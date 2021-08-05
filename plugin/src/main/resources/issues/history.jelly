@@ -10,17 +10,17 @@
     <div id="trend-carousel" class="carousel slide carousel-dark" data-bs-interval="false">
       <div class="carousel-inner">
         <div class="carousel-item active">
-          <div id="severities-trend-chart" class="graph-cursor-pointer card-chart"/>
+          <div id="severities-trend-chart" class="graph-cursor-pointer card-chart-carousel"/>
         </div>
         <div class="carousel-item">
-          <div id="tools-trend-chart" class="graph-cursor-pointer card-chart"/>
+          <div id="tools-trend-chart" class="graph-cursor-pointer card-chart-carousel"/>
         </div>
         <div class="carousel-item">
-          <div id="new-versus-fixed-trend-chart" class="graph-cursor-pointer card-chart"/>
+          <div id="new-versus-fixed-trend-chart" class="graph-cursor-pointer card-chart-carousel"/>
         </div>
         <j:if test="${it.healthReportEnabled}">
           <div class="carousel-item">
-            <div id="health-trend-chart" class="graph-cursor-pointer card-chart"/>
+            <div id="health-trend-chart" class="graph-cursor-pointer card-chart-carousel"/>
           </div>
         </j:if>
       </div>

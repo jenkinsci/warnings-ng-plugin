@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.function.Function;
 
+import org.apache.commons.lang3.StringUtils;
+
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
@@ -35,6 +37,7 @@ import io.jenkins.plugins.analysis.core.charts.TrendChart;
 import io.jenkins.plugins.analysis.core.restapi.AnalysisResultApi;
 import io.jenkins.plugins.analysis.core.restapi.ReportApi;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
+import io.jenkins.plugins.analysis.core.util.BuildResultNavigator;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
@@ -242,14 +245,14 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
         else if ("blames".equals(id)) {
             return new BlamesModel(report, result.getBlames(),
                     labelProvider.getFileNameRenderer(owner),
-                    labelProvider.getAgeBuilder(owner,  getUrl()),
+                    labelProvider.getAgeBuilder(owner, getUrl()),
                     labelProvider,
                     CommitDecoratorFactory.findCommitDecorator(owner));
         }
         else if ("forensics".equals(id)) {
             return new ForensicsModel(report, result.getForensics(),
                     labelProvider.getFileNameRenderer(owner),
-                    labelProvider.getAgeBuilder(owner,  getUrl()),
+                    labelProvider.getAgeBuilder(owner, getUrl()),
                     labelProvider);
         }
         else {
@@ -268,6 +271,22 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
         RESET_QUALITY_GATE_COMMAND.execute(owner, labelProvider.getId());
 
         return "{}";
+    }
+
+    /**
+     * Returns the URL for same results of the selected build.
+     *
+     * @param build
+     *         the selected build to open the new results for
+     * @param detailsUrl
+     *         the absolute URL to this details view results
+     *
+     * @return the URL to the results or an empty string if the results are not available
+     */
+    @JavaScriptMethod
+    public String getUrlForBuild(final String build, final String detailsUrl) {
+        return new BuildResultNavigator().getSameUrlForOtherBuild(owner, detailsUrl, getResult().getId(), build)
+                .orElse(StringUtils.EMPTY);
     }
 
     /**
@@ -301,7 +320,8 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
      * @return the UI model as JSON
      * @deprecated replaced by {@link #getBuildTrend(String)}
      */
-    @Deprecated @SuppressWarnings("unused")
+    @Deprecated
+    @SuppressWarnings("unused")
     public String getBuildTrend(final boolean isBuildOnXAxis) {
         return createTrendAsJson(new SeverityTrendChart(), DEFAULT_CONFIGURATION);
     }
@@ -329,7 +349,8 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
      * @return the UI model as JSON
      * @deprecated replaced by {@link #getToolsTrend(String)}
      */
-    @Deprecated @SuppressWarnings("unused")
+    @Deprecated
+    @SuppressWarnings("unused")
     public String getToolsTrend(final boolean isBuildOnXAxis) {
         return createTrendAsJson(new ToolsTrendChart(), DEFAULT_CONFIGURATION);
     }
@@ -357,7 +378,8 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
      * @return the UI model as JSON
      * @deprecated replaced by {@link #getNewVersusFixedTrend(String)}
      */
-    @Deprecated @SuppressWarnings("unused")
+    @Deprecated
+    @SuppressWarnings("unused")
     public String getNewVersusFixedTrend(final boolean isBuildOnXAxis) {
         return createTrendAsJson(new NewVersusFixedTrendChart(), DEFAULT_CONFIGURATION);
     }
@@ -385,7 +407,8 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
      * @return the UI model as JSON
      * @deprecated replaced by {@link #getHealthTrend(String)}
      */
-    @Deprecated @SuppressWarnings("unused")
+    @Deprecated
+    @SuppressWarnings("unused")
     public String getHealthTrend(final boolean isBuildOnXAxis) {
         return createTrendAsJson(new HealthTrendChart(healthDescriptor), DEFAULT_CONFIGURATION);
     }
