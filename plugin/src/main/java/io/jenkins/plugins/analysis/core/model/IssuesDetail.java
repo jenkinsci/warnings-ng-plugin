@@ -17,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
+import edu.hm.hafner.echarts.BuildResult;
 import edu.hm.hafner.echarts.ChartModelConfiguration;
 import edu.hm.hafner.echarts.JacksonFacade;
 
@@ -37,6 +38,7 @@ import io.jenkins.plugins.analysis.core.charts.TrendChart;
 import io.jenkins.plugins.analysis.core.restapi.AnalysisResultApi;
 import io.jenkins.plugins.analysis.core.restapi.ReportApi;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
+import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.analysis.core.util.BuildResultNavigator;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
@@ -285,10 +287,15 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
      */
     @JavaScriptMethod
     public String getUrlForBuild(final String build, final String detailsUrl) {
-        return new BuildResultNavigator().getSameUrlForOtherBuild(owner, detailsUrl, getResult().getId(), build)
-                .orElse(StringUtils.EMPTY);
+        AnalysisHistory history = createHistory();
+        for (BuildResult<AnalysisBuildResult> buildResult : history) {
+            if (buildResult.getBuild().getDisplayName().equals(build)) {
+                return new BuildResultNavigator().getSameUrlForOtherBuild(owner, detailsUrl, getResult().getId(),
+                                buildResult.getBuild().getNumber()).orElse(StringUtils.EMPTY);
+            }
+        }
+        return StringUtils.EMPTY;
     }
-
     /**
      * Returns the UI model for an ECharts doughnut chart that shows the severities.
      *
@@ -438,9 +445,13 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
     }
 
     private String createTrendAsJson(final TrendChart trendChart, final String configuration) {
-        History history = new AnalysisHistory(owner, new ByIdResultSelector(result.getId()));
+        History history = createHistory();
 
         return new JacksonFacade().toJson(trendChart.create(history, ChartModelConfiguration.fromJson(configuration)));
+    }
+
+    private AnalysisHistory createHistory() {
+        return new AnalysisHistory(owner, new ByIdResultSelector(result.getId()));
     }
 
     /**
