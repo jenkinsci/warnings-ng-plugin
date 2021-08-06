@@ -925,6 +925,12 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         shouldFindIssuesOfTool(4, new QtTranslation(), "qttranslation.ts");
     }
 
+    /** Runs the oelint-adv parser on an output file that contains 8 issues. */
+    @Test
+    public void shouldFindAllOELintAdvIssues() {
+        shouldFindIssuesOfTool(8, new OELintAdv(), "oelint-adv.txt");
+    }
+
     private void shouldFindIssuesOfTool(final int expectedSizeOfIssues, final AnalysisModelParser tool,
             final String... fileNames) {
         String defaultPipelineDefinition = "recordIssues tool: %s(pattern:'**/%s', reportEncoding:'UTF-8')";
