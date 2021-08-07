@@ -12,9 +12,12 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.function.Function;
 
+import org.apache.commons.lang3.StringUtils;
+
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
+import edu.hm.hafner.echarts.BuildResult;
 import edu.hm.hafner.echarts.ChartModelConfiguration;
 import edu.hm.hafner.echarts.JacksonFacade;
 
@@ -35,6 +38,8 @@ import io.jenkins.plugins.analysis.core.charts.TrendChart;
 import io.jenkins.plugins.analysis.core.restapi.AnalysisResultApi;
 import io.jenkins.plugins.analysis.core.restapi.ReportApi;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
+import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
+import io.jenkins.plugins.analysis.core.util.BuildResultNavigator;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
@@ -242,14 +247,14 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
         else if ("blames".equals(id)) {
             return new BlamesModel(report, result.getBlames(),
                     labelProvider.getFileNameRenderer(owner),
-                    labelProvider.getAgeBuilder(owner,  getUrl()),
+                    labelProvider.getAgeBuilder(owner, getUrl()),
                     labelProvider,
                     CommitDecoratorFactory.findCommitDecorator(owner));
         }
         else if ("forensics".equals(id)) {
             return new ForensicsModel(report, result.getForensics(),
                     labelProvider.getFileNameRenderer(owner),
-                    labelProvider.getAgeBuilder(owner,  getUrl()),
+                    labelProvider.getAgeBuilder(owner, getUrl()),
                     labelProvider);
         }
         else {
@@ -270,6 +275,27 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
         return "{}";
     }
 
+    /**
+     * Returns the URL for same results of the selected build.
+     *
+     * @param build
+     *         the selected build to open the new results for
+     * @param detailsUrl
+     *         the absolute URL to this details view results
+     *
+     * @return the URL to the results or an empty string if the results are not available
+     */
+    @JavaScriptMethod
+    public String getUrlForBuild(final String build, final String detailsUrl) {
+        AnalysisHistory history = createHistory();
+        for (BuildResult<AnalysisBuildResult> buildResult : history) {
+            if (buildResult.getBuild().getDisplayName().equals(build)) {
+                return new BuildResultNavigator().getSameUrlForOtherBuild(owner, detailsUrl, getResult().getId(),
+                                buildResult.getBuild().getNumber()).orElse(StringUtils.EMPTY);
+            }
+        }
+        return StringUtils.EMPTY;
+    }
     /**
      * Returns the UI model for an ECharts doughnut chart that shows the severities.
      *
@@ -301,7 +327,8 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
      * @return the UI model as JSON
      * @deprecated replaced by {@link #getBuildTrend(String)}
      */
-    @Deprecated @SuppressWarnings("unused")
+    @Deprecated
+    @SuppressWarnings("unused")
     public String getBuildTrend(final boolean isBuildOnXAxis) {
         return createTrendAsJson(new SeverityTrendChart(), DEFAULT_CONFIGURATION);
     }
@@ -329,7 +356,8 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
      * @return the UI model as JSON
      * @deprecated replaced by {@link #getToolsTrend(String)}
      */
-    @Deprecated @SuppressWarnings("unused")
+    @Deprecated
+    @SuppressWarnings("unused")
     public String getToolsTrend(final boolean isBuildOnXAxis) {
         return createTrendAsJson(new ToolsTrendChart(), DEFAULT_CONFIGURATION);
     }
@@ -357,7 +385,8 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
      * @return the UI model as JSON
      * @deprecated replaced by {@link #getNewVersusFixedTrend(String)}
      */
-    @Deprecated @SuppressWarnings("unused")
+    @Deprecated
+    @SuppressWarnings("unused")
     public String getNewVersusFixedTrend(final boolean isBuildOnXAxis) {
         return createTrendAsJson(new NewVersusFixedTrendChart(), DEFAULT_CONFIGURATION);
     }
@@ -385,7 +414,8 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
      * @return the UI model as JSON
      * @deprecated replaced by {@link #getHealthTrend(String)}
      */
-    @Deprecated @SuppressWarnings("unused")
+    @Deprecated
+    @SuppressWarnings("unused")
     public String getHealthTrend(final boolean isBuildOnXAxis) {
         return createTrendAsJson(new HealthTrendChart(healthDescriptor), DEFAULT_CONFIGURATION);
     }
@@ -415,9 +445,13 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
     }
 
     private String createTrendAsJson(final TrendChart trendChart, final String configuration) {
-        History history = new AnalysisHistory(owner, new ByIdResultSelector(result.getId()));
+        History history = createHistory();
 
         return new JacksonFacade().toJson(trendChart.create(history, ChartModelConfiguration.fromJson(configuration)));
+    }
+
+    private AnalysisHistory createHistory() {
+        return new AnalysisHistory(owner, new ByIdResultSelector(result.getId()));
     }
 
     /**
