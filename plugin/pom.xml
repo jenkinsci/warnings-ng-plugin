@@ -31,11 +31,11 @@
     <forensics-api-plugin.version>1.2.1</forensics-api-plugin.version>
     <plugin-util-api.version>2.4.0</plugin-util-api.version>
 
-    <data-tables-api.version>1.10.25-3</data-tables-api.version>
-    <font-awesome-api.version>5.15.3-4</font-awesome-api.version>
-    <echarts-api.version>5.1.2-5</echarts-api.version>
+    <data-tables-api.version>1.11.2-1</data-tables-api.version>
+    <font-awesome-api.version>5.15.4-1</font-awesome-api.version>
+    <echarts-api.version>5.1.2-11</echarts-api.version>
     <jquery3-api.version>3.6.0-2</jquery3-api.version>
-    <bootstrap5-api.version>5.0.2-1</bootstrap5-api.version>
+    <bootstrap5-api.version>5.1.1-1</bootstrap5-api.version>
     <popper-api.version>1.16.1-2</popper-api.version>
     <error_prone_annotations.version>2.9.0</error_prone_annotations.version>
     <pull-request-monitoring.version>1.7.8</pull-request-monitoring.version>
