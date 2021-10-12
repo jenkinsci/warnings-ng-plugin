@@ -48,6 +48,7 @@ version-resolver:
       - 'documentation'
       - 'tests'
       - 'internal'
+      - 'bug'
   default: minor
 
 replacers:
