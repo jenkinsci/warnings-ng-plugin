@@ -28,6 +28,12 @@
 - name: java
   desccription: Pull requests that update Maven Java dependencies
   color: b6b6b6
+- name: javascript
+  desccription: Pull requests that update Node Javascript dependencies
+  color: b6b6b6
 - name: github_actions
   desccription: Pull requests that update Github Actions code
   color: 909090
+- name: hacktoberfest
+  desccription: Pull requests that participate in Hacktoberfest 2021
+  color: 7057ff

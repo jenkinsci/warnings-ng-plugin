@@ -1,4 +1,4 @@
-# Contributing to the Warnings Next Generation Plugin
+# Contributing to the Warnings Next Generation Plug-in
 
 This document provides information about contributing code to Jenkins' Warnings Next Generation plug-in.
 
@@ -8,9 +8,9 @@ project overall, check out [Jenkins' contributing landing page](https://jenkins.
 ## Beginner Topics
 
 If you don't have a specific problem or task in mind, i.e.,  you simply want to participate in this open source project 
-I would suggest to have a look at the 
+I would suggest looking at the 
 [open newbie friendly issues in our issues tracker](https://issues.jenkins-ci.org/issues/?filter=-1&jql=resolution%20%3D%20Unresolved%20AND%20component%20in%20(analysis-model%2C%20forensics-api-plugin%2C%20git-forensics-plugin%2C%20warnings-ng-plugin)%20AND%20labels%20%3D%20newbie-friendly%20order%20by%20updated%20DESC). 
-I marked several newbie friendly issues with the labels `newbie-friendly`. These are a good starting
+I marked several newbie friendly issues with the label `newbie-friendly`. These are a good starting
 point to get in touch with this Jenkins plugin.
 If you already have some experience with the plugin you can also fix one of the issues that are marked with the label
 `help-wanted` [open issues in our issues tracker](https://issues.jenkins-ci.org/issues/?filter=-1&jql=resolution%20%3D%20Unresolved%20AND%20component%20in%20(analysis-model%2C%20forensics-api-plugin%2C%20git-forensics-plugin%2C%20warnings-ng-plugin)%20AND%20labels%20%3D%20help-wanted%20order%20by%20updated%20DESC). 
@@ -25,28 +25,30 @@ analysis-model library.
 
 ## Getting started
 
-Setup your development environment as described in 
-[Development environment for Jenkins' Warnings Next Generation Plugin](https://github.com/uhafner/warnings-ng-plugin-devenv).
+Setup your development environment as described in
+[Development environment for Jenkins' Warnings and Code Coverage Plugins](https://github.com/uhafner/warnings-ng-plugin-devenv).
 
 ## Coding Guidelines
 
-Start reading the code and you'll get the hang of it. A complete description of the 
-coding guidelines is part of a [separate GitHub repository](https://github.com/uhafner/codingstyle), which 
-is only available in German. 
+Start reading the code, and you'll get the hang of it. A complete description of the
+coding guidelines is part of a [separate GitHub repository](https://github.com/uhafner/codingstyle) that I am also using
+for my lectures about software development.
 
-For [IntelliJ IDEA](https://www.jetbrains.com/idea/) users: the coding style is stored in configuration files below the 
-`.idea` folder. If you import this project into IntelliJ this style will used automatically. 
+For [IntelliJ IDEA](https://www.jetbrains.com/idea/) users: If you use the
+[provided development environment](https://github.com/uhafner/warnings-ng-plugin-devenv) then the coding style is stored
+in configuration files below the `codingstyle/.idea` and `codingstyle/etc` folders. When you import all projects into IntelliJ
+then this style will be used automatically.
 
-Moreover (since this project is about static code analysis :wink:) a configuration for the following static code
-analysis tools is defined in the POM and the `etc` and `.idea` folders:
+Moreover, (since this project is about static code analysis :wink:) a configuration for the following static code
+analysis tools is defined in the POM (and the `etc` and `.idea` folders of the `codingstyle` module):
 - [Checkstyle](http://checkstyle.sourceforge.net/)
 - [PMD](https://pmd.github.io/)
 - [SpotBugs](https://spotbugs.github.io)
 - [Error Prone](http://errorprone.info)
 - [IntelliJ](https://www.jetbrains.com/help/idea/code-inspection.html)
 
-This configuration will be picked up automatically if you build the project using Maven. If you install the CheckStyle 
-plugin of IntelliJ then the correct set of CheckStyle rules will used automatically. Moreover, the code formatter and 
+This configuration will be picked up automatically if you build the project using Maven. If you install the CheckStyle
+plugin of IntelliJ then the correct set of CheckStyle rules will used automatically. Moreover, the code formatter and
 the inspection rules will be automatically picked up by IntelliJ.
 
 ## Proposing Changes
