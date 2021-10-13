@@ -26,7 +26,7 @@
     <module.name>${project.groupId}.warnings.ng</module.name>
 
     <analysis-model-api.version>10.5.1</analysis-model-api.version>
-    <analysis-model-tests.version>10.3.0</analysis-model-tests.version>
+    <analysis-model-tests.version>10.5.1</analysis-model-tests.version>
 
     <forensics-api-plugin.version>1.5.0</forensics-api-plugin.version>
     <plugin-util-api.version>2.5.0</plugin-util-api.version>
@@ -121,6 +121,11 @@
         <groupId>-io.jenkins.plugins</groupId>
         <artifactId>jquery3-api</artifactId>
         <version>${jquery3-api.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-net</groupId>
+        <artifactId>commons-net</artifactId>
+        <version>3.8.0</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
