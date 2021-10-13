@@ -9,11 +9,11 @@ project overall, check out [Jenkins' contributing landing page](https://jenkins.
 
 If you don't have a specific problem or task in mind, i.e.,  you simply want to participate in this open source project 
 I would suggest looking at the 
-[open newbie friendly issues in our issues tracker](https://issues.jenkins-ci.org/issues/?filter=-1&jql=resolution%20%3D%20Unresolved%20AND%20component%20in%20(analysis-model%2C%20forensics-api-plugin%2C%20git-forensics-plugin%2C%20warnings-ng-plugin)%20AND%20labels%20%3D%20newbie-friendly%20order%20by%20updated%20DESC). 
+[open newbie friendly issues in our issues tracker](https://issues.jenkins.io/issues/?filter=-1&jql=resolution%20%3D%20Unresolved%20AND%20component%20in%20(analysis-model%2C%20forensics-api-plugin%2C%20git-forensics-plugin%2C%20warnings-ng-plugin)%20AND%20labels%20%3D%20newbie-friendly%20order%20by%20updated%20DESC). 
 I marked several newbie friendly issues with the label `newbie-friendly`. These are a good starting
 point to get in touch with this Jenkins plugin.
 If you already have some experience with the plugin you can also fix one of the issues that are marked with the label
-`help-wanted` [open issues in our issues tracker](https://issues.jenkins-ci.org/issues/?filter=-1&jql=resolution%20%3D%20Unresolved%20AND%20component%20in%20(analysis-model%2C%20forensics-api-plugin%2C%20git-forensics-plugin%2C%20warnings-ng-plugin)%20AND%20labels%20%3D%20help-wanted%20order%20by%20updated%20DESC). 
+`help-wanted` [open issues in our issues tracker](https://issues.jenkins.io/issues/?filter=-1&jql=resolution%20%3D%20Unresolved%20AND%20component%20in%20(analysis-model%2C%20forensics-api-plugin%2C%20git-forensics-plugin%2C%20warnings-ng-plugin)%20AND%20labels%20%3D%20help-wanted%20order%20by%20updated%20DESC). 
 
 
 ## Parser Implementations
@@ -63,7 +63,7 @@ It is a good practice is to create branches instead of pushing to master.
 2. In GitHub Web UI click the **New Pull Request** button.
 3. Select `warnings-ng-plugin` as **base fork** and `master` as **base**, then click **Create Pull Request**.
 4. Fill in the Pull Request description. It should reflect the changes, the reason behind the changes, and if available a
-reference to the Jenkins ticket in our [issue tracker](https://issues.jenkins-ci.org/).
+reference to the Jenkins ticket in our [issue tracker](https://issues.jenkins.io/).
 5. Click **Create Pull Request**.
 6. Wait for CI results and reviews. 
 7. Process the feedback (see previous step). If there are changes required, commit them in your local branch and push them
