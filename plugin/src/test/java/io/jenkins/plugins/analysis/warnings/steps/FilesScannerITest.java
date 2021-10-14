@@ -146,6 +146,8 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void findIssuesWithMultipleFilesReachableWithSymbolicLinks() {
+        assumeFalse(isWindows());
+
         FreeStyleProject project = createJobWithWorkspaceFile(SYMLINKS_WORKSPACE);
 
         FilePath workspace = getWorkspace(project);
@@ -183,8 +185,7 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void findNoIssuesWithMultipleFilesReachableWithSymlinksWithSkipSymbolicLinks() {
-
-        assumeTrue(!isWindows());
+        assumeFalse(isWindows());
 
         FreeStyleProject project = createJobWithWorkspaceFile(SYMLINKS_WORKSPACE);
 
