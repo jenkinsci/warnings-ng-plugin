@@ -169,18 +169,6 @@ public class BlamesTableRow extends GenericTableRow {
     }
 
     /**
-     * Performs a click on a link which filters the AnalysisResult.
-     *
-     * @param columnName
-     *         the columnName holding the link
-     *
-     * @return the representation of the filtered AnalysisResult
-     */
-    private AnalysisResult clickOnFilterLink(final String columnName) {
-        return blamesTable.clickFilterLinkOnSite(findLink(getCell(columnName)));
-    }
-
-    /**
      * Returns the file link that will navigate to the source content.
      *
      * @return the file link

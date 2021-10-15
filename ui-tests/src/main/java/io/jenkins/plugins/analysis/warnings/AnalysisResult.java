@@ -146,7 +146,7 @@ public class AnalysisResult extends PageObject {
         }
         return ForensicsTableRowType.DEFAULT;
     }
-    
+
     /**
      * Reloads the {@link PageObject}.
      */
@@ -338,7 +338,7 @@ public class AnalysisResult extends PageObject {
      */
     public String getTrendChartById(final String elementId) {
         Object result = executeScript(String.format(
-                "delete(window.Array.prototype.toJSON) \n"
+                "delete(window.Array.prototype.toJSON) %n"
                         + "return JSON.stringify(echarts.getInstanceByDom(document.getElementById(\"%s\")).getOption())",
                 elementId));
         ScriptResult scriptResult = new ScriptResult(result);

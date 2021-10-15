@@ -8,8 +8,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import org.jenkinsci.test.acceptance.po.PageObject;
 
+@SuppressFBWarnings("EI")
 public class BlamesTable {
     private final AnalysisResult resultDetailsPage;
     private final List<GenericTableRow> tableRows = new ArrayList<>();

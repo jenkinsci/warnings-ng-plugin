@@ -6,7 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 import org.openqa.selenium.WebElement;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.PageObject;
 
@@ -15,6 +19,7 @@ import org.jenkinsci.test.acceptance.po.PageObject;
  *
  * @author Lukas Kirner
  */
+@SuppressFBWarnings("EI")
 public class DashboardTable extends PageObject {
     private static final String EMPTY = "-";
 

@@ -18,6 +18,7 @@ import org.jenkinsci.test.acceptance.po.PageObject;
  * @author Andreas Riepl
  * @author Oliver Scholz
  */
+@SuppressWarnings("EI")
 public class IssuesColumnConfiguration extends PageObject {
     private ListView listView;
 
