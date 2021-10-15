@@ -56,7 +56,7 @@ public class AnalysisResult extends PageObject {
      * @param url
      *         the url of the page
      * @param id
-     *         the id of  the result page (e.g simian or cpd)
+     *         the id of  the result page (e.g., simian or cpd)
      */
     @SuppressWarnings("unused") // Required to dynamically create page object using reflection
     public AnalysisResult(final Injector injector, final URL url, final String id) {
@@ -77,7 +77,7 @@ public class AnalysisResult extends PageObject {
     }
 
     /**
-     * Returns the list of available tabs. These tabs depend on the available properites of the set of shown issues.
+     * Returns the list of available tabs. These tabs depend on the available properties of the set of shown issues.
      *
      * @return the available tabs
      */
@@ -146,7 +146,7 @@ public class AnalysisResult extends PageObject {
         }
         return ForensicsTableRowType.DEFAULT;
     }
-    
+
     /**
      * Reloads the {@link PageObject}.
      */
