@@ -58,8 +58,20 @@ public class IssuesDetailsTable {
      */
     public final void updateTableRows() {
         tableRows.clear();
-        List<WebElement> tableRowsAsWebElements = tableElement.findElements(By.xpath(".//tbody/tr"));
+
+        List<WebElement> tableRowsAsWebElements;
+        do {
+            tableRowsAsWebElements = tableElement.findElements(By.xpath(".//tbody/tr"));
+        }
+        while (isLoadingSeverData(tableRowsAsWebElements));
         tableRowsAsWebElements.forEach(element -> tableRows.add(getRightTableRow(element)));
+    }
+
+    private boolean isLoadingSeverData(final List<WebElement> tableRowsAsWebElements) {
+        if (tableRowsAsWebElements.size() != 1) {
+            return false;
+        }
+        return tableRowsAsWebElements.get(0).getText().contains("Loading - please wait");
     }
 
     /**

@@ -30,13 +30,17 @@ abstract class UiTest extends AbstractJUnitTest {
     static final String WARNINGS_PLUGIN_PREFIX = "/";
     static final String CHECKSTYLE_ID = "checkstyle";
     static final String CPD_ID = "cpd";
+    static final String CPD_TOOL = "CPD";
     static final String PMD_ID = "pmd";
     static final String FINDBUGS_ID = "findbugs";
+    static final String FINDBUGS_TOOL = "FindBugs";
     static final String MAVEN_ID = "maven-warnings";
+    static final String MAVEN_TOOL = "Maven";
     static final String ANALYSIS_ID = "analysis";
     static final String PEP8_ID = "pep8";
-    static final String PEP8_NAME = "PEP8";
+    static final String PEP8_TOOL = "PEP8";
     static final String PEP8_FILE = "pep8Test.txt";
+    static final String JAVA_COMPILER = "Java Compiler";
 
     private static final String CPD_SOURCE_NAME = "Main.java";
     private static final String CPD_SOURCE_PATH = "/duplicate_code/Main.java";
@@ -312,7 +316,7 @@ abstract class UiTest extends AbstractJUnitTest {
     protected void verifyPep8(final Build build, final int referenceBuild) {
         AnalysisSummary pep8 = new AnalysisSummary(build, PEP8_ID);
         assertThat(pep8).isDisplayed()
-                .hasTitleText(PEP8_NAME + ": 8 warnings")
+                .hasTitleText(PEP8_TOOL + ": 8 warnings")
                 .hasReferenceBuild(referenceBuild)
                 .hasInfoType(InfoType.ERROR);
 
@@ -407,7 +411,7 @@ abstract class UiTest extends AbstractJUnitTest {
         GlobalWarningsSettings settings = new GlobalWarningsSettings(jenkins);
         settings.configure();
         GroovyConfiguration groovyConfiguration = settings.openGroovyConfiguration();
-        groovyConfiguration.enterName(PEP8_NAME);
+        groovyConfiguration.enterName(PEP8_TOOL);
         groovyConfiguration.enterId(PEP8_ID);
         groovyConfiguration.enterRegex("(.*):(\\d+):(\\d+): (\\D\\d*) (.*)");
         groovyConfiguration.enterScript("import edu.hm.hafner.analysis.Severity\n"

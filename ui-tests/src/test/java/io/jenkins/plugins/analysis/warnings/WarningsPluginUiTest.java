@@ -172,7 +172,7 @@ public class WarningsPluginUiTest extends UiTest {
         copyResourceFilesToWorkspace(job, SOURCE_VIEW_FOLDER + "pom.xml");
 
         IssuesRecorder recorder = job.addPublisher(IssuesRecorder.class);
-        recorder.setToolWithPattern("Maven", "");
+        recorder.setToolWithPattern(MAVEN_TOOL, "");
         recorder.setEnabledForFailure(true);
 
         job.save();

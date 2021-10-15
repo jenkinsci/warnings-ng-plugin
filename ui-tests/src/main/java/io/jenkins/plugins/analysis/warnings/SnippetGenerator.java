@@ -86,6 +86,7 @@ public class SnippetGenerator extends PageObject {
          */
         public IssuesRecorder(final PageObject snippetGenerator, final String path) {
             super(snippetGenerator, path);
+
             openAdvancedOptions();
         }
 
@@ -264,9 +265,8 @@ public class SnippetGenerator extends PageObject {
          * Opens the advanced section.
          */
         private void openAdvancedOptions() {
-            if (advancedButton != null && advancedButton.exists()) {
-                advancedButton.click();
-            }
+            waitFor().until(advancedButton::exists);
+            advancedButton.click();
         }
 
         /**

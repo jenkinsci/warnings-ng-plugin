@@ -44,7 +44,7 @@ public class GlobalWarningsSettings extends JenkinsConfig {
     public String getHomeDirectory() {
         ensureConfigPage();
 
-        return driver.findElement(By.xpath("//td[contains(text(), 'Home directory')]//..//*[@class='setting-main']"))
+        return driver.findElement(By.xpath("//div[contains(text(), 'Home directory')]//..//*[@class='setting-main']"))
                 .getText();
     }
 
