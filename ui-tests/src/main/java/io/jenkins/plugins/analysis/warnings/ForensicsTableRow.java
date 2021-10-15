@@ -6,7 +6,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 /**
- * Abstract representation of a table row displaying a forensic.
+ * Representation of a table row displaying the forensic details for an issue.
  *
  * @author Thomas Großbeck
  */

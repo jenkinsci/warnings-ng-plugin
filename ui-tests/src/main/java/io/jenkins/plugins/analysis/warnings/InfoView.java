@@ -15,7 +15,7 @@ import org.jenkinsci.test.acceptance.po.Control;
 import org.jenkinsci.test.acceptance.po.PageObject;
 
 /**
- * Page object for the error and info messages view.
+ * {@link PageObject} representing the error and info messages view.
  *
  * @author Alexander Praegla
  * @author Arne Schöntag

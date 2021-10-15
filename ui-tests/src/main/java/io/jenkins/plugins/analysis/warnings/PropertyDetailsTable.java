@@ -11,8 +11,8 @@ import org.openqa.selenium.WebElement;
 import org.jenkinsci.test.acceptance.po.PageObject;
 
 /**
- * Page object representing one of the property tables that show the distribution of the {@link AnalysisResult} given by
- * a property.
+ * {@link PageObject} representing one of the property tables that show the distribution of the {@link AnalysisResult}
+ * given by a property.
  *
  * @author Kevin Richter
  */

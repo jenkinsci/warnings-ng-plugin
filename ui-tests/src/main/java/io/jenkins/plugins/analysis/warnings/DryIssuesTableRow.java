@@ -10,7 +10,9 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 /**
- * Class representing a duplicate code warnings issue table row in the issues table.
+ * Representation of a table row displaying the duplicate code warnings details.
+ *
+ * @author Stephan Plöderl
  */
 public class DryIssuesTableRow extends IssuesTableRow {
     private static final String DUPLICATED_IN = "Duplicated In";

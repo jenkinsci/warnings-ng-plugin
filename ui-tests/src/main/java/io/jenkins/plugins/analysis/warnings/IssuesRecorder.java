@@ -8,10 +8,11 @@ import org.jenkinsci.test.acceptance.po.Describable;
 import org.jenkinsci.test.acceptance.po.Job;
 import org.jenkinsci.test.acceptance.po.PageArea;
 import org.jenkinsci.test.acceptance.po.PageAreaImpl;
+import org.jenkinsci.test.acceptance.po.PageObject;
 import org.jenkinsci.test.acceptance.po.PostBuildStep;
 
 /**
- * Page object for the IssuesRecorder of the Jenkins Warnings Plugin.
+ * {@link PageObject} representing the IssuesRecorder of the Jenkins Warnings Plugin.
  *
  * @author Ullrich Hafner
  */
@@ -444,7 +445,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     }
 
     private StaticAnalysisTool createToolPageArea(final String toolName) {
-        String path = createPageArea("toolProxies", () -> toolsRepeatable.click());
+        String path = createPageArea("toolProxies", toolsRepeatable::click);
 
         StaticAnalysisTool tool = new StaticAnalysisTool(this, path);
         tool.setTool(toolName);
@@ -477,7 +478,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      */
     public void addQualityGateConfiguration(final int threshold, final QualityGateType type,
             final QualityGateBuildResult result) {
-        String path = createPageArea("qualityGates", () -> qualityGatesRepeatable.click());
+        String path = createPageArea("qualityGates", qualityGatesRepeatable::click);
         QualityGatePanel qualityGate = new QualityGatePanel(this, path);
         qualityGate.setThreshold(threshold);
         qualityGate.setType(type);

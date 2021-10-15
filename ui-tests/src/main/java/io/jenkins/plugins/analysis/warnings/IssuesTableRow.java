@@ -10,7 +10,7 @@ import org.openqa.selenium.WebElement;
 import org.jenkinsci.test.acceptance.po.PageObject;
 
 /**
- * Abstract representation of a table row displaying an issue.
+ * Representation of a table row displaying an issue.
  *
  * @author Stephan Plöderl
  * @author Anna-Maria Hardi

@@ -11,9 +11,9 @@ import org.openqa.selenium.WebElement;
 import org.jenkinsci.test.acceptance.po.PageObject;
 
 /**
- * Class representing an forensics-table on the {@link AnalysisResult}.
+ * Area that represents the forensics table in an {@link AnalysisResult} page.
  *
- * @author Thomas Großbeck
+ * @author Stephan Plöderl
  */
 public class ForensicsTable {
     private final AnalysisResult resultDetailsPage;

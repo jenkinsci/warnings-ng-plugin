@@ -7,7 +7,7 @@ import org.openqa.selenium.By;
 import org.jenkinsci.test.acceptance.po.PageObject;
 
 /**
- * Class representing the groovy parser configuration in the global settings.
+ * {@link PageObject} representing the groovy parser configuration in the global settings.
  */
 public class GroovyConfiguration extends PageObject {
 

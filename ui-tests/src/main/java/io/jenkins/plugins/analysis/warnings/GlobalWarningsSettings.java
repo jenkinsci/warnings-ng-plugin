@@ -6,7 +6,7 @@ import org.jenkinsci.test.acceptance.po.Jenkins;
 import org.jenkinsci.test.acceptance.po.JenkinsConfig;
 
 /**
- * Global system configuration of the warnings plugin.
+ * Global system configuration of the Warnings Plugin.
  */
 public class GlobalWarningsSettings extends JenkinsConfig {
     private static final String XPATH_PLUGIN_CONFIG = "//*[@path='%s']";

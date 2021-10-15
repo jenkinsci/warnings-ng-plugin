@@ -13,7 +13,7 @@ import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateBuildResul
 import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateType;
 
 /**
- * Page object for the SnippetGenerator to learning the available Pipeline steps.
+ * {@link PageObject} for the SnippetGenerator to learning the available Pipeline steps.
  *
  * @author Lion Kosiuk
  */
@@ -29,7 +29,7 @@ public class SnippetGenerator extends PageObject {
      * @param context
      *         job context
      */
-    public SnippetGenerator(WorkflowJob context) {
+    public SnippetGenerator(final WorkflowJob context) {
         super(context,  context.url(URI));
     }
 
@@ -40,8 +40,8 @@ public class SnippetGenerator extends PageObject {
      */
     public IssuesRecorder selectRecordIssues() {
         selectSampleStep.select(RECORD_ISSUES_OPTION);
-        IssuesRecorder issuesRecorder = new IssuesRecorder(this, "/prototype");
-        return issuesRecorder;
+
+        return new IssuesRecorder(this, "/prototype");
     }
 
     /**
@@ -252,7 +252,7 @@ public class SnippetGenerator extends PageObject {
          * @return issuesRecorder page area
          */
         public IssuesRecorder addQualityGateConfiguration(final int threshold, final QualityGateType type, final QualityGateBuildResult result) {
-            String path = createPageArea("qualityGates", () -> qualityGatesRepeatable.click());
+            String path = createPageArea("qualityGates", qualityGatesRepeatable::click);
             QualityGatePanel qualityGate = new QualityGatePanel(this, path);
             qualityGate.setThreshold(threshold);
             qualityGate.setType(type);

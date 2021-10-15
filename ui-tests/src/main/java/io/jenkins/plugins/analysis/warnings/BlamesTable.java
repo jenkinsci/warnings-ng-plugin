@@ -10,6 +10,11 @@ import org.openqa.selenium.WebElement;
 
 import org.jenkinsci.test.acceptance.po.PageObject;
 
+/**
+ * Area that represents the blames table in an {@link AnalysisResult} page.
+ *
+ * @author Stephan Plöderl
+ */
 public class BlamesTable {
     private final AnalysisResult resultDetailsPage;
     private final List<GenericTableRow> tableRows = new ArrayList<>();
@@ -156,11 +161,11 @@ public class BlamesTable {
         return resultDetailsPage.openFilterLinkOnSite(element);
     }
 
-/**
- * Supported element types of the issues table.
- */
-public enum BlamesTableRowType {
-    DEFAULT,
-    DRY
-}
+    /**
+     * Supported element types of the issues table.
+     */
+    public enum BlamesTableRowType {
+        DEFAULT,
+        DRY
+    }
 }

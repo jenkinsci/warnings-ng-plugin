@@ -3,8 +3,8 @@ package io.jenkins.plugins.analysis.warnings;
 import org.openqa.selenium.WebElement;
 
 /**
- * Representation for the details row which can be toggled by clicking the icon in the details column on a issues-table
- * row.
+ * Representation for the details row which can be toggled by clicking the icon in the details' column in an issues
+ * table row.
  *
  * @author Stephan Plöderl
  */

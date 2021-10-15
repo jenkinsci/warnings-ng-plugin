@@ -12,7 +12,7 @@ import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.PageObject;
 
 /**
- * Page object to access column "# Issues" in ListView or Dashboard.
+ * {@link PageObject} to access column "# Issues" in ListView or Dashboard.
  *
  * @author Andreas Riepl
  * @author Oliver Scholz

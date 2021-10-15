@@ -14,7 +14,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.jenkinsci.test.acceptance.po.PageObject;
 
 /**
- * Class representing an issues-table on the {@link AnalysisResult}.
+ * Area that represents the issues table in an {@link AnalysisResult} page.
  *
  * @author Stephan Plöderl
  */

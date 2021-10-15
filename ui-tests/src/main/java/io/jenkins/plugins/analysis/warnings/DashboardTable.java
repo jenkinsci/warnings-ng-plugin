@@ -6,7 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 import org.openqa.selenium.WebElement;
+
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.PageObject;
 
@@ -41,7 +43,7 @@ public class DashboardTable extends PageObject {
                 .collect(Collectors.toList());
 
         headers = rows.stream()
-            .flatMap(dom -> dom.findElements(by.tagName("th")).stream())
+                .flatMap(dom -> dom.findElements(by.tagName("th")).stream())
                 .map(th -> {
                     List<WebElement> img = th.findElements(by.tagName("img"));
                     if (img.size() > 0) {
@@ -52,7 +54,7 @@ public class DashboardTable extends PageObject {
                         return th.getText();
                     }
                 })
-            .collect(Collectors.toList());
+                .collect(Collectors.toList());
 
         List<List<List<String>>> lines = rows.stream().skip(1)
                 .map(dom -> dom.findElements(by.tagName("td")).stream().map(td -> {
@@ -67,7 +69,8 @@ public class DashboardTable extends PageObject {
                 .collect(Collectors.toList());
 
         table = lines.stream()
-                .collect(Collectors.toMap(entry -> entry.get(0).get(0), entry -> createPluginValueMapping(entry, headers)));
+                .collect(Collectors.toMap(entry -> entry.get(0).get(0),
+                        entry -> createPluginValueMapping(entry, headers)));
     }
 
     public List<String> getHeaders() {
@@ -78,11 +81,13 @@ public class DashboardTable extends PageObject {
         return this.table;
     }
 
-    private Map<String, DashboardTableEntry> createPluginValueMapping(final List<List<String>> warnings, final List<String> plugins) {
+    private Map<String, DashboardTableEntry> createPluginValueMapping(final List<List<String>> warnings,
+            final List<String> plugins) {
         Map<String, DashboardTableEntry> valuePluginMapping = new HashMap<>();
         for (int i = 1; i < warnings.size(); i++) {
             if (!EMPTY.equals(warnings.get(i).get(0))) {
-                valuePluginMapping.put(plugins.get(i).trim(), new DashboardTableEntry(Integer.parseInt(warnings.get(i).get(0)), warnings.get(i).get(1)));
+                valuePluginMapping.put(plugins.get(i).trim(),
+                        new DashboardTableEntry(Integer.parseInt(warnings.get(i).get(0)), warnings.get(i).get(1)));
             }
         }
         return valuePluginMapping;
@@ -97,8 +102,11 @@ public class DashboardTable extends PageObject {
 
         /**
          * Construct a DashboardTableEntry.
-         * @param warningsCount of the plugin in the build
-         * @param url link to the plugin page
+         *
+         * @param warningsCount
+         *         of the plugin in the build
+         * @param url
+         *         link to the plugin page
          */
         public DashboardTableEntry(final int warningsCount, final String url) {
             this.warningsCount = warningsCount;

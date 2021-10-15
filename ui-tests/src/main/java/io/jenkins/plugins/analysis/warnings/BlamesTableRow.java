@@ -9,6 +9,11 @@ import org.openqa.selenium.WebElement;
 
 import org.jenkinsci.test.acceptance.po.PageObject;
 
+/**
+ * Representation of a table row displaying the blames details for an issue.
+ *
+ * @author Thomas Großbeck
+ */
 public class BlamesTableRow extends GenericTableRow {
     private static final String DETAILS = "Details";
     private static final String FILE = "File";

@@ -13,7 +13,7 @@ import org.jenkinsci.test.acceptance.po.ListView;
 import org.jenkinsci.test.acceptance.po.PageObject;
 
 /**
- * Page object to configure the issues column in a {@link ListView}.
+ * Page object to configure the issues' column in a {@link ListView}.
  *
  * @author Andreas Riepl
  * @author Oliver Scholz
