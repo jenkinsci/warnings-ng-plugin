@@ -5,7 +5,6 @@ import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Severity;
-import edu.hm.hafner.util.SerializableTest;
 
 import hudson.model.Run;
 
@@ -19,22 +18,17 @@ import static org.mockito.Mockito.*;
  *
  * @author Ullrich Hafner
  */
-class ResultActionTest extends SerializableTest<ResultAction> {
+class ResultActionTest {
     @Test
     void shouldRestoreRun() {
-        ResultAction action = createSerializable();
+        ResultAction action = new ResultAction(null, mock(AnalysisResult.class),
+                new HealthDescriptor(0, 0, Severity.WARNING_HIGH),
+                "ID", "Name", StandardCharsets.UTF_8);
 
         assertThat(action.getOwner()).isNull();
 
         Run<?, ?> run = mock(Run.class);
         action.onAttached(run);
         assertThat(action.getOwner()).isSameAs(run);
-    }
-
-    @Override
-    protected ResultAction createSerializable() {
-        return new ResultAction(null, mock(AnalysisResult.class),
-                new HealthDescriptor(0, 0, Severity.WARNING_HIGH),
-                "ID", "Name", StandardCharsets.UTF_8);
     }
 }
