@@ -7,8 +7,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-import org.jenkinsci.test.acceptance.po.PageObject;
-
 /**
  * Representation of a table row displaying the blames details for an issue.
  *
@@ -54,13 +52,21 @@ public class BlamesTableRow extends GenericTableRow {
         return Integer.parseInt(getCellContent(AGE));
     }
 
-    public String getAuthor() { return getCellContent(AUTHOR); }
+    public String getAuthor() {
+        return getCellContent(AUTHOR);
+    }
 
-    public String getEmail() { return getCellContent(EMAIL); }
+    public String getEmail() {
+        return getCellContent(EMAIL);
+    }
 
-    public String getCommit() { return getCellContent(COMMIT); }
+    public String getCommit() {
+        return getCellContent(COMMIT);
+    }
 
-    public String getAdded() { return getCellContent(ADDED); }
+    public String getAdded() {
+        return getCellContent(ADDED);
+    }
 
     /**
      * Returns the line number of the affected file.

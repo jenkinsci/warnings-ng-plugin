@@ -32,7 +32,7 @@ public class TrendChartsUiTest extends UiTest {
                 recorder -> recorder.setToolWithPattern(JAVA_COMPILER, "**/*.txt"));
         job.save();
 
-        Build build = shouldBuildJobSuccessfully(job);
+        Build build = buildSuccessfully(job);
 
         AnalysisResult analysisResultPage = new AnalysisResult(build, "java");
         analysisResultPage.open();
@@ -143,7 +143,7 @@ public class TrendChartsUiTest extends UiTest {
                 );
     }
 
-    private Build shouldBuildJobSuccessfully(final Job job) {
+    private Build buildSuccessfully(final Job job) {
         Build build = job.startBuild().waitUntilFinished();
         assertThat(build.isSuccess()).isTrue();
         return build;
@@ -157,8 +157,8 @@ public class TrendChartsUiTest extends UiTest {
         FreeStyleJob job = createFreeStyleJob(SOURCE_VIEW_FOLDER + "build_01");
         job.addPublisher(IssuesRecorder.class, recorder -> recorder.setToolWithPattern(JAVA_COMPILER, "**/*.txt"));
         job.save();
-        shouldBuildJobSuccessfully(job);
+        buildSuccessfully(job);
         reconfigureJobWithResource(job);
-        return shouldBuildJobSuccessfully(job);
+        return buildSuccessfully(job);
     }
 }
