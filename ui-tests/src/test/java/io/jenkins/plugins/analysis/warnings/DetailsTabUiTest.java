@@ -210,7 +210,6 @@ public class DetailsTabUiTest extends UiTest {
         List<WebElement> issuesPaginateButtons = issuesPaginate.findElements(By.cssSelector("ul li"));
 
         assertThat(issuesPaginateButtons.size()).isEqualTo(2);
-        assertThat(ExpectedConditions.elementToBeClickable(issuesPaginateButtons.get(1)));
 
         issuesLengthSelect.selectByValue("25");
         waitUntilCondition(issuesInfo, "Showing 1 to 12 of 12 entries");
