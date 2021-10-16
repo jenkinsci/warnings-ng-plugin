@@ -7,8 +7,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-import org.jenkinsci.test.acceptance.po.PageObject;
-
 /**
  * Representation of a table row displaying an issue.
  *
@@ -26,13 +24,22 @@ public abstract class IssuesTableRow extends GenericTableRow {
     private static final By A_TAG = By.tagName("a");
 
     private final WebElement row;
-    private final IssuesDetailsTable issuesDetailsTable;
+    private final IssuesDetailsTable<?> issuesDetailsTable;
 
-    IssuesTableRow(final WebElement rowElement, final IssuesDetailsTable table) {
+    IssuesTableRow(final WebElement rowElement, final IssuesDetailsTable<?> table) {
         super();
 
         this.row = rowElement;
         this.issuesDetailsTable = table;
+    }
+
+    /**
+     * Returns the details' column text.
+     *
+     * @return the details' column
+     */
+    public String getDetails() {
+        return row.getText();
     }
 
     /**
@@ -78,22 +85,6 @@ public abstract class IssuesTableRow extends GenericTableRow {
      */
     public String getPackageName() {
         return getCellContent(PACKAGE);
-    }
-
-    /**
-     * Performs a click on a link.
-     *
-     * @param link
-     *         the WebElement representing the link
-     * @param targetPageClass
-     *         the PageObject class representing the target page
-     * @param <T>
-     *         type of the target class
-     *
-     * @return the PageObject representing the target page
-     */
-    <T extends PageObject> T clickOnLink(final WebElement link, final Class<T> targetPageClass) {
-        return issuesDetailsTable.clickLinkOnSite(link, targetPageClass);
     }
 
     /**
@@ -210,7 +201,16 @@ public abstract class IssuesTableRow extends GenericTableRow {
      * @return the source code view
      */
     public SourceView openSourceCode() {
-        return clickOnLink(getFileLink(), SourceView.class);
+        return issuesDetailsTable.openSourceCode(getFileLink());
+    }
+
+    /**
+     * Opens the source code of the affected file.
+     *
+     * @return the source code view
+     */
+    public ConsoleLogView openConsoleLog() {
+        return issuesDetailsTable.openConsoleLogView(getFileLink());
     }
 
     @Override

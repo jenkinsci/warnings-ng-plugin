@@ -49,8 +49,8 @@ public class DetailsTabUiTest extends UiTest {
         assertThat(tabs).containsOnlyOnce(Tab.ISSUES);
         assertThat(resultPage.getActiveTab()).isEqualTo(Tab.ISSUES);
 
-        IssuesDetailsTable issuesDetailsTable = resultPage.openIssuesTable();
-        assertThat(issuesDetailsTable.getTableRows()).hasSize(1);
+        IssuesTable issuesTable = resultPage.openIssuesTable();
+        assertThat(issuesTable.getTableRows()).hasSize(1);
     }
 
     /**
@@ -76,8 +76,8 @@ public class DetailsTabUiTest extends UiTest {
         PropertyDetailsTable filesDetailsTable = resultPage.openPropertiesTable(Tab.FILES);
         assertThat(filesDetailsTable).hasTotal(2);
 
-        IssuesDetailsTable issuesDetailsTable = resultPage.openIssuesTable();
-        assertThat(issuesDetailsTable).hasTotal(2);
+        IssuesTable issuesTable = resultPage.openIssuesTable();
+        assertThat(issuesTable).hasTotal(2);
     }
 
     /**
@@ -132,26 +132,26 @@ public class DetailsTabUiTest extends UiTest {
         assertThat(typesDetailsTable).hasHeaders("Type", "Total", "Distribution");
         assertThat(typesDetailsTable).hasSize(7).hasTotal(7);
 
-        IssuesDetailsTable issuesDetailsTable = resultPage.openIssuesTable();
-        assertThat(issuesDetailsTable).hasColumnHeaders(Header.DETAILS, Header.FILE, Header.CATEGORY,
+        IssuesTable issuesTable = resultPage.openIssuesTable();
+        assertThat(issuesTable).hasColumnHeaders(Header.DETAILS, Header.FILE, Header.CATEGORY,
                 Header.TYPE, Header.SEVERITY, Header.AGE);
-        assertThat(issuesDetailsTable).hasSize(10).hasTotal(11);
+        assertThat(issuesTable).hasSize(10).hasTotal(11);
 
-        List<GenericTableRow> tableRowListIssues = issuesDetailsTable.getTableRows();
-        IssuesTableRow firstRow = (IssuesTableRow) tableRowListIssues.get(9);
+        List<DefaultIssuesTableRow> tableRowListIssues = issuesTable.getTableRows();
+        IssuesTableRow firstRow = tableRowListIssues.get(9);
         firstRow.toggleDetailsRow();
 
-        issuesDetailsTable.openTablePage(2);
-        assertThat(issuesDetailsTable.getSize()).isEqualTo(1);
+        issuesTable.openTablePage(2);
+        assertThat(issuesTable.getSize()).isEqualTo(1);
 
-        tableRowListIssues = issuesDetailsTable.getTableRows();
-        IssuesTableRow lastIssueTableRow = (IssuesTableRow) tableRowListIssues.get(0);
+        tableRowListIssues = issuesTable.getTableRows();
+        IssuesTableRow lastIssueTableRow = tableRowListIssues.get(0);
         assertThat(lastIssueTableRow.getSeverity()).isEqualTo("Error");
         AnalysisResult analysisResult = lastIssueTableRow.clickOnSeverityLink();
-        IssuesDetailsTable errorIssuesDetailsTable = analysisResult.openIssuesTable();
-        assertThat(errorIssuesDetailsTable.getSize()).isEqualTo(6);
-        for (int i = 0; i < errorIssuesDetailsTable.getSize(); i++) {
-            IssuesTableRow row = (IssuesTableRow) errorIssuesDetailsTable.getTableRows().get(i);
+        IssuesTable errorIssuesTable = analysisResult.openIssuesTable();
+        assertThat(errorIssuesTable.getSize()).isEqualTo(6);
+        for (int i = 0; i < errorIssuesTable.getSize(); i++) {
+            IssuesTableRow row = errorIssuesTable.getTableRows().get(i);
             assertThat(row.getSeverity()).isEqualTo("Error");
         }
     }
@@ -173,8 +173,8 @@ public class DetailsTabUiTest extends UiTest {
 
         AnalysisResult cpdDetails = cpd.openOverallResult();
 
-        IssuesDetailsTable issuesDetailsTable = cpdDetails.openIssuesTable();
-        DryIssuesTableRow issuesTableFirstRow = issuesDetailsTable.getRowAs(0, DryIssuesTableRow.class);
+        DryTable issuesDetailsTable = cpdDetails.openDryTable();
+        DryIssuesTableRow issuesTableFirstRow = issuesDetailsTable.getRowAs(0);
         assertThat(issuesTableFirstRow.getSeverity()).isEqualTo("Normal");
         assertThat(issuesTableFirstRow.getAge()).isEqualTo(1);
     }

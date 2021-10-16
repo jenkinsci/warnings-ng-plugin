@@ -19,7 +19,6 @@ import org.jenkinsci.test.acceptance.po.PageObject;
 
 import io.jenkins.plugins.analysis.warnings.BlamesTable.BlamesTableRowType;
 import io.jenkins.plugins.analysis.warnings.ForensicsTable.ForensicsTableRowType;
-import io.jenkins.plugins.analysis.warnings.IssuesDetailsTable.IssuesTableRowType;
 
 /**
  * {@link PageObject} representing the details page of the static analysis tool results.
@@ -115,19 +114,6 @@ public class AnalysisResult extends PageObject {
         return Integer.parseInt(total.split(" ")[2]);
     }
 
-    /**
-     * Returns the type of the rows in the issues table. Currently, code duplications have a different representation
-     * than all other static analysis tools.
-     *
-     * @return the row type
-     */
-    private IssuesTableRowType getIssuesTableType() {
-        if (ArrayUtils.contains(DRY_TOOLS, id)) {
-            return IssuesTableRowType.DRY;
-        }
-        return IssuesTableRowType.DEFAULT;
-    }
-
     private BlamesTableRowType getBlamesTableType() {
         if (ArrayUtils.contains(DRY_TOOLS, id)) {
             return BlamesTableRowType.DRY;
@@ -173,11 +159,26 @@ public class AnalysisResult extends PageObject {
      *
      * @return page object of the issues table.
      */
-    public IssuesDetailsTable openIssuesTable() {
-        openTab(Tab.ISSUES);
+    public IssuesTable openIssuesTable() {
+        WebElement issuesTab = selectTab(Tab.ISSUES);
+        return new IssuesTable(issuesTab, this);
+    }
 
-        WebElement issuesTab = find(By.id("issuesContent"));
-        return new IssuesDetailsTable(issuesTab, this, getIssuesTableType());
+    /**
+     * Opens the analysis details page, selects the tab {@link Tab#ISSUES} and returns the {@link PageObject} of the
+     * issues table.
+     *
+     * @return page object of the issues table.
+     */
+    public DryTable openDryTable() {
+        WebElement issuesTab = selectTab(Tab.ISSUES);
+        return new DryTable(issuesTab, this);
+    }
+
+    private WebElement selectTab(final Tab issues) {
+        openTab(issues);
+
+        return find(By.id(issues.contentId));
     }
 
     /**
@@ -190,9 +191,7 @@ public class AnalysisResult extends PageObject {
      * @return page object of the categories table.
      */
     public PropertyDetailsTable openPropertiesTable(final Tab tab) {
-        openTab(tab);
-
-        WebElement table = find(By.id(tab.contentId));
+        WebElement table = selectTab(tab);
         return new PropertyDetailsTable(table, this, tab.property);
     }
 
@@ -234,7 +233,6 @@ public class AnalysisResult extends PageObject {
      *
      * @return the instance of the PageObject to which the link leads to
      */
-    // FIXME: IssuesTable should not depend on AnalysisResult
     public <T extends PageObject> T openLinkOnSite(final WebElement element, final Class<T> type) {
         String link = element.getAttribute("href");
         T retVal = newInstance(type, injector, url(link));

@@ -136,23 +136,23 @@ abstract class UiTest extends AbstractJUnitTest {
         AnalysisResult cpdDetails = cpd.openOverallResult();
         assertThat(cpdDetails).hasActiveTab(Tab.ISSUES).hasOnlyAvailableTabs(Tab.ISSUES);
 
-        IssuesDetailsTable issuesTable = cpdDetails.openIssuesTable();
+        DryTable issuesTable = cpdDetails.openDryTable();
         assertThat(issuesTable).hasSize(10).hasTotal(20);
 
-        DryIssuesTableRow firstRow = issuesTable.getRowAs(0, DryIssuesTableRow.class);
-        DryIssuesTableRow secondRow = issuesTable.getRowAs(1, DryIssuesTableRow.class);
+        DryIssuesTableRow firstRow = issuesTable.getRowAs(0);
+        DryIssuesTableRow secondRow = issuesTable.getRowAs(1);
 
         firstRow.toggleDetailsRow();
         assertThat(issuesTable).hasSize(11);
 
-        DetailsTableRow detailsRow = issuesTable.getRowAs(1, DetailsTableRow.class);
+        DryIssuesTableRow detailsRow = issuesTable.getRowAs(1);
         assertThat(detailsRow).hasDetails("Found duplicated code.\nfunctionOne();");
 
-        assertThat(issuesTable.getRowAs(2, DryIssuesTableRow.class)).isEqualTo(secondRow);
+        assertThat(issuesTable.getRowAs(2)).isEqualTo(secondRow);
 
         firstRow.toggleDetailsRow();
         assertThat(issuesTable).hasSize(10);
-        assertThat(issuesTable.getRowAs(1, DryIssuesTableRow.class)).isEqualTo(secondRow);
+        assertThat(issuesTable.getRowAs(1)).isEqualTo(secondRow);
 
         SourceView sourceView = firstRow.openSourceCode();
         assertThat(sourceView).hasFileName(CPD_SOURCE_NAME);
@@ -161,15 +161,15 @@ abstract class UiTest extends AbstractJUnitTest {
         assertThat(sourceView.getSourceCode()).isEqualToIgnoringWhitespace(expectedSourceCode);
 
         cpdDetails.open();
-        issuesTable = cpdDetails.openIssuesTable();
-        firstRow = issuesTable.getRowAs(0, DryIssuesTableRow.class);
+        issuesTable = cpdDetails.openDryTable();
+        firstRow = issuesTable.getRowAs(0);
 
         AnalysisResult lowSeverity = firstRow.clickOnSeverityLink();
-        IssuesDetailsTable lowSeverityTable = lowSeverity.openIssuesTable();
+        DryTable lowSeverityTable = lowSeverity.openDryTable();
         assertThat(lowSeverityTable).hasSize(6).hasTotal(6);
 
         for (int i = 0; i < 6; i++) {
-            DryIssuesTableRow row = lowSeverityTable.getRowAs(i, DryIssuesTableRow.class);
+            DryIssuesTableRow row = lowSeverityTable.getRowAs(i);
             assertThat(row).hasSeverity(WARNING_LOW_PRIORITY);
         }
 
@@ -235,10 +235,10 @@ abstract class UiTest extends AbstractJUnitTest {
                 .hasTotal(3)
                 .hasOnlyAvailableTabs(Tab.CATEGORIES, Tab.TYPES, Tab.ISSUES);
 
-        IssuesDetailsTable issuesTable = checkstyleDetails.openIssuesTable();
+        IssuesTable issuesTable = checkstyleDetails.openIssuesTable();
         assertThat(issuesTable).hasSize(3).hasTotal(3);
 
-        DefaultIssuesTableRow tableRow = issuesTable.getRowAs(0, DefaultIssuesTableRow.class);
+        DefaultIssuesTableRow tableRow = issuesTable.getRowAs(0);
         assertThat(tableRow).hasFileName("RemoteLauncher.java")
                 .hasLineNumber(59)
                 .hasCategory("Checks")
@@ -326,7 +326,7 @@ abstract class UiTest extends AbstractJUnitTest {
         AnalysisResult pep8Details = verifyPep8Details(pep8);
 
         pep8Details.openTab(Tab.ISSUES);
-        IssuesDetailsTable issuesTable = pep8Details.openIssuesTable();
+        IssuesTable issuesTable = pep8Details.openIssuesTable();
         assertThat(issuesTable).hasSize(8);
 
         long normalIssueCount = issuesTable.getTableRows().stream()

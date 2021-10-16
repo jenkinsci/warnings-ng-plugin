@@ -158,7 +158,7 @@ public class WarningsPluginUiTest extends UiTest {
         AnalysisResult resultPage = new AnalysisResult(build, "checkstyle");
         resultPage.open();
 
-        IssuesDetailsTable issuesTable = resultPage.openIssuesTable();
+        IssuesTable issuesTable = resultPage.openIssuesTable();
         assertThat(issuesTable).hasSize(1);
     }
 
@@ -197,9 +197,9 @@ public class WarningsPluginUiTest extends UiTest {
                 .hasTotal(4)
                 .hasOnlyAvailableTabs(Tab.MODULES, Tab.TYPES, Tab.ISSUES);
 
-        IssuesDetailsTable issuesTable = mavenDetails.openIssuesTable();
+        IssuesTable issuesTable = mavenDetails.openIssuesTable();
 
-        DefaultIssuesTableRow firstRow = issuesTable.getRowAs(0, DefaultIssuesTableRow.class);
+        DefaultIssuesTableRow firstRow = issuesTable.getRowAs(0);
         ConsoleLogView sourceView = firstRow.openConsoleLog();
         assertThat(sourceView).hasTitle("Console Details")
                 .hasHighlightedText("[WARNING]\n"

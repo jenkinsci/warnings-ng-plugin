@@ -11,18 +11,15 @@ import org.openqa.selenium.WebElement;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-import org.jenkinsci.test.acceptance.po.PageObject;
-
 /**
  * Area that represents the issues table in an {@link AnalysisResult} page.
  *
  * @author Stephan Plöderl
  */
 @SuppressFBWarnings("EI")
-public class IssuesDetailsTable {
-    private final IssuesTableRowType type;
+public abstract class IssuesDetailsTable<T extends GenericTableRow> {
     private final AnalysisResult resultDetailsPage;
-    private final List<GenericTableRow> tableRows = new ArrayList<>();
+    private final List<T> tableRows = new ArrayList<>();
     private final List<String> headers;
     private final WebElement tableElement;
     private final WebElement tab;
@@ -35,14 +32,10 @@ public class IssuesDetailsTable {
      *         the WebElement containing the issues-tab
      * @param resultDetailsPage
      *         the AnalysisResult on which the issues-table is displayed on
-     * @param type
-     *         the type of the issues-table (e.g. Default or DRY)
      */
-    public IssuesDetailsTable(final WebElement tab, final AnalysisResult resultDetailsPage,
-            final IssuesTableRowType type) {
+    public IssuesDetailsTable(final WebElement tab, final AnalysisResult resultDetailsPage) {
         this.tab = tab;
         this.resultDetailsPage = resultDetailsPage;
-        this.type = type;
         tabId = "issues";
 
         tableElement = tab.findElement(By.id("issues"));
@@ -76,46 +69,45 @@ public class IssuesDetailsTable {
     }
 
     /**
-         * Returns the table row as an object of the right sub class of {@link GenericTableRow}.
-         *
-         * @param row
-         *         the WebElement representing the specific row.
-         *
-         * @return the table row
-         */
-    private GenericTableRow getRightTableRow(final WebElement row) {
-        String rowType = row.getAttribute("class");
-        if (StringUtils.containsAny(rowType, "odd", "even")) {
-            if (type == IssuesTableRowType.DRY) {
-                return new DryIssuesTableRow(row, this);
-            }
-            else {
-                return new DefaultIssuesTableRow(row, this);
-            }
-        }
-        else {
-            return new DetailsTableRow(row);
-        }
+     * Returns the table row as an object of the right sub class of {@link GenericTableRow}.
+     *
+     * @param row
+     *         the WebElement representing the specific row.
+     *
+     * @return the table row
+     */
+    private T getRightTableRow(final WebElement row) {
+        return createRow(row);
     }
+
+    protected abstract T createRow(WebElement row);
 
     public List<Header> getColumnHeaders() {
         return getHeaders().stream().map(Header::fromTitle).collect(Collectors.toList());
     }
 
     /**
-     * Performs a click on a link on this site and returns the corresponding PageObject of the target page.
+     * Opens the source code of the affected file.
      *
      * @param link
      *         the WebElement representing the link
-     * @param targetPageClass
-     *         the class of the {@link PageObject} representing the target page
-     * @param <T>
-     *         actual type of the page object
      *
-     * @return the PageObject representing the target page
+     * @return the source code view
      */
-    public <T extends PageObject> T clickLinkOnSite(final WebElement link, final Class<T> targetPageClass) {
-        return resultDetailsPage.openLinkOnSite(link, targetPageClass);
+    public SourceView openSourceCode(final WebElement link) {
+        return resultDetailsPage.openLinkOnSite(link, SourceView.class);
+    }
+
+    /**
+     * Opens the console log view that contains the warning.
+     *
+     * @param link
+     *         the WebElement representing the link
+     *
+     * @return the source code view
+     */
+    public ConsoleLogView openConsoleLogView(final WebElement link) {
+        return resultDetailsPage.openLinkOnSite(link, ConsoleLogView.class);
     }
 
     /**
@@ -152,7 +144,7 @@ public class IssuesDetailsTable {
      *
      * @return the rows of the table
      */
-    public List<GenericTableRow> getTableRows() {
+    public List<T> getTableRows() {
         return tableRows;
     }
 
@@ -170,15 +162,11 @@ public class IssuesDetailsTable {
      *
      * @param row
      *         the number of the row to be returned
-     * @param expectedClass
-     *         the expected type of the row
-     * @param <T>
-     *         actual type of the row
      *
      * @return the row
      */
-    public <T extends GenericTableRow> T getRowAs(final int row, final Class<T> expectedClass) {
-        return getTableRows().get(row).getAs(expectedClass);
+    public T getRowAs(final int row) {
+        return getTableRows().get(row);
     }
 
     /**
@@ -203,14 +191,6 @@ public class IssuesDetailsTable {
         WebElement webElement = resultDetailsPage.find(By.linkText(String.valueOf(pageNumber)));
         webElement.click();
         updateTableRows();
-    }
-
-    /**
-     * Supported element types of the issues table.
-     */
-    public enum IssuesTableRowType {
-        DEFAULT,
-        DRY
     }
 
     /**

@@ -12,7 +12,7 @@ import org.openqa.selenium.WebElement;
  * @author Stephan Plöderl
  */
 public class DefaultIssuesTableRow extends IssuesTableRow {
-    DefaultIssuesTableRow(final WebElement rowElement, final IssuesDetailsTable issuesDetailsTable) {
+    DefaultIssuesTableRow(final WebElement rowElement, final IssuesTable issuesDetailsTable) {
         super(rowElement, issuesDetailsTable);
     }
 
@@ -32,15 +32,6 @@ public class DefaultIssuesTableRow extends IssuesTableRow {
      */
     public String getType() {
         return getCellContent("Type");
-    }
-
-    /**
-     * Opens the console log view to show the warning.
-     *
-     * @return the console log view
-     */
-    public ConsoleLogView openConsoleLog() {
-        return clickOnLink(getFileLink(), ConsoleLogView.class);
     }
 
     @Override

@@ -26,7 +26,7 @@ public class DryIssuesTableRow extends IssuesTableRow {
      * @param issuesDetailsTable
      *         the issues table in which this row is displayed in
      */
-    DryIssuesTableRow(final WebElement element, final IssuesDetailsTable issuesDetailsTable) {
+    DryIssuesTableRow(final WebElement element, final DryTable issuesDetailsTable) {
         super(element, issuesDetailsTable);
     }
 
@@ -50,18 +50,6 @@ public class DryIssuesTableRow extends IssuesTableRow {
                 .stream()
                 .map(WebElement::getText)
                 .collect(Collectors.toList());
-    }
-
-    /**
-     * Performs a click on a specific link of the detected duplications.
-     *
-     * @param number
-     *         the number of the link which shall be clicked
-     *
-     * @return the representation of the source code page.
-     */
-    public SourceView clickOnDuplicatedInLink(final int number) {
-        return clickOnLink(findAllLinks(getCell(DUPLICATED_IN)).get(number), SourceView.class);
     }
 
     @Override

@@ -17,8 +17,6 @@ import static org.assertj.core.api.Assertions.*;
  */
 @WithPlugins("warnings-ng")
 public class IssuesColumnUiTest extends UiTest {
-    private static final String WARNINGS_PLUGIN_PREFIX = "/";
-
     /**
      * Configure a job with multiple recorders: Should display a table when hovering the issue column.
      */

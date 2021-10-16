@@ -159,6 +159,10 @@
           <packages combine.children="append">
             <package>io.jenkins.plugins.analysis.warnings</package>
           </packages>
+          <excludes>
+            <exclude>.*Test</exclude>
+            <exclude>.*IssuesDetailsTable</exclude>
+          </excludes>
           <entryPointClassPackage>io.jenkins.plugins.analysis.warnings</entryPointClassPackage>
         </configuration>
       </plugin>
