@@ -18,6 +18,7 @@ import org.jenkinsci.test.acceptance.po.PageObject;
  *
  * @author Stephan Plöderl
  */
+@SuppressFBWarnings("EI")
 public class IssuesDetailsTable {
     private final IssuesTableRowType type;
     private final AnalysisResult resultDetailsPage;

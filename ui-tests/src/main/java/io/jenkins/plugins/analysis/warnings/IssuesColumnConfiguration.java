@@ -8,6 +8,8 @@ import org.openqa.selenium.support.ui.Select;
 
 import com.google.inject.Injector;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.ListView;
 import org.jenkinsci.test.acceptance.po.PageObject;
@@ -18,6 +20,7 @@ import org.jenkinsci.test.acceptance.po.PageObject;
  * @author Andreas Riepl
  * @author Oliver Scholz
  */
+@SuppressFBWarnings("EI")
 public class IssuesColumnConfiguration extends PageObject {
     private ListView listView;
 

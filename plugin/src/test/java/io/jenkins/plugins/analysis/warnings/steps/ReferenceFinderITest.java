@@ -104,7 +104,7 @@ public class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
                 "[ReferenceFinder] Configured reference job: 'reference'",
                 "[ReferenceFinder] Found reference build '#1' for target branch",
                 "Obtaining reference build from reference recorder",
-                "-> found 'reference #1'");
+                "-> Found 'reference #1'");
     }
 
     /**
@@ -129,7 +129,7 @@ public class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(result.getOutstandingIssues()).hasSize(2);
         assertThat(getConsoleLog(result)).contains(
                 "Obtaining reference build from reference recorder",
-                "-> no reference build recorded",
+                "-> No reference build recorded",
                 "Obtaining reference build from same job",
                 "No valid reference build found that meets the criteria (NO_JOB_FAILURE - SUCCESSFUL_QUALITY_GATE)",
                 "All reported issues will be considered outstanding");

@@ -25,7 +25,6 @@ public class BlamesTableRow extends GenericTableRow {
 
     private static final String PACKAGE = "Package";
     private static final String FILE_LINE_SEPARATOR = ":";
-    private static final By A_TAG = By.tagName("a");
 
     private final WebElement row;
     private final BlamesTable blamesTable;
@@ -61,6 +60,8 @@ public class BlamesTableRow extends GenericTableRow {
 
     public String getCommit() { return getCellContent(COMMIT); }
 
+    public String getAdded() { return getCellContent(ADDED); }
+
     /**
      * Returns the line number of the affected file.
      *
@@ -77,22 +78,6 @@ public class BlamesTableRow extends GenericTableRow {
      */
     public String getPackageName() {
         return getCellContent(PACKAGE);
-    }
-
-    /**
-     * Performs a click on a link.
-     *
-     * @param link
-     *         the WebElement representing the link
-     * @param targetPageClass
-     *         the PageObject class representing the target page
-     * @param <T>
-     *         type of the target class
-     *
-     * @return the PageObject representing the target page
-     */
-    <T extends PageObject> T clickOnLink(final WebElement link, final Class<T> targetPageClass) {
-        return blamesTable.clickLinkOnSite(link, targetPageClass);
     }
 
     /**
@@ -146,61 +131,6 @@ public class BlamesTableRow extends GenericTableRow {
     public void toggleDetailsRow() {
         getCell(DETAILS).findElement(By.tagName("div")).click();
         blamesTable.updateTableRows();
-    }
-
-    /**
-     * Returns the child WebElement representing a link.
-     *
-     * @param parent
-     *         the WebElement which is a parent of the link to be searched for
-     *
-     * @return the WebElement representing the link
-     */
-    private WebElement findLink(final WebElement parent) {
-        return parent.findElement(A_TAG);
-
-    }
-
-    /**
-     * Returns a list of all the links which are children nodes of a specific WebElement.
-     *
-     * @param parent
-     *         the WebElement which is the parent of the links to be returned
-     *
-     * @return a List of the WebElements representing links
-     */
-    List<WebElement> findAllLinks(final WebElement parent) {
-        return parent.findElements(A_TAG);
-    }
-
-    /**
-     * Performs a click on a link which filters the AnalysisResult.
-     *
-     * @param columnName
-     *         the columnName holding the link
-     *
-     * @return the representation of the filtered AnalysisResult
-     */
-    private AnalysisResult clickOnFilterLink(final String columnName) {
-        return blamesTable.clickFilterLinkOnSite(findLink(getCell(columnName)));
-    }
-
-    /**
-     * Returns the file link that will navigate to the source content.
-     *
-     * @return the file link
-     */
-    WebElement getFileLink() {
-        return getCell(FILE).findElement(By.tagName("a"));
-    }
-
-    /**
-     * Opens the source code of the affected file.
-     *
-     * @return the source code view
-     */
-    public SourceView openSourceCode() {
-        return clickOnLink(getFileLink(), SourceView.class);
     }
 
     @Override

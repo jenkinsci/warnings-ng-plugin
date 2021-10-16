@@ -8,6 +8,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import org.jenkinsci.test.acceptance.po.PageObject;
 
 /**
@@ -15,6 +17,7 @@ import org.jenkinsci.test.acceptance.po.PageObject;
  *
  * @author Stephan Plöderl
  */
+@SuppressFBWarnings("EI")
 public class ForensicsTable {
     private final AnalysisResult resultDetailsPage;
     private final List<GenericTableRow> tableRows = new ArrayList<>();

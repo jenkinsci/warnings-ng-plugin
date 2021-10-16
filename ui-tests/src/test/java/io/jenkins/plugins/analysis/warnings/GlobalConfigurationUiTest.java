@@ -1,8 +1,8 @@
 package io.jenkins.plugins.analysis.warnings;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -70,7 +70,6 @@ public class GlobalConfigurationUiTest extends UiTest {
         });
     }
 
-    // TODO: use plugin?
     private void createFileInWorkspace(final FreeStyleJob job, final String homeDir) throws IOException {
         String content = String.format("%s/config.xml:451: warning: foo defined but not used%n",
                 getJobDir(homeDir, job));
@@ -84,15 +83,7 @@ public class GlobalConfigurationUiTest extends UiTest {
             Files.createDirectory(workspacePath);
         }
 
-        File newFile = workspacePath.resolve("gcc.log").toFile();
-        boolean newFile1 = newFile.createNewFile();
-        if (!newFile1) {
-            return;
-        }
-        FileWriter writer = new FileWriter(newFile);
-        writer.write(content);
-        writer.flush();
-        writer.close();
+        Files.write(workspacePath.resolve("gcc.log"), content.getBytes(StandardCharsets.UTF_8));
     }
 
     private void initGlobalSettingsForSourceDirectory(final FreeStyleJob job) {
