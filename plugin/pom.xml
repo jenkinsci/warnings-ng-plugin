@@ -645,6 +645,7 @@
         <groupId>org.revapi</groupId>
         <artifactId>revapi-maven-plugin</artifactId>
         <configuration>
+          <skip>true</skip> <!-- FIXME: find a better workaround for https://github.com/revapi/revapi/issues/253 -->
           <failBuildOnProblemsFound>true</failBuildOnProblemsFound>
           <!-- Including provided-scope dependencies like Jenkins core results in too many false positives -->
           <checkDependencies>false</checkDependencies>
