@@ -29,9 +29,11 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 abstract class UiTest extends AbstractJUnitTest {
     static final String WARNINGS_PLUGIN_PREFIX = "/";
     static final String CHECKSTYLE_ID = "checkstyle";
+    static final String CHECKSTYLE_TOOL = "CheckStyle";
     static final String CPD_ID = "cpd";
     static final String CPD_TOOL = "CPD";
     static final String PMD_ID = "pmd";
+    static final String PMD_TOOL = "PMD";
     static final String FINDBUGS_ID = "findbugs";
     static final String FINDBUGS_TOOL = "FindBugs";
     static final String MAVEN_ID = "maven-warnings";
@@ -41,6 +43,7 @@ abstract class UiTest extends AbstractJUnitTest {
     static final String PEP8_TOOL = "PEP8";
     static final String PEP8_FILE = "pep8Test.txt";
     static final String JAVA_COMPILER = "Java Compiler";
+    static final String ECLIPSE_COMPILER = "Eclipse ECJ";
 
     private static final String CPD_SOURCE_NAME = "Main.java";
     private static final String CPD_SOURCE_PATH = "/duplicate_code/Main.java";
