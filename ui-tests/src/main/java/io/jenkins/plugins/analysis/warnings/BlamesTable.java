@@ -2,11 +2,14 @@ package io.jenkins.plugins.analysis.warnings;
 
 import org.openqa.selenium.WebElement;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Area that represents the blames table in an {@link AnalysisResult} page.
  *
  * @author Ullrich Hafner
  */
+@SuppressFBWarnings("BC")
 public class BlamesTable extends AbstractIssuesTable<BlamesTableRow> {
     /**
      * Creates a new {@link BlamesTable} instance.

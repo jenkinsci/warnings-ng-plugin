@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import org.apache.commons.lang3.StringUtils;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -14,10 +12,8 @@ import org.jenkinsci.test.acceptance.po.PageObject;
  *
  * @author Kevin Richter
  */
-@SuppressFBWarnings("EI")
+@SuppressFBWarnings("BC")
 public class PropertyDetailsTable extends AbstractIssuesTable<GenericTableRow> {
-    private final String tabId;
-
     /**
      * Creates a {@link PropertyDetailsTable} of a specific type.
      *
@@ -31,35 +27,10 @@ public class PropertyDetailsTable extends AbstractIssuesTable<GenericTableRow> {
     public PropertyDetailsTable(final WebElement tab, final AnalysisResult resultDetailsPage,
             final String property) {
         super(tab, resultDetailsPage, property);
-
-        tabId = property;
     }
 
     @Override
     protected GenericTableRow createRow(final WebElement row) {
         return new GenericTableRow(row, this);
-    }
-
-    /**
-     * Returns the totals value of the table.
-     *
-     * @return the totals
-     */
-    public int getTotal() {
-        String tableInfo = getTab().findElement(By.id(tabId + "_info")).getText();
-        String total = StringUtils.substringAfter(tableInfo, "of ");
-        return Integer.parseInt(StringUtils.substringBefore(total, " "));
-    }
-
-    /**
-     * Performs a click on the page button to open the page of the table.
-     *
-     * @param pageNumber
-     *         the number representing the page to open
-     */
-    public void openTablePage(final int pageNumber) {
-        WebElement webElement = getAnalysisResult().find(By.linkText(String.valueOf(pageNumber)));
-        webElement.click();
-        updateTableRows();
     }
 }

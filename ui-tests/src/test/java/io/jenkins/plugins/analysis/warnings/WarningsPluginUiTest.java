@@ -64,6 +64,9 @@ public class WarningsPluginUiTest extends UiTest {
     @Inject
     private DockerContainerHolder<JavaGitContainer> dockerContainer;
 
+    /**
+     * Verifies that static analysise results are correctly shown when the job is part of a folder.
+     */
     @Test
     public void shouldRunInFolder() {
         Folder folder = jenkins.jobs.create(Folder.class, "singleSummary");
@@ -213,7 +216,7 @@ public class WarningsPluginUiTest extends UiTest {
     }
 
     /**
-     * Verifies that warnings can be parsed on a agent as well.
+     * Verifies that warnings can be parsed on an agent as well.
      */
     @Test
     @WithDocker
@@ -234,6 +237,8 @@ public class WarningsPluginUiTest extends UiTest {
                 .hasNewSize(0)
                 .hasFixedSize(0)
                 .hasReferenceBuild(0);
+
+        getDockerContainer().close();
     }
 
     private FreeStyleJob createFreeStyleJobForDockerAgent(final Slave dockerAgent, final String... resourcesToCopy) {
@@ -259,6 +264,7 @@ public class WarningsPluginUiTest extends UiTest {
      *
      * @return the new agent ready for new builds
      */
+    @SuppressWarnings("PMD.CloseResource")
     private DumbSlave createDockerAgent() {
         DumbSlave agent = jenkins.slaves.create(DumbSlave.class);
 

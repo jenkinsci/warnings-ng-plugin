@@ -330,13 +330,8 @@ abstract class UiTest extends AbstractJUnitTest {
         IssuesTable issuesTable = pep8Details.openIssuesTable();
         assertThat(issuesTable).hasSize(8);
 
-        long normalIssueCount = issuesTable.getTableRows().stream()
-                .map(IssuesTableRow::getSeverity)
-                .filter(severity -> severity.equals("Normal")).count();
-
-        long lowIssueCount = issuesTable.getTableRows().stream()
-                .map(IssuesTableRow::getSeverity)
-                .filter(severity -> severity.equals("Low")).count();
+        long normalIssueCount = getCountOfSeverity(issuesTable, "Normal");
+        long lowIssueCount = getCountOfSeverity(issuesTable, "Low");
 
         assertThat(normalIssueCount).isEqualTo(6);
         assertThat(lowIssueCount).isEqualTo(2);
@@ -350,6 +345,12 @@ abstract class UiTest extends AbstractJUnitTest {
             assertThat(openInfoView(build, PEP8_ID))
                     .hasInfoMessages("Issues delta (vs. reference build): outstanding: 0, new: 8, fixed: 0");
         }
+    }
+
+    private long getCountOfSeverity(final IssuesTable issuesTable, final String normal) {
+        return issuesTable.getTableRows().stream()
+                .map(IssuesTableRow::getSeverity)
+                .filter(severity -> normal.equals(severity)).count();
     }
 
     protected AnalysisResult verifyPep8Details(final AnalysisSummary pep8) {

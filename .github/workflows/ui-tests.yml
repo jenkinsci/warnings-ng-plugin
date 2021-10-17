@@ -7,10 +7,9 @@ on:
   pull_request:
 
 jobs:
-  coverage:
-
+  details-tab:
     runs-on: [ubuntu-latest]
-    name: UI tests on Ubuntu
+    name: Details tab UI tests
 
     steps:
       - uses: actions/checkout@v1
@@ -24,4 +23,21 @@ jobs:
         env:
           BROWSER: firefox-container
         run: mvn -V -ntp test --file ui-tests/pom.xml -Dtest=DetailsTabUiTest -Dgpg.skip
+
+  dashboard-view:
+    runs-on: [ubuntu-latest]
+    name: Dashboard view UI tests
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Build warnings plugin and download dependencies
+        run: mvn -V -ntp verify -Pskip --file plugin/pom.xml -Dgpg.skip
+      - name: Run UI tests for the dashboard view
+        env:
+          BROWSER: firefox-container
+        run: mvn -V -ntp test --file ui-tests/pom.xml -Dtest=DashboardViewPortletUiTest -Dgpg.skip
 

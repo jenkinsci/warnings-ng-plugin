@@ -2,11 +2,14 @@ package io.jenkins.plugins.analysis.warnings;
 
 import org.openqa.selenium.WebElement;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Details table that shows the issues of a report.
  *
  * @author Ullrich Hafner
  */
+@SuppressFBWarnings("BC")
 public class IssuesTable extends AbstractIssuesTable<DefaultIssuesTableRow> {
     /**
      * Creates an IssuesTable of a specific type.
