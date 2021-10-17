@@ -43,6 +43,7 @@ abstract class UiTest extends AbstractJUnitTest {
     static final String PEP8_TOOL = "PEP8";
     static final String PEP8_FILE = "pep8Test.txt";
     static final String JAVA_COMPILER = "Java Compiler";
+    static final String JAVA_ID = "java";
     static final String ECLIPSE_COMPILER = "Eclipse ECJ";
 
     private static final String CPD_SOURCE_NAME = "Main.java";
@@ -330,11 +331,11 @@ abstract class UiTest extends AbstractJUnitTest {
         assertThat(issuesTable).hasSize(8);
 
         long normalIssueCount = issuesTable.getTableRows().stream()
-                .map(row -> row.getAs(IssuesTableRow.class).getSeverity())
+                .map(IssuesTableRow::getSeverity)
                 .filter(severity -> severity.equals("Normal")).count();
 
         long lowIssueCount = issuesTable.getTableRows().stream()
-                .map(row -> row.getAs(IssuesTableRow.class).getSeverity())
+                .map(IssuesTableRow::getSeverity)
                 .filter(severity -> severity.equals("Low")).count();
 
         assertThat(normalIssueCount).isEqualTo(6);

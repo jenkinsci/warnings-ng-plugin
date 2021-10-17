@@ -7,17 +7,17 @@ import org.openqa.selenium.WebElement;
  *
  * @author Ullrich Hafner
  */
-public class IssuesTable extends IssuesDetailsTable<DefaultIssuesTableRow> {
+public class IssuesTable extends AbstractIssuesTable<DefaultIssuesTableRow> {
     /**
      * Creates an IssuesTable of a specific type.
      *
      * @param tab
      *         the WebElement containing the issues-tab
-     * @param resultDetailsPage
+     * @param analysisResult
      *         the {@link AnalysisResult} on which the issues-table is displayed on
      */
-    public IssuesTable(final WebElement tab, final AnalysisResult resultDetailsPage) {
-        super(tab, resultDetailsPage);
+    public IssuesTable(final WebElement tab, final AnalysisResult analysisResult) {
+        super(tab, analysisResult, "issues");
     }
 
     @Override

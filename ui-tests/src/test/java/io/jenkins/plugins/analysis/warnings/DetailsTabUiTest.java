@@ -14,8 +14,8 @@ import org.jenkinsci.test.acceptance.junit.WithPlugins;
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.FreeStyleJob;
 
+import io.jenkins.plugins.analysis.warnings.AbstractIssuesTable.Header;
 import io.jenkins.plugins.analysis.warnings.AnalysisResult.Tab;
-import io.jenkins.plugins.analysis.warnings.IssuesDetailsTable.Header;
 
 import static io.jenkins.plugins.analysis.warnings.Assertions.*;
 

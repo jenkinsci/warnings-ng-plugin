@@ -23,14 +23,8 @@ public abstract class IssuesTableRow extends GenericTableRow {
     private static final String FILE_LINE_SEPARATOR = ":";
     private static final By A_TAG = By.tagName("a");
 
-    private final WebElement row;
-    private final IssuesDetailsTable<?> issuesDetailsTable;
-
-    IssuesTableRow(final WebElement rowElement, final IssuesDetailsTable<?> table) {
-        super();
-
-        this.row = rowElement;
-        this.issuesDetailsTable = table;
+    IssuesTableRow(final WebElement rowElement, final AbstractIssuesTable<?> table) {
+        super(rowElement, table);
     }
 
     /**
@@ -39,7 +33,7 @@ public abstract class IssuesTableRow extends GenericTableRow {
      * @return the details' column
      */
     public String getDetails() {
-        return row.getText();
+        return getRow().getText();
     }
 
     /**
@@ -88,56 +82,11 @@ public abstract class IssuesTableRow extends GenericTableRow {
     }
 
     /**
-     * Returns all table data fields in the table row.
-     *
-     * @return the table data fields
-     */
-    List<WebElement> getCells() {
-        return row.findElements(By.tagName("td"));
-    }
-
-    /**
-     * Returns a specific table data field specified by the header of the column.
-     *
-     * @param header
-     *         the header text specifying the column
-     *
-     * @return the WebElement of the table data field
-     */
-    WebElement getCell(final String header) {
-        return getCells().get(getHeaders().indexOf(header));
-    }
-
-    /**
-     * Returns all possible headers representing the columns of the table.
-     *
-     * @return the headers of the table
-     */
-    List<String> getHeaders() {
-        return issuesDetailsTable.getHeaders();
-    }
-
-    /**
-     * Returns the String representation of the table cell.
-     *
-     * @param header
-     *         the header specifying the column
-     *
-     * @return the String representation of the cell
-     */
-    String getCellContent(final String header) {
-        if (getHeaders().indexOf(header) == -1) {
-            return "-";
-        }
-        return getCell(header).getText();
-    }
-
-    /**
      * Performs a click on the icon showing and hiding the details row.
      */
     public void toggleDetailsRow() {
         getCell(DETAILS).findElement(By.tagName("div")).click();
-        issuesDetailsTable.updateTableRows();
+        getTable().updateTableRows();
     }
 
     /**
@@ -174,7 +123,7 @@ public abstract class IssuesTableRow extends GenericTableRow {
      * @return the representation of the filtered AnalysisResult
      */
     private AnalysisResult clickOnFilterLink(final String columnName) {
-        return issuesDetailsTable.clickFilterLinkOnSite(findLink(getCell(columnName)));
+        return getTable().clickFilterLinkOnSite(findLink(getCell(columnName)));
     }
 
     /**
@@ -201,7 +150,7 @@ public abstract class IssuesTableRow extends GenericTableRow {
      * @return the source code view
      */
     public SourceView openSourceCode() {
-        return issuesDetailsTable.openSourceCode(getFileLink());
+        return getTable().openSourceCode(getFileLink());
     }
 
     /**
@@ -210,7 +159,7 @@ public abstract class IssuesTableRow extends GenericTableRow {
      * @return the source code view
      */
     public ConsoleLogView openConsoleLog() {
-        return issuesDetailsTable.openConsoleLogView(getFileLink());
+        return getTable().openConsoleLogView(getFileLink());
     }
 
     @Override

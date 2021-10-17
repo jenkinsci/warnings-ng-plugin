@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -16,9 +15,6 @@ import com.google.inject.Injector;
 
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.PageObject;
-
-import io.jenkins.plugins.analysis.warnings.BlamesTable.BlamesTableRowType;
-import io.jenkins.plugins.analysis.warnings.ForensicsTable.ForensicsTableRowType;
 
 /**
  * {@link PageObject} representing the details page of the static analysis tool results.
@@ -114,25 +110,6 @@ public class AnalysisResult extends PageObject {
         return Integer.parseInt(total.split(" ")[2]);
     }
 
-    private BlamesTableRowType getBlamesTableType() {
-        if (ArrayUtils.contains(DRY_TOOLS, id)) {
-            return BlamesTableRowType.DRY;
-        }
-        return BlamesTableRowType.DEFAULT;
-    }
-
-    /**
-     * Returns the type of the rows in the forensics table.
-     *
-     * @return the row type
-     */
-    private ForensicsTableRowType getForensicsTableType() {
-        if (ArrayUtils.contains(DRY_TOOLS, id)) {
-            return ForensicsTableRowType.DRY;
-        }
-        return ForensicsTableRowType.DEFAULT;
-    }
-
     /**
      * Reloads the {@link PageObject}.
      */
@@ -205,7 +182,7 @@ public class AnalysisResult extends PageObject {
         openTab(Tab.BLAMES);
 
         WebElement blamesTab = find(By.id("blamesContent"));
-        return new BlamesTable(blamesTab, this, getBlamesTableType());
+        return new BlamesTable(blamesTab, this);
     }
 
     /**
@@ -218,7 +195,7 @@ public class AnalysisResult extends PageObject {
         openTab(Tab.FORENSICS);
 
         WebElement forensicsTab = find(By.id("forensicsContent"));
-        return new ForensicsTable(forensicsTab, this, getForensicsTableType());
+        return new ForensicsTable(forensicsTab, this);
     }
 
     /**

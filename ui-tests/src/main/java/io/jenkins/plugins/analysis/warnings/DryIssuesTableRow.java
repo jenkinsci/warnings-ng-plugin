@@ -45,7 +45,7 @@ public class DryIssuesTableRow extends IssuesTableRow {
      * @return the duplications
      */
     public List<String> getDuplicatedIn() {
-        return getCells().get(getHeaders().indexOf(DUPLICATED_IN))
+        return getCell(DUPLICATED_IN)
                 .findElements(By.tagName("li"))
                 .stream()
                 .map(WebElement::getText)

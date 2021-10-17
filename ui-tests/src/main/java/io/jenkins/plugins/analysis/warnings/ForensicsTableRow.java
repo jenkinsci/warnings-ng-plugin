@@ -1,8 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.util.List;
-
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 /**
@@ -11,7 +8,6 @@ import org.openqa.selenium.WebElement;
  * @author Thomas Großbeck
  */
 public class ForensicsTableRow extends GenericTableRow {
-    private static final String DETAILS = "Details";
     private static final String FILE = "File";
     private static final String AGE = "Age";
     private static final String AUTHORS = "#Authors";
@@ -19,18 +15,10 @@ public class ForensicsTableRow extends GenericTableRow {
     private static final String LAST_COMMIT = "Last Commit";
     private static final String ADDED = "Added";
 
-    private static final String PACKAGE = "Package";
     private static final String FILE_LINE_SEPARATOR = ":";
-    private static final By A_TAG = By.tagName("a");
-
-    private final WebElement row;
-    private final ForensicsTable forensicsTable;
 
     ForensicsTableRow(final WebElement rowElement, final ForensicsTable table) {
-        super();
-
-        this.row = rowElement;
-        this.forensicsTable = table;
+        super(rowElement, table);
     }
 
     /**
@@ -86,50 +74,4 @@ public class ForensicsTableRow extends GenericTableRow {
     public String getAdded() {
         return getCellContent(ADDED);
     }
-
-    /**
-     * Returns all possible headers representing the columns of the table.
-     *
-     * @return the headers of the table
-     */
-    List<String> getHeaders() {
-        return forensicsTable.getHeaders();
-    }
-
-    /**
-     * Returns all table data fields in the table row.
-     *
-     * @return the table data fields
-     */
-    List<WebElement> getCells() {
-        return row.findElements(By.tagName("td"));
-    }
-
-    /**
-     * Returns a specific table data field specified by the header of the column.
-     *
-     * @param header
-     *         the header text specifying the column
-     *
-     * @return the WebElement of the table data field
-     */
-    WebElement getCell(final String header) {
-        return getCells().get(getHeaders().indexOf(header));
-    }
-
-    /**
-     * Returns the String representation of the table cell.
-     *
-     * @param header
-     *         the header specifying the column
-     *
-     * @return the String representation of the cell
-     */
-    String getCellContent(final String header) {
-        if (getHeaders().indexOf(header) == -1) {
-            return "-";
-        }
-        return getCell(header).getText();
-    }
-
 }

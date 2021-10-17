@@ -12,13 +12,18 @@ import org.openqa.selenium.WebElement;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
- * Area that represents the issues table in an {@link AnalysisResult} page.
+ * Area that represents the issues tables in an {@link AnalysisResult} page. Several
+ * issue aspects are visualized in different tables so the actual rows are composed
+ * in concrete sub-classes.
+ *
+ * @param <T>
+ *         the type of the table rows
  *
  * @author Stephan Plöderl
  */
 @SuppressFBWarnings("EI")
-public abstract class IssuesDetailsTable<T extends GenericTableRow> {
-    private final AnalysisResult resultDetailsPage;
+public abstract class AbstractIssuesTable<T extends GenericTableRow> {
+    private final AnalysisResult analysisResult;
     private final List<T> tableRows = new ArrayList<>();
     private final List<String> headers;
     private final WebElement tableElement;
@@ -30,21 +35,31 @@ public abstract class IssuesDetailsTable<T extends GenericTableRow> {
      *
      * @param tab
      *         the WebElement containing the issues-tab
-     * @param resultDetailsPage
+     * @param analysisResult
      *         the AnalysisResult on which the issues-table is displayed on
+     * @param divId
+     *         the ID of the div that contains the actual HTML table
      */
-    public IssuesDetailsTable(final WebElement tab, final AnalysisResult resultDetailsPage) {
+    public AbstractIssuesTable(final WebElement tab, final AnalysisResult analysisResult, final String divId) {
         this.tab = tab;
-        this.resultDetailsPage = resultDetailsPage;
+        this.analysisResult = analysisResult;
         tabId = "issues";
 
-        tableElement = tab.findElement(By.id("issues"));
+        tableElement = tab.findElement(By.id(divId));
         headers = tableElement.findElements(By.xpath(".//thead/tr/th"))
                 .stream()
                 .map(WebElement::getText)
                 .collect(Collectors.toList());
 
         updateTableRows();
+    }
+
+    protected AnalysisResult getAnalysisResult() {
+        return analysisResult;
+    }
+
+    protected WebElement getTab() {
+        return tab;
     }
 
     /**
@@ -95,7 +110,7 @@ public abstract class IssuesDetailsTable<T extends GenericTableRow> {
      * @return the source code view
      */
     public SourceView openSourceCode(final WebElement link) {
-        return resultDetailsPage.openLinkOnSite(link, SourceView.class);
+        return analysisResult.openLinkOnSite(link, SourceView.class);
     }
 
     /**
@@ -107,7 +122,7 @@ public abstract class IssuesDetailsTable<T extends GenericTableRow> {
      * @return the source code view
      */
     public ConsoleLogView openConsoleLogView(final WebElement link) {
-        return resultDetailsPage.openLinkOnSite(link, ConsoleLogView.class);
+        return analysisResult.openLinkOnSite(link, ConsoleLogView.class);
     }
 
     /**
@@ -178,7 +193,7 @@ public abstract class IssuesDetailsTable<T extends GenericTableRow> {
      * @return the filtered AnalysisResult
      */
     public AnalysisResult clickFilterLinkOnSite(final WebElement element) {
-        return resultDetailsPage.openFilterLinkOnSite(element);
+        return analysisResult.openFilterLinkOnSite(element);
     }
 
     /**
@@ -188,13 +203,13 @@ public abstract class IssuesDetailsTable<T extends GenericTableRow> {
      *         the number representing the page to open
      */
     public void openTablePage(final int pageNumber) {
-        WebElement webElement = resultDetailsPage.find(By.linkText(String.valueOf(pageNumber)));
+        WebElement webElement = analysisResult.find(By.linkText(String.valueOf(pageNumber)));
         webElement.click();
         updateTableRows();
     }
 
     /**
-     * Enum representing the headers which should be present in a {@link IssuesDetailsTable}.
+     * Enum representing the headers which should be present in a {@link AbstractIssuesTable}.
      */
     public enum Header {
         DETAILS("Details"),

@@ -18,10 +18,10 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-      - name: Build dependencies
-        run: mvn -V -ntp verify -Pskip --file plugin/pom.xml '-Dgpg.skip'
-      - name: Run UI tests
+      - name: Build warnings plugin and download dependencies
+        run: mvn -V -ntp verify -Pskip --file plugin/pom.xml -Dgpg.skip
+      - name: Run UI tests for the detais tabs
         env:
           BROWSER: firefox-container
-        run: mvn -V -ntp test --file ui-tests/pom.xml -Pall-ui-tests '-Dgpg.skip'
+        run: mvn -V -ntp test --file ui-tests/pom.xml -Dtest=DetailsTabUiTest -Dgpg.skip
 
