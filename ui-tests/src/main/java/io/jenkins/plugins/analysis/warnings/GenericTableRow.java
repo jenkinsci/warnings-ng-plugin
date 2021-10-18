@@ -19,20 +19,6 @@ class GenericTableRow {
         this.table = table;
     }
 
-    /**
-     * Returns this row as an instance of a specific sub-class of {@link GenericTableRow}.
-     *
-     * @param actualClass
-     *         the class to which the table row shall be converted to
-     * @param <T>
-     *         actual type of the row
-     *
-     * @return the row
-     */
-    public <T extends GenericTableRow> T getAs(final Class<T> actualClass) {
-        return actualClass.cast(this);
-    }
-
     WebElement getRow() {
         return row;
     }

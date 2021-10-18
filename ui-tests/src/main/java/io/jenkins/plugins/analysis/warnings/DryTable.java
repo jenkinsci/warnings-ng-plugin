@@ -2,14 +2,11 @@ package io.jenkins.plugins.analysis.warnings;
 
 import org.openqa.selenium.WebElement;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 /**
  * Details table that shows the duplicate code issues of a report.
  *
  * @author Ullrich Hafner
  */
-@SuppressFBWarnings("BC")
 public class DryTable extends AbstractIssuesTable<DryIssuesTableRow> {
     /**
      * Creates an IssuesTable of a specific type.

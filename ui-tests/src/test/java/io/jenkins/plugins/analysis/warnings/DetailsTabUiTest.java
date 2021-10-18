@@ -10,6 +10,8 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import org.jenkinsci.test.acceptance.junit.WithPlugins;
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.FreeStyleJob;
@@ -27,6 +29,7 @@ import static io.jenkins.plugins.analysis.warnings.Assertions.*;
  * @author Simon Schönwiese
  */
 @WithPlugins("warnings-ng")
+@SuppressFBWarnings("BC")
 public class DetailsTabUiTest extends UiTest {
     private static final String DETAILS_TAB_RESOURCES = "details_tab_test/";
 

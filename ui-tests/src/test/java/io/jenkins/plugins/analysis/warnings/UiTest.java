@@ -8,6 +8,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import org.jenkinsci.test.acceptance.junit.AbstractJUnitTest;
 import org.jenkinsci.test.acceptance.plugins.dashboard_view.DashboardView;
 import org.jenkinsci.test.acceptance.plugins.maven.MavenInstallation;
@@ -26,6 +28,7 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 /**
  * Base class for all UI tests. Provides several helper methods that can be used by all tests.
  */
+@SuppressFBWarnings("BC")
 abstract class UiTest extends AbstractJUnitTest {
     static final String WARNINGS_PLUGIN_PREFIX = "/";
     static final String CHECKSTYLE_ID = "checkstyle";

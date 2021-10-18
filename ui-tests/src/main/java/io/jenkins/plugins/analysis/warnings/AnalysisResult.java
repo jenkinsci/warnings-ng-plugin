@@ -24,8 +24,6 @@ import org.jenkinsci.test.acceptance.po.PageObject;
  * @author Mitja Oldenbourg
  */
 public class AnalysisResult extends PageObject {
-    private static final String[] DRY_TOOLS = {"cpd", "simian", "dupfinder"};
-
     private final String id;
 
     /**

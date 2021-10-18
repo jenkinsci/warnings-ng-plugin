@@ -2,8 +2,6 @@ package io.jenkins.plugins.analysis.warnings;
 
 import org.openqa.selenium.WebElement;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 import org.jenkinsci.test.acceptance.po.PageObject;
 
 /**
@@ -12,7 +10,6 @@ import org.jenkinsci.test.acceptance.po.PageObject;
  *
  * @author Kevin Richter
  */
-@SuppressFBWarnings("BC")
 public class PropertyDetailsTable extends AbstractIssuesTable<GenericTableRow> {
     /**
      * Creates a {@link PropertyDetailsTable} of a specific type.

@@ -10,6 +10,8 @@ import java.nio.file.Paths;
 import org.junit.Test;
 import org.openqa.selenium.NoSuchElementException;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import org.jenkinsci.test.acceptance.junit.WithPlugins;
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.FreeStyleJob;
@@ -25,6 +27,7 @@ import static io.jenkins.plugins.analysis.warnings.Assertions.*;
  * @author Lukas Kirner
  */
 @WithPlugins("warnings-ng")
+@SuppressFBWarnings("BC")
 public class GlobalConfigurationUiTest extends UiTest {
     private static final String GCC_ID = "gcc";
 
