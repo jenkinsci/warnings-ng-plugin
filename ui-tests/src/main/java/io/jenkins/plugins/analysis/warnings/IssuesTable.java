@@ -48,7 +48,7 @@ public class IssuesTable extends AbstractIssuesTable<DefaultIssuesTableRow> {
 
         @SuppressFBWarnings("IMPROPER_UNICODE")
         static Header fromTitle(final String title) {
-            for (Header value : .values()) {
+            for (Header value : values()) {
                 if (value.title.equalsIgnoreCase(title)) {
                     return value;
                 }
