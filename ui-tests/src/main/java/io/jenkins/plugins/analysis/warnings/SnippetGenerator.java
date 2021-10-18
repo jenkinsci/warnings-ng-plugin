@@ -18,7 +18,6 @@ import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateType;
  * @author Lion Kosiuk
  */
 public class SnippetGenerator extends PageObject {
-
     private static final String URI = "pipeline-syntax/";
     private static final String RECORD_ISSUES_OPTION = "recordIssues: Record compiler warnings and static analysis results";
     private final Control selectSampleStep = control("/");

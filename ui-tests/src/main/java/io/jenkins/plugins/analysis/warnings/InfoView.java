@@ -33,6 +33,7 @@ public class InfoView extends PageObject {
      * @param id
      *         the id of the analysis tool
      */
+    @SuppressWarnings("unused") // Required to dynamically create page object using reflection
     public InfoView(final Build build, final String id) {
         super(build, build.url(id + "/info/"));
     }

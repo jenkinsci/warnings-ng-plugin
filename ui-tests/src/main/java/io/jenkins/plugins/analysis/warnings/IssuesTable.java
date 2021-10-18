@@ -1,6 +1,10 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import java.util.NoSuchElementException;
+
 import org.openqa.selenium.WebElement;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Details table that shows the issues of a report.
@@ -23,5 +27,33 @@ public class IssuesTable extends AbstractIssuesTable<DefaultIssuesTableRow> {
     @Override
     protected DefaultIssuesTableRow createRow(final WebElement row) {
         return new DefaultIssuesTableRow(row, this);
+    }
+
+    /**
+     * Enum representing the headers which should be present in a {@link AbstractIssuesTable}.
+     */
+    public enum Header {
+        DETAILS("Details"),
+        FILE("File"),
+        CATEGORY("Category"),
+        TYPE("Type"),
+        SEVERITY("Severity"),
+        AGE("Age");
+
+        private final String title;
+
+        Header(final String property) {
+            title = property;
+        }
+
+        @SuppressFBWarnings("IMPROPER_UNICODE")
+        static Header fromTitle(final String title) {
+            for (Header value : .values()) {
+                if (value.title.equalsIgnoreCase(title)) {
+                    return value;
+                }
+            }
+            throw new NoSuchElementException("No enum found for column name " + title);
+        }
     }
 }

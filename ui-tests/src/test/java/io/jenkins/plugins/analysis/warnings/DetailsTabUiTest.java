@@ -16,7 +16,6 @@ import org.jenkinsci.test.acceptance.junit.WithPlugins;
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.FreeStyleJob;
 
-import io.jenkins.plugins.analysis.warnings.AbstractIssuesTable.Header;
 import io.jenkins.plugins.analysis.warnings.AnalysisResult.Tab;
 
 import static io.jenkins.plugins.analysis.warnings.Assertions.*;
@@ -136,8 +135,8 @@ public class DetailsTabUiTest extends UiTest {
         assertThat(typesDetailsTable).hasSize(7).hasTotal(7);
 
         IssuesTable issuesTable = resultPage.openIssuesTable();
-        assertThat(issuesTable).hasColumnHeaders(Header.DETAILS, Header.FILE, Header.CATEGORY,
-                Header.TYPE, Header.SEVERITY, Header.AGE);
+        assertThat(issuesTable).hasColumnHeaders(IssuesTable.Header.DETAILS, IssuesTable.Header.FILE, IssuesTable.Header.CATEGORY,
+                IssuesTable.Header.TYPE, IssuesTable.Header.SEVERITY, IssuesTable.Header.AGE);
         assertThat(issuesTable).hasSize(10).hasTotal(11);
 
         List<DefaultIssuesTableRow> tableRowListIssues = issuesTable.getTableRows();

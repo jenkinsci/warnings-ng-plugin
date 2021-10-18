@@ -32,6 +32,7 @@ public class IssuesColumnConfiguration extends PageObject {
      * @param url
      *         the URL of the view
      */
+    @SuppressWarnings("unused") // Required to dynamically create page object using reflection
     public IssuesColumnConfiguration(final Injector injector, final URL url) {
         super(injector, url);
     }
@@ -44,6 +45,7 @@ public class IssuesColumnConfiguration extends PageObject {
      * @param url
      *         the URL of the view
      */
+    @SuppressWarnings("unused") // Required to dynamically create page object using reflection
     protected IssuesColumnConfiguration(final PageObject context, final URL url) {
         super(context, url);
     }

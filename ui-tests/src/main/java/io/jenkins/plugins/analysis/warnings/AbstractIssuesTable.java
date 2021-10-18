@@ -2,7 +2,6 @@ package io.jenkins.plugins.analysis.warnings;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -10,6 +9,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+import io.jenkins.plugins.analysis.warnings.IssuesTable.Header;
 
 /**
  * Area that represents the issues tables in an {@link AnalysisResult} page. Several
@@ -31,19 +32,20 @@ public abstract class AbstractIssuesTable<T extends GenericTableRow> {
     private final String tabId;
 
     /**
-     * Creates an IssuesTable of a specific type.
+     * Creates a new {@link AbstractIssuesTable} that shows the issues in a table. The structure of the rows is
+     * determined by the row type {@code T}.
      *
      * @param tab
-     *         the WebElement containing the issues-tab
+     *         the WebElement containing the issues tab
      * @param analysisResult
-     *         the AnalysisResult on which the issues-table is displayed on
+     *         the AnalysisResult on which the issues table is displayed on
      * @param divId
      *         the ID of the div that contains the actual HTML table
      */
     public AbstractIssuesTable(final WebElement tab, final AnalysisResult analysisResult, final String divId) {
         this.tab = tab;
         this.analysisResult = analysisResult;
-        tabId = "issues";
+        tabId = divId;
 
         tableElement = tab.findElement(By.id(divId));
         headers = tableElement.findElements(By.xpath(".//thead/tr/th"))
@@ -52,14 +54,6 @@ public abstract class AbstractIssuesTable<T extends GenericTableRow> {
                 .collect(Collectors.toList());
 
         updateTableRows();
-    }
-
-    protected AnalysisResult getAnalysisResult() {
-        return analysisResult;
-    }
-
-    protected WebElement getTab() {
-        return tab;
     }
 
     /**
@@ -98,7 +92,7 @@ public abstract class AbstractIssuesTable<T extends GenericTableRow> {
     protected abstract T createRow(WebElement row);
 
     public List<Header> getColumnHeaders() {
-        return getHeaders().stream().map(Header::fromTitle).collect(Collectors.toList());
+        return getHeaders().stream().map(IssuesTable.Header::fromTitle).collect(Collectors.toList());
     }
 
     /**
@@ -206,33 +200,5 @@ public abstract class AbstractIssuesTable<T extends GenericTableRow> {
         WebElement webElement = analysisResult.find(By.linkText(String.valueOf(pageNumber)));
         webElement.click();
         updateTableRows();
-    }
-
-    /**
-     * Enum representing the headers which should be present in a {@link AbstractIssuesTable}.
-     */
-    public enum Header {
-        DETAILS("Details"),
-        FILE("File"),
-        CATEGORY("Category"),
-        TYPE("Type"),
-        SEVERITY("Severity"),
-        AGE("Age");
-
-        private final String title;
-
-        Header(final String property) {
-            title = property;
-        }
-
-        @SuppressFBWarnings("IMPROPER_UNICODE")
-        static Header fromTitle(final String title) {
-            for (Header value : values()) {
-                if (value.title.equalsIgnoreCase(title)) {
-                    return value;
-                }
-            }
-            throw new NoSuchElementException("No enum found for column name " + title);
-        }
     }
 }
