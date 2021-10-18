@@ -26,13 +26,12 @@ public class IssuesColumnUiTest extends UiTest {
         FreeStyleJob job = createFreeStyleJob("build_status_test/build_02");
         addAllRecorders(job);
         job.save();
-        String jobName = job.name;
 
         Build build = job.startBuild().waitUntilFinished();
 
         jenkins.open();
 
-        IssuesColumn column = new IssuesColumn(build, jobName);
+        IssuesColumn column = new IssuesColumn(build, job.name);
 
         String issueCount = column.getIssuesCountTextFromTable();
         assertThat(issueCount).isEqualTo("25");
@@ -53,14 +52,14 @@ public class IssuesColumnUiTest extends UiTest {
     @WithPlugins({"token-macro", "pipeline-stage-step", "workflow-durable-task-step", "workflow-basic-steps"})
     public void shouldShowConfiguredToolOnlyWithLink() {
         FreeStyleJob job = createFreeStyleJob("build_status_test/build_02");
-        addRecorder(job, "CheckStyle");
+        addRecorder(job, CHECKSTYLE_TOOL);
         job.save();
         Build build = job.startBuild().waitUntilFinished();
 
         ListView view = createListView();
 
         IssuesColumnConfiguration columnConfig = new IssuesColumnConfiguration(build, view);
-        columnConfig.selectSubsetOfTools("CheckStyle");
+        columnConfig.selectSubsetOfTools(CHECKSTYLE_TOOL);
 
         view.save();
 
@@ -85,7 +84,7 @@ public class IssuesColumnUiTest extends UiTest {
         ListView view = createListView();
 
         IssuesColumnConfiguration columnConfig = new IssuesColumnConfiguration(build, view);
-        columnConfig.selectSubsetOfTools("CheckStyle");
+        columnConfig.selectSubsetOfTools(CHECKSTYLE_TOOL);
 
         view.save();
 
