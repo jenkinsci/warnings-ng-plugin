@@ -113,7 +113,7 @@ public class GlobalConfigurationUiTest extends UiTest {
         assertThat(gccDetails).hasActiveTab(Tab.ISSUES)
                 .hasOnlyAvailableTabs(Tab.ISSUES);
 
-        IssuesTableRow row = gccDetails.openIssuesTable().getRowAs(0);
+        AbstractSeverityTableRow row = gccDetails.openIssuesTable().getRow(0);
 
         if (linkType == LinkType.SHOULD_HAVE_SOURCE_CODE_LINK) {
             assertThat(row.getFileLink()).isNotNull();

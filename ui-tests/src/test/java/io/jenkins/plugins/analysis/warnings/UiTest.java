@@ -141,22 +141,23 @@ abstract class UiTest extends AbstractJUnitTest {
         assertThat(cpdDetails).hasActiveTab(Tab.ISSUES).hasOnlyAvailableTabs(Tab.ISSUES);
 
         DryTable issuesTable = cpdDetails.openDryTable();
-        assertThat(issuesTable).hasSize(10).hasTotal(20);
+        assertThat(issuesTable.getSize()).isEqualTo(10);
+        assertThat(issuesTable.getTotal()).isEqualTo(20);
 
-        DryIssuesTableRow firstRow = issuesTable.getRowAs(0);
-        DryIssuesTableRow secondRow = issuesTable.getRowAs(1);
+        DryTableRow firstRow = issuesTable.getRow(0);
+        DryTableRow secondRow = issuesTable.getRow(1);
 
         firstRow.toggleDetailsRow();
-        assertThat(issuesTable).hasSize(11);
+        assertThat(issuesTable.getSize()).isEqualTo(11);
 
-        DryIssuesTableRow detailsRow = issuesTable.getRowAs(1);
+        DryTableRow detailsRow = issuesTable.getRow(1);
         assertThat(detailsRow).hasDetails("Found duplicated code.\nfunctionOne();");
 
-        assertThat(issuesTable.getRowAs(2)).isEqualTo(secondRow);
+        assertThat(issuesTable.getRow(2)).isEqualTo(secondRow);
 
         firstRow.toggleDetailsRow();
-        assertThat(issuesTable).hasSize(10);
-        assertThat(issuesTable.getRowAs(1)).isEqualTo(secondRow);
+        assertThat(issuesTable.getSize()).isEqualTo(10);
+        assertThat(issuesTable.getRow(1)).isEqualTo(secondRow);
 
         SourceView sourceView = firstRow.openSourceCode();
         assertThat(sourceView).hasFileName(CPD_SOURCE_NAME);
@@ -166,14 +167,15 @@ abstract class UiTest extends AbstractJUnitTest {
 
         cpdDetails.open();
         issuesTable = cpdDetails.openDryTable();
-        firstRow = issuesTable.getRowAs(0);
+        firstRow = issuesTable.getRow(0);
 
         AnalysisResult lowSeverity = firstRow.clickOnSeverityLink();
         DryTable lowSeverityTable = lowSeverity.openDryTable();
-        assertThat(lowSeverityTable).hasSize(6).hasTotal(6);
+        assertThat(issuesTable.getSize()).isEqualTo(6);
+        assertThat(issuesTable.getTotal()).isEqualTo(6);
 
         for (int i = 0; i < 6; i++) {
-            DryIssuesTableRow row = lowSeverityTable.getRowAs(i);
+            DryTableRow row = lowSeverityTable.getRow(i);
             assertThat(row).hasSeverity(WARNING_LOW_PRIORITY);
         }
 
@@ -240,9 +242,10 @@ abstract class UiTest extends AbstractJUnitTest {
                 .hasOnlyAvailableTabs(Tab.CATEGORIES, Tab.TYPES, Tab.ISSUES);
 
         IssuesTable issuesTable = checkstyleDetails.openIssuesTable();
-        assertThat(issuesTable).hasSize(3).hasTotal(3);
+        assertThat(issuesTable.getSize()).isEqualTo(3);
+        assertThat(issuesTable.getTotal()).isEqualTo(3);
 
-        DefaultIssuesTableRow tableRow = issuesTable.getRowAs(0);
+        IssuesTableRow tableRow = issuesTable.getRow(0);
         assertThat(tableRow).hasFileName("RemoteLauncher.java")
                 .hasLineNumber(59)
                 .hasCategory("Checks")
@@ -331,7 +334,7 @@ abstract class UiTest extends AbstractJUnitTest {
 
         pep8Details.openTab(Tab.ISSUES);
         IssuesTable issuesTable = pep8Details.openIssuesTable();
-        assertThat(issuesTable).hasSize(8);
+        assertThat(issuesTable.getSize()).isEqualTo(8);
 
         long normalIssueCount = getCountOfSeverity(issuesTable, "Normal");
         long lowIssueCount = getCountOfSeverity(issuesTable, "Low");
@@ -352,8 +355,8 @@ abstract class UiTest extends AbstractJUnitTest {
 
     private long getCountOfSeverity(final IssuesTable issuesTable, final String normal) {
         return issuesTable.getTableRows().stream()
-                .map(IssuesTableRow::getSeverity)
-                .filter(severity -> normal.equals(severity)).count();
+                .map(AbstractSeverityTableRow::getSeverity)
+                .filter(normal::equals).count();
     }
 
     protected AnalysisResult verifyPep8Details(final AnalysisSummary pep8) {
@@ -373,11 +376,11 @@ abstract class UiTest extends AbstractJUnitTest {
 
     protected DashboardView createDashboardWithStaticAnalysisPortlet(final boolean hideCleanJobs,
             final boolean showIcons) {
-        return createDashboardWithStaticAnalysisPortlet(jenkins, hideCleanJobs, showIcons);
+        return createDashboardWithStaticAnalysisPortlet(hideCleanJobs, showIcons, jenkins);
     }
 
-    protected DashboardView createDashboardWithStaticAnalysisPortlet(final Container container,
-            final boolean hideCleanJobs, final boolean showIcons) {
+    protected DashboardView createDashboardWithStaticAnalysisPortlet(final boolean hideCleanJobs,
+            final boolean showIcons, final Container container) {
         DashboardView view = createDashboardView(container);
         StaticAnalysisIssuesPerToolAndJobPortlet portlet = view.addTopPortlet(
                 StaticAnalysisIssuesPerToolAndJobPortlet.class);

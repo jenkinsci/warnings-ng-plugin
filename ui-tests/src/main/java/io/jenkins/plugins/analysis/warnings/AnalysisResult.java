@@ -93,8 +93,7 @@ public class AnalysisResult extends PageObject {
      * @return the total number of issues
      */
     public int getTotal() {
-        String total = find(By.tagName("tfoot")).getText();
-        return Integer.parseInt(total.split(" ")[1]);
+        return extractTotalFromFooter(1);
     }
 
     /**
@@ -104,8 +103,12 @@ public class AnalysisResult extends PageObject {
      * @return the total number of new issues
      */
     public int getTotalNew() {
+        return extractTotalFromFooter(2);
+    }
+
+    private int extractTotalFromFooter(final int column) {
         String total = find(By.tagName("tfoot")).getText();
-        return Integer.parseInt(total.split(" ")[2]);
+        return Integer.parseInt(total.split(" ", 2)[column]);
     }
 
     /**
@@ -261,7 +264,6 @@ public class AnalysisResult extends PageObject {
      *
      * @return the instance of the filtered AnalysisResult
      */
-    // FIXME: IssuesTable should not depend on AnalysisResult
     public AnalysisResult openFilterLinkOnSite(final WebElement element) {
         String link = element.getAttribute("href");
         AnalysisResult retVal = newInstance(AnalysisResult.class, injector, url(link), id);
@@ -270,7 +272,7 @@ public class AnalysisResult extends PageObject {
     }
 
     /**
-     * returns the TrendChart Carousel DOM Node.
+     * Returns the TrendChart Carousel DOM Node.
      *
      * @return trendChart Carousel.
      */

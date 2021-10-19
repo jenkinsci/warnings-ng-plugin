@@ -134,8 +134,7 @@
           </packages>
           <excludes>
             <exclude>.*Test</exclude>
-            <exclude>.*IssuesDetailsTable</exclude>
-            <exclude>.*AbstractIssuesTable</exclude>
+            <exclude>.*Table</exclude>
           </excludes>
           <entryPointClassPackage>io.jenkins.plugins.analysis.warnings</entryPointClassPackage>
         </configuration>

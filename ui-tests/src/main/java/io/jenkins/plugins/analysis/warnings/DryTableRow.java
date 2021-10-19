@@ -1,33 +1,42 @@
 package io.jenkins.plugins.analysis.warnings;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 /**
  * Representation of a table row displaying the duplicate code warnings details.
  *
  * @author Stephan Plöderl
  */
-public class DryIssuesTableRow extends IssuesTableRow {
+public class DryTableRow extends AbstractSeverityTableRow {
     private static final String DUPLICATED_IN = "Duplicated In";
     private static final String AMOUNT_OF_LINES = "#Lines";
+
+    private final List<String> duplicatedIn;
+    private final int lines;
 
     /**
      * Creates an instance representing a duplicate code warnings table row.
      *
      * @param element
      *         the WebElement representing the row
-     * @param issuesDetailsTable
+     * @param table
      *         the issues table in which this row is displayed in
      */
-    DryIssuesTableRow(final WebElement element, final DryTable issuesDetailsTable) {
-        super(element, issuesDetailsTable);
+    DryTableRow(final WebElement element, final DryTable table) {
+        super(element, table);
+
+        duplicatedIn = getCell(DUPLICATED_IN)
+                .findElements(By.tagName("li"))
+                .stream()
+                .map(WebElement::getText)
+                .collect(Collectors.toList());
+        lines = Integer.parseInt(getCellContent(AMOUNT_OF_LINES));
     }
 
     /**
@@ -36,7 +45,7 @@ public class DryIssuesTableRow extends IssuesTableRow {
      * @return the number of lines
      */
     public int getLines() {
-        return Integer.parseInt(getCellContent(AMOUNT_OF_LINES));
+        return lines;
     }
 
     /**
@@ -45,15 +54,11 @@ public class DryIssuesTableRow extends IssuesTableRow {
      * @return the duplications
      */
     public List<String> getDuplicatedIn() {
-        return getCell(DUPLICATED_IN)
-                .findElements(By.tagName("li"))
-                .stream()
-                .map(WebElement::getText)
-                .collect(Collectors.toList());
+        return duplicatedIn;
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(@CheckForNull final Object o) {
         if (this == o) {
             return true;
         }
@@ -63,21 +68,20 @@ public class DryIssuesTableRow extends IssuesTableRow {
         if (!super.equals(o)) {
             return false;
         }
-        DryIssuesTableRow that = (DryIssuesTableRow) o;
 
-        EqualsBuilder builder = new EqualsBuilder();
-        builder.append(getLines(), that.getLines())
-                .append(getDuplicatedIn(), that.getDuplicatedIn());
-        return builder.isEquals();
+        DryTableRow that = (DryTableRow) o;
+
+        if (lines != that.lines) {
+            return false;
+        }
+        return duplicatedIn.equals(that.duplicatedIn);
     }
 
     @Override
     public int hashCode() {
-        HashCodeBuilder builder = new HashCodeBuilder();
-
-        builder.append(getLines())
-                .append(getDuplicatedIn());
-
-        return Objects.hash(super.hashCode(), builder.toHashCode());
+        int result = super.hashCode();
+        result = 31 * result + duplicatedIn.hashCode();
+        result = 31 * result + lines;
+        return result;
     }
 }

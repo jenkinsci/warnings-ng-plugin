@@ -73,13 +73,13 @@ public class DetailsTabUiTest extends UiTest {
         assertThat(resultPage).hasOnlyAvailableTabs(Tab.FOLDERS, Tab.FILES, Tab.ISSUES);
 
         PropertyDetailsTable foldersDetailsTable = resultPage.openPropertiesTable(Tab.FOLDERS);
-        assertThat(foldersDetailsTable).hasTotal(2);
+        assertThat(foldersDetailsTable.getTotal()).isEqualTo(2);
 
         PropertyDetailsTable filesDetailsTable = resultPage.openPropertiesTable(Tab.FILES);
-        assertThat(filesDetailsTable).hasTotal(2);
+        assertThat(filesDetailsTable.getTotal()).isEqualTo(2);
 
         IssuesTable issuesTable = resultPage.openIssuesTable();
-        assertThat(issuesTable).hasTotal(2);
+        assertThat(issuesTable.getTotal()).isEqualTo(2);
     }
 
     /**
@@ -127,33 +127,36 @@ public class DetailsTabUiTest extends UiTest {
         assertThat(resultPage).hasOnlyAvailableTabs(Tab.ISSUES, Tab.TYPES, Tab.CATEGORIES);
 
         PropertyDetailsTable categoriesDetailsTable = resultPage.openPropertiesTable(Tab.CATEGORIES);
-        assertThat(categoriesDetailsTable).hasHeaders("Category", "Total", "Distribution");
-        assertThat(categoriesDetailsTable).hasSize(5).hasTotal(5);
+        assertThat(categoriesDetailsTable.getHeaders()).containsOnly("Category", "Total", "Distribution");
+        assertThat(categoriesDetailsTable.getSize()).isEqualTo(5);
+        assertThat(categoriesDetailsTable.getTotal()).isEqualTo(5);
 
         PropertyDetailsTable typesDetailsTable = resultPage.openPropertiesTable(Tab.TYPES);
-        assertThat(typesDetailsTable).hasHeaders("Type", "Total", "Distribution");
-        assertThat(typesDetailsTable).hasSize(7).hasTotal(7);
+        assertThat(typesDetailsTable.getHeaders()).containsOnly("Type", "Total", "Distribution");
+        assertThat(categoriesDetailsTable.getSize()).isEqualTo(7);
+        assertThat(categoriesDetailsTable.getTotal()).isEqualTo(7);
 
         IssuesTable issuesTable = resultPage.openIssuesTable();
-        assertThat(issuesTable).hasColumnHeaders(IssuesTable.Header.DETAILS, IssuesTable.Header.FILE, IssuesTable.Header.CATEGORY,
+        assertThat(issuesTable.getColumnHeaders()).containsOnly(IssuesTable.Header.DETAILS, IssuesTable.Header.FILE, IssuesTable.Header.CATEGORY,
                 IssuesTable.Header.TYPE, IssuesTable.Header.SEVERITY, IssuesTable.Header.AGE);
-        assertThat(issuesTable).hasSize(10).hasTotal(11);
+        assertThat(categoriesDetailsTable.getSize()).isEqualTo(10);
+        assertThat(categoriesDetailsTable.getTotal()).isEqualTo(11);
 
-        List<DefaultIssuesTableRow> tableRowListIssues = issuesTable.getTableRows();
-        IssuesTableRow firstRow = tableRowListIssues.get(9);
+        List<IssuesTableRow> tableRowListIssues = issuesTable.getTableRows();
+        AbstractSeverityTableRow firstRow = tableRowListIssues.get(9);
         firstRow.toggleDetailsRow();
 
         issuesTable.openTablePage(2);
         assertThat(issuesTable.getSize()).isEqualTo(1);
 
         tableRowListIssues = issuesTable.getTableRows();
-        IssuesTableRow lastIssueTableRow = tableRowListIssues.get(0);
+        AbstractSeverityTableRow lastIssueTableRow = tableRowListIssues.get(0);
         assertThat(lastIssueTableRow.getSeverity()).isEqualTo("Error");
         AnalysisResult analysisResult = lastIssueTableRow.clickOnSeverityLink();
         IssuesTable errorIssuesTable = analysisResult.openIssuesTable();
         assertThat(errorIssuesTable.getSize()).isEqualTo(6);
         for (int i = 0; i < errorIssuesTable.getSize(); i++) {
-            IssuesTableRow row = errorIssuesTable.getTableRows().get(i);
+            AbstractSeverityTableRow row = errorIssuesTable.getTableRows().get(i);
             assertThat(row.getSeverity()).isEqualTo("Error");
         }
     }
@@ -176,7 +179,7 @@ public class DetailsTabUiTest extends UiTest {
         AnalysisResult cpdDetails = cpd.openOverallResult();
 
         DryTable issuesDetailsTable = cpdDetails.openDryTable();
-        DryIssuesTableRow issuesTableFirstRow = issuesDetailsTable.getRowAs(0);
+        DryTableRow issuesTableFirstRow = issuesDetailsTable.getRow(0);
         assertThat(issuesTableFirstRow.getSeverity()).isEqualTo("Normal");
         assertThat(issuesTableFirstRow.getAge()).isEqualTo(1);
     }

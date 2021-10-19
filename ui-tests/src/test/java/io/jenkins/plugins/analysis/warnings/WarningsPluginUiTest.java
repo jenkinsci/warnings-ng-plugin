@@ -165,7 +165,7 @@ public class WarningsPluginUiTest extends UiTest {
         resultPage.open();
 
         IssuesTable issuesTable = resultPage.openIssuesTable();
-        assertThat(issuesTable).hasSize(1);
+        assertThat(issuesTable.getSize()).isEqualTo(1);
     }
 
     /**
@@ -173,6 +173,7 @@ public class WarningsPluginUiTest extends UiTest {
      */
     @Test
     @WithPlugins("maven-plugin")
+    @SuppressWarnings("SystemOut")
     public void shouldShowMavenWarningsInMavenProject() {
         MavenModuleSet job = createMavenProject();
         copyResourceFilesToWorkspace(job, SOURCE_VIEW_FOLDER + "pom.xml");
@@ -205,7 +206,7 @@ public class WarningsPluginUiTest extends UiTest {
 
         IssuesTable issuesTable = mavenDetails.openIssuesTable();
 
-        DefaultIssuesTableRow firstRow = issuesTable.getRowAs(0);
+        IssuesTableRow firstRow = issuesTable.getRow(0);
         ConsoleLogView sourceView = firstRow.openConsoleLog();
         assertThat(sourceView).hasTitle("Console Details")
                 .hasHighlightedText("[WARNING]\n"

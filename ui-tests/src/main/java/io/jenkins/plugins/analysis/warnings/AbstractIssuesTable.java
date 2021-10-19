@@ -13,9 +13,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.analysis.warnings.IssuesTable.Header;
 
 /**
- * Area that represents the issues tables in an {@link AnalysisResult} page. Several
- * issue aspects are visualized in different tables so the actual rows are composed
- * in concrete sub-classes.
+ * Area that represents the issues tables in an {@link AnalysisResult} page. Several issue aspects are visualized in
+ * different tables so the actual rows are composed in concrete sub-classes.
  *
  * @param <T>
  *         the type of the table rows
@@ -23,7 +22,7 @@ import io.jenkins.plugins.analysis.warnings.IssuesTable.Header;
  * @author Stephan Plöderl
  */
 @SuppressFBWarnings("EI")
-public abstract class AbstractIssuesTable<T extends GenericTableRow> {
+abstract class AbstractIssuesTable<T extends GenericTableRow> {
     private final AnalysisResult analysisResult;
     private final List<T> tableRows = new ArrayList<>();
     private final List<String> headers;
@@ -42,7 +41,7 @@ public abstract class AbstractIssuesTable<T extends GenericTableRow> {
      * @param divId
      *         the ID of the div that contains the actual HTML table
      */
-    public AbstractIssuesTable(final WebElement tab, final AnalysisResult analysisResult, final String divId) {
+    AbstractIssuesTable(final WebElement tab, final AnalysisResult analysisResult, final String divId) {
         this.tab = tab;
         this.analysisResult = analysisResult;
         tabId = divId;
@@ -67,7 +66,7 @@ public abstract class AbstractIssuesTable<T extends GenericTableRow> {
             tableRowsAsWebElements = tableElement.findElements(By.xpath(".//tbody/tr"));
         }
         while (isLoadingSeverData(tableRowsAsWebElements));
-        tableRowsAsWebElements.forEach(element -> tableRows.add(getRightTableRow(element)));
+        tableRowsAsWebElements.forEach(element -> tableRows.add(createRow(element)));
     }
 
     private boolean isLoadingSeverData(final List<WebElement> tableRowsAsWebElements) {
@@ -78,21 +77,32 @@ public abstract class AbstractIssuesTable<T extends GenericTableRow> {
     }
 
     /**
-     * Returns the table row as an object of the right sub class of {@link GenericTableRow}.
+     * Creates the concrete table row as an object of the matching sub-class of {@link GenericTableRow}. This row
+     * contains the specialized column mapping of the corresponding issues table.
      *
      * @param row
-     *         the WebElement representing the specific row.
+     *         the WebElement representing the specific row
      *
      * @return the table row
      */
-    private T getRightTableRow(final WebElement row) {
-        return createRow(row);
-    }
-
     protected abstract T createRow(WebElement row);
 
+    /**
+     * Returns the table row at the given index. This row instance contains the specialized column mapping of the
+     * corresponding issues table.
+     *
+     * @param rowIndex
+     *         the number of the row to be returned
+     *
+     * @return the row
+     * @see #createRow(WebElement)
+     */
+    public T getRow(final int rowIndex) {
+        return getTableRows().get(rowIndex);
+    }
+
     public List<Header> getColumnHeaders() {
-        return getHeaders().stream().map(IssuesTable.Header::fromTitle).collect(Collectors.toList());
+        return getHeaders().stream().map(Header::fromTitle).collect(Collectors.toList());
     }
 
     /**
@@ -164,18 +174,6 @@ public abstract class AbstractIssuesTable<T extends GenericTableRow> {
      */
     public List<String> getHeaders() {
         return headers;
-    }
-
-    /**
-     * Returns a specific row as an instance of the expected class.
-     *
-     * @param row
-     *         the number of the row to be returned
-     *
-     * @return the row
-     */
-    public T getRowAs(final int row) {
-        return getTableRows().get(row);
     }
 
     /**

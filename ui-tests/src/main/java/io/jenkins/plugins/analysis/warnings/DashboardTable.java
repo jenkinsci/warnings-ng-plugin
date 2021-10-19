@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 
 import org.openqa.selenium.WebElement;
 
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import org.jenkinsci.test.acceptance.po.Build;
@@ -37,7 +36,8 @@ public class DashboardTable extends PageObject {
      */
     public DashboardTable(final Build parent, final URL url) {
         super(parent, url);
-        this.open();
+
+        open();
 
         WebElement page = this.getElement(by.tagName("body"));
         List<WebElement> rows = page.findElements(by.tagName("table")).stream()

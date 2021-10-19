@@ -36,8 +36,9 @@ import static org.assertj.core.api.Assertions.*;
 @WithPlugins({"git", "git-forensics"})
 @WithCredentials(credentialType = WithCredentials.SSH_USERNAME_PRIVATE_KEY, values = {"gitplugin", "/org/jenkinsci/test/acceptance/docker/fixtures/GitContainer/unsafe"})
 @SuppressFBWarnings("BC")
-public class GitBlamerAndForensicsUiTest extends UiTest {
+public class GitForensicsUiTest extends UiTest {
     @Inject
+    @SuppressWarnings("CdiInjectionPointsInspection")
     private DockerContainerHolder<GitContainer> gitServer;
 
     private static final String USERNAME = "gitplugin";
@@ -136,7 +137,7 @@ public class GitBlamerAndForensicsUiTest extends UiTest {
             AnalysisSummary blame = new AnalysisSummary(build, JAVA_ID);
             AnalysisResult resultPage = blame.openOverallResult();
             BlamesTable blamesTable = resultPage.openBlamesTable();
-            BlamesTableRow row = blamesTable.getRowAs(0);
+            BlamesTableRow row = blamesTable.getRow(0);
 
             assertThat(blamesTable.getTableRows()).hasSize(1);
             assertColumnHeader(blamesTable);
@@ -229,7 +230,7 @@ public class GitBlamerAndForensicsUiTest extends UiTest {
             AnalysisSummary summary = new AnalysisSummary(build, JAVA_ID);
             AnalysisResult result = summary.openOverallResult();
             ForensicsTable forensicsTable = result.openForensicsTable();
-            ForensicsTableRow row = forensicsTable.getRowAs(0);
+            ForensicsTableRow row = forensicsTable.getRow(0);
             assertThat(forensicsTable.getTableRows()).hasSize(1);
 
             verifyForensicsTableModel(forensicsTable);
@@ -362,18 +363,18 @@ public class GitBlamerAndForensicsUiTest extends UiTest {
     }
 
     private void assertElevenIssues(final Map<String, String> commits, final BlamesTable table) {
-        assertColumnsOfRowBob(table.getRowAs(0), commits.get("Bob"));
-        assertColumnsOfRowBob(table.getRowAs(1), commits.get("Bob"));
-        assertColumnsOfRowBob(table.getRowAs(2), commits.get("Bob"));
+        assertColumnsOfRowBob(table.getRow(0), commits.get("Bob"));
+        assertColumnsOfRowBob(table.getRow(1), commits.get("Bob"));
+        assertColumnsOfRowBob(table.getRow(2), commits.get("Bob"));
 
-        assertColumnsOfRowLoremIpsum(table.getRowAs(3), commits.get("LoremIpsum"));
-        assertColumnsOfRowLoremIpsum(table.getRowAs(4), commits.get("LoremIpsum"));
-        assertColumnsOfRowLoremIpsum(table.getRowAs(5), commits.get("LoremIpsum"));
-        assertColumnsOfRowLoremIpsum(table.getRowAs(6), commits.get("LoremIpsum"));
+        assertColumnsOfRowLoremIpsum(table.getRow(3), commits.get("LoremIpsum"));
+        assertColumnsOfRowLoremIpsum(table.getRow(4), commits.get("LoremIpsum"));
+        assertColumnsOfRowLoremIpsum(table.getRow(5), commits.get("LoremIpsum"));
+        assertColumnsOfRowLoremIpsum(table.getRow(6), commits.get("LoremIpsum"));
 
-        assertColumnsOfTest(table.getRowAs(7), commits.get("Test"));
-        assertColumnsOfTest(table.getRowAs(8), commits.get("Test"));
-        assertColumnsOfTest(table.getRowAs(9), commits.get("Test"));
+        assertColumnsOfTest(table.getRow(7), commits.get("Test"));
+        assertColumnsOfTest(table.getRow(8), commits.get("Test"));
+        assertColumnsOfTest(table.getRow(9), commits.get("Test"));
     }
 
     private void assertColumnsOfTest(final BlamesTableRow row, final String commit) {
@@ -420,15 +421,15 @@ public class GitBlamerAndForensicsUiTest extends UiTest {
 
     private void assertMultipleIssuesAndAuthors(final ForensicsTable forensicsTable, final int commits,
             final int authors) {
-        assertColumnsOfRow(forensicsTable.getRowAs(0), "Bob.java", 1, 1);
-        assertColumnsOfRow(forensicsTable.getRowAs(1), "Bob.java", 1, 1);
-        assertColumnsOfRow(forensicsTable.getRowAs(2), "Bob.java", 1, 1);
-        assertColumnsOfRow(forensicsTable.getRowAs(3), "LoremIpsum.java", commits, authors);
-        assertColumnsOfRow(forensicsTable.getRowAs(5), "LoremIpsum.java", commits, authors);
-        assertColumnsOfRow(forensicsTable.getRowAs(6), "LoremIpsum.java", commits, authors);
-        assertColumnsOfRow(forensicsTable.getRowAs(7), "Test.java", 1, 1);
-        assertColumnsOfRow(forensicsTable.getRowAs(8), "Test.java", 1, 1);
-        assertColumnsOfRow(forensicsTable.getRowAs(9), "Test.java", 1, 1);
+        assertColumnsOfRow(forensicsTable.getRow(0), "Bob.java", 1, 1);
+        assertColumnsOfRow(forensicsTable.getRow(1), "Bob.java", 1, 1);
+        assertColumnsOfRow(forensicsTable.getRow(2), "Bob.java", 1, 1);
+        assertColumnsOfRow(forensicsTable.getRow(3), "LoremIpsum.java", commits, authors);
+        assertColumnsOfRow(forensicsTable.getRow(5), "LoremIpsum.java", commits, authors);
+        assertColumnsOfRow(forensicsTable.getRow(6), "LoremIpsum.java", commits, authors);
+        assertColumnsOfRow(forensicsTable.getRow(7), "Test.java", 1, 1);
+        assertColumnsOfRow(forensicsTable.getRow(8), "Test.java", 1, 1);
+        assertColumnsOfRow(forensicsTable.getRow(9), "Test.java", 1, 1);
     }
 
     private Build generateFreeStyleJob(final GitRepo repo) {

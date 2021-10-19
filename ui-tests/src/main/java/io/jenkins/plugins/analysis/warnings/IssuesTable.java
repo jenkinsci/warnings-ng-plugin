@@ -11,7 +11,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  *
  * @author Ullrich Hafner
  */
-public class IssuesTable extends AbstractIssuesTable<DefaultIssuesTableRow> {
+public class IssuesTable extends AbstractIssuesTable<IssuesTableRow> {
     /**
      * Creates an IssuesTable of a specific type.
      *
@@ -25,8 +25,8 @@ public class IssuesTable extends AbstractIssuesTable<DefaultIssuesTableRow> {
     }
 
     @Override
-    protected DefaultIssuesTableRow createRow(final WebElement row) {
-        return new DefaultIssuesTableRow(row, this);
+    protected IssuesTableRow createRow(final WebElement row) {
+        return new IssuesTableRow(row, this);
     }
 
     /**

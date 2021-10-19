@@ -7,7 +7,7 @@ import org.openqa.selenium.WebElement;
  *
  * @author Ullrich Hafner
  */
-public class DryTable extends AbstractIssuesTable<DryIssuesTableRow> {
+public class DryTable extends AbstractIssuesTable<DryTableRow> {
     /**
      * Creates an IssuesTable of a specific type.
      *
@@ -21,7 +21,7 @@ public class DryTable extends AbstractIssuesTable<DryIssuesTableRow> {
     }
 
     @Override
-    protected DryIssuesTableRow createRow(final WebElement row) {
-        return new DryIssuesTableRow(row, this);
+    protected DryTableRow createRow(final WebElement row) {
+        return new DryTableRow(row, this);
     }
 }

@@ -1,195 +1,58 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.util.List;
-
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+
 /**
- * Representation of a table row displaying an issue.
+ * Default row of the issues table that is used by most of the static analysis tools.
  *
  * @author Stephan Plöderl
- * @author Anna-Maria Hardi
- * @author Elvira Hauer
  */
-public abstract class IssuesTableRow extends GenericTableRow {
-    private static final String SEVERITY = "Severity";
-    private static final String DETAILS = "Details";
-    private static final String AGE = "Age";
-    private static final String FILE = "File";
-    private static final String PACKAGE = "Package";
-    private static final String FILE_LINE_SEPARATOR = ":";
-    private static final By A_TAG = By.tagName("a");
+public class IssuesTableRow extends AbstractSeverityTableRow {
+    private final String category;
+    private final String type;
 
-    IssuesTableRow(final WebElement rowElement, final AbstractIssuesTable<?> table) {
-        super(rowElement, table);
+    IssuesTableRow(final WebElement rowElement, final IssuesTable issuesDetailsTable) {
+        super(rowElement, issuesDetailsTable);
+
+        category = getCellContent("Category");
+        type = getCellContent("Type");
     }
 
-    /**
-     * Returns the details' column text.
-     *
-     * @return the details' column
-     */
-    public String getDetails() {
-        return getRow().getText();
+    public String getCategory() {
+        return category;
     }
 
-    /**
-     * Returns the severity of the issue in this row.
-     *
-     * @return the severity
-     */
-    public String getSeverity() {
-        return getCellContent(SEVERITY);
-    }
-
-    /**
-     * Returns the age of the issue in this row. The age is the total number of builds since the issue has been found.
-     *
-     * @return the age
-     */
-    public int getAge() {
-        return Integer.parseInt(getCellContent(AGE));
-    }
-
-    /**
-     * Returns the file name of the affected file.
-     *
-     * @return the file name
-     */
-    public String getFileName() {
-        return getCellContent(FILE).split(FILE_LINE_SEPARATOR)[0];
-    }
-
-    /**
-     * Returns the line number of the affected file.
-     *
-     * @return the line number
-     */
-    public int getLineNumber() {
-        return Integer.parseInt(getCellContent(FILE).split(FILE_LINE_SEPARATOR)[1]);
-    }
-
-    /**
-     * Returns the package or namespace name of the affected file.
-     *
-     * @return the package or namespace name
-     */
-    public String getPackageName() {
-        return getCellContent(PACKAGE);
-    }
-
-    /**
-     * Performs a click on the icon showing and hiding the details row.
-     */
-    public void toggleDetailsRow() {
-        getCell(DETAILS).findElement(By.tagName("div")).click();
-        getTable().updateTableRows();
-    }
-
-    /**
-     * Returns the child WebElement representing a link.
-     *
-     * @param parent
-     *         the WebElement which is a parent of the link to be searched for
-     *
-     * @return the WebElement representing the link
-     */
-    private WebElement findLink(final WebElement parent) {
-        return parent.findElement(A_TAG);
-
-    }
-
-    /**
-     * Returns a list of all the links which are children nodes of a specific WebElement.
-     *
-     * @param parent
-     *         the WebElement which is the parent of the links to be returned
-     *
-     * @return a List of the WebElements representing links
-     */
-    List<WebElement> findAllLinks(final WebElement parent) {
-        return parent.findElements(A_TAG);
-    }
-
-    /**
-     * Performs a click on a link which filters the AnalysisResult.
-     *
-     * @param columnName
-     *         the columnName holding the link
-     *
-     * @return the representation of the filtered AnalysisResult
-     */
-    private AnalysisResult clickOnFilterLink(final String columnName) {
-        return getTable().clickFilterLinkOnSite(findLink(getCell(columnName)));
-    }
-
-    /**
-     * Performs a click on the severity link.
-     *
-     * @return the representation of the filtered AnalysisResult
-     */
-    public AnalysisResult clickOnSeverityLink() {
-        return clickOnFilterLink(SEVERITY);
-    }
-
-    /**
-     * Returns the file link that will navigate to the source content.
-     *
-     * @return the file link
-     */
-    WebElement getFileLink() {
-        return getCell(FILE).findElement(By.tagName("a"));
-    }
-
-    /**
-     * Opens the source code of the affected file.
-     *
-     * @return the source code view
-     */
-    public SourceView openSourceCode() {
-        return getTable().openSourceCode(getFileLink());
-    }
-
-    /**
-     * Opens the source code of the affected file.
-     *
-     * @return the source code view
-     */
-    public ConsoleLogView openConsoleLog() {
-        return getTable().openConsoleLogView(getFileLink());
+    public String getType() {
+        return type;
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(@CheckForNull final Object o) {
         if (this == o) {
             return true;
         }
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
+        if (!super.equals(o)) {
+            return false;
+        }
+
         IssuesTableRow that = (IssuesTableRow) o;
 
-        EqualsBuilder builder = new EqualsBuilder();
-        builder.append(this.getAge(), that.getAge())
-                .append(this.getFileName(), that.getFileName())
-                .append(this.getLineNumber(), that.getLineNumber())
-                .append(this.getPackageName(), that.getPackageName())
-                .append(this.getSeverity(), that.getSeverity());
-        return builder.isEquals();
+        if (!category.equals(that.category)) {
+            return false;
+        }
+        return type.equals(that.type);
     }
 
     @Override
     public int hashCode() {
-        HashCodeBuilder builder = new HashCodeBuilder();
-
-        builder.append(this.getAge())
-                .append(this.getFileName())
-                .append(this.getLineNumber())
-                .append(this.getPackageName())
-                .append(this.getSeverity());
-        return builder.toHashCode();
+        int result = super.hashCode();
+        result = 31 * result + category.hashCode();
+        result = 31 * result + type.hashCode();
+        return result;
     }
 }

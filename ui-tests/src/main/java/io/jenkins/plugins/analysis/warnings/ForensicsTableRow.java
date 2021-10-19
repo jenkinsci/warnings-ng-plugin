@@ -2,76 +2,104 @@ package io.jenkins.plugins.analysis.warnings;
 
 import org.openqa.selenium.WebElement;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+
 /**
  * Representation of a table row displaying the forensic details for an issue.
  *
  * @author Thomas Großbeck
  */
-public class ForensicsTableRow extends GenericTableRow {
-    private static final String FILE = "File";
-    private static final String AGE = "Age";
+public class ForensicsTableRow extends BaseIssuesTableRow {
     private static final String AUTHORS = "#Authors";
     private static final String COMMITS = "#Commits";
     private static final String LAST_COMMIT = "Last Commit";
     private static final String ADDED = "Added";
+    private static final String LOC = "#LOC";
+    private static final String CHURN = "Code Churn";
 
-    private static final String FILE_LINE_SEPARATOR = ":";
+    private final int authors;
+    private final int commits;
+    private final String lastCommit;
+    private final String added;
+    private final int loc;
+    private final int churn;
 
     ForensicsTableRow(final WebElement rowElement, final ForensicsTable table) {
         super(rowElement, table);
+
+        authors = Integer.parseInt(getCellContent(AUTHORS));
+        commits = Integer.parseInt(getCellContent(COMMITS));
+        lastCommit = getCellContent(LAST_COMMIT);
+        added = getCellContent(ADDED);
+        loc = Integer.parseInt(getCellContent(LOC));
+        churn = Integer.parseInt(getCellContent(CHURN));
     }
 
-    /**
-     * Returns the file name of the forensic in this row.
-     *
-     * @return the file name
-     */
-    public String getFileName() {
-        return getCellContent(FILE).split(FILE_LINE_SEPARATOR)[0];
-    }
-
-    /**
-     * Returns the age of the forensic in this row.
-     *
-     * @return the age
-     */
-    public int getAge() {
-        return Integer.parseInt(getCellContent(AGE));
-    }
-
-    /**
-     * Returns the number of authors of the forensic in this row.
-     *
-     * @return the number of authors
-     */
     public int getAuthors() {
-        return Integer.parseInt(getCellContent(AUTHORS));
+        return authors;
     }
 
-    /**
-     * Returns the number of commits of the forensic in this row.
-     *
-     * @return the number of commits
-     */
     public int getCommits() {
-        return Integer.parseInt(getCellContent(COMMITS));
+        return commits;
     }
 
-    /**
-     * Returns the time of the last commit of the forensic in this row.
-     *
-     * @return the time of the last commit
-     */
     public String getLastCommit() {
-        return getCellContent(LAST_COMMIT);
+        return lastCommit;
     }
 
-    /**
-     * Returns the time of the last add of the forensic in this row.
-     *
-     * @return the time of the last add
-     */
     public String getAdded() {
-        return getCellContent(ADDED);
+        return added;
+    }
+
+    public int getLoc() {
+        return loc;
+    }
+
+    public int getChurn() {
+        return churn;
+    }
+
+    @Override
+    public boolean equals(@CheckForNull final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+
+        ForensicsTableRow that = (ForensicsTableRow) o;
+
+        if (authors != that.authors) {
+            return false;
+        }
+        if (commits != that.commits) {
+            return false;
+        }
+        if (loc != that.loc) {
+            return false;
+        }
+        if (churn != that.churn) {
+            return false;
+        }
+        if (!lastCommit.equals(that.lastCommit)) {
+            return false;
+        }
+        return added.equals(that.added);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + authors;
+        result = 31 * result + commits;
+        result = 31 * result + lastCommit.hashCode();
+        result = 31 * result + added.hashCode();
+        result = 31 * result + loc;
+        result = 31 * result + churn;
+        return result;
     }
 }
