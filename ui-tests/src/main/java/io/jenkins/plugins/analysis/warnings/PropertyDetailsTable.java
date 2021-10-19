@@ -10,6 +10,7 @@ import org.jenkinsci.test.acceptance.po.PageObject;
  *
  * @author Kevin Richter
  */
+// TODO: add support for new warnings
 public class PropertyDetailsTable extends AbstractIssuesTable<GenericTableRow> {
     /**
      * Creates a {@link PropertyDetailsTable} of a specific type.

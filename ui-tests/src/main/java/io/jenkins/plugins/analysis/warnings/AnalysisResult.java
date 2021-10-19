@@ -108,7 +108,7 @@ public class AnalysisResult extends PageObject {
 
     private int extractTotalFromFooter(final int column) {
         String total = find(By.tagName("tfoot")).getText();
-        return Integer.parseInt(total.split(" ", 2)[column]);
+        return Integer.parseInt(total.split(" ", -1)[column]);
     }
 
     /**

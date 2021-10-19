@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.WebElement;
 
 import edu.umd.cs.findbugs.annotations.CheckForNull;
@@ -27,12 +28,22 @@ public class ForensicsTableRow extends BaseIssuesTableRow {
     ForensicsTableRow(final WebElement rowElement, final ForensicsTable table) {
         super(rowElement, table);
 
-        authors = Integer.parseInt(getCellContent(AUTHORS));
-        commits = Integer.parseInt(getCellContent(COMMITS));
-        lastCommit = getCellContent(LAST_COMMIT);
-        added = getCellContent(ADDED);
-        loc = Integer.parseInt(getCellContent(LOC));
-        churn = Integer.parseInt(getCellContent(CHURN));
+        if (isDetailsRow()) {
+            authors = 0;
+            commits = 0;
+            lastCommit = StringUtils.EMPTY;
+            added = StringUtils.EMPTY;
+            loc = 0;
+            churn = 0;
+        }
+        else {
+            authors = Integer.parseInt(getCellContent(AUTHORS));
+            commits = Integer.parseInt(getCellContent(COMMITS));
+            lastCommit = getCellContent(LAST_COMMIT);
+            added = getCellContent(ADDED);
+            loc = Integer.parseInt(getCellContent(LOC));
+            churn = Integer.parseInt(getCellContent(CHURN));
+        }
     }
 
     public int getAuthors() {

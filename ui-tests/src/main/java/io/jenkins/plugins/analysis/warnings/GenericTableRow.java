@@ -19,11 +19,11 @@ class GenericTableRow {
         this.table = table;
     }
 
-    WebElement getRow() {
+    final WebElement getRow() {
         return row;
     }
 
-    AbstractIssuesTable<?> getTable() {
+    final AbstractIssuesTable<?> getTable() {
         return table;
     }
 
@@ -32,7 +32,7 @@ class GenericTableRow {
      *
      * @return the headers of the table
      */
-    List<String> getHeaders() {
+    final List<String> getHeaders() {
         return getTable().getHeaders();
     }
 
@@ -41,7 +41,7 @@ class GenericTableRow {
      *
      * @return the table data fields
      */
-    List<WebElement> getCells() {
+    final List<WebElement> getCells() {
         return getRow().findElements(By.tagName("td"));
     }
 
@@ -53,7 +53,7 @@ class GenericTableRow {
      *
      * @return the WebElement of the table data field
      */
-    WebElement getCell(final String header) {
+    final WebElement getCell(final String header) {
         return getCells().get(getHeaders().indexOf(header));
     }
 
@@ -65,10 +65,14 @@ class GenericTableRow {
      *
      * @return the String representation of the cell
      */
-    String getCellContent(final String header) {
+    final String getCellContent(final String header) {
         if (!getHeaders().contains(header)) {
             return "-";
         }
         return getCell(header).getText();
+    }
+
+    final boolean isDetailsRow() {
+        return getCells().size() == 1;
     }
 }

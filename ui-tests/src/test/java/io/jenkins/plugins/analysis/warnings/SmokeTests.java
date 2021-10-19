@@ -163,7 +163,7 @@ public class SmokeTests extends UiTest {
         resultPage.open();
         assertThat(resultPage).hasOnlyAvailableTabs(Tab.ISSUES, Tab.TYPES, Tab.CATEGORIES);
         PropertyDetailsTable categoriesDetailsTable = resultPage.openPropertiesTable(Tab.CATEGORIES);
-        assertThat(categoriesDetailsTable.getHeaders()).containsOnly("Category", "Total", "Distribution");
+        assertThat(categoriesDetailsTable.getHeaders()).containsOnly("Category", "Total", "New", "Distribution");
         assertThat(categoriesDetailsTable.getSize()).isEqualTo(2);
         assertThat(categoriesDetailsTable.getTotal()).isEqualTo(2);
 

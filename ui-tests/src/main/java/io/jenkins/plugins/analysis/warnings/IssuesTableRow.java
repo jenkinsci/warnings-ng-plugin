@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.WebElement;
 
 import edu.umd.cs.findbugs.annotations.CheckForNull;
@@ -16,8 +17,14 @@ public class IssuesTableRow extends AbstractSeverityTableRow {
     IssuesTableRow(final WebElement rowElement, final IssuesTable issuesDetailsTable) {
         super(rowElement, issuesDetailsTable);
 
-        category = getCellContent("Category");
-        type = getCellContent("Type");
+        if (isDetailsRow()) {
+            category = StringUtils.EMPTY;
+            type = StringUtils.EMPTY;
+        }
+        else {
+            category = getCellContent("Category");
+            type = getCellContent("Type");
+        }
     }
 
     public String getCategory() {

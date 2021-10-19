@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,12 +32,18 @@ public class DryTableRow extends AbstractSeverityTableRow {
     DryTableRow(final WebElement element, final DryTable table) {
         super(element, table);
 
-        duplicatedIn = getCell(DUPLICATED_IN)
-                .findElements(By.tagName("li"))
-                .stream()
-                .map(WebElement::getText)
-                .collect(Collectors.toList());
-        lines = Integer.parseInt(getCellContent(AMOUNT_OF_LINES));
+        if (isDetailsRow()) {
+            duplicatedIn = new ArrayList<>();
+            lines = 0;
+        }
+        else {
+            duplicatedIn = getCell(DUPLICATED_IN)
+                    .findElements(By.tagName("li"))
+                    .stream()
+                    .map(WebElement::getText)
+                    .collect(Collectors.toList());
+            lines = Integer.parseInt(getCellContent(AMOUNT_OF_LINES));
+        }
     }
 
     /**

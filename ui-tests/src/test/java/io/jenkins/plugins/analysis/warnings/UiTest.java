@@ -171,8 +171,8 @@ abstract class UiTest extends AbstractJUnitTest {
 
         AnalysisResult lowSeverity = firstRow.clickOnSeverityLink();
         DryTable lowSeverityTable = lowSeverity.openDryTable();
-        assertThat(issuesTable.getSize()).isEqualTo(6);
-        assertThat(issuesTable.getTotal()).isEqualTo(6);
+        assertThat(lowSeverityTable.getSize()).isEqualTo(6);
+        assertThat(lowSeverityTable.getTotal()).isEqualTo(6);
 
         for (int i = 0; i < 6; i++) {
             DryTableRow row = lowSeverityTable.getRow(i);

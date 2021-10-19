@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -26,10 +27,17 @@ class BaseIssuesTableRow extends GenericTableRow {
         super(row, table);
 
         details = getRow().getText();
-        String[] file = getCellContent(FILE).split(FILE_LINE_SEPARATOR, 2);
-        fileName = file[0];
-        lineNumber = Integer.parseInt(file[1]);
-        age = Integer.parseInt(getCellContent(AGE));
+        if (isDetailsRow()) {
+            fileName = StringUtils.EMPTY;
+            lineNumber = 0;
+            age = 0;
+        }
+        else {
+            String[] file = getCellContent(FILE).split(FILE_LINE_SEPARATOR, -1);
+            fileName = file[0];
+            lineNumber = Integer.parseInt(file[1]);
+            age = Integer.parseInt(getCellContent(AGE));
+        }
     }
 
     public String getDetails() {

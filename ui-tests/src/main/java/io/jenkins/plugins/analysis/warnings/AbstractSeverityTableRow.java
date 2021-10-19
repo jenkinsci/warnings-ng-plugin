@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -24,8 +25,14 @@ abstract class AbstractSeverityTableRow extends BaseIssuesTableRow {
     AbstractSeverityTableRow(final WebElement rowElement, final AbstractIssuesTable<?> table) {
         super(rowElement, table);
 
-        severity = getCellContent(SEVERITY);
-        packageName = getCellContent(PACKAGE);
+        if (isDetailsRow()) {
+            severity = StringUtils.EMPTY;
+            packageName = StringUtils.EMPTY;
+        }
+        else {
+            severity = getCellContent(SEVERITY);
+            packageName = getCellContent(PACKAGE);
+        }
     }
 
     public String getSeverity() {
