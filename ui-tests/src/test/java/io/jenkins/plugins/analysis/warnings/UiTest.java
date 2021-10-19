@@ -370,7 +370,7 @@ abstract class UiTest extends AbstractJUnitTest {
         return new AnalysisSummary(build, toolId).openInfoView();
     }
 
-    protected Build shouldBuildSuccessfully(final Job job) {
+    protected Build buildSuccessfully(final Job job) {
         return job.startBuild().waitUntilFinished().shouldSucceed();
     }
 

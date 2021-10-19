@@ -32,7 +32,7 @@ public class DashboardViewPortletUiTest extends UiTest {
         FreeStyleJob job = createFreeStyleJob(CHECKSTYLE_RESULT);
         job.addPublisher(IssuesRecorder.class, recorder -> recorder.setTool(CHECKSTYLE_TOOL));
         job.save();
-        Build build = shouldBuildSuccessfully(job);
+        Build build = buildSuccessfully(job);
 
         DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
 
@@ -54,7 +54,7 @@ public class DashboardViewPortletUiTest extends UiTest {
         FreeStyleJob job = createFreeStyleJob(CHECKSTYLE_RESULT);
         job.addPublisher(IssuesRecorder.class, recorder -> recorder.setTool(CHECKSTYLE_TOOL));
         job.save();
-        Build build = shouldBuildSuccessfully(job);
+        Build build = buildSuccessfully(job);
 
         DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
 
@@ -75,7 +75,7 @@ public class DashboardViewPortletUiTest extends UiTest {
         FreeStyleJob job = createFreeStyleJob(CLEAN_CHECKSTYLE_RESULT);
         job.addPublisher(IssuesRecorder.class, recorder -> recorder.setTool(CHECKSTYLE_TOOL));
         job.save();
-        Build build = shouldBuildSuccessfully(job);
+        Build build = buildSuccessfully(job);
 
         DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
 
@@ -97,7 +97,7 @@ public class DashboardViewPortletUiTest extends UiTest {
             recorder.addTool(ECLIPSE_COMPILER, "**/eclipse.txt");
         });
         job.save();
-        Build build = shouldBuildSuccessfully(job);
+        Build build = buildSuccessfully(job);
 
         DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
 
@@ -127,7 +127,7 @@ public class DashboardViewPortletUiTest extends UiTest {
             recorder.addTool(PMD_TOOL, "**/pmd.xml");
         });
         job.save();
-        Build build = shouldBuildSuccessfully(job);
+        Build build = buildSuccessfully(job);
 
         DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
 
@@ -154,12 +154,12 @@ public class DashboardViewPortletUiTest extends UiTest {
         FreeStyleJob job1 = createFreeStyleJob(CHECKSTYLE_RESULT);
         job1.addPublisher(IssuesRecorder.class, recorder -> recorder.setTool(CHECKSTYLE_TOOL));
         job1.save();
-        shouldBuildSuccessfully(job1);
+        buildSuccessfully(job1);
 
         FreeStyleJob job2 = createFreeStyleJob(CLEAN_CHECKSTYLE_RESULT);
         job2.addPublisher(IssuesRecorder.class, recorder -> recorder.setTool(CHECKSTYLE_TOOL));
         job2.save();
-        Build build = shouldBuildSuccessfully(job2);
+        Build build = buildSuccessfully(job2);
 
         DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
 
@@ -182,12 +182,12 @@ public class DashboardViewPortletUiTest extends UiTest {
         FreeStyleJob job1 = createFreeStyleJob(CHECKSTYLE_RESULT);
         job1.addPublisher(IssuesRecorder.class, recorder -> recorder.setTool(CHECKSTYLE_TOOL));
         job1.save();
-        shouldBuildSuccessfully(job1);
+        buildSuccessfully(job1);
 
         FreeStyleJob job2 = createFreeStyleJob(CLEAN_CHECKSTYLE_RESULT);
         job2.addPublisher(IssuesRecorder.class, recorder -> recorder.setTool(CHECKSTYLE_TOOL));
         job2.save();
-        Build build = shouldBuildSuccessfully(job2);
+        Build build = buildSuccessfully(job2);
 
         DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
 

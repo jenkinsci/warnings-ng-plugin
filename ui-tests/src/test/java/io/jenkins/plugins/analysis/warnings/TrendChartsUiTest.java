@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.jenkinsci.test.acceptance.junit.WithPlugins;
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.FreeStyleJob;
-import org.jenkinsci.test.acceptance.po.Job;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 import static org.assertj.core.api.Assertions.*;
@@ -141,12 +140,6 @@ public class TrendChartsUiTest extends UiTest {
                         .contains(0)
                         .contains(2)
                 );
-    }
-
-    private Build buildSuccessfully(final Job job) {
-        Build build = job.startBuild().waitUntilFinished();
-        assertThat(build.isSuccess()).isTrue();
-        return build;
     }
 
     private void reconfigureJobWithResource(final FreeStyleJob job) {
