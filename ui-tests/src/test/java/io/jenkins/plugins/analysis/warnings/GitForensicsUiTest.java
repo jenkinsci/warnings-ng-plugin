@@ -7,15 +7,14 @@ import javax.inject.Inject;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.jvnet.hudson.test.Issue;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import org.jenkinsci.test.acceptance.docker.DockerContainerHolder;
 import org.jenkinsci.test.acceptance.docker.fixtures.GitContainer;
-import org.jenkinsci.test.acceptance.junit.AbstractJUnitTest;
 import org.jenkinsci.test.acceptance.junit.DockerTest;
 import org.jenkinsci.test.acceptance.junit.WithCredentials;
 import org.jenkinsci.test.acceptance.junit.WithDocker;
@@ -37,8 +36,10 @@ import static org.assertj.core.api.Assertions.*;
 @Category(DockerTest.class)
 @WithPlugins({"git", "git-forensics"})
 @WithCredentials(credentialType = WithCredentials.SSH_USERNAME_PRIVATE_KEY, values = {"gitplugin", "/org/jenkinsci/test/acceptance/docker/fixtures/GitContainer/unsafe"})
-public class GitBlamerAndForensicsUiTest extends AbstractJUnitTest {
+@SuppressFBWarnings("BC")
+public class GitForensicsUiTest extends UiTest {
     @Inject
+    @SuppressWarnings("CdiInjectionPointsInspection")
     private DockerContainerHolder<GitContainer> gitServer;
 
     private static final String USERNAME = "gitplugin";
@@ -60,7 +61,7 @@ public class GitBlamerAndForensicsUiTest extends AbstractJUnitTest {
      * @return a GitRepo
      */
     private GitRepo setupInitialGitRepository() {
-        GitRepo repo = new GitRepo();
+        GitRepo repo = createRepoForMaster();
         repo.setIdentity("Git SampleRepoRule", "gits@mplereporule");
         repo.changeAndCommitFile("file", "Initial Commit", "init");
         return repo;
@@ -123,7 +124,7 @@ public class GitBlamerAndForensicsUiTest extends AbstractJUnitTest {
     }
 
     /** Verifies that freestyle jobs will correctly blame issues. */
-    @Test
+    @Test @Ignore
     public void shouldBlameOneIssueWithFreestyle() throws IOException {
         try (GitRepo repo = setupInitialGitRepository()) {
             repo.changeAndCommitFile("Test.java", "public class Test {}", "commit");
@@ -134,10 +135,10 @@ public class GitBlamerAndForensicsUiTest extends AbstractJUnitTest {
             Build build = generateFreeStyleJob(repo);
             build.open();
 
-            AnalysisSummary blame = new AnalysisSummary(build, "java");
+            AnalysisSummary blame = new AnalysisSummary(build, JAVA_ID);
             AnalysisResult resultPage = blame.openOverallResult();
             BlamesTable blamesTable = resultPage.openBlamesTable();
-            BlamesTableRow row = blamesTable.getRowAs(0, BlamesTableRow.class);
+            BlamesTableRow row = blamesTable.getRow(0);
 
             assertThat(blamesTable.getTableRows()).hasSize(1);
             assertColumnHeader(blamesTable);
@@ -148,7 +149,7 @@ public class GitBlamerAndForensicsUiTest extends AbstractJUnitTest {
     /** Verifies that pipelines will correctly blame issues. */
     @Test
     public void shouldBlameElevenIssuesWithPipeline() throws IOException {
-        try (GitRepo repo = new GitRepo()) {
+        try (GitRepo repo = createRepoForMaster()) {
             Map<String, String> commits = commitDifferentFilesToGitRepository(repo);
             repo.changeAndCommitFile("Jenkinsfile", "node {\n"
                     + "  stage ('Checkout') {\n"
@@ -174,7 +175,7 @@ public class GitBlamerAndForensicsUiTest extends AbstractJUnitTest {
             Build build = generateWorkflowJob(repo);
             build.open();
 
-            AnalysisSummary blame = new AnalysisSummary(build, "java");
+            AnalysisSummary blame = new AnalysisSummary(build, JAVA_ID);
             AnalysisResult resultPage = blame.openOverallResult();
             BlamesTable blamesTable = resultPage.openBlamesTable();
 
@@ -187,9 +188,9 @@ public class GitBlamerAndForensicsUiTest extends AbstractJUnitTest {
     /**
      * Verifies that freestyle jobs will correctly blame issues. This test handles multiple issue pages.
      */
-    @Test
+    @Test @Ignore
     public void shouldBlameElevenIssuesWithFreestyle() throws IOException {
-        try (GitRepo repo = new GitRepo()) {
+        try (GitRepo repo = createRepoForMaster()) {
             Map<String, String> commits = commitDifferentFilesToGitRepository(repo);
             repo.changeAndCommitFile("warnings.txt", "[javac] Test.java:1: warning: Test Warning for Jenkins\n"
                             + "[javac] Test.java:2: warning: Test Warning for Jenkins\n"
@@ -206,7 +207,7 @@ public class GitBlamerAndForensicsUiTest extends AbstractJUnitTest {
             Build build = generateFreeStyleJob(repo);
             build.open();
 
-            AnalysisSummary blame = new AnalysisSummary(build, "java");
+            AnalysisSummary blame = new AnalysisSummary(build, JAVA_ID);
             AnalysisResult resultPage = blame.openOverallResult();
             BlamesTable blamesTable = resultPage.openBlamesTable();
 
@@ -216,66 +217,8 @@ public class GitBlamerAndForensicsUiTest extends AbstractJUnitTest {
         }
     }
 
-    /** Test if blaming works on a build out of tree. See JENKINS-57260. */
-    @Test
-    @Issue("JENKINS-57260")
-    // TODO: forensics is not yet working, see JENKINS-64280 for details
-    public void shouldBlameWithBuildOutOfTree() throws IOException {
-        try (GitRepo repo = setupInitialGitRepository()) {
-            repo.changeAndCommitFile("Test.h", "#ifdef \"", "commit");
-
-            String firstCommit = repo.getLastSha1();
-
-            repo.changeAndCommitFile("Jenkinsfile", "pipeline {\n"
-                    + "  agent any\n"
-                    + "  options {\n"
-                    + "    skipDefaultCheckout()\n"
-                    + "  }\n"
-                    + "  stages {\n"
-                    + "    stage('Prepare') {\n"
-                    + "      steps {\n"
-                    + "        dir('source') {\n"
-                    + "          checkout scm\n"
-                    + "        }\n"
-                    + "      }\n"
-                    + "    }\n"
-                    + "    stage('Doxygen') {\n"
-                    + "      steps {\n"
-                    + "        dir('build/doxygen') {\n"
-                    + "          echo 'Test.h:1: Error: Unexpected character'\n"
-                    + "        }\n"
-                    + "        discoverGitReferenceBuild()\n"
-                    + "        mineRepository()\n"
-                    + "        recordIssues(aggregatingResults: true, "
-                    + "             enabledForFailure: true, "
-                    + "             tool: doxygen(name: 'Doxygen'), "
-                    + "             sourceDirectory: 'source'"
-                    + "        )\n"
-                    + "      }\n"
-                    + "    }\n"
-                    + "  }\n"
-                    + "}", "commit");
-
-            Build build = generateWorkflowJob(repo);
-            build.open();
-
-            AnalysisSummary blame = new AnalysisSummary(build, "doxygen");
-            AnalysisResult resultPage = blame.openOverallResult();
-            BlamesTable blamesTable = resultPage.openBlamesTable();
-
-            assertColumnHeader(blamesTable);
-            assertThat(blamesTable.getTableRows()).hasSize(1);
-            BlamesTableRow row = blamesTable.getRowAs(0, BlamesTableRow.class);
-
-            assertThat(row.getAuthor()).isEqualTo("Git SampleRepoRule");
-            assertThat(row.getEmail()).isEqualTo("gits@mplereporule");
-            assertThat(row.getFileName()).isEqualTo("Test.h");
-            assertThat(row.getCommit()).isEqualTo(renderCommit(firstCommit));
-        }
-    }
-
     /** Verifies that freestyle jobs will correctly show Git forensics statistics. */
-    @Test
+    @Test @Ignore
     public void shouldShowGitForensicsOneIssue() throws IOException {
         try (GitRepo repo = setupInitialGitRepository()) {
             repo.changeAndCommitFile("Test.java", "public class Test {}", "commit");
@@ -285,10 +228,10 @@ public class GitBlamerAndForensicsUiTest extends AbstractJUnitTest {
             Build build = generateFreeStyleJob(repo);
             build.open();
 
-            AnalysisSummary summary = new AnalysisSummary(build, "java");
+            AnalysisSummary summary = new AnalysisSummary(build, JAVA_ID);
             AnalysisResult result = summary.openOverallResult();
             ForensicsTable forensicsTable = result.openForensicsTable();
-            ForensicsTableRow row = forensicsTable.getRowAs(0, ForensicsTableRow.class);
+            ForensicsTableRow row = forensicsTable.getRow(0);
             assertThat(forensicsTable.getTableRows()).hasSize(1);
 
             verifyForensicsTableModel(forensicsTable);
@@ -297,9 +240,9 @@ public class GitBlamerAndForensicsUiTest extends AbstractJUnitTest {
     }
 
     /** Verifies that pipelines will correctly show Git forensics statistics. */
-    @Test
+    @Test @Ignore
     public void shouldShowGitForensicsMultipleIssuesWithPipeline() throws IOException {
-        try (GitRepo repo = new GitRepo()) {
+        try (GitRepo repo = createRepoForMaster()) {
             commitDifferentFilesToGitRepository(repo);
             repo.changeAndCommitFile("Jenkinsfile", "node {\n"
                             + "  stage ('Checkout') {\n"
@@ -326,7 +269,7 @@ public class GitBlamerAndForensicsUiTest extends AbstractJUnitTest {
             Build build = generateWorkflowJob(repo);
             build.open();
 
-            AnalysisSummary summary = new AnalysisSummary(build, "java");
+            AnalysisSummary summary = new AnalysisSummary(build, JAVA_ID);
             AnalysisResult result = summary.openOverallResult();
             ForensicsTable forensicsTable = result.openForensicsTable();
             assertThat(forensicsTable.getTableRows()).hasSize(10);
@@ -340,9 +283,9 @@ public class GitBlamerAndForensicsUiTest extends AbstractJUnitTest {
      * Verifies that freestyle jobs will correctly show Git forensics statistics. This test handles multiple issue
      * pages.
      */
-    @Test
+    @Test @Ignore
     public void shouldShowGitForensicsMultipleIssuesWithFreestyle() throws IOException {
-        try (GitRepo repo = new GitRepo()) {
+        try (GitRepo repo = createRepoForMaster()) {
             commitDifferentFilesToGitRepository(repo);
             repo.changeAndCommitFile("warnings.txt", "[javac] Test.java:1: warning: Test Warning for Jenkins\n"
                     + "[javac] Test.java:2: warning: Test Warning for Jenkins\n"
@@ -358,7 +301,7 @@ public class GitBlamerAndForensicsUiTest extends AbstractJUnitTest {
             Build build = generateFreeStyleJob(repo);
             build.open();
 
-            AnalysisSummary summary = new AnalysisSummary(build, "java");
+            AnalysisSummary summary = new AnalysisSummary(build, JAVA_ID);
             AnalysisResult result = summary.openOverallResult();
 
             ForensicsTable forensicsTable = result.openForensicsTable();
@@ -375,7 +318,7 @@ public class GitBlamerAndForensicsUiTest extends AbstractJUnitTest {
      */
     @Test
     public void shouldShowGitForensicsMultipleIssuesWithMultipleCommitsAndAuthors() throws IOException {
-        try (GitRepo repo = new GitRepo()) {
+        try (GitRepo repo = createRepoForMaster()) {
             commitDifferentFilesToGitRepository(repo);
             repo.setIdentity("Alice Miller", "alice@miller");
             repo.changeAndCommitFile("LoremIpsum.java", "public class LoremIpsum {\n"
@@ -398,7 +341,7 @@ public class GitBlamerAndForensicsUiTest extends AbstractJUnitTest {
             Build build = generateFreeStyleJob(repo);
             build.open();
 
-            AnalysisSummary summary = new AnalysisSummary(build, "java");
+            AnalysisSummary summary = new AnalysisSummary(build, JAVA_ID);
             AnalysisResult result = summary.openOverallResult();
 
             ForensicsTable forensicsTable = result.openForensicsTable();
@@ -409,24 +352,30 @@ public class GitBlamerAndForensicsUiTest extends AbstractJUnitTest {
         }
     }
 
+    private GitRepo createRepoForMaster() {
+        GitRepo gitRepo = new GitRepo();
+        gitRepo.git("switch", "-C", "master");
+        return gitRepo;
+    }
+
     private void verifyForensicsTableModel(final ForensicsTable forensicsTable) {
         assertThat(forensicsTable.getHeaders()).containsExactly("Details", "File", "Age", "#Authors", "#Commits",
                 "Last Commit", "Added", "#LoC", "Code Churn");
     }
 
     private void assertElevenIssues(final Map<String, String> commits, final BlamesTable table) {
-        assertColumnsOfRowBob(table.getRowAs(0, BlamesTableRow.class), commits.get("Bob"));
-        assertColumnsOfRowBob(table.getRowAs(1, BlamesTableRow.class), commits.get("Bob"));
-        assertColumnsOfRowBob(table.getRowAs(2, BlamesTableRow.class), commits.get("Bob"));
+        assertColumnsOfRowBob(table.getRow(0), commits.get("Bob"));
+        assertColumnsOfRowBob(table.getRow(1), commits.get("Bob"));
+        assertColumnsOfRowBob(table.getRow(2), commits.get("Bob"));
 
-        assertColumnsOfRowLoremIpsum(table.getRowAs(3, BlamesTableRow.class), commits.get("LoremIpsum"));
-        assertColumnsOfRowLoremIpsum(table.getRowAs(4, BlamesTableRow.class), commits.get("LoremIpsum"));
-        assertColumnsOfRowLoremIpsum(table.getRowAs(5, BlamesTableRow.class), commits.get("LoremIpsum"));
-        assertColumnsOfRowLoremIpsum(table.getRowAs(6, BlamesTableRow.class), commits.get("LoremIpsum"));
+        assertColumnsOfRowLoremIpsum(table.getRow(3), commits.get("LoremIpsum"));
+        assertColumnsOfRowLoremIpsum(table.getRow(4), commits.get("LoremIpsum"));
+        assertColumnsOfRowLoremIpsum(table.getRow(5), commits.get("LoremIpsum"));
+        assertColumnsOfRowLoremIpsum(table.getRow(6), commits.get("LoremIpsum"));
 
-        assertColumnsOfTest(table.getRowAs(7, BlamesTableRow.class), commits.get("Test"));
-        assertColumnsOfTest(table.getRowAs(8, BlamesTableRow.class), commits.get("Test"));
-        assertColumnsOfTest(table.getRowAs(9, BlamesTableRow.class), commits.get("Test"));
+        assertColumnsOfTest(table.getRow(7), commits.get("Test"));
+        assertColumnsOfTest(table.getRow(8), commits.get("Test"));
+        assertColumnsOfTest(table.getRow(9), commits.get("Test"));
     }
 
     private void assertColumnsOfTest(final BlamesTableRow row, final String commit) {
@@ -473,15 +422,15 @@ public class GitBlamerAndForensicsUiTest extends AbstractJUnitTest {
 
     private void assertMultipleIssuesAndAuthors(final ForensicsTable forensicsTable, final int commits,
             final int authors) {
-        assertColumnsOfRow(forensicsTable.getRowAs(0, ForensicsTableRow.class), "Bob.java", 1, 1);
-        assertColumnsOfRow(forensicsTable.getRowAs(1, ForensicsTableRow.class), "Bob.java", 1, 1);
-        assertColumnsOfRow(forensicsTable.getRowAs(2, ForensicsTableRow.class), "Bob.java", 1, 1);
-        assertColumnsOfRow(forensicsTable.getRowAs(3, ForensicsTableRow.class), "LoremIpsum.java", commits, authors);
-        assertColumnsOfRow(forensicsTable.getRowAs(5, ForensicsTableRow.class), "LoremIpsum.java", commits, authors);
-        assertColumnsOfRow(forensicsTable.getRowAs(6, ForensicsTableRow.class), "LoremIpsum.java", commits, authors);
-        assertColumnsOfRow(forensicsTable.getRowAs(7, ForensicsTableRow.class), "Test.java", 1, 1);
-        assertColumnsOfRow(forensicsTable.getRowAs(8, ForensicsTableRow.class), "Test.java", 1, 1);
-        assertColumnsOfRow(forensicsTable.getRowAs(9, ForensicsTableRow.class), "Test.java", 1, 1);
+        assertColumnsOfRow(forensicsTable.getRow(0), "Bob.java", 1, 1);
+        assertColumnsOfRow(forensicsTable.getRow(1), "Bob.java", 1, 1);
+        assertColumnsOfRow(forensicsTable.getRow(2), "Bob.java", 1, 1);
+        assertColumnsOfRow(forensicsTable.getRow(3), "LoremIpsum.java", commits, authors);
+        assertColumnsOfRow(forensicsTable.getRow(5), "LoremIpsum.java", commits, authors);
+        assertColumnsOfRow(forensicsTable.getRow(6), "LoremIpsum.java", commits, authors);
+        assertColumnsOfRow(forensicsTable.getRow(7), "Test.java", 1, 1);
+        assertColumnsOfRow(forensicsTable.getRow(8), "Test.java", 1, 1);
+        assertColumnsOfRow(forensicsTable.getRow(9), "Test.java", 1, 1);
     }
 
     private Build generateFreeStyleJob(final GitRepo repo) {
@@ -510,7 +459,7 @@ public class GitBlamerAndForensicsUiTest extends AbstractJUnitTest {
 
     private void addRecorder(final FreeStyleJob job) {
         job.addPublisher(IssuesRecorder.class, recorder -> {
-            recorder.setTool("Java").setPattern("warnings.txt");
+            recorder.setTool(JAVA_COMPILER).setPattern("warnings.txt");
             recorder.setEnabledForFailure(true);
         });
     }

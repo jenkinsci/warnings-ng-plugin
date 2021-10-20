@@ -323,7 +323,7 @@ public class AnalysisSummary extends PageObject {
         /** Info and error messages. */
         ERROR("exclamation-triangle");
 
-        private String iconName;
+        private final String iconName;
 
         InfoType(final String iconName) {
             this.iconName = iconName;

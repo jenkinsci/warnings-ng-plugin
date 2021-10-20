@@ -12,12 +12,10 @@ import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule.WebClient;
 import org.xml.sax.SAXException;
 
-import com.gargoylesoftware.htmlunit.WebResponse;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.parser.neko.HtmlUnitNekoHtmlParser;
 
 import edu.hm.hafner.analysis.Issue;
 
@@ -386,8 +384,7 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
 
     private void checkWebPageForExpectedEmptyResult(final AnalysisResult result) {
         try (WebClient webClient = createWebClient()) {
-            WebResponse webResponse = webClient.getPage(result.getOwner(), DEFAULT_ENTRY_PATH).getWebResponse();
-            HtmlPage htmlPage = new HtmlUnitNekoHtmlParser().parseHtml(webResponse, webClient.getCurrentWindow());
+            HtmlPage htmlPage = webClient.getPage(result.getOwner(), DEFAULT_ENTRY_PATH).getPage();
             assertThat(getLinksWithGivenTargetName(htmlPage, DEFAULT_TAB_TO_INVESTIGATE)).isEmpty();
         }
         catch (IOException | SAXException e) {

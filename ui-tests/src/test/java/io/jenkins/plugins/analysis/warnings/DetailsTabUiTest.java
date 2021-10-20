@@ -10,13 +10,13 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import org.jenkinsci.test.acceptance.junit.AbstractJUnitTest;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import org.jenkinsci.test.acceptance.junit.WithPlugins;
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.FreeStyleJob;
 
 import io.jenkins.plugins.analysis.warnings.AnalysisResult.Tab;
-import io.jenkins.plugins.analysis.warnings.IssuesDetailsTable.Header;
 
 import static io.jenkins.plugins.analysis.warnings.Assertions.*;
 
@@ -28,16 +28,17 @@ import static io.jenkins.plugins.analysis.warnings.Assertions.*;
  * @author Simon Schönwiese
  */
 @WithPlugins("warnings-ng")
-public class DetailsTabUiTest extends AbstractJUnitTest {
-    private static final String WARNINGS_PLUGIN_PREFIX = "/details_tab_test/";
+@SuppressFBWarnings("BC")
+public class DetailsTabUiTest extends UiTest {
+    private static final String DETAILS_TAB_RESOURCES = "details_tab_test/";
 
     /**
      * When a single warning is being recognized only the issues-tab should be shown.
      */
     @Test
     public void shouldPopulateDetailsTabSingleWarning() {
-        FreeStyleJob job = createFreeStyleJob("java1Warning.txt");
-        job.addPublisher(IssuesRecorder.class, recorder -> recorder.setToolWithPattern("Java", "**/*.txt"));
+        FreeStyleJob job = createFreeStyleJob(DETAILS_TAB_RESOURCES + "java1Warning.txt");
+        job.addPublisher(IssuesRecorder.class, recorder -> recorder.setToolWithPattern(JAVA_COMPILER, "**/*.txt"));
         job.save();
 
         Build build = job.startBuild().waitUntilFinished();
@@ -50,8 +51,8 @@ public class DetailsTabUiTest extends AbstractJUnitTest {
         assertThat(tabs).containsOnlyOnce(Tab.ISSUES);
         assertThat(resultPage.getActiveTab()).isEqualTo(Tab.ISSUES);
 
-        IssuesDetailsTable issuesDetailsTable = resultPage.openIssuesTable();
-        assertThat(issuesDetailsTable.getTableRows()).hasSize(1);
+        IssuesTable issuesTable = resultPage.openIssuesTable();
+        assertThat(issuesTable.getTableRows()).hasSize(1);
     }
 
     /**
@@ -59,8 +60,8 @@ public class DetailsTabUiTest extends AbstractJUnitTest {
      */
     @Test
     public void shouldPopulateDetailsTabMultipleWarnings() {
-        FreeStyleJob job = createFreeStyleJob("java2Warnings.txt");
-        job.addPublisher(IssuesRecorder.class, recorder -> recorder.setToolWithPattern("Java", "**/*.txt"));
+        FreeStyleJob job = createFreeStyleJob(DETAILS_TAB_RESOURCES + "java2Warnings.txt");
+        job.addPublisher(IssuesRecorder.class, recorder -> recorder.setToolWithPattern(JAVA_COMPILER, "**/*.txt"));
         job.save();
 
         Build build = job.startBuild().waitUntilFinished();
@@ -72,13 +73,13 @@ public class DetailsTabUiTest extends AbstractJUnitTest {
         assertThat(resultPage).hasOnlyAvailableTabs(Tab.FOLDERS, Tab.FILES, Tab.ISSUES);
 
         PropertyDetailsTable foldersDetailsTable = resultPage.openPropertiesTable(Tab.FOLDERS);
-        assertThat(foldersDetailsTable).hasTotal(2);
+        assertThat(foldersDetailsTable.getTotal()).isEqualTo(2);
 
         PropertyDetailsTable filesDetailsTable = resultPage.openPropertiesTable(Tab.FILES);
-        assertThat(filesDetailsTable).hasTotal(2);
+        assertThat(filesDetailsTable.getTotal()).isEqualTo(2);
 
-        IssuesDetailsTable issuesDetailsTable = resultPage.openIssuesTable();
-        assertThat(issuesDetailsTable).hasTotal(2);
+        IssuesTable issuesTable = resultPage.openIssuesTable();
+        assertThat(issuesTable.getTotal()).isEqualTo(2);
     }
 
     /**
@@ -87,8 +88,8 @@ public class DetailsTabUiTest extends AbstractJUnitTest {
      */
     @Test
     public void shouldMemorizeSelectedTabAsActiveOnPageReload() {
-        FreeStyleJob job = createFreeStyleJob("../checkstyle-result.xml");
-        job.addPublisher(IssuesRecorder.class, recorder -> recorder.setTool("CheckStyle"));
+        FreeStyleJob job = createFreeStyleJob("checkstyle-result.xml");
+        job.addPublisher(IssuesRecorder.class, recorder -> recorder.setTool(CHECKSTYLE_TOOL));
         job.save();
 
         Build build = job.startBuild().waitUntilFinished();
@@ -113,8 +114,8 @@ public class DetailsTabUiTest extends AbstractJUnitTest {
      */
     @Test
     public void shouldWorkWithMultipleTabsAndPages() {
-        FreeStyleJob job = createFreeStyleJob("../checkstyle-result.xml");
-        job.addPublisher(IssuesRecorder.class, recorder -> recorder.setTool("CheckStyle"));
+        FreeStyleJob job = createFreeStyleJob("checkstyle-result.xml");
+        job.addPublisher(IssuesRecorder.class, recorder -> recorder.setTool(CHECKSTYLE_TOOL));
         job.save();
 
         Build build = job.startBuild().waitUntilFinished();
@@ -126,33 +127,36 @@ public class DetailsTabUiTest extends AbstractJUnitTest {
         assertThat(resultPage).hasOnlyAvailableTabs(Tab.ISSUES, Tab.TYPES, Tab.CATEGORIES);
 
         PropertyDetailsTable categoriesDetailsTable = resultPage.openPropertiesTable(Tab.CATEGORIES);
-        assertThat(categoriesDetailsTable).hasHeaders("Category", "Total", "Distribution");
-        assertThat(categoriesDetailsTable).hasSize(5).hasTotal(5);
+        assertThat(categoriesDetailsTable.getHeaders()).containsOnly("Category", "Total", "New", "Distribution");
+        assertThat(categoriesDetailsTable.getSize()).isEqualTo(5);
+        assertThat(categoriesDetailsTable.getTotal()).isEqualTo(5);
 
         PropertyDetailsTable typesDetailsTable = resultPage.openPropertiesTable(Tab.TYPES);
-        assertThat(typesDetailsTable).hasHeaders("Type", "Total", "Distribution");
-        assertThat(typesDetailsTable).hasSize(7).hasTotal(7);
+        assertThat(typesDetailsTable.getHeaders()).containsOnly("Type", "Total", "New", "Distribution");
+        assertThat(typesDetailsTable.getSize()).isEqualTo(7);
+        assertThat(typesDetailsTable.getTotal()).isEqualTo(7);
 
-        IssuesDetailsTable issuesDetailsTable = resultPage.openIssuesTable();
-        assertThat(issuesDetailsTable).hasColumnHeaders(Header.DETAILS, Header.FILE, Header.CATEGORY,
-                Header.TYPE, Header.SEVERITY, Header.AGE);
-        assertThat(issuesDetailsTable).hasSize(10).hasTotal(11);
+        IssuesTable issuesTable = resultPage.openIssuesTable();
+        assertThat(issuesTable.getColumnHeaders()).containsOnly(IssuesTable.Header.DETAILS, IssuesTable.Header.FILE, IssuesTable.Header.CATEGORY,
+                IssuesTable.Header.TYPE, IssuesTable.Header.SEVERITY, IssuesTable.Header.AGE);
+        assertThat(issuesTable.getSize()).isEqualTo(10);
+        assertThat(issuesTable.getTotal()).isEqualTo(11);
 
-        List<GenericTableRow> tableRowListIssues = issuesDetailsTable.getTableRows();
-        IssuesTableRow firstRow = (IssuesTableRow) tableRowListIssues.get(9);
+        List<IssuesTableRow> tableRowListIssues = issuesTable.getTableRows();
+        AbstractSeverityTableRow firstRow = tableRowListIssues.get(9);
         firstRow.toggleDetailsRow();
 
-        issuesDetailsTable.openTablePage(2);
-        assertThat(issuesDetailsTable.getSize()).isEqualTo(1);
+        issuesTable.openTablePage(2);
+        assertThat(issuesTable.getSize()).isEqualTo(1);
 
-        tableRowListIssues = issuesDetailsTable.getTableRows();
-        IssuesTableRow lastIssueTableRow = (IssuesTableRow) tableRowListIssues.get(0);
+        tableRowListIssues = issuesTable.getTableRows();
+        AbstractSeverityTableRow lastIssueTableRow = tableRowListIssues.get(0);
         assertThat(lastIssueTableRow.getSeverity()).isEqualTo("Error");
         AnalysisResult analysisResult = lastIssueTableRow.clickOnSeverityLink();
-        IssuesDetailsTable errorIssuesDetailsTable = analysisResult.openIssuesTable();
-        assertThat(errorIssuesDetailsTable.getSize()).isEqualTo(6);
-        for (int i = 0; i < errorIssuesDetailsTable.getSize(); i++) {
-            IssuesTableRow row = (IssuesTableRow) errorIssuesDetailsTable.getTableRows().get(i);
+        IssuesTable errorIssuesTable = analysisResult.openIssuesTable();
+        assertThat(errorIssuesTable.getSize()).isEqualTo(6);
+        for (int i = 0; i < errorIssuesTable.getSize(); i++) {
+            AbstractSeverityTableRow row = errorIssuesTable.getTableRows().get(i);
             assertThat(row.getSeverity()).isEqualTo("Error");
         }
     }
@@ -163,8 +167,8 @@ public class DetailsTabUiTest extends AbstractJUnitTest {
      */
     @Test
     public void shouldShowCorrectSeverityAndAge() {
-        FreeStyleJob job = createFreeStyleJob("../cpd1Warning.xml");
-        job.addPublisher(IssuesRecorder.class, recorder -> recorder.setToolWithPattern("CPD", "**/*.xml"));
+        FreeStyleJob job = createFreeStyleJob("cpd1Warning.xml");
+        job.addPublisher(IssuesRecorder.class, recorder -> recorder.setToolWithPattern(CPD_TOOL, "**/*.xml"));
         job.save();
 
         Build build = job.startBuild().waitUntilFinished();
@@ -174,8 +178,8 @@ public class DetailsTabUiTest extends AbstractJUnitTest {
 
         AnalysisResult cpdDetails = cpd.openOverallResult();
 
-        IssuesDetailsTable issuesDetailsTable = cpdDetails.openIssuesTable();
-        DryIssuesTableRow issuesTableFirstRow = issuesDetailsTable.getRowAs(0, DryIssuesTableRow.class);
+        DryTable issuesDetailsTable = cpdDetails.openDryTable();
+        DryTableRow issuesTableFirstRow = issuesDetailsTable.getRow(0);
         assertThat(issuesTableFirstRow.getSeverity()).isEqualTo("Normal");
         assertThat(issuesTableFirstRow.getAge()).isEqualTo(1);
     }
@@ -185,8 +189,8 @@ public class DetailsTabUiTest extends AbstractJUnitTest {
      */
     @Test
     public void shouldShowTheCorrectNumberOfRowsSelectedByLength() {
-        FreeStyleJob job = createFreeStyleJob("findbugs-severities.xml");
-        job.addPublisher(IssuesRecorder.class, recorder -> recorder.setToolWithPattern("FindBugs", "**/*.xml"));
+        FreeStyleJob job = createFreeStyleJob(DETAILS_TAB_RESOURCES + "findbugs-severities.xml");
+        job.addPublisher(IssuesRecorder.class, recorder -> recorder.setToolWithPattern(FINDBUGS_TOOL, "**/*.xml"));
         job.save();
 
         Build build = job.startBuild().waitUntilFinished();
@@ -211,7 +215,6 @@ public class DetailsTabUiTest extends AbstractJUnitTest {
         List<WebElement> issuesPaginateButtons = issuesPaginate.findElements(By.cssSelector("ul li"));
 
         assertThat(issuesPaginateButtons.size()).isEqualTo(2);
-        assertThat(ExpectedConditions.elementToBeClickable(issuesPaginateButtons.get(1)));
 
         issuesLengthSelect.selectByValue("25");
         waitUntilCondition(issuesInfo, "Showing 1 to 12 of 12 entries");
@@ -227,8 +230,8 @@ public class DetailsTabUiTest extends AbstractJUnitTest {
      */
     @Test
     public void shouldDisplayTheFilteredRows() {
-        FreeStyleJob job = createFreeStyleJob("findbugs-severities.xml");
-        job.addPublisher(IssuesRecorder.class, recorder -> recorder.setToolWithPattern("FindBugs", "**/*.xml"));
+        FreeStyleJob job = createFreeStyleJob(DETAILS_TAB_RESOURCES + "findbugs-severities.xml");
+        job.addPublisher(IssuesRecorder.class, recorder -> recorder.setToolWithPattern(FINDBUGS_TOOL, "**/*.xml"));
         job.save();
 
         Build build = job.startBuild().waitUntilFinished();
@@ -260,8 +263,8 @@ public class DetailsTabUiTest extends AbstractJUnitTest {
      */
     @Test
     public void shouldMemorizeSelectedNumberOfRowsOnReload() {
-        FreeStyleJob job = createFreeStyleJob("findbugs-severities.xml");
-        job.addPublisher(IssuesRecorder.class, recorder -> recorder.setToolWithPattern("FindBugs", "**/*.xml"));
+        FreeStyleJob job = createFreeStyleJob(DETAILS_TAB_RESOURCES + "findbugs-severities.xml");
+        job.addPublisher(IssuesRecorder.class, recorder -> recorder.setToolWithPattern(FINDBUGS_TOOL, "**/*.xml"));
         job.save();
 
         Build build = job.startBuild().waitUntilFinished();
@@ -315,14 +318,5 @@ public class DetailsTabUiTest extends AbstractJUnitTest {
     private void waitUntilCondition(final WebElement target, final String expectedString) {
         WebDriverWait wait = new WebDriverWait(driver, 2, 100);
         wait.until(ExpectedConditions.textToBePresentInElement(target, expectedString));
-    }
-
-    private FreeStyleJob createFreeStyleJob(final String... resourcesToCopy) {
-        FreeStyleJob job = jenkins.getJobs().create(FreeStyleJob.class);
-        ScrollerUtil.hideScrollerTabBar(driver);
-        for (String resource : resourcesToCopy) {
-            job.copyResource(WARNINGS_PLUGIN_PREFIX + resource);
-        }
-        return job;
     }
 }

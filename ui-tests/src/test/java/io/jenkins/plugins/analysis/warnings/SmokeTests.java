@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
 import java.util.List;
-
 import java.util.Map;
 
 import org.junit.Test;
@@ -16,10 +15,9 @@ import org.jenkinsci.test.acceptance.po.FreeStyleJob;
 import org.jenkinsci.test.acceptance.po.WorkflowJob;
 
 import io.jenkins.plugins.analysis.warnings.AnalysisResult.Tab;
-
-import static io.jenkins.plugins.analysis.warnings.Assertions.assertThat;
-
 import io.jenkins.plugins.analysis.warnings.DashboardTable.DashboardTableEntry;
+
+import static io.jenkins.plugins.analysis.warnings.Assertions.*;
 
 /**
  * Smoke tests for the Warnings Next Generation Plugin. These tests are invoked during the validation of pull requests
@@ -152,7 +150,7 @@ public class SmokeTests extends UiTest {
         verifyIssuesColumnResults(build, job.name);
 
         // Dashboard UI-Tests
-        DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(folder, false, true);
+        DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, true, folder);
         DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
 
         verifyDashboardTablePortlet(dashboardTable, String.format("%s » %s", folder.name, job.name));
@@ -165,8 +163,9 @@ public class SmokeTests extends UiTest {
         resultPage.open();
         assertThat(resultPage).hasOnlyAvailableTabs(Tab.ISSUES, Tab.TYPES, Tab.CATEGORIES);
         PropertyDetailsTable categoriesDetailsTable = resultPage.openPropertiesTable(Tab.CATEGORIES);
-        assertThat(categoriesDetailsTable).hasHeaders("Category", "Total", "Distribution");
-        assertThat(categoriesDetailsTable).hasSize(2).hasTotal(2);
+        assertThat(categoriesDetailsTable.getHeaders()).containsOnly("Category", "Total", "New", "Distribution");
+        assertThat(categoriesDetailsTable.getSize()).isEqualTo(2);
+        assertThat(categoriesDetailsTable.getTotal()).isEqualTo(2);
 
         WebElement categoryPaginate = resultPage.getPaginateElementByActiveTab();
         List<WebElement> categoryPaginateButtons = categoryPaginate.findElements(By.cssSelector("ul li"));

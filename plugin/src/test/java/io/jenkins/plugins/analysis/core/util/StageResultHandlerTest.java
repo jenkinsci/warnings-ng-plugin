@@ -1,11 +1,6 @@
 package io.jenkins.plugins.analysis.core.util;
 
-import java.lang.reflect.Field;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import org.junit.jupiter.api.Test;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import org.jenkinsci.plugins.workflow.actions.WarningAction;
 import org.jenkinsci.plugins.workflow.graph.FlowNode;
@@ -22,7 +17,7 @@ class StageResultHandlerTest {
 
     @Test
     void defaultHandlerShouldSetBuildResult() {
-        Run run = mock(Run.class);
+        Run<?, ?> run = mock(Run.class);
         StageResultHandler defaultHandler = new RunResultHandler(run);
         defaultHandler.setResult(Result.UNSTABLE, "something");
         verify(run).setResult(Result.UNSTABLE);
@@ -30,16 +25,9 @@ class StageResultHandlerTest {
 
     @Test
     @SuppressWarnings("ConstantConditions")
-    @SuppressFBWarnings(value = "DP_DO_INSIDE_DO_PRIVILEGED",
-            justification = "Needed to keep `FlowNode.getPersistentAction` from failing. "
-                    + "We can't mock the method directly because it's final.")
-    void pipelineHandlerShouldSetBuildResultAndAddWarningAction()
-            throws IllegalAccessException, IllegalArgumentException, NoSuchFieldException {
-        Run run = mock(Run.class);
+    void pipelineHandlerShouldSetBuildResultAndAddWarningAction() {
+        Run<?, ?> run = mock(Run.class);
         FlowNode flowNode = mock(FlowNode.class);
-        Field actions = FlowNode.class.getDeclaredField("actions");
-        actions.setAccessible(true);
-        actions.set(flowNode, new CopyOnWriteArrayList<>());
         StageResultHandler pipelineHandler = new PipelineResultHandler(run, flowNode);
         pipelineHandler.setResult(Result.UNSTABLE, MESSAGE);
         verify(run).setResult(Result.UNSTABLE);

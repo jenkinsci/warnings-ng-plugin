@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -17,10 +16,6 @@ import com.google.inject.Injector;
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.PageObject;
 
-import io.jenkins.plugins.analysis.warnings.BlamesTable.BlamesTableRowType;
-import io.jenkins.plugins.analysis.warnings.ForensicsTable.ForensicsTableRowType;
-import io.jenkins.plugins.analysis.warnings.IssuesDetailsTable.IssuesTableRowType;
-
 /**
  * {@link PageObject} representing the details page of the static analysis tool results.
  *
@@ -29,8 +24,6 @@ import io.jenkins.plugins.analysis.warnings.IssuesDetailsTable.IssuesTableRowTyp
  * @author Mitja Oldenbourg
  */
 public class AnalysisResult extends PageObject {
-    private static final String[] DRY_TOOLS = {"cpd", "simian", "dupfinder"};
-
     private final String id;
 
     /**
@@ -56,7 +49,7 @@ public class AnalysisResult extends PageObject {
      * @param url
      *         the url of the page
      * @param id
-     *         the id of  the result page (e.g simian or cpd)
+     *         the id of  the result page (e.g., simian or cpd)
      */
     @SuppressWarnings("unused") // Required to dynamically create page object using reflection
     public AnalysisResult(final Injector injector, final URL url, final String id) {
@@ -77,7 +70,7 @@ public class AnalysisResult extends PageObject {
     }
 
     /**
-     * Returns the list of available tabs. These tabs depend on the available properites of the set of shown issues.
+     * Returns the list of available tabs. These tabs depend on the available properties of the set of shown issues.
      *
      * @return the available tabs
      */
@@ -100,8 +93,7 @@ public class AnalysisResult extends PageObject {
      * @return the total number of issues
      */
     public int getTotal() {
-        String total = find(By.tagName("tfoot")).getText();
-        return Integer.parseInt(total.split(" ")[1]);
+        return extractTotalFromFooter(1);
     }
 
     /**
@@ -111,42 +103,14 @@ public class AnalysisResult extends PageObject {
      * @return the total number of new issues
      */
     public int getTotalNew() {
+        return extractTotalFromFooter(2);
+    }
+
+    private int extractTotalFromFooter(final int column) {
         String total = find(By.tagName("tfoot")).getText();
-        return Integer.parseInt(total.split(" ")[2]);
+        return Integer.parseInt(total.split(" ", -1)[column]);
     }
 
-    /**
-     * Returns the type of the rows in the issues table. Currently, code duplications have a different representation
-     * than all other static analysis tools.
-     *
-     * @return the row type
-     */
-    private IssuesTableRowType getIssuesTableType() {
-        if (ArrayUtils.contains(DRY_TOOLS, id)) {
-            return IssuesTableRowType.DRY;
-        }
-        return IssuesTableRowType.DEFAULT;
-    }
-
-    private BlamesTableRowType getBlamesTableType() {
-        if (ArrayUtils.contains(DRY_TOOLS, id)) {
-            return BlamesTableRowType.DRY;
-        }
-        return BlamesTableRowType.DEFAULT;
-    }
-
-    /**
-     * Returns the type of the rows in the forensics table.
-     *
-     * @return the row type
-     */
-    private ForensicsTableRowType getForensicsTableType() {
-        if (ArrayUtils.contains(DRY_TOOLS, id)) {
-            return ForensicsTableRowType.DRY;
-        }
-        return ForensicsTableRowType.DEFAULT;
-    }
-    
     /**
      * Reloads the {@link PageObject}.
      */
@@ -173,11 +137,26 @@ public class AnalysisResult extends PageObject {
      *
      * @return page object of the issues table.
      */
-    public IssuesDetailsTable openIssuesTable() {
-        openTab(Tab.ISSUES);
+    public IssuesTable openIssuesTable() {
+        WebElement issuesTab = selectTab(Tab.ISSUES);
+        return new IssuesTable(issuesTab, this);
+    }
 
-        WebElement issuesTab = find(By.id("issuesContent"));
-        return new IssuesDetailsTable(issuesTab, this, getIssuesTableType());
+    /**
+     * Opens the analysis details page, selects the tab {@link Tab#ISSUES} and returns the {@link PageObject} of the
+     * issues table.
+     *
+     * @return page object of the issues table.
+     */
+    public DryTable openDryTable() {
+        WebElement issuesTab = selectTab(Tab.ISSUES);
+        return new DryTable(issuesTab, this);
+    }
+
+    private WebElement selectTab(final Tab issues) {
+        openTab(issues);
+
+        return find(By.id(issues.contentId));
     }
 
     /**
@@ -190,9 +169,7 @@ public class AnalysisResult extends PageObject {
      * @return page object of the categories table.
      */
     public PropertyDetailsTable openPropertiesTable(final Tab tab) {
-        openTab(tab);
-
-        WebElement table = find(By.id(tab.contentId));
+        WebElement table = selectTab(tab);
         return new PropertyDetailsTable(table, this, tab.property);
     }
 
@@ -206,7 +183,7 @@ public class AnalysisResult extends PageObject {
         openTab(Tab.BLAMES);
 
         WebElement blamesTab = find(By.id("blamesContent"));
-        return new BlamesTable(blamesTab, this, getBlamesTableType());
+        return new BlamesTable(blamesTab, this);
     }
 
     /**
@@ -219,7 +196,7 @@ public class AnalysisResult extends PageObject {
         openTab(Tab.FORENSICS);
 
         WebElement forensicsTab = find(By.id("forensicsContent"));
-        return new ForensicsTable(forensicsTab, this, getForensicsTableType());
+        return new ForensicsTable(forensicsTab, this);
     }
 
     /**
@@ -234,7 +211,6 @@ public class AnalysisResult extends PageObject {
      *
      * @return the instance of the PageObject to which the link leads to
      */
-    // FIXME: IssuesTable should not depend on AnalysisResult
     public <T extends PageObject> T openLinkOnSite(final WebElement element, final Class<T> type) {
         String link = element.getAttribute("href");
         T retVal = newInstance(type, injector, url(link));
@@ -288,7 +264,6 @@ public class AnalysisResult extends PageObject {
      *
      * @return the instance of the filtered AnalysisResult
      */
-    // FIXME: IssuesTable should not depend on AnalysisResult
     public AnalysisResult openFilterLinkOnSite(final WebElement element) {
         String link = element.getAttribute("href");
         AnalysisResult retVal = newInstance(AnalysisResult.class, injector, url(link), id);
@@ -297,14 +272,13 @@ public class AnalysisResult extends PageObject {
     }
 
     /**
-     * returns the TrendChart Carousel DOM Node.
+     * Returns the TrendChart Carousel DOM Node.
      *
      * @return trendChart Carousel.
      */
     private WebElement getTrendChart() {
         return find(By.id("trend-carousel"));
     }
-
 
     /**
      * Clicks the next-button to cycle through the Trend Charts.
@@ -338,7 +312,7 @@ public class AnalysisResult extends PageObject {
      */
     public String getTrendChartById(final String elementId) {
         Object result = executeScript(String.format(
-                "delete(window.Array.prototype.toJSON) \n"
+                "delete(window.Array.prototype.toJSON) %n"
                         + "return JSON.stringify(echarts.getInstanceByDom(document.getElementById(\"%s\")).getOption())",
                 elementId));
         ScriptResult scriptResult = new ScriptResult(result);

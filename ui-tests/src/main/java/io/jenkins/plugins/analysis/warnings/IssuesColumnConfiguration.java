@@ -8,16 +8,19 @@ import org.openqa.selenium.support.ui.Select;
 
 import com.google.inject.Injector;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.ListView;
 import org.jenkinsci.test.acceptance.po.PageObject;
 
 /**
- * Page object to configure the issues column in a {@link ListView}.
+ * Page object to configure the issues' column in a {@link ListView}.
  *
  * @author Andreas Riepl
  * @author Oliver Scholz
  */
+@SuppressFBWarnings("EI")
 public class IssuesColumnConfiguration extends PageObject {
     private ListView listView;
 
@@ -29,6 +32,7 @@ public class IssuesColumnConfiguration extends PageObject {
      * @param url
      *         the URL of the view
      */
+    @SuppressWarnings("unused") // Required to dynamically create page object using reflection
     public IssuesColumnConfiguration(final Injector injector, final URL url) {
         super(injector, url);
     }
@@ -41,6 +45,7 @@ public class IssuesColumnConfiguration extends PageObject {
      * @param url
      *         the URL of the view
      */
+    @SuppressWarnings("unused") // Required to dynamically create page object using reflection
     protected IssuesColumnConfiguration(final PageObject context, final URL url) {
         super(context, url);
     }

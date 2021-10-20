@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>5.9.0</version>
+    <version>5.12.0</version>
     <relativePath />
   </parent>
 
@@ -25,15 +25,15 @@
     <changelist>-SNAPSHOT</changelist>
     <module.name>${project.groupId}.warnings.ng</module.name>
 
-    <analysis-model-api.version>10.3.0</analysis-model-api.version>
-    <analysis-model-tests.version>10.3.0</analysis-model-tests.version>
+    <analysis-model-api.version>10.5.1</analysis-model-api.version>
+    <analysis-model-tests.version>10.5.1</analysis-model-tests.version>
 
-    <forensics-api-plugin.version>1.2.1</forensics-api-plugin.version>
+    <forensics-api-plugin.version>1.5.0</forensics-api-plugin.version>
     <plugin-util-api.version>2.5.0</plugin-util-api.version>
 
-    <data-tables-api.version>1.11.2-1</data-tables-api.version>
+    <data-tables-api.version>1.11.3-1</data-tables-api.version>
     <font-awesome-api.version>5.15.4-1</font-awesome-api.version>
-    <echarts-api.version>5.1.2-11</echarts-api.version>
+    <echarts-api.version>5.2.1-2</echarts-api.version>
     <jquery3-api.version>3.6.0-2</jquery3-api.version>
     <bootstrap5-api.version>5.1.1-1</bootstrap5-api.version>
     <popper-api.version>1.16.1-2</popper-api.version>
@@ -53,8 +53,8 @@
 
     <!-- Jenkins Plug-in Dependencies Versions -->
     <autograding.version>3.3.1</autograding.version>
-    <git-forensics.version>1.1.0</git-forensics.version>
-    <token-macro.version>2.13</token-macro.version>
+    <git-forensics.version>1.2.1</git-forensics.version>
+    <token-macro.version>266.v44a80cf277fd</token-macro.version>
     <jenkins-maven-plugin.version>3.8</jenkins-maven-plugin.version>
     <matrix-project.version>1.18</matrix-project.version>
     <junit-plugin.version>1.35</junit-plugin.version>
@@ -121,6 +121,11 @@
         <groupId>-io.jenkins.plugins</groupId>
         <artifactId>jquery3-api</artifactId>
         <version>${jquery3-api.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-net</groupId>
+        <artifactId>commons-net</artifactId>
+        <version>3.8.0</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -640,6 +645,7 @@
         <groupId>org.revapi</groupId>
         <artifactId>revapi-maven-plugin</artifactId>
         <configuration>
+          <skip>true</skip> <!-- FIXME: find a better workaround for https://github.com/revapi/revapi/issues/253 -->
           <failBuildOnProblemsFound>true</failBuildOnProblemsFound>
           <!-- Including provided-scope dependencies like Jenkins core results in too many false positives -->
           <checkDependencies>false</checkDependencies>

@@ -1,135 +1,118 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.util.List;
-
-import org.openqa.selenium.By;
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.WebElement;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+
 /**
- * Abstract representation of a table row displaying a forensic.
+ * Representation of a table row displaying the forensic details for an issue.
  *
  * @author Thomas Großbeck
  */
-public class ForensicsTableRow extends GenericTableRow {
-    private static final String DETAILS = "Details";
-    private static final String FILE = "File";
-    private static final String AGE = "Age";
+@SuppressWarnings("PMD.DataClass")
+public class ForensicsTableRow extends BaseIssuesTableRow {
     private static final String AUTHORS = "#Authors";
     private static final String COMMITS = "#Commits";
     private static final String LAST_COMMIT = "Last Commit";
     private static final String ADDED = "Added";
+    private static final String LOC = "#LOC";
+    private static final String CHURN = "Code Churn";
 
-    private static final String PACKAGE = "Package";
-    private static final String FILE_LINE_SEPARATOR = ":";
-    private static final By A_TAG = By.tagName("a");
-
-    private final WebElement row;
-    private final ForensicsTable forensicsTable;
+    private final int authors;
+    private final int commits;
+    private final String lastCommit;
+    private final String added;
+    private final int loc;
+    private final int churn;
 
     ForensicsTableRow(final WebElement rowElement, final ForensicsTable table) {
-        super();
+        super(rowElement, table);
 
-        this.row = rowElement;
-        this.forensicsTable = table;
-    }
-
-    /**
-     * Returns the file name of the forensic in this row.
-     *
-     * @return the file name
-     */
-    public String getFileName() {
-        return getCellContent(FILE).split(FILE_LINE_SEPARATOR)[0];
-    }
-
-    /**
-     * Returns the age of the forensic in this row.
-     *
-     * @return the age
-     */
-    public int getAge() {
-        return Integer.parseInt(getCellContent(AGE));
-    }
-
-    /**
-     * Returns the number of authors of the forensic in this row.
-     *
-     * @return the number of authors
-     */
-    public int getAuthors() {
-        return Integer.parseInt(getCellContent(AUTHORS));
-    }
-
-    /**
-     * Returns the number of commits of the forensic in this row.
-     *
-     * @return the number of commits
-     */
-    public int getCommits() {
-        return Integer.parseInt(getCellContent(COMMITS));
-    }
-
-    /**
-     * Returns the time of the last commit of the forensic in this row.
-     *
-     * @return the time of the last commit
-     */
-    public String getLastCommit() {
-        return getCellContent(LAST_COMMIT);
-    }
-
-    /**
-     * Returns the time of the last add of the forensic in this row.
-     *
-     * @return the time of the last add
-     */
-    public String getAdded() {
-        return getCellContent(ADDED);
-    }
-
-    /**
-     * Returns all possible headers representing the columns of the table.
-     *
-     * @return the headers of the table
-     */
-    List<String> getHeaders() {
-        return forensicsTable.getHeaders();
-    }
-
-    /**
-     * Returns all table data fields in the table row.
-     *
-     * @return the table data fields
-     */
-    List<WebElement> getCells() {
-        return row.findElements(By.tagName("td"));
-    }
-
-    /**
-     * Returns a specific table data field specified by the header of the column.
-     *
-     * @param header
-     *         the header text specifying the column
-     *
-     * @return the WebElement of the table data field
-     */
-    WebElement getCell(final String header) {
-        return getCells().get(getHeaders().indexOf(header));
-    }
-
-    /**
-     * Returns the String representation of the table cell.
-     *
-     * @param header
-     *         the header specifying the column
-     *
-     * @return the String representation of the cell
-     */
-    String getCellContent(final String header) {
-        if (getHeaders().indexOf(header) == -1) {
-            return "-";
+        if (isDetailsRow()) {
+            authors = 0;
+            commits = 0;
+            lastCommit = StringUtils.EMPTY;
+            added = StringUtils.EMPTY;
+            loc = 0;
+            churn = 0;
         }
-        return getCell(header).getText();
+        else {
+            authors = Integer.parseInt(getCellContent(AUTHORS));
+            commits = Integer.parseInt(getCellContent(COMMITS));
+            lastCommit = getCellContent(LAST_COMMIT);
+            added = getCellContent(ADDED);
+            loc = Integer.parseInt(getCellContent(LOC));
+            churn = Integer.parseInt(getCellContent(CHURN));
+        }
     }
 
+    public int getAuthors() {
+        return authors;
+    }
+
+    public int getCommits() {
+        return commits;
+    }
+
+    public String getLastCommit() {
+        return lastCommit;
+    }
+
+    public String getAdded() {
+        return added;
+    }
+
+    public int getLoc() {
+        return loc;
+    }
+
+    public int getChurn() {
+        return churn;
+    }
+
+    @Override
+    @SuppressWarnings("all")
+    public boolean equals(@CheckForNull final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+
+        ForensicsTableRow that = (ForensicsTableRow) o;
+
+        if (authors != that.authors) {
+            return false;
+        }
+        if (commits != that.commits) {
+            return false;
+        }
+        if (loc != that.loc) {
+            return false;
+        }
+        if (churn != that.churn) {
+            return false;
+        }
+        if (!lastCommit.equals(that.lastCommit)) {
+            return false;
+        }
+        return added.equals(that.added);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + authors;
+        result = 31 * result + commits;
+        result = 31 * result + lastCommit.hashCode();
+        result = 31 * result + added.hashCode();
+        result = 31 * result + loc;
+        result = 31 * result + churn;
+        return result;
+    }
 }
