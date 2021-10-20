@@ -7,6 +7,7 @@ import javax.inject.Inject;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -123,7 +124,7 @@ public class GitForensicsUiTest extends UiTest {
     }
 
     /** Verifies that freestyle jobs will correctly blame issues. */
-    @Test
+    @Test @Ignore
     public void shouldBlameOneIssueWithFreestyle() throws IOException {
         try (GitRepo repo = setupInitialGitRepository()) {
             repo.changeAndCommitFile("Test.java", "public class Test {}", "commit");
@@ -187,7 +188,7 @@ public class GitForensicsUiTest extends UiTest {
     /**
      * Verifies that freestyle jobs will correctly blame issues. This test handles multiple issue pages.
      */
-    @Test
+    @Test @Ignore
     public void shouldBlameElevenIssuesWithFreestyle() throws IOException {
         try (GitRepo repo = createRepoForMaster()) {
             Map<String, String> commits = commitDifferentFilesToGitRepository(repo);
@@ -217,7 +218,7 @@ public class GitForensicsUiTest extends UiTest {
     }
 
     /** Verifies that freestyle jobs will correctly show Git forensics statistics. */
-    @Test
+    @Test @Ignore
     public void shouldShowGitForensicsOneIssue() throws IOException {
         try (GitRepo repo = setupInitialGitRepository()) {
             repo.changeAndCommitFile("Test.java", "public class Test {}", "commit");
@@ -239,7 +240,7 @@ public class GitForensicsUiTest extends UiTest {
     }
 
     /** Verifies that pipelines will correctly show Git forensics statistics. */
-    @Test
+    @Test @Ignore
     public void shouldShowGitForensicsMultipleIssuesWithPipeline() throws IOException {
         try (GitRepo repo = createRepoForMaster()) {
             commitDifferentFilesToGitRepository(repo);
@@ -282,7 +283,7 @@ public class GitForensicsUiTest extends UiTest {
      * Verifies that freestyle jobs will correctly show Git forensics statistics. This test handles multiple issue
      * pages.
      */
-    @Test
+    @Test @Ignore
     public void shouldShowGitForensicsMultipleIssuesWithFreestyle() throws IOException {
         try (GitRepo repo = createRepoForMaster()) {
             commitDifferentFilesToGitRepository(repo);
