@@ -25,7 +25,7 @@
     <changelist>-SNAPSHOT</changelist>
     <module.name>${project.groupId}.warnings.ng</module.name>
 
-    <analysis-model-api.version>10.5.1</analysis-model-api.version>
+    <analysis-model-api.version>10.5.3</analysis-model-api.version>
     <analysis-model-tests.version>10.5.1</analysis-model-tests.version>
 
     <forensics-api-plugin.version>1.5.0</forensics-api-plugin.version>
