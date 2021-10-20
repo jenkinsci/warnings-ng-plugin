@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.warnings;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -61,7 +62,7 @@ public class DryTableRow extends AbstractSeverityTableRow {
      * @return the duplications
      */
     public List<String> getDuplicatedIn() {
-        return duplicatedIn;
+        return Collections.unmodifiableList(duplicatedIn);
     }
 
     @Override

@@ -10,6 +10,7 @@ import edu.umd.cs.findbugs.annotations.CheckForNull;
  *
  * @author Thomas Großbeck
  */
+@SuppressWarnings("PMD.DataClass")
 public class ForensicsTableRow extends BaseIssuesTableRow {
     private static final String AUTHORS = "#Authors";
     private static final String COMMITS = "#Commits";
@@ -71,6 +72,7 @@ public class ForensicsTableRow extends BaseIssuesTableRow {
     }
 
     @Override
+    @SuppressWarnings("all")
     public boolean equals(@CheckForNull final Object o) {
         if (this == o) {
             return true;

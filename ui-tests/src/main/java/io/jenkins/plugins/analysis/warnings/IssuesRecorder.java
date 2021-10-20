@@ -16,7 +16,7 @@ import org.jenkinsci.test.acceptance.po.PostBuildStep;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings({"unused", "UnusedReturnValue"})
+@SuppressWarnings({"unused", "UnusedReturnValue", "PMD.GodClass", "PMD.TooManyFields", "PMD.ExcessivePublicCount"})
 @Describable("Record compiler warnings and static analysis results")
 public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     private final Control toolsRepeatable = findRepeatableAddButtonFor("tools");
