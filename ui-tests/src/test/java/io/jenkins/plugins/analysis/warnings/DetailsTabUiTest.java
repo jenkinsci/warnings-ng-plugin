@@ -127,20 +127,20 @@ public class DetailsTabUiTest extends UiTest {
         assertThat(resultPage).hasOnlyAvailableTabs(Tab.ISSUES, Tab.TYPES, Tab.CATEGORIES);
 
         PropertyDetailsTable categoriesDetailsTable = resultPage.openPropertiesTable(Tab.CATEGORIES);
-        assertThat(categoriesDetailsTable.getHeaders()).containsOnly("Category", "Total", "Distribution");
+        assertThat(categoriesDetailsTable.getHeaders()).containsOnly("Category", "Total", "New", "Distribution");
         assertThat(categoriesDetailsTable.getSize()).isEqualTo(5);
         assertThat(categoriesDetailsTable.getTotal()).isEqualTo(5);
 
         PropertyDetailsTable typesDetailsTable = resultPage.openPropertiesTable(Tab.TYPES);
-        assertThat(typesDetailsTable.getHeaders()).containsOnly("Type", "Total", "Distribution");
-        assertThat(categoriesDetailsTable.getSize()).isEqualTo(7);
-        assertThat(categoriesDetailsTable.getTotal()).isEqualTo(7);
+        assertThat(typesDetailsTable.getHeaders()).containsOnly("Type", "Total", "New", "Distribution");
+        assertThat(typesDetailsTable.getSize()).isEqualTo(7);
+        assertThat(typesDetailsTable.getTotal()).isEqualTo(7);
 
         IssuesTable issuesTable = resultPage.openIssuesTable();
         assertThat(issuesTable.getColumnHeaders()).containsOnly(IssuesTable.Header.DETAILS, IssuesTable.Header.FILE, IssuesTable.Header.CATEGORY,
                 IssuesTable.Header.TYPE, IssuesTable.Header.SEVERITY, IssuesTable.Header.AGE);
-        assertThat(categoriesDetailsTable.getSize()).isEqualTo(10);
-        assertThat(categoriesDetailsTable.getTotal()).isEqualTo(11);
+        assertThat(issuesTable.getSize()).isEqualTo(10);
+        assertThat(issuesTable.getTotal()).isEqualTo(11);
 
         List<IssuesTableRow> tableRowListIssues = issuesTable.getTableRows();
         AbstractSeverityTableRow firstRow = tableRowListIssues.get(9);
