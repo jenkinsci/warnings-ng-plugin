@@ -62,7 +62,7 @@
     <dashboard-view.version>2.16</dashboard-view.version>
     <script-security.version>1.78</script-security.version>
     <httpcomponents-client.version>4.5.13-1.0</httpcomponents-client.version>
-    <configuration-as-code.version>1.51</configuration-as-code.version>
+    <configuration-as-code.version>1.54</configuration-as-code.version>
     <job-dsl.version>1.77</job-dsl.version>
     <flexible-publish.version>0.15.2</flexible-publish.version>
     <pipeline-stage-step.version>2.5</pipeline-stage-step.version>
