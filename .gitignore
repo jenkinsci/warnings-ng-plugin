@@ -1,3 +1,4 @@
+node
 node_modules
 target
 *.iml
@@ -8,3 +9,4 @@ pom.xml.versionsBackup
 pom.xml.releaseBackup
 release.properties
 .DS_Store
+/package-lock.json
