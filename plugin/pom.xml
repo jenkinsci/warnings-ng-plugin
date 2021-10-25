@@ -26,7 +26,7 @@
     <module.name>${project.groupId}.warnings.ng</module.name>
 
     <analysis-model-api.version>10.5.4</analysis-model-api.version>
-    <analysis-model-tests.version>10.5.1</analysis-model-tests.version>
+    <analysis-model-tests.version>10.5.4</analysis-model-tests.version>
 
     <forensics-api-plugin.version>1.5.0</forensics-api-plugin.version>
     <plugin-util-api.version>2.5.0</plugin-util-api.version>
@@ -74,7 +74,6 @@
     <folder.version>6.16</folder.version>
     <scm-api.version>2.6.4</scm-api.version>
     <checks-api.version>1.7.2</checks-api.version>
-    <credentials.version>2.6.1</credentials.version>
 
     <!-- Maven Surefire ArgLine -->
     <argLine>-Djava.awt.headless=true -Xmx1024m -Djenkins.test.timeout=1000</argLine>
@@ -227,7 +226,6 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>checks-api</artifactId>
-      <version>${checks-api.version}</version>
       <exclusions>
         <exclusion>
           <groupId>com.github.spotbugs</groupId>
@@ -240,7 +238,6 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>credentials</artifactId>
-      <version>${credentials.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
