@@ -51,7 +51,6 @@
     <!-- Jenkins Plug-in Dependencies Versions -->
     <autograding.version>3.3.1</autograding.version>
     <git-forensics.version>1.2.1</git-forensics.version>
-    <token-macro.version>266.v44a80cf277fd</token-macro.version>
     <jenkins-maven-plugin.version>3.8</jenkins-maven-plugin.version>
     <antisamy-markup-formatter.version>2.1</antisamy-markup-formatter.version>
     <job-dsl.version>1.77</job-dsl.version>
@@ -205,7 +204,6 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>token-macro</artifactId>
-      <version>${token-macro.version}</version>
       <optional>true</optional>
     </dependency>
     <dependency>
