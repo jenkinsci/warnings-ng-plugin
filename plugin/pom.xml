@@ -26,17 +26,14 @@
     <module.name>${project.groupId}.warnings.ng</module.name>
 
     <analysis-model-api.version>10.5.4</analysis-model-api.version>
-    <analysis-model-tests.version>10.5.1</analysis-model-tests.version>
+    <analysis-model-tests.version>10.5.4</analysis-model-tests.version>
 
     <forensics-api-plugin.version>1.5.0</forensics-api-plugin.version>
     <plugin-util-api.version>2.5.0</plugin-util-api.version>
 
     <data-tables-api.version>1.11.3-1</data-tables-api.version>
-    <font-awesome-api.version>5.15.4-1</font-awesome-api.version>
     <echarts-api.version>5.2.1-2</echarts-api.version>
-    <jquery3-api.version>3.6.0-2</jquery3-api.version>
     <bootstrap5-api.version>5.1.1-1</bootstrap5-api.version>
-    <popper-api.version>1.16.1-2</popper-api.version>
     <error_prone_annotations.version>2.9.0</error_prone_annotations.version>
     <pull-request-monitoring.version>1.7.8</pull-request-monitoring.version>
 
@@ -54,27 +51,12 @@
     <!-- Jenkins Plug-in Dependencies Versions -->
     <autograding.version>3.3.1</autograding.version>
     <git-forensics.version>1.2.1</git-forensics.version>
-    <token-macro.version>266.v44a80cf277fd</token-macro.version>
     <jenkins-maven-plugin.version>3.8</jenkins-maven-plugin.version>
-    <matrix-project.version>1.18</matrix-project.version>
-    <junit-plugin.version>1.35</junit-plugin.version>
     <antisamy-markup-formatter.version>2.1</antisamy-markup-formatter.version>
-    <dashboard-view.version>2.16</dashboard-view.version>
-    <script-security.version>1.78</script-security.version>
-    <httpcomponents-client.version>4.5.13-1.0</httpcomponents-client.version>
-    <configuration-as-code.version>1.54</configuration-as-code.version>
     <job-dsl.version>1.77</job-dsl.version>
     <flexible-publish.version>0.15.2</flexible-publish.version>
-    <pipeline-stage-step.version>2.5</pipeline-stage-step.version>
     <docker-fixtures.version>1.11</docker-fixtures.version>
-    <jdk-tool.version>1.5</jdk-tool.version>
-    <workflow-support.version>3.8</workflow-support.version>
-    <pipeline-model-definition.version>1.8.5</pipeline-model-definition.version>
     <form-element-path.version>1.10</form-element-path.version>
-    <folder.version>6.16</folder.version>
-    <scm-api.version>2.6.4</scm-api.version>
-    <checks-api.version>1.7.2</checks-api.version>
-    <credentials.version>2.6.1</credentials.version>
 
     <!-- Maven Surefire ArgLine -->
     <argLine>-Djava.awt.headless=true -Xmx1024m -Djenkins.test.timeout=1000</argLine>
@@ -94,41 +76,6 @@
       <email>ullrich.hafner@gmail.com</email>
     </developer>
   </developers>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.jenkins-ci.plugins</groupId>
-        <artifactId>trilead-api</artifactId>
-        <version>1.0.13</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jenkins-ci.plugins</groupId>
-        <artifactId>script-security</artifactId>
-        <version>${script-security.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.google.errorprone</groupId>
-        <artifactId>error_prone_annotations</artifactId>
-        <version>${error_prone_annotations.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.google.code.gson</groupId>
-        <artifactId>gson</artifactId>
-        <version>2.8.8</version>
-      </dependency>
-      <dependency>
-        <groupId>-io.jenkins.plugins</groupId>
-        <artifactId>jquery3-api</artifactId>
-        <version>${jquery3-api.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>commons-net</groupId>
-        <artifactId>commons-net</artifactId>
-        <version>3.8.0</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
 
   <dependencies>
 
@@ -173,7 +120,6 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>font-awesome-api</artifactId>
-      <version>${font-awesome-api.version}</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
@@ -183,7 +129,6 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>jquery3-api</artifactId>
-      <version>${jquery3-api.version}</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
@@ -227,7 +172,6 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>checks-api</artifactId>
-      <version>${checks-api.version}</version>
       <exclusions>
         <exclusion>
           <groupId>com.github.spotbugs</groupId>
@@ -240,31 +184,26 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>credentials</artifactId>
-      <version>${credentials.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>apache-httpcomponents-client-4-api</artifactId>
-      <version>${httpcomponents-client.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>2.8.8</version>
     </dependency>
 
     <!-- Optional Jenkins Plug-in Dependencies -->
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>matrix-project</artifactId>
-      <version>${matrix-project.version}</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>junit</artifactId>
-          <groupId>org.jenkins-ci.plugins</groupId>
-        </exclusion>
-      </exclusions>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>token-macro</artifactId>
-      <version>${token-macro.version}</version>
       <optional>true</optional>
     </dependency>
     <dependency>
@@ -289,7 +228,6 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>dashboard-view</artifactId>
-      <version>${dashboard-view.version}</version>
       <optional>true</optional>
     </dependency>
 
@@ -399,9 +337,8 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>checks-api</artifactId>
-      <version>${checks-api.version}</version>
       <scope>test</scope>
-      <type>test-jar</type>
+      <classifier>tests</classifier>
       <exclusions>
         <exclusion>
           <groupId>com.github.spotbugs</groupId>
@@ -446,6 +383,10 @@
           <artifactId>annotations</artifactId>
           <groupId>com.google.code.findbugs</groupId>
         </exclusion>
+        <exclusion>
+          <groupId>commons-net</groupId>
+          <artifactId>commons-net</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -463,13 +404,11 @@
     <dependency>
       <groupId>io.jenkins</groupId>
       <artifactId>configuration-as-code</artifactId>
-      <version>${configuration-as-code.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>cloudbees-folder</artifactId>
-      <version>${folder.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -523,7 +462,6 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>pipeline-stage-step</artifactId>
-      <version>${pipeline-stage-step.version}</version>
       <scope>test</scope>
     </dependency>
     <!-- node -->
@@ -553,14 +491,12 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>jdk-tool</artifactId>
-      <version>${jdk-tool.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>scm-api</artifactId>
-      <version>${scm-api.version}</version>
-      <type>test-jar</type>
+      <classifier>tests</classifier>
       <scope>test</scope>
     </dependency>
 
@@ -568,13 +504,11 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins.workflow</groupId>
       <artifactId>workflow-support</artifactId>
-      <version>${workflow-support.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jenkinsci.plugins</groupId>
       <artifactId>pipeline-model-definition</artifactId>
-      <version>${pipeline-model-definition.version}</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
