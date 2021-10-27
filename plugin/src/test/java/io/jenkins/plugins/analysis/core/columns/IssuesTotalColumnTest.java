@@ -140,9 +140,9 @@ class IssuesTotalColumnTest {
         column.setSelectTools(false);
 
         column.setType(StatisticProperties.TOTAL);
-        verifyUrlOfChecksSytleAndSpotBugs(column, "");
+        verifyUrlOfChecksStyleAndSpotBugs(column, "");
         column.setType(StatisticProperties.TOTAL_ERROR);
-        verifyUrlOfChecksSytleAndSpotBugs(column, "/error");
+        verifyUrlOfChecksStyleAndSpotBugs(column, "/error");
     }
 
     @Test
@@ -151,9 +151,9 @@ class IssuesTotalColumnTest {
         column.setSelectTools(false);
 
         column.setType(StatisticProperties.NEW);
-        verifyUrlOfChecksSytleAndSpotBugs(column, "/new");
+        verifyUrlOfChecksStyleAndSpotBugs(column, "/new");
         column.setType(StatisticProperties.NEW_ERROR);
-        verifyUrlOfChecksSytleAndSpotBugs(column, "/new/error");
+        verifyUrlOfChecksStyleAndSpotBugs(column, "/new/error");
     }
 
     @Test
@@ -162,9 +162,9 @@ class IssuesTotalColumnTest {
         column.setSelectTools(false);
 
         column.setType(StatisticProperties.DELTA);
-        verifyUrlOfChecksSytleAndSpotBugs(column, "");
+        verifyUrlOfChecksStyleAndSpotBugs(column, "");
         column.setType(StatisticProperties.DELTA_ERROR);
-        verifyUrlOfChecksSytleAndSpotBugs(column, "");
+        verifyUrlOfChecksStyleAndSpotBugs(column, "");
     }
 
     @Test
@@ -173,7 +173,7 @@ class IssuesTotalColumnTest {
         column.setSelectTools(false);
 
         column.setType(StatisticProperties.FIXED);
-        verifyUrlOfChecksSytleAndSpotBugs(column, "/fixed");
+        verifyUrlOfChecksStyleAndSpotBugs(column, "/fixed");
     }
 
     private IssuesTotalColumn createColumn() {
@@ -202,7 +202,7 @@ class IssuesTotalColumnTest {
                         "0/" + SPOT_BUGS_ID));
     }
 
-    private void verifyUrlOfChecksSytleAndSpotBugs(final IssuesTotalColumn column, final String url) {
+    private void verifyUrlOfChecksStyleAndSpotBugs(final IssuesTotalColumn column, final String url) {
         Job<?, ?> job = createJobWithActions(
                 createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 0),
                 createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 0));
