@@ -67,8 +67,8 @@ class IssuesTotalColumnTest {
         assertThat(column.getUrl(job)).isEqualTo("0/" + CHECK_STYLE_ID);
     }
 
-    @Test @Issue("JENKINS-57312")
-    void shouldShowResultOfNewWarnings() {
+    @Test @Issue("JENKINS-57312, JENKINS-59591")
+    void shouldShowResultAndDetailsInToolTipOfNewWarnings() {
         IssuesTotalColumn column = createColumn();
         column.setType(StatisticProperties.NEW);
         column.setSelectTools(false);
@@ -76,14 +76,26 @@ class IssuesTotalColumnTest {
         AnalysisResult result = mock(AnalysisResult.class);
         when(result.getNewSize()).thenReturn(1);
 
+        int newSize = 2;
+        int fixedSize = 4;
         Job<?, ?> job = createJobWithActions(
-                createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 3, 1, 2));
+                createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 3, newSize, fixedSize));
 
-        assertThat(column.getTotal(job)).isNotEmpty().hasValue(1);
-        assertThat(column.getUrl(job)).isEqualTo("0/" + CHECK_STYLE_ID + "/new");
+        assertThat(column.getTotal(job)).isNotEmpty().hasValue(newSize);
+        String newIssuesUrl = "0/" + CHECK_STYLE_ID + "/new";
+        assertThat(column.getUrl(job)).isEqualTo(newIssuesUrl);
+        assertThat(column.getDetails(job)).hasSize(1).element(0)
+                .as("Value of new column")
+                .isEqualTo(new AnalysisResultDescription("checkstyle.png", CHECK_STYLE_NAME, newSize, newIssuesUrl));
 
         column.setType(StatisticProperties.FIXED);
-        assertThat(column.getTotal(job)).isNotEmpty().hasValue(2);
+        assertThat(column.getTotal(job)).isNotEmpty().hasValue(fixedSize);
+        String fixedIssuesUrl = "0/" + CHECK_STYLE_ID + "/fixed";
+        assertThat(column.getUrl(job)).isEqualTo(fixedIssuesUrl);
+        assertThat(column.getDetails(job)).hasSize(1).element(0)
+                .as("Value of fixed column")
+                .isEqualTo(new AnalysisResultDescription("checkstyle.png", CHECK_STYLE_NAME,
+                        fixedSize, fixedIssuesUrl));
     }
 
     @Test

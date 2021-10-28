@@ -279,7 +279,7 @@ public class IssuesTotalColumn extends ListViewColumn {
             StaticAnalysisLabelProvider labelProvider = labelProviderFactory.create(result.getId(), result.getName());
             name = labelProvider.getLinkName();
             icon = labelProvider.getSmallIconUrl();
-            total = result.getResult().getTotalSize();
+            total = type.getSizeGetter().apply(result.getResult().getTotals());
             url = type.getUrl(result.getOwner().getNumber() + "/" + result.getUrlName());
         }
 
