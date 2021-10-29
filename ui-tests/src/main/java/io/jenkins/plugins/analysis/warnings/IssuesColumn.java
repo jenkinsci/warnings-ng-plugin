@@ -1,12 +1,8 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.net.URL;
-
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
-
-import com.google.inject.Injector;
 
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.PageObject;
@@ -18,33 +14,10 @@ import org.jenkinsci.test.acceptance.po.PageObject;
  * @author Oliver Scholz
  */
 public class IssuesColumn extends PageObject {
-    private String jobName;
+    private static final int EXISTING_COLUMN_INDEX = 8;
 
-    /**
-     * Creates a new issue column page object.
-     *
-     * @param injector
-     *         injector
-     * @param url
-     *         the URL of the view
-     */
-    @SuppressWarnings("unused") // Required to dynamically create page object using reflection
-    public IssuesColumn(final Injector injector, final URL url) {
-        super(injector, url);
-    }
-
-    /**
-     * Creates a new issue column page object.
-     *
-     * @param context
-     *         context
-     * @param url
-     *         the URL of the view
-     */
-    @SuppressWarnings("unused") // Required to dynamically create page object using reflection
-    protected IssuesColumn(final PageObject context, final URL url) {
-        super(context, url);
-    }
+    private final String issueColumnTd;
+    private final String jobName;
 
     /**
      * Creates a new issue column page object.
@@ -55,9 +28,24 @@ public class IssuesColumn extends PageObject {
      *         the name of the jenkins job
      */
     public IssuesColumn(final Build parent, final String jobName) {
+        this(parent, jobName, EXISTING_COLUMN_INDEX);
+    }
+
+    /**
+     * Creates a new issue column page object.
+     *
+     * @param parent
+     *         the build that contains the static analysis results
+     * @param jobName
+     *         the name of the jenkins job
+     * @param columnIndex
+     *         the position where this column is shown
+     */
+    public IssuesColumn(final Build parent, final String jobName, final int columnIndex) {
         super(parent, parent.url(""));
 
         this.jobName = jobName;
+        this.issueColumnTd = "td[" + columnIndex + "]";
     }
 
     /**
@@ -66,7 +54,8 @@ public class IssuesColumn extends PageObject {
      * @return Table Cell that contains the Issue Count as {@link WebElement}
      */
     public WebElement getIssuesCountFromTable() {
-        return driver.findElement(by.xpath("//*[@id=\"job_" + jobName + "\"]/td[8]"));
+        return driver.findElement(by.xpath("//*[@id=\"job_" + jobName + "\"]/"
+                + issueColumnTd));
     }
 
     /**
@@ -76,7 +65,9 @@ public class IssuesColumn extends PageObject {
      */
     public boolean issuesCountFromTableHasLink() {
         try {
-            getIssuesCountFromTable().findElement(by.xpath("//*[@id=\"job_" + jobName + "\"]/td[8]/a"));
+            getIssuesCountFromTable().findElement(by.xpath("//*[@id=\"job_" + jobName + "\"]/"
+                    + issueColumnTd
+                    + "/a"));
             return true;
         }
         catch (final NoSuchElementException e) {
@@ -103,7 +94,9 @@ public class IssuesColumn extends PageObject {
      */
     public String getToolNameFromHover(final int rowNumber) {
         return findIfNotVisible(by.xpath(
-                "//*[@id=\"job_" + jobName + "\"]/td[8]/div/table/tbody/tr[" + rowNumber + "]/td[2]")).getText();
+                "//*[@id=\"job_" + jobName + "\"]/"
+                        + issueColumnTd
+                        + "/div/table/tbody/tr[" + rowNumber + "]/td[2]")).getText();
     }
 
     /**
@@ -116,7 +109,9 @@ public class IssuesColumn extends PageObject {
      */
     public String getIssueCountFromHover(final int rowNumber) {
         return findIfNotVisible(by.xpath(
-                "//*[@id=\"job_" + jobName + "\"]/td[8]/div/table/tbody/tr[" + rowNumber + "]/td[3]")).getText();
+                "//*[@id=\"job_" + jobName + "\"]/"
+                        + issueColumnTd
+                        + "/div/table/tbody/tr[" + rowNumber + "]/td[3]")).getText();
     }
 
     /**

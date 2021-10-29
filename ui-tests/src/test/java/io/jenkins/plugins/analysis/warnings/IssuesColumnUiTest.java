@@ -18,10 +18,9 @@ import static org.assertj.core.api.Assertions.*;
 @WithPlugins("warnings-ng")
 public class IssuesColumnUiTest extends UiTest {
     /**
-     * Configure a job with multiple recorders: Should display a table when hovering the issue column.
+     * Configure a job with multiple recorders: Should display a table when hovering over the issue column.
      */
     @Test
-    @WithPlugins({"token-macro", "pipeline-stage-step", "workflow-durable-task-step", "workflow-basic-steps"})
     public void shouldDisplayIssueCount() {
         FreeStyleJob job = createFreeStyleJob("build_status_test/build_02");
         addAllRecorders(job);
@@ -42,6 +41,38 @@ public class IssuesColumnUiTest extends UiTest {
         assertHoverValues(column, 2, "FindBugs Warnings", "0");
         assertHoverValues(column, 3, "PMD Warnings", "2");
         assertHoverValues(column, 4, "CPD Duplications", "20");
+
+        ListView view = createListView();
+
+        IssuesTotalColumn totalColumn = view.addColumn(IssuesTotalColumn.class);
+        totalColumn.setName("Hello World");
+        totalColumn.filterByTool(CHECKSTYLE_TOOL);
+
+        view.save();
+
+        IssuesColumn checkstyleColumn = new IssuesColumn(build, job.name, 9);
+        assertThat(checkstyleColumn.getIssuesCountTextFromTable()).isEqualTo("3");
+        assertThat(checkstyleColumn.issuesCountFromTableHasLink()).isFalse();
+
+        checkstyleColumn.hoverIssueCount();
+
+        assertHoverValues(checkstyleColumn, 1, "CheckStyle Warnings", "3");
+
+        view.configure(() -> {
+            totalColumn.setType(StatisticProperties.TOTAL_HIGH);
+            totalColumn.disableToolFilter();
+        });
+
+        IssuesColumn highColumn = new IssuesColumn(build, job.name, 9);
+        assertThat(highColumn.getIssuesCountTextFromTable()).isEqualTo("5");
+        assertThat(highColumn.issuesCountFromTableHasLink()).isFalse();
+
+        highColumn.hoverIssueCount();
+
+        assertHoverValues(highColumn, 1, "CheckStyle Warnings", "0");
+        assertHoverValues(highColumn, 2, "FindBugs Warnings", "0");
+        assertHoverValues(highColumn, 3, "PMD Warnings", "0");
+        assertHoverValues(highColumn, 4, "CPD Duplications", "5");
     }
 
     /**
@@ -49,88 +80,28 @@ public class IssuesColumnUiTest extends UiTest {
      * tool results. Should have a link in issue column.
      */
     @Test
-    @WithPlugins({"token-macro", "pipeline-stage-step", "workflow-durable-task-step", "workflow-basic-steps"})
     public void shouldShowConfiguredToolOnlyWithLink() {
         FreeStyleJob job = createFreeStyleJob("build_status_test/build_02");
-        addRecorder(job, CHECKSTYLE_TOOL);
+        addCheckStyle(job);
         job.save();
         Build build = job.startBuild().waitUntilFinished();
 
         ListView view = createListView();
 
-        IssuesColumnConfiguration columnConfig = new IssuesColumnConfiguration(build, view);
-        columnConfig.selectSubsetOfTools(CHECKSTYLE_TOOL);
+        IssuesTotalColumn totalColumn = view.addColumn(IssuesTotalColumn.class);
+        totalColumn.filterByTool(CHECKSTYLE_TOOL);
 
         view.save();
 
-        IssuesColumn column = new IssuesColumn(build, job.name);
+        IssuesColumn column = new IssuesColumn(build, job.name, 9);
 
         assertThat(column.getIssuesCountTextFromTable()).isEqualTo("3");
         assertThat(column.issuesCountFromTableHasLink()).isTrue();
     }
 
-    /**
-     * Configure a job with multiple recorders, also create a ListView and configure the issue column to display only
-     * results from CheckStyle. Should have no link in column and display detailed table when hovering the column.
-     */
-    @Test
-    @WithPlugins({"token-macro", "pipeline-stage-step", "workflow-durable-task-step", "workflow-basic-steps"})
-    public void shouldShowConfiguredToolOnly() {
-        FreeStyleJob job = createFreeStyleJob("build_status_test/build_02");
-        addAllRecorders(job);
-        job.save();
-        Build build = job.startBuild().waitUntilFinished();
-
-        ListView view = createListView();
-
-        IssuesColumnConfiguration columnConfig = new IssuesColumnConfiguration(build, view);
-        columnConfig.selectSubsetOfTools(CHECKSTYLE_TOOL);
-
-        view.save();
-
-        IssuesColumn column = new IssuesColumn(build, job.name);
-        assertThat(column.getIssuesCountTextFromTable()).isEqualTo("3");
-        assertThat(column.issuesCountFromTableHasLink()).isFalse();
-
-        column.hoverIssueCount();
-
-        assertHoverValues(column, 1, "CheckStyle Warnings", "3");
-    }
-
-    /**
-     * Configure a job with multiple recorders, also create a ListView and configure the issue column to display only
-     * results of severity "high". Should have no link in column and display detailed table when hovering the column.
-     */
-    @Test
-    @WithPlugins({"token-macro", "pipeline-stage-step", "workflow-durable-task-step", "workflow-basic-steps"})
-    public void shouldShowConfiguredTypeOnly() {
-        FreeStyleJob job = createFreeStyleJob("build_status_test/build_02");
-        addAllRecorders(job);
-        job.save();
-        Build build = job.startBuild().waitUntilFinished();
-
-        ListView view = createListView();
-
-        IssuesColumnConfiguration columnConfig = new IssuesColumnConfiguration(build, view);
-        columnConfig.selectType(StatisticProperties.TOTAL_HIGH);
-
-        view.save();
-
-        IssuesColumn column = new IssuesColumn(build, job.name);
-        assertThat(column.getIssuesCountTextFromTable()).isEqualTo("5");
-        assertThat(column.issuesCountFromTableHasLink()).isFalse();
-
-        column.hoverIssueCount();
-
-        assertHoverValues(column, 1, "CheckStyle Warnings", "0");
-        assertHoverValues(column, 2, "FindBugs Warnings", "0");
-        assertHoverValues(column, 3, "PMD Warnings", "0");
-        assertHoverValues(column, 4, "CPD Duplications", "5");
-    }
-
-    private void addRecorder(final FreeStyleJob job, final String recorderName) {
+    private void addCheckStyle(final FreeStyleJob job) {
         job.addPublisher(IssuesRecorder.class, recorder -> {
-            recorder.setTool(recorderName);
+            recorder.setTool(UiTest.CHECKSTYLE_TOOL);
             recorder.setEnabledForFailure(true);
         });
     }
@@ -141,10 +112,9 @@ public class IssuesColumnUiTest extends UiTest {
     }
 
     private ListView createListView() {
-        ListView view = jenkins.views.create(ListView.class, "a_view");
+        ListView view = jenkins.getViews().create(ListView.class);
         view.configure();
-        view.check("Use a regular expression to include jobs into the view");
-        fillIn("includeRegex", ".*");
+        view.matchAllJobs();
         return view;
     }
 }
