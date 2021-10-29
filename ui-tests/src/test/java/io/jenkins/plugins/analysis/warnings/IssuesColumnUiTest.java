@@ -122,11 +122,10 @@ public class IssuesColumnUiTest extends UiTest {
 
         column.hoverIssueCount();
 
-        // TODO: see JENKINS-59591
-        assertHoverValues(column, 1, "CheckStyle Warnings", "3");
+        assertHoverValues(column, 1, "CheckStyle Warnings", "0");
         assertHoverValues(column, 2, "FindBugs Warnings", "0");
-        assertHoverValues(column, 3, "PMD Warnings", "2");
-        assertHoverValues(column, 4, "CPD Duplications", "20");
+        assertHoverValues(column, 3, "PMD Warnings", "0");
+        assertHoverValues(column, 4, "CPD Duplications", "5");
     }
 
     private void addRecorder(final FreeStyleJob job, final String recorderName) {
