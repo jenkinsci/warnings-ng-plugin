@@ -125,15 +125,20 @@ class IssuesTotalColumnTest {
                 createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 1),
                 createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 2));
 
-        assertThat(column.getTotal(job)).isNotEmpty();
-        assertThat(column.getTotal(job)).hasValue(1);
+        assertThat(column.getTotal(job)).isNotEmpty().hasValue(1);
         assertThat(column.getUrl(job)).isEqualTo("0/" + CHECK_STYLE_ID);
 
         column.setTools(Collections.singletonList(createTool(SPOT_BUGS_ID)));
 
-        assertThat(column.getTotal(job)).isNotEmpty();
-        assertThat(column.getTotal(job)).hasValue(2);
+        assertThat(column.getTotal(job)).isNotEmpty().hasValue(2);
         assertThat(column.getUrl(job)).isEqualTo("0/" + SPOT_BUGS_ID);
+
+        column.setSelectTools(false);
+
+        assertThat(column.getTotal(job)).isNotEmpty().hasValue(3);
+        assertThat(column.getUrl(job)).isEmpty();
+
+        column.setSelectTools(true);
 
         column.setTools(Collections.singletonList(createTool("unknown")));
 

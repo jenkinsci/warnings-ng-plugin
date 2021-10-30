@@ -84,6 +84,17 @@ public class IssuesColumn extends PageObject {
     }
 
     /**
+     * Returns the URL to the issues result in the cell.
+     *
+     * @return the URL to the results
+     */
+    public String getResultUrl() {
+        List<WebElement> a = cell.findElements(By.xpath("a"));
+
+        return a.get(0).getAttribute("href");
+    }
+
+    /**
      * Returns the issues total count from the table cell as text.
      *
      * @return Displayed Issue Count as {@link String}

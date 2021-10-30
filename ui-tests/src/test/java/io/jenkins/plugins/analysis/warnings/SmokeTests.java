@@ -73,13 +73,59 @@ public class SmokeTests extends UiTest {
         verifyDetailsTab(build);
 
         jenkins.open();
-        verifyIssuesColumnResults(build, job.name);
 
-        // Dashboard UI-Tests
+        verifyColumnCount(job, build);
+
         DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, true);
         DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
 
         verifyDashboardTablePortlet(dashboardTable, job.name);
+    }
+
+    /**
+     * Runs a freestyle job with all tools two times. Verifies the analysis results in several views.
+     */
+    @Test
+    @WithPlugins("cloudbees-folder")
+    public void shouldShowBuildSummaryAndLinkToDetails() {
+        initGlobalSettingsForGroovyParser();
+
+        Folder folder = jenkins.jobs.create(Folder.class, "folder");
+        FreeStyleJob job = folder.getJobs().create(FreeStyleJob.class);
+        ScrollerUtil.hideScrollerTabBar(driver);
+
+        job.copyResource(WARNINGS_PLUGIN_PREFIX + "build_status_test/build_01");
+
+        addAllRecorders(job);
+        job.save();
+
+        buildJob(job);
+
+        reconfigureJobWithResource(job, "build_status_test/build_02");
+
+        Build build = buildJob(job);
+
+        verifyPmd(build);
+        verifyFindBugs(build);
+        verifyCheckStyle(build);
+        verifyCpd(build);
+        verifyPep8(build);
+        verifyDetailsTab(build);
+
+        folder.open();
+
+        IssuesColumn column = new IssuesColumn(build, job.name);
+        assertThat(column).hasTotalCount("33");
+
+        DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, true, folder);
+        DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
+
+        verifyDashboardTablePortlet(dashboardTable, String.format("%s » %s", folder.name, job.name));
+    }
+
+    private void verifyColumnCount(final WorkflowJob job, final Build build) {
+        IssuesColumn column = new IssuesColumn(build, job.name);
+        assertThat(column).hasTotalCount("33");
     }
 
     private void verifyDashboardTablePortlet(final DashboardTable dashboardTable, final String jobName) {
@@ -116,46 +162,6 @@ public class SmokeTests extends UiTest {
                 + "}");
     }
 
-    /**
-     * Runs a freestyle job with all tools two times. Verifies the analysis results in several views.
-     */
-    @Test
-    @WithPlugins("cloudbees-folder")
-    public void shouldShowBuildSummaryAndLinkToDetails() {
-        initGlobalSettingsForGroovyParser();
-
-        Folder folder = jenkins.jobs.create(Folder.class, "folder");
-        FreeStyleJob job = folder.getJobs().create(FreeStyleJob.class);
-        ScrollerUtil.hideScrollerTabBar(driver);
-
-        job.copyResource(WARNINGS_PLUGIN_PREFIX + "build_status_test/build_01");
-
-        addAllRecorders(job);
-        job.save();
-
-        buildJob(job);
-
-        reconfigureJobWithResource(job, "build_status_test/build_02");
-
-        Build build = buildJob(job);
-
-        verifyPmd(build);
-        verifyFindBugs(build);
-        verifyCheckStyle(build);
-        verifyCpd(build);
-        verifyPep8(build);
-        verifyDetailsTab(build);
-
-        folder.open();
-        verifyIssuesColumnResults(build, job.name);
-
-        // Dashboard UI-Tests
-        DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, true, folder);
-        DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
-
-        verifyDashboardTablePortlet(dashboardTable, String.format("%s » %s", folder.name, job.name));
-    }
-
     private void verifyDetailsTab(final Build build) {
         build.open();
 
@@ -180,13 +186,6 @@ public class SmokeTests extends UiTest {
                     "/build_status_test/build_0" + build + "/" + fileName).replace("\\", "\\\\"));
         }
         return resourceCopySteps;
-    }
-
-    private void verifyIssuesColumnResults(final Build build, final String jobName) {
-        IssuesColumn column = new IssuesColumn(build, jobName);
-
-        String issueCount = column.getTotalCount();
-        assertThat(issueCount).isEqualTo("33");
     }
 
     @Override

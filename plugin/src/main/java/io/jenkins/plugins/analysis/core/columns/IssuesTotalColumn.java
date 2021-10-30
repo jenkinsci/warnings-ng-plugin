@@ -209,7 +209,7 @@ public class IssuesTotalColumn extends ListViewColumn {
         Set<String> actualIds = actions.stream().map(ResultAction::getId).collect(Collectors.toSet());
 
         String[] selectedIds = getIds(tools);
-        if (selectedIds.length == 1) {
+        if (selectedIds.length == 1 && selectTools) {
             String selectedId = selectedIds[0];
             if (actualIds.contains(selectedId)) {
                 ResultAction result = actions.stream().filter(action -> action.getId().equals(selectedId))

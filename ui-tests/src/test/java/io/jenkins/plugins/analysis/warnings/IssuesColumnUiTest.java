@@ -45,15 +45,14 @@ public class IssuesColumnUiTest extends UiTest {
 
         IssuesColumnConfiguration totalColumn = view.addColumn(IssuesColumnConfiguration.class);
         totalColumn.setName(CUSTOM_ISSUES_COLUMN_NAME);
-        totalColumn.filterByTool(CHECKSTYLE_TOOL);
+        totalColumn.filterByTool(CHECKSTYLE_ID);
 
         view.save();
 
         IssuesColumn checkstyleColumn = new IssuesColumn(build, CUSTOM_ISSUES_COLUMN_NAME);
-        assertThat(checkstyleColumn.getTotalCount()).isEqualTo("3");
-        assertThat(checkstyleColumn.hasLinkToResults()).isFalse();
-
-        assertHoverValues(checkstyleColumn, 1, "CheckStyle Warnings", "3");
+        assertThat(checkstyleColumn).hasTotalCount("3");
+        assertThat(checkstyleColumn).hasLinkToResults();
+        assertThat(checkstyleColumn.getResultUrl()).endsWith("1/" + CHECKSTYLE_ID);
 
         view.configure(() -> {
             totalColumn.setType(StatisticProperties.TOTAL_HIGH);
@@ -61,8 +60,8 @@ public class IssuesColumnUiTest extends UiTest {
         });
 
         IssuesColumn highColumn = new IssuesColumn(build, CUSTOM_ISSUES_COLUMN_NAME);
-        assertThat(highColumn.getTotalCount()).isEqualTo("5");
-        assertThat(highColumn.hasLinkToResults()).isFalse();
+        assertThat(highColumn).hasTotalCount("5");
+        assertThat(highColumn).doesNotHaveLinkToResults();
 
         assertHoverValues(highColumn, 1, "CheckStyle Warnings", "0");
         assertHoverValues(highColumn, 2, "FindBugs Warnings", "0");
@@ -91,8 +90,9 @@ public class IssuesColumnUiTest extends UiTest {
 
         IssuesColumn column = new IssuesColumn(build, CUSTOM_ISSUES_COLUMN_NAME);
 
-        assertThat(column.getTotalCount()).isEqualTo("3");
-        assertThat(column.hasLinkToResults()).isTrue();
+        assertThat(column).hasTotalCount("3");
+        assertThat(column).hasLinkToResults();
+        assertThat(column.getResultUrl()).endsWith("1/" + CHECKSTYLE_ID);
     }
 
     private void addCheckStyle(final FreeStyleJob job) {
