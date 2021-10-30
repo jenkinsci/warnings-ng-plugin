@@ -185,7 +185,7 @@ public class SmokeTests extends UiTest {
     private void verifyIssuesColumnResults(final Build build, final String jobName) {
         IssuesColumn column = new IssuesColumn(build, jobName);
 
-        String issueCount = column.getIssuesCountTextFromTable();
+        String issueCount = column.getTotalCount();
         assertThat(issueCount).isEqualTo("33");
     }
 

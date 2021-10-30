@@ -11,7 +11,7 @@ import org.jenkinsci.test.acceptance.po.ListView;
  * @author Ullrich Hafner
  */
 @Describable("Number of static analysis issues")
-public class IssuesTotalColumn extends AbstractListViewColumn {
+public class IssuesColumnConfiguration extends AbstractListViewColumn {
     private final Control name = control("/name");
     private final Control type = control("/type");
     private final Control selectTools = control("/selectTools");
@@ -25,7 +25,7 @@ public class IssuesTotalColumn extends AbstractListViewColumn {
      * @param path
      *         the URL of the view
      */
-    public IssuesTotalColumn(final ListView parent, final String path) {
+    public IssuesColumnConfiguration(final ListView parent, final String path) {
         super(parent, path);
     }
 

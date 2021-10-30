@@ -7,7 +7,7 @@ import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.FreeStyleJob;
 import org.jenkinsci.test.acceptance.po.ListView;
 
-import static org.assertj.core.api.Assertions.*;
+import static io.jenkins.plugins.analysis.warnings.Assertions.*;
 
 /**
  * Acceptance tests for the Warnings Issue Column.
@@ -17,6 +17,9 @@ import static org.assertj.core.api.Assertions.*;
  */
 @WithPlugins("warnings-ng")
 public class IssuesColumnUiTest extends UiTest {
+    private static final String DEFAULT_ISSUES_COLUMN_NAME = "# Issues";
+    private static final String CUSTOM_ISSUES_COLUMN_NAME = "Hello World";
+
     /**
      * Configure a job with multiple recorders: Should display a table when hovering over the issue column.
      */
@@ -30,12 +33,8 @@ public class IssuesColumnUiTest extends UiTest {
 
         jenkins.open();
 
-        IssuesColumn column = new IssuesColumn(build, job.name);
-
-        String issueCount = column.getIssuesCountTextFromTable();
-        assertThat(issueCount).isEqualTo("25");
-
-        column.hoverIssueCount();
+        IssuesColumn column = new IssuesColumn(jenkins, DEFAULT_ISSUES_COLUMN_NAME);
+        assertThat(column).hasTotalCount("25");
 
         assertHoverValues(column, 1, "CheckStyle Warnings", "3");
         assertHoverValues(column, 2, "FindBugs Warnings", "0");
@@ -44,17 +43,15 @@ public class IssuesColumnUiTest extends UiTest {
 
         ListView view = createListView();
 
-        IssuesTotalColumn totalColumn = view.addColumn(IssuesTotalColumn.class);
-        totalColumn.setName("Hello World");
+        IssuesColumnConfiguration totalColumn = view.addColumn(IssuesColumnConfiguration.class);
+        totalColumn.setName(CUSTOM_ISSUES_COLUMN_NAME);
         totalColumn.filterByTool(CHECKSTYLE_TOOL);
 
         view.save();
 
-        IssuesColumn checkstyleColumn = new IssuesColumn(build, job.name, 9);
-        assertThat(checkstyleColumn.getIssuesCountTextFromTable()).isEqualTo("3");
-        assertThat(checkstyleColumn.issuesCountFromTableHasLink()).isFalse();
-
-        checkstyleColumn.hoverIssueCount();
+        IssuesColumn checkstyleColumn = new IssuesColumn(build, CUSTOM_ISSUES_COLUMN_NAME);
+        assertThat(checkstyleColumn.getTotalCount()).isEqualTo("3");
+        assertThat(checkstyleColumn.hasLinkToResults()).isFalse();
 
         assertHoverValues(checkstyleColumn, 1, "CheckStyle Warnings", "3");
 
@@ -63,11 +60,9 @@ public class IssuesColumnUiTest extends UiTest {
             totalColumn.disableToolFilter();
         });
 
-        IssuesColumn highColumn = new IssuesColumn(build, job.name, 9);
-        assertThat(highColumn.getIssuesCountTextFromTable()).isEqualTo("5");
-        assertThat(highColumn.issuesCountFromTableHasLink()).isFalse();
-
-        highColumn.hoverIssueCount();
+        IssuesColumn highColumn = new IssuesColumn(build, CUSTOM_ISSUES_COLUMN_NAME);
+        assertThat(highColumn.getTotalCount()).isEqualTo("5");
+        assertThat(highColumn.hasLinkToResults()).isFalse();
 
         assertHoverValues(highColumn, 1, "CheckStyle Warnings", "0");
         assertHoverValues(highColumn, 2, "FindBugs Warnings", "0");
@@ -88,15 +83,16 @@ public class IssuesColumnUiTest extends UiTest {
 
         ListView view = createListView();
 
-        IssuesTotalColumn totalColumn = view.addColumn(IssuesTotalColumn.class);
+        IssuesColumnConfiguration totalColumn = view.addColumn(IssuesColumnConfiguration.class);
         totalColumn.filterByTool(CHECKSTYLE_TOOL);
+        totalColumn.setName(CUSTOM_ISSUES_COLUMN_NAME);
 
         view.save();
 
-        IssuesColumn column = new IssuesColumn(build, job.name, 9);
+        IssuesColumn column = new IssuesColumn(build, CUSTOM_ISSUES_COLUMN_NAME);
 
-        assertThat(column.getIssuesCountTextFromTable()).isEqualTo("3");
-        assertThat(column.issuesCountFromTableHasLink()).isTrue();
+        assertThat(column.getTotalCount()).isEqualTo("3");
+        assertThat(column.hasLinkToResults()).isTrue();
     }
 
     private void addCheckStyle(final FreeStyleJob job) {
@@ -107,8 +103,8 @@ public class IssuesColumnUiTest extends UiTest {
     }
 
     private void assertHoverValues(final IssuesColumn column, final int rowNumber, final String toolName, final String issueCount) {
-        assertThat(column.getToolNameFromHover(rowNumber)).isEqualTo(toolName);
-        assertThat(column.getIssueCountFromHover(rowNumber)).isEqualTo(issueCount);
+        assertThat(column.getToolFromTooltip(rowNumber)).isEqualTo(toolName);
+        assertThat(column.getTotalFromTooltip(rowNumber)).isEqualTo(issueCount);
     }
 
     private ListView createListView() {
