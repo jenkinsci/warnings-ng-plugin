@@ -115,8 +115,7 @@ public class SmokeTests extends UiTest {
 
         folder.open();
 
-        IssuesColumn column = new IssuesColumn(build, job.name);
-        assertThat(column).hasTotalCount("33");
+        verifyColumnCount(build);
 
         DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, true, folder);
         DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
