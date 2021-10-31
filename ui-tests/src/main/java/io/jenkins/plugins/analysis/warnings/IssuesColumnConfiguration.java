@@ -12,6 +12,8 @@ import org.jenkinsci.test.acceptance.po.ListView;
  */
 @Describable("Number of static analysis issues")
 public class IssuesColumnConfiguration extends AbstractListViewColumn {
+    static final String DEFAULT_ISSUES_COLUMN_NAME = "# Issues";
+
     private final Control name = control("/name");
     private final Control type = control("/type");
     private final Control selectTools = control("/selectTools");

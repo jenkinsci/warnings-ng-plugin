@@ -8,6 +8,7 @@ import org.jenkinsci.test.acceptance.po.FreeStyleJob;
 import org.jenkinsci.test.acceptance.po.ListView;
 
 import static io.jenkins.plugins.analysis.warnings.Assertions.*;
+import static io.jenkins.plugins.analysis.warnings.IssuesColumnConfiguration.*;
 
 /**
  * Acceptance tests for the Warnings Issue Column.
@@ -17,7 +18,6 @@ import static io.jenkins.plugins.analysis.warnings.Assertions.*;
  */
 @WithPlugins("warnings-ng")
 public class IssuesColumnUiTest extends UiTest {
-    private static final String DEFAULT_ISSUES_COLUMN_NAME = "# Issues";
     private static final String CUSTOM_ISSUES_COLUMN_NAME = "Hello World";
 
     /**

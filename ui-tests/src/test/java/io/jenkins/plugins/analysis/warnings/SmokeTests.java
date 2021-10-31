@@ -18,6 +18,7 @@ import io.jenkins.plugins.analysis.warnings.AnalysisResult.Tab;
 import io.jenkins.plugins.analysis.warnings.DashboardTable.DashboardTableEntry;
 
 import static io.jenkins.plugins.analysis.warnings.Assertions.*;
+import static io.jenkins.plugins.analysis.warnings.IssuesColumnConfiguration.*;
 
 /**
  * Smoke tests for the Warnings Next Generation Plugin. These tests are invoked during the validation of pull requests
@@ -74,7 +75,7 @@ public class SmokeTests extends UiTest {
 
         jenkins.open();
 
-        verifyColumnCount(job, build);
+        verifyColumnCount(build);
 
         DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, true);
         DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
@@ -123,8 +124,8 @@ public class SmokeTests extends UiTest {
         verifyDashboardTablePortlet(dashboardTable, String.format("%s » %s", folder.name, job.name));
     }
 
-    private void verifyColumnCount(final WorkflowJob job, final Build build) {
-        IssuesColumn column = new IssuesColumn(build, job.name);
+    private void verifyColumnCount(final Build build) {
+        IssuesColumn column = new IssuesColumn(build, DEFAULT_ISSUES_COLUMN_NAME);
         assertThat(column).hasTotalCount("33");
     }
 
