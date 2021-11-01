@@ -94,7 +94,7 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
      * @param url
      *         the relative URL of this view
      * @param displayName
-     *         the human readable name of this view (shown in breadcrumb)
+     *         the human-readable name of this view (shown in breadcrumb)
      * @param labelProvider
      *         the label provider for the static analysis tool
      * @param sourceEncoding
@@ -128,7 +128,7 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
      * @param url
      *         the relative URL of this view
      * @param displayName
-     *         the human readable name of this view (shown in breadcrumb)
+     *         the human-readable name of this view (shown in breadcrumb)
      * @param labelProvider
      *         the label provider for the static analysis tool
      * @param sourceEncoding

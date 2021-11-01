@@ -29,7 +29,7 @@ public class ToolApi {
      * @param id
      *         unique ID of the tool
      * @param name
-     *         human readable name of the tool
+     *         human-readable name of the tool
      * @param latestUrl
      *         the URL to the latest results
      * @param size
@@ -48,7 +48,7 @@ public class ToolApi {
      * @param id
      *         unique ID of the tool
      * @param name
-     *         human readable name of the tool
+     *         human-readable name of the tool
      * @param latestUrl
      *         the URL to the latest results
      * @param size

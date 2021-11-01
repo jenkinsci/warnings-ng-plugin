@@ -528,9 +528,9 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
         }
 
         /**
-         * Returns the localized human readable name of this type.
+         * Returns the localized human-readable name of this type.
          *
-         * @return human readable name
+         * @return human-readable name
          */
         public String getDisplayName() {
             return displayName;

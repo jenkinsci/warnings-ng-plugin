@@ -36,8 +36,8 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
     private static final Sanitizer SANITIZER = new Sanitizer();
 
     private static final String ICONS_PREFIX = "/plugin/warnings-ng/icons/";
-    private static final String SMALL_ICON_URL = ICONS_PREFIX + "analysis-24x24.png";
-    private static final String LARGE_ICON_URL = ICONS_PREFIX + "analysis-48x48.png";
+    private static final String ANALYSIS_SVG_ICON = ICONS_PREFIX + "analysis.svg";
+
     @VisibleForTesting
     static final String ERROR_ICON = "exclamation-triangle";
     @VisibleForTesting
@@ -102,7 +102,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
     }
 
     private void setNameAndRawName(final String originalName) {
-        if (StringUtils.isNotBlank(originalName)) { // don't overwrite with empty
+        if (StringUtils.isNotBlank(originalName) && !"-".equals(originalName)) { // don't overwrite with empty or -
             rawName = originalName;
             name = SANITIZER.render(originalName);
         }
@@ -165,7 +165,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
     }
 
     /**
-     * Returns the human readable name of the tool. If the name has not been set, then the default name is returned.
+     * Returns the human-readable name of the tool. If the name has not been set, then the default name is returned.
      *
      * @return the name
      */
@@ -177,7 +177,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
     }
 
     /**
-     * Sets the human readable name of the tool.
+     * Sets the human-readable name of the tool.
      *
      * @param name
      *         the name of the tool
@@ -231,7 +231,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      * @return absolute URL
      */
     public String getSmallIconUrl() {
-        return SMALL_ICON_URL;
+        return ANALYSIS_SVG_ICON;
     }
 
     /**
@@ -240,7 +240,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      * @return absolute URL
      */
     public String getLargeIconUrl() {
-        return LARGE_ICON_URL;
+        return ANALYSIS_SVG_ICON;
     }
 
     /**

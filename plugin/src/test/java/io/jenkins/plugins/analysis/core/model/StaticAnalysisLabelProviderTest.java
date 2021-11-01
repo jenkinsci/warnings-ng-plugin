@@ -6,10 +6,11 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.Issue;
 
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.CompositeLocalizable;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.DefaultAgeBuilder;
+
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
 /**
  * Tests the class {@link StaticAnalysisLabelProvider}.
@@ -20,6 +21,14 @@ class StaticAnalysisLabelProviderTest {
     private static final String ID = "id";
     private static final String NAME = "name";
     private static final String OTHER_NAME = "other";
+
+    @Test
+    void shouldIgnoreUndefinedName() {
+        StaticAnalysisLabelProvider labelProvider = new StaticAnalysisLabelProvider("cpd", "-");
+
+        assertThat(labelProvider).hasId("cpd");
+        assertThat(labelProvider).hasName(labelProvider.getDefaultName());
+    }
 
     @Test @Issue("JENKINS-61834")
     void shouldNotEscapeHtmlEntities() {

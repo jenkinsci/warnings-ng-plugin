@@ -111,9 +111,9 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
     }
 
     /**
-     * Returns the human readable name of the quality gate.
+     * Returns the human-readable name of the quality gate.
      *
-     * @return the human readable name
+     * @return the human-readable name
      */
     public String getName() {
         return type.getDisplayName();
@@ -279,9 +279,9 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
         }
 
         /**
-         * Returns the localized human readable name of this type.
+         * Returns the localized human-readable name of this type.
          *
-         * @return human readable name
+         * @return human-readable name
          */
         public String getDisplayName() {
             return properties.getDisplayName();
