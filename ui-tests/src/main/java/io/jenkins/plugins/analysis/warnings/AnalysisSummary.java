@@ -26,7 +26,6 @@ import org.jenkinsci.test.acceptance.po.PageObject;
  */
 public class AnalysisSummary extends PageObject {
     private static final Pattern NUMBER = Pattern.compile("\\d+");
-    private static final String UNDEFINED = "-";
     private static final String AGGREGATION_MESSAGE = "Static analysis results from: ";
 
     private final String id;
@@ -60,10 +59,6 @@ public class AnalysisSummary extends PageObject {
 
     private WebElement getTitleResultLink() {
         return titleElement.findElement(by.href(id));
-    }
-
-    private WebElement getTitleResultInfoLink() {
-        return infoElement.findElement(by.href(id + "/info"));
     }
 
     /**
@@ -114,11 +109,12 @@ public class AnalysisSummary extends PageObject {
     }
 
     /**
-     * Returns the tools that are part of the aggregated results. If aggregation is disabled, then {@link #UNDEFINED} is
-     * returned.
+     * Returns the tools that are part of the aggregated results. If aggregation is disabled, then an empty
+     * list is returned.
      *
      * @return the tools that participate in the aggregation
      */
+    // TODO: check for the links to the tools
     public List<String> getTools() {
         for (WebElement result : results) {
             String message = result.getText();
@@ -311,20 +307,7 @@ public class AnalysisSummary extends PageObject {
      * Determines which icon is shown to represent the info messages view.
      */
     public enum InfoType {
-        /** Info messages only. */
-        INFO("info-circle"),
-        /** Info and error messages. */
-        ERROR("exclamation-triangle");
-
-        private final String iconName;
-
-        InfoType(final String iconName) {
-            this.iconName = iconName;
-        }
-
-        private String getIconName() {
-            return iconName;
-        }
+        INFO, ERROR;
     }
 
     /**
