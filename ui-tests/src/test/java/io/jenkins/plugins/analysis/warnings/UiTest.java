@@ -332,6 +332,8 @@ abstract class UiTest extends AbstractJUnitTest {
     }
 
     protected void verifyPep8(final Build build, final int referenceBuild) {
+        build.open();
+
         AnalysisSummary pep8 = new AnalysisSummary(build, PEP8_ID);
         assertThat(pep8)
                 .hasTitleText(PEP8_TOOL + ": 8 warnings")
