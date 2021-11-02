@@ -21,6 +21,7 @@ import org.jenkinsci.test.acceptance.po.FreeStyleJob;
 import org.jenkinsci.test.acceptance.po.Slave;
 
 import io.jenkins.plugins.analysis.warnings.AnalysisResult.Tab;
+import io.jenkins.plugins.analysis.warnings.AnalysisSummary.QualityGateResult;
 import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateBuildResult;
 import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateType;
 
@@ -110,17 +111,14 @@ public class WarningsPluginUiTest extends UiTest {
         Build referenceBuild = buildJob(job).shouldBeUnstable();
         referenceBuild.open();
 
-        assertThat(new AnalysisSummary(referenceBuild, CHECKSTYLE_ID)).isNotDisplayed();
-        assertThat(new AnalysisSummary(referenceBuild, PMD_ID)).isNotDisplayed();
-        assertThat(new AnalysisSummary(referenceBuild, FINDBUGS_ID)).isNotDisplayed();
-
         AnalysisSummary referenceSummary = new AnalysisSummary(referenceBuild, ANALYSIS_ID);
-        assertThat(referenceSummary).isDisplayed()
+        assertThat(referenceSummary)
                 .hasTitleText("Static Analysis: 4 warnings")
-                .hasAggregation("FindBugs, CPD, CheckStyle, PMD")
+                .hasTools(FINDBUGS_TOOL, CPD_TOOL, CHECKSTYLE_TOOL, PMD_TOOL)
                 .hasNewSize(0)
                 .hasFixedSize(0)
-                .hasReferenceBuild(0);
+                .hasReferenceBuild(0)
+                .hasQualityGateResult(QualityGateResult.UNSTABLE);
 
         reconfigureJobWithResource(job, "build_status_test/build_02");
 
@@ -129,12 +127,13 @@ public class WarningsPluginUiTest extends UiTest {
         build.open();
 
         AnalysisSummary analysisSummary = new AnalysisSummary(build, ANALYSIS_ID);
-        assertThat(analysisSummary).isDisplayed()
+        assertThat(analysisSummary)
                 .hasTitleText("Static Analysis: 25 warnings")
-                .hasAggregation("FindBugs, CPD, CheckStyle, PMD")
+                .hasTools(FINDBUGS_TOOL, CPD_TOOL, CHECKSTYLE_TOOL, PMD_TOOL)
                 .hasNewSize(23)
                 .hasFixedSize(2)
-                .hasReferenceBuild(1);
+                .hasReferenceBuild(1)
+                .hasQualityGateResult(QualityGateResult.FAILED);
 
         AnalysisResult result = analysisSummary.openOverallResult();
         assertThat(result).hasActiveTab(Tab.TOOLS).hasTotal(25)
@@ -193,8 +192,8 @@ public class WarningsPluginUiTest extends UiTest {
         build.open();
 
         AnalysisSummary summary = new AnalysisSummary(build, MAVEN_ID);
-        assertThat(summary).isDisplayed()
-                .hasTitleText("Maven: 4 warnings")
+        assertThat(summary)
+                .hasTitleText("Maven: 5 warnings")
                 .hasNewSize(0)
                 .hasFixedSize(0)
                 .hasReferenceBuild(0);
@@ -236,7 +235,7 @@ public class WarningsPluginUiTest extends UiTest {
         build.open();
 
         AnalysisSummary summary = new AnalysisSummary(build, "checkstyle");
-        assertThat(summary).isDisplayed()
+        assertThat(summary)
                 .hasTitleText("CheckStyle: 4 warnings")
                 .hasNewSize(0)
                 .hasFixedSize(0)
