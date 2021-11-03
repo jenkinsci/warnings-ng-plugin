@@ -52,6 +52,7 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 @SuppressWarnings({"PMD.ExcessiveImports", "checkstyle:ClassFanOutComplexity"})
 public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     private static final Pattern TAG_REGEX = Pattern.compile(">(.+?)</", Pattern.DOTALL);
+    private static final String ANALYSIS_ICON = "/plugin/warnings-ng/icons/analysis.svg";
 
     /**
      * Verifies that {@link FindBugs} handles the different severity mapping modes ({@link PriorityProperty}).
@@ -242,7 +243,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         assertThat(portlet.isEmpty()).isTrue();
         assertThat(portlet.getId()).endsWith("analysis");
         assertThat(portlet.getTitle()).endsWith("Static Analysis");
-        assertThat(portlet.getIconUrl()).contains("/plugin/warnings-ng/icons/analysis-24x24.png");
+        assertThat(portlet.getIconUrl()).contains(ANALYSIS_ICON);
         assertThat(portlet.getDetailViewUrl()).contains("analysis");
     }
 
@@ -382,7 +383,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         assertThat(portlet.hasQualityGate()).isFalse();
         assertThat(portlet.getId()).endsWith("eclipse");
         assertThat(portlet.getTitle()).endsWith("Eclipse ECJ");
-        assertThat(portlet.getIconUrl()).contains("/plugin/warnings-ng/icons/analysis-24x24.png");
+        assertThat(portlet.getIconUrl()).contains(ANALYSIS_ICON);
         assertThat(portlet.getDetailViewUrl()).contains("eclipse");
         assertThat(portlet.isEmpty()).isFalse();
 

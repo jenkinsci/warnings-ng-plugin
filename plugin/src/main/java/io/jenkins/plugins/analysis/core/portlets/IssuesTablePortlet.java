@@ -166,6 +166,7 @@ public class IssuesTablePortlet extends DashboardPortlet {
             return img()
                     .withAlt(label)
                     .withTitle(render(labelProvider.getLinkName()))
+                    .withStyle("width:24px; height:24px")
                     .withSrc(getJenkinsFacade().getImagePath(labelProvider.getSmallIconUrl()))
                     .render();
         }

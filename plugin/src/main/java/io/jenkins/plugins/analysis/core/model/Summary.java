@@ -26,8 +26,9 @@ import static j2html.TagCreator.*;
  * </pre>
  *
  * @author Ullrich Hafner
+ * @deprecated rendering of the summary is now done on the client side with the new model {@link SummaryModel}
  */
-// TODO: number of parsed reports should be shown as well
+@Deprecated
 public class Summary {
     private final StaticAnalysisLabelProvider labelProvider;
     private final AnalysisResult analysisResult;

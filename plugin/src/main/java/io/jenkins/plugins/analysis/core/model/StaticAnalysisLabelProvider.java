@@ -36,8 +36,8 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
     private static final Sanitizer SANITIZER = new Sanitizer();
 
     private static final String ICONS_PREFIX = "/plugin/warnings-ng/icons/";
-    private static final String SMALL_ICON_URL = ICONS_PREFIX + "analysis-24x24.png";
-    private static final String LARGE_ICON_URL = ICONS_PREFIX + "analysis-48x48.png";
+    private static final String ANALYSIS_SVG_ICON = ICONS_PREFIX + "analysis.svg";
+
     @VisibleForTesting
     static final String ERROR_ICON = "exclamation-triangle";
     @VisibleForTesting
@@ -102,7 +102,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
     }
 
     private void setNameAndRawName(final String originalName) {
-        if (StringUtils.isNotBlank(originalName)) { // don't overwrite with empty
+        if (StringUtils.isNotBlank(originalName) && !"-".equals(originalName)) { // don't overwrite with empty or -
             rawName = originalName;
             name = SANITIZER.render(originalName);
         }
@@ -165,7 +165,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
     }
 
     /**
-     * Returns the human readable name of the tool. If the name has not been set, then the default name is returned.
+     * Returns the human-readable name of the tool. If the name has not been set, then the default name is returned.
      *
      * @return the name
      */
@@ -177,7 +177,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
     }
 
     /**
-     * Sets the human readable name of the tool.
+     * Sets the human-readable name of the tool.
      *
      * @param name
      *         the name of the tool
@@ -231,7 +231,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      * @return absolute URL
      */
     public String getSmallIconUrl() {
-        return SMALL_ICON_URL;
+        return ANALYSIS_SVG_ICON;
     }
 
     /**
@@ -240,7 +240,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      * @return absolute URL
      */
     public String getLargeIconUrl() {
-        return LARGE_ICON_URL;
+        return ANALYSIS_SVG_ICON;
     }
 
     /**
@@ -252,7 +252,9 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      *         indicates if an error has been reported
      *
      * @return the title div
+     * @deprecated rendering of the summary is now done on the client side with the new model {@link SummaryModel}
      */
+    @Deprecated
     public ContainerTag getTitle(final AnalysisResult result, final boolean hasErrors) {
         String icon = hasErrors ? ERROR_ICON : INFO_ICON;
         return span(join(getName() + ": ",
@@ -270,8 +272,9 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      *         the number of new issues
      *
      * @return the legend of the trend chart
+     * @deprecated rendering of the summary is now done on the client side with the new model {@link SummaryModel}
      */
-    // TODO: Make messages overridable
+    @Deprecated
     public ContainerTag getNewIssuesLabel(final int newSize) {
         return a(newSize == 1 ? Messages.Tool_OneNewWarning() : Messages.Tool_MultipleNewWarnings(newSize))
                 .withHref(getId() + "/new");
@@ -284,7 +287,9 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      *         the number of fixed issues
      *
      * @return the legend of the trend chart
+     * @deprecated rendering of the summary is now done on the client side with the new model {@link SummaryModel}
      */
+    @Deprecated
     public ContainerTag getFixedIssuesLabel(final int fixedSize) {
         return a(fixedSize == 1 ? Messages.Tool_OneFixedWarning() : Messages.Tool_MultipleFixedWarnings(fixedSize))
                 .withHref(getId() + "/fixed");
@@ -299,7 +304,9 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      *         the build since there are no issues
      *
      * @return the legend of the trend chart
+     * @deprecated rendering of the summary is now done on the client side with the new model {@link SummaryModel}
      */
+    @Deprecated
     public DomContent getNoIssuesSinceLabel(final int currentBuild, final int noIssuesSinceBuild) {
         return join(Messages.Tool_NoIssuesSinceBuild(Messages.Tool_NoIssues(),
                 currentBuild - noIssuesSinceBuild + 1,
@@ -331,7 +338,9 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      *         the status of the quality gate
      *
      * @return the legend of the trend chart
+     * @deprecated rendering of the summary is now done on the client side with the new model {@link SummaryModel}
      */
+    @Deprecated
     public DomContent getQualityGateResult(final QualityGateStatus qualityGateStatus) {
         return getQualityGateResult(qualityGateStatus, true);
     }
@@ -345,7 +354,9 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      *         determines whether the reset reference link is shown
      *
      * @return the legend of the trend chart
+     * @deprecated rendering of the summary is now done on the client side with the new model {@link SummaryModel}
      */
+    @Deprecated
     public DomContent getQualityGateResult(final QualityGateStatus qualityGateStatus, final boolean hasResetLink) {
         if (hasResetLink) {
             return join(Messages.Tool_QualityGate(), getResultIcon(qualityGateStatus),
@@ -364,7 +375,9 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      *         the reference build
      *
      * @return the legend of the trend chart
+     * @deprecated rendering of the summary is now done on the client side with the new model {@link SummaryModel}
      */
+    @Deprecated
     public DomContent getReferenceBuild(final Run<?, ?> referenceBuild) {
         return join(Messages.Tool_ReferenceBuild(), createReferenceBuildLink(referenceBuild));
     }

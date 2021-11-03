@@ -197,7 +197,7 @@ public class DetailsTabUiTest extends UiTest {
         build.open();
 
         AnalysisSummary resultPage = new AnalysisSummary(build, "findbugs");
-        assertThat(resultPage).isDisplayed();
+        assertThat(resultPage).hasTitleText("FindBugs: 12 warnings");
 
         AnalysisResult findBugsAnalysisResult = resultPage.openOverallResult();
 
@@ -238,7 +238,7 @@ public class DetailsTabUiTest extends UiTest {
         build.open();
 
         AnalysisSummary resultPage = new AnalysisSummary(build, "findbugs");
-        assertThat(resultPage).isDisplayed();
+        assertThat(resultPage).hasTitleText("FindBugs: 12 warnings");
         AnalysisResult findBugsAnalysisResult = resultPage.openOverallResult();
 
         assertThat(findBugsAnalysisResult).hasAvailableTabs(Tab.ISSUES);
@@ -271,7 +271,7 @@ public class DetailsTabUiTest extends UiTest {
         build.open();
 
         AnalysisSummary resultPage = new AnalysisSummary(build, "findbugs");
-        assertThat(resultPage).isDisplayed();
+        assertThat(resultPage).hasTitleText("FindBugs: 12 warnings");
         AnalysisResult findBugsAnalysisResult = resultPage.openOverallResult();
 
         assertThat(findBugsAnalysisResult).hasAvailableTabs(Tab.ISSUES);

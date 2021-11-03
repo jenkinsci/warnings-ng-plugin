@@ -73,8 +73,7 @@ public class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
         createFileInWorkspace(job, "java-issues.txt", createJavaWarning(SCM_RESOLVER, AFFECTED_LINE));
 
         GitSCM scm = new GitSCM(GitSCM.createRepoList(FORENSICS_API_PLUGIN, null),
-                Collections.singletonList(new BranchSpec(COMMIT)),
-                false, Collections.emptyList(), null, null,
+                Collections.singletonList(new BranchSpec(COMMIT)), null, null,
                 Collections.singletonList(new RelativeTargetDirectory("forensics-api")));
         job.setScm(scm);
         job.getPublishersList().add(new RepositoryMinerStep());
@@ -148,8 +147,7 @@ public class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
         createFileInWorkspace(job, "java-issues.txt", createJavaWarning(SCM_RESOLVER, AFFECTED_LINE));
 
         GitSCM scm = new GitSCM(GitSCM.createRepoList(FORENSICS_API_PLUGIN, null),
-                Collections.singletonList(new BranchSpec(COMMIT)),
-                false, Collections.emptyList(), null, null,
+                Collections.singletonList(new BranchSpec(COMMIT)), null, null,
                 Collections.singletonList(new RelativeTargetDirectory("forensics-api")));
         job.setScm(scm);
         job.getPublishersList().add(new RepositoryMinerStep());

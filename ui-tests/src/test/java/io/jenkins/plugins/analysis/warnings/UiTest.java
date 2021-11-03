@@ -129,8 +129,10 @@ abstract class UiTest extends AbstractJUnitTest {
     }
 
     protected void verifyCpd(final Build build) {
+        build.open();
+
         AnalysisSummary cpd = new AnalysisSummary(build, CPD_ID);
-        assertThat(cpd).isDisplayed()
+        assertThat(cpd)
                 .hasTitleText("CPD: 20 warnings")
                 .hasNewSize(20)
                 .hasFixedSize(0)
@@ -189,14 +191,16 @@ abstract class UiTest extends AbstractJUnitTest {
     }
 
     protected void verifyFindBugs(final Build build) {
+        build.open();
+
         AnalysisSummary findbugs = new AnalysisSummary(build, FINDBUGS_ID);
-        assertThat(findbugs).isDisplayed()
+        assertThat(findbugs)
                 .hasTitleText("FindBugs: No warnings")
                 .hasNewSize(0)
                 .hasFixedSize(0)
                 .hasReferenceBuild(1)
                 .hasInfoType(InfoType.INFO)
-                .hasDetails("No warnings for 2 builds, i.e. since build 1");
+                .hasDetails("No issues for 2 builds, i.e. since build: #1");
 
         assertThat(openInfoView(build, FINDBUGS_ID))
                 .hasNoErrorMessages()
@@ -206,8 +210,10 @@ abstract class UiTest extends AbstractJUnitTest {
     }
 
     protected void verifyPmd(final Build build) {
+        build.open();
+
         AnalysisSummary pmd = new AnalysisSummary(build, PMD_ID);
-        assertThat(pmd).isDisplayed()
+        assertThat(pmd)
                 .hasTitleText("PMD: 2 warnings")
                 .hasNewSize(0)
                 .hasFixedSize(1)
@@ -228,8 +234,10 @@ abstract class UiTest extends AbstractJUnitTest {
     }
 
     protected void verifyCheckStyle(final Build build) {
+        build.open();
+
         AnalysisSummary checkstyle = new AnalysisSummary(build, CHECKSTYLE_ID);
-        assertThat(checkstyle).isDisplayed()
+        assertThat(checkstyle)
                 .hasTitleText("CheckStyle: 3 warnings")
                 .hasNewSize(3)
                 .hasFixedSize(1)
@@ -324,8 +332,10 @@ abstract class UiTest extends AbstractJUnitTest {
     }
 
     protected void verifyPep8(final Build build, final int referenceBuild) {
+        build.open();
+
         AnalysisSummary pep8 = new AnalysisSummary(build, PEP8_ID);
-        assertThat(pep8).isDisplayed()
+        assertThat(pep8)
                 .hasTitleText(PEP8_TOOL + ": 8 warnings")
                 .hasReferenceBuild(referenceBuild)
                 .hasInfoType(InfoType.ERROR);
@@ -367,6 +377,8 @@ abstract class UiTest extends AbstractJUnitTest {
     }
 
     InfoView openInfoView(final Build build, final String toolId) {
+        build.open();
+
         return new AnalysisSummary(build, toolId).openInfoView();
     }
 

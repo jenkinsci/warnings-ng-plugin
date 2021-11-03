@@ -1,8 +1,8 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -26,12 +26,14 @@ import org.jenkinsci.test.acceptance.po.PageObject;
  */
 public class AnalysisSummary extends PageObject {
     private static final Pattern NUMBER = Pattern.compile("\\d+");
-    private static final String UNDEFINED = "-";
+    private static final String AGGREGATION_MESSAGE = "Static analysis results from: ";
 
-    private final WebElement summary;
-    private final String title;
-    private final List<WebElement> results;
     private final String id;
+    private final boolean hasErrorIcon;
+    private final WebElement titleElement;
+    private final WebElement infoElement;
+
+    private final List<WebElement> results;
 
     /**
      * Creates a new page object representing the analysis summary on the build page of a job.
@@ -44,26 +46,19 @@ public class AnalysisSummary extends PageObject {
     public AnalysisSummary(final Build parent, final String id) {
         super(parent, parent.url(id));
 
-        parent.open();
         this.id = id;
-        summary = getElement(By.id(id + "-summary"));
-        if (summary == null) {
-            results = new ArrayList<>();
-            title = StringUtils.EMPTY;
-        }
-        else {
-            results = summary.findElements(by.xpath("./ul/li"));
-            title = find(By.id(id + "-title")).getText();
-        }
+
+        WebElement summary = getElement(By.id(id + "-summary"));
+        titleElement = summary.findElement(By.id(id + "-title"));
+
+        infoElement = summary.findElement(By.id(id + "-info"));
+        hasErrorIcon = infoElement.getText().contains("error messages");
+        results = summary.findElements(by.xpath("ul[@id='" + id + "-details']/li"));
     }
 
-    /**
-     * Determines whether this summary page exists.
-     *
-     * @return {@code true} if the page exists, {@code false} otherwise
-     */
-    public boolean isDisplayed() {
-        return summary != null && summary.isDisplayed();
+
+    private WebElement getTitleResultLink() {
+        return titleElement.findElement(by.href(id));
     }
 
     /**
@@ -72,7 +67,7 @@ public class AnalysisSummary extends PageObject {
      * @return the title text
      */
     public String getTitleText() {
-        return title;
+        return titleElement.getText();
     }
 
     /**
@@ -81,7 +76,7 @@ public class AnalysisSummary extends PageObject {
      * @return the number of new issues
      */
     public int getNewSize() {
-        return getSize("new");
+        return getSize("New issues: ");
     }
 
     /**
@@ -90,7 +85,7 @@ public class AnalysisSummary extends PageObject {
      * @return the number of fixed issues
      */
     public int getFixedSize() {
-        return getSize("fixed");
+        return getSize("Fixed issues: ");
     }
 
     /**
@@ -100,7 +95,7 @@ public class AnalysisSummary extends PageObject {
      * @return the reference build
      */
     public int getReferenceBuild() {
-        return getSize("#");
+        return getSize("Reference build:");
     }
 
     /**
@@ -110,28 +105,25 @@ public class AnalysisSummary extends PageObject {
      * @return the type of the icon that links to the info messages view
      */
     public InfoType getInfoType() {
-        String iconName = find(by.xpath("//a[@href='" + id + "/info']")).findElements(by.css("*"))
-                .get(1)
-                .getAttribute("href");
-
-        return InfoType.valueOfClass(iconName);
+        return hasErrorIcon ? InfoType.ERROR : InfoType.INFO;
     }
 
     /**
-     * Returns the tools that are part of the aggregated results. If aggregation is disabled, then {@link #UNDEFINED} is
-     * returned.
+     * Returns the tools that are part of the aggregated results. If aggregation is disabled, then an empty
+     * list is returned.
      *
      * @return the tools that participate in the aggregation
      */
-    public String getAggregation() {
+    // TODO: check for the links to the tools
+    public List<String> getTools() {
         for (WebElement result : results) {
             String message = result.getText();
-            String aggregation = "Static analysis results from: ";
-            if (message.startsWith(aggregation)) {
-                return StringUtils.removeStart(message, aggregation);
+            if (message.startsWith(AGGREGATION_MESSAGE)) {
+                String tools = StringUtils.removeStart(message, AGGREGATION_MESSAGE);
+                return Arrays.stream(tools.split(",", -1)).map(StringUtils::trim).collect(Collectors.toList());
             }
         }
-        return UNDEFINED;
+        return Collections.emptyList();
     }
 
     /**
@@ -140,13 +132,18 @@ public class AnalysisSummary extends PageObject {
      * @return the details
      */
     public List<String> getDetails() {
-        return results.stream().map(WebElement::getText).collect(Collectors.toList());
+        return results.stream().map(WebElement::getText).map(StringUtils::normalizeSpace).collect(Collectors.toList());
     }
 
     private int getSize(final String linkName) {
-        Optional<WebElement> newLink = findClickableResultEntryByNamePart(linkName);
+        for (WebElement result : results) {
+            String text = result.getText();
+            if (text.contains(linkName)) {
+                return extractNumber(text);
+            }
+        }
 
-        return newLink.map(webElement -> extractNumber(webElement.getText())).orElse(0);
+        return 0;
     }
 
     private int extractNumber(final String linkText) {
@@ -172,12 +169,12 @@ public class AnalysisSummary extends PageObject {
     }
 
     /**
-     * Clicks the info link that opens the messages page showing all info and error messages.
+     * Clicks the info link that opens the info page showing all info and error messages.
      *
      * @return the messages page showing all info and error messages
      */
     public InfoView openInfoView() {
-        return openPage(getTitleResultInfoLink(), InfoView.class);
+        return openPage(infoElement, InfoView.class);
     }
 
     /**
@@ -230,9 +227,9 @@ public class AnalysisSummary extends PageObject {
      */
     public QualityGateResult getQualityGateResult() {
         for (WebElement result : results) {
-            if (result.getText().contains("Quality gate")) {
-                return QualityGateResult.valueOf(
-                        result.findElement(by.tagName("img")).getAttribute("title").toUpperCase(Locale.ENGLISH));
+            String text = result.getText();
+            if (text.contains("Quality gate")) {
+                return QualityGateResult.fromTextMessage(text);
             }
         }
         return QualityGateResult.INACTIVE;
@@ -306,48 +303,26 @@ public class AnalysisSummary extends PageObject {
         return null;
     }
 
-    private WebElement getTitleResultLink() {
-        return summary.findElement(by.href(id));
-    }
-
-    private WebElement getTitleResultInfoLink() {
-        return summary.findElement(by.href(id + "/info"));
-    }
-
     /**
      * Determines which icon is shown to represent the info messages view.
      */
     public enum InfoType {
-        /** Info messages only. */
-        INFO("info-circle"),
-        /** Info and error messages. */
-        ERROR("exclamation-triangle");
-
-        private final String iconName;
-
-        InfoType(final String iconName) {
-            this.iconName = iconName;
-        }
-
-        private String getIconName() {
-            return iconName;
-        }
-
-        static InfoType valueOfClass(final String iconName) {
-            if (iconName.contains(INFO.getIconName())) {
-                return INFO;
-            }
-            if (iconName.contains(ERROR.getIconName())) {
-                return ERROR;
-            }
-            throw new NoSuchElementException("No such info type with classes " + iconName);
-        }
+        INFO, ERROR;
     }
 
     /**
      * Determines the quality gate result.
      */
     public enum QualityGateResult {
-        SUCCESS, FAILED, UNSTABLE, INACTIVE
+        SUCCESS, FAILED, UNSTABLE, INACTIVE;
+
+        static QualityGateResult fromTextMessage(final String text) {
+            for (QualityGateResult qualityGate : values()) {
+                if (StringUtils.containsIgnoreCase(text, qualityGate.name())) {
+                    return qualityGate;
+                }
+            }
+            throw new NoSuchElementException("No quality gate for given text: " + text);
+        }
     }
 }

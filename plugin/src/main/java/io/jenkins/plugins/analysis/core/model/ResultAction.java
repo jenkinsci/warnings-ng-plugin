@@ -28,9 +28,9 @@ import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
  * Controls the life cycle of the analysis results in a job. This action persists the results of a build and displays a
- * summary on the build page. The actual visualization of the results is defined in the matching {@code
- * summary.jelly} file. This action also provides access to the static analysis details: these are rendered using a new
- * {@link IssuesDetail} instance.
+ * summary on the build page. The actual visualization of the results is defined in the matching {@code summary.jelly}
+ * file. This action also provides access to the static analysis details: these are rendered using a new {@link
+ * IssuesDetail} instance.
  *
  * @author Ullrich Hafner
  */
@@ -279,9 +279,21 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      * Returns a summary message of the static analysis run. This message is shown in the 'summary.jelly' view.
      *
      * @return summary message (HTML)
+     * @deprecated replaced by {@link #getSummaryModel()}
      */
+    @Deprecated
     public String getSummary() {
         return new Summary(getLabelProvider(), getResult()).create();
+    }
+
+    /**
+     * Returns the model for the summary of the static analysis run. This model is used as input in the 'summary.jelly'
+     * view.
+     *
+     * @return summary message (HTML)
+     */
+    public SummaryModel getSummaryModel() {
+        return new SummaryModel(getLabelProvider(), getResult());
     }
 
     /**

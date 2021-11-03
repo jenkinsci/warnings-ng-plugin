@@ -38,9 +38,9 @@ public enum StatisticProperties {
     }
 
     /**
-     * Returns the localized human readable name of this instance.
+     * Returns the localized human-readable name of this instance.
      *
-     * @return human readable name
+     * @return human-readable name
      */
     public String getDisplayName() {
         return displayName;

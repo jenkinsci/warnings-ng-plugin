@@ -60,7 +60,7 @@ class IssuesTablePortletTest {
         verifySpotBugsAndCheckStyle(job, model);
     }
 
-    private void verifySpotBugsAndCheckStyle(final Job job, final PortletTableModel model) {
+    private void verifySpotBugsAndCheckStyle(final Job<?, ?> job, final PortletTableModel model) {
         assertThat(model.getToolNames()).containsExactly(CHECK_STYLE_NAME, SPOT_BUGS_NAME);
 
         List<TableRow> rows = model.getRows();
@@ -108,7 +108,7 @@ class IssuesTablePortletTest {
         assertThat(actualRow.getResults()).isEmpty();
     }
 
-    private void verifySingleTool(final Job job, final PortletTableModel model,
+    private void verifySingleTool(final Job<?, ?> job, final PortletTableModel model,
             final String expectedId, final String expectedName, final int expectedSize) {
         assertThat(model.getToolNames()).containsExactly(expectedName);
 
@@ -135,8 +135,8 @@ class IssuesTablePortletTest {
         PortletTableModel model = portlet.getModel(list(job));
 
         assertThat(model.getToolNames()).containsExactly(
-                "<img alt=\"CheckStyle\" title=\"CheckStyle\" src=\"/path/to/checkstyle.png\">",
-                "<img alt=\"SpotBugs\" title=\"SpotBugs\" src=\"/path/to/spotbugs.png\">");
+                "<img alt=\"CheckStyle\" title=\"CheckStyle\" style=\"width:24px; height:24px\" src=\"/path/to/checkstyle.png\">",
+                "<img alt=\"SpotBugs\" title=\"SpotBugs\" style=\"width:24px; height:24px\" src=\"/path/to/spotbugs.png\">");
 
         List<TableRow> rows = model.getRows();
         assertThat(rows).hasSize(1);

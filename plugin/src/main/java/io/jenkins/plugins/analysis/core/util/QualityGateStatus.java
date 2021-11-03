@@ -34,7 +34,9 @@ public enum QualityGateStatus {
      * Returns the associated {@link Result} color.
      *
      * @return Jenkins' {@link Result} color
+     * @deprecated BallColor is not used anymore, build status icons are now rendered on the UI side only
      */
+    @Deprecated
     public BallColor getColor() {
         return result.color;
     }
@@ -46,6 +48,15 @@ public enum QualityGateStatus {
      */
     public String getIconClass() {
         return getColor().getIconClassName();
+    }
+
+    /**
+     * Returns the localized description be used in the UI.
+     *
+     * @return the localized description
+     */
+    public String getDescription() {
+        return getColor().getDescription();
     }
 
     /**

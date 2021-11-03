@@ -29,6 +29,12 @@ import static io.jenkins.plugins.analysis.warnings.IssuesColumnConfiguration.*;
  */
 @WithPlugins({"warnings-ng", "dashboard-view"})
 public class SmokeTests extends UiTest {
+    private static final String CHECKSTYLE_ICON = "/checkstyle-24x24.png";
+    private static final String FINDBUGS_ICON = "/findbugs-24x24.png";
+    private static final String ANALYSIS_ICON = "/analysis.svg";
+    private static final String DRY_ICON = "/dry.svg";
+    private static final String PMD_ICON = "/pmd-24x24.png";
+
     /**
      * Runs a pipeline with all tools two times. Verifies the analysis results in several views. Additionally, verifies
      * the expansion of tokens with the token-macro plugin.
@@ -130,14 +136,14 @@ public class SmokeTests extends UiTest {
 
     private void verifyDashboardTablePortlet(final DashboardTable dashboardTable, final String jobName) {
         assertThat(dashboardTable.getHeaders()).containsExactly(
-                "Job", "/checkstyle-24x24.png", "/dry-24x24.png", "/findbugs-24x24.png", "/analysis-24x24.png", "/pmd-24x24.png");
+                "Job", CHECKSTYLE_ICON, DRY_ICON, FINDBUGS_ICON, ANALYSIS_ICON, PMD_ICON);
 
         Map<String, Map<String, DashboardTableEntry>> table = dashboardTable.getTable();
-        assertThat(table.get(jobName).get("/findbugs-24x24.png")).hasWarningsCount(0);
-        assertThat(table.get(jobName).get("/checkstyle-24x24.png")).hasWarningsCount(3);
-        assertThat(table.get(jobName).get("/analysis-24x24.png")).hasWarningsCount(8);
-        assertThat(table.get(jobName).get("/pmd-24x24.png")).hasWarningsCount(2);
-        assertThat(table.get(jobName).get("/dry-24x24.png")).hasWarningsCount(20);
+        assertThat(table.get(jobName).get(FINDBUGS_ICON)).hasWarningsCount(0);
+        assertThat(table.get(jobName).get(CHECKSTYLE_ICON)).hasWarningsCount(3);
+        assertThat(table.get(jobName).get(ANALYSIS_ICON)).hasWarningsCount(8);
+        assertThat(table.get(jobName).get(PMD_ICON)).hasWarningsCount(2);
+        assertThat(table.get(jobName).get(DRY_ICON)).hasWarningsCount(20);
     }
 
     private void createRecordIssuesStep(final WorkflowJob job, final int buildNumber) {

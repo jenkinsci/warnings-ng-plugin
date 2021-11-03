@@ -178,7 +178,7 @@ public class PullRequestMonitoringPortlet extends MonitorPortlet {
     }
 
     /**
-     * Get the human readable description of quality gate.
+     * Get the human-readable description of quality gate.
      *
      * @return
      *          the description.
