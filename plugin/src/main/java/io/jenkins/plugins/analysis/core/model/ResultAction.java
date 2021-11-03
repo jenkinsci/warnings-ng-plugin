@@ -290,8 +290,9 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      * Returns the model for the summary of the static analysis run. This model is used as input in the 'summary.jelly'
      * view.
      *
-     * @return summary message (HTML)
+     * @return model to build the summary message on the client side
      */
+    @SuppressWarnings("unused") // Called by jelly view
     public SummaryModel getSummaryModel() {
         return new SummaryModel(getLabelProvider(), getResult());
     }
