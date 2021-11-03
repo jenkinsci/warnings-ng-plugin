@@ -4,6 +4,7 @@
 
   <st:once>
     <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
+    <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/reset-quality-gate.js"/>
   </st:once>
 
   <t:summary icon="${it.hasLargeImage() ? it.largeImageName : icon}">
@@ -66,12 +67,6 @@
             <a href="${it.id}/new">${s.newSize}</a>
           </li>
         </j:if>
-        <j:if test="${s.qualityGateStatus.name() != 'INACTIVE'}">
-          <li>
-            ${%Quality gate}: ${s.qualityGateStatus.description}
-            <l:icon alt="${s.qualityGateStatus.description}" class="${s.qualityGateStatus.iconClass} icon-sm"/>
-          </li>
-        </j:if>
         <j:if test="${s.referenceBuild.present}">
           <j:set var="r" value="${s.referenceBuild.get()}"/>
           <li>
@@ -79,9 +74,28 @@
             <t:buildLink jobName="${r.parent.displayName}" job="${r.parent}" number="${r.number}"/>
           </li>
         </j:if>
+        <j:if test="${s.qualityGateStatus.name() != 'INACTIVE'}">
+          <li>
+            ${%Quality gate}: ${s.qualityGateStatus.description}
+            <l:icon alt="${s.qualityGateStatus.description}" class="${s.qualityGateStatus.iconClass} icon-sm"/>
+            <j:if test="${s.resetQualityGateVisible}">
+              <span class="yui-button">
+                <button id="${it.id}-reset-reference" style="padding: 0.3em 0.5em; min-width: 0.20em; min-height: 0.20em" type="button" title="Reset quality gate so that next build will use this build as a reference." >Reset</button>
+              </span>
+            </j:if>
+          </li>
+        </j:if>
       </ul>
     </span>
 
   </t:summary>
+
+  <script>
+    {
+      const proxy = <st:bind value="${it}"/>;
+      const handler = new ResetQualityGateButtonHandler();
+      handler.bindResetButton('${it.id}', proxy);
+    }
+  </script>
 
 </j:jelly>
