@@ -1,7 +1,6 @@
 /* global jQuery3, echarts, portlet */
-(function($) {
-
-    portlet.getId(function(id) {
+(function ($) {
+    portlet.getId(function (id) {
         const chartDom = document.getElementById(id.responseObject());
 
         if (chartDom == null) {
@@ -15,7 +14,7 @@
         const data = [{
             name: 'All\nIssues',
             itemStyle: {
-                color:  '#70a1d7'
+                color: '#70a1d7'
             },
             children: [{
                 name: 'New',
@@ -29,19 +28,22 @@
                     itemStyle: {
                         color: '#e9e2d0'
                     }
-                }, {
+                },
+                {
                     name: 'Normal-Prio',
                     value: sunburstData.new.normal,
                     itemStyle: {
                         color: '#ffcda3'
                     }
-                }, {
+                },
+                {
                     name: 'High-Prio',
                     value: sunburstData.new.high,
                     itemStyle: {
                         color: '#ee9595'
                     }
-                },  {
+                },
+                {
                     name: 'Error',
                     value: sunburstData.new.error,
                     itemStyle: {
@@ -85,5 +87,4 @@
 
         option && portletChart.setOption(option);
     });
-
 })(jQuery3);
