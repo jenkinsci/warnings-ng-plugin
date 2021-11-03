@@ -86,7 +86,7 @@ class AgentScanner extends MasterToSlaveFileCallable<Report> {
         report.logInfo(scanner.getTaskTags());
         report.logInfo("Scanning all %d files for open tasks", fileNames.length);
         for (String fileName : fileNames) {
-            report.addAll(scanner.scan(root.resolve(fileName), getCharset()));
+            report.addAll(scanner.scan(root.resolve(fileName), getCharset()).get());
 
             if (Thread.interrupted()) {
                 throw new ParsingCanceledException();
