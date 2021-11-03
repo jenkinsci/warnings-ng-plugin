@@ -252,7 +252,9 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      *         indicates if an error has been reported
      *
      * @return the title div
+     * @deprecated rendering of the summary is now done on the client side with the new model {@link SummaryModel}
      */
+    @Deprecated
     public ContainerTag getTitle(final AnalysisResult result, final boolean hasErrors) {
         String icon = hasErrors ? ERROR_ICON : INFO_ICON;
         return span(join(getName() + ": ",
@@ -270,8 +272,9 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      *         the number of new issues
      *
      * @return the legend of the trend chart
+     * @deprecated rendering of the summary is now done on the client side with the new model {@link SummaryModel}
      */
-    // TODO: Make messages overridable
+    @Deprecated
     public ContainerTag getNewIssuesLabel(final int newSize) {
         return a(newSize == 1 ? Messages.Tool_OneNewWarning() : Messages.Tool_MultipleNewWarnings(newSize))
                 .withHref(getId() + "/new");
@@ -284,7 +287,9 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      *         the number of fixed issues
      *
      * @return the legend of the trend chart
+     * @deprecated rendering of the summary is now done on the client side with the new model {@link SummaryModel}
      */
+    @Deprecated
     public ContainerTag getFixedIssuesLabel(final int fixedSize) {
         return a(fixedSize == 1 ? Messages.Tool_OneFixedWarning() : Messages.Tool_MultipleFixedWarnings(fixedSize))
                 .withHref(getId() + "/fixed");
@@ -299,7 +304,9 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      *         the build since there are no issues
      *
      * @return the legend of the trend chart
+     * @deprecated rendering of the summary is now done on the client side with the new model {@link SummaryModel}
      */
+    @Deprecated
     public DomContent getNoIssuesSinceLabel(final int currentBuild, final int noIssuesSinceBuild) {
         return join(Messages.Tool_NoIssuesSinceBuild(Messages.Tool_NoIssues(),
                 currentBuild - noIssuesSinceBuild + 1,
@@ -331,7 +338,9 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      *         the status of the quality gate
      *
      * @return the legend of the trend chart
+     * @deprecated rendering of the summary is now done on the client side with the new model {@link SummaryModel}
      */
+    @Deprecated
     public DomContent getQualityGateResult(final QualityGateStatus qualityGateStatus) {
         return getQualityGateResult(qualityGateStatus, true);
     }
@@ -345,7 +354,9 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      *         determines whether the reset reference link is shown
      *
      * @return the legend of the trend chart
+     * @deprecated rendering of the summary is now done on the client side with the new model {@link SummaryModel}
      */
+    @Deprecated
     public DomContent getQualityGateResult(final QualityGateStatus qualityGateStatus, final boolean hasResetLink) {
         if (hasResetLink) {
             return join(Messages.Tool_QualityGate(), getResultIcon(qualityGateStatus),
@@ -364,7 +375,9 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      *         the reference build
      *
      * @return the legend of the trend chart
+     * @deprecated rendering of the summary is now done on the client side with the new model {@link SummaryModel}
      */
+    @Deprecated
     public DomContent getReferenceBuild(final Run<?, ?> referenceBuild) {
         return join(Messages.Tool_ReferenceBuild(), createReferenceBuildLink(referenceBuild));
     }
