@@ -12,21 +12,6 @@ updates:
       - dependency-name: org.eclipse.collections:eclipse-collections-api
         versions:
           - ">= 10.a"
-      - dependency-name: org.jenkins-ci.plugins.workflow:workflow-basic-steps
-        versions:
-          - ">= 2.23"
-      - dependency-name: org.jenkins-ci.plugins:git
-        versions:
-          - ">= 4.7.0"
-      - dependency-name: org.jenkins-ci.plugins:git-client
-        versions:
-          - ">= 3.7.0"
-      - dependency-name: org.jenkins-ci.main:maven-plugin
-        versions:
-          - "> 3.8"
-      - dependency-name: org.jenkins-ci.plugins:token-macro
-        versions:
-          - "> 2.13"
       - dependency-name: org.webjars:popper.js
         versions:
           - ">= 2.0.0"
