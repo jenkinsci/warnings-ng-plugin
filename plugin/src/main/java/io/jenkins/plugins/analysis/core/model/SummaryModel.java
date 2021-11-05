@@ -74,27 +74,23 @@ public class SummaryModel {
      * @return the title
      */
     public String getTitle() {
-        int analysesSize = analysisResult.getIssues().getOriginReportFiles().size();
-        if (analysesSize < 2) {
-            int totalSize = analysisResult.getTotalSize();
-            if (totalSize == 0) {
-                return Messages.Tool_NoIssues();
-            }
-            if (totalSize == 1) {
-                return Messages.Tool_OneIssue();
-            }
-            return Messages.Tool_MultipleIssues(totalSize);
+        int totalSize = analysisResult.getTotalSize();
+        if (totalSize == 0) {
+            return Messages.Tool_NoIssues();
         }
-        else {
-            int totalSize = analysisResult.getTotalSize();
-            if (totalSize == 0) {
-                return Messages.Tools_NoIssues(analysesSize);
-            }
-            if (totalSize == 1) {
-                return Messages.Tools_OneIssue(analysesSize);
-            }
-            return Messages.Tools_MultipleIssues(analysesSize, totalSize);
+        if (totalSize == 1) {
+            return Messages.Tool_OneIssue();
         }
+        return Messages.Tool_MultipleIssues(totalSize);
+    }
+
+    /**
+     * Returns the number of analysis files that have been parsed in this step.
+     *
+     * @return the number of analysis files
+     */
+    public int getAnalysesCount() {
+        return analysisResult.getIssues().getOriginReportFiles().size();
     }
 
     public ImmutableList<String> getErrors() {
@@ -140,7 +136,8 @@ public class SummaryModel {
     }
 
     public String getZeroIssuesHighscoreMessage() {
-        return Messages.Summary_NoIssuesSinceBuild(analysisResult.getOwner().getNumber() - analysisResult.getNoIssuesSinceBuild() + 1);
+        return Messages.Summary_NoIssuesSinceBuild(
+                analysisResult.getOwner().getNumber() - analysisResult.getNoIssuesSinceBuild() + 1);
     }
 
     /**

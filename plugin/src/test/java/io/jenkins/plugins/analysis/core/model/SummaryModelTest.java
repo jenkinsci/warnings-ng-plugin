@@ -121,7 +121,7 @@ class SummaryModelTest {
         assertThat(summary)
                 .hasId(TOOL_ID)
                 .hasName(TOOL_NAME)
-                .hasTitle(Messages.Tools_MultipleIssues(2, 5))
+                .hasTitle(Messages.Tool_MultipleIssues(5))
                 .hasNoErrors();
 
         assertThat(summary.getTools()).hasSize(2)

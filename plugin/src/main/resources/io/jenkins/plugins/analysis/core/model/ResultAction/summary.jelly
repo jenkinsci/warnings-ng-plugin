@@ -20,6 +20,9 @@
           <j:otherwise>
             ${s.title}
           </j:otherwise>
+          <j:if test="${s.analysesCount > 1}">
+            <st:nbsp/>(from ${s.analysesCount} analyses)
+          </j:if>
         </j:choose>
       </span>
       <a id="${it.id}-info" href="${it.id}/info">
