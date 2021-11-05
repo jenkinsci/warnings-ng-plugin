@@ -3,12 +3,16 @@ package io.jenkins.plugins.analysis.core.model;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.impl.factory.Lists;
 import org.eclipse.collections.impl.factory.Maps;
 import org.junit.jupiter.api.Test;
 
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.IssueBuilder;
+import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.echarts.Build;
 
 import hudson.model.BallColor;
@@ -117,7 +121,7 @@ class SummaryModelTest {
         assertThat(summary)
                 .hasId(TOOL_ID)
                 .hasName(TOOL_NAME)
-                .hasTitle(Messages.Tool_MultipleIssues(5))
+                .hasTitle(Messages.Tools_MultipleIssues(2, 5))
                 .hasNoErrors();
 
         assertThat(summary.getTools()).hasSize(2)
@@ -209,11 +213,29 @@ class SummaryModelTest {
         when(analysisRun.getErrorMessages()).thenReturn(errorMessages);
         when(analysisRun.getNoIssuesSinceBuild()).thenReturn(numberOfIssuesSinceBuild);
         when(analysisRun.getQualityGateStatus()).thenReturn(QualityGateStatus.INACTIVE);
+        when(analysisRun.getIssues()).thenReturn(createReport(sizesPerOrigin.keySet()));
         Run<?, ?> build = mock(Run.class);
         when(build.getNumber()).thenReturn(2);
         when(analysisRun.getOwner()).thenAnswer(i -> build);
 
         return analysisRun;
+    }
+
+    private Report createReport(final Set<String> ids) {
+        IssueBuilder builder = new IssueBuilder();
+        Report container = new Report();
+        container.setOrigin("container", "Aggregation");
+        for (String id : ids) {
+            Report subReport = new Report(id, "Name of " + id, id + ".xml");
+            Issue checkstyleWarning = builder.setFileName("A.java")
+                    .setCategory("Style")
+                    .setLineStart(1)
+                    .buildAndClean();
+            subReport.add(checkstyleWarning);
+            subReport.add(builder.setFileName("A.java").setCategory("Style").setLineStart(1).buildAndClean());
+            container.addAll(subReport);
+        }
+        return container;
     }
 
     private ResetQualityGateCommand createResetReferenceAction(final boolean isEnabled) {

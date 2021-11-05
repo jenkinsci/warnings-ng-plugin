@@ -74,14 +74,27 @@ public class SummaryModel {
      * @return the title
      */
     public String getTitle() {
-        int totalSize = analysisResult.getTotalSize();
-        if (totalSize == 0) {
-            return Messages.Tool_NoIssues();
+        int analysesSize = analysisResult.getIssues().getOriginReportFiles().size();
+        if (analysesSize < 2) {
+            int totalSize = analysisResult.getTotalSize();
+            if (totalSize == 0) {
+                return Messages.Tool_NoIssues();
+            }
+            if (totalSize == 1) {
+                return Messages.Tool_OneIssue();
+            }
+            return Messages.Tool_MultipleIssues(totalSize);
         }
-        if (totalSize == 1) {
-            return Messages.Tool_OneIssue();
+        else {
+            int totalSize = analysisResult.getTotalSize();
+            if (totalSize == 0) {
+                return Messages.Tools_NoIssues(analysesSize);
+            }
+            if (totalSize == 1) {
+                return Messages.Tools_OneIssue(analysesSize);
+            }
+            return Messages.Tools_MultipleIssues(analysesSize, totalSize);
         }
-        return Messages.Tool_MultipleIssues(totalSize);
     }
 
     public ImmutableList<String> getErrors() {
