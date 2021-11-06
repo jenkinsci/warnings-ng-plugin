@@ -6,9 +6,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
-import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -48,7 +46,7 @@ abstract class AbstractIssuesTable<T extends GenericTableRow> {
         this.analysisResult = analysisResult;
         tabId = divId;
 
-        tableElement = tab.findElement(By.id(divId));
+        tableElement = analysisResult.waitFor(By.xpath("//table[@id='" + divId + "' and @isLoaded='true']"));
         headers = tableElement.findElements(By.xpath(".//thead/tr/th"))
                 .stream()
                 .map(WebElement::getText)
@@ -63,25 +61,8 @@ abstract class AbstractIssuesTable<T extends GenericTableRow> {
     public final void updateTableRows() {
         tableRows.clear();
 
-        List<WebElement> tableRowsAsWebElements;
-        do {
-            tableRowsAsWebElements = tableElement.findElements(By.xpath(".//tbody/tr"));
-        }
-        while (isLoadingSeverData(tableRowsAsWebElements));
+        List<WebElement> tableRowsAsWebElements = tableElement.findElements(By.xpath(".//tbody/tr"));
         tableRowsAsWebElements.forEach(element -> tableRows.add(createRow(element)));
-    }
-
-    private boolean isLoadingSeverData(final List<WebElement> tableRowsAsWebElements) {
-        try {
-            if (tableRowsAsWebElements.size() != 1) {
-                return false;
-            }
-            return tableRowsAsWebElements.get(0).getText().contains("Loading - please wait");
-        }
-        catch (StaleElementReferenceException exception) {
-            // if the server did load the table in the meantime
-            return false;
-        }
     }
 
     /**
@@ -203,10 +184,10 @@ abstract class AbstractIssuesTable<T extends GenericTableRow> {
      *         the number representing the page to open
      */
     public void openTablePage(final int pageNumber) {
-        WebElement webElement = analysisResult.find(By.linkText(String.valueOf(pageNumber)));
+        WebElement webElement = analysisResult.find(By.xpath("//a[@class='page-link' and @data-dt-idx='" + (pageNumber - 1) + "']"));
         webElement.click();
 
-        analysisResult.waitFor(ExpectedConditions.attributeContains(By.xpath("./.."), "class", "active"));
+        analysisResult.waitFor(By.xpath("//a[@class='page-link' and @data-dt-idx='" + (pageNumber - 1) + "']/parent::li[contains(@class, 'active')]"));
 
         updateTableRows();
     }
