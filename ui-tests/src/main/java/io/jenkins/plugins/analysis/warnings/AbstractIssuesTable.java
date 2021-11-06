@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -70,10 +71,16 @@ abstract class AbstractIssuesTable<T extends GenericTableRow> {
     }
 
     private boolean isLoadingSeverData(final List<WebElement> tableRowsAsWebElements) {
-        if (tableRowsAsWebElements.size() != 1) {
+        try {
+            if (tableRowsAsWebElements.size() != 1) {
+                return false;
+            }
+            return tableRowsAsWebElements.get(0).getText().contains("Loading - please wait");
+        }
+        catch (StaleElementReferenceException exception) {
+            // if the server did load the table in the meantime
             return false;
         }
-        return tableRowsAsWebElements.get(0).getText().contains("Loading - please wait");
     }
 
     /**
