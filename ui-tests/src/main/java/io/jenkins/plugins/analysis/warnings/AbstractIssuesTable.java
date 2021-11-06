@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -204,6 +205,9 @@ abstract class AbstractIssuesTable<T extends GenericTableRow> {
     public void openTablePage(final int pageNumber) {
         WebElement webElement = analysisResult.find(By.linkText(String.valueOf(pageNumber)));
         webElement.click();
+
+        analysisResult.waitFor(ExpectedConditions.attributeContains(By.xpath("./.."), "class", "active"));
+
         updateTableRows();
     }
 }
