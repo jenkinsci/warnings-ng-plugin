@@ -178,6 +178,23 @@ class SummaryModelTest {
         assertThat(summary).hasQualityGateStatus(qualityGateStatus);
     }
 
+    @Test
+    void shouldEnableResetQualityGateButton() {
+        AnalysisResult analysisResult = createAnalysisResult(
+                Maps.fixedSize.of(CHECK_STYLE_ID, 2), 0, 0,
+                Lists.immutable.of(ERROR_MESSAGE), 0);
+
+        SummaryModel summary = createSummaryWithQualityGateReset(analysisResult);
+
+        assertThat(summary).isResetQualityGateVisible();
+    }
+
+    private SummaryModel createSummaryWithQualityGateReset(final AnalysisResult analysisResult) {
+        SummaryModel summary = createSummary(analysisResult);
+        summary.setResetQualityGateCommand(createResetReferenceAction(true));
+        return summary;
+    }
+
     private SummaryModel createSummary(final AnalysisResult analysisResult) {
         Locale.setDefault(Locale.ENGLISH);
 
@@ -222,20 +239,21 @@ class SummaryModelTest {
     }
 
     private Report createReport(final Set<String> ids) {
-        IssueBuilder builder = new IssueBuilder();
-        Report container = new Report();
-        container.setOrigin("container", "Aggregation");
-        for (String id : ids) {
-            Report subReport = new Report(id, "Name of " + id, id + ".xml");
-            Issue checkstyleWarning = builder.setFileName("A.java")
-                    .setCategory("Style")
-                    .setLineStart(1)
-                    .buildAndClean();
-            subReport.add(checkstyleWarning);
-            subReport.add(builder.setFileName("A.java").setCategory("Style").setLineStart(1).buildAndClean());
-            container.addAll(subReport);
+        try (IssueBuilder builder = new IssueBuilder()) {
+            Report container = new Report();
+            container.setOrigin("container", "Aggregation");
+            for (String id : ids) {
+                Report subReport = new Report(id, "Name of " + id, id + ".xml");
+                Issue checkstyleWarning = builder.setFileName("A.java")
+                        .setCategory("Style")
+                        .setLineStart(1)
+                        .buildAndClean();
+                subReport.add(checkstyleWarning);
+                subReport.add(builder.setFileName("A.java").setCategory("Style").setLineStart(1).buildAndClean());
+                container.addAll(subReport);
+            }
+            return container;
         }
-        return container;
     }
 
     private ResetQualityGateCommand createResetReferenceAction(final boolean isEnabled) {
