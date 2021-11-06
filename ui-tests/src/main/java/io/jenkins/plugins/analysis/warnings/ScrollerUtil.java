@@ -1,9 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 
 /**
  * Utilities to remove the scroller on the job configuration page.
@@ -18,10 +15,10 @@ public final class ScrollerUtil {
      *         web driver
      */
     public static void hideScrollerTabBar(final WebDriver driver) {
-        WebElement element = driver.findElement(By.xpath("//div[contains(@class, 'jenkins-config-widgets')]"));
-        if (driver instanceof JavascriptExecutor) {
-            ((JavascriptExecutor) driver).executeScript("arguments[0].style.visibility='hidden'", element);
-        }
+//        WebElement element = driver.findElement(By.xpath("//div[contains(@class, 'jenkins-config-widgets')]"));
+//        if (driver instanceof JavascriptExecutor) {
+//            ((JavascriptExecutor) driver).executeScript("arguments[0].style.visibility='hidden'", element);
+//        }
     }
 
     private ScrollerUtil() {
