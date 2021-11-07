@@ -54,6 +54,7 @@ class SummaryModelTest {
                 .hasTotalSize(0)
                 .hasNewSize(0)
                 .hasFixedSize(0)
+                .hasAnalysesCount(1)
                 .hasQualityGateStatus(QualityGateStatus.INACTIVE)
                 .hasReferenceBuild(Optional.empty())
                 .isNotZeroIssuesHighscore()
@@ -122,6 +123,7 @@ class SummaryModelTest {
                 .hasId(TOOL_ID)
                 .hasName(TOOL_NAME)
                 .hasTitle(Messages.Tool_MultipleIssues(5))
+                .hasAnalysesCount(2)
                 .hasNoErrors();
 
         assertThat(summary.getTools()).hasSize(2)
