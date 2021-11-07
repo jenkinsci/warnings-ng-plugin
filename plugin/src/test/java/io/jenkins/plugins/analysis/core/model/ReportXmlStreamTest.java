@@ -17,17 +17,6 @@ import static edu.hm.hafner.analysis.assertions.Assertions.*;
  * @author Ullrich Hafner
  */
 class ReportXmlStreamTest extends ResourceTest {
-    @Test @Issue("JENKINS-63659")
-    void shouldMapOldSerializationFromAnalysisModel900AndWarnings841() {
-        ReportXmlStream reportXmlStream = new ReportXmlStream();
-
-        Object restored = reportXmlStream.read(getResourceAsFile("serialization-9.0.0.xml"));
-        assertThat(restored).isInstanceOfSatisfying(Report.class,
-                report -> {
-                    assertThat(report).isEmpty(); // Fallback empty report
-                });
-    }
-
     @Test @Issue("JENKINS-61293")
     void shouldMapDescriptionsToCorrectType() {
         ReportXmlStream reportXmlStream = new ReportXmlStream();
@@ -55,6 +44,32 @@ class ReportXmlStreamTest extends ResourceTest {
 
         Report newFormat = reportXmlStream.read(saved);
         assertThatReportIsCorrect(newFormat);
+    }
+
+    @Test
+    void shouldStoreOriginFiles() {
+        ReportXmlStream reportXmlStream = new ReportXmlStream();
+
+        Report newIssues = reportXmlStream.read(getResourceAsFile("analysis-new-issues.xml"));
+        Report outstandingIssues = reportXmlStream.read(getResourceAsFile("analysis-outstanding-issues.xml"));
+
+        Report merged = new Report();
+        merged.addAll(newIssues, outstandingIssues);
+
+        assertThat(newIssues).hasOriginReportFiles("/var/data/workspace/freestyle-analysis-model/target/test-classes/edu/hm/hafner/analysis/parser/spotbugsXml.xml",
+                "/var/data/workspace/freestyle-analysis-model/src/test/resources/edu/hm/hafner/analysis/parser/pmd/pmd.xml",
+                "/var/data/workspace/freestyle-analysis-model/target/test-classes/edu/hm/hafner/analysis/parser/pmd/pmd.xml",
+                "/var/data/workspace/freestyle-analysis-model/target/spotbugsXml.xml",
+                "/var/data/workspace/freestyle-analysis-model/target/test-classes/edu/hm/hafner/analysis/parser/dry/cpd/cpd.xml",
+                "/var/data/workspace/freestyle-analysis-model/target/pmd.xml",
+                "/var/data/workspace/freestyle-analysis-model/src/test/resources/edu/hm/hafner/analysis/parser/dry/cpd/cpd.xml",
+                "/var/data/workspace/freestyle-analysis-model/src/test/resources/edu/hm/hafner/analysis/parser/findbugs/spotbugsXml.xml",
+                "/var/data/workspace/freestyle-analysis-model/target/cpd.xml",
+                "/var/data/workspace/freestyle-analysis-model/target/test-classes/edu/hm/hafner/analysis/parser/cpd.xml",
+                "jenkins-console.log",
+                "/var/data/workspace/freestyle-analysis-model/src/test/resources/edu/hm/hafner/analysis/parser/cpd.xml",
+                "/var/data/workspace/freestyle-analysis-model/src/test/resources/edu/hm/hafner/analysis/parser/spotbugsXml.xml",
+                "/var/data/workspace/freestyle-analysis-model/target/test-classes/edu/hm/hafner/analysis/parser/findbugs/spotbugsXml.xml");
     }
 
     private void assertThatReportIsCorrect(final Report report) {

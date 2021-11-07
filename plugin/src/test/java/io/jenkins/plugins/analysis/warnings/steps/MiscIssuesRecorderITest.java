@@ -204,6 +204,11 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         assertThat(result).hasTotalSize(10);
         assertThat(result).hasId("analysis");
         assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
+        assertThat(result.getIssues().getOriginReportFiles()).satisfiesExactlyInAnyOrder(
+                first -> assertThat(first).endsWith("checkstyle-issues.txt"),
+                second -> assertThat(second).endsWith("pmd-warnings-issues.txt")
+        );
+
     }
 
     private List<AnalysisResult> runJobWithAggregation(final boolean isAggregationEnabled) {

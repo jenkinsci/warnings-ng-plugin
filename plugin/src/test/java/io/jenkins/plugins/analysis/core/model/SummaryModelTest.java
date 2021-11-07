@@ -3,12 +3,16 @@ package io.jenkins.plugins.analysis.core.model;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.impl.factory.Lists;
 import org.eclipse.collections.impl.factory.Maps;
 import org.junit.jupiter.api.Test;
 
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.IssueBuilder;
+import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.echarts.Build;
 
 import hudson.model.BallColor;
@@ -50,6 +54,7 @@ class SummaryModelTest {
                 .hasTotalSize(0)
                 .hasNewSize(0)
                 .hasFixedSize(0)
+                .hasAnalysesCount(1)
                 .hasQualityGateStatus(QualityGateStatus.INACTIVE)
                 .hasReferenceBuild(Optional.empty())
                 .isNotZeroIssuesHighscore()
@@ -118,6 +123,7 @@ class SummaryModelTest {
                 .hasId(TOOL_ID)
                 .hasName(TOOL_NAME)
                 .hasTitle(Messages.Tool_MultipleIssues(5))
+                .hasAnalysesCount(2)
                 .hasNoErrors();
 
         assertThat(summary.getTools()).hasSize(2)
@@ -174,6 +180,23 @@ class SummaryModelTest {
         assertThat(summary).hasQualityGateStatus(qualityGateStatus);
     }
 
+    @Test
+    void shouldEnableResetQualityGateButton() {
+        AnalysisResult analysisResult = createAnalysisResult(
+                Maps.fixedSize.of(CHECK_STYLE_ID, 2), 0, 0,
+                Lists.immutable.of(ERROR_MESSAGE), 0);
+
+        SummaryModel summary = createSummaryWithQualityGateReset(analysisResult);
+
+        assertThat(summary).isResetQualityGateVisible();
+    }
+
+    private SummaryModel createSummaryWithQualityGateReset(final AnalysisResult analysisResult) {
+        SummaryModel summary = createSummary(analysisResult);
+        summary.setResetQualityGateCommand(createResetReferenceAction(true));
+        return summary;
+    }
+
     private SummaryModel createSummary(final AnalysisResult analysisResult) {
         Locale.setDefault(Locale.ENGLISH);
 
@@ -209,11 +232,30 @@ class SummaryModelTest {
         when(analysisRun.getErrorMessages()).thenReturn(errorMessages);
         when(analysisRun.getNoIssuesSinceBuild()).thenReturn(numberOfIssuesSinceBuild);
         when(analysisRun.getQualityGateStatus()).thenReturn(QualityGateStatus.INACTIVE);
+        when(analysisRun.getIssues()).thenReturn(createReport(sizesPerOrigin.keySet()));
         Run<?, ?> build = mock(Run.class);
         when(build.getNumber()).thenReturn(2);
         when(analysisRun.getOwner()).thenAnswer(i -> build);
 
         return analysisRun;
+    }
+
+    private Report createReport(final Set<String> ids) {
+        try (IssueBuilder builder = new IssueBuilder()) {
+            Report container = new Report();
+            container.setOrigin("container", "Aggregation");
+            for (String id : ids) {
+                Report subReport = new Report(id, "Name of " + id, id + ".xml");
+                Issue checkstyleWarning = builder.setFileName("A.java")
+                        .setCategory("Style")
+                        .setLineStart(1)
+                        .buildAndClean();
+                subReport.add(checkstyleWarning);
+                subReport.add(builder.setFileName("A.java").setCategory("Style").setLineStart(1).buildAndClean());
+                container.addAll(subReport);
+            }
+            return container;
+        }
     }
 
     private ResetQualityGateCommand createResetReferenceAction(final boolean isEnabled) {

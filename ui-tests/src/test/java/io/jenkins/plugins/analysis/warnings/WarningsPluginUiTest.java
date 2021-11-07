@@ -113,7 +113,7 @@ public class WarningsPluginUiTest extends UiTest {
 
         AnalysisSummary referenceSummary = new AnalysisSummary(referenceBuild, ANALYSIS_ID);
         assertThat(referenceSummary)
-                .hasTitleText("Static Analysis: 4 warnings")
+                .hasTitleText("Static Analysis: 4 warnings (from 4 analyses)")
                 .hasTools(FINDBUGS_TOOL, CPD_TOOL, CHECKSTYLE_TOOL, PMD_TOOL)
                 .hasNewSize(0)
                 .hasFixedSize(0)
@@ -128,7 +128,7 @@ public class WarningsPluginUiTest extends UiTest {
 
         AnalysisSummary analysisSummary = new AnalysisSummary(build, ANALYSIS_ID);
         assertThat(analysisSummary)
-                .hasTitleText("Static Analysis: 25 warnings")
+                .hasTitleText("Static Analysis: 25 warnings (from 4 analyses)")
                 .hasTools(FINDBUGS_TOOL, CPD_TOOL, CHECKSTYLE_TOOL, PMD_TOOL)
                 .hasNewSize(23)
                 .hasFixedSize(2)

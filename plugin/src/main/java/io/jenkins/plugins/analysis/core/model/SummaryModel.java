@@ -84,6 +84,15 @@ public class SummaryModel {
         return Messages.Tool_MultipleIssues(totalSize);
     }
 
+    /**
+     * Returns the number of analysis files that have been parsed in this step.
+     *
+     * @return the number of analysis files
+     */
+    public int getAnalysesCount() {
+        return analysisResult.getIssues().getOriginReportFiles().size();
+    }
+
     public ImmutableList<String> getErrors() {
         return analysisResult.getErrorMessages();
     }
@@ -127,7 +136,8 @@ public class SummaryModel {
     }
 
     public String getZeroIssuesHighscoreMessage() {
-        return Messages.Summary_NoIssuesSinceBuild(analysisResult.getOwner().getNumber() - analysisResult.getNoIssuesSinceBuild() + 1);
+        return Messages.Summary_NoIssuesSinceBuild(
+                analysisResult.getOwner().getNumber() - analysisResult.getNoIssuesSinceBuild() + 1);
     }
 
     /**
