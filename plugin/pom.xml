@@ -51,6 +51,7 @@
     <!-- Jenkins Plug-in Dependencies Versions -->
     <autograding.version>3.3.1</autograding.version>
     <git-forensics.version>1.2.1</git-forensics.version>
+    <jenkins-maven-plugin.version>3.8</jenkins-maven-plugin.version>
     <antisamy-markup-formatter.version>2.1</antisamy-markup-formatter.version>
     <job-dsl.version>1.78.1</job-dsl.version>
     <flexible-publish.version>0.15.2</flexible-publish.version>
@@ -373,6 +374,7 @@
     <dependency>
       <groupId>org.jenkins-ci.main</groupId>
       <artifactId>maven-plugin</artifactId>
+      <version>${jenkins-maven-plugin.version}</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
