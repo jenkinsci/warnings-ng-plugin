@@ -4,18 +4,21 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Serializable;
+import java.io.StringReader;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.ReaderFactory;
+import edu.hm.hafner.analysis.Report;
 
 import org.jenkinsci.plugins.workflow.graph.FlowNode;
 import org.jenkinsci.plugins.workflow.steps.BodyExecutionCallback;
@@ -27,9 +30,11 @@ import hudson.console.LineTransformationOutputStream.Delegating;
 import hudson.model.Computer;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+import hudson.remoting.Channel;
 import hudson.remoting.VirtualChannel;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
 import io.jenkins.plugins.analysis.core.util.PipelineResultHandler;
@@ -113,6 +118,33 @@ abstract class AnalysisExecution<T> extends SynchronousNonBlockingStepExecution<
         return new ModelValidation().getCharset(charset);
     }
 
+    static class RemoteReport implements Serializable {
+        private static final long serialVersionUID = -3393024464067160526L;
+
+        private final List<ReportScanningTool> tools = new ArrayList<>();
+
+        private final List<Report> reports = new ArrayList<>();
+
+        RemoteReport(final List<ReportScanningTool> tools) {
+            this.tools.addAll(tools);
+            for (ReportScanningTool tool : tools) {
+                reports.add(new Report(tool.getActualId(), tool.getActualName()));
+            }
+        }
+
+        public List<Report> getReports() {
+            return reports;
+        }
+
+        public List<ReportScanningTool> getTools() {
+            return tools;
+        }
+
+        public void add(final int index, final Collection<Issue> issues) {
+            reports.get(index).addAll(issues);
+        }
+    }
+
     /**
      * Splits off a second branch of the console log into a temporary file that can be parsed by a {@link Tool} parser
      * later on.
@@ -120,31 +152,60 @@ abstract class AnalysisExecution<T> extends SynchronousNonBlockingStepExecution<
     static class ConsoleLogSplitter extends ConsoleLogFilter implements Serializable {
         private static final long serialVersionUID = -4867121027779734489L;
 
-        private final String splitConsoleLog;
+        private final RemoteReport remoteReport;
 
-        ConsoleLogSplitter(final String splitConsoleLog) {
-            this.splitConsoleLog = splitConsoleLog;
+        ConsoleLogSplitter(final RemoteReport remoteReport) {
+            this.remoteReport = remoteReport;
         }
 
         @Override
         public OutputStream decorateLogger(final Run build, final OutputStream logger)
                 throws IOException, InterruptedException {
-            return super.decorateLogger(build, new Splitter(logger, Paths.get(splitConsoleLog)));
+            return super.decorateLogger(build, new Splitter(logger, remoteReport));
+        }
+
+        private Object writeReplace() {
+            Channel channel = Channel.current();
+            if (channel == null) {
+                return this;
+            }
+            return new ConsoleLogSplitter(channel.export(RemoteReport.class, remoteReport));
         }
     }
 
     static class Splitter extends Delegating {
-        private final Path splitConsoleLog;
+        private final RemoteReport remoteReport;
 
-        Splitter(final OutputStream output, final Path splitConsoleLog) {
-            super(output);
+        Splitter(final OutputStream logger, final RemoteReport remoteReport) {
+            super(logger);
 
-            this.splitConsoleLog = splitConsoleLog;
+            this.remoteReport = remoteReport;
         }
 
         @Override
-        protected void eol(final byte[] b, final int len) throws IOException {
-            Files.write(splitConsoleLog, Arrays.copyOf(b, len), StandardOpenOption.APPEND);
+        protected void eol(final byte[] b, final int len) {
+            List<ReportScanningTool> tools = remoteReport.getTools();
+            for (int i = 0; i < tools.size(); i++) {
+                Report subReport = tools.get(i).createParser().parse(new StringReaderFactory(new String(b, 0, len)));
+                remoteReport.add(i, subReport.get());
+            }
+        }
+
+        public static class StringReaderFactory extends ReaderFactory {
+            private final String content;
+
+            StringReaderFactory(final String content) {
+                super(StandardCharsets.UTF_8);
+                this.content = content;
+            }
+
+            public String getFileName() {
+                return "Console log block";
+            }
+
+            public Reader create() {
+                return new StringReader(this.content);
+            }
         }
     }
 
@@ -156,33 +217,22 @@ abstract class AnalysisExecution<T> extends SynchronousNonBlockingStepExecution<
         private static final long serialVersionUID = -2269253566145222283L;
 
         private final IssuesRecorder recorder;
-        private final String consoleLogFileName;
-        private List<AnalysisResult> run;
+        private final AnalysisExecution.ConsoleLogSplitter splitter;
 
-        RecordIssuesCallback(final IssuesRecorder recorder, final String consoleLogFileName) {
+        RecordIssuesCallback(final IssuesRecorder recorder, final ConsoleLogSplitter splitter) {
             this.recorder = recorder;
-            this.consoleLogFileName = consoleLogFileName;
+            this.splitter = splitter;
         }
 
         @Override
         public void onSuccess(final StepContext context, final Object result) {
             ContextFacade contextFacade = new ContextFacade(context);
-            BlockOutputReaderFactory readerFactory = new BlockOutputReaderFactory(Paths.get(consoleLogFileName),
-                    contextFacade.getCharset());
-            System.out.println("======== Start ==========");
-            readerFactory.readStream().forEach(line -> System.out.format(">>> %s\n", line));
-            System.out.println("========= End  ========");
-            RecordIssuesRunner runner = new RecordIssuesRunner();
-            run = runner.run(recorder, contextFacade, readerFactory);
+
         }
 
         @Override
         public void onFailure(final StepContext context, final Throwable t) {
             System.out.println("==================");
-        }
-
-        public List<AnalysisResult> getResults() {
-            return run;
         }
     }
 

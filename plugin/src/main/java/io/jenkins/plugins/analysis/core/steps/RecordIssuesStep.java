@@ -2,8 +2,6 @@ package io.jenkins.plugins.analysis.core.steps;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -34,6 +32,7 @@ import hudson.model.TaskListener;
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.HealthReportBuilder;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
@@ -1115,21 +1114,28 @@ public class RecordIssuesStep extends Step implements Serializable {
             workspace.mkdirs();
 
             if (getContext().hasBody()) {
-                Path blockLog = Files.createTempFile("warnings-ng", "console-log");
-                RecordIssuesCallback callback = new RecordIssuesCallback(recorder, blockLog.toString());
+                ConsoleLogSplitter splitter = new ConsoleLogSplitter(new RemoteReport(getTools()));
+                RecordIssuesCallback callback = new RecordIssuesCallback(recorder, splitter);
                 getContext().newBodyInvoker()
                         .withContext(BodyInvoker.mergeConsoleLogFilters(
-                                getContext().get(ConsoleLogFilter.class),
-                                new ConsoleLogSplitter(blockLog.toString())))
+                                getContext().get(ConsoleLogFilter.class), splitter))
                         .withCallback(callback)
                         .start();
-                return callback.getResults();
+                return Collections.emptyList();
             }
             else {
                 RecordIssuesRunner runner = new RecordIssuesRunner();
 
                 return runner.run(recorder, new ContextFacade(getContext()), new ConsoleLogReaderFactory(getRun()));
             }
+        }
+
+        private List<ReportScanningTool> getTools() {
+            return step.getTools()
+                    .stream()
+                    .filter(t -> t instanceof ReportScanningTool)
+                    .map(t -> (ReportScanningTool) t)
+                    .collect(Collectors.toList());
         }
     }
 
