@@ -7,7 +7,7 @@ import hudson.Extension;
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
- * Provides a parser and customized messages for CodeChecker
+ * Provides a parser and customized messages for CodeChecker.
  *
  */
 public class CodeChecker extends AnalysisModelParser {
