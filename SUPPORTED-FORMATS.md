@@ -27,7 +27,7 @@ the [Analysis Parsers Library](https://github.com/jenkinsci/analysis-model/).
 | 7 | axivion-suite | axivionSuite() | ![Axivion Suite](plugin/src/main/webapp/icons/axivion-24x24.png) ![Axivion Suite](plugin/src/main/webapp/icons/axivion-48x48.png) | Axivion Suite | - |
 | 8 | brakeman | brakeman() | ![Brakeman](plugin/src/main/webapp/icons/brakeman-24x24.png) ![Brakeman](plugin/src/main/webapp/icons/brakeman-48x48.png) | [Brakeman](https://brakemanscanner.org) | **/brakeman-output.json |
 | 9 | buckminster | buckminster() | - - | Buckminster |  |
-| 10 | cpplint | cppLint() | - - | C&#43;&#43; Lint |  |
+| 10 | cpplint | cppLint() | - - | Cpplint |  |
 | 11 | cadence | cadence() | - - | Cadence Incisive |  |
 | 12 | cargo | cargo() | - - | Cargo Check |  |
 | 13 | ccm | ccm() | - - | CCM |  |
