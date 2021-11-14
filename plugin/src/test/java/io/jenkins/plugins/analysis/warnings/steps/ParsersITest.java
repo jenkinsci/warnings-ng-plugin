@@ -112,6 +112,28 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         }
     }
 
+    /** Runs the CodeChecker parser on an output file that contains 3 issues. */
+    @Test
+    public void shouldFindAllCodeCheckerIssues() {
+        String logFile = "CodeChecker_with_linux_paths.txt";
+        shouldFindIssuesOfTool(3, new CodeChecker(), logFile);
+
+        WorkflowJob job = createPipeline();
+        copyMultipleFilesToWorkspace(job, logFile);
+        job.setDefinition(asStage(String.format(
+                "recordIssues tool:analysisParser("
+                        + "pattern:'**/%s', "
+                        + "reportEncoding:'UTF-8', "
+                        + "id:'code-checker')", logFile)));
+
+        AnalysisResult result = scheduleSuccessfulBuild(job);
+
+        assertThat(result).hasTotalSize(3);
+        Report report = result.getIssues();
+        assertThat(report.filter(issue -> issue.getOrigin().equals("code-checker"))).hasSize(3);
+
+    }
+
     /** Runs the Cmake parser on an output file that contains 8 issues. */
     @Test
     public void shouldFindAllCmakeIssues() {
