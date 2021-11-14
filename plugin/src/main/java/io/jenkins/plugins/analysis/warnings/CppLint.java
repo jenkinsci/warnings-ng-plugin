@@ -7,7 +7,7 @@ import hudson.Extension;
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
- * Provides a parser and customized messages for C++ Lint.
+ * Provides a parser and customized messages for Cpplint.
  *
  * @author Ullrich Hafner
  */
