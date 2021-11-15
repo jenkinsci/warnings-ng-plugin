@@ -130,8 +130,7 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
 
         assertThat(result).hasTotalSize(3);
         Report report = result.getIssues();
-        assertThat(report.filter(issue -> issue.getOrigin().equals("code-checker"))).hasSize(3);
-
+        assertThat(report.filter(issue -> "code-checker".equals(issue.getOrigin()))).hasSize(3);
     }
 
     /** Runs the Cmake parser on an output file that contains 8 issues. */
@@ -519,10 +518,10 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         shouldFindIssuesOfTool(3, new ClangAnalyzer(), "ClangAnalyzer.txt");
     }
 
-    /** Runs the Clang-Tidy parser on an output file that contains 6 issues. */
+    /** Runs the Clang-Tidy parser on an output file that contains 7 issues. */
     @Test
     public void shouldFindAllClangTidyIssues() {
-        shouldFindIssuesOfTool(6, new ClangTidy(), "ClangTidy.txt");
+        shouldFindIssuesOfTool(7, new ClangTidy(), "ClangTidy.txt");
     }
 
     /** Runs the Clang parser on an output file that contains 9 issues. */
