@@ -1,0 +1,59 @@
+Found no defects in csv2xlslibTest.cpp
+Found no defects in TestMain.cpp
+Found no defects in convertCsvTest.cpp
+Found no defects in ReadCellTest.cpp
+Found no defects in parsecmd.cpp
+Found no defects in OutputFileNameTest.cpp
+Found no defects in parseCsvStream.cpp
+Found no defects in version.cpp
+[LOW] /path/to/projrct/csv2xlslib.Test/parsecmdTest.cpp:17:8: class 'TheFixture' defines a default destructor but does not define a copy constructor, a copy assignment operator, a move constructor or a move assignment operator [cppcoreguidelines-special-member-functions]
+struct TheFixture
+       ^
+
+Found 1 defect(s) in parsecmdTest.cpp
+
+[HIGH] /path/to/projrct/extern/lib/workbook.cpp:425:33: Called C++ object pointer is null [core.CallAndMessage]
+        const unsigned8_t* pdata = (((CRecord*)m_pCurrentData)->GetRecordDataBuffer()) + m_ContinueIndex*MAX_RECORD_SIZE;
+                                    ^
+
+Found 1 defect(s) in workbook.cpp
+
+[MEDIUM] /path/to/projrct/extern/lib/HPSF.cpp:212:12: 'signed char' to 'int' conversion; consider casting to 'unsigned char' first. [bugprone-signed-char-misuse]
+  int ret = Inflate(SUMMARY_SIZE);    // this file will only be this size, ever (zero padded)
+            ^
+
+Found 1 defect(s) in HPSF.cpp
+
+Found 485 defect(s) in formula.cpp
+
+
+----==== Summary ====----
+-------------------------------------
+Filename               | Report count
+-------------------------------------
+formula.cpp            |          485
+clara.hpp              |            5
+Helpers.h              |            3
+OutputDoc.hpp          |            3
+formula_expr.cpp       |            3
+XlsWorkBook.cpp        |            2
+XlsWorkBook.hpp        |            2
+extformat.cpp          |            2
+mainCPP.cpp            |            2
+parseCsvStreamTest.cpp |            2
+HPSF.cpp               |            1
+catch.hpp              |            1
+formula_cell.cpp       |            1
+parsecmdTest.cpp       |            1
+workbook.cpp           |            1
+-------------------------------------
+-----------------------
+Severity | Report count
+-----------------------
+MEDIUM   |          493
+LOW      |           14
+HIGH     |            7
+-----------------------
+----=================----
+Total number of reports: 514
+----=================----

@@ -116,7 +116,7 @@ The basic configuration of the plugin is shown in the image above:
 
 ![basic configuration](images/freestyle-start.png) 
 
-First of all you need to specify the tool that should be used to create the issues.
+First, you need to specify the tool that should be used to create the issues.
 Depending on the selected tool you might configure some additional parameters as well. 
 
 For all parsers that read report files you need to specify the pattern of the report files that should be parsed and scanned for issues. 
@@ -162,6 +162,25 @@ If you are using a single tool you can use the property `tool` instead of `tools
 
 ```groovy
 recordIssues enabledForFailure: true, aggregatingResults: true, tool: checkStyle(pattern: 'checkstyle-result.xml')
+```
+
+### Referencing tools by id
+
+As seen in the section above, a parser can be selected by specifying a pre-defined pipeline symbol in a Jenkinsfile.
+This is convenient for users but requires a change in the analysis-model module and the warnings plugin for each new
+parser. So a simplification has been added in release 10.x of the analysis-model module: you can now select a parser 
+simply by using the corresponding ID and the generic tool symbol `analysisModel`. 
+
+#### Pipeline step with a specific symbol
+
+```groovy
+recordIssues tool: checkStyle(pattern: 'checkstyle-result.xml')
+```
+
+#### Pipeline step with a generic symbol
+
+```groovy
+recordIssues tool: analysisParser(pattern: 'checkstyle-result.xml', id: 'checkstyle')
 ```
 
 ### Creating support for a custom tool
