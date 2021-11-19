@@ -928,6 +928,12 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         shouldFindIssuesOfTool(3, new OTDockerLint(), "ot-docker-linter.json");
     }
 
+    /** Runs the OWASP dependency check parser on an output file that contains 2 issues. */
+    @Test
+    public void shouldFindOwaspDependencyCheckIssues() {
+        shouldFindIssuesOfTool(2, new OwaspDependencyCheck(), "dependency-check-report.json");
+    }
+
     /** Runs the Brakeman parser on an output file that contains 32 issues. */
     @Test
     public void shouldFindAllBrakemanIssues() {
