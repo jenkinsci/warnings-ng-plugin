@@ -25,18 +25,15 @@
           </j:if>
         </j:choose>
       </span>
-      <a id="${it.id}-info" href="${it.id}/info">
-        <j:choose>
-          <j:when test="${size(s.errors) > 0}">
-            <fa:svg-icon name="exclamation-triangle" class="info-page-decorator"
-                         tooltip="${%Click to open details view to see all error messages}"/>
-          </j:when>
-          <j:otherwise>
-            <fa:svg-icon name="info-circle" class="info-page-decorator"
-                         tooltip="${%Click to open details view to see all information messages}"/>
-          </j:otherwise>
-        </j:choose>
-      </a>
+
+      <j:choose>
+        <j:when test="${size(s.errors) > 0}">
+          <fa:image-button label="${%Open log messages}" name="exclamation-triangle" tooltip="${%icon.error.tooltip}" url="${it.id}/info" class="fa-image-button-warning"/>
+        </j:when>
+        <j:otherwise>
+          <fa:image-button label="${%Open error messages}" name="info-circle" tooltip="${%icon.info.tooltip}" url="${it.id}/info"/>
+        </j:otherwise>
+      </j:choose>
 
       <ul id="${it.id}-details">
         <j:if test="${size(s.tools) > 1}">

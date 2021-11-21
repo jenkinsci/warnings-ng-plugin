@@ -25,6 +25,7 @@ import hudson.model.Run;
 import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
+import io.jenkins.plugins.bootstrap5.MessagesViewModel;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
@@ -157,8 +158,9 @@ public class DetailFactory {
                     EMPTY, Messages.Outstanding_Warnings_Header(), url, labelProvider, sourceEncoding);
         }
         if ("info".equalsIgnoreCase(link)) {
-            return new InfoErrorDetail(owner, result.getErrorMessages(), result.getInfoMessages(),
-                    labelProvider.getName());
+            return new MessagesViewModel(owner, labelProvider.getName(),
+                    result.getInfoMessages().castToList(),
+                    result.getErrorMessages().castToList());
         }
         for (Severity severity : Severity.getPredefinedValues()) {
             if (severity.getName().equalsIgnoreCase(link)) {
