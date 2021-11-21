@@ -109,10 +109,27 @@ public class SummaryModel {
         return analysisResult.getFixedSize();
     }
 
+    /**
+     * Returns the tools that contribute to this result.
+     *
+     * @return the tools that have been used in this report
+     */
     public List<StaticAnalysisLabelProvider> getTools() {
         return analysisResult.getSizePerOrigin().keySet().stream()
                 .map(facade::get)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns the number of issues for a specific tool given by its {@code origin} value.
+     *
+     * @param origin
+     *         the ID of the tool
+     *
+     * @return the number of issues for this tool
+     */
+    public int totalSize(final String origin) {
+        return analysisResult.getSizePerOrigin().get(origin);
     }
 
     public QualityGateStatus getQualityGateStatus() {

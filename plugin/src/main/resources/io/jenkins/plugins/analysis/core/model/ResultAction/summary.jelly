@@ -20,10 +20,10 @@
           <j:otherwise>
             ${s.title}
           </j:otherwise>
-          <j:if test="${s.analysesCount > 1}">
-            <st:nbsp/>(from ${s.analysesCount} analyses)
-          </j:if>
         </j:choose>
+        <j:if test="${s.analysesCount > 1}">
+          <st:nbsp/>(from ${s.analysesCount} analyses)
+        </j:if>
       </span>
       <a id="${it.id}-info" href="${it.id}/info">
         <j:choose>
@@ -44,7 +44,14 @@
             Static analysis results from:
             <j:set var="i" value="0"/>
             <j:forEach var="t" items="${s.tools}">
-              <a href="${it.id}/origin.${t.id.hashCode()}">${t.name}</a>
+              <j:choose>
+                <j:when test="${s.totalSize(t.id) != 0}">
+                  <a href="${it.id}/origin.${t.id.hashCode()}">${t.name} (${s.totalSize(t.id)})</a>
+                </j:when>
+                <j:otherwise>
+                  ${t.name} (0)
+                </j:otherwise>
+              </j:choose>
               <j:set var="i" value="${i + 1}"/>
               <j:if test="${i lt size(s.tools)}">,
                 <st:nbsp/>
@@ -83,7 +90,10 @@
             <l:icon alt="${s.qualityGateStatus.description}" class="${s.qualityGateStatus.iconClass} icon-sm"/>
             <j:if test="${s.resetQualityGateVisible}">
               <span class="yui-button">
-                <button id="${it.id}-reset-reference" style="padding: 0.3em 0.5em; min-width: 0.20em; min-height: 0.20em" type="button" title="Reset quality gate so that next build will use this build as a reference." >Reset</button>
+                <button id="${it.id}-reset-reference"
+                        style="padding: 0.3em 0.5em; min-width: 0.20em; min-height: 0.20em" type="button"
+                        title="Reset quality gate so that next build will use this build as a reference.">Reset
+                </button>
               </span>
             </j:if>
           </li>
@@ -95,9 +105,9 @@
 
   <script>
     {
-      const proxy = <st:bind value="${it}"/>;
-      const handler = new ResetQualityGateButtonHandler();
-      handler.bindResetButton('${it.id}', proxy);
+    const proxy =<st:bind value="${it}"/>;
+    const handler = new ResetQualityGateButtonHandler();
+    handler.bindResetButton('${it.id}', proxy);
     }
   </script>
 

@@ -92,6 +92,7 @@ class SummaryModelTest {
                 .hasName(TOOL_NAME)
                 .hasTitle(Messages.Tool_MultipleIssues(2))
                 .hasNoErrors();
+        assertThat(summary.totalSize(CHECK_STYLE_ID)).isEqualTo(2);
     }
 
     @Test
@@ -131,7 +132,8 @@ class SummaryModelTest {
                 .containsExactly(
                         tuple(CHECK_STYLE_ID, CHECK_STYLE_NAME),
                         tuple(PMD_ID, PMD_NAME));
-
+        assertThat(summary.totalSize(CHECK_STYLE_ID)).isEqualTo(2);
+        assertThat(summary.totalSize(PMD_ID)).isEqualTo(3);
     }
 
     @Test
