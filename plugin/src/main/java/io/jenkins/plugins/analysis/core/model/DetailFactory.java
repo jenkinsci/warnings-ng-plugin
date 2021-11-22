@@ -189,7 +189,7 @@ public class DetailFactory {
                     return factory.create(origin).getName();
                 }
             }
-            return "n/a";
+            return factory.create(StringUtils.EMPTY).getName();
         }
         return getColumnHeaderFor(selectedIssues, property)
                 + " "
