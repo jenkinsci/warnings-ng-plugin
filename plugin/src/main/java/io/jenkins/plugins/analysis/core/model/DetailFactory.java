@@ -5,6 +5,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -128,9 +129,10 @@ public class DetailFactory {
         String property = StringUtils.substringBefore(link, ".");
         Predicate<Issue> filter = createPropertyFilter(plainLink, property);
         Report selectedIssues = allIssues.filter(filter);
+        String displayName = getDisplayNameOfDetails(property, selectedIssues, plainLink, result.getSizePerOrigin().keySet());
         return new IssuesDetail(owner, result,
                 selectedIssues, newIssues.filter(filter), outstandingIssues.filter(filter),
-                fixedIssues.filter(filter), getDisplayNameOfDetails(property, selectedIssues), url,
+                fixedIssues.filter(filter), displayName, url,
                 labelProvider, sourceEncoding);
     }
 
@@ -178,10 +180,16 @@ public class DetailFactory {
                 Issue.getPropertyValueAsString(issue, property).hashCode()));
     }
 
-    private String getDisplayNameOfDetails(final String property, final Report selectedIssues) {
+    private String getDisplayNameOfDetails(final String property, final Report selectedIssues,
+            final String originHash, final Set<String> origins) {
         if ("origin".equals(property)) {
             LabelProviderFactory factory = createFactory();
-            return factory.create(getPropertyValueAsString(property, selectedIssues)).getName();
+            for (String origin : origins) {
+                if (String.valueOf(origin.hashCode()).equals(originHash)) {
+                    return factory.create(origin).getName();
+                }
+            }
+            return "n/a";
         }
         return getColumnHeaderFor(selectedIssues, property)
                 + " "
