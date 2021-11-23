@@ -8,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 
-import hudson.DescriptorExtensionList;
 import hudson.ExtensionPoint;
 
 import io.jenkins.plugins.analysis.core.model.Tool.ToolDescriptor;
@@ -59,7 +58,7 @@ public class LabelProviderFactory {
      *         provider is returned.
      */
     public StaticAnalysisLabelProvider create(final String id, @CheckForNull final String name) {
-        DescriptorExtensionList<Tool, ToolDescriptor> extensions = jenkins.getDescriptorsFor(Tool.class);
+        List<ToolDescriptor> extensions = jenkins.getDescriptorsFor(Tool.class);
         for (ToolDescriptor descriptor : extensions) {
             if (descriptor.getId().equals(id)) {
                 return createNamedLabelProvider(descriptor.getLabelProvider(), name);
