@@ -34,10 +34,11 @@ public class DashboardTable extends PageObject {
      * @param url
      *         the type of the result page (e.g. simian, checkstyle, cpd, etc.)
      */
+    @SuppressFBWarnings("MC")
     public DashboardTable(final Build parent, final URL url) {
         super(parent, url);
 
-        open();
+        open(); // TODO: the view should be already open when calling this constructor
 
         WebElement page = this.getElement(by.tagName("body"));
         List<WebElement> rows = page.findElements(by.tagName("table")).stream()
