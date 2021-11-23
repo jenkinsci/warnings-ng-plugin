@@ -180,6 +180,7 @@ public class DetailFactory {
                 Issue.getPropertyValueAsString(issue, property).hashCode()));
     }
 
+    @SuppressFBWarnings(value = "UNSAFE_HASH_EQUALS", justification = "Hashcode is used as URL")
     private String getDisplayNameOfDetails(final String property, final Report selectedIssues,
             final String originHash, final Set<String> origins) {
         if ("origin".equals(property)) {
@@ -202,6 +203,9 @@ public class DetailFactory {
     }
 
     private String getPropertyValueAsString(final String property, final Report selectedIssues) {
+        if (selectedIssues.isEmpty()) {
+            return "n/a";
+        }
         if ("fileName".equals(property)) {
             return selectedIssues.get(0).getBaseName();
         }
