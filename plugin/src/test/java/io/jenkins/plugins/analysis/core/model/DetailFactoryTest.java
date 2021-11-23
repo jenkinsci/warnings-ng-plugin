@@ -26,6 +26,7 @@ import jenkins.model.Jenkins;
 
 import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
+import io.jenkins.plugins.bootstrap5.MessagesViewModel;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
@@ -193,9 +194,9 @@ class DetailFactoryTest {
 
     @Test
     void shouldReturnInfoErrorDetailWhenCalledWithInfoLink() {
-        InfoErrorDetail details = createTrendDetails("info", createResult(),
-                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, createParent(),
-                InfoErrorDetail.class);
+        MessagesViewModel details = createTrendDetails("info", RUN, createResult(),
+                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent(),
+                MessagesViewModel.class);
         assertThat(details.getErrorMessages()).containsExactly(ERROR_MESSAGES);
         assertThat(details.getDisplayName()).contains(PARENT_NAME);
     }

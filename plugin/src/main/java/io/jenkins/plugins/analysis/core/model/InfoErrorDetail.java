@@ -11,8 +11,10 @@ import hudson.model.Run;
  * Result object to visualize the logging messages and errors during a static analysis run.
  *
  * @author Ullrich Hafner
+ * @deprecated moved to Bootstrap 5 API plugin
  */
 @SuppressWarnings("PMD.DataClass")
+@Deprecated
 public class InfoErrorDetail implements ModelObject {
     private final Run<?, ?> owner;
     private final ImmutableList<String> errorMessages;

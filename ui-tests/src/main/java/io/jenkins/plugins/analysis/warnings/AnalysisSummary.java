@@ -51,8 +51,8 @@ public class AnalysisSummary extends PageObject {
         WebElement summary = getElement(By.id(id + "-summary"));
         titleElement = summary.findElement(By.id(id + "-title"));
 
-        infoElement = summary.findElement(By.id(id + "-info"));
-        hasErrorIcon = infoElement.getText().contains("error messages");
+        infoElement = summary.findElement(By.className("fa-image-button"));
+        hasErrorIcon = !infoElement.findElements(By.className("fa-image-button-warning")).isEmpty();
         results = summary.findElements(by.xpath("ul[@id='" + id + "-details']/li"));
     }
 
@@ -307,7 +307,7 @@ public class AnalysisSummary extends PageObject {
      * Determines which icon is shown to represent the info messages view.
      */
     public enum InfoType {
-        INFO, ERROR;
+        INFO, ERROR
     }
 
     /**
