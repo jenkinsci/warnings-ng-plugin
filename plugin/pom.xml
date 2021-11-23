@@ -28,7 +28,7 @@
     <analysis-model-api.version>10.8.0</analysis-model-api.version>
     <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
 
-    <forensics-api-plugin.version>1.6.0</forensics-api-plugin.version>
+    <forensics-api-plugin.version>1.7.0</forensics-api-plugin.version>
     <plugin-util-api.version>2.5.1</plugin-util-api.version>
 
     <data-tables-api.version>1.11.3-4</data-tables-api.version>
