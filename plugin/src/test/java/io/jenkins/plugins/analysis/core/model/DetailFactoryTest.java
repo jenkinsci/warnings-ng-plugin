@@ -194,8 +194,8 @@ class DetailFactoryTest {
 
     @Test
     void shouldReturnInfoErrorDetailWhenCalledWithInfoLink() {
-        MessagesViewModel details = createTrendDetails("info", RUN, createResult(),
-                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent(),
+        MessagesViewModel details = createTrendDetails("info", createResult(),
+                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, createParent(),
                 MessagesViewModel.class);
         assertThat(details.getErrorMessages()).containsExactly(ERROR_MESSAGES);
         assertThat(details.getDisplayName()).contains(PARENT_NAME);
