@@ -102,9 +102,9 @@ public class SourcePrinter {
 
     private ContainerTag createTitle(final String message, final String iconUrl, final boolean isCollapseVisible) {
         return div().with(table().withClass("analysis-title").with(tr().with(
-                td().with(img().withSrc(iconUrl)),
                 td().withClass("analysis-title-column")
                         .with(div().withClass("analysis-warning-title").with(replaceNewLine(message))),
+                td().with(img().withSrc(iconUrl)),
                 createCollapseButton(isCollapseVisible)
         )));
     }
