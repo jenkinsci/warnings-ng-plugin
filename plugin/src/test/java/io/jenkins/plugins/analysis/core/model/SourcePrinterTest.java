@@ -126,6 +126,27 @@ class SourcePrinterTest extends ResourceTest {
     }
 
     @Test
+    void shouldMarkTheCodeBetweenColumnStartAndColumnEnd() {
+        try (IssueBuilder builder = new IssueBuilder()) {
+
+            Issue issue = builder.setLineStart(5).setColumnStart(11).setColumnEnd(25).build();
+
+            SourcePrinter printer = new SourcePrinter(createJenkinsFacade());
+            Document document = Jsoup.parse(printer.render(asStream("format-cpp.txt"), issue,
+                    "Hello <b>Description</b> <script>execute</script>", ICON_URL));
+
+            assertThat(document.getElementsByTag("code").html()).isEqualTo(
+                      "#include &lt;iostream&gt;\n"
+                    + "\n"
+                    + "int main(int argc, char**argv) {\n"
+                    + "int b = <mark>std::move(argc)</mark>;\n"
+                    + "std::cout &lt;&lt; \"Hello, World!\" &lt;&lt; argc &lt;&lt; std::endl;\n"
+                    + "  return 0;\n"
+                    + "}");
+
+        }
+    }
+    @Test
     void shouldAddBreakOnNewLine() {
         try (IssueBuilder builder = new IssueBuilder()) {
 

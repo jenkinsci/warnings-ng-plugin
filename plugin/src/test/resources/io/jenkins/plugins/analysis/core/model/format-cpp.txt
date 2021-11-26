@@ -1,0 +1,9 @@
+#include <iostream>
+
+int main(int argc, char**argv) {
+
+  int b = std::move(argc);
+
+  std::cout << "Hello, World!" << argc << std::endl;
+  return 0;
+}

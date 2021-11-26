@@ -28,6 +28,7 @@ import static j2html.TagCreator.*;
 public class SourcePrinter {
     private static final Sanitizer SANITIZER = new Sanitizer();
     private final JenkinsFacade jenkinsFacade;
+    private final ColumnMarker columnMarker = new ColumnMarker("ACOMBINATIONthatIsUnliklyTobe_in_any_source_code");
 
     /**
      * Creates a new instance of {@link SourcePrinter}.
@@ -68,14 +69,13 @@ public class SourcePrinter {
 
             String language = selectLanguageClass(issue);
             String code = asCode(before, language, "line-numbers")
-                    + asCode(marked, language, "highlight")
+                    + asMarkedCode(marked, issue,  language, "highlight")
                     + createInfoPanel(issue, description, iconUrl)
                     + asCode(after, language);
 
             return pre().with(new UnescapedText(code)).renderFormatted();
         }
     }
-
     private StringBuilder readBlockUntilLine(final LookaheadStream stream, final int end) {
         StringBuilder marked = new StringBuilder();
         while (stream.hasNext() && stream.getLine() < end) {
@@ -198,6 +198,13 @@ public class SourcePrinter {
             default:
                 return "language-clike"; // Best effort for unknown extensions
         }
+    }
+    private String asMarkedCode(final StringBuilder text, final Issue issue, final String... classes) {
+        final StringBuilder marked = columnMarker.markColumns(text.toString(), issue.getColumnStart(), issue.getColumnEnd());
+        final String sanitized = SANITIZER.render(StringEscapeUtils.escapeHtml4(marked.toString()));
+        final String markerReplaced = columnMarker.replaceMarkerWithHtmlTag(sanitized);
+        final UnescapedText unescapedText = new UnescapedText(markerReplaced);
+        return code().withClasses(classes).with(unescapedText).render();
     }
 
     private String asCode(final StringBuilder text, final String... classes) {
