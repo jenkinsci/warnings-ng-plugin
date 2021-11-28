@@ -17,8 +17,8 @@ public final class ColumnMarker {
         openingTagPlaceHolder = "OpEn" + placeHolderText;
         closingTagPlaceHolder = "ClOsE" + placeHolderText;
     }
-    private String openingTagPlaceHolder;
-    private String closingTagPlaceHolder;
+    private final String openingTagPlaceHolder;
+    private final String closingTagPlaceHolder;
     private final String openingTag = "<span class='squiggled-underline'>";
     private final String closingTag = "</span>";
     /**
