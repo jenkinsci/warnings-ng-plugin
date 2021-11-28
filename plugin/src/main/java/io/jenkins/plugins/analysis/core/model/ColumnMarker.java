@@ -19,7 +19,7 @@ public final class ColumnMarker {
     }
     private final String openingTagPlaceHolder;
     private final String closingTagPlaceHolder;
-    private final String openingTag = "<span class='squiggled-underline'>";
+    private final String openingTag = "<span class='code-mark'>";
     private final String closingTag = "</span>";
     /**
      * Encloses columns between start and end with the HTML tag 'mark'.

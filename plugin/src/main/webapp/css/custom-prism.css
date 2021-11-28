@@ -83,7 +83,7 @@ pre > code.highlight {
     vertical-align: center;
 }
 
-.squiggled-underline {
+.code-mark {
     text-decoration: underline;
     text-decoration-style: solid;
     text-decoration-color: red;
