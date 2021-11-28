@@ -5,12 +5,22 @@ package io.jenkins.plugins.analysis.core.model;
  *
  */
 public final class ColumnMarker {
-    public ColumnMarker(final String markerText){
-        openingTag = "OpEn" + markerText;
-        closingTag = "ClOsE" + markerText;
+    /**
+     * Creates ColumnMarker will use `placeHolderText` for enclosing.
+     *
+     * @param placeHolderText
+     *         Used to construct an opening and closing text that can
+     *         later be replaced with the HTML tag.
+     *         It should be a text that is unlikely to appear in any source code.
+     */
+    public ColumnMarker(final String placeHolderText) {
+        openingTagPlaceHolder = "OpEn" + placeHolderText;
+        closingTagPlaceHolder = "ClOsE" + placeHolderText;
     }
-    private String openingTag;
-    private String closingTag;
+    private String openingTagPlaceHolder;
+    private String closingTagPlaceHolder;
+    private final String openingTag = "<span class='squiggled-underline'>";
+    private final String closingTag = "</span>";
     /**
      * Encloses columns between start and end with the HTML tag 'mark'.
      * This will make prism highlight the enclosed part of the line.
@@ -41,13 +51,22 @@ public final class ColumnMarker {
         final String after = text.substring(afterMark);
 
         return new StringBuilder(before)
-                .append(openingTag)
+                .append(openingTagPlaceHolder)
                 .append(toBeMarked)
-                .append(closingTag)
+                .append(closingTagPlaceHolder)
                 .append(after);
     }
-    public String replaceMarkerWithHtmlTag(final String text) {
-        return text.replaceAll(openingTag, "<mark>")
-                   .replaceAll(closingTag, "</mark>");
+    /**
+     * Encloses columns between start and end with the HTML tag 'mark'.
+     * This will make prism highlight the enclosed part of the line.
+     *
+     * @param text
+     *         the source code line
+     *
+     * @return String containing the text with the added html tag
+     */
+    public String replacePlaceHolderWithHtmlTag(final String text) {
+        return text.replaceAll(openingTagPlaceHolder, openingTag)
+                   .replaceAll(closingTagPlaceHolder, closingTag);
     }
 }

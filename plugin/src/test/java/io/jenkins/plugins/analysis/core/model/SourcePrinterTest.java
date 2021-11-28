@@ -139,7 +139,7 @@ class SourcePrinterTest extends ResourceTest {
                       "#include &lt;iostream&gt;\n"
                     + "\n"
                     + "int main(int argc, char**argv) {\n"
-                    + "int b = <mark>std::move(argc)</mark>;\n"
+                    + "int b = <span class=\"squiggled-underline\">std::move(argc)</span>;\n"
                     + "std::cout &lt;&lt; \"Hello, World!\" &lt;&lt; argc &lt;&lt; std::endl;\n"
                     + "  return 0;\n"
                     + "}");
