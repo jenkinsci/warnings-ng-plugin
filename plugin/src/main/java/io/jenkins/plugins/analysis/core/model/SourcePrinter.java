@@ -200,7 +200,9 @@ public class SourcePrinter {
         }
     }
     private String asMarkedCode(final StringBuilder text, final Issue issue, final String... classes) {
-        final StringBuilder marked = columnMarker.markColumns(text.toString(), issue.getColumnStart(), issue.getColumnEnd());
+        final StringBuilder marked = (issue.getLineStart() == issue.getLineEnd())
+                                        ? columnMarker.markColumns(text.toString(), issue.getColumnStart(), issue.getColumnEnd())
+                                        : text;
         final String sanitized = SANITIZER.render(StringEscapeUtils.escapeHtml4(marked.toString()));
         final String markerReplaced = columnMarker.replacePlaceHolderWithHtmlTag(sanitized);
         final UnescapedText unescapedText = new UnescapedText(markerReplaced);
