@@ -1,28 +1,29 @@
 package io.jenkins.plugins.analysis.core.model;
 
 /**
- * Encloses columns between start and end with the HTML tag 'mark'.
- *
+ * Encloses columns between start and end with a HTML tag {@code openingTag} {@code closingTag}.
  */
+
 public final class ColumnMarker {
     /**
-     * Creates ColumnMarker will use `placeHolderText` for enclosing.
+     * Creates a {@link ColumnMarker} that will use {@code placeHolderText} for enclosing.
      *
      * @param placeHolderText
      *         Used to construct an opening and closing text that can
-     *         later be replaced with the HTML tag.
+     *         later be replaced with the HTML tag {@code openingTag} {@code closingTag}.
      *         It should be a text that is unlikely to appear in any source code.
      */
     public ColumnMarker(final String placeHolderText) {
         openingTagPlaceHolder = "OpEn" + placeHolderText;
         closingTagPlaceHolder = "ClOsE" + placeHolderText;
     }
+
     private final String openingTagPlaceHolder;
     private final String closingTagPlaceHolder;
     private final String openingTag = "<span class='code-mark'>";
     private final String closingTag = "</span>";
     /**
-     * Encloses columns between start and end with the HTML tag 'mark'.
+     * Encloses columns between start and end with the HTML tag {@code openingTag} {@code closingTag}.
      * This will make prism highlight the enclosed part of the line.
      *
      * @param text
@@ -57,7 +58,7 @@ public final class ColumnMarker {
                 .append(after);
     }
     /**
-     * Encloses columns between start and end with the HTML tag 'mark'.
+     * Encloses columns between start and end with the HTML tag {@code openingTag} {@code closingTag}.
      * This will make prism highlight the enclosed part of the line.
      *
      * @param text
