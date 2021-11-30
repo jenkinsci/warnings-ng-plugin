@@ -4,11 +4,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.util.ResourceTest;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import io.jenkins.plugins.util.JenkinsFacade;
 
@@ -146,6 +148,7 @@ class SourcePrinterTest extends ResourceTest {
 
         }
     }
+
     @Test
     void shouldNotMarkTheCodeIfStartLineAndEndLineAreDifferent() {
         try (IssueBuilder builder = new IssueBuilder()) {
@@ -178,6 +181,7 @@ class SourcePrinterTest extends ResourceTest {
 
         }
     }
+
     @Test
     void shouldAddBreakOnNewLine() {
         try (IssueBuilder builder = new IssueBuilder()) {
@@ -221,5 +225,94 @@ class SourcePrinterTest extends ResourceTest {
         JenkinsFacade jenkinsFacade = mock(JenkinsFacade.class);
         when(jenkinsFacade.getImagePath(anyString())).thenReturn("/path/to/icon");
         return jenkinsFacade;
+    }
+
+    @Nested @SuppressFBWarnings("SIC_INNER_SHOULD_BE_STATIC")
+    class ColumnMarkerTest {
+        @Test
+        void withColumnStartZeroThenDontMark() {
+            assertThat(new SourcePrinter.ColumnMarker("MARK")
+                    .markColumns("text that could be code", 0, 0))
+                    .contains("text that could be code");
+        }
+        @Test
+        void givenColumnStartAndColumnEndZeroThenMarkFromStartToLineEnd() {
+            assertThat(new SourcePrinter.ColumnMarker("MARK")
+                    .markColumns("text that could be code", 6, 0))
+                    .contains("text OpEnMARKthat could be codeClOsEMARK");
+        }
+        @Test
+        void givenColumnStartAndColumnEndwithColumnEndPointingToLineEndThenMarkFromStartToLineEnd() {
+            assertThat(new SourcePrinter.ColumnMarker("MARK")
+                    .markColumns("text that could be code", 6, 23))
+                    .contains("text OpEnMARKthat could be codeClOsEMARK");
+        }
+        @Test
+        void givenColumnStartAndColumnEndThenMarkFromColumnStartToColumnEnd() {
+            assertThat(new SourcePrinter.ColumnMarker("MARK")
+                    .markColumns("text that could be code", 6, 10))
+                    .contains("text OpEnMARKthat ClOsEMARKcould be code");
+        }
+        @Test
+        void givenColumnStartAndColumnEndWithDifferenceOfOneThenMarkFromColumnStartToColumnEnd() {
+            assertThat(new SourcePrinter.ColumnMarker("MARK")
+                    .markColumns("text that could be code", 6, 7))
+                    .contains("text OpEnMARKthClOsEMARKat could be code");
+        }
+        @Test
+        void givenColumnStartAndColumnEndWithSameValueThenMarkOneCharacter() {
+            assertThat(new SourcePrinter.ColumnMarker("MARK")
+                    .markColumns("text that could be code", 6, 6))
+                    .contains("text OpEnMARKtClOsEMARKhat could be code");
+        }
+        @Test
+        void givenAnEmptyTextThenMarkNothing() {
+            assertThat(new SourcePrinter.ColumnMarker("MARK")
+                    .markColumns("", 6, 6))
+                    .contains("");
+        }
+
+        @Test
+        void givenColumnStartWithValueOneThenMarkTheLineFromBegin() {
+            assertThat(new SourcePrinter.ColumnMarker("MARK")
+                    .markColumns("text that could be code", 1, 6))
+                    .contains("OpEnMARKtext tClOsEMARKhat could be code");
+        }
+        @Test
+        void givenColumnStartWithValueOfTheLastCharacterThenMarkTheLastCharacter() {
+            assertThat(new SourcePrinter.ColumnMarker("MARK")
+                    .markColumns("text that could be code", 23, 0))
+                    .contains("text that could be codOpEnMARKeClOsEMARK");
+        }
+        @Test
+        void givenColumnStartWithValueOfBehindColumnEndThenDoNotMark() {
+            assertThat(new SourcePrinter.ColumnMarker("MARK")
+                    .markColumns("text that could be code", 23, 10))
+                    .contains("text that could be code");
+        }
+        @Test
+        void givenColumnStartIsAfterLineEndThenDoNotMark() {
+            assertThat(new SourcePrinter.ColumnMarker("MARK")
+                    .markColumns("text that could be code", 30, 10))
+                    .contains("text that could be code");
+        }
+        @Test
+        void givenColumnStartIsNegativeThenDoNotMark() {
+            assertThat(new SourcePrinter.ColumnMarker("MARK")
+                    .markColumns("text that could be code", -1, 10))
+                    .contains("text that could be code");
+        }
+        @Test
+        void givenColumnEndIsNegativeThenDoNotMark() {
+            assertThat(new SourcePrinter.ColumnMarker("MARK")
+                    .markColumns("text that could be code", 1, -1))
+                    .contains("text that could be code");
+        }
+        @Test
+        void givenColumnEndIsAfterLineEndThenDoNotMark() {
+            assertThat(new SourcePrinter.ColumnMarker("MARK")
+                    .markColumns("text that could be code", 1, 24))
+                    .contains("text that could be code");
+        }
     }
 }

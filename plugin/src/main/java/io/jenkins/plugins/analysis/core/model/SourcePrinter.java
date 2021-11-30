@@ -27,8 +27,10 @@ import static j2html.TagCreator.*;
 @SuppressWarnings("PMD.GodClass")
 public class SourcePrinter {
     private static final Sanitizer SANITIZER = new Sanitizer();
+
+    private static final ColumnMarker COLUMN_MARKER = new ColumnMarker("ACOMBINATIONthatIsUnliklyTobe_in_any_source_code");
+
     private final JenkinsFacade jenkinsFacade;
-    private final ColumnMarker columnMarker = new ColumnMarker("ACOMBINATIONthatIsUnliklyTobe_in_any_source_code");
 
     /**
      * Creates a new instance of {@link SourcePrinter}.
@@ -69,13 +71,14 @@ public class SourcePrinter {
 
             String language = selectLanguageClass(issue);
             String code = asCode(before, language, "line-numbers")
-                    + asMarkedCode(marked, issue,  language, "highlight")
+                    + asMarkedCode(marked, issue, language, "highlight")
                     + createInfoPanel(issue, description, iconUrl)
                     + asCode(after, language);
 
             return pre().with(new UnescapedText(code)).renderFormatted();
         }
     }
+
     private StringBuilder readBlockUntilLine(final LookaheadStream stream, final int end) {
         StringBuilder marked = new StringBuilder();
         while (stream.hasNext() && stream.getLine() < end) {
@@ -199,17 +202,92 @@ public class SourcePrinter {
                 return "language-clike"; // Best effort for unknown extensions
         }
     }
+
     private String asMarkedCode(final StringBuilder text, final Issue issue, final String... classes) {
         final StringBuilder marked = (issue.getLineStart() == issue.getLineEnd())
-                                        ? columnMarker.markColumns(text.toString(), issue.getColumnStart(), issue.getColumnEnd())
-                                        : text;
+                ? COLUMN_MARKER.markColumns(text.toString(), issue.getColumnStart(), issue.getColumnEnd())
+                : text;
         final String sanitized = SANITIZER.render(StringEscapeUtils.escapeHtml4(marked.toString()));
-        final String markerReplaced = columnMarker.replacePlaceHolderWithHtmlTag(sanitized);
+        final String markerReplaced = COLUMN_MARKER.replacePlaceHolderWithHtmlTag(sanitized);
         final UnescapedText unescapedText = new UnescapedText(markerReplaced);
         return code().withClasses(classes).with(unescapedText).render();
     }
 
     private String asCode(final StringBuilder text, final String... classes) {
         return code().withClasses(classes).with(unescape(StringEscapeUtils.escapeHtml4(text.toString()))).render();
+    }
+
+    /**
+     * Encloses columns between {@code start} and {@code end} with an HTML tag (see {@code openingTag} and
+     * {@code closingTag}).
+     */
+    static final class ColumnMarker {
+        private static final String OPENING_TAG = "<span class='code-mark'>";
+        private static final String CLOSING_TAG = "</span>";
+
+        /**
+         * Creates a {@link ColumnMarker} that will use {@code placeHolderText} for enclosing.
+         *
+         * @param placeHolderText
+         *         Used to construct an opening and closing text that can later be replaced with the HTML tag {@code
+         *         openingTag} {@code closingTag}. It should be a text that is unlikely to appear in any source code.
+         */
+        ColumnMarker(final String placeHolderText) {
+            openingTagPlaceHolder = "OpEn" + placeHolderText;
+            closingTagPlaceHolder = "ClOsE" + placeHolderText;
+        }
+
+        private final String openingTagPlaceHolder;
+        private final String closingTagPlaceHolder;
+
+        /**
+         * Encloses columns between start and end with the HTML tag {@code openingTag} {@code closingTag}. This will
+         * make prism highlight the enclosed part of the line.
+         *
+         * @param text
+         *         the source code line
+         * @param start
+         *         the first column in text, that needs to be marked
+         * @param end
+         *         the last column in text, that needs to be marked
+         *
+         * @return StringBuilder containing the text with the added html tag "mark"
+         */
+        public StringBuilder markColumns(final String text, final int start, final int end) {
+            if (start < 1 || text.length() == 0 || end > text.length()) {
+                return new StringBuilder(text);
+            }
+            final int realStart = start - 1;
+            final int realEnd = (end == 0) ? text.length() - 1 : end - 1;
+
+            if (realStart > realEnd) {
+                return new StringBuilder(text);
+            }
+            final int afterMark = realEnd + 1;
+
+            final String before = text.substring(0, realStart);
+            final String toBeMarked = text.substring(realStart, afterMark);
+            final String after = text.substring(afterMark);
+
+            return new StringBuilder(before)
+                    .append(openingTagPlaceHolder)
+                    .append(toBeMarked)
+                    .append(closingTagPlaceHolder)
+                    .append(after);
+        }
+
+        /**
+         * Encloses columns between start and end with the HTML tag {@code openingTag} {@code closingTag}. This will
+         * make prism highlight the enclosed part of the line.
+         *
+         * @param text
+         *         the source code line
+         *
+         * @return String containing the text with the added html tag
+         */
+        public String replacePlaceHolderWithHtmlTag(final String text) {
+            return text.replaceAll(openingTagPlaceHolder, OPENING_TAG)
+                    .replaceAll(closingTagPlaceHolder, CLOSING_TAG);
+        }
     }
 }
