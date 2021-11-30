@@ -165,14 +165,14 @@ class SourcePrinterTest extends ResourceTest {
                     "Hello <b>Description</b> <script>execute</script>", ICON_URL));
             final String actual = document.getElementsByTag("code").toString();
             assertThat(actual).isEqualTo(
-                      "<code class=\"language-clike line-numbers\">#include &lt;iostream&gt;\n"
+                      "<code class=\"language-clike line-numbers match-braces\">#include &lt;iostream&gt;\n"
                     + "</code>\n"
-                    + "<code class=\"language-clike highlight\">\n"
+                    + "<code class=\"language-clike line-numbers highlight match-braces\">\n"
                     + "int main(int argc, char**argv) {\n"
                     + "\n"
                     + "  int b = std::move(argc);\n"
                     + "</code>\n"
-                    + "<code class=\"language-clike\">\n"
+                    + "<code class=\"language-clike line-numbers match-braces\">\n"
                     + "  std::cout &lt;&lt; \"Hello, World!\" &lt;&lt; argc &lt;&lt; std::endl;\n"
                     + "  return 0;\n"
                     + "}\n"
