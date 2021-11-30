@@ -82,3 +82,10 @@ pre > code.highlight {
     right: 25px;
     vertical-align: center;
 }
+
+.code-mark {
+    text-decoration: underline;
+    text-decoration-style: solid;
+    text-decoration-color: red;
+    text-decoration-thickness: 5px;
+}
