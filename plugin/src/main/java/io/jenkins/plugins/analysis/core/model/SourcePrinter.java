@@ -29,6 +29,8 @@ public class SourcePrinter {
     private static final Sanitizer SANITIZER = new Sanitizer();
 
     private static final ColumnMarker COLUMN_MARKER = new ColumnMarker("ACOMBINATIONthatIsUnliklyTobe_in_any_source_code");
+    private static final String LINE_NUMBERS = "line-numbers";
+    private static final String MATCH_BRACES = "match-braces";
 
     private final JenkinsFacade jenkinsFacade;
 
@@ -70,10 +72,10 @@ public class SourcePrinter {
             StringBuilder after = readBlockUntilLine(stream, Integer.MAX_VALUE);
 
             String language = selectLanguageClass(issue);
-            String code = asCode(before, language, "line-numbers")
-                    + asMarkedCode(marked, issue, language, "highlight")
+            String code = asCode(before, language, LINE_NUMBERS, MATCH_BRACES)
+                    + asMarkedCode(marked, issue, language, LINE_NUMBERS, "highlight", MATCH_BRACES)
                     + createInfoPanel(issue, description, iconUrl)
-                    + asCode(after, language);
+                    + asCode(after, language, LINE_NUMBERS, MATCH_BRACES);
 
             return pre().with(new UnescapedText(code)).renderFormatted();
         }
@@ -105,7 +107,7 @@ public class SourcePrinter {
 
     private ContainerTag createTitle(final String message, final String iconUrl, final boolean isCollapseVisible) {
         return div().with(table().withClass("analysis-title").with(tr().with(
-                td().with(img().withSrc(iconUrl)),
+                td().with(img().withClass("analysis-icon").withSrc(iconUrl)),
                 td().withClass("analysis-title-column")
                         .with(div().withClass("analysis-warning-title").with(replaceNewLine(message))),
                 createCollapseButton(isCollapseVisible)

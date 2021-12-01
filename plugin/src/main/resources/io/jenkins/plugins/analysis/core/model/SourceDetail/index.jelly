@@ -5,9 +5,7 @@
 
   <bs:page it="${it}" notitle="true">
 
-    <script src="${resURL}/plugin/warnings-ng/js/libs/prism.js"/>
-
-    <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/prism.css"/>
+    <st:adjunct includes="io.jenkins.plugins.prism"/>
     <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-prism.css"/>
 
     <h1>${%sourcedetail.header(it.displayName)}</h1>
