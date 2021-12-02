@@ -60,7 +60,7 @@
     <job-dsl.version>1.78.1</job-dsl.version>
     <flexible-publish.version>0.15.2</flexible-publish.version>
     <docker-fixtures.version>1.11</docker-fixtures.version>
-    <form-element-path.version>1.11</form-element-path.version>
+    <form-element-path.version>1.12</form-element-path.version>
 
     <!-- Maven Surefire ArgLine -->
     <argLine>-Djava.awt.headless=true -Xmx1024m -Djenkins.test.timeout=1000</argLine>
