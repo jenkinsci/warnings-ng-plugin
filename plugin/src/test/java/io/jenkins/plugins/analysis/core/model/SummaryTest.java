@@ -10,7 +10,6 @@ import org.eclipse.collections.api.map.FixedSizeMap;
 import org.eclipse.collections.impl.factory.Lists;
 import org.eclipse.collections.impl.factory.Maps;
 import org.junit.jupiter.api.Test;
-import org.jvnet.hudson.test.Issue;
 
 import edu.hm.hafner.echarts.Build;
 
@@ -33,28 +32,6 @@ import static org.mockito.Mockito.*;
 class SummaryTest {
     private static final FixedSizeMap<String, Integer> EMPTY_ORIGINS = Maps.fixedSize.empty();
     private static final ImmutableList<String> EMPTY_ERRORS = Lists.immutable.empty();
-
-    @Test
-    @Issue("SECURITY-1373")
-    void shouldSanitizeName() {
-        AnalysisResult analysisResult = createAnalysisResult(EMPTY_ORIGINS, 0, 0,
-                Lists.immutable.of("Error 1", "Error 2"), 0);
-
-        Locale.setDefault(Locale.ENGLISH);
-
-        LabelProviderFactoryFacade facade = mock(LabelProviderFactoryFacade.class);
-        StaticAnalysisLabelProvider checkStyleLabelProvider = createLabelProvider("checkstyle",
-                "<b>CheckStyle</b> <script>execute</script>");
-        when(facade.get("checkstyle")).thenReturn(checkStyleLabelProvider);
-
-        Summary summary = new Summary(checkStyleLabelProvider, analysisResult, facade);
-        setResetReferenceAction(summary, false);
-
-        String createdHtml = summary.create();
-
-        assertThat(createdHtml).contains("<b>CheckStyle</b>");
-        assertThat(createdHtml).doesNotContain("<script>execute</script>");
-    }
 
     @Test
     void shouldShowAggregatedWarnings() {
