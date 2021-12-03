@@ -212,13 +212,11 @@ public class IssuesTablePortlet extends DashboardPortlet {
 
         PortletTableModel(final List<Job<?, ?>> visibleJobs, final Predicate<ResultAction> filter,
                 final LabelProviderFactory labelProviderFactory) {
-            List<ResultAction> actions = visibleJobs.stream()
+            columns = visibleJobs.stream()
                     .filter(job -> job.getLastCompletedBuild() != null)
                     .map(Job::getLastCompletedBuild)
                     .flatMap(build -> build.getActions(ResultAction.class).stream().filter(filter))
-                    .collect(Collectors.toList());
-
-            columns = actions.stream()
+                    .collect(Collectors.toList()).stream()
                     .map(r -> createColumn(r, labelProviderFactory))
                     .collect(Collectors.toCollection(TreeSet::new));
 
