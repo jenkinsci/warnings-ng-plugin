@@ -8,7 +8,6 @@ import java.util.TreeSet;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.util.VisibleForTesting;
@@ -26,7 +25,6 @@ import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.ToolSelection;
-import io.jenkins.plugins.analysis.core.util.Sanitizer;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 import static io.jenkins.plugins.analysis.core.model.ToolSelection.*;
@@ -38,8 +36,6 @@ import static io.jenkins.plugins.analysis.core.model.ToolSelection.*;
  */
 @SuppressWarnings("PMD.DataClass")
 public class IssuesTablePortlet extends DashboardPortlet {
-    private static final Sanitizer SANITIZER = new Sanitizer();
-
     private boolean hideCleanJobs;
     private boolean showIcons;
     private boolean selectTools = false;
@@ -64,17 +60,9 @@ public class IssuesTablePortlet extends DashboardPortlet {
         this.labelProviderFactory = labelProviderFactory;
     }
 
-    private LabelProviderFactory getLabelProviderFactory() {
-        return ObjectUtils.defaultIfNull(labelProviderFactory, new LabelProviderFactory());
-    }
-
     @VisibleForTesting
     void setJenkinsFacade(final JenkinsFacade jenkinsFacade) {
         this.jenkinsFacade = jenkinsFacade;
-    }
-
-    private JenkinsFacade getJenkinsFacade() {
-        return ObjectUtils.defaultIfNull(jenkinsFacade, new JenkinsFacade());
     }
 
     @SuppressWarnings({"unused", "PMD.BooleanGetMethodName"}) // called by Stapler
