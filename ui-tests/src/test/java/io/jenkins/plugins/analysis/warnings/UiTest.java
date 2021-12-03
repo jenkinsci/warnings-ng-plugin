@@ -33,6 +33,7 @@ abstract class UiTest extends AbstractJUnitTest {
     static final String WARNINGS_PLUGIN_PREFIX = "/";
     static final String CHECKSTYLE_ID = "checkstyle";
     static final String CHECKSTYLE_TOOL = "CheckStyle";
+    static final String CHECK_STYLE_NAME = "++CheckStyle++";
     static final String CPD_ID = "cpd";
     static final String CPD_TOOL = "CPD";
     static final String PMD_ID = "pmd";
@@ -238,7 +239,7 @@ abstract class UiTest extends AbstractJUnitTest {
 
         AnalysisSummary checkstyle = new AnalysisSummary(build, CHECKSTYLE_ID);
         assertThat(checkstyle)
-                .hasTitleText("CheckStyle: 3 warnings")
+                .hasTitleText(CHECK_STYLE_NAME + ": 3 warnings")
                 .hasNewSize(3)
                 .hasFixedSize(1)
                 .hasReferenceBuild(1)

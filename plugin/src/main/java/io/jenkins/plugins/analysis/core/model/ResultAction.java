@@ -160,7 +160,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
     @Whitelisted
     @Override
     public String getDisplayName() {
-        return getLabelProvider().getRawLinkName();
+        return getLabelProvider().getLinkName();
     }
 
     @Override

@@ -27,7 +27,6 @@ import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
  *
  * @author Ullrich Hafner
  */
-// TODO: number of parsed reports should be shown as well
 public class SummaryModel {
     private final StaticAnalysisLabelProvider labelProvider;
     private final AnalysisResult analysisResult;

@@ -1,12 +1,10 @@
 package io.jenkins.plugins.analysis.core.portlets;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.OptionalInt;
-import java.util.SortedMap;
-import java.util.TreeMap;
-import java.util.function.Function;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -202,38 +200,44 @@ public class IssuesTablePortlet extends DashboardPortlet {
      * @return the table model
      */
     public PortletTableModel getModel(final List<Job<?, ?>> jobs) {
-        return new PortletTableModel(getVisibleJobs(jobs), this::getToolName, createToolFilter(selectTools, tools));
+        return new PortletTableModel(getVisibleJobs(jobs), createToolFilter(selectTools, tools), labelProviderFactory);
     }
 
     /**
      * Provides the model for the two-dimensional table of issues per type and job.
      */
     public static class PortletTableModel {
-        private final List<TableRow> rows;
-        private final Collection<String> toolNames;
+        private final List<TableRow> rows = new ArrayList<>();
+        private final SortedSet<Column> columns;
 
-        PortletTableModel(final List<Job<?, ?>> visibleJobs, final Function<ResultAction, String> namePrinter,
-                final Predicate<ResultAction> filter) {
-            SortedMap<String, String> toolNamesById = mapToolIdsToNames(visibleJobs, namePrinter, filter);
+        PortletTableModel(final List<Job<?, ?>> visibleJobs, final Predicate<ResultAction> filter,
+                final LabelProviderFactory labelProviderFactory) {
+            List<ResultAction> actions = visibleJobs.stream()
+                    .filter(job -> job.getLastCompletedBuild() != null)
+                    .map(Job::getLastCompletedBuild)
+                    .flatMap(build -> build.getActions(ResultAction.class).stream().filter(filter))
+                    .collect(Collectors.toList());
 
-            toolNames = toolNamesById.values();
-            rows = new ArrayList<>();
+            columns = actions.stream()
+                    .map(r -> createColumn(r, labelProviderFactory))
+                    .collect(Collectors.toCollection(TreeSet::new));
 
-            populateRows(visibleJobs, toolNamesById);
+            populateRows(visibleJobs);
         }
 
-        private SortedMap<String, String> mapToolIdsToNames(final List<Job<?, ?>> visibleJobs,
-                final Function<ResultAction, String> namePrinter,
-                final Predicate<ResultAction> actionFilter) {
-            return visibleJobs.stream().filter(job -> job.getLastCompletedBuild() != null)
-                    .map(Job::getLastCompletedBuild).flatMap(build -> build.getActions(ResultAction.class).stream().filter(actionFilter))
-                    .collect(Collectors.toMap(ResultAction::getId, namePrinter, (r1, r2) -> r1, TreeMap::new));
+        public SortedSet<Column> getColumns() {
+            return columns;
         }
 
-        private void populateRows(final List<Job<?, ?>> visibleJobs, final SortedMap<String, String> toolNamesById) {
+        private Column createColumn(final ResultAction result, final LabelProviderFactory labelProviderFactory) {
+            StaticAnalysisLabelProvider labelProvider = labelProviderFactory.create(result.getId(), result.getName());
+            return new Column(result.getId(), labelProvider.getName(), labelProvider.getLinkName(), labelProvider.getSmallIconUrl());
+        }
+
+        private void populateRows(final List<Job<?, ?>> visibleJobs) {
             for (Job<?, ?> job : visibleJobs) {
                 TableRow row = new TableRow(job);
-                for (String id : toolNamesById.keySet()) {
+                for (Column column : columns) {
                     Run<?, ?> lastCompletedBuild = job.getLastCompletedBuild();
                     if (lastCompletedBuild == null) {
                         row.add(Result.EMPTY);
@@ -241,7 +245,7 @@ public class IssuesTablePortlet extends DashboardPortlet {
                     else {
                         Result result = lastCompletedBuild.getActions(ResultAction.class)
                                 .stream()
-                                .filter(action -> action.getId().equals(id))
+                                .filter(action -> action.getId().equals(column.getId()))
                                 .findFirst()
                                 .map(Result::new)
                                 .orElse(Result.EMPTY);
@@ -262,22 +266,91 @@ public class IssuesTablePortlet extends DashboardPortlet {
         }
 
         /**
-         * Returns the names of the tools that should be used as column header of the table.
-         *
-         * @return the tool names (may contain valid HTML)
-         */
-        @SuppressWarnings("WeakerAccess") // called by view
-        public Collection<String> getToolNames() {
-            return toolNames;
-        }
-
-        /**
          * Returns the rows of the table (as {@link TableRow} instances).
          *
          * @return the rows
          */
         public List<TableRow> getRows() {
             return rows;
+        }
+    }
+
+    /**
+     * Properties of a column in the table.
+     */
+    public static class Column implements Comparable<Column> {
+        private final String id;
+        private final String name;
+        private final String linkName;
+        private final String icon;
+
+        Column(final String id, final String name, final String linkName, final String icon) {
+            this.id = id;
+            this.name = name;
+            this.linkName = linkName;
+            this.icon = icon;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getLinkName() {
+            return linkName;
+        }
+
+        public String getIcon() {
+            return icon;
+        }
+
+        @Override
+        public int compareTo(final Column o) {
+            return id.compareTo(o.getId());
+        }
+
+        @Override
+        public boolean equals(final Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            Column column = (Column) o;
+
+            if (!id.equals(column.id)) {
+                return false;
+            }
+            if (!name.equals(column.name)) {
+                return false;
+            }
+            if (!linkName.equals(column.linkName)) {
+                return false;
+            }
+            return icon.equals(column.icon);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = id.hashCode();
+            result = 31 * result + name.hashCode();
+            result = 31 * result + linkName.hashCode();
+            result = 31 * result + icon.hashCode();
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "Column{"
+                    + "id='" + id + '\'' + ", "
+                    + "name='" + name + '\'' + ", "
+                    + "linkName='" + linkName + '\'' + ", "
+                    + "icon='" + icon + '\'' + '}';
         }
     }
 

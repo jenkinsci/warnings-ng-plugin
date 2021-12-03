@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import hudson.model.Job;
 
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
+import io.jenkins.plugins.analysis.core.portlets.IssuesTablePortlet.Column;
 import io.jenkins.plugins.analysis.core.portlets.IssuesTablePortlet.PortletTableModel;
 import io.jenkins.plugins.analysis.core.portlets.IssuesTablePortlet.Result;
 import io.jenkins.plugins.analysis.core.portlets.IssuesTablePortlet.TableRow;
@@ -24,6 +25,11 @@ import static org.mockito.Mockito.*;
  * @author Ullrich Hafner
  */
 class IssuesTablePortletTest {
+    private static final Column SPOT_BUGS_COLUMN
+            = new Column(SPOT_BUGS_ID, SPOT_BUGS_NAME, SPOT_BUGS_NAME, SPOT_BUGS_ICON);
+    private static final Column CHECK_STYLE_COLUMN
+            = new Column(CHECK_STYLE_ID, CHECK_STYLE_NAME, CHECK_STYLE_NAME, CHECK_STYLE_ICON);
+
     @Test
     void shouldShowTableWithOneJob() {
         Job<?, ?> job = createJob(CHECK_STYLE_ID, CHECK_STYLE_NAME, 1);
@@ -40,7 +46,7 @@ class IssuesTablePortletTest {
 
         PortletTableModel model = createModel(list(firstRow, secondRow));
 
-        assertThat(model.getToolNames()).containsExactly(SPOT_BUGS_NAME);
+        assertThat(model.getColumns()).containsExactly(SPOT_BUGS_COLUMN);
 
         List<TableRow> rows = model.getRows();
         assertThat(rows).hasSize(2);
@@ -61,7 +67,7 @@ class IssuesTablePortletTest {
     }
 
     private void verifySpotBugsAndCheckStyle(final Job<?, ?> job, final PortletTableModel model) {
-        assertThat(model.getToolNames()).containsExactly(CHECK_STYLE_NAME, SPOT_BUGS_NAME);
+        assertThat(model.getColumns()).containsExactly(CHECK_STYLE_COLUMN, SPOT_BUGS_COLUMN);
 
         List<TableRow> rows = model.getRows();
         assertThat(rows).hasSize(1);
@@ -98,7 +104,7 @@ class IssuesTablePortletTest {
         portlet.setTools(Collections.emptyList());
 
         PortletTableModel model = portlet.getModel(jobs);
-        assertThat(model.getToolNames()).isEmpty();
+        assertThat(model.getColumns()).isEmpty();
 
         List<TableRow> rows = model.getRows();
         assertThat(rows).hasSize(1);
@@ -110,7 +116,7 @@ class IssuesTablePortletTest {
 
     private void verifySingleTool(final Job<?, ?> job, final PortletTableModel model,
             final String expectedId, final String expectedName, final int expectedSize) {
-        assertThat(model.getToolNames()).containsExactly(expectedName);
+        assertThat(model.getColumns()).extracting(Column::getName).containsExactly(expectedName);
 
         List<TableRow> rows = model.getRows();
         assertThat(rows).hasSize(1);
@@ -134,9 +140,7 @@ class IssuesTablePortletTest {
 
         PortletTableModel model = portlet.getModel(list(job));
 
-        assertThat(model.getToolNames()).containsExactly(
-                "<img alt=\"CheckStyle\" title=\"CheckStyle\" style=\"width:24px; height:24px\" src=\"/path/to/checkstyle.png\">",
-                "<img alt=\"SpotBugs\" title=\"SpotBugs\" style=\"width:24px; height:24px\" src=\"/path/to/spotbugs.png\">");
+        assertThat(model.getColumns()).containsExactly(CHECK_STYLE_COLUMN, SPOT_BUGS_COLUMN);
 
         List<TableRow> rows = model.getRows();
         assertThat(rows).hasSize(1);
@@ -152,22 +156,6 @@ class IssuesTablePortletTest {
     }
 
     @Test
-    void shouldShowHtmlHeaders() {
-        IssuesTablePortlet portlet = new IssuesTablePortlet("portlet");
-
-        String htmlName = "<b>ToolName</b> <script>execute</script>";
-        Job<?, ?> job = createJob(SPOT_BUGS_ID, htmlName, 1);
-
-        LabelProviderFactory factory = mock(LabelProviderFactory.class);
-        registerTool(factory, SPOT_BUGS_ID, htmlName);
-
-        portlet.setLabelProviderFactory(factory);
-
-        PortletTableModel model = portlet.getModel(list(job));
-        assertThat(model.getToolNames()).containsExactly("<b>ToolName</b>");
-    }
-
-    @Test
     void shouldShowTableWithTwoToolsAndTwoJobs() {
         Job<?, ?> first = createJobWithActions(
                 createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 1),
@@ -178,7 +166,7 @@ class IssuesTablePortletTest {
 
         PortletTableModel model = createModel(list(first, second));
 
-        assertThat(model.getToolNames()).containsExactly(CHECK_STYLE_NAME, SPOT_BUGS_NAME);
+        assertThat(model.getColumns()).containsExactly(CHECK_STYLE_COLUMN, SPOT_BUGS_COLUMN);
 
         List<TableRow> rows = model.getRows();
         assertThat(rows).hasSize(2);
@@ -263,7 +251,7 @@ class IssuesTablePortletTest {
 
         PortletTableModel model = createModel(list(first, second));
 
-        assertThat(model.getToolNames()).containsExactly(CHECK_STYLE_NAME, SPOT_BUGS_NAME);
+        assertThat(model.getColumns()).containsExactly(CHECK_STYLE_COLUMN, SPOT_BUGS_COLUMN);
 
         List<TableRow> rows = model.getRows();
         assertThat(rows).hasSize(2);

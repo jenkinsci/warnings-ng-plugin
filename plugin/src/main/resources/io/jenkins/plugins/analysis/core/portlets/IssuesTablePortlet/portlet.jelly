@@ -18,9 +18,17 @@
                   <th class="pane-header" align="left" initialSortDir="down">
                     ${%Job}
                   </th>
-                  <j:forEach var="toolName" items="${model.toolNames}">
+                  <j:forEach var="column" items="${model.columns}">
                     <th class="pane-header" align="right">
-                      <j:out value="${toolName}"/>
+                      <j:choose>
+                        <j:when test="${it.getShowIcons()}">
+                          <img alt="${column.name}" title="${column.linkName}" style="width:24px; height:24px"
+                               src="${resURL}/${column.icon}"/>
+                        </j:when>
+                        <j:otherwise>
+                          ${column.name}
+                        </j:otherwise>
+                      </j:choose>
                     </th>
                   </j:forEach>
                 </tr>

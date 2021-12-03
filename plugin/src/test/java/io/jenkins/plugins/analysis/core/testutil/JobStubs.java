@@ -29,10 +29,16 @@ public final class JobStubs {
     public static final String SPOT_BUGS_ID = "spotbugs";
     /** Name of SpotBugs actions. */
     public static final String SPOT_BUGS_NAME = "SpotBugs";
+
+    private static final String IMAGE_SUFFIX = ".png";
+    /** Name of SpotBugs icon. */
+    public static final String SPOT_BUGS_ICON = SPOT_BUGS_ID + IMAGE_SUFFIX;
     /** ID of CheckStyle actions. */
     public static final String CHECK_STYLE_ID = "checkstyle";
     /** Name of CheckStyle actions. */
     public static final String CHECK_STYLE_NAME = "CheckStyle";
+    /** Name of CheckStyle icon. */
+    public static final String CHECK_STYLE_ICON = CHECK_STYLE_ID + IMAGE_SUFFIX;
 
     /**
      * Registers a stub for the specified tool in the label provider factory so that this tool later on will be picked
@@ -50,7 +56,7 @@ public final class JobStubs {
 
         when(factory.create(id, name)).thenReturn(tool);
         when(factory.create(id)).thenReturn(tool);
-        when(tool.getSmallIconUrl()).thenReturn(id + ".png");
+        when(tool.getSmallIconUrl()).thenReturn(id + IMAGE_SUFFIX);
         when(tool.getName()).thenReturn(name);
         when(tool.getLinkName()).thenReturn(name);
     }

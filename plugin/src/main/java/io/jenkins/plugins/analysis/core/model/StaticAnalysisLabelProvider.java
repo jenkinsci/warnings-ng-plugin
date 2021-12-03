@@ -19,7 +19,6 @@ import hudson.model.BallColor;
 import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
-import io.jenkins.plugins.analysis.core.util.Sanitizer;
 import io.jenkins.plugins.fontawesome.api.SvgTag;
 import io.jenkins.plugins.util.JenkinsFacade;
 
@@ -33,8 +32,6 @@ import static j2html.TagCreator.*;
  * @author Ullrich Hafner
  */
 public class StaticAnalysisLabelProvider implements DescriptionProvider {
-    private static final Sanitizer SANITIZER = new Sanitizer();
-
     private static final String ICONS_PREFIX = "/plugin/warnings-ng/icons/";
     private static final String ANALYSIS_SVG_ICON = ICONS_PREFIX + "analysis.svg";
 
@@ -46,8 +43,6 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
     protected static final DescriptionProvider EMPTY_DESCRIPTION = i -> StringUtils.EMPTY;
 
     private final String id;
-    @CheckForNull
-    private String rawName;
     @CheckForNull
     private String name;
     private final DescriptionProvider descriptionProvider;
@@ -98,13 +93,12 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
         this.descriptionProvider = descriptionProvider;
         this.jenkins = jenkins;
 
-        setNameAndRawName(name);
+        changeName(name);
     }
 
-    private void setNameAndRawName(final String originalName) {
+    private void changeName(final String originalName) {
         if (StringUtils.isNotBlank(originalName) && !"-".equals(originalName)) { // don't overwrite with empty or -
-            rawName = originalName;
-            name = SANITIZER.render(originalName);
+            name = originalName;
         }
     }
 
@@ -185,7 +179,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      * @return the name
      */
     public StaticAnalysisLabelProvider setName(@CheckForNull final String name) {
-        setNameAndRawName(name);
+        changeName(name);
 
         return this;
     }
@@ -196,22 +190,24 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
     }
 
     /**
-     * Returns the name of the link to the results. The name will be sanitized and may contain HTML entities.
+     * Returns the name of the link to the results.
      *
      * @return the name of the side panel link
      */
     public String getLinkName() {
-        return Messages.Tool_Link_Name(getName());
+        return getRawLinkName();
     }
 
     /**
-     * Returns the name of the link to the results in Jenkins' side panel.
+     * Returns the name of the link to the results.
      *
      * @return the name of the side panel link
+     * @deprecated use {@link #getLinkName()}
      */
+    @Deprecated
     public String getRawLinkName() {
-        if (StringUtils.isNotBlank(rawName)) {
-            return Messages.Tool_Link_Name(rawName);
+        if (StringUtils.isNotBlank(name)) {
+            return Messages.Tool_Link_Name(name);
         }
         return Messages.Tool_Link_Name(getDefaultName());
     }
