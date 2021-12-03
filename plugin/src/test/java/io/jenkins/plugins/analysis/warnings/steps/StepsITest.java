@@ -78,7 +78,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
 
         job.setDefinition(new CpsFlowDefinition("node {\n"
                 + "  stage ('Integration Test') {\n"
-                + "         recordIssues tool: analysisParser(id: 'checkstyle', pattern: '**/" + "checkstyle1" + "*')\n"
+                + "         recordIssues tool: analysisParser(analysisModelId: 'checkstyle', pattern: '**/" + "checkstyle1" + "*')\n"
                 + "  }\n"
                 + "}", true));
 

@@ -180,7 +180,7 @@ recordIssues tool: checkStyle(pattern: 'checkstyle-result.xml')
 #### Pipeline step with a generic symbol
 
 ```groovy
-recordIssues tool: analysisParser(pattern: 'checkstyle-result.xml', id: 'checkstyle')
+recordIssues tool: analysisParser(pattern: 'checkstyle-result.xml', analysisModelId: 'checkstyle')
 ```
 
 ### Creating support for a custom tool

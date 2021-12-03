@@ -124,7 +124,7 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
                 "recordIssues tool:analysisParser("
                         + "pattern:'**/%s', "
                         + "reportEncoding:'UTF-8', "
-                        + "id:'code-checker')", logFile)));
+                        + "analysisModelId:'code-checker')", logFile)));
 
         AnalysisResult result = scheduleSuccessfulBuild(job);
 

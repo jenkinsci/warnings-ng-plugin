@@ -26,26 +26,30 @@ public class RegisteredParser extends ReportScanningTool {
 
     private static final ParserRegistry REGISTRY = new ParserRegistry();
 
-    private final String id;
+    private final String analysisModelId;
 
     /**
      * Creates a new instance of {@link RegisteredParser}.
      *
-     * @param id
-     *         the unique ID of the tool
+     * @param analysisModelId
+     *         the unique ID of the tool in the analysis-model module
      */
     @DataBoundConstructor
-    public RegisteredParser(final String id) {
+    public RegisteredParser(final String analysisModelId) {
         super();
 
-        this.id = id;
-        if (!REGISTRY.contains(id)) {
-            throw new NoSuchElementException("No such parser found with the specified ID: " + id);
+        this.analysisModelId = analysisModelId;
+        if (!REGISTRY.contains(analysisModelId)) {
+            throw new NoSuchElementException("No such parser found with the specified ID: " + analysisModelId);
         }
     }
 
+    public String getAnalysisModelId() {
+        return analysisModelId;
+    }
+
     private ParserDescriptor getParserDescriptor() {
-        return REGISTRY.get(id);
+        return REGISTRY.get(analysisModelId);
     }
 
     @Override
