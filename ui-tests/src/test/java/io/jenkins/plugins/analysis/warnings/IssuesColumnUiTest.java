@@ -36,9 +36,9 @@ public class IssuesColumnUiTest extends UiTest {
         IssuesColumn column = new IssuesColumn(jenkins, DEFAULT_ISSUES_COLUMN_NAME);
         assertThat(column).hasTotalCount("25");
 
-        assertHoverValues(column, 1, "CheckStyle Warnings", "3");
-        assertHoverValues(column, 2, "FindBugs Warnings", "0");
-        assertHoverValues(column, 3, "PMD Warnings", "2");
+        assertHoverValues(column, 1, CHECK_STYLE_NAME + " Warnings", "3");
+        assertHoverValues(column, 2, FINDBUGS_TOOL + " Warnings", "0");
+        assertHoverValues(column, 3, PMD_TOOL + " Warnings", "2");
         assertHoverValues(column, 4, "CPD Duplications", "20");
 
         ListView view = createListView();
