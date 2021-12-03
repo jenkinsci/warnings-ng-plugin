@@ -30,15 +30,14 @@ class StaticAnalysisLabelProviderTest {
         assertThat(labelProvider).hasName(labelProvider.getDefaultName());
     }
 
-    @Test @Issue("JENKINS-61834")
-    void shouldNotEscapeHtmlEntities() {
+    @Test @Issue("JENKINS-61834, JENKINS-67245")
+    void shouldNotEscapeHtmlEntitiesAnymore() {
         StaticAnalysisLabelProvider labelProvider = new StaticAnalysisLabelProvider(ID, "C++");
 
         assertThat(labelProvider).hasId(ID);
-        assertThat(labelProvider).hasName("C&#43;&#43;");
-        assertThat(labelProvider.getLinkName()).contains("C&#43;&#43;");
-        assertThat(labelProvider.getRawLinkName()).contains("C++");
-        assertThat(labelProvider.getTrendName()).contains("C&#43;&#43;");
+        assertThat(labelProvider).hasName("C++");
+        assertThat(labelProvider.getLinkName()).contains("C++");
+        assertThat(labelProvider.getTrendName()).contains("C++");
     }
 
     @Test
