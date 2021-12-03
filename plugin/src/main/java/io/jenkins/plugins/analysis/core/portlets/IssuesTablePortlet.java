@@ -30,7 +30,6 @@ import io.jenkins.plugins.analysis.core.util.Sanitizer;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 import static io.jenkins.plugins.analysis.core.model.ToolSelection.*;
-import static j2html.TagCreator.*;
 
 /**
  * A dashboard view portlet that renders a two-dimensional table of issues per type and job.
@@ -154,25 +153,6 @@ public class IssuesTablePortlet extends DashboardPortlet {
 
     private List<Job<?, ?>> removeZeroIssuesJobs(final List<Job<?, ?>> jobs) {
         return jobs.stream().filter(this::isVisible).collect(Collectors.toList());
-    }
-
-    private String getToolName(final ResultAction action) {
-        StaticAnalysisLabelProvider labelProvider = getLabelProviderFactory().create(action.getId(), action.getName());
-
-        String label = render(labelProvider.getName());
-        if (showIcons) {
-            return img()
-                    .withAlt(label)
-                    .withTitle(render(labelProvider.getLinkName()))
-                    .withStyle("width:24px; height:24px")
-                    .withSrc(getJenkinsFacade().getImagePath(labelProvider.getSmallIconUrl()))
-                    .render();
-        }
-        return label;
-    }
-
-    private String render(final String html) {
-        return StringUtils.strip(SANITIZER.render(html));
     }
 
     private boolean isVisible(final Job<?, ?> job) {

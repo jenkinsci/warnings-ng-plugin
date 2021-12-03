@@ -65,7 +65,7 @@ abstract class UiTest extends AbstractJUnitTest {
 
     protected IssuesRecorder addAllRecorders(final FreeStyleJob job) {
         return job.addPublisher(IssuesRecorder.class, recorder -> {
-            recorder.setTool("CheckStyle");
+            recorder.setTool("CheckStyle").setName(CHECK_STYLE_NAME);
             recorder.addTool("FindBugs");
             recorder.addTool("PMD");
             recorder.addTool("CPD",

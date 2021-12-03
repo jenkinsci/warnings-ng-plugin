@@ -545,6 +545,8 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
         private final Control pattern = control("tool/pattern");
         private final Control normalThreshold = control("tool/normalThreshold");
         private final Control highThreshold = control("tool/highThreshold");
+        private final Control id = control("tool/id");
+        private final Control name = control("tool/name");
 
         StaticAnalysisTool(final PageArea issuesRecorder, final String path) {
             super(issuesRecorder, path);
@@ -560,6 +562,34 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
          */
         public StaticAnalysisTool setTool(final String toolName) {
             tool.select(toolName);
+            return this;
+        }
+
+        /**
+         * Sets the custom ID of the tool.
+         *
+         * @param id
+         *         the ID
+         *
+         * @return this
+         */
+        public StaticAnalysisTool setId(final String id) {
+            this.id.set(id);
+
+            return this;
+        }
+
+        /**
+         * Sets the custom name of the tool.
+         *
+         * @param name
+         *         the name
+         *
+         * @return this
+         */
+        public StaticAnalysisTool setName(final String name) {
+            this.name.set(name);
+
             return this;
         }
 
