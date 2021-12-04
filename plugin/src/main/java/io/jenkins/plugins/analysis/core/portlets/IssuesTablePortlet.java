@@ -27,7 +27,6 @@ import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.ToolSelection;
-import io.jenkins.plugins.util.JenkinsFacade;
 
 import static io.jenkins.plugins.analysis.core.model.ToolSelection.*;
 
@@ -59,10 +58,6 @@ public class IssuesTablePortlet extends DashboardPortlet {
     @VisibleForTesting
     void setLabelProviderFactory(final LabelProviderFactory labelProviderFactory) {
         this.labelProviderFactory = labelProviderFactory;
-    }
-
-    @VisibleForTesting
-    void setJenkinsFacade(final JenkinsFacade jenkinsFacade) {
     }
 
     @SuppressWarnings({"unused", "PMD.BooleanGetMethodName"}) // called by Stapler
@@ -132,7 +127,7 @@ public class IssuesTablePortlet extends DashboardPortlet {
      */
     @DataBoundSetter
     public void setTools(final List<ToolSelection> tools) {
-        this.tools = tools;
+        this.tools = new ArrayList<>(tools);
     }
 
     private List<Job<?, ?>> getVisibleJobs(final List<Job<?, ?>> jobs) {

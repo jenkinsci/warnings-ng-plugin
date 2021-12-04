@@ -15,7 +15,6 @@ import io.jenkins.plugins.analysis.core.portlets.IssuesTablePortlet.Column;
 import io.jenkins.plugins.analysis.core.portlets.IssuesTablePortlet.PortletTableModel;
 import io.jenkins.plugins.analysis.core.portlets.IssuesTablePortlet.Result;
 import io.jenkins.plugins.analysis.core.portlets.IssuesTablePortlet.TableRow;
-import io.jenkins.plugins.util.JenkinsFacade;
 
 import static io.jenkins.plugins.analysis.core.testutil.JobStubs.*;
 import static org.assertj.core.api.Assertions.*;
@@ -147,11 +146,6 @@ class IssuesTablePortletTest {
         portlet.setShowIcons(true);
 
         assertThat(portlet.getShowIcons()).isTrue();
-
-        JenkinsFacade jenkinsFacade = mock(JenkinsFacade.class);
-        when(jenkinsFacade.getImagePath("checkstyle.png")).thenReturn("/path/to/checkstyle.png");
-        when(jenkinsFacade.getImagePath("spotbugs.png")).thenReturn("/path/to/spotbugs.png");
-        portlet.setJenkinsFacade(jenkinsFacade);
 
         Job<?, ?> job = createJobWithActions(
                 createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 1),
