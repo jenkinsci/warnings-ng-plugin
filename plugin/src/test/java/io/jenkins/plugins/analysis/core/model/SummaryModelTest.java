@@ -15,12 +15,10 @@ import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.echarts.Build;
 
-import hudson.model.BallColor;
 import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.model.SummaryModel.LabelProviderFactoryFacade;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
-import io.jenkins.plugins.util.JenkinsFacade;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -203,23 +201,15 @@ class SummaryModelTest {
         Locale.setDefault(Locale.ENGLISH);
 
         LabelProviderFactoryFacade facade = mock(LabelProviderFactoryFacade.class);
-        StaticAnalysisLabelProvider checkStyleLabelProvider = createLabelProvider(CHECK_STYLE_ID, CHECK_STYLE_NAME);
+        StaticAnalysisLabelProvider checkStyleLabelProvider = new StaticAnalysisLabelProvider(CHECK_STYLE_ID,
+                CHECK_STYLE_NAME);
         when(facade.get(CHECK_STYLE_ID)).thenReturn(checkStyleLabelProvider);
-        StaticAnalysisLabelProvider pmdLabelProvider = createLabelProvider(PMD_ID, PMD_NAME);
+        StaticAnalysisLabelProvider pmdLabelProvider = new StaticAnalysisLabelProvider(PMD_ID, PMD_NAME);
         when(facade.get(PMD_ID)).thenReturn(pmdLabelProvider);
 
-        SummaryModel summaryModel = new SummaryModel(createLabelProvider(TOOL_ID, TOOL_NAME), analysisResult, facade);
+        SummaryModel summaryModel = new SummaryModel(new StaticAnalysisLabelProvider(TOOL_ID, TOOL_NAME), analysisResult, facade);
         summaryModel.setResetQualityGateCommand(createResetReferenceAction(false));
         return summaryModel;
-    }
-
-    private StaticAnalysisLabelProvider createLabelProvider(final String id, final String name) {
-        JenkinsFacade jenkins = mock(JenkinsFacade.class);
-        when(jenkins.getImagePath(any(BallColor.class))).thenReturn("color");
-        when(jenkins.getImagePath(contains(StaticAnalysisLabelProvider.ERROR_ICON))).thenReturn("/path/to/error");
-        when(jenkins.getImagePath(contains(StaticAnalysisLabelProvider.INFO_ICON))).thenReturn("/path/to/info");
-        when(jenkins.getAbsoluteUrl(any())).thenReturn("absoluteUrl");
-        return new StaticAnalysisLabelProvider(id, name, StaticAnalysisLabelProvider.EMPTY_DESCRIPTION, jenkins);
     }
 
     private AnalysisResult createAnalysisResult(final Map<String, Integer> sizesPerOrigin,

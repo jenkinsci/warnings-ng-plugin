@@ -18,7 +18,6 @@ import org.jvnet.localizer.Localizable;
 import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
-import io.jenkins.plugins.util.JenkinsFacade;
 
 import static j2html.TagCreator.*;
 
@@ -65,7 +64,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      *         the name of the static analysis tool
      */
     public StaticAnalysisLabelProvider(final String id, @CheckForNull final String name) {
-        this(id, name, EMPTY_DESCRIPTION, new JenkinsFacade());
+        this(id, name, EMPTY_DESCRIPTION);
     }
 
     /**
@@ -80,12 +79,6 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      */
     public StaticAnalysisLabelProvider(final String id, @CheckForNull final String name,
             final DescriptionProvider descriptionProvider) {
-        this(id, name, descriptionProvider, new JenkinsFacade());
-    }
-
-    @VisibleForTesting
-    StaticAnalysisLabelProvider(final String id, @CheckForNull final String name,
-            final DescriptionProvider descriptionProvider, final JenkinsFacade jenkins) {
         this.id = id;
         this.descriptionProvider = descriptionProvider;
 
