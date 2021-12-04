@@ -67,10 +67,10 @@ public class IssuesColumnUiTest extends UiTest {
         assertThat(highColumn).hasTotalCount("5");
         assertThat(highColumn).doesNotHaveLinkToResults();
 
-        assertHoverValues(column, 1, CHECK_STYLE_LINK, "0");
-        assertHoverValues(column, 2, FIND_BUGS_LINK, "0");
-        assertHoverValues(column, 3, PMD_LINK, "0");
-        assertHoverValues(column, 4, CPD_LINK, "5");
+        assertHoverValues(highColumn, 1, CHECK_STYLE_LINK, "0");
+        assertHoverValues(highColumn, 2, FIND_BUGS_LINK, "0");
+        assertHoverValues(highColumn, 3, PMD_LINK, "0");
+        assertHoverValues(highColumn, 4, CPD_LINK, "5");
     }
 
     /**
