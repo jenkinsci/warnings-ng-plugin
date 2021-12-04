@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.util.VisibleForTesting;
 
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -39,6 +40,13 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
 
     private String id = StringUtils.EMPTY;
     private String name = StringUtils.EMPTY;
+
+    private JenkinsFacade jenkins = new JenkinsFacade();
+
+    @VisibleForTesting
+    public void setJenkinsFacade(final JenkinsFacade jenkinsFacade) {
+        this.jenkins = jenkinsFacade;
+    }
 
     /**
      * Overrides the default ID of the results. The ID is used as URL of the results and as identifier in UI elements.
@@ -122,7 +130,7 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
 
     @Override
     public ToolDescriptor getDescriptor() {
-        return (ToolDescriptor) super.getDescriptor();
+        return (ToolDescriptor) jenkins.getDescriptorOrDie(getClass());
     }
 
     /**
