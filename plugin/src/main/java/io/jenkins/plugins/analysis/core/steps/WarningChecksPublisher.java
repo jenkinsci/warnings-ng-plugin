@@ -89,7 +89,7 @@ class WarningChecksPublisher {
                 .filter(StringUtils::isNotEmpty)
                 .orElse(labelProvider.getName());
 
-        String summary = extractChecksSummary(totals) + "\n" + extractReferenceBuild(result, labelProvider);
+        String summary = extractChecksSummary(totals) + "\n" + extractReferenceBuild(result);
         Report issues = annotationScope == AnnotationScope.PUBLISH_NEW_ISSUES ? result.getNewIssues() : result.getIssues();
         return new ChecksDetailsBuilder()
                 .withName(checksName)
@@ -105,8 +105,7 @@ class WarningChecksPublisher {
                 .build();
     }
 
-    private String extractReferenceBuild(final AnalysisResult result,
-            final StaticAnalysisLabelProvider labelProvider) {
+    private String extractReferenceBuild(final AnalysisResult result) {
         return result.getReferenceBuild()
                 .map(referenceBuild -> getReferenceBuild(result.getId(), referenceBuild))
                 .map(DomContent::render)

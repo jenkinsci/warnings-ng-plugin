@@ -44,7 +44,6 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
     @CheckForNull
     private String name;
     private final DescriptionProvider descriptionProvider;
-    private final JenkinsFacade jenkins;
 
     /**
      * Creates a new {@link StaticAnalysisLabelProvider} with the specified ID.
@@ -89,7 +88,6 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
             final DescriptionProvider descriptionProvider, final JenkinsFacade jenkins) {
         this.id = id;
         this.descriptionProvider = descriptionProvider;
-        this.jenkins = jenkins;
 
         changeName(name);
     }

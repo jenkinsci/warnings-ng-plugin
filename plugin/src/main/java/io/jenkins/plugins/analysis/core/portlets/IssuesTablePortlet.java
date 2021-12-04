@@ -282,28 +282,14 @@ public class IssuesTablePortlet extends DashboardPortlet {
             if (o == null || getClass() != o.getClass()) {
                 return false;
             }
-
             Column column = (Column) o;
-
-            if (!Objects.equals(id, column.id)) {
-                return false;
-            }
-            if (!Objects.equals(name, column.name)) {
-                return false;
-            }
-            if (!Objects.equals(linkName, column.linkName)) {
-                return false;
-            }
-            return Objects.equals(icon, column.icon);
+            return Objects.equals(id, column.id) && Objects.equals(name, column.name)
+                    && Objects.equals(linkName, column.linkName) && Objects.equals(icon, column.icon);
         }
 
         @Override
         public int hashCode() {
-            int result = id != null ? id.hashCode() : 0;
-            result = 31 * result + (name != null ? name.hashCode() : 0);
-            result = 31 * result + (linkName != null ? linkName.hashCode() : 0);
-            result = 31 * result + (icon != null ? icon.hashCode() : 0);
-            return result;
+            return Objects.hash(id, name, linkName, icon);
         }
 
         @Override @Generated
