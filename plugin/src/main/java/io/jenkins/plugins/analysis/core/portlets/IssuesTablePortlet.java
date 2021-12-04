@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.core.portlets;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.OptionalInt;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -10,6 +11,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
+import edu.hm.hafner.util.Generated;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -142,10 +144,6 @@ public class IssuesTablePortlet extends DashboardPortlet {
     }
 
     private boolean isVisible(final Job<?, ?> job) {
-        if (!hideCleanJobs) {
-            return true;
-        }
-
         Run<?, ?> lastCompletedBuild = job.getLastCompletedBuild();
         if (lastCompletedBuild == null) {
             return true;
@@ -242,7 +240,7 @@ public class IssuesTablePortlet extends DashboardPortlet {
     /**
      * Properties of a column in the table.
      */
-    public static class Column implements Comparable<Column> {
+    public static final class Column implements Comparable<Column> {
         private final String id;
         private final String name;
         private final String linkName;
@@ -287,28 +285,28 @@ public class IssuesTablePortlet extends DashboardPortlet {
 
             Column column = (Column) o;
 
-            if (!id.equals(column.id)) {
+            if (!Objects.equals(id, column.id)) {
                 return false;
             }
-            if (!name.equals(column.name)) {
+            if (!Objects.equals(name, column.name)) {
                 return false;
             }
-            if (!linkName.equals(column.linkName)) {
+            if (!Objects.equals(linkName, column.linkName)) {
                 return false;
             }
-            return icon.equals(column.icon);
+            return Objects.equals(icon, column.icon);
         }
 
         @Override
         public int hashCode() {
-            int result = id.hashCode();
-            result = 31 * result + name.hashCode();
-            result = 31 * result + linkName.hashCode();
-            result = 31 * result + icon.hashCode();
+            int result = id != null ? id.hashCode() : 0;
+            result = 31 * result + (name != null ? name.hashCode() : 0);
+            result = 31 * result + (linkName != null ? linkName.hashCode() : 0);
+            result = 31 * result + (icon != null ? icon.hashCode() : 0);
             return result;
         }
 
-        @Override
+        @Override @Generated
         public String toString() {
             return "Column{"
                     + "id='" + id + '\'' + ", "

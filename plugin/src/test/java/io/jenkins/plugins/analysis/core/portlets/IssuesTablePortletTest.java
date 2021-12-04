@@ -5,9 +5,12 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 import hudson.model.Job;
 
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
+import io.jenkins.plugins.analysis.core.model.ToolSelection;
 import io.jenkins.plugins.analysis.core.portlets.IssuesTablePortlet.Column;
 import io.jenkins.plugins.analysis.core.portlets.IssuesTablePortlet.PortletTableModel;
 import io.jenkins.plugins.analysis.core.portlets.IssuesTablePortlet.Result;
@@ -29,6 +32,11 @@ class IssuesTablePortletTest {
             = new Column(SPOT_BUGS_ID, SPOT_BUGS_NAME, SPOT_BUGS_NAME, SPOT_BUGS_ICON);
     private static final Column CHECK_STYLE_COLUMN
             = new Column(CHECK_STYLE_ID, CHECK_STYLE_NAME, CHECK_STYLE_NAME, CHECK_STYLE_ICON);
+
+    @Test
+    void shouldHaveComparableColumn() {
+        EqualsVerifier.forClass(Column.class).verify();
+    }
 
     @Test
     void shouldShowTableWithOneJob() {
@@ -89,8 +97,16 @@ class IssuesTablePortletTest {
                 createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 2));
 
         IssuesTablePortlet portlet = createPortlet();
+        assertThat(portlet.getSelectTools()).isFalse();
+        assertThat(portlet.getShowIcons()).isFalse();
+        assertThat(portlet.getHideCleanJobs()).isFalse();
+        assertThat(portlet.getTools()).isEmpty();
+
         portlet.setSelectTools(true);
         portlet.setTools(list(createTool(SPOT_BUGS_ID), createTool(CHECK_STYLE_ID)));
+
+        assertThat(portlet.getSelectTools()).isTrue();
+        assertThat(portlet.getTools()).extracting(ToolSelection::getId).containsExactly(SPOT_BUGS_ID, CHECK_STYLE_ID);
 
         List<Job<?, ?>> jobs = list(job);
         verifySpotBugsAndCheckStyle(job, portlet.getModel(jobs));
@@ -120,6 +136,7 @@ class IssuesTablePortletTest {
 
         List<TableRow> rows = model.getRows();
         assertThat(rows).hasSize(1);
+        assertThat(model.size()).isEqualTo(1);
 
         verifyRow(rows.get(0), job, expectedId, expectedSize);
     }
@@ -128,6 +145,8 @@ class IssuesTablePortletTest {
     void shouldShowIconsOfTools() {
         IssuesTablePortlet portlet = createPortlet();
         portlet.setShowIcons(true);
+
+        assertThat(portlet.getShowIcons()).isTrue();
 
         JenkinsFacade jenkinsFacade = mock(JenkinsFacade.class);
         when(jenkinsFacade.getImagePath("checkstyle.png")).thenReturn("/path/to/checkstyle.png");
@@ -144,6 +163,7 @@ class IssuesTablePortletTest {
 
         List<TableRow> rows = model.getRows();
         assertThat(rows).hasSize(1);
+        assertThat(model.size()).isEqualTo(1);
 
         TableRow actualRow = rows.get(0);
         assertThat(actualRow.getJob()).isSameAs(job);
@@ -170,6 +190,7 @@ class IssuesTablePortletTest {
 
         List<TableRow> rows = model.getRows();
         assertThat(rows).hasSize(2);
+        assertThat(model.size()).isEqualTo(2);
 
         TableRow firstRow = rows.get(0);
         assertThat(firstRow.getJob()).isSameAs(first);
@@ -193,7 +214,9 @@ class IssuesTablePortletTest {
     @Test
     void shouldFilterZeroIssuesJobs() {
         IssuesTablePortlet portlet = createPortlet();
+
         portlet.setHideCleanJobs(true);
+        assertThat(portlet.getHideCleanJobs()).isTrue();
 
         Job<?, ?> first = createJobWithActions(
                 createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 0),
@@ -215,6 +238,23 @@ class IssuesTablePortletTest {
 
         verifyResult(results.get(0), CHECK_STYLE_ID, 4);
         verifyResult(results.get(1), SPOT_BUGS_ID, 3);
+    }
+
+    @Test
+    void shouldHandleJobsWithoutBuild() {
+        IssuesTablePortlet portlet = createPortlet();
+
+        portlet.setHideCleanJobs(true);
+        assertThat(portlet.getHideCleanJobs()).isTrue();
+
+        Job<?, ?> first = mock(Job.class);
+        PortletTableModel model = portlet.getModel(list(first));
+
+        List<TableRow> rows = model.getRows();
+        assertThat(rows).hasSize(1);
+
+        TableRow actualRow = rows.get(0);
+        assertThat(actualRow.getJob()).isSameAs(first);
     }
 
     @Test

@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.util.Generated;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 
@@ -184,7 +185,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
         return this;
     }
 
-    @Override
+    @Override @Generated
     public String toString() {
         return String.format("%s: %s", getId(), getName());
     }
@@ -204,7 +205,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      * @return the name of the side panel link
      * @deprecated use {@link #getLinkName()}
      */
-    @Deprecated
+    @Deprecated @Generated
     public String getRawLinkName() {
         if (StringUtils.isNotBlank(name)) {
             return Messages.Tool_Link_Name(name);
