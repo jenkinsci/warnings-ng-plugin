@@ -13,14 +13,11 @@ import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 import j2html.tags.ContainerTag;
 import j2html.tags.DomContent;
-import j2html.tags.UnescapedText;
 
 import org.jvnet.localizer.Localizable;
-import hudson.model.BallColor;
 import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
-import io.jenkins.plugins.fontawesome.api.SvgTag;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 import static j2html.TagCreator.*;
@@ -253,13 +250,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      */
     @Deprecated
     public ContainerTag getTitle(final AnalysisResult result, final boolean hasErrors) {
-        String icon = hasErrors ? ERROR_ICON : INFO_ICON;
-        return span(join(getName() + ": ",
-                getWarningsCount(result),
-                a().withHref(getId() + "/info")
-                        .with(new UnescapedText(new SvgTag(icon, jenkins)
-                                .withClasses("info-page-decorator")
-                                .render())))).withId(id + "-title");
+        return emptyElementForDeprecatedMethod();
     }
 
     /**
@@ -273,8 +264,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      */
     @Deprecated
     public ContainerTag getNewIssuesLabel(final int newSize) {
-        return a(newSize == 1 ? Messages.Tool_OneNewWarning() : Messages.Tool_MultipleNewWarnings(newSize))
-                .withHref(getId() + "/new");
+        return emptyElementForDeprecatedMethod();
     }
 
     /**
@@ -288,8 +278,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      */
     @Deprecated
     public ContainerTag getFixedIssuesLabel(final int fixedSize) {
-        return a(fixedSize == 1 ? Messages.Tool_OneFixedWarning() : Messages.Tool_MultipleFixedWarnings(fixedSize))
-                .withHref(getId() + "/fixed");
+        return emptyElementForDeprecatedMethod();
     }
 
     /**
@@ -305,27 +294,11 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      */
     @Deprecated
     public DomContent getNoIssuesSinceLabel(final int currentBuild, final int noIssuesSinceBuild) {
-        return join(Messages.Tool_NoIssuesSinceBuild(Messages.Tool_NoIssues(),
-                currentBuild - noIssuesSinceBuild + 1,
-                a(String.valueOf(noIssuesSinceBuild))
-                        .withHref("../" + noIssuesSinceBuild)
-                        .withClasses("model-link", "inside").render()));
+        return emptyElementForDeprecatedMethod();
     }
 
-    @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
-    private Object getWarningsCount(final AnalysisResult analysisRun) {
-        int size = analysisRun.getTotalSize();
-        if (size == 0) {
-            return Messages.Tool_NoIssues();
-        }
-        if (size == 1) {
-            return linkToIssues(Messages.Tool_OneIssue());
-        }
-        return linkToIssues(Messages.Tool_MultipleIssues(size));
-    }
-
-    private ContainerTag linkToIssues(final String linkText) {
-        return a(linkText).withHref(getId());
+    private ContainerTag emptyElementForDeprecatedMethod() {
+        return div();
     }
 
     /**
@@ -339,7 +312,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      */
     @Deprecated
     public DomContent getQualityGateResult(final QualityGateStatus qualityGateStatus) {
-        return getQualityGateResult(qualityGateStatus, true);
+        return emptyElementForDeprecatedMethod();
     }
 
     /**
@@ -355,14 +328,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      */
     @Deprecated
     public DomContent getQualityGateResult(final QualityGateStatus qualityGateStatus, final boolean hasResetLink) {
-        if (hasResetLink) {
-            return join(Messages.Tool_QualityGate(), getResultIcon(qualityGateStatus),
-                    button("Reset quality gate")
-                            .withId(getId() + "-resetReference")
-                            .withType("button")
-                            .withClasses("btn", "btn-outline-primary", "btn-sm"));
-        }
-        return join(Messages.Tool_QualityGate(), getResultIcon(qualityGateStatus));
+        return emptyElementForDeprecatedMethod();
     }
 
     /**
@@ -376,21 +342,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      */
     @Deprecated
     public DomContent getReferenceBuild(final Run<?, ?> referenceBuild) {
-        return join(Messages.Tool_ReferenceBuild(), createReferenceBuildLink(referenceBuild));
-    }
-
-    private ContainerTag createReferenceBuildLink(final Run<?, ?> referenceBuild) {
-        String absoluteUrl = jenkins.getAbsoluteUrl(referenceBuild.getUrl(), getId());
-        return a(referenceBuild.getFullDisplayName()).withHref(absoluteUrl);
-    }
-
-    private UnescapedText getResultIcon(final QualityGateStatus qualityGateStatus) {
-        BallColor color = qualityGateStatus.getColor();
-        return join(img().withSrc(jenkins.getImagePath(color))
-                        .withClasses(color.getIconClassName())
-                        .withAlt(color.getDescription())
-                        .withTitle(color.getDescription()),
-                color.getDescription());
+        return emptyElementForDeprecatedMethod();
     }
 
     /**

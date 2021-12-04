@@ -28,6 +28,7 @@ class StaticAnalysisLabelProviderTest {
 
         assertThat(labelProvider).hasId("cpd");
         assertThat(labelProvider).hasName(labelProvider.getDefaultName());
+        assertThat(labelProvider).hasLinkName("Static Analysis Warnings");
     }
 
     @Test @Issue("JENKINS-61834, JENKINS-67245")
