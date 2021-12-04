@@ -42,7 +42,6 @@ public class IssuesTablePortlet extends DashboardPortlet {
     private List<ToolSelection> tools = new ArrayList<>();
 
     private LabelProviderFactory labelProviderFactory = new LabelProviderFactory();
-    private JenkinsFacade jenkinsFacade = new JenkinsFacade();
 
     /**
      * Creates a new instance of {@link IssuesTablePortlet}.
@@ -62,7 +61,6 @@ public class IssuesTablePortlet extends DashboardPortlet {
 
     @VisibleForTesting
     void setJenkinsFacade(final JenkinsFacade jenkinsFacade) {
-        this.jenkinsFacade = jenkinsFacade;
     }
 
     @SuppressWarnings({"unused", "PMD.BooleanGetMethodName"}) // called by Stapler
