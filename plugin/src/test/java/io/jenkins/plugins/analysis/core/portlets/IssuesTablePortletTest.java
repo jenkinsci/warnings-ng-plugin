@@ -5,13 +5,16 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 import hudson.model.Job;
 
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
+import io.jenkins.plugins.analysis.core.model.ToolSelection;
+import io.jenkins.plugins.analysis.core.portlets.IssuesTablePortlet.Column;
 import io.jenkins.plugins.analysis.core.portlets.IssuesTablePortlet.PortletTableModel;
 import io.jenkins.plugins.analysis.core.portlets.IssuesTablePortlet.Result;
 import io.jenkins.plugins.analysis.core.portlets.IssuesTablePortlet.TableRow;
-import io.jenkins.plugins.util.JenkinsFacade;
 
 import static io.jenkins.plugins.analysis.core.testutil.JobStubs.*;
 import static org.assertj.core.api.Assertions.*;
@@ -24,6 +27,16 @@ import static org.mockito.Mockito.*;
  * @author Ullrich Hafner
  */
 class IssuesTablePortletTest {
+    private static final Column SPOT_BUGS_COLUMN
+            = new Column(SPOT_BUGS_ID, SPOT_BUGS_NAME, SPOT_BUGS_NAME, SPOT_BUGS_ICON);
+    private static final Column CHECK_STYLE_COLUMN
+            = new Column(CHECK_STYLE_ID, CHECK_STYLE_NAME, CHECK_STYLE_NAME, CHECK_STYLE_ICON);
+
+    @Test
+    void shouldHaveComparableColumn() {
+        EqualsVerifier.forClass(Column.class).verify();
+    }
+
     @Test
     void shouldShowTableWithOneJob() {
         Job<?, ?> job = createJob(CHECK_STYLE_ID, CHECK_STYLE_NAME, 1);
@@ -40,7 +53,7 @@ class IssuesTablePortletTest {
 
         PortletTableModel model = createModel(list(firstRow, secondRow));
 
-        assertThat(model.getToolNames()).containsExactly(SPOT_BUGS_NAME);
+        assertThat(model.getColumns()).containsExactly(SPOT_BUGS_COLUMN);
 
         List<TableRow> rows = model.getRows();
         assertThat(rows).hasSize(2);
@@ -61,7 +74,7 @@ class IssuesTablePortletTest {
     }
 
     private void verifySpotBugsAndCheckStyle(final Job<?, ?> job, final PortletTableModel model) {
-        assertThat(model.getToolNames()).containsExactly(CHECK_STYLE_NAME, SPOT_BUGS_NAME);
+        assertThat(model.getColumns()).containsExactly(CHECK_STYLE_COLUMN, SPOT_BUGS_COLUMN);
 
         List<TableRow> rows = model.getRows();
         assertThat(rows).hasSize(1);
@@ -83,8 +96,16 @@ class IssuesTablePortletTest {
                 createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 2));
 
         IssuesTablePortlet portlet = createPortlet();
+        assertThat(portlet.getSelectTools()).isFalse();
+        assertThat(portlet.getShowIcons()).isFalse();
+        assertThat(portlet.getHideCleanJobs()).isFalse();
+        assertThat(portlet.getTools()).isEmpty();
+
         portlet.setSelectTools(true);
         portlet.setTools(list(createTool(SPOT_BUGS_ID), createTool(CHECK_STYLE_ID)));
+
+        assertThat(portlet.getSelectTools()).isTrue();
+        assertThat(portlet.getTools()).extracting(ToolSelection::getId).containsExactly(SPOT_BUGS_ID, CHECK_STYLE_ID);
 
         List<Job<?, ?>> jobs = list(job);
         verifySpotBugsAndCheckStyle(job, portlet.getModel(jobs));
@@ -98,7 +119,7 @@ class IssuesTablePortletTest {
         portlet.setTools(Collections.emptyList());
 
         PortletTableModel model = portlet.getModel(jobs);
-        assertThat(model.getToolNames()).isEmpty();
+        assertThat(model.getColumns()).isEmpty();
 
         List<TableRow> rows = model.getRows();
         assertThat(rows).hasSize(1);
@@ -110,10 +131,11 @@ class IssuesTablePortletTest {
 
     private void verifySingleTool(final Job<?, ?> job, final PortletTableModel model,
             final String expectedId, final String expectedName, final int expectedSize) {
-        assertThat(model.getToolNames()).containsExactly(expectedName);
+        assertThat(model.getColumns()).extracting(Column::getName).containsExactly(expectedName);
 
         List<TableRow> rows = model.getRows();
         assertThat(rows).hasSize(1);
+        assertThat(model.size()).isEqualTo(1);
 
         verifyRow(rows.get(0), job, expectedId, expectedSize);
     }
@@ -123,10 +145,7 @@ class IssuesTablePortletTest {
         IssuesTablePortlet portlet = createPortlet();
         portlet.setShowIcons(true);
 
-        JenkinsFacade jenkinsFacade = mock(JenkinsFacade.class);
-        when(jenkinsFacade.getImagePath("checkstyle.png")).thenReturn("/path/to/checkstyle.png");
-        when(jenkinsFacade.getImagePath("spotbugs.png")).thenReturn("/path/to/spotbugs.png");
-        portlet.setJenkinsFacade(jenkinsFacade);
+        assertThat(portlet.getShowIcons()).isTrue();
 
         Job<?, ?> job = createJobWithActions(
                 createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 1),
@@ -134,12 +153,11 @@ class IssuesTablePortletTest {
 
         PortletTableModel model = portlet.getModel(list(job));
 
-        assertThat(model.getToolNames()).containsExactly(
-                "<img alt=\"CheckStyle\" title=\"CheckStyle\" style=\"width:24px; height:24px\" src=\"/path/to/checkstyle.png\">",
-                "<img alt=\"SpotBugs\" title=\"SpotBugs\" style=\"width:24px; height:24px\" src=\"/path/to/spotbugs.png\">");
+        assertThat(model.getColumns()).containsExactly(CHECK_STYLE_COLUMN, SPOT_BUGS_COLUMN);
 
         List<TableRow> rows = model.getRows();
         assertThat(rows).hasSize(1);
+        assertThat(model.size()).isEqualTo(1);
 
         TableRow actualRow = rows.get(0);
         assertThat(actualRow.getJob()).isSameAs(job);
@@ -149,22 +167,6 @@ class IssuesTablePortletTest {
 
         verifyResult(results.get(0), CHECK_STYLE_ID, 2);
         verifyResult(results.get(1), SPOT_BUGS_ID, 1);
-    }
-
-    @Test
-    void shouldShowHtmlHeaders() {
-        IssuesTablePortlet portlet = new IssuesTablePortlet("portlet");
-
-        String htmlName = "<b>ToolName</b> <script>execute</script>";
-        Job<?, ?> job = createJob(SPOT_BUGS_ID, htmlName, 1);
-
-        LabelProviderFactory factory = mock(LabelProviderFactory.class);
-        registerTool(factory, SPOT_BUGS_ID, htmlName);
-
-        portlet.setLabelProviderFactory(factory);
-
-        PortletTableModel model = portlet.getModel(list(job));
-        assertThat(model.getToolNames()).containsExactly("<b>ToolName</b>");
     }
 
     @Test
@@ -178,10 +180,11 @@ class IssuesTablePortletTest {
 
         PortletTableModel model = createModel(list(first, second));
 
-        assertThat(model.getToolNames()).containsExactly(CHECK_STYLE_NAME, SPOT_BUGS_NAME);
+        assertThat(model.getColumns()).containsExactly(CHECK_STYLE_COLUMN, SPOT_BUGS_COLUMN);
 
         List<TableRow> rows = model.getRows();
         assertThat(rows).hasSize(2);
+        assertThat(model.size()).isEqualTo(2);
 
         TableRow firstRow = rows.get(0);
         assertThat(firstRow.getJob()).isSameAs(first);
@@ -205,7 +208,9 @@ class IssuesTablePortletTest {
     @Test
     void shouldFilterZeroIssuesJobs() {
         IssuesTablePortlet portlet = createPortlet();
+
         portlet.setHideCleanJobs(true);
+        assertThat(portlet.getHideCleanJobs()).isTrue();
 
         Job<?, ?> first = createJobWithActions(
                 createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 0),
@@ -227,6 +232,23 @@ class IssuesTablePortletTest {
 
         verifyResult(results.get(0), CHECK_STYLE_ID, 4);
         verifyResult(results.get(1), SPOT_BUGS_ID, 3);
+    }
+
+    @Test
+    void shouldHandleJobsWithoutBuild() {
+        IssuesTablePortlet portlet = createPortlet();
+
+        portlet.setHideCleanJobs(true);
+        assertThat(portlet.getHideCleanJobs()).isTrue();
+
+        Job<?, ?> first = mock(Job.class);
+        PortletTableModel model = portlet.getModel(list(first));
+
+        List<TableRow> rows = model.getRows();
+        assertThat(rows).hasSize(1);
+
+        TableRow actualRow = rows.get(0);
+        assertThat(actualRow.getJob()).isSameAs(first);
     }
 
     @Test
@@ -263,7 +285,7 @@ class IssuesTablePortletTest {
 
         PortletTableModel model = createModel(list(first, second));
 
-        assertThat(model.getToolNames()).containsExactly(CHECK_STYLE_NAME, SPOT_BUGS_NAME);
+        assertThat(model.getColumns()).containsExactly(CHECK_STYLE_COLUMN, SPOT_BUGS_COLUMN);
 
         List<TableRow> rows = model.getRows();
         assertThat(rows).hasSize(2);

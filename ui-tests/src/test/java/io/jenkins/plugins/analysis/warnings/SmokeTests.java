@@ -149,7 +149,7 @@ public class SmokeTests extends UiTest {
     private void createRecordIssuesStep(final WorkflowJob job, final int buildNumber) {
         job.script.set("node {\n"
                 + createReportFilesStep(job, buildNumber)
-                + "recordIssues tool: checkStyle(pattern: '**/checkstyle*')\n"
+                + "recordIssues(tool: checkStyle(pattern: '**/checkstyle*', name: '" + CHECK_STYLE_NAME + "'))\n"
                 + "recordIssues tool: pmdParser(pattern: '**/pmd*')\n"
                 + "recordIssues tools: [cpd(pattern: '**/cpd*', highThreshold:8, normalThreshold:3), findBugs()], aggregatingResults: 'false' \n"
                 + "recordIssues tool: pep8(pattern: '**/" + PEP8_FILE + "')\n"

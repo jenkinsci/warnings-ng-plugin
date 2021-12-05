@@ -19,6 +19,10 @@ import static io.jenkins.plugins.analysis.warnings.IssuesColumnConfiguration.*;
 @WithPlugins("warnings-ng")
 public class IssuesColumnUiTest extends UiTest {
     private static final String CUSTOM_ISSUES_COLUMN_NAME = "Hello World";
+    private static final String CHECK_STYLE_LINK = CHECK_STYLE_NAME + " Warnings";
+    private static final String FIND_BUGS_LINK = FINDBUGS_TOOL + " Warnings";
+    private static final String PMD_LINK = PMD_TOOL + " Warnings";
+    private static final String CPD_LINK = "CPD Duplications";
 
     /**
      * Configure a job with multiple recorders: Should display a table when hovering over the issue column.
@@ -36,10 +40,10 @@ public class IssuesColumnUiTest extends UiTest {
         IssuesColumn column = new IssuesColumn(jenkins, DEFAULT_ISSUES_COLUMN_NAME);
         assertThat(column).hasTotalCount("25");
 
-        assertHoverValues(column, 1, "CheckStyle Warnings", "3");
-        assertHoverValues(column, 2, "FindBugs Warnings", "0");
-        assertHoverValues(column, 3, "PMD Warnings", "2");
-        assertHoverValues(column, 4, "CPD Duplications", "20");
+        assertHoverValues(column, 1, CHECK_STYLE_LINK, "3");
+        assertHoverValues(column, 2, FIND_BUGS_LINK, "0");
+        assertHoverValues(column, 3, PMD_LINK, "2");
+        assertHoverValues(column, 4, CPD_LINK, "20");
 
         ListView view = createListView();
 
@@ -63,10 +67,10 @@ public class IssuesColumnUiTest extends UiTest {
         assertThat(highColumn).hasTotalCount("5");
         assertThat(highColumn).doesNotHaveLinkToResults();
 
-        assertHoverValues(highColumn, 1, "CheckStyle Warnings", "0");
-        assertHoverValues(highColumn, 2, "FindBugs Warnings", "0");
-        assertHoverValues(highColumn, 3, "PMD Warnings", "0");
-        assertHoverValues(highColumn, 4, "CPD Duplications", "5");
+        assertHoverValues(highColumn, 1, CHECK_STYLE_LINK, "0");
+        assertHoverValues(highColumn, 2, FIND_BUGS_LINK, "0");
+        assertHoverValues(highColumn, 3, PMD_LINK, "0");
+        assertHoverValues(highColumn, 4, CPD_LINK, "5");
     }
 
     /**

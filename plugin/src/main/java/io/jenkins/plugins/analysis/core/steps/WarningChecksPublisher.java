@@ -16,11 +16,14 @@ import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 
+import j2html.tags.ContainerTag;
 import j2html.tags.DomContent;
 
+import hudson.model.Run;
 import hudson.model.TaskListener;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.model.Messages;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.util.IssuesStatistics;
@@ -36,6 +39,9 @@ import io.jenkins.plugins.checks.api.ChecksPublisher;
 import io.jenkins.plugins.checks.api.ChecksPublisherFactory;
 import io.jenkins.plugins.checks.api.ChecksStatus;
 import io.jenkins.plugins.checks.steps.ChecksInfo;
+import io.jenkins.plugins.util.JenkinsFacade;
+
+import static j2html.TagCreator.*;
 
 /**
  * Publishes warnings as checks to scm platforms.
@@ -83,7 +89,7 @@ class WarningChecksPublisher {
                 .filter(StringUtils::isNotEmpty)
                 .orElse(labelProvider.getName());
 
-        String summary = extractChecksSummary(totals) + "\n" + extractReferenceBuild(result, labelProvider);
+        String summary = extractChecksSummary(totals) + "\n" + extractReferenceBuild(result);
         Report issues = annotationScope == AnnotationScope.PUBLISH_NEW_ISSUES ? result.getNewIssues() : result.getIssues();
         return new ChecksDetailsBuilder()
                 .withName(checksName)
@@ -99,13 +105,22 @@ class WarningChecksPublisher {
                 .build();
     }
 
-    private String extractReferenceBuild(final AnalysisResult result,
-            final StaticAnalysisLabelProvider labelProvider) {
+    private String extractReferenceBuild(final AnalysisResult result) {
         return result.getReferenceBuild()
-                .map(labelProvider::getReferenceBuild)
+                .map(referenceBuild -> getReferenceBuild(result.getId(), referenceBuild))
                 .map(DomContent::render)
                 .orElse(StringUtils.EMPTY);
     }
+
+    public DomContent getReferenceBuild(final String id, final Run<?, ?> referenceBuild) {
+        return join(Messages.Tool_ReferenceBuild(), createReferenceBuildLink(id, referenceBuild));
+    }
+
+    private ContainerTag createReferenceBuildLink(final String id, final Run<?, ?> referenceBuild) {
+        return a(referenceBuild.getFullDisplayName()).withHref(
+                new JenkinsFacade().getAbsoluteUrl(referenceBuild.getUrl(), id));
+    }
+
 
     private String extractChecksTitle(final IssuesStatistics statistics) {
         if (statistics.getTotalSize() == 0) {
