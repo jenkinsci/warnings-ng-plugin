@@ -49,6 +49,17 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
     }
 
     /**
+     * Called after de-serialization to retain backward compatibility.
+     *
+     * @return this
+     */
+    protected Object readResolve() {
+        jenkins = new JenkinsFacade();
+
+        return this;
+    }
+
+    /**
      * Overrides the default ID of the results. The ID is used as URL of the results and as identifier in UI elements.
      * If no ID is given, then the default ID is used, see corresponding {@link ToolDescriptor}.
      *
@@ -185,7 +196,8 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckId(@AncestorInPath final AbstractProject<?, ?> project, @QueryParameter final String id) {
+        public FormValidation doCheckId(@AncestorInPath final AbstractProject<?, ?> project,
+                @QueryParameter final String id) {
             if (!new JenkinsFacade().hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
@@ -253,9 +265,9 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
         }
 
         /**
-         * Returns whether post processing on the agent is enabled for this tool. If enabled, for all issues
-         * absolute paths, fingerprints, packages and modules will be detected. Additionally, all affected files
-         * will be saved in the build so that these files can be shown in the UI later on.,
+         * Returns whether post processing on the agent is enabled for this tool. If enabled, for all issues absolute
+         * paths, fingerprints, packages and modules will be detected. Additionally, all affected files will be saved in
+         * the build so that these files can be shown in the UI later on.,
          *
          * @return {@code true} if post processing is enabled, {@code false} otherwise
          */
