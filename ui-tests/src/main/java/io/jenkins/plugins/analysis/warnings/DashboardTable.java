@@ -50,13 +50,13 @@ public class DashboardTable extends PageObject {
         headers = rows.stream()
                 .flatMap(dom -> dom.findElements(by.tagName("th")).stream())
                 .map(th -> {
-                    List<WebElement> img = th.findElements(by.tagName("img"));
-                    if (img.size() > 0) {
-                        String src = img.get(0).getAttribute("src");
-                        return src.substring(src.lastIndexOf('/'));
+                    List<WebElement> images = th.findElements(by.tagName("img"));
+                    if (images.isEmpty()) {
+                        return th.getText();
                     }
                     else {
-                        return th.getText();
+                        String src = images.get(0).getAttribute("src");
+                        return src.substring(src.lastIndexOf('/'));
                     }
                 })
                 .collect(Collectors.toList());
