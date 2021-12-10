@@ -160,12 +160,13 @@ public final class AxivionSuite extends Tool {
      *
      * @return this
      */
+    @Override
     protected Object readResolve() {
         // field was added in 9.1.0
         if (namedFilter == null) {
             namedFilter = StringUtils.EMPTY;
         }
-        return this;
+        return super.readResolve();
     }
 
     @Override
