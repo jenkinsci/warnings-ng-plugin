@@ -92,7 +92,8 @@ public class ModelValidation {
      */
     public void ensureValidId(final String id) {
         if (!isValidId(id)) {
-            throw new IllegalArgumentException(String.format("An ID must be a valid URL, but '%s' is not.", id));
+            throw new IllegalArgumentException(String.format("An ID must match the regexp pattern '%s', but '%s' does not.",
+                    VALID_ID_PATTERN.pattern(), id));
         }
     }
 

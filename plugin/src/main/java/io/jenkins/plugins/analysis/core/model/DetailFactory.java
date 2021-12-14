@@ -27,6 +27,8 @@ import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 import io.jenkins.plugins.bootstrap5.MessagesViewModel;
+import io.jenkins.plugins.prism.Annotation;
+import io.jenkins.plugins.prism.Annotation.AnnotationBuilder;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
@@ -114,13 +116,14 @@ public class DetailFactory {
             else {
                 String description = labelProvider.getSourceCodeDescription(owner, issue);
                 String icon = jenkins.getImagePath(labelProvider.getSmallIconUrl());
+                Annotation annotation = toSourceCodeAnnotation(issue, description, icon);
                 try (Reader affectedFile = buildFolder.readFile(owner, issue.getFileName(), sourceEncoding)) {
-                    return new SourceDetail(owner, affectedFile, issue, description, icon);
+                    return new io.jenkins.plugins.prism.SourceDetail(owner, issue.getBaseName(), affectedFile, annotation);
                 }
                 catch (IOException e) {
                     try (StringReader fallback = new StringReader(
                             String.format("%s%n%s", ExceptionUtils.getMessage(e), ExceptionUtils.getStackTrace(e)))) {
-                        return new SourceDetail(owner, fallback, issue, description, icon);
+                        return new io.jenkins.plugins.prism.SourceDetail(owner, issue.getBaseName(), fallback, annotation);
                     }
                 }
             }
@@ -130,11 +133,23 @@ public class DetailFactory {
         String property = StringUtils.substringBefore(link, ".");
         Predicate<Issue> filter = createPropertyFilter(plainLink, property);
         Report selectedIssues = allIssues.filter(filter);
-        String displayName = getDisplayNameOfDetails(property, selectedIssues, plainLink, result.getSizePerOrigin().keySet());
+        String displayName = getDisplayNameOfDetails(property, selectedIssues, plainLink,
+                result.getSizePerOrigin().keySet());
         return new IssuesDetail(owner, result,
                 selectedIssues, newIssues.filter(filter), outstandingIssues.filter(filter),
                 fixedIssues.filter(filter), displayName, url,
                 labelProvider, sourceEncoding);
+    }
+
+    private Annotation toSourceCodeAnnotation(final Issue issue, final String description, final String icon) {
+        return new AnnotationBuilder()
+                .withTitle(issue.getMessage())
+                .withDescription(description)
+                .withIcon(icon)
+                .withLineStart(issue.getLineStart())
+                .withLineEnd(issue.getLineEnd())
+                .withColumnStart(issue.getColumnStart())
+                .withColumnEnd(issue.getColumnEnd()).build();
     }
 
     @SuppressWarnings("checkstyle:ParameterNumber")

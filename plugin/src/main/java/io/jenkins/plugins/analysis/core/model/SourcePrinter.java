@@ -23,8 +23,10 @@ import static j2html.TagCreator.*;
  *
  * @author Philippe Arteau
  * @author Ullrich Hafner
+ * @deprecated moved to prism-api-plugin
  */
 @SuppressWarnings("PMD.GodClass")
+@Deprecated
 public class SourcePrinter {
     private static final Sanitizer SANITIZER = new Sanitizer();
 
