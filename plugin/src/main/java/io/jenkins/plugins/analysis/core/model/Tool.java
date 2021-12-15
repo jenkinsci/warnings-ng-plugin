@@ -51,6 +51,8 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
      */
     @DataBoundSetter
     public void setId(final String id) {
+        new ModelValidation().ensureValidId(id);
+
         this.id = id;
     }
 
