@@ -27,8 +27,8 @@ import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 import io.jenkins.plugins.bootstrap5.MessagesViewModel;
-import io.jenkins.plugins.prism.Annotation;
-import io.jenkins.plugins.prism.Annotation.AnnotationBuilder;
+import io.jenkins.plugins.prism.Marker;
+import io.jenkins.plugins.prism.Marker.MarkerBuilder;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
@@ -37,7 +37,7 @@ import io.jenkins.plugins.util.JenkinsFacade;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings("checkstyle:ClassDataAbstractionCoupling")
+@SuppressWarnings({"checkstyle:ClassDataAbstractionCoupling", "checkstyle:ClassFanOutComplexity"})
 public class DetailFactory {
     private static final Report EMPTY = new Report();
     private static final String LINK_SEPARATOR = ".";
@@ -116,14 +116,14 @@ public class DetailFactory {
             else {
                 String description = labelProvider.getSourceCodeDescription(owner, issue);
                 String icon = jenkins.getImagePath(labelProvider.getSmallIconUrl());
-                Annotation annotation = toSourceCodeAnnotation(issue, description, icon);
+                Marker marker = asMarker(issue, description, icon);
                 try (Reader affectedFile = buildFolder.readFile(owner, issue.getFileName(), sourceEncoding)) {
-                    return new io.jenkins.plugins.prism.SourceDetail(owner, issue.getBaseName(), affectedFile, annotation);
+                    return new io.jenkins.plugins.prism.SourceDetail(owner, issue.getBaseName(), affectedFile, marker);
                 }
                 catch (IOException e) {
                     try (StringReader fallback = new StringReader(
                             String.format("%s%n%s", ExceptionUtils.getMessage(e), ExceptionUtils.getStackTrace(e)))) {
-                        return new io.jenkins.plugins.prism.SourceDetail(owner, issue.getBaseName(), fallback, annotation);
+                        return new io.jenkins.plugins.prism.SourceDetail(owner, issue.getBaseName(), fallback, marker);
                     }
                 }
             }
@@ -141,8 +141,8 @@ public class DetailFactory {
                 labelProvider, sourceEncoding);
     }
 
-    private Annotation toSourceCodeAnnotation(final Issue issue, final String description, final String icon) {
-        return new AnnotationBuilder()
+    private Marker asMarker(final Issue issue, final String description, final String icon) {
+        return new MarkerBuilder()
                 .withTitle(issue.getMessage())
                 .withDescription(description)
                 .withIcon(icon)

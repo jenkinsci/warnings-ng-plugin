@@ -36,7 +36,7 @@
     <bootstrap5-api.version>5.1.3-3</bootstrap5-api.version>
     <font-awesome-api.version>5.15.4-4</font-awesome-api.version>
     <bootstrap5-api.version>5.1.3-3</bootstrap5-api.version>
-    <prism-api.version>1.25.0-2-rc11.1e10885c49fa</prism-api.version>
+    <prism-api.version>1.25.0-2-rc17.cc2e70179acd</prism-api.version>
 
     <error_prone_annotations.version>2.9.0</error_prone_annotations.version>
     <pull-request-monitoring.version>1.7.8</pull-request-monitoring.version>
@@ -608,20 +608,20 @@
                 <justification>Dependencies are not being checked, so they are reported as missing</justification>
               </item>
               <item>
-                <code>java.annotation.added</code>
+                <code>java.marker.added</code>
                 <annotationType>org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted</annotationType>
                 <justification>Annotation should be save to add.</justification>
               </item>
               <item>
                 <regex>true</regex>
-                <code>java.annotation.*</code>
-                <annotation>@edu.umd.cs.findbugs.annotations.*</annotation>
+                <code>java.marker.*</code>
+                <marker>@edu.umd.cs.findbugs.annotations.*</marker>
                 <justification>Annotation should be save to change.</justification>
               </item>
               <item>
                 <regex>true</regex>
-                <code>java.annotation.*</code>
-                <annotation>@org.kohsuke.stapler.*</annotation>
+                <code>java.marker.*</code>
+                <marker>@org.kohsuke.stapler.*</marker>
                 <justification>Annotation should be save to change.</justification>
               </item>
               <item>
