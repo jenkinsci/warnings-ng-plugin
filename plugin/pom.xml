@@ -36,7 +36,7 @@
     <bootstrap5-api.version>5.1.3-3</bootstrap5-api.version>
     <font-awesome-api.version>5.15.4-4</font-awesome-api.version>
     <bootstrap5-api.version>5.1.3-3</bootstrap5-api.version>
-    <prism-api.version>1.25.0-2-rc18.56bfcba9e379</prism-api.version>
+    <prism-api.version>1.25.0-2-rc19.d7e406ed29b0</prism-api.version>
 
     <error_prone_annotations.version>2.9.0</error_prone_annotations.version>
     <pull-request-monitoring.version>1.7.8</pull-request-monitoring.version>
