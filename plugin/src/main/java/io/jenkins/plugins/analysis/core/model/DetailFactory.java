@@ -29,6 +29,7 @@ import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 import io.jenkins.plugins.bootstrap5.MessagesViewModel;
 import io.jenkins.plugins.prism.Marker;
 import io.jenkins.plugins.prism.Marker.MarkerBuilder;
+import io.jenkins.plugins.prism.SourceCodeViewModel;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
@@ -118,12 +119,12 @@ public class DetailFactory {
                 String icon = jenkins.getImagePath(labelProvider.getSmallIconUrl());
                 Marker marker = asMarker(issue, description, icon);
                 try (Reader affectedFile = buildFolder.readFile(owner, issue.getFileName(), sourceEncoding)) {
-                    return new io.jenkins.plugins.prism.SourceDetail(owner, issue.getBaseName(), affectedFile, marker);
+                    return new SourceCodeViewModel(owner, issue.getBaseName(), affectedFile, marker);
                 }
                 catch (IOException e) {
                     try (StringReader fallback = new StringReader(
                             String.format("%s%n%s", ExceptionUtils.getMessage(e), ExceptionUtils.getStackTrace(e)))) {
-                        return new io.jenkins.plugins.prism.SourceDetail(owner, issue.getBaseName(), fallback, marker);
+                        return new SourceCodeViewModel(owner, issue.getBaseName(), fallback, marker);
                     }
                 }
             }
