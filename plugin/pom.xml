@@ -29,7 +29,7 @@
     <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
 
     <forensics-api-plugin.version>1.7.0</forensics-api-plugin.version>
-    <plugin-util-api.version>2.6.0</plugin-util-api.version>
+    <plugin-util-api.version>2.7.0</plugin-util-api.version>
 
     <data-tables-api.version>1.11.3-4</data-tables-api.version>
     <echarts-api.version>5.2.2-1</echarts-api.version>
