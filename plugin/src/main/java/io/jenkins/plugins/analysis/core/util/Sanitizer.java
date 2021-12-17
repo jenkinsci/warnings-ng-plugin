@@ -13,7 +13,9 @@ import hudson.markup.RawHtmlMarkupFormatter;
  * Sanitizes a piece of unsafe HTML code so that it can be rendered in a UI view.
  *
  * @author Ullrich Hafner
+ * @deprecated moved to Prism API plugin
  */
+@Deprecated
 public class Sanitizer {
     /** Sanitizes HTML elements in warning messages and tooltips. Use this formatter if raw HTML should be shown. */
     private final MarkupFormatter formatter = new RawHtmlMarkupFormatter(true);

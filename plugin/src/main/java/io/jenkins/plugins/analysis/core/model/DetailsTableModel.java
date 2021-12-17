@@ -14,10 +14,10 @@ import j2html.tags.UnescapedText;
 
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
-import io.jenkins.plugins.analysis.core.util.Sanitizer;
 import io.jenkins.plugins.datatables.TableColumn;
 import io.jenkins.plugins.datatables.TableColumn.ColumnCss;
 import io.jenkins.plugins.datatables.TableModel;
+import io.jenkins.plugins.prism.Sanitizer;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 import static edu.hm.hafner.util.IntegerParser.*;

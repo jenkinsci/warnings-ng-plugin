@@ -15,7 +15,7 @@ import hudson.model.Run;
  * Renders a source file containing an issue for the whole file or a specific line number.
  *
  * @author Ullrich Hafner
- * @deprecated moved to prism-api-plugin
+ * @deprecated moved to Prism API plugin
  */
 @SuppressWarnings("PMD.CyclomaticComplexity")
 @Deprecated

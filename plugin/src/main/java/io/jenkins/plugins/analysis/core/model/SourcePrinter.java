@@ -12,8 +12,8 @@ import edu.hm.hafner.util.VisibleForTesting;
 import j2html.tags.ContainerTag;
 import j2html.tags.UnescapedText;
 
-import io.jenkins.plugins.analysis.core.util.Sanitizer;
 import io.jenkins.plugins.fontawesome.api.SvgTag;
+import io.jenkins.plugins.prism.Sanitizer;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 import static j2html.TagCreator.*;
@@ -23,7 +23,7 @@ import static j2html.TagCreator.*;
  *
  * @author Philippe Arteau
  * @author Ullrich Hafner
- * @deprecated moved to prism-api-plugin
+ * @deprecated moved to Prism API plugin
  */
 @SuppressWarnings("PMD.GodClass")
 @Deprecated
