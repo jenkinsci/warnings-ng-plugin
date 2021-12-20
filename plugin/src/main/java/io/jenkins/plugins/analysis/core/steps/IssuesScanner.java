@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -48,6 +49,8 @@ import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.forensics.blame.FileLocations;
 import io.jenkins.plugins.forensics.miner.MinerService;
 import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
+import io.jenkins.plugins.prism.PrismConfiguration;
+import io.jenkins.plugins.prism.SourceCodeDirectory;
 
 import static io.jenkins.plugins.analysis.core.util.AffectedFilesResolver.*;
 
@@ -128,8 +131,14 @@ class IssuesScanner {
     }
 
     private ReportPostProcessor createPostProcessor(final Report report) {
+        List<String> sourceDirectories = PrismConfiguration.getInstance()
+                .getSourceDirectories()
+                .stream()
+                .map(SourceCodeDirectory::getPath)
+                .collect(Collectors.toList());
         return new ReportPostProcessor(tool.getActualId(), report, sourceCodeEncoding.name(),
-                createBlamer(report), filters, getPermittedSourceDirectory(report).getRemote());
+                createBlamer(report), filters, getPermittedSourceDirectory(report).getRemote(),
+                sourceDirectories);
     }
 
     private FilePath getPermittedSourceDirectory(final Report report) {
@@ -229,10 +238,12 @@ class IssuesScanner {
         private final String sourceCodeEncoding;
         private final Blamer blamer;
         private final String sourceDirectory;
+        private final List<String> sourceDirectories;
         private final List<RegexpFilter> filters;
 
         ReportPostProcessor(final String id, final Report report, final String sourceCodeEncoding,
-                final Blamer blamer, final List<RegexpFilter> filters, final String sourceDirectory) {
+                final Blamer blamer, final List<RegexpFilter> filters, final String sourceDirectory,
+                final List<String> sourceDirectories) {
             super();
 
             this.id = id;
@@ -241,6 +252,7 @@ class IssuesScanner {
             this.blamer = blamer;
             this.filters = filters;
             this.sourceDirectory = sourceDirectory;
+            this.sourceDirectories = sourceDirectories;
         }
 
         @Override
