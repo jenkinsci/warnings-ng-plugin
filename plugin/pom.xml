@@ -29,14 +29,14 @@
     <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
 
     <forensics-api-plugin.version>1.7.0</forensics-api-plugin.version>
-    <plugin-util-api.version>2.8.0-rc417.08e7d9ef5a3e</plugin-util-api.version>
+    <plugin-util-api.version>2.8.0</plugin-util-api.version>
 
     <data-tables-api.version>1.11.3-4</data-tables-api.version>
     <echarts-api.version>5.2.2-1</echarts-api.version>
     <bootstrap5-api.version>5.1.3-3</bootstrap5-api.version>
     <font-awesome-api.version>5.15.4-4</font-awesome-api.version>
     <bootstrap5-api.version>5.1.3-3</bootstrap5-api.version>
-    <prism-api.version>1.25.0-2-rc20.f5839d9257d1</prism-api.version>
+    <prism-api.version>1.25.0-1</prism-api.version>
 
     <error_prone_annotations.version>2.9.0</error_prone_annotations.version>
     <pull-request-monitoring.version>1.7.8</pull-request-monitoring.version>
@@ -47,7 +47,7 @@
     <json.version>20211205</json.version>
 
     <!-- Test Library Dependencies Versions -->
-    <xmlunit.version>2.8.3</xmlunit.version>
+    <xmlunit.version>2.8.4</xmlunit.version>
     <jsoup.version>1.14.3</jsoup.version>
     <json-smart.version>2.4.7</json-smart.version>
     <jmh.version>1.33</jmh.version>
@@ -608,20 +608,20 @@
                 <justification>Dependencies are not being checked, so they are reported as missing</justification>
               </item>
               <item>
-                <code>java.marker.added</code>
+                <code>java.annotation.added</code>
                 <annotationType>org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted</annotationType>
                 <justification>Annotation should be save to add.</justification>
               </item>
               <item>
                 <regex>true</regex>
-                <code>java.marker.*</code>
-                <marker>@edu.umd.cs.findbugs.annotations.*</marker>
+                <code>java.annotation.*</code>
+                <annotation>@edu.umd.cs.findbugs.annotations.*</annotation>
                 <justification>Annotation should be save to change.</justification>
               </item>
               <item>
                 <regex>true</regex>
-                <code>java.marker.*</code>
-                <marker>@org.kohsuke.stapler.*</marker>
+                <code>java.annotation.*</code>
+                <annotation>@org.kohsuke.stapler.*</annotation>
                 <justification>Annotation should be save to change.</justification>
               </item>
               <item>
