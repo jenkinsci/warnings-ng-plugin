@@ -758,7 +758,7 @@ public class IssuesRecorder extends Recorder {
     private AnnotatedReport scanWithTool(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
             final Tool tool) throws IOException, InterruptedException {
         IssuesScanner issuesScanner = new IssuesScanner(tool, getFilters(), getSourceCodeCharset(),
-                workspace, sourceDirectory, run,
+                workspace, Collections.singleton(sourceDirectory), run,
                 new FilePath(run.getRootDir()), listener,
                 scm, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED);
 

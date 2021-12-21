@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.core.steps;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -207,7 +208,7 @@ public class ScanForIssuesStep extends Step {
             TaskListener listener = getTaskListener();
 
             IssuesScanner issuesScanner = new IssuesScanner(tool, filters,
-                    getCharset(sourceCodeEncoding), workspace, sourceDirectory,
+                    getCharset(sourceCodeEncoding), workspace, Collections.singleton(sourceDirectory),
                     getRun(), new FilePath(getRun().getRootDir()), listener,
                     scm, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED);
 

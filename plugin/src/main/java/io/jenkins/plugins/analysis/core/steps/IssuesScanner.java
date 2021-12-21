@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -62,7 +63,7 @@ import static io.jenkins.plugins.analysis.core.util.AffectedFilesResolver.*;
 @SuppressWarnings("PMD.ExcessiveImports")
 class IssuesScanner {
     private final FilePath workspace;
-    private final String sourceDirectory;
+    private final Set<String> sourceDirectories;
     private final Run<?, ?> run;
     private final FilePath jenkinsRootDir;
     private final Charset sourceCodeEncoding;
@@ -78,14 +79,14 @@ class IssuesScanner {
 
     @SuppressWarnings("checkstyle:ParameterNumber")
     IssuesScanner(final Tool tool, final List<RegexpFilter> filters, final Charset sourceCodeEncoding,
-            final FilePath workspace, final String sourceDirectory, final Run<?, ?> run,
+            final FilePath workspace, final Set<String> sourceDirectories, final Run<?, ?> run,
             final FilePath jenkinsRootDir, final TaskListener listener,
             final String scm, final BlameMode blameMode) {
         this.filters = new ArrayList<>(filters);
         this.sourceCodeEncoding = sourceCodeEncoding;
         this.tool = tool;
         this.workspace = workspace;
-        this.sourceDirectory = sourceDirectory;
+        this.sourceDirectories = sourceDirectories;
         this.run = run;
         this.jenkinsRootDir = jenkinsRootDir;
         this.listener = listener;
@@ -131,17 +132,22 @@ class IssuesScanner {
     }
 
     private ReportPostProcessor createPostProcessor(final Report report) {
-        List<String> sourceDirectories = PrismConfiguration.getInstance()
+        Set<String> sourceDirectories = PrismConfiguration.getInstance()
                 .getSourceDirectories()
                 .stream()
                 .map(SourceCodeDirectory::getPath)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
+        sourceDirectories.add(getPermittedSourceDirectory(report).getRemote());
         return new ReportPostProcessor(tool.getActualId(), report, sourceCodeEncoding.name(),
-                createBlamer(report), filters, getPermittedSourceDirectory(report).getRemote(),
-                sourceDirectories);
+                createBlamer(report), filters, sourceDirectories);
     }
 
     private FilePath getPermittedSourceDirectory(final Report report) {
+        if (sourceDirectories.isEmpty()) {
+            return workspace;
+        }
+
+        String sourceDirectory = sourceDirectories.iterator().next();
         FilePath permittedSourceDirectory = WarningsPluginConfiguration.getInstance()
                 .getPermittedSourceDirectory(workspace, sourceDirectory);
         if (StringUtils.isNotBlank(sourceDirectory) && permittedSourceDirectory.equals(workspace)) {
@@ -237,13 +243,11 @@ class IssuesScanner {
         private final Report originalReport;
         private final String sourceCodeEncoding;
         private final Blamer blamer;
-        private final String sourceDirectory;
-        private final List<String> sourceDirectories;
+        private final Set<String> sourceDirectories;
         private final List<RegexpFilter> filters;
 
         ReportPostProcessor(final String id, final Report report, final String sourceCodeEncoding,
-                final Blamer blamer, final List<RegexpFilter> filters, final String sourceDirectory,
-                final List<String> sourceDirectories) {
+                final Blamer blamer, final List<RegexpFilter> filters, final Set<String> sourceDirectories) {
             super();
 
             this.id = id;
@@ -251,7 +255,6 @@ class IssuesScanner {
             this.sourceCodeEncoding = sourceCodeEncoding;
             this.blamer = blamer;
             this.filters = filters;
-            this.sourceDirectory = sourceDirectory;
             this.sourceDirectories = sourceDirectories;
         }
 
@@ -283,11 +286,12 @@ class IssuesScanner {
         }
 
         private void resolvePaths(final Report report) {
-            report.logInfo("Resolving file names for all issues in source directory '%s'", sourceDirectory);
-
             try {
-                FileNameResolver generator = new FileNameResolver();
-                generator.run(report, sourceDirectory, ConsoleLogHandler::isInConsoleLog);
+                FileNameResolver nameResolver = new FileNameResolver();
+                for (String sourceDirectory : sourceDirectories) {
+                    report.logInfo("Resolving file names for all issues in source directory '%s'", sourceDirectory);
+                    nameResolver.run(report, sourceDirectory, ConsoleLogHandler::isInConsoleLog);
+                }
             }
             catch (InvalidPathException exception) {
                 report.logException(exception, "Resolving of file names aborted");
