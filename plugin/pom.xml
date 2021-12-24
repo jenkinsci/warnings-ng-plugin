@@ -50,7 +50,7 @@
     <xmlunit.version>2.8.4</xmlunit.version>
     <jsoup.version>1.14.3</jsoup.version>
     <json-smart.version>2.4.7</json-smart.version>
-    <jmh.version>1.33</jmh.version>
+    <jmh.version>1.34</jmh.version>
 
     <!-- Jenkins Plug-in Dependencies Versions -->
     <autograding.version>3.3.1</autograding.version>
