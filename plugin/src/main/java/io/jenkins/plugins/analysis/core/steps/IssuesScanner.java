@@ -303,6 +303,8 @@ class IssuesScanner {
         private void resolvePaths(final File workspace, final Report report) {
             try {
                 FileNameResolver nameResolver = new FileNameResolver();
+                report.logInfo("Resolving file names for all issues in workspace '%s'", workspace);
+                nameResolver.run(report, workspace.getAbsolutePath(), ConsoleLogHandler::isInConsoleLog);
                 for (FilePath sourceDirectory : filterSourceDirectories(workspace)) {
                     report.logInfo("Resolving file names for all issues in source directory '%s'", sourceDirectory);
                     nameResolver.run(report, sourceDirectory.getRemote(), ConsoleLogHandler::isInConsoleLog);
