@@ -33,6 +33,7 @@ import static org.mockito.Mockito.*;
 class AffectedFilesResolverTest extends ResourceTest {
     private static final FilePath BUILD_ROOT = new FilePath(new File("builds"));
     private static final String FILE_NAME = "file.txt";
+    private static final VirtualChannel CHANNEL = mock(VirtualChannel.class);
 
     /**
      * Ensures that illegal file names are processed without problems.
@@ -81,7 +82,7 @@ class AffectedFilesResolverTest extends ResourceTest {
 
     @Test
     void shouldComparePathsOnUnix() {
-        RemoteFacade remoteFacade = new RemoteFacade(BUILD_ROOT, BUILD_ROOT);
+        RemoteFacade remoteFacade = new RemoteFacade(BUILD_ROOT, CHANNEL, BUILD_ROOT);
         assertThat(remoteFacade.isInWorkspace("/a/b.c", "/a")).isTrue();
         assertThat(remoteFacade.isInWorkspace("/a/b.c", "/")).isTrue();
         assertThat(remoteFacade.isInWorkspace("/a/b.c", "/a/b")).isFalse();
@@ -91,7 +92,7 @@ class AffectedFilesResolverTest extends ResourceTest {
     void shouldComparePathsCaseInsensitiveOnWindows() {
         assumeThat(isWindows()).isTrue();
 
-        RemoteFacade remoteFacade = new RemoteFacade(BUILD_ROOT, BUILD_ROOT);
+        RemoteFacade remoteFacade = new RemoteFacade(BUILD_ROOT, CHANNEL, BUILD_ROOT);
 
         assertThat(remoteFacade.isInWorkspace("C:\\a\\b.c", "C:\\a")).isTrue();
         assertThat(remoteFacade.isInWorkspace("C:\\a\\b.c", "C:\\")).isTrue();
@@ -180,7 +181,7 @@ class AffectedFilesResolverTest extends ResourceTest {
             FilePath buildFolderStub = createWorkspaceStub();
             FilePath workspaceStub = createWorkspaceStub();
             FilePath sourceFolderStub = createWorkspaceStub();
-            RemoteFacade remoteFacade = new RemoteFacade(buildFolderStub, workspaceStub);
+            RemoteFacade remoteFacade = new RemoteFacade(buildFolderStub, CHANNEL, workspaceStub);
 
             assertThat(remoteFacade.isInWorkspace(workspaceStub.getRemote())).isTrue();
             assertThat(remoteFacade.isInWorkspace(workspaceStub.child(FILE_NAME).getRemote())).isTrue();
@@ -194,7 +195,7 @@ class AffectedFilesResolverTest extends ResourceTest {
             FilePath buildFolderStub = createWorkspaceStub();
             FilePath workspaceStub = createWorkspaceStub();
 
-            RemoteFacade remoteFacade = new RemoteFacade(buildFolderStub, workspaceStub);
+            RemoteFacade remoteFacade = new RemoteFacade(buildFolderStub, CHANNEL, workspaceStub);
 
             assertThat(remoteFacade.isInWorkspace(workspaceStub.getRemote())).isTrue();
             assertThat(remoteFacade.isInWorkspace(workspaceStub.child(FILE_NAME).getRemote())).isTrue();

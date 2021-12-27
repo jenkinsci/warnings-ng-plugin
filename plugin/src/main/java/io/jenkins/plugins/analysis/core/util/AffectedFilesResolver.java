@@ -5,6 +5,9 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import edu.hm.hafner.analysis.FilteredLog;
 import edu.hm.hafner.analysis.Issue;
@@ -93,6 +96,26 @@ public class AffectedFilesResolver {
      *
      * @param report
      *         the issues
+     * @param channel
+     *         virtual channel to access the files on the agent
+     * @param buildFolder
+     *         directory to store the copied files in
+     * @param permittedSourceDirectories
+     *         paths to the affected files on the agent
+     *
+     * @throws InterruptedException
+     *         if the user cancels the processing
+     */
+    public void copyAffectedFilesToBuildFolder(final Report report, final VirtualChannel channel,
+            final FilePath buildFolder, final Set<String> permittedSourceDirectories) throws InterruptedException {
+        copyAffectedFilesToBuildFolder(report, new RemoteFacade(buildFolder, channel, permittedSourceDirectories));
+    }
+
+    /**
+     * Copies all files with issues from the workspace to the build folder.
+     *
+     * @param report
+     *         the issues
      * @param buildFolder
      *         directory to store the copied files in
      * @param affectedFilesFolder
@@ -103,10 +126,12 @@ public class AffectedFilesResolver {
      */
     public void copyAffectedFilesToBuildFolder(final Report report, final FilePath buildFolder,
             final FilePath affectedFilesFolder) throws InterruptedException {
-        copyAffectedFilesToBuildFolder(report, new RemoteFacade(buildFolder, affectedFilesFolder));
+        copyAffectedFilesToBuildFolder(report, new RemoteFacade(buildFolder, affectedFilesFolder.getChannel(),
+                Collections.singleton(affectedFilesFolder.getRemote())));
     }
 
-    @VisibleForTesting @SuppressWarnings("PMD.CognitiveComplexity")
+    @VisibleForTesting
+    @SuppressWarnings("PMD.CognitiveComplexity")
     void copyAffectedFilesToBuildFolder(final Report report, final RemoteFacade remoteFacade)
             throws InterruptedException {
         int copied = 0;
@@ -148,12 +173,21 @@ public class AffectedFilesResolver {
         private static final PathUtil PATH_UTIL = new PathUtil();
         private final FilePath buildFolder;
         private final VirtualChannel channel;
-        private final String affectedFilesPrefix;
+        private final Set<String> permittedAbsolutePaths;
 
-        RemoteFacade(final FilePath buildFolder, final FilePath agentWorkspace) {
+        @VisibleForTesting
+        RemoteFacade(final FilePath buildFolder, final VirtualChannel channel,
+                final FilePath permittedSourceDirectory) {
+            this(buildFolder, channel, Collections.singleton(permittedSourceDirectory.getRemote()));
+        }
+
+        RemoteFacade(final FilePath buildFolder, final VirtualChannel channel,
+                final Set<String> permittedSourceDirectories) {
             this.buildFolder = buildFolder;
-            channel = agentWorkspace.getChannel();
-            affectedFilesPrefix = PATH_UTIL.getAbsolutePath(agentWorkspace.getRemote());
+            this.channel = channel;
+            permittedAbsolutePaths = permittedSourceDirectories.stream()
+                    .map(PATH_UTIL::getAbsolutePath)
+                    .collect(Collectors.toSet());
         }
 
         boolean exists(final String fileName) {
@@ -170,7 +204,7 @@ public class AffectedFilesResolver {
         }
 
         /**
-         * Checks whether the source file is in the workspace. Due to security reasons copying of files outside of the
+         * Checks whether the source file is in the workspace. Due to security reasons copying of files outside the
          * workspace is prohibited.
          *
          * @param fileName
@@ -181,11 +215,17 @@ public class AffectedFilesResolver {
         boolean isInWorkspace(final String fileName) {
             String sourceFile = PATH_UTIL.getAbsolutePath(createFile(fileName).getRemote());
 
-            return isInWorkspace(sourceFile, affectedFilesPrefix);
+            return isInWorkspace(sourceFile, this.permittedAbsolutePaths);
         }
 
-        boolean isInWorkspace(final String sourceFile, final String workspace) {
-            return Paths.get(sourceFile).startsWith(Paths.get(workspace));
+        boolean isInWorkspace(final String sourceFile, final String permittedPrefixes) {
+            return isInWorkspace(sourceFile, Collections.singleton(permittedPrefixes));
+        }
+
+        boolean isInWorkspace(final String sourceFile, final Set<String> permittedPrefixes) {
+            return permittedPrefixes.parallelStream()
+                    .map(Paths::get)
+                    .anyMatch(prefix -> Paths.get(sourceFile).startsWith(prefix));
         }
 
         public void copy(final String from, final String to) throws IOException, InterruptedException {

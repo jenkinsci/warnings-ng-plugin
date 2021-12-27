@@ -154,21 +154,6 @@ class IssuesScanner {
         return permittedSourceDirectories;
     }
 
-    private FilePath getPermittedSourceDirectory(final Report report) {
-        if (sourceDirectories.isEmpty()) {
-            return workspace;
-        }
-
-        String sourceDirectory = sourceDirectories.iterator().next();
-        FilePath permittedSourceDirectory = WarningsPluginConfiguration.getInstance()
-                .getPermittedSourceDirectory(workspace, sourceDirectory);
-        if (StringUtils.isNotBlank(sourceDirectory) && permittedSourceDirectory.equals(workspace)) {
-            report.logError("Additional source directory '%s' must be registered in Jenkins system configuration",
-                    sourceDirectory);
-        }
-        return permittedSourceDirectory;
-    }
-
     private Blamer createBlamer(final Report report) {
         if (blameMode == BlameMode.DISABLED) {
             report.logInfo("Skipping SCM blames as requested");
@@ -194,8 +179,10 @@ class IssuesScanner {
             throws InterruptedException {
         report.logInfo("Copying affected files to Jenkins' build folder '%s'", buildFolder);
 
+        Set<String> permittedSourceDirectories = getPermittedSourceDirectories();
+        permittedSourceDirectories.add(workspace.getRemote());
         new AffectedFilesResolver().copyAffectedFilesToBuildFolder(
-                report, buildFolder, getPermittedSourceDirectory(report));
+                report, workspace.getChannel(), buildFolder, permittedSourceDirectories);
     }
 
     private FilePath createAffectedFilesFolder(final Report report) throws InterruptedException {
