@@ -5,18 +5,28 @@
     Provides all required input fields to scan for issues.
   </st:documentation>
 
-  <s:scm/>
+  <i:hr title="${%Source Control Integration}"/>
+
   <f:entry field="skipBlames">
     <f:checkbox title="${%title.blameDisabled}" />
   </f:entry>
+  <s:scm/>
 
-  <i:hr title="${%Affected Files}"/>
+  <i:hr title="${%Reading Affected Files}"/>
 
   <f:entry title="${%title.sourceCodeEncoding}" field="sourceCodeEncoding">
     <c:safe-combobox/>
   </f:entry>
-  <f:entry title="${%title.sourceDirectory}" description="${%description.sourceDirectory}" field="sourceDirectory">
-    <c:safe-textbox/>
+  <f:entry title="${%title.sourceDirectories}" description="${%description.sourceDirectories}">
+    <div id="sourceDirectories">
+      <f:repeatableProperty field="sourceDirectories">
+        <f:entry title="">
+          <div align="right">
+            <f:repeatableDeleteButton/>
+          </div>
+        </f:entry>
+      </f:repeatableProperty>
+    </div>
   </f:entry>
 
   <i:hr title="${%Issue filters}"/>

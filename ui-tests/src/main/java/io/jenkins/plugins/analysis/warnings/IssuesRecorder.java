@@ -31,7 +31,8 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     private final Control ignoreQualityGate = control("ignoreQualityGate");
     private final Control aggregatingResults = control("aggregatingResults");
     private final Control sourceCodeEncoding = control("sourceCodeEncoding");
-    private final Control sourceDirectory = control("sourceDirectory");
+    private final Control sourceDirectories = findRepeatableAddButtonFor("sourceDirectories");
+    private final Control sourceDirectory = control("/sourceDirectories/path");
     private final Control skipBlames = control("skipBlames");
     private final Control ignoreFailedBuilds = control("ignoreFailedBuilds");
     private final Control failOnError = control("failOnError");
@@ -269,7 +270,6 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
         }
     }
 
-
     /**
      * Sets the source code encoding to the specified value.
      *
@@ -321,7 +321,9 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      *         a folder containing the source code
      */
     public void setSourceDirectory(final String sourceDirectory) {
-        this.sourceDirectory.set(sourceDirectory);
+        String path = createPageArea("sourceDirectories", sourceDirectories::click);
+        SourceCodeDirectoryPanel panel = new SourceCodeDirectoryPanel(this, path);
+        panel.setPath(sourceDirectory);
     }
 
     /**
@@ -673,6 +675,21 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
         public void setUnstable(final boolean isUnstable) {
             self().findElement(by.xpath(".//input[@type='radio' and contains(@path,'unstable[" + isUnstable + "]')]"))
                     .click();
+        }
+    }
+
+    /**
+     * Page area of a source code path configuration.
+     */
+    private static class SourceCodeDirectoryPanel extends PageAreaImpl {
+        private final Control path = control("path");
+
+        SourceCodeDirectoryPanel(final PageArea area, final String path) {
+            super(area, path);
+        }
+
+        public void setPath(final String path) {
+            this.path.set(path);
         }
     }
 

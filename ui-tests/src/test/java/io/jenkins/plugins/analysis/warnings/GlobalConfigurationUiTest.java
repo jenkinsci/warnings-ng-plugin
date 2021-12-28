@@ -109,7 +109,7 @@ public class GlobalConfigurationUiTest extends UiTest {
         assertThat(gcc)
                 .hasTitleText("GNU C Compiler (gcc): One warning")
                 .hasReferenceBuild(linkType == LinkType.SHOULD_HAVE_SOURCE_CODE_LINK ? 1 : 0)
-                .hasInfoType(linkType == LinkType.SHOULD_HAVE_SOURCE_CODE_LINK ? InfoType.INFO : InfoType.ERROR);
+                .hasInfoType(InfoType.INFO);
 
         AnalysisResult gccDetails = gcc.openOverallResult();
         assertThat(gccDetails).hasActiveTab(Tab.ISSUES)

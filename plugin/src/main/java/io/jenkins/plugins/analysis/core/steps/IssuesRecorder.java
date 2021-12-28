@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -59,13 +61,16 @@ import io.jenkins.plugins.analysis.core.util.RunResultHandler;
 import io.jenkins.plugins.analysis.core.util.StageResultHandler;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
 import io.jenkins.plugins.checks.steps.ChecksInfo;
+import io.jenkins.plugins.prism.SourceCodeDirectory;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
  * Freestyle or Maven job {@link Recorder} that scans report files or the console log for issues. Stores the created
  * issues in an {@link AnalysisResult}. The result is attached to a {@link Run} by registering a {@link ResultAction}.
+ *
  * <p>
  * Additional features:
+ * </p>
  * <ul>
  * <li>It provides a {@link QualityGateEvaluator} that is checked after each run. If the quality gate is not passed,
  * then the build will be set to {@link Result#UNSTABLE} or {@link Result#FAILURE}, depending on the configuration
@@ -86,6 +91,7 @@ public class IssuesRecorder extends Recorder {
 
     private String sourceCodeEncoding = StringUtils.EMPTY;
     private String sourceDirectory = StringUtils.EMPTY;
+    private Set<SourceCodeDirectory> sourceDirectories = new HashSet<>(); // @since 9.11.0
 
     private boolean ignoreQualityGate = false; // by default, a successful quality gate is mandatory;
     private boolean ignoreFailedBuilds = true; // by default, failed builds are ignored;
@@ -146,6 +152,12 @@ public class IssuesRecorder extends Recorder {
     protected Object readResolve() {
         if (sourceDirectory == null) {
             sourceDirectory = StringUtils.EMPTY;
+        }
+        if (sourceDirectories == null) {
+            sourceDirectories = new HashSet<>();
+            if (StringUtils.isNotBlank(sourceDirectory)) {
+                sourceDirectories.add(new SourceCodeDirectory(sourceDirectory));
+            }
         }
         if (trendChartType == null) {
             trendChartType = TrendChartType.AGGREGATION_TOOLS;
@@ -339,15 +351,31 @@ public class IssuesRecorder extends Recorder {
     }
 
     /**
-     * Sets the path to the folder that contains the source code. If not relative and thus not part of the workspace
-     * then this folder needs to be added in Jenkins global configuration.
+     * Sets the path to the directory that contains the source code. If not relative and thus not part of the workspace
+     * then this directory needs to be added in Jenkins global configuration to prevent accessing of forbidden resources.
      *
      * @param sourceDirectory
-     *         a folder containing the source code
+     *         directory containing the source code
      */
     @DataBoundSetter
     public void setSourceDirectory(final String sourceDirectory) {
         this.sourceDirectory = sourceDirectory;
+    }
+
+    /**
+     * Sets the paths to the directories that contain the source code. If not relative and thus not part of the workspace
+     * then these directories need to be added in Jenkins global configuration to prevent accessing of forbidden resources.
+     *
+     * @param sourceDirectories
+     *         directories containing the source code
+     */
+    @DataBoundSetter
+    public void setSourceDirectories(final List<SourceCodeDirectory> sourceDirectories) {
+        this.sourceDirectories = new HashSet<>(sourceDirectories);
+    }
+
+    public List<SourceCodeDirectory> getSourceDirectories() {
+        return new ArrayList<>(sourceDirectories);
     }
 
     /**
@@ -758,11 +786,14 @@ public class IssuesRecorder extends Recorder {
     private AnnotatedReport scanWithTool(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
             final Tool tool) throws IOException, InterruptedException {
         IssuesScanner issuesScanner = new IssuesScanner(tool, getFilters(), getSourceCodeCharset(),
-                workspace, Collections.singleton(sourceDirectory), run,
-                new FilePath(run.getRootDir()), listener,
+                workspace, getSourceCodePaths(), run, new FilePath(run.getRootDir()), listener,
                 scm, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED);
 
         return issuesScanner.scan();
+    }
+
+    private Set<String> getSourceCodePaths() {
+        return getSourceDirectories().stream().map(SourceCodeDirectory::getPath).collect(Collectors.toSet());
     }
 
     private Charset getSourceCodeCharset() {

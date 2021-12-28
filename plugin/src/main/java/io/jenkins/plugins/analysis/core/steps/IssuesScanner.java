@@ -51,8 +51,8 @@ import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.forensics.blame.FileLocations;
 import io.jenkins.plugins.forensics.miner.MinerService;
 import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
+import io.jenkins.plugins.prism.PermittedSourceCodeDirectory;
 import io.jenkins.plugins.prism.PrismConfiguration;
-import io.jenkins.plugins.prism.SourceCodeDirectory;
 import io.jenkins.plugins.prism.SourceDirectoryFilter;
 
 import static io.jenkins.plugins.analysis.core.util.AffectedFilesResolver.*;
@@ -142,7 +142,7 @@ class IssuesScanner {
         Set<String> permittedSourceDirectories = PrismConfiguration.getInstance()
                 .getSourceDirectories()
                 .stream()
-                .map(SourceCodeDirectory::getPath)
+                .map(PermittedSourceCodeDirectory::getPath)
                 .collect(Collectors.toSet());
         List<String> permittedSourceCodeDirectoriesOfWarningsPlugin
                 = WarningsPluginConfiguration.getInstance()

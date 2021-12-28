@@ -31,8 +31,8 @@ import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSu
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.Gcc4;
+import io.jenkins.plugins.prism.PermittedSourceCodeDirectory;
 import io.jenkins.plugins.prism.PrismConfiguration;
-import io.jenkins.plugins.prism.SourceCodeDirectory;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -234,7 +234,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         buildAndVerifyFilesResolving(job, ColumnLink.SHOULD_NOT_HAVE_LINK, "0 copied", "1 not in workspace", "0 not-found", "0 with I/O error");
 
         PrismConfiguration.getInstance().setSourceDirectories(
-                Collections.singletonList(new SourceCodeDirectory(buildsFolder)));
+                Collections.singletonList(new PermittedSourceCodeDirectory(buildsFolder)));
 
         // Fourth build: copying the affected file is permitted again
         buildAndVerifyFilesResolving(job, ColumnLink.SHOULD_HAVE_LINK, "1 copied", "0 not in workspace", "0 not-found", "0 with I/O error");
