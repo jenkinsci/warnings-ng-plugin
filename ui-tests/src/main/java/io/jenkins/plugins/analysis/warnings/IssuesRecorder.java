@@ -275,9 +275,12 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      *
      * @param encoding
      *         the encoding to use when reading source files
+     * @return this recorder
      */
-    public void setSourceCodeEncoding(final String encoding) {
+    public IssuesRecorder setSourceCodeEncoding(final String encoding) {
         sourceCodeEncoding.set(encoding);
+
+        return this;
     }
 
     /**
@@ -285,9 +288,12 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      *
      * @param isChecked
      *         determines if the checkbox should be checked or not
+     * @return this recorder
      */
-    public void setEnabledForFailure(final boolean isChecked) {
+    public IssuesRecorder setEnabledForFailure(final boolean isChecked) {
         enabledForFailureCheckBox.check(isChecked);
+
+        return this;
     }
 
     /**
@@ -295,9 +301,12 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      *
      * @param isChecked
      *         determines if the checkbox should be checked or not
+     * @return this recorder
      */
-    public void setEnabledForAggregation(final boolean isChecked) {
+    public IssuesRecorder setEnabledForAggregation(final boolean isChecked) {
         aggregatingResults.check(isChecked);
+
+        return this;
     }
 
     /**
@@ -308,9 +317,12 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      * @param ignoreQualityGate
      *         if {@code true} then the result of the quality gate is ignored, otherwise only build with a successful
      *         quality gate are selected
+     * @return this recorder
      */
-    public void setIgnoreQualityGate(final boolean ignoreQualityGate) {
+    public IssuesRecorder setIgnoreQualityGate(final boolean ignoreQualityGate) {
         this.ignoreQualityGate.check(ignoreQualityGate);
+
+        return this;
     }
 
     /**
@@ -319,11 +331,14 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      *
      * @param sourceDirectory
      *         a folder containing the source code
+     * @return this recorder
      */
-    public void setSourceDirectory(final String sourceDirectory) {
+    public IssuesRecorder setSourceDirectory(final String sourceDirectory) {
         String path = createPageArea("sourceDirectories", sourceDirectories::click);
         SourceCodeDirectoryPanel panel = new SourceCodeDirectoryPanel(this, path);
         panel.setPath(sourceDirectory);
+
+        return this;
     }
 
     /**
@@ -333,9 +348,12 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      * @param aggregatingResults
      *         if {@code true} then the results of each static analysis tool should be aggregated into a single result,
      *         if {@code false} then every tool should get an individual result.
+     * @return this recorder
      */
-    public void setAggregatingResults(final boolean aggregatingResults) {
+    public IssuesRecorder setAggregatingResults(final boolean aggregatingResults) {
         this.aggregatingResults.check(aggregatingResults);
+
+        return this;
     }
 
     /**
@@ -344,9 +362,12 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      *
      * @param scm
      *         the ID of the SCM to use (a substring of the full ID)
+     * @return this recorder
      */
-    public void setScm(final String scm) {
+    public IssuesRecorder setScm(final String scm) {
         this.scm.set(scm);
+
+        return this;
     }
 
     /**
@@ -354,9 +375,12 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      *
      * @param blameDisabled
      *         {@code true} if SCM blaming should be disabled, {@code false} otherwise
+     * @return this recorder
      */
-    public void setSkipBlames(final boolean blameDisabled) {
+    public IssuesRecorder setSkipBlames(final boolean blameDisabled) {
         skipBlames.check(blameDisabled);
+
+        return this;
     }
 
     /**
@@ -366,9 +390,12 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      *
      * @param ignoreFailedBuilds
      *         if {@code true} then a stable build is used as reference
+     * @return this recorder
      */
-    public void setIgnoreFailedBuilds(final boolean ignoreFailedBuilds) {
+    public IssuesRecorder setIgnoreFailedBuilds(final boolean ignoreFailedBuilds) {
         this.ignoreFailedBuilds.check(ignoreFailedBuilds);
+
+        return this;
     }
 
     /**
@@ -377,9 +404,12 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      * @param failOnError
      *         if {@code true} then the build will be failed on errors, {@code false} then errors are only reported in
      *         the UI
+     * @return this recorder
      */
-    public void setFailOnError(final boolean failOnError) {
+    public IssuesRecorder setFailOnError(final boolean failOnError) {
         this.failOnError.check(failOnError);
+
+        return this;
     }
 
     /**
@@ -387,9 +417,12 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      *
      * @param skipPublishingChecks
      *         if {@code true} then publishing checks should be skipped, {@code false} otherwise
+     * @return this recorder
      */
-    public void setSkipPublishingChecks(final boolean skipPublishingChecks) {
+    public IssuesRecorder setSkipPublishingChecks(final boolean skipPublishingChecks) {
         this.skipPublishingChecks.check(skipPublishingChecks);
+
+        return this;
     }
 
     /**
@@ -397,18 +430,24 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      * be published.
      *
      * @param publishAllIssues {@code true} if all issues should be published, {@code false} if only new issues should be published
+     * @return this recorder
      */
-    public void setPublishAllIssues(final boolean publishAllIssues) {
+    public IssuesRecorder setPublishAllIssues(final boolean publishAllIssues) {
         this.publishAllIssues.check(publishAllIssues);
+
+        return this;
     }
 
     /**
      * Sets the report file pattern.
      *
      * @param pattern the pattern to set
+     * @return this recorder
      */
-    public void setReportFilePattern(final String pattern) {
+    public IssuesRecorder setReportFilePattern(final String pattern) {
         reportFilePattern.set(pattern);
+
+        return this;
     }
 
     /**
@@ -416,25 +455,30 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      *
      * @param trendChartType
      *         the type of the trend chart to use
+     * @return this recorder
      */
-    public void setTrendChartType(final TrendChartType trendChartType) {
+    public IssuesRecorder setTrendChartType(final TrendChartType trendChartType) {
         this.trendChartType.select(trendChartType.toString());
+
+        return this;
     }
 
     /**
      * Sets the healthy report values.
-     *
-     * @param healthy
+     *  @param healthy
      *         the number of issues when health is reported as 100%
      * @param unhealthy
      *         the number of issues when health is reported as 0%
      * @param minimumSeverity
      *         the severity to consider
+     * @return this recorder
      */
-    public void setHealthReport(final int healthy, final int unhealthy, final String minimumSeverity) {
+    public IssuesRecorder setHealthReport(final int healthy, final int unhealthy, final String minimumSeverity) {
         healthyThreshold.set(healthy);
         unhealthyThreshold.set(unhealthy);
         healthSeverity.select(minimumSeverity);
+
+        return this;
     }
 
     /**
@@ -456,49 +500,55 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
 
     /**
      * Sets the name of the static analysis tool to use and the pattern.
-     *
-     * @param toolName
+     *  @param toolName
      *         the tool name
      * @param pattern
      *         the pattern
+     * @return this recorder
      */
-    public void setToolWithPattern(final String toolName, final String pattern) {
+    public IssuesRecorder setToolWithPattern(final String toolName, final String pattern) {
         StaticAnalysisTool tool = new StaticAnalysisTool(this, "toolProxies");
         tool.setTool(toolName);
         tool.setPattern(pattern);
+
+        return this;
     }
 
     /**
      * Adds a new quality gate.
-     *
-     * @param threshold
+     *  @param threshold
      *         the minimum number of issues that fails the quality gate
      * @param type
      *         the type of the quality gate
      * @param result
      *         determines whether the quality gate sets the build result to Unstable or Failed
+     * @return this recorder
      */
-    public void addQualityGateConfiguration(final int threshold, final QualityGateType type,
+    public IssuesRecorder addQualityGateConfiguration(final int threshold, final QualityGateType type,
             final QualityGateBuildResult result) {
         String path = createPageArea("qualityGates", qualityGatesRepeatable::click);
         QualityGatePanel qualityGate = new QualityGatePanel(this, path);
         qualityGate.setThreshold(threshold);
         qualityGate.setType(type);
         qualityGate.setUnstable(result == QualityGateBuildResult.UNSTABLE);
+
+        return this;
     }
 
     /**
      * Adds a new issue filter.
-     *
-     * @param filterName
+     *  @param filterName
      *         name of the filter
      * @param regex
      *         regular expression to apply
+     * @return this recorder
      */
-    public void addIssueFilter(final String filterName, final String regex) {
+    public IssuesRecorder addIssueFilter(final String filterName, final String regex) {
         String path = createPageArea("filters", () -> filtersRepeatable.selectDropdownMenu(filterName));
         IssueFilterPanel filter = new IssueFilterPanel(this, path);
         filter.setFilter(regex);
+
+        return this;
     }
 
     /**
