@@ -218,7 +218,7 @@
         <configuration>
           <archive>
             <manifestEntries>
-              <Automatic-Module-Name>${artifactId}</Automatic-Module-Name>
+              <Automatic-Module-Name>warnings.ui.tests</Automatic-Module-Name>
             </manifestEntries>
           </archive>
         </configuration>
