@@ -12,7 +12,7 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 
-import io.jenkins.plugins.analysis.core.util.ModelValidation;
+import io.jenkins.plugins.prism.SourceEncodingValidation;
 
 /**
  * Base class for static analysis step executions. Provides several helper methods to obtain the defined {@link
@@ -130,7 +130,7 @@ abstract class AnalysisExecution<T> extends SynchronousNonBlockingStepExecution<
      * @return the default charset for the specified encoding string
      */
     protected Charset getCharset(final String charset) {
-        return new ModelValidation().getCharset(charset);
+        return new SourceEncodingValidation().getCharset(charset);
     }
 
 }

@@ -56,7 +56,9 @@ public class ModelValidation {
      * Returns all available character set names.
      *
      * @return all available character set names
+     * @deprecated moved to Prism API Plugin
      */
+    @Deprecated
     public ComboBoxModel getAllCharsets() {
         return new ComboBoxModel(ALL_CHARSETS);
     }
@@ -69,7 +71,9 @@ public class ModelValidation {
      *         identifier of the character set
      *
      * @return the default charset for the specified encoding string
+     * @deprecated moved to Prism API Plugin
      */
+    @Deprecated
     public Charset getCharset(@CheckForNull final String charset) {
         try {
             if (StringUtils.isNotBlank(charset)) {
@@ -123,7 +127,9 @@ public class ModelValidation {
      *         the character encoding
      *
      * @return the validation result
+     * @deprecated moved to Prism API Plugin
      */
+    @Deprecated
     public FormValidation validateCharset(final String reportEncoding) {
         try {
             if (StringUtils.isBlank(reportEncoding) || Charset.isSupported(reportEncoding)) {
@@ -311,7 +317,9 @@ public class ModelValidation {
      *         the file pattern
      *
      * @return the validation result
+     * @deprecated moved to Prism API Plugin
      */
+    @Deprecated
     public FormValidation doCheckSourceDirectory(@AncestorInPath final AbstractProject<?, ?> project,
             @QueryParameter final String sourceDirectory) {
         if (project != null) { // there is no workspace in pipelines

@@ -28,6 +28,7 @@ import io.jenkins.plugins.analysis.core.model.AnalysisModelParser.AnalysisModelP
 import io.jenkins.plugins.analysis.core.util.ConsoleLogReaderFactory;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
+import io.jenkins.plugins.prism.SourceEncodingValidation;
 import io.jenkins.plugins.util.EnvironmentResolver;
 import io.jenkins.plugins.util.JenkinsFacade;
 
@@ -232,6 +233,7 @@ public abstract class ReportScanningTool extends Tool {
         private static final JenkinsFacade JENKINS = new JenkinsFacade();
 
         private final ModelValidation model = new ModelValidation();
+        private final SourceEncodingValidation validation = new SourceEncodingValidation();
 
         /**
          * Creates a new instance of {@link ReportScanningToolDescriptor} with the given ID.
@@ -254,7 +256,7 @@ public abstract class ReportScanningTool extends Tool {
         @POST
         public ComboBoxModel doFillReportEncodingItems(@AncestorInPath final AbstractProject<?, ?> project) {
             if (JENKINS.hasPermission(Item.CONFIGURE, project)) {
-                return model.getAllCharsets();
+                return validation.getAllCharsets();
             }
             return new ComboBoxModel();
         }
@@ -276,7 +278,7 @@ public abstract class ReportScanningTool extends Tool {
                 return FormValidation.ok();
             }
 
-            return model.validateCharset(reportEncoding);
+            return validation.validateCharset(reportEncoding);
         }
 
         /**

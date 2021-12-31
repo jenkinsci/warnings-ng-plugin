@@ -62,6 +62,7 @@ import io.jenkins.plugins.analysis.core.util.StageResultHandler;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
 import io.jenkins.plugins.checks.steps.ChecksInfo;
 import io.jenkins.plugins.prism.SourceCodeDirectory;
+import io.jenkins.plugins.prism.SourceEncodingValidation;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
@@ -801,7 +802,7 @@ public class IssuesRecorder extends Recorder {
     }
 
     private Charset getCharset(final String encoding) {
-        return new ModelValidation().getCharset(encoding);
+        return new SourceEncodingValidation().getCharset(encoding);
     }
 
     /**
@@ -1277,8 +1278,8 @@ public class IssuesRecorder extends Recorder {
     @Symbol("recordIssues")
     @SuppressWarnings("unused") // most methods are used by the corresponding jelly view
     public static class Descriptor extends BuildStepDescriptor<Publisher> {
-
         private static final JenkinsFacade JENKINS = new JenkinsFacade();
+        private final SourceEncodingValidation validation = new SourceEncodingValidation();
 
         /** Retain backward compatibility. */
         @Initializer(before = InitMilestone.PLUGINS_STARTED)
@@ -1330,7 +1331,7 @@ public class IssuesRecorder extends Recorder {
         @POST
         public ComboBoxModel doFillSourceCodeEncodingItems(@AncestorInPath final AbstractProject<?, ?> project) {
             if (JENKINS.hasPermission(Item.CONFIGURE, project)) {
-                return model.getAllCharsets();
+                return validation.getAllCharsets();
             }
             return new ComboBoxModel();
         }
@@ -1367,7 +1368,7 @@ public class IssuesRecorder extends Recorder {
                 return FormValidation.ok();
             }
 
-            return model.validateCharset(reportEncoding);
+            return validation.validateCharset(reportEncoding);
         }
 
         /**
@@ -1387,7 +1388,7 @@ public class IssuesRecorder extends Recorder {
                 return FormValidation.ok();
             }
 
-            return model.validateCharset(sourceCodeEncoding);
+            return validation.validateCharset(sourceCodeEncoding);
         }
 
         /**
@@ -1445,26 +1446,6 @@ public class IssuesRecorder extends Recorder {
                 return model.getAllTrendChartTypes();
             }
             return new ListBoxModel();
-        }
-
-        /**
-         * Performs on-the-fly validation on the source code directory.
-         *
-         * @param project
-         *         the project that is configured
-         * @param sourceDirectory
-         *         the file pattern
-         *
-         * @return the validation result
-         */
-        @POST
-        public FormValidation doCheckSourceDirectory(@AncestorInPath final AbstractProject<?, ?> project,
-                @QueryParameter final String sourceDirectory) {
-            if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
-                return FormValidation.ok();
-            }
-
-            return model.doCheckSourceDirectory(project, sourceDirectory);
         }
     }
 }
