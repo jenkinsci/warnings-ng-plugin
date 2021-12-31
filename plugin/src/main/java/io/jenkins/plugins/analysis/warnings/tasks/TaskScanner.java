@@ -23,6 +23,7 @@ import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 
@@ -195,6 +196,7 @@ class TaskScanner {
      *
      * @return the open tasks
      */
+    @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE", justification = "https://github.com/spotbugs/spotbugs/issues/756")
     public Report scan(final Path file, final Charset charset) {
         try (Stream<String> lines = Files.lines(file, charset)) {
             return scanTasks(lines.iterator(), new IssueBuilder().setFileName(file.toString()));
