@@ -15,7 +15,8 @@ public class Cpd extends DuplicateCodeScanner {
     private static final long serialVersionUID = -4121571018057432203L;
     private static final String ID = "cpd";
 
-    /** Creates a new instance of {@link Cpd}.
+    /**
+     * Creates a new instance of {@link Cpd}.
      */
     @DataBoundConstructor
     public Cpd() {

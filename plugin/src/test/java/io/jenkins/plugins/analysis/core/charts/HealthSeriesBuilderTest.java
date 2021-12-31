@@ -39,55 +39,54 @@ class HealthSeriesBuilderTest {
 
                 new TestArgumentsBuilder()
                         .setTestName("no issues")
-                        .setDescriptor(createEnabledDescriptor(HEALTH_THRESHOLD, UNHEALTHY_THRESHOLD))
+                        .setDescriptor(createEnabledDescriptor())
                         .setRun(createRunWithSize(0))
                         .setExpectedSeries(0, 0, 0)
                         .build(),
 
                 new TestArgumentsBuilder()
                         .setTestName("all healthy when below health threshold")
-                        .setDescriptor(createEnabledDescriptor(HEALTH_THRESHOLD, UNHEALTHY_THRESHOLD))
+                        .setDescriptor(createEnabledDescriptor())
                         .setRun(createRunWithSize(1))
                         .setExpectedSeries(HEALTH_THRESHOLD - 1, 0, 0)
                         .build(),
 
                 new TestArgumentsBuilder()
                         .setTestName("all healthy when at health threshold")
-                        .setDescriptor(createEnabledDescriptor(HEALTH_THRESHOLD, UNHEALTHY_THRESHOLD))
+                        .setDescriptor(createEnabledDescriptor())
                         .setRun(createRunWithSize(HEALTH_THRESHOLD))
                         .setExpectedSeries(HEALTH_THRESHOLD, 0, 0)
                         .build(),
 
                 new TestArgumentsBuilder()
                         .setTestName("one medium when above health, below unhealth threshold")
-                        .setDescriptor(createEnabledDescriptor(HEALTH_THRESHOLD, UNHEALTHY_THRESHOLD))
+                        .setDescriptor(createEnabledDescriptor())
                         .setRun(createRunWithSize(HEALTH_THRESHOLD + 1))
                         .setExpectedSeries(HEALTH_THRESHOLD, 1, 0)
                         .build(),
 
                 new TestArgumentsBuilder()
                         .setTestName("none unhealthy when below unhealth threshold")
-                        .setDescriptor(createEnabledDescriptor(HEALTH_THRESHOLD, UNHEALTHY_THRESHOLD))
+                        .setDescriptor(createEnabledDescriptor())
                         .setRun(createRunWithSize(UNHEALTHY_THRESHOLD - 1))
                         .setExpectedSeries(HEALTH_THRESHOLD, 2, 0)
                         .build(),
 
                 new TestArgumentsBuilder()
                         .setTestName("none unhealthy when at unhealth threshold")
-                        .setDescriptor(createEnabledDescriptor(HEALTH_THRESHOLD, UNHEALTHY_THRESHOLD))
+                        .setDescriptor(createEnabledDescriptor())
                         .setRun(createRunWithSize(UNHEALTHY_THRESHOLD))
                         .setExpectedSeries(HEALTH_THRESHOLD, 3, 0)
                         .build(),
 
                 new TestArgumentsBuilder()
                         .setTestName("one unhealthy when above unhealth threshold")
-                        .setDescriptor(createEnabledDescriptor(HEALTH_THRESHOLD, UNHEALTHY_THRESHOLD))
+                        .setDescriptor(createEnabledDescriptor())
                         .setRun(createRunWithSize(UNHEALTHY_THRESHOLD + 1))
                         .setExpectedSeries(HEALTH_THRESHOLD, 3, 1)
                         .build()
         );
     }
-
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("testData")
@@ -120,10 +119,10 @@ class HealthSeriesBuilderTest {
         return createDescriptor(false);
     }
 
-    private static HealthDescriptor createEnabledDescriptor(final int healthThreshold, final int unhealthThreshhold) {
+    private static HealthDescriptor createEnabledDescriptor() {
         HealthDescriptor healthDescriptor = createDescriptor(true);
-        when(healthDescriptor.getHealthy()).thenReturn(healthThreshold);
-        when(healthDescriptor.getUnhealthy()).thenReturn(unhealthThreshhold);
+        when(healthDescriptor.getHealthy()).thenReturn(HealthSeriesBuilderTest.HEALTH_THRESHOLD);
+        when(healthDescriptor.getUnhealthy()).thenReturn(HealthSeriesBuilderTest.UNHEALTHY_THRESHOLD);
         return healthDescriptor;
     }
 

@@ -35,6 +35,7 @@ import io.jenkins.plugins.util.JenkinsFacade;
  * @author Ullrich Hafner
  */
 @SuppressFBWarnings(value = "SE", justification = "transient field owner ist restored using a Jenkins callback")
+@SuppressWarnings("checkstyle.ClassFanOutComplexity")
 public class ResultAction implements HealthReportingAction, LastBuildAction, RunAction2, StaplerProxy, Serializable {
     private static final long serialVersionUID = 6683647181785654908L;
 

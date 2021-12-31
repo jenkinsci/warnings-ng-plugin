@@ -26,7 +26,6 @@ import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 
-
 /**
  * Scans a given input stream for open tasks.
  *
