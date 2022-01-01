@@ -29,7 +29,7 @@ public class FreeStyleConfigurationUiTest extends AbstractJUnitTest {
     /**
      * Verifies that job configuration screen correctly modifies the properties of an {@link IssuesRecorder} instance.
      */
-    @Test @SuppressWarnings("checkstyle:JavaNCSS")
+    @Test @SuppressWarnings({"checkstyle:JavaNCSS", "PMD.NcssCount"})
     public void shouldSetPropertiesInJobConfiguration() {
         FreeStyleJob job = jenkins.getJobs().create(FreeStyleJob.class);
 
