@@ -98,6 +98,7 @@ public class FreeStyleConfigurationUiTest extends AbstractJUnitTest {
         assertThat(issuesRecorder).isNotIgnoringQualityGate();
         assertThat(issuesRecorder).isNotIgnoringFailedBuilds();
         assertThat(issuesRecorder).isNotFailingOnError();
+
         assertThat(issuesRecorder).hasSourceDirectories(SOURCE_DIRECTORY, "second");
     }
 }

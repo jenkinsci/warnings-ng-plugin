@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -33,6 +34,7 @@ import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.Gcc4;
 import io.jenkins.plugins.prism.PermittedSourceCodeDirectory;
 import io.jenkins.plugins.prism.PrismConfiguration;
+import io.jenkins.plugins.prism.SourceCodeDirectory;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -215,7 +217,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
 
         IssuesRecorder recorder = enableWarnings(job, createTool(new Gcc4(), "**/gcc.log"));
         String buildsFolder = job.getRootDir().getAbsolutePath();
-        recorder.setSourceDirectory(buildsFolder);
+        recorder.setSourceDirectories(Arrays.asList(new SourceCodeDirectory(buildsFolder), new SourceCodeDirectory("relative")));
 
         // First build: copying the affected file is forbidden
         buildAndVerifyFilesResolving(job, ColumnLink.SHOULD_NOT_HAVE_LINK, "0 copied", "1 not in workspace", "0 not-found", "0 with I/O error");
