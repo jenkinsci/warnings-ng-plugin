@@ -37,7 +37,7 @@ public class SnippetGenerator extends PageObject {
      */
     public IssuesRecorder selectRecordIssues() {
         selectSampleStep.select(RECORD_ISSUES_OPTION);
-
+        elasticSleep(2000);
         return new IssuesRecorder(job, "/prototype");
     }
 
