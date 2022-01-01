@@ -69,7 +69,7 @@ public class GlobalConfigurationUiTest extends UiTest {
             recorder.setTool("GNU C Compiler (gcc)", gcc -> gcc.setPattern("**/gcc.log"));
             recorder.setEnabledForFailure(true);
             recorder.setSourceCodeEncoding("UTF-8");
-            recorder.setSourceDirectory(getJobDir(homeDir, job));
+            recorder.addSourceDirectory(getJobDir(homeDir, job));
         });
     }
 

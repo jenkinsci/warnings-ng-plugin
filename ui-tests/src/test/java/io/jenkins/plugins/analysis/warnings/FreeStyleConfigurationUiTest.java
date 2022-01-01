@@ -36,7 +36,7 @@ public class FreeStyleConfigurationUiTest extends AbstractJUnitTest {
         IssuesRecorder issuesRecorder = job.addPublisher(IssuesRecorder.class, recorder -> recorder.setTool("Eclipse ECJ"));
 
         issuesRecorder.setSourceCodeEncoding(ENCODING);
-        issuesRecorder.setSourceDirectory(SOURCE_DIRECTORY);
+        issuesRecorder.addSourceDirectory(SOURCE_DIRECTORY);
         issuesRecorder.setScm(SCM);
         issuesRecorder.setAggregatingResults(true);
         issuesRecorder.setTrendChartType(TrendChartType.TOOLS_ONLY);
@@ -57,7 +57,7 @@ public class FreeStyleConfigurationUiTest extends AbstractJUnitTest {
         issuesRecorder.openAdvancedOptions();
 
         assertThat(issuesRecorder).hasSourceCodeEncoding(ENCODING);
-        assertThat(issuesRecorder).hasSourceDirectory(SOURCE_DIRECTORY);
+        assertThat(issuesRecorder).hasSourceDirectories(SOURCE_DIRECTORY);
         assertThat(issuesRecorder).hasScm(SCM);
         assertThat(issuesRecorder).isAggregatingResults();
         assertThat(issuesRecorder).hasTrendChartType(TrendChartType.TOOLS_ONLY.toString());
@@ -86,6 +86,8 @@ public class FreeStyleConfigurationUiTest extends AbstractJUnitTest {
         issuesRecorder.setIgnoreFailedBuilds(false);
         issuesRecorder.setFailOnError(false);
 
+        issuesRecorder.addSourceDirectory("second");
+
         job.save();
         job.configure();
         issuesRecorder.openAdvancedOptions();
@@ -96,5 +98,6 @@ public class FreeStyleConfigurationUiTest extends AbstractJUnitTest {
         assertThat(issuesRecorder).isNotIgnoringQualityGate();
         assertThat(issuesRecorder).isNotIgnoringFailedBuilds();
         assertThat(issuesRecorder).isNotFailingOnError();
+        assertThat(issuesRecorder).hasSourceDirectories(SOURCE_DIRECTORY, "second");
     }
 }

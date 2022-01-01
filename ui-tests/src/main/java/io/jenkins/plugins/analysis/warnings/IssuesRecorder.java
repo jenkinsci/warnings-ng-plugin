@@ -1,6 +1,8 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import org.jenkinsci.test.acceptance.po.AbstractStep;
 import org.jenkinsci.test.acceptance.po.Control;
@@ -32,7 +34,6 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     private final Control aggregatingResults = control("aggregatingResults");
     private final Control sourceCodeEncoding = control("sourceCodeEncoding");
     private final Control sourceDirectories = findRepeatableAddButtonFor("sourceDirectories");
-    private final Control sourceDirectory = control("/sourceDirectories/path");
     private final Control skipBlames = control("skipBlames");
     private final Control ignoreFailedBuilds = control("ignoreFailedBuilds");
     private final Control failOnError = control("failOnError");
@@ -187,8 +188,10 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
         return isChecked(ignoreQualityGate);
     }
 
-    public String getSourceDirectory() {
-        return sourceDirectory.get();
+    public List<String> getSourceDirectories() {
+        return all(by.xpath("//div[@id='sourceDirectories']//input")).stream()
+                .map(e -> e.getAttribute("value"))
+                .collect(Collectors.toList());
     }
 
     public String getTrendChartType() {
@@ -275,6 +278,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      *
      * @param encoding
      *         the encoding to use when reading source files
+     *
      * @return this recorder
      */
     public IssuesRecorder setSourceCodeEncoding(final String encoding) {
@@ -288,6 +292,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      *
      * @param isChecked
      *         determines if the checkbox should be checked or not
+     *
      * @return this recorder
      */
     public IssuesRecorder setEnabledForFailure(final boolean isChecked) {
@@ -301,6 +306,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      *
      * @param isChecked
      *         determines if the checkbox should be checked or not
+     *
      * @return this recorder
      */
     public IssuesRecorder setEnabledForAggregation(final boolean isChecked) {
@@ -317,6 +323,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      * @param ignoreQualityGate
      *         if {@code true} then the result of the quality gate is ignored, otherwise only build with a successful
      *         quality gate are selected
+     *
      * @return this recorder
      */
     public IssuesRecorder setIgnoreQualityGate(final boolean ignoreQualityGate) {
@@ -326,14 +333,15 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     }
 
     /**
-     * Sets the path to the folder that contains the source code. If not relative and thus not part of the workspace
+     * Adds the path to the folder that contains the source code. If not relative and thus not part of the workspace
      * then this folder needs to be added in Jenkins global configuration.
      *
      * @param sourceDirectory
      *         a folder containing the source code
+     *
      * @return this recorder
      */
-    public IssuesRecorder setSourceDirectory(final String sourceDirectory) {
+    public IssuesRecorder addSourceDirectory(final String sourceDirectory) {
         String path = createPageArea("sourceDirectories", sourceDirectories::click);
         SourceCodeDirectoryPanel panel = new SourceCodeDirectoryPanel(this, path);
         panel.setPath(sourceDirectory);
@@ -348,6 +356,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      * @param aggregatingResults
      *         if {@code true} then the results of each static analysis tool should be aggregated into a single result,
      *         if {@code false} then every tool should get an individual result.
+     *
      * @return this recorder
      */
     public IssuesRecorder setAggregatingResults(final boolean aggregatingResults) {
@@ -362,6 +371,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      *
      * @param scm
      *         the ID of the SCM to use (a substring of the full ID)
+     *
      * @return this recorder
      */
     public IssuesRecorder setScm(final String scm) {
@@ -375,6 +385,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      *
      * @param blameDisabled
      *         {@code true} if SCM blaming should be disabled, {@code false} otherwise
+     *
      * @return this recorder
      */
     public IssuesRecorder setSkipBlames(final boolean blameDisabled) {
@@ -390,6 +401,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      *
      * @param ignoreFailedBuilds
      *         if {@code true} then a stable build is used as reference
+     *
      * @return this recorder
      */
     public IssuesRecorder setIgnoreFailedBuilds(final boolean ignoreFailedBuilds) {
@@ -404,6 +416,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      * @param failOnError
      *         if {@code true} then the build will be failed on errors, {@code false} then errors are only reported in
      *         the UI
+     *
      * @return this recorder
      */
     public IssuesRecorder setFailOnError(final boolean failOnError) {
@@ -417,6 +430,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      *
      * @param skipPublishingChecks
      *         if {@code true} then publishing checks should be skipped, {@code false} otherwise
+     *
      * @return this recorder
      */
     public IssuesRecorder setSkipPublishingChecks(final boolean skipPublishingChecks) {
@@ -426,10 +440,12 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     }
 
     /**
-     * Sets whether all issues should be published using the Checks API. If set to {@code false} only new issues will
-     * be published.
+     * Sets whether all issues should be published using the Checks API. If set to {@code false} only new issues will be
+     * published.
      *
-     * @param publishAllIssues {@code true} if all issues should be published, {@code false} if only new issues should be published
+     * @param publishAllIssues
+     *         {@code true} if all issues should be published, {@code false} if only new issues should be published
+     *
      * @return this recorder
      */
     public IssuesRecorder setPublishAllIssues(final boolean publishAllIssues) {
@@ -441,7 +457,9 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     /**
      * Sets the report file pattern.
      *
-     * @param pattern the pattern to set
+     * @param pattern
+     *         the pattern to set
+     *
      * @return this recorder
      */
     public IssuesRecorder setReportFilePattern(final String pattern) {
@@ -455,6 +473,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      *
      * @param trendChartType
      *         the type of the trend chart to use
+     *
      * @return this recorder
      */
     public IssuesRecorder setTrendChartType(final TrendChartType trendChartType) {
@@ -465,12 +484,14 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
 
     /**
      * Sets the healthy report values.
-     *  @param healthy
+     *
+     * @param healthy
      *         the number of issues when health is reported as 100%
      * @param unhealthy
      *         the number of issues when health is reported as 0%
      * @param minimumSeverity
      *         the severity to consider
+     *
      * @return this recorder
      */
     public IssuesRecorder setHealthReport(final int healthy, final int unhealthy, final String minimumSeverity) {
@@ -500,10 +521,12 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
 
     /**
      * Sets the name of the static analysis tool to use and the pattern.
-     *  @param toolName
+     *
+     * @param toolName
      *         the tool name
      * @param pattern
      *         the pattern
+     *
      * @return this recorder
      */
     public IssuesRecorder setToolWithPattern(final String toolName, final String pattern) {
@@ -516,12 +539,14 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
 
     /**
      * Adds a new quality gate.
-     *  @param threshold
+     *
+     * @param threshold
      *         the minimum number of issues that fails the quality gate
      * @param type
      *         the type of the quality gate
      * @param result
      *         determines whether the quality gate sets the build result to Unstable or Failed
+     *
      * @return this recorder
      */
     public IssuesRecorder addQualityGateConfiguration(final int threshold, final QualityGateType type,
@@ -537,10 +562,12 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
 
     /**
      * Adds a new issue filter.
-     *  @param filterName
+     *
+     * @param filterName
      *         name of the filter
      * @param regex
      *         regular expression to apply
+     *
      * @return this recorder
      */
     public IssuesRecorder addIssueFilter(final String filterName, final String regex) {
