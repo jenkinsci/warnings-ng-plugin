@@ -233,7 +233,6 @@ public abstract class ReportScanningTool extends Tool {
         private static final JenkinsFacade JENKINS = new JenkinsFacade();
 
         private final ModelValidation model = new ModelValidation();
-        private final SourceEncodingValidation validation = new SourceEncodingValidation();
 
         /**
          * Creates a new instance of {@link ReportScanningToolDescriptor} with the given ID.
@@ -256,7 +255,7 @@ public abstract class ReportScanningTool extends Tool {
         @POST
         public ComboBoxModel doFillReportEncodingItems(@AncestorInPath final AbstractProject<?, ?> project) {
             if (JENKINS.hasPermission(Item.CONFIGURE, project)) {
-                return validation.getAllCharsets();
+                return new SourceEncodingValidation().getAllCharsets();
             }
             return new ComboBoxModel();
         }
@@ -278,7 +277,7 @@ public abstract class ReportScanningTool extends Tool {
                 return FormValidation.ok();
             }
 
-            return validation.validateCharset(reportEncoding);
+            return new SourceEncodingValidation().validateCharset(reportEncoding);
         }
 
         /**
