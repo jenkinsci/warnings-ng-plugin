@@ -41,7 +41,6 @@
     <pull-request-monitoring.version>1.7.8</pull-request-monitoring.version>
 
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
-    <j2html.version>1.4.0</j2html.version>
 
     <json.version>20211205</json.version>
 
@@ -92,11 +91,6 @@
       <groupId>org.eclipse.collections</groupId>
       <artifactId>eclipse-collections</artifactId>
       <version>${eclipse-collections.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.j2html</groupId>
-      <artifactId>j2html</artifactId>
-      <version>${j2html.version}</version>
     </dependency>
     <dependency>
       <groupId>net.minidev</groupId>
