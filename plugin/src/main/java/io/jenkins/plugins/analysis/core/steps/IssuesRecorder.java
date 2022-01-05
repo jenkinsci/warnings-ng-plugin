@@ -61,8 +61,8 @@ import io.jenkins.plugins.analysis.core.util.RunResultHandler;
 import io.jenkins.plugins.analysis.core.util.StageResultHandler;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
 import io.jenkins.plugins.checks.steps.ChecksInfo;
+import io.jenkins.plugins.prism.CharsetValidation;
 import io.jenkins.plugins.prism.SourceCodeDirectory;
-import io.jenkins.plugins.prism.SourceEncodingValidation;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
@@ -802,7 +802,7 @@ public class IssuesRecorder extends Recorder {
     }
 
     private Charset getCharset(final String encoding) {
-        return new SourceEncodingValidation().getCharset(encoding);
+        return new CharsetValidation().getCharset(encoding);
     }
 
     /**
@@ -1279,7 +1279,6 @@ public class IssuesRecorder extends Recorder {
     @SuppressWarnings("unused") // most methods are used by the corresponding jelly view
     public static class Descriptor extends BuildStepDescriptor<Publisher> {
         private static final JenkinsFacade JENKINS = new JenkinsFacade();
-        private final SourceEncodingValidation validation = new SourceEncodingValidation();
 
         /** Retain backward compatibility. */
         @Initializer(before = InitMilestone.PLUGINS_STARTED)
@@ -1331,7 +1330,7 @@ public class IssuesRecorder extends Recorder {
         @POST
         public ComboBoxModel doFillSourceCodeEncodingItems(@AncestorInPath final AbstractProject<?, ?> project) {
             if (JENKINS.hasPermission(Item.CONFIGURE, project)) {
-                return validation.getAllCharsets();
+                return new CharsetValidation().getAllCharsets();
             }
             return new ComboBoxModel();
         }
@@ -1368,7 +1367,7 @@ public class IssuesRecorder extends Recorder {
                 return FormValidation.ok();
             }
 
-            return validation.validateCharset(reportEncoding);
+            return new CharsetValidation().validateCharset(reportEncoding);
         }
 
         /**
@@ -1388,7 +1387,7 @@ public class IssuesRecorder extends Recorder {
                 return FormValidation.ok();
             }
 
-            return validation.validateCharset(sourceCodeEncoding);
+            return new CharsetValidation().validateCharset(sourceCodeEncoding);
         }
 
         /**

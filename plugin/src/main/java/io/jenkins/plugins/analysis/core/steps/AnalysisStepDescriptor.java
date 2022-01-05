@@ -15,7 +15,7 @@ import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
-import io.jenkins.plugins.prism.SourceEncodingValidation;
+import io.jenkins.plugins.prism.CharsetValidation;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
@@ -27,7 +27,6 @@ import io.jenkins.plugins.util.JenkinsFacade;
 public abstract class AnalysisStepDescriptor extends StepDescriptor {
     private static final JenkinsFacade JENKINS = new JenkinsFacade();
     private final ModelValidation model = new ModelValidation();
-    private final SourceEncodingValidation validation = new SourceEncodingValidation();
 
     /**
      * Returns a model with all available charsets.
@@ -39,7 +38,7 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
     @POST
     public ComboBoxModel doFillSourceCodeEncodingItems(@AncestorInPath final AbstractProject<?, ?> project) {
         if (JENKINS.hasPermission(Item.CONFIGURE, project)) {
-            return validation.getAllCharsets();
+            return new CharsetValidation().getAllCharsets();
         }
         return new ComboBoxModel();
     }
@@ -61,7 +60,7 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
             return FormValidation.ok();
         }
 
-        return validation.validateCharset(reportEncoding);
+        return new CharsetValidation().validateCharset(reportEncoding);
     }
 
     /**
@@ -81,7 +80,7 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
             return FormValidation.ok();
         }
 
-        return validation.validateCharset(sourceCodeEncoding);
+        return new CharsetValidation().validateCharset(sourceCodeEncoding);
     }
 
     /**

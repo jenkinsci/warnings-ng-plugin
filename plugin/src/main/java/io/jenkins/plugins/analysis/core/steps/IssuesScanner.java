@@ -182,7 +182,7 @@ class IssuesScanner {
         Set<String> permittedSourceDirectories = getPermittedSourceDirectories();
         permittedSourceDirectories.add(workspace.getRemote());
         new AffectedFilesResolver().copyAffectedFilesToBuildFolder(
-                report, workspace.getChannel(), buildFolder, permittedSourceDirectories);
+                report, workspace, permittedSourceDirectories, buildFolder);
     }
 
     private FilePath createAffectedFilesFolder(final Report report) throws InterruptedException {

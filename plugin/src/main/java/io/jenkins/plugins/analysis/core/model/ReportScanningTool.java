@@ -28,7 +28,7 @@ import io.jenkins.plugins.analysis.core.model.AnalysisModelParser.AnalysisModelP
 import io.jenkins.plugins.analysis.core.util.ConsoleLogReaderFactory;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
-import io.jenkins.plugins.prism.SourceEncodingValidation;
+import io.jenkins.plugins.prism.CharsetValidation;
 import io.jenkins.plugins.util.EnvironmentResolver;
 import io.jenkins.plugins.util.JenkinsFacade;
 
@@ -255,7 +255,7 @@ public abstract class ReportScanningTool extends Tool {
         @POST
         public ComboBoxModel doFillReportEncodingItems(@AncestorInPath final AbstractProject<?, ?> project) {
             if (JENKINS.hasPermission(Item.CONFIGURE, project)) {
-                return new SourceEncodingValidation().getAllCharsets();
+                return new CharsetValidation().getAllCharsets();
             }
             return new ComboBoxModel();
         }
@@ -277,7 +277,7 @@ public abstract class ReportScanningTool extends Tool {
                 return FormValidation.ok();
             }
 
-            return new SourceEncodingValidation().validateCharset(reportEncoding);
+            return new CharsetValidation().validateCharset(reportEncoding);
         }
 
         /**
