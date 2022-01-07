@@ -292,7 +292,10 @@ class IssuesScanner {
                 FileNameResolver nameResolver = new FileNameResolver();
                 report.logInfo("Resolving file names for all issues in workspace '%s'", workspace);
                 nameResolver.run(report, workspace.getAbsolutePath(), ConsoleLogHandler::isInConsoleLog);
-                for (FilePath sourceDirectory : filterSourceDirectories(workspace)) {
+                FilteredLog errors = new FilteredLog("Source-Directories");
+                Set<FilePath> filteredSourceDirectories = filterSourceDirectories(workspace, errors);
+                errors.getErrorMessages().forEach(report::logError);
+                for (FilePath sourceDirectory : filteredSourceDirectories) {
                     report.logInfo("Resolving file names for all issues in source directory '%s'", sourceDirectory);
                     nameResolver.run(report, sourceDirectory.getRemote(), ConsoleLogHandler::isInConsoleLog);
                 }
@@ -302,10 +305,10 @@ class IssuesScanner {
             }
         }
 
-        private Set<FilePath> filterSourceDirectories(final File workspace) {
+        private Set<FilePath> filterSourceDirectories(final File workspace, final FilteredLog errors) {
             SourceDirectoryFilter filter = new SourceDirectoryFilter();
             return filter.getPermittedSourceDirectories(
-                    new FilePath(workspace), permittedSourceDirectories, requestedSourceDirectories);
+                    new FilePath(workspace), permittedSourceDirectories, requestedSourceDirectories, errors);
         }
 
         private void resolveModuleNames(final Report report, final File workspace) {
