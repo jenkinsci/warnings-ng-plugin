@@ -49,6 +49,7 @@ public class GlobalConfigurationUiTest extends UiTest {
 
         createFileInWorkspace(job, homeDir);
 
+        // First build contains an error and no source code
         Build build = buildJob(job);
         verifyGcc(build, LinkType.SHOULD_NOT_HAVE_SOURCE_CODE_LINK);
 
@@ -109,11 +110,10 @@ public class GlobalConfigurationUiTest extends UiTest {
         assertThat(gcc)
                 .hasTitleText("GNU C Compiler (gcc): One warning")
                 .hasReferenceBuild(linkType == LinkType.SHOULD_HAVE_SOURCE_CODE_LINK ? 1 : 0)
-                .hasInfoType(InfoType.INFO);
+                .hasInfoType(linkType == LinkType.SHOULD_HAVE_SOURCE_CODE_LINK ? InfoType.INFO : InfoType.ERROR);
 
         AnalysisResult gccDetails = gcc.openOverallResult();
-        assertThat(gccDetails).hasActiveTab(Tab.ISSUES)
-                .hasOnlyAvailableTabs(Tab.ISSUES);
+        assertThat(gccDetails).hasActiveTab(Tab.ISSUES).hasOnlyAvailableTabs(Tab.ISSUES);
 
         AbstractSeverityTableRow row = gccDetails.openIssuesTable().getRow(0);
 
