@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.Issue;
 
+import edu.hm.hafner.analysis.IssueBuilder;
+
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.CompositeLocalizable;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.DefaultAgeBuilder;
@@ -21,6 +23,20 @@ class StaticAnalysisLabelProviderTest {
     private static final String ID = "id";
     private static final String NAME = "name";
     private static final String OTHER_NAME = "other";
+
+    @Test
+    void shouldShowDescriptionOfIssueByDefault() {
+        try (IssueBuilder issueBuilder = new IssueBuilder()) {
+            StaticAnalysisLabelProvider labelProvider = new StaticAnalysisLabelProvider("description", "-");
+
+            String text = "Hello Description";
+            issueBuilder.setDescription(text);
+            assertThat(labelProvider.getDescription(issueBuilder.build())).isEqualTo(text);
+
+            StaticAnalysisLabelProvider emptyDescription = new StaticAnalysisLabelProvider("description", "-", i -> "empty");
+            assertThat(emptyDescription.getDescription(issueBuilder.build())).isEqualTo("empty");
+        }
+    }
 
     @Test
     void shouldIgnoreUndefinedName() {

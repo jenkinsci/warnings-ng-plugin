@@ -37,7 +37,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
     @VisibleForTesting
     static final String INFO_ICON = "info-circle";
     /** Provides an empty description. */
-    protected static final DescriptionProvider EMPTY_DESCRIPTION = i -> StringUtils.EMPTY;
+    protected static final DescriptionProvider EMPTY_DESCRIPTION = Issue::getDescription;
 
     private final String id;
     @CheckForNull
