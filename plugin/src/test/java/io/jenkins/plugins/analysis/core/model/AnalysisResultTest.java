@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.Issue;
 
@@ -42,7 +41,7 @@ class AnalysisResultTest extends ResourceTest {
     @Test
     @Issue("SECURITY-2090")
     void constructorShouldThrowExceptionIfIdHasInvalidPattern() {
-        Assertions.assertThatIllegalArgumentException()
+        assertThatIllegalArgumentException()
                 .isThrownBy(
                         () -> new AnalysisResult(mock(Run.class), "../../invalid-id", mock(DeltaReport.class),
                                 new Blames(), new RepositoryStatistics(),
