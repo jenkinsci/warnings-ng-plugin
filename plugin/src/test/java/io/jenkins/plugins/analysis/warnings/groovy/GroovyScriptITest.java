@@ -1,10 +1,14 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
-import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
+import java.util.Collections;
 
 import org.junit.Test;
+import org.jvnet.hudson.test.Issue;
 
+import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
+
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 
 /**
  * Tests the class {@link GroovyScript}.
@@ -33,5 +37,16 @@ public class GroovyScriptITest extends IntegrationTestWithJenkinsPerSuite {
 
         // Then
         assertThat(actual).isEqualTo(expected);
+    }
+
+    /** Verifies that the Groovy parser does not accept illegal IDs. */
+    @Test
+    @Issue("SECURITY-2090")
+    public void setIdShouldThrowExceptionIfCustomIdHasInvalidPattern() {
+        ParserConfiguration configuration = ParserConfiguration.getInstance();
+        configuration.setParsers(Collections.singletonList(new GroovyParser("groovy", "", "", "", "")));
+        Tool groovyScript = new GroovyScript("groovy");
+
+        assertThatIllegalArgumentException().isThrownBy(() -> groovyScript.setId("../../invalid-id"));
     }
 }
