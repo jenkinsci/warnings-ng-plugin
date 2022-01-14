@@ -293,11 +293,11 @@ class IssuesScanner {
                 report.logInfo("Resolving file names for all issues in workspace '%s'", workspace);
                 nameResolver.run(report, workspace.getAbsolutePath(), ConsoleLogHandler::isInConsoleLog);
                 FilteredLog errors = new FilteredLog("Source-Directories");
-                Set<FilePath> filteredSourceDirectories = filterSourceDirectories(workspace, errors);
+                Set<String> filteredSourceDirectories = filterSourceDirectories(workspace, errors);
                 errors.getErrorMessages().forEach(report::logError);
-                for (FilePath sourceDirectory : filteredSourceDirectories) {
+                for (String sourceDirectory : filteredSourceDirectories) {
                     report.logInfo("Resolving file names for all issues in source directory '%s'", sourceDirectory);
-                    nameResolver.run(report, sourceDirectory.getRemote(), ConsoleLogHandler::isInConsoleLog);
+                    nameResolver.run(report, sourceDirectory, ConsoleLogHandler::isInConsoleLog);
                 }
             }
             catch (InvalidPathException exception) {
@@ -305,10 +305,10 @@ class IssuesScanner {
             }
         }
 
-        private Set<FilePath> filterSourceDirectories(final File workspace, final FilteredLog errors) {
+        private Set<String> filterSourceDirectories(final File workspace, final FilteredLog errors) {
             SourceDirectoryFilter filter = new SourceDirectoryFilter();
             return filter.getPermittedSourceDirectories(
-                    new FilePath(workspace), permittedSourceDirectories, requestedSourceDirectories, errors);
+                    workspace.getAbsolutePath(), permittedSourceDirectories, requestedSourceDirectories, errors);
         }
 
         private void resolveModuleNames(final Report report, final File workspace) {
