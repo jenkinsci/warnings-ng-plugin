@@ -1,0 +1,118 @@
+{
+  "runs": [
+    {
+      "invocations": [],
+      "language": "en-US",
+      "versionControlProvenance": [],
+      "artifacts": [],
+      "logicalLocations": [],
+      "graphs": [],
+      "results": [
+        {
+          "ruleId": "",
+          "ruleIndex": -1,
+          "kind": "FAIL",
+          "level": "NONE",
+          "message": {
+            "text": "asdasd",
+            "arguments": []
+          },
+          "locations": [
+            {
+              "id": -1,
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/whatever/path.c",
+                  "index": -1
+                },
+                "region": {
+                  "startLine": 123,
+                  "endLine": 123,
+                  "charOffset": -1,
+                  "byteOffset": -1,
+                  "message": {
+                    "text": "asdasd",
+                    "arguments": []
+                  }
+                }
+              },
+              "logicalLocations": [],
+              "annotations": [],
+              "relationships": []
+            }
+          ],
+          "stacks": [],
+          "codeFlows": [],
+          "graphs": [],
+          "graphTraversals": [],
+          "relatedLocations": [],
+          "suppressions": [],
+          "rank": -1.0,
+          "attachments": [],
+          "workItemUris": [],
+          "fixes": [],
+          "taxa": []
+        },
+        {
+          "ruleId": "Cyclomatic complexity",
+          "ruleIndex": -1,
+          "kind": "FAIL",
+          "level": "ERROR",
+          "message": {
+            "text": "asdasd",
+            "arguments": []
+          },
+          "locations": [
+            {
+              "id": -1,
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/whatever/path.c",
+                  "index": -1
+                },
+                "region": {
+                  "startLine": 123,
+                  "endLine": 123,
+                  "charOffset": -1,
+                  "byteOffset": -1,
+                  "message": {
+                    "text": "asdasd",
+                    "arguments": []
+                  }
+                }
+              },
+              "logicalLocations": [],
+              "annotations": [],
+              "relationships": []
+            }
+          ],
+          "stacks": [],
+          "codeFlows": [],
+          "graphs": [],
+          "graphTraversals": [],
+          "relatedLocations": [],
+          "suppressions": [],
+          "rank": -1.0,
+          "attachments": [],
+          "workItemUris": [],
+          "fixes": [],
+          "taxa": []
+        }
+      ],
+      "runAggregates": [],
+      "redactionTokens": [],
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ],
+      "threadFlowLocations": [],
+      "taxonomies": [],
+      "addresses": [],
+      "translations": [],
+      "policies": [],
+      "webRequests": [],
+      "webResponses": []
+    }
+  ],
+  "inlineExternalProperties": []
+}
