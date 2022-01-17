@@ -15,8 +15,10 @@ import hudson.model.Run;
  * Renders a source file containing an issue for the whole file or a specific line number.
  *
  * @author Ullrich Hafner
+ * @deprecated moved to Prism API plugin
  */
 @SuppressWarnings("PMD.CyclomaticComplexity")
+@Deprecated
 public class SourceDetail implements ModelObject {
     private final Run<?, ?> owner;
     private final String baseName;

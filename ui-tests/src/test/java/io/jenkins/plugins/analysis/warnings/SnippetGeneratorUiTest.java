@@ -40,13 +40,13 @@ public class SnippetGeneratorUiTest extends UiTest {
         SnippetGenerator snippetGenerator = createSnippetGenerator();
 
         snippetGenerator.selectRecordIssues()
-                .setTool(JAVA_COMPILER)
                 .setAggregatingResults(false)
                 .setSkipBlames(false)
                 .setEnabledForFailure(false)
                 .setIgnoreFailedBuilds(true)
                 .setIgnoreQualityGate(false)
-                .setSourceCodeEncoding("");
+                .setSourceCodeEncoding("")
+                .setTool(JAVA_COMPILER);
 
         String script = snippetGenerator.generateScript();
 
@@ -60,14 +60,14 @@ public class SnippetGeneratorUiTest extends UiTest {
     public void antiDefaultConfigurationExplicitTest() {
         SnippetGenerator snippetGenerator = createSnippetGenerator();
 
-        snippetGenerator
-                .selectRecordIssues().setToolWithPattern(JAVA_COMPILER, "firstText")
+        snippetGenerator.selectRecordIssues()
                 .setAggregatingResults(true)
                 .setSkipBlames(true)
                 .setEnabledForFailure(true)
                 .setIgnoreFailedBuilds(false)
                 .setIgnoreQualityGate(true)
-                .setSourceCodeEncoding("otherText");
+                .setSourceCodeEncoding("otherText")
+                .setToolWithPattern(JAVA_COMPILER, "firstText");
 
         String script = snippetGenerator.generateScript();
 
@@ -91,8 +91,9 @@ public class SnippetGeneratorUiTest extends UiTest {
     public void configureHealthReportTest() {
         SnippetGenerator snippetGenerator = createSnippetGenerator();
 
-        snippetGenerator.selectRecordIssues().setTool(JAVA_COMPILER)
-                .setHealthReport(1, 9, "LOW");
+        snippetGenerator.selectRecordIssues()
+                .setHealthReport(1, 9, "LOW")
+                .setTool(JAVA_COMPILER);
 
         String script = snippetGenerator.generateScript();
 
@@ -107,7 +108,6 @@ public class SnippetGeneratorUiTest extends UiTest {
         SnippetGenerator snippetGenerator = createSnippetGenerator();
 
         snippetGenerator.selectRecordIssues()
-                .setToolWithPattern(JAVA_COMPILER, "firstText")
                 .setAggregatingResults(true)
                 .setSkipBlames(true)
                 .setEnabledForFailure(true)
@@ -116,7 +116,8 @@ public class SnippetGeneratorUiTest extends UiTest {
                 .setIgnoreQualityGate(true)
                 .setSourceCodeEncoding("otherText")
                 .addIssueFilter("Exclude types", "*toExclude*")
-                .addQualityGateConfiguration(1, QualityGateType.NEW, QualityGateBuildResult.FAILED);
+                .addQualityGateConfiguration(1, QualityGateType.NEW, QualityGateBuildResult.FAILED)
+                .setToolWithPattern(JAVA_COMPILER, "firstText");
 
         String script = snippetGenerator.generateScript();
 

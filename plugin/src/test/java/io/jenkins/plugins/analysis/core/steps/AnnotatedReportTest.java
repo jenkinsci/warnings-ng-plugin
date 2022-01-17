@@ -27,7 +27,6 @@ class AnnotatedReportTest {
     private static final Report REPORT1 = new Report().add(ISSUE1);
     private static final Report REPORT2 = new Report().add(ISSUE2).add(ISSUE3);
 
-
     @Test
     void shouldCreateEmptyReport() {
         AnnotatedReport report = new AnnotatedReport(ID);

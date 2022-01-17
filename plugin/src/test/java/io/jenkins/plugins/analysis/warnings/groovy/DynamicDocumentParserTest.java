@@ -26,6 +26,7 @@ class DynamicDocumentParserTest extends AbstractParserTest {
                     + "([\\^]+).*"                      // group 6 column pointers (^^^^^)
                     + "\\r?\\n(?:\\s*\\[.*\\]\\s*)?"    // newline then optional ignored text in [] (eg [javac])
                     + "(.*)";                           // group 7 'message'
+
     DynamicDocumentParserTest() {
         super("eclipse.txt");
     }

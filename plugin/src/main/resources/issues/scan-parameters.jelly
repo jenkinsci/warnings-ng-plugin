@@ -1,23 +1,20 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:f="/lib/form" xmlns:i="/issues" xmlns:c="/controls" xmlns:s="/forensics">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:f="/lib/form" xmlns:i="/issues" xmlns:p="/prism" xmlns:s="/forensics">
 
   <st:documentation>
     Provides all required input fields to scan for issues.
   </st:documentation>
 
-  <s:scm/>
+  <i:hr title="${%Source Control Integration}"/>
+
   <f:entry field="skipBlames">
     <f:checkbox title="${%title.blameDisabled}" />
   </f:entry>
+  <s:scm/>
 
-  <i:hr title="${%Affected Files}"/>
+  <i:hr title="${%Reading Affected Files}"/>
 
-  <f:entry title="${%title.sourceCodeEncoding}" field="sourceCodeEncoding">
-    <c:safe-combobox/>
-  </f:entry>
-  <f:entry title="${%title.sourceDirectory}" description="${%description.sourceDirectory}" field="sourceDirectory">
-    <c:safe-textbox/>
-  </f:entry>
+  <p:sourceConfig/>
 
   <i:hr title="${%Issue filters}"/>
 

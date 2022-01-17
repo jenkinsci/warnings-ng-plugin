@@ -32,6 +32,7 @@ import static org.assertj.core.api.Assertions.*;
  * <p>
  * These tests work on several pom.xml, build.xml and MANIFEST.MF files that will be copied to the workspace for each
  * test. The following files are used:
+ * </p>
  *
  * <b>Maven:</b>
  *
@@ -51,9 +52,10 @@ import static org.assertj.core.api.Assertions.*;
  * <dt>m5/pom.xml</dt>
  * <dd>a pom.xml without an artifactId tag and without a name tag</dd>
  * </dl>
- * <p>
  *
+ * <p>
  * <b>Ant:</b>
+ * </p>
  *
  * <dl>
  * <dt>build.xml</dt>
@@ -81,11 +83,13 @@ import static org.assertj.core.api.Assertions.*;
  * <dt>plugin.properties</dt>
  * <dd>a default plugin.properties file</dd>
  * </dl>
+ *
  * <p>
  * All tests work the same way: first of all a set of module files will be copied to the workspace. Each module file
  * will be copied to a separate folder, the first module file is the top-level module. Into each of the modules, a
  * source code file will be placed. Finally,  Eclipse parser log file will be generated, that has exactly one warning
  * for each file.
+ * </p>
  *
  * @author Frank Christian Geyer
  * @author Deniz Mardin

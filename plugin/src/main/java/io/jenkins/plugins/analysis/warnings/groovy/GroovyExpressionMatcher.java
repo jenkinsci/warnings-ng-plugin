@@ -19,9 +19,11 @@ import groovy.lang.Script;
 /**
  * Creates a warning based on a regular expression match and groovy script.
  *
+ * <p>
  * This class does not use any sandboxing mechanisms to parse or run the Groovy
  * script. Instead, only users with Overall/Run Scripts permission are able to
  * configure parsers that use custom Groovy scripts.
+ * </p>
  *
  * @author Ullrich Hafner
  */

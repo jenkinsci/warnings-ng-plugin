@@ -27,11 +27,11 @@ import jenkins.model.Jenkins;
 import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 import io.jenkins.plugins.bootstrap5.MessagesViewModel;
+import io.jenkins.plugins.prism.SourceCodeViewModel;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.*;
 
 /**
@@ -241,8 +241,8 @@ class DetailFactoryTest {
 
         Object details = createDetails(jenkins, buildFolder, "a-file");
 
-        assertThat(details).isInstanceOf(SourceDetail.class);
-        assertThat(((SourceDetail) details).getSourceCode()).contains("IOException: file error");
+        assertThat(details).isInstanceOfSatisfying(SourceCodeViewModel.class,
+                s -> assertThat(s.getSourceCode()).contains("IOException: file error"));
     }
 
     /**
@@ -256,8 +256,8 @@ class DetailFactoryTest {
 
         Object details = createDetails(jenkins, buildFolder, "a-file");
 
-        assertThat(details).isInstanceOf(SourceDetail.class);
-        assertThat(((SourceDetail) details).getSourceCode()).contains(AFFECTED_FILE_CONTENT);
+        assertThat(details).isInstanceOfSatisfying(SourceCodeViewModel.class,
+                s -> assertThat(s.getSourceCode()).contains(AFFECTED_FILE_CONTENT));
     }
 
     /**
