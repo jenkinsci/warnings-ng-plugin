@@ -21,6 +21,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
  *
  * @author Ullrich Hafner
  */
+// FIXME: config.jelly needs to be updated
 public class RegisteredParser extends ReportScanningTool {
     private static final long serialVersionUID = 22286587552212078L;
 

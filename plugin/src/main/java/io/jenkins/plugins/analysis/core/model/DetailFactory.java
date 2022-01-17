@@ -27,6 +27,9 @@ import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 import io.jenkins.plugins.bootstrap5.MessagesViewModel;
+import io.jenkins.plugins.prism.Marker;
+import io.jenkins.plugins.prism.Marker.MarkerBuilder;
+import io.jenkins.plugins.prism.SourceCodeViewModel;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
@@ -35,7 +38,7 @@ import io.jenkins.plugins.util.JenkinsFacade;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings("checkstyle:ClassDataAbstractionCoupling")
+@SuppressWarnings({"checkstyle:ClassDataAbstractionCoupling", "checkstyle:ClassFanOutComplexity"})
 public class DetailFactory {
     private static final Report EMPTY = new Report();
     private static final String LINK_SEPARATOR = ".";
@@ -114,13 +117,14 @@ public class DetailFactory {
             else {
                 String description = labelProvider.getSourceCodeDescription(owner, issue);
                 String icon = jenkins.getImagePath(labelProvider.getSmallIconUrl());
+                Marker marker = asMarker(issue, description, icon);
                 try (Reader affectedFile = buildFolder.readFile(owner, issue.getFileName(), sourceEncoding)) {
-                    return new SourceDetail(owner, affectedFile, issue, description, icon);
+                    return new SourceCodeViewModel(owner, issue.getBaseName(), affectedFile, marker);
                 }
                 catch (IOException e) {
                     try (StringReader fallback = new StringReader(
                             String.format("%s%n%s", ExceptionUtils.getMessage(e), ExceptionUtils.getStackTrace(e)))) {
-                        return new SourceDetail(owner, fallback, issue, description, icon);
+                        return new SourceCodeViewModel(owner, issue.getBaseName(), fallback, marker);
                     }
                 }
             }
@@ -130,11 +134,23 @@ public class DetailFactory {
         String property = StringUtils.substringBefore(link, ".");
         Predicate<Issue> filter = createPropertyFilter(plainLink, property);
         Report selectedIssues = allIssues.filter(filter);
-        String displayName = getDisplayNameOfDetails(property, selectedIssues, plainLink, result.getSizePerOrigin().keySet());
+        String displayName = getDisplayNameOfDetails(property, selectedIssues, plainLink,
+                result.getSizePerOrigin().keySet());
         return new IssuesDetail(owner, result,
                 selectedIssues, newIssues.filter(filter), outstandingIssues.filter(filter),
                 fixedIssues.filter(filter), displayName, url,
                 labelProvider, sourceEncoding);
+    }
+
+    private Marker asMarker(final Issue issue, final String description, final String icon) {
+        return new MarkerBuilder()
+                .withTitle(issue.getMessage())
+                .withDescription(description)
+                .withIcon(icon)
+                .withLineStart(issue.getLineStart())
+                .withLineEnd(issue.getLineEnd())
+                .withColumnStart(issue.getColumnStart())
+                .withColumnEnd(issue.getColumnEnd()).build();
     }
 
     @SuppressWarnings("checkstyle:ParameterNumber")

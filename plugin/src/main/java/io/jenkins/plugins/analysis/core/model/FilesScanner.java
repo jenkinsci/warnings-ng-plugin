@@ -18,7 +18,7 @@ import hudson.remoting.VirtualChannel;
 import jenkins.MasterToSlaveFileCallable;
 
 import io.jenkins.plugins.analysis.core.util.FileFinder;
-import io.jenkins.plugins.analysis.core.util.ModelValidation;
+import io.jenkins.plugins.prism.CharsetValidation;
 
 /**
  * Scans files that match a specified Ant files pattern for issues and aggregates the found issues into a single {@link
@@ -102,7 +102,7 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report> {
 
     private void aggregateIssuesOfFile(final Path file, final Report aggregatedReport) {
         try {
-            Report fileReport = parser.parseFile(new FileReaderFactory(file, new ModelValidation().getCharset(encoding)));
+            Report fileReport = parser.parseFile(new FileReaderFactory(file, new CharsetValidation().getCharset(encoding)));
 
             aggregatedReport.addAll(fileReport);
             aggregatedReport.setOriginReportFile(file.toString());

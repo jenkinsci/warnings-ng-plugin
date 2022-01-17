@@ -296,6 +296,7 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
         }
         return StringUtils.EMPTY;
     }
+
     /**
      * Returns the UI model for an ECharts doughnut chart that shows the severities.
      *

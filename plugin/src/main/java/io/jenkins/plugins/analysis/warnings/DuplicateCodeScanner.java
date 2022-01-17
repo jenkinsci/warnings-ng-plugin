@@ -29,9 +29,9 @@ import io.jenkins.plugins.analysis.core.model.DetailsTableModel;
 import io.jenkins.plugins.analysis.core.model.FileNameRenderer;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
 import io.jenkins.plugins.analysis.core.model.SvgIconLabelProvider;
-import io.jenkins.plugins.analysis.core.util.Sanitizer;
 import io.jenkins.plugins.datatables.TableColumn;
 import io.jenkins.plugins.datatables.TableColumn.ColumnCss;
+import io.jenkins.plugins.prism.Sanitizer;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 import static edu.hm.hafner.analysis.registry.DryDescriptor.*;

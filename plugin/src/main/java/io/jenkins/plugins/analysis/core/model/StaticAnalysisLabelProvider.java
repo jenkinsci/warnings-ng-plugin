@@ -32,12 +32,8 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
     private static final String ICONS_PREFIX = "/plugin/warnings-ng/icons/";
     private static final String ANALYSIS_SVG_ICON = ICONS_PREFIX + "analysis.svg";
 
-    @VisibleForTesting
-    static final String ERROR_ICON = "exclamation-triangle";
-    @VisibleForTesting
-    static final String INFO_ICON = "info-circle";
     /** Provides an empty description. */
-    protected static final DescriptionProvider EMPTY_DESCRIPTION = i -> StringUtils.EMPTY;
+    protected static final DescriptionProvider EMPTY_DESCRIPTION = Issue::getDescription;
 
     private final String id;
     @CheckForNull

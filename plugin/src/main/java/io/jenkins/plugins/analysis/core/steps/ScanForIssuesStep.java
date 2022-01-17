@@ -2,8 +2,10 @@ package io.jenkins.plugins.analysis.core.steps;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.impl.factory.Sets;
@@ -25,6 +27,7 @@ import hudson.model.TaskListener;
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.IssuesScanner.BlameMode;
+import io.jenkins.plugins.prism.SourceCodeDirectory;
 
 /**
  * Scan files or the console log for issues.
@@ -35,6 +38,7 @@ public class ScanForIssuesStep extends Step {
 
     private String sourceCodeEncoding = StringUtils.EMPTY;
     private String sourceDirectory = StringUtils.EMPTY;
+    private Set<SourceCodeDirectory> sourceDirectories = new HashSet<>(); // @since 9.11.0
     private boolean isBlameDisabled;
 
     private List<RegexpFilter> filters = new ArrayList<>();
@@ -164,6 +168,34 @@ public class ScanForIssuesStep extends Step {
         this.sourceDirectory = sourceDirectory;
     }
 
+    /**
+     * Sets the paths to the directories that contain the source code. If not relative and thus not part of the
+     * workspace then these directories need to be added in Jenkins global configuration to prevent accessing of
+     * forbidden resources.
+     *
+     * @param sourceDirectories
+     *         directories containing the source code
+     */
+    @DataBoundSetter
+    public void setSourceDirectories(final List<SourceCodeDirectory> sourceDirectories) {
+        this.sourceDirectories = new HashSet<>(sourceDirectories);
+    }
+
+    public List<SourceCodeDirectory> getSourceDirectories() {
+        return new ArrayList<>(sourceDirectories);
+    }
+
+    private Set<String> getAllSourceDirectories() {
+        Set<String> directories = new HashSet<>();
+        if (StringUtils.isNotBlank(getSourceDirectory())) {
+            directories.add(getSourceDirectory());
+        }
+        directories.addAll(getSourceDirectories().stream()
+                .map(SourceCodeDirectory::getPath)
+                .collect(Collectors.toSet()));
+        return directories;
+    }
+
     @Override
     public StepExecution start(final StepContext context) {
         return new Execution(context, this);
@@ -179,7 +211,7 @@ public class ScanForIssuesStep extends Step {
         private final String sourceCodeEncoding;
         private final boolean isBlameDisabled;
         private final List<RegexpFilter> filters;
-        private final String sourceDirectory;
+        private final Set<String> sourceDirectories;
         private final String scm;
 
         /**
@@ -197,7 +229,7 @@ public class ScanForIssuesStep extends Step {
             sourceCodeEncoding = step.getSourceCodeEncoding();
             isBlameDisabled = step.getBlameDisabled();
             filters = step.getFilters();
-            sourceDirectory = step.getSourceDirectory();
+            sourceDirectories = step.getAllSourceDirectories();
             scm = step.getScm();
         }
 
@@ -207,7 +239,7 @@ public class ScanForIssuesStep extends Step {
             TaskListener listener = getTaskListener();
 
             IssuesScanner issuesScanner = new IssuesScanner(tool, filters,
-                    getCharset(sourceCodeEncoding), workspace, sourceDirectory,
+                    getCharset(sourceCodeEncoding), workspace, sourceDirectories,
                     getRun(), new FilePath(getRun().getRootDir()), listener,
                     scm, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED);
 

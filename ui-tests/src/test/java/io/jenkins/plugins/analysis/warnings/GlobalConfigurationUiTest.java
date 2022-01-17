@@ -49,6 +49,7 @@ public class GlobalConfigurationUiTest extends UiTest {
 
         createFileInWorkspace(job, homeDir);
 
+        // First build contains an error and no source code
         Build build = buildJob(job);
         verifyGcc(build, LinkType.SHOULD_NOT_HAVE_SOURCE_CODE_LINK);
 
@@ -69,7 +70,7 @@ public class GlobalConfigurationUiTest extends UiTest {
             recorder.setTool("GNU C Compiler (gcc)", gcc -> gcc.setPattern("**/gcc.log"));
             recorder.setEnabledForFailure(true);
             recorder.setSourceCodeEncoding("UTF-8");
-            recorder.setSourceDirectory(getJobDir(homeDir, job));
+            recorder.addSourceDirectory(getJobDir(homeDir, job));
         });
     }
 
@@ -112,8 +113,7 @@ public class GlobalConfigurationUiTest extends UiTest {
                 .hasInfoType(linkType == LinkType.SHOULD_HAVE_SOURCE_CODE_LINK ? InfoType.INFO : InfoType.ERROR);
 
         AnalysisResult gccDetails = gcc.openOverallResult();
-        assertThat(gccDetails).hasActiveTab(Tab.ISSUES)
-                .hasOnlyAvailableTabs(Tab.ISSUES);
+        assertThat(gccDetails).hasActiveTab(Tab.ISSUES).hasOnlyAvailableTabs(Tab.ISSUES);
 
         AbstractSeverityTableRow row = gccDetails.openIssuesTable().getRow(0);
 

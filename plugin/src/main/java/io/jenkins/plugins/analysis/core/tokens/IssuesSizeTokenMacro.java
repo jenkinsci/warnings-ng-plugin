@@ -41,7 +41,6 @@ public class IssuesSizeTokenMacro extends DataBoundTokenMacro {
         this.type = StatisticProperties.valueOf(type);
     }
 
-
     @Override
     public boolean acceptsMacroName(final String macroName) {
         return "ANALYSIS_ISSUES_COUNT".equals(macroName);

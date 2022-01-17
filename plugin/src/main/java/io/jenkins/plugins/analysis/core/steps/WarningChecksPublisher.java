@@ -121,7 +121,6 @@ class WarningChecksPublisher {
                 new JenkinsFacade().getAbsoluteUrl(referenceBuild.getUrl(), id));
     }
 
-
     private String extractChecksTitle(final IssuesStatistics statistics) {
         if (statistics.getTotalSize() == 0) {
             return "No issues.";

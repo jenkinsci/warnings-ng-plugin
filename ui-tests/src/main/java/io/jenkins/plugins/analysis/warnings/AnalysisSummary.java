@@ -56,7 +56,6 @@ public class AnalysisSummary extends PageObject {
         results = summary.findElements(by.xpath("ul[@id='" + id + "-details']/li"));
     }
 
-
     private WebElement getTitleResultLink() {
         return titleElement.findElement(by.href(id));
     }

@@ -6,6 +6,8 @@ import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
@@ -28,6 +30,7 @@ class ConsoleDetailTest {
     }
 
     @Test
+    @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE", justification = "https://github.com/spotbugs/spotbugs/issues/756")
     void shouldEscapeEntities() {
         try (Stream<String> lines = Stream.of("<b>CheckStyle</b> <script>execute</script>")) {
             ConsoleDetail consoleDetail = new ConsoleDetail(mock(Run.class), lines, 1, 2);

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -42,12 +43,15 @@ import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.StageResultHandler;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
 import io.jenkins.plugins.checks.steps.ChecksInfo;
+import io.jenkins.plugins.prism.SourceCodeDirectory;
 
 /**
  * Pipeline step that scans report files or the console log for issues. Stores the created issues in an {@link
  * AnalysisResult}. The result is attached to the {@link Run} by registering a {@link ResultAction}.
+ *
  * <p>
  * Additional features:
+ * </p>
  * <ul>
  * <li>It provides a {@link QualityGateEvaluator} that is checked after each run. If the quality gate is not passed,
  * then the
@@ -66,6 +70,7 @@ public class RecordIssuesStep extends Step implements Serializable {
 
     private String sourceCodeEncoding = StringUtils.EMPTY;
     private String sourceDirectory = StringUtils.EMPTY;
+    private Set<SourceCodeDirectory> sourceDirectories = new HashSet<>(); // @since 9.11.0
 
     private boolean ignoreQualityGate = false; // by default, a successful quality gate is mandatory;
     private boolean ignoreFailedBuilds = true; // by default, failed builds are ignored;
@@ -749,6 +754,31 @@ public class RecordIssuesStep extends Step implements Serializable {
     }
 
     /**
+     * Sets the paths to the directories that contain the source code. If not relative and thus not part of the
+     * workspace then these directories need to be added in Jenkins global configuration to prevent accessing of
+     * forbidden resources.
+     *
+     * @param sourceDirectories
+     *         directories containing the source code
+     */
+    @DataBoundSetter
+    public void setSourceDirectories(final List<SourceCodeDirectory> sourceDirectories) {
+        this.sourceDirectories = new HashSet<>(sourceDirectories);
+    }
+
+    public List<SourceCodeDirectory> getSourceDirectories() {
+        return new ArrayList<>(sourceDirectories);
+    }
+
+    private List<SourceCodeDirectory> getAllSourceDirectories() {
+        Set<SourceCodeDirectory> directories = new HashSet<>(getSourceDirectories());
+        if (StringUtils.isNotBlank(getSourceDirectory())) {
+            directories.add(new SourceCodeDirectory(getSourceDirectory()));
+        }
+        return new ArrayList<>(directories);
+    }
+
+    /**
      * Returns whether the results for each configured static analysis result should be aggregated into a single result
      * or if every tool should get an individual result.
      *
@@ -779,7 +809,7 @@ public class RecordIssuesStep extends Step implements Serializable {
 
     /**
      * Determines whether to skip the SCM blaming.
-     * 
+     *
      * @param blameDisabled {@code true} if SCM blaming should be disabled
      * @deprecated use {@link #setSkipBlames(boolean)}
      */
@@ -1098,7 +1128,7 @@ public class RecordIssuesStep extends Step implements Serializable {
             recorder.setQualityGates(step.getQualityGates());
             recorder.setFailOnError(step.getFailOnError());
             recorder.setTrendChartType(step.getTrendChartType());
-            recorder.setSourceDirectory(step.getSourceDirectory());
+            recorder.setSourceDirectories(step.getAllSourceDirectories());
             recorder.setChecksInfo(getContext().get(ChecksInfo.class));
             StageResultHandler statusHandler = new PipelineResultHandler(getRun(),
                     getContext().get(FlowNode.class));
@@ -1108,7 +1138,6 @@ public class RecordIssuesStep extends Step implements Serializable {
 
             return recorder.perform(getRun(), workspace, getTaskListener(), statusHandler);
         }
-
     }
 
     /**

@@ -780,6 +780,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         }
         return str;
     }
+
     private IssuesRow getIssuesModel(final AnalysisResult result, final int rowNumber) {
         IssuesDetail issuesDetail = (IssuesDetail) result.getOwner().getAction(ResultAction.class).getTarget();
         return (IssuesRow) issuesDetail.getTableModel("issues").getRows().get(rowNumber);
