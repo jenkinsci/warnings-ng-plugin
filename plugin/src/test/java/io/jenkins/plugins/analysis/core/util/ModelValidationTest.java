@@ -39,12 +39,12 @@ class ModelValidationTest {
     void shouldRejectId(final String id) {
         ModelValidation model = new ModelValidation();
 
-        assertThat(model.validateId(id)).isError().hasMessage(Messages.FieldValidator_Error_WrongIdFormat());
+        assertThat(model.validateId(id)).isError().hasMessage(createInvalidIdMessage(id));
         assertThatIllegalArgumentException().isThrownBy(() -> model.ensureValidId(id));
     }
 
     @ParameterizedTest(name = "{index} => Should be marked as valid ID: \"{0}\"")
-    @ValueSource(strings = {"", "a", "awordb", "a-b", "a_b", "", "0", "a0b", "12a34", "A", "aBc"})
+    @ValueSource(strings = {"", "a", "awordb", "a-b", "a_b", "", "0", "a0b", "12a34", "A", "aBc", "a.b-c_e"})
     @DisplayName("should accept IDs")
     void shouldAcceptId(final String id) {
         ModelValidation model = new ModelValidation();
