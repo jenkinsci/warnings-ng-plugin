@@ -32,11 +32,10 @@ import io.jenkins.plugins.util.JenkinsFacade;
 @SuppressWarnings("PMD.GodClass")
 public class ModelValidation {
     private static final Set<String> ALL_CHARSETS = Charset.availableCharsets().keySet();
-    private static final Pattern VALID_ID_PATTERN = Pattern.compile("\\p{Alnum}[\\p{Alnum}-_]*");
+    private static final Pattern VALID_ID_PATTERN = Pattern.compile("\\p{Alnum}[\\p{Alnum}-_.]*");
 
     @VisibleForTesting
     static final String NO_REFERENCE_JOB = "-";
-    static final String NO_REFERENCE_BUILD = "-";
 
     private final JenkinsFacade jenkins;
 
@@ -96,8 +95,7 @@ public class ModelValidation {
      */
     public void ensureValidId(final String id) {
         if (!isValidId(id)) {
-            throw new IllegalArgumentException(String.format("An ID must match the regexp pattern '%s', but '%s' does not.",
-                    VALID_ID_PATTERN.pattern(), id));
+            throw new IllegalArgumentException(createInvalidIdMessage(id));
         }
     }
 
@@ -113,7 +111,11 @@ public class ModelValidation {
         if (isValidId(id)) {
             return FormValidation.ok();
         }
-        return FormValidation.error(Messages.FieldValidator_Error_WrongIdFormat());
+        return FormValidation.error(createInvalidIdMessage(id));
+    }
+
+    static String createInvalidIdMessage(final String id) {
+        return Messages.FieldValidator_Error_WrongIdFormat(VALID_ID_PATTERN.pattern(), id);
     }
 
     private boolean isValidId(final String id) {
