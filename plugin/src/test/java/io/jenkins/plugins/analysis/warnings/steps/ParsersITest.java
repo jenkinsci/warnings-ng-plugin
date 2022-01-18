@@ -76,13 +76,13 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
                 "json-issues.log");
     }
 
-    /** Runs the Dart parser on an output file that contains 8 issues. */
+    /** Runs the Dart analysis parser on an output file that contains 6 issues. */
     @Test
     public void shouldFindAllDartIssues() {
         shouldFindIssuesOfTool(6, new Dart(), "dart.log");
     }
 
-    /** Runs the Dart parser on an output file that contains 8 issues. */
+    /** Runs the SARIF parser on an output file that contains 2 issues. */
     @Test
     public void shouldFindAllSarifIssues() {
         shouldFindIssuesOfTool(2, new Sarif(), "sarif.json");
