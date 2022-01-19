@@ -16,7 +16,7 @@
 
   <j:if test="${size(elements) > 1}">
     <li class="nav-item">
-      <a class="nav-link" role="tab" data-toggle="tab" href="#${property}Content">${name}</a>
+      <a class="nav-link" role="tab" data-bs-toggle="tab" href="#${property}Content">${name}</a>
     </li>
   </j:if>
 

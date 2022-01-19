@@ -64,6 +64,7 @@ import hudson.model.Action;
 import hudson.model.Descriptor;
 import hudson.model.FreeStyleProject;
 import hudson.model.Item;
+import hudson.model.Job;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.Slave;
@@ -601,7 +602,8 @@ public abstract class IntegrationTest extends ResourceTest {
      * @return the pipeline step
      */
     protected String createRecordIssuesStep(final AnalysisModelParser tool) {
-        return String.format("recordIssues(tools: [%s(pattern: '**/*issues.txt', reportEncoding:'UTF-8')])", tool.getSymbolName());
+        return String.format("recordIssues(tools: [%s(pattern: '**/*issues.txt', reportEncoding:'UTF-8')])",
+                tool.getSymbolName());
     }
 
     /**
@@ -904,7 +906,6 @@ public abstract class IntegrationTest extends ResourceTest {
         }
     }
 
-
     /**
      * Schedules a build for the specified job and waits for the job to finish. After the build has been finished the
      * builds result is checked to be equals to {@code expectedResult}.
@@ -1013,6 +1014,25 @@ public abstract class IntegrationTest extends ResourceTest {
     protected ResultAction getResultAction(final Run<?, ?> build) {
         ResultAction action = build.getAction(ResultAction.class);
         assertThat(action).as("No ResultAction found in run %s", build).isNotNull();
+        return action;
+    }
+
+    /**
+     * Returns the {@link ResultAction} for the specified job. Note that this method does only return the first match,
+     * even if a test registered multiple actions.
+     *
+     * @param job
+     *         the job
+     *
+     * @return the action of the specified build
+     */
+    protected ResultAction getResultAction(final Job<?, ?> job) {
+        Run<?, ?> build = job.getLastCompletedBuild();
+        assertThat(build).as("No completed build found for job %s", job).isNotNull();
+
+        ResultAction action = build.getAction(ResultAction.class);
+        assertThat(action).as("No ResultAction found in run %s", build).isNotNull();
+
         return action;
     }
 
@@ -1405,6 +1425,38 @@ public abstract class IntegrationTest extends ResourceTest {
         catch (IOException e) {
             throw new AssertionError(e);
         }
+    }
+
+    /**
+     * Sets the specified environment variables in Jenkins global configuration.
+     *
+     * @param vars
+     *         the variables to set
+     * @see #env(String, String)
+     */
+    protected void setEnvironmentVariables(final Entry... vars) {
+        try {
+            getJenkins().getInstance().getNodeProperties().replaceBy(
+                    Collections.singleton(new EnvironmentVariablesNodeProperty(vars)));
+        }
+        catch (IOException exception) {
+            throw new AssertionError(exception);
+        }
+    }
+
+    /**
+     * Creates a new environment variable.
+     *
+     * @param key
+     *         the key
+     * @param value
+     *         the value
+     *
+     * @return the environment variable
+     * @see #setEnvironmentVariables(Entry...)
+     */
+    protected Entry env(final String key, final String value) {
+        return new Entry(key, value);
     }
 
     @SuppressWarnings({"PMD.AvoidPrintStackTrace", "PMD.SystemPrintln"})

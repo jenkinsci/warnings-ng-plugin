@@ -1,6 +1,8 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import org.jenkinsci.test.acceptance.po.AbstractStep;
 import org.jenkinsci.test.acceptance.po.Control;
@@ -8,14 +10,15 @@ import org.jenkinsci.test.acceptance.po.Describable;
 import org.jenkinsci.test.acceptance.po.Job;
 import org.jenkinsci.test.acceptance.po.PageArea;
 import org.jenkinsci.test.acceptance.po.PageAreaImpl;
+import org.jenkinsci.test.acceptance.po.PageObject;
 import org.jenkinsci.test.acceptance.po.PostBuildStep;
 
 /**
- * Page object for the IssuesRecorder of the Jenkins Warnings Plugin.
+ * {@link PageObject} representing the IssuesRecorder of the Jenkins Warnings Plugin.
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings({"unused", "UnusedReturnValue"})
+@SuppressWarnings({"unused", "UnusedReturnValue", "PMD.GodClass", "PMD.TooManyFields", "PMD.ExcessivePublicCount"})
 @Describable("Record compiler warnings and static analysis results")
 public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     private final Control toolsRepeatable = findRepeatableAddButtonFor("tools");
@@ -30,7 +33,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     private final Control ignoreQualityGate = control("ignoreQualityGate");
     private final Control aggregatingResults = control("aggregatingResults");
     private final Control sourceCodeEncoding = control("sourceCodeEncoding");
-    private final Control sourceDirectory = control("sourceDirectory");
+    private final Control sourceDirectories = findRepeatableAddButtonFor("sourceDirectories");
     private final Control skipBlames = control("skipBlames");
     private final Control ignoreFailedBuilds = control("ignoreFailedBuilds");
     private final Control failOnError = control("failOnError");
@@ -185,8 +188,10 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
         return isChecked(ignoreQualityGate);
     }
 
-    public String getSourceDirectory() {
-        return sourceDirectory.get();
+    public List<String> getSourceDirectories() {
+        return all(by.xpath("//div[@id='sourceDirectories']//input")).stream()
+                .map(e -> e.getAttribute("value"))
+                .collect(Collectors.toList());
     }
 
     public String getTrendChartType() {
@@ -268,15 +273,18 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
         }
     }
 
-
     /**
      * Sets the source code encoding to the specified value.
      *
      * @param encoding
      *         the encoding to use when reading source files
+     *
+     * @return this recorder
      */
-    public void setSourceCodeEncoding(final String encoding) {
+    public IssuesRecorder setSourceCodeEncoding(final String encoding) {
         sourceCodeEncoding.set(encoding);
+
+        return this;
     }
 
     /**
@@ -284,9 +292,13 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      *
      * @param isChecked
      *         determines if the checkbox should be checked or not
+     *
+     * @return this recorder
      */
-    public void setEnabledForFailure(final boolean isChecked) {
+    public IssuesRecorder setEnabledForFailure(final boolean isChecked) {
         enabledForFailureCheckBox.check(isChecked);
+
+        return this;
     }
 
     /**
@@ -294,9 +306,13 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      *
      * @param isChecked
      *         determines if the checkbox should be checked or not
+     *
+     * @return this recorder
      */
-    public void setEnabledForAggregation(final boolean isChecked) {
+    public IssuesRecorder setEnabledForAggregation(final boolean isChecked) {
         aggregatingResults.check(isChecked);
+
+        return this;
     }
 
     /**
@@ -307,20 +323,30 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      * @param ignoreQualityGate
      *         if {@code true} then the result of the quality gate is ignored, otherwise only build with a successful
      *         quality gate are selected
+     *
+     * @return this recorder
      */
-    public void setIgnoreQualityGate(final boolean ignoreQualityGate) {
+    public IssuesRecorder setIgnoreQualityGate(final boolean ignoreQualityGate) {
         this.ignoreQualityGate.check(ignoreQualityGate);
+
+        return this;
     }
 
     /**
-     * Sets the path to the folder that contains the source code. If not relative and thus not part of the workspace
+     * Adds the path to the folder that contains the source code. If not relative and thus not part of the workspace
      * then this folder needs to be added in Jenkins global configuration.
      *
      * @param sourceDirectory
      *         a folder containing the source code
+     *
+     * @return this recorder
      */
-    public void setSourceDirectory(final String sourceDirectory) {
-        this.sourceDirectory.set(sourceDirectory);
+    public IssuesRecorder addSourceDirectory(final String sourceDirectory) {
+        String path = createPageArea("sourceDirectories", sourceDirectories::click);
+        SourceCodeDirectoryPanel panel = new SourceCodeDirectoryPanel(this, path);
+        panel.setPath(sourceDirectory);
+
+        return this;
     }
 
     /**
@@ -330,9 +356,13 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      * @param aggregatingResults
      *         if {@code true} then the results of each static analysis tool should be aggregated into a single result,
      *         if {@code false} then every tool should get an individual result.
+     *
+     * @return this recorder
      */
-    public void setAggregatingResults(final boolean aggregatingResults) {
+    public IssuesRecorder setAggregatingResults(final boolean aggregatingResults) {
         this.aggregatingResults.check(aggregatingResults);
+
+        return this;
     }
 
     /**
@@ -341,9 +371,13 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      *
      * @param scm
      *         the ID of the SCM to use (a substring of the full ID)
+     *
+     * @return this recorder
      */
-    public void setScm(final String scm) {
+    public IssuesRecorder setScm(final String scm) {
         this.scm.set(scm);
+
+        return this;
     }
 
     /**
@@ -351,9 +385,13 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      *
      * @param blameDisabled
      *         {@code true} if SCM blaming should be disabled, {@code false} otherwise
+     *
+     * @return this recorder
      */
-    public void setSkipBlames(final boolean blameDisabled) {
+    public IssuesRecorder setSkipBlames(final boolean blameDisabled) {
         skipBlames.check(blameDisabled);
+
+        return this;
     }
 
     /**
@@ -363,9 +401,13 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      *
      * @param ignoreFailedBuilds
      *         if {@code true} then a stable build is used as reference
+     *
+     * @return this recorder
      */
-    public void setIgnoreFailedBuilds(final boolean ignoreFailedBuilds) {
+    public IssuesRecorder setIgnoreFailedBuilds(final boolean ignoreFailedBuilds) {
         this.ignoreFailedBuilds.check(ignoreFailedBuilds);
+
+        return this;
     }
 
     /**
@@ -374,9 +416,13 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      * @param failOnError
      *         if {@code true} then the build will be failed on errors, {@code false} then errors are only reported in
      *         the UI
+     *
+     * @return this recorder
      */
-    public void setFailOnError(final boolean failOnError) {
+    public IssuesRecorder setFailOnError(final boolean failOnError) {
         this.failOnError.check(failOnError);
+
+        return this;
     }
 
     /**
@@ -384,28 +430,42 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      *
      * @param skipPublishingChecks
      *         if {@code true} then publishing checks should be skipped, {@code false} otherwise
+     *
+     * @return this recorder
      */
-    public void setSkipPublishingChecks(final boolean skipPublishingChecks) {
+    public IssuesRecorder setSkipPublishingChecks(final boolean skipPublishingChecks) {
         this.skipPublishingChecks.check(skipPublishingChecks);
+
+        return this;
     }
 
     /**
-     * Sets whether all issues should be published using the Checks API. If set to {@code false} only new issues will
-     * be published.
+     * Sets whether all issues should be published using the Checks API. If set to {@code false} only new issues will be
+     * published.
      *
-     * @param publishAllIssues {@code true} if all issues should be published, {@code false} if only new issues should be published
+     * @param publishAllIssues
+     *         {@code true} if all issues should be published, {@code false} if only new issues should be published
+     *
+     * @return this recorder
      */
-    public void setPublishAllIssues(final boolean publishAllIssues) {
+    public IssuesRecorder setPublishAllIssues(final boolean publishAllIssues) {
         this.publishAllIssues.check(publishAllIssues);
+
+        return this;
     }
 
     /**
      * Sets the report file pattern.
      *
-     * @param pattern the pattern to set
+     * @param pattern
+     *         the pattern to set
+     *
+     * @return this recorder
      */
-    public void setReportFilePattern(final String pattern) {
+    public IssuesRecorder setReportFilePattern(final String pattern) {
         reportFilePattern.set(pattern);
+
+        return this;
     }
 
     /**
@@ -413,9 +473,13 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      *
      * @param trendChartType
      *         the type of the trend chart to use
+     *
+     * @return this recorder
      */
-    public void setTrendChartType(final TrendChartType trendChartType) {
+    public IssuesRecorder setTrendChartType(final TrendChartType trendChartType) {
         this.trendChartType.select(trendChartType.toString());
+
+        return this;
     }
 
     /**
@@ -427,11 +491,15 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      *         the number of issues when health is reported as 0%
      * @param minimumSeverity
      *         the severity to consider
+     *
+     * @return this recorder
      */
-    public void setHealthReport(final int healthy, final int unhealthy, final String minimumSeverity) {
+    public IssuesRecorder setHealthReport(final int healthy, final int unhealthy, final String minimumSeverity) {
         healthyThreshold.set(healthy);
         unhealthyThreshold.set(unhealthy);
         healthSeverity.select(minimumSeverity);
+
+        return this;
     }
 
     /**
@@ -444,7 +512,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     }
 
     private StaticAnalysisTool createToolPageArea(final String toolName) {
-        String path = createPageArea("toolProxies", () -> toolsRepeatable.click());
+        String path = createPageArea("toolProxies", toolsRepeatable::click);
 
         StaticAnalysisTool tool = new StaticAnalysisTool(this, path);
         tool.setTool(toolName);
@@ -458,11 +526,15 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      *         the tool name
      * @param pattern
      *         the pattern
+     *
+     * @return this recorder
      */
-    public void setToolWithPattern(final String toolName, final String pattern) {
+    public IssuesRecorder setToolWithPattern(final String toolName, final String pattern) {
         StaticAnalysisTool tool = new StaticAnalysisTool(this, "toolProxies");
         tool.setTool(toolName);
         tool.setPattern(pattern);
+
+        return this;
     }
 
     /**
@@ -474,14 +546,18 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      *         the type of the quality gate
      * @param result
      *         determines whether the quality gate sets the build result to Unstable or Failed
+     *
+     * @return this recorder
      */
-    public void addQualityGateConfiguration(final int threshold, final QualityGateType type,
+    public IssuesRecorder addQualityGateConfiguration(final int threshold, final QualityGateType type,
             final QualityGateBuildResult result) {
-        String path = createPageArea("qualityGates", () -> qualityGatesRepeatable.click());
+        String path = createPageArea("qualityGates", qualityGatesRepeatable::click);
         QualityGatePanel qualityGate = new QualityGatePanel(this, path);
         qualityGate.setThreshold(threshold);
         qualityGate.setType(type);
         qualityGate.setUnstable(result == QualityGateBuildResult.UNSTABLE);
+
+        return this;
     }
 
     /**
@@ -491,11 +567,15 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      *         name of the filter
      * @param regex
      *         regular expression to apply
+     *
+     * @return this recorder
      */
-    public void addIssueFilter(final String filterName, final String regex) {
+    public IssuesRecorder addIssueFilter(final String filterName, final String regex) {
         String path = createPageArea("filters", () -> filtersRepeatable.selectDropdownMenu(filterName));
         IssueFilterPanel filter = new IssueFilterPanel(this, path);
         filter.setFilter(regex);
+
+        return this;
     }
 
     /**
@@ -527,9 +607,9 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
         }
 
         /**
-         * Returns the localized human readable name of this type.
+         * Returns the localized human-readable name of this type.
          *
-         * @return human readable name
+         * @return human-readable name
          */
         public String getDisplayName() {
             return displayName;
@@ -544,6 +624,8 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
         private final Control pattern = control("tool/pattern");
         private final Control normalThreshold = control("tool/normalThreshold");
         private final Control highThreshold = control("tool/highThreshold");
+        private final Control id = control("tool/id");
+        private final Control name = control("tool/name");
 
         StaticAnalysisTool(final PageArea issuesRecorder, final String path) {
             super(issuesRecorder, path);
@@ -559,6 +641,34 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
          */
         public StaticAnalysisTool setTool(final String toolName) {
             tool.select(toolName);
+            return this;
+        }
+
+        /**
+         * Sets the custom ID of the tool.
+         *
+         * @param id
+         *         the ID
+         *
+         * @return this
+         */
+        public StaticAnalysisTool setId(final String id) {
+            this.id.set(id);
+
+            return this;
+        }
+
+        /**
+         * Sets the custom name of the tool.
+         *
+         * @param name
+         *         the name
+         *
+         * @return this
+         */
+        public StaticAnalysisTool setName(final String name) {
+            this.name.set(name);
+
             return this;
         }
 
@@ -642,6 +752,21 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
         public void setUnstable(final boolean isUnstable) {
             self().findElement(by.xpath(".//input[@type='radio' and contains(@path,'unstable[" + isUnstable + "]')]"))
                     .click();
+        }
+    }
+
+    /**
+     * Page area of a source code path configuration.
+     */
+    private static class SourceCodeDirectoryPanel extends PageAreaImpl {
+        private final Control path = control("path");
+
+        SourceCodeDirectoryPanel(final PageArea area, final String path) {
+            super(area, path);
+        }
+
+        public void setPath(final String path) {
+            this.path.set(path);
         }
     }
 

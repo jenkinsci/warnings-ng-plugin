@@ -3,10 +3,11 @@ package io.jenkins.plugins.analysis.warnings;
 import org.jenkinsci.test.acceptance.po.AbstractStep;
 import org.jenkinsci.test.acceptance.po.Describable;
 import org.jenkinsci.test.acceptance.po.Job;
+import org.jenkinsci.test.acceptance.po.PageObject;
 import org.jenkinsci.test.acceptance.po.PostBuildStep;
 
 /**
- * Page object for the ForensicsPublisher of the forensics API plugin.
+ * {@link PageObject} representing  the ForensicsPublisher of the forensics API plugin.
  *
  * @author Ullrich Hafner
  */

@@ -6,7 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 import org.openqa.selenium.WebElement;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.PageObject;
 
@@ -15,6 +19,7 @@ import org.jenkinsci.test.acceptance.po.PageObject;
  *
  * @author Lukas Kirner
  */
+@SuppressFBWarnings("EI")
 public class DashboardTable extends PageObject {
     private static final String EMPTY = "-";
 
@@ -29,9 +34,11 @@ public class DashboardTable extends PageObject {
      * @param url
      *         the type of the result page (e.g. simian, checkstyle, cpd, etc.)
      */
+    @SuppressFBWarnings("MC")
     public DashboardTable(final Build parent, final URL url) {
         super(parent, url);
-        this.open();
+
+        open(); // TODO: the view should be already open when calling this constructor
 
         WebElement page = this.getElement(by.tagName("body"));
         List<WebElement> rows = page.findElements(by.tagName("table")).stream()
@@ -41,18 +48,18 @@ public class DashboardTable extends PageObject {
                 .collect(Collectors.toList());
 
         headers = rows.stream()
-            .flatMap(dom -> dom.findElements(by.tagName("th")).stream())
+                .flatMap(dom -> dom.findElements(by.tagName("th")).stream())
                 .map(th -> {
-                    List<WebElement> img = th.findElements(by.tagName("img"));
-                    if (img.size() > 0) {
-                        String src = img.get(0).getAttribute("src");
-                        return src.substring(src.lastIndexOf('/'));
-                    }
-                    else {
+                    List<WebElement> images = th.findElements(by.tagName("img"));
+                    if (images.isEmpty()) {
                         return th.getText();
                     }
+                    else {
+                        String src = images.get(0).getAttribute("src");
+                        return src.substring(src.lastIndexOf('/'));
+                    }
                 })
-            .collect(Collectors.toList());
+                .collect(Collectors.toList());
 
         List<List<List<String>>> lines = rows.stream().skip(1)
                 .map(dom -> dom.findElements(by.tagName("td")).stream().map(td -> {
@@ -67,7 +74,8 @@ public class DashboardTable extends PageObject {
                 .collect(Collectors.toList());
 
         table = lines.stream()
-                .collect(Collectors.toMap(entry -> entry.get(0).get(0), entry -> createPluginValueMapping(entry, headers)));
+                .collect(Collectors.toMap(entry -> entry.get(0).get(0),
+                        entry -> createPluginValueMapping(entry, headers)));
     }
 
     public List<String> getHeaders() {
@@ -78,11 +86,13 @@ public class DashboardTable extends PageObject {
         return this.table;
     }
 
-    private Map<String, DashboardTableEntry> createPluginValueMapping(final List<List<String>> warnings, final List<String> plugins) {
+    private Map<String, DashboardTableEntry> createPluginValueMapping(final List<List<String>> warnings,
+            final List<String> plugins) {
         Map<String, DashboardTableEntry> valuePluginMapping = new HashMap<>();
         for (int i = 1; i < warnings.size(); i++) {
             if (!EMPTY.equals(warnings.get(i).get(0))) {
-                valuePluginMapping.put(plugins.get(i).trim(), new DashboardTableEntry(Integer.parseInt(warnings.get(i).get(0)), warnings.get(i).get(1)));
+                valuePluginMapping.put(plugins.get(i).trim(),
+                        new DashboardTableEntry(Integer.parseInt(warnings.get(i).get(0)), warnings.get(i).get(1)));
             }
         }
         return valuePluginMapping;
@@ -97,8 +107,11 @@ public class DashboardTable extends PageObject {
 
         /**
          * Construct a DashboardTableEntry.
-         * @param warningsCount of the plugin in the build
-         * @param url link to the plugin page
+         *
+         * @param warningsCount
+         *         of the plugin in the build
+         * @param url
+         *         link to the plugin page
          */
         public DashboardTableEntry(final int warningsCount, final String url) {
             this.warningsCount = warningsCount;

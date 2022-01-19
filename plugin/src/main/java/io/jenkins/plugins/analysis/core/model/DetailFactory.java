@@ -5,6 +5,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -25,6 +26,10 @@ import hudson.model.Run;
 import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
+import io.jenkins.plugins.bootstrap5.MessagesViewModel;
+import io.jenkins.plugins.prism.Marker;
+import io.jenkins.plugins.prism.Marker.MarkerBuilder;
+import io.jenkins.plugins.prism.SourceCodeViewModel;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
@@ -33,7 +38,7 @@ import io.jenkins.plugins.util.JenkinsFacade;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings("checkstyle:ClassDataAbstractionCoupling")
+@SuppressWarnings({"checkstyle:ClassDataAbstractionCoupling", "checkstyle:ClassFanOutComplexity"})
 public class DetailFactory {
     private static final Report EMPTY = new Report();
     private static final String LINK_SEPARATOR = ".";
@@ -112,13 +117,14 @@ public class DetailFactory {
             else {
                 String description = labelProvider.getSourceCodeDescription(owner, issue);
                 String icon = jenkins.getImagePath(labelProvider.getSmallIconUrl());
+                Marker marker = asMarker(issue, description, icon);
                 try (Reader affectedFile = buildFolder.readFile(owner, issue.getFileName(), sourceEncoding)) {
-                    return new SourceDetail(owner, affectedFile, issue, description, icon);
+                    return new SourceCodeViewModel(owner, issue.getBaseName(), affectedFile, marker);
                 }
                 catch (IOException e) {
                     try (StringReader fallback = new StringReader(
                             String.format("%s%n%s", ExceptionUtils.getMessage(e), ExceptionUtils.getStackTrace(e)))) {
-                        return new SourceDetail(owner, fallback, issue, description, icon);
+                        return new SourceCodeViewModel(owner, issue.getBaseName(), fallback, marker);
                     }
                 }
             }
@@ -128,10 +134,23 @@ public class DetailFactory {
         String property = StringUtils.substringBefore(link, ".");
         Predicate<Issue> filter = createPropertyFilter(plainLink, property);
         Report selectedIssues = allIssues.filter(filter);
+        String displayName = getDisplayNameOfDetails(property, selectedIssues, plainLink,
+                result.getSizePerOrigin().keySet());
         return new IssuesDetail(owner, result,
                 selectedIssues, newIssues.filter(filter), outstandingIssues.filter(filter),
-                fixedIssues.filter(filter), getDisplayNameOfDetails(property, selectedIssues), url,
+                fixedIssues.filter(filter), displayName, url,
                 labelProvider, sourceEncoding);
+    }
+
+    private Marker asMarker(final Issue issue, final String description, final String icon) {
+        return new MarkerBuilder()
+                .withTitle(issue.getMessage())
+                .withDescription(description)
+                .withIcon(icon)
+                .withLineStart(issue.getLineStart())
+                .withLineEnd(issue.getLineEnd())
+                .withColumnStart(issue.getColumnStart())
+                .withColumnEnd(issue.getColumnEnd()).build();
     }
 
     @SuppressWarnings("checkstyle:ParameterNumber")
@@ -157,8 +176,9 @@ public class DetailFactory {
                     EMPTY, Messages.Outstanding_Warnings_Header(), url, labelProvider, sourceEncoding);
         }
         if ("info".equalsIgnoreCase(link)) {
-            return new InfoErrorDetail(owner, result.getErrorMessages(), result.getInfoMessages(),
-                    labelProvider.getName());
+            return new MessagesViewModel(owner, labelProvider.getName(),
+                    result.getInfoMessages().castToList(),
+                    result.getErrorMessages().castToList());
         }
         for (Severity severity : Severity.getPredefinedValues()) {
             if (severity.getName().equalsIgnoreCase(link)) {
@@ -178,10 +198,17 @@ public class DetailFactory {
                 Issue.getPropertyValueAsString(issue, property).hashCode()));
     }
 
-    private String getDisplayNameOfDetails(final String property, final Report selectedIssues) {
+    @SuppressFBWarnings(value = "UNSAFE_HASH_EQUALS", justification = "Hashcode is used as URL")
+    private String getDisplayNameOfDetails(final String property, final Report selectedIssues,
+            final String originHash, final Set<String> origins) {
         if ("origin".equals(property)) {
             LabelProviderFactory factory = createFactory();
-            return factory.create(getPropertyValueAsString(property, selectedIssues)).getName();
+            for (String origin : origins) {
+                if (String.valueOf(origin.hashCode()).equals(originHash)) {
+                    return factory.create(origin).getName();
+                }
+            }
+            return factory.create(StringUtils.EMPTY).getName();
         }
         return getColumnHeaderFor(selectedIssues, property)
                 + " "
@@ -194,6 +221,9 @@ public class DetailFactory {
     }
 
     private String getPropertyValueAsString(final String property, final Report selectedIssues) {
+        if (selectedIssues.isEmpty()) {
+            return "n/a";
+        }
         if ("fileName".equals(property)) {
             return selectedIssues.get(0).getBaseName();
         }

@@ -164,11 +164,11 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
         ChecksDetails details = publisher.extractChecksDetails(AnnotationScope.PUBLISH_NEW_ISSUES);
 
         assertThat(details.getOutput().get().getChecksAnnotations())
-                .usingElementComparatorOnFields("message")
+                .usingRecursiveFieldByFieldElementComparatorOnFields("message")
                 .containsOnly(new ChecksAnnotationBuilder()
                         .withMessage("ERROR:\n"
                                 + "Some diagnostic messages may contain incorrect line number.\n"
-                                + "V002:https://www.viva64.com/en/w/v002/")
+                                + "V002:https://pvs-studio.com/en/docs/warnings/v002/")
                         .build());
     }
 

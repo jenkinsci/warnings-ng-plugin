@@ -19,7 +19,7 @@
       <j:set var="l" value="${it.tabLabelProvider}"/>
       <j:set var="t" value="${it.getDetails(property)}"/>
       <div class="table-responsive">
-        <table class="table table-hover table-striped display property-table" id="${property}">
+        <table class="table table-hover table-striped display property-table" id="${property}" isLoaded="true">
           <colgroup>
             <col class="col-width-5"/>
             <col class="col-width-1 text-right"/>
@@ -41,7 +41,7 @@
               <tr>
                 <td>
                   <a href="${t.property}.${key.hashCode()}/"
-                     data-toggle="tooltip" data-placement="right" title="${t.getToolTip(key)}">
+                     data-bs-toggle="tooltip" data-bs-placement="left" title="${t.getToolTip(key)}">
                     ${t.getDisplayName(key)}</a>
                 </td>
                 <td class="text-right">${count}</td>

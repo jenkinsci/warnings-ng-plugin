@@ -8,6 +8,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import org.jenkinsci.test.acceptance.junit.AbstractJUnitTest;
 import org.jenkinsci.test.acceptance.plugins.dashboard_view.DashboardView;
 import org.jenkinsci.test.acceptance.plugins.maven.MavenInstallation;
@@ -26,17 +28,27 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 /**
  * Base class for all UI tests. Provides several helper methods that can be used by all tests.
  */
+@SuppressFBWarnings("BC")
 abstract class UiTest extends AbstractJUnitTest {
     static final String WARNINGS_PLUGIN_PREFIX = "/";
     static final String CHECKSTYLE_ID = "checkstyle";
+    static final String CHECKSTYLE_TOOL = "CheckStyle";
+    static final String CHECK_STYLE_NAME = "++CheckStyle++";
     static final String CPD_ID = "cpd";
+    static final String CPD_TOOL = "CPD";
     static final String PMD_ID = "pmd";
+    static final String PMD_TOOL = "PMD";
     static final String FINDBUGS_ID = "findbugs";
+    static final String FINDBUGS_TOOL = "FindBugs";
     static final String MAVEN_ID = "maven-warnings";
+    static final String MAVEN_TOOL = "Maven";
     static final String ANALYSIS_ID = "analysis";
     static final String PEP8_ID = "pep8";
-    static final String PEP8_NAME = "PEP8";
+    static final String PEP8_TOOL = "PEP8";
     static final String PEP8_FILE = "pep8Test.txt";
+    static final String JAVA_COMPILER = "Java Compiler";
+    static final String JAVA_ID = "java";
+    static final String ECLIPSE_COMPILER = "Eclipse ECJ";
 
     private static final String CPD_SOURCE_NAME = "Main.java";
     private static final String CPD_SOURCE_PATH = "/duplicate_code/Main.java";
@@ -53,7 +65,7 @@ abstract class UiTest extends AbstractJUnitTest {
 
     protected IssuesRecorder addAllRecorders(final FreeStyleJob job) {
         return job.addPublisher(IssuesRecorder.class, recorder -> {
-            recorder.setTool("CheckStyle");
+            recorder.setTool("CheckStyle").setName(CHECK_STYLE_NAME);
             recorder.addTool("FindBugs");
             recorder.addTool("PMD");
             recorder.addTool("CPD",
@@ -118,8 +130,10 @@ abstract class UiTest extends AbstractJUnitTest {
     }
 
     protected void verifyCpd(final Build build) {
+        build.open();
+
         AnalysisSummary cpd = new AnalysisSummary(build, CPD_ID);
-        assertThat(cpd).isDisplayed()
+        assertThat(cpd)
                 .hasTitleText("CPD: 20 warnings")
                 .hasNewSize(20)
                 .hasFixedSize(0)
@@ -129,23 +143,24 @@ abstract class UiTest extends AbstractJUnitTest {
         AnalysisResult cpdDetails = cpd.openOverallResult();
         assertThat(cpdDetails).hasActiveTab(Tab.ISSUES).hasOnlyAvailableTabs(Tab.ISSUES);
 
-        IssuesDetailsTable issuesTable = cpdDetails.openIssuesTable();
-        assertThat(issuesTable).hasSize(10).hasTotal(20);
+        DryTable issuesTable = cpdDetails.openDryTable();
+        assertThat(issuesTable.getSize()).isEqualTo(10);
+        assertThat(issuesTable.getTotal()).isEqualTo(20);
 
-        DryIssuesTableRow firstRow = issuesTable.getRowAs(0, DryIssuesTableRow.class);
-        DryIssuesTableRow secondRow = issuesTable.getRowAs(1, DryIssuesTableRow.class);
+        DryTableRow firstRow = issuesTable.getRow(0);
+        DryTableRow secondRow = issuesTable.getRow(1);
 
         firstRow.toggleDetailsRow();
-        assertThat(issuesTable).hasSize(11);
+        assertThat(issuesTable.getSize()).isEqualTo(11);
 
-        DetailsTableRow detailsRow = issuesTable.getRowAs(1, DetailsTableRow.class);
+        DryTableRow detailsRow = issuesTable.getRow(1);
         assertThat(detailsRow).hasDetails("Found duplicated code.\nfunctionOne();");
 
-        assertThat(issuesTable.getRowAs(2, DryIssuesTableRow.class)).isEqualTo(secondRow);
+        assertThat(issuesTable.getRow(2)).isEqualTo(secondRow);
 
         firstRow.toggleDetailsRow();
-        assertThat(issuesTable).hasSize(10);
-        assertThat(issuesTable.getRowAs(1, DryIssuesTableRow.class)).isEqualTo(secondRow);
+        assertThat(issuesTable.getSize()).isEqualTo(10);
+        assertThat(issuesTable.getRow(1)).isEqualTo(secondRow);
 
         SourceView sourceView = firstRow.openSourceCode();
         assertThat(sourceView).hasFileName(CPD_SOURCE_NAME);
@@ -154,15 +169,16 @@ abstract class UiTest extends AbstractJUnitTest {
         assertThat(sourceView.getSourceCode()).isEqualToIgnoringWhitespace(expectedSourceCode);
 
         cpdDetails.open();
-        issuesTable = cpdDetails.openIssuesTable();
-        firstRow = issuesTable.getRowAs(0, DryIssuesTableRow.class);
+        issuesTable = cpdDetails.openDryTable();
+        firstRow = issuesTable.getRow(0);
 
         AnalysisResult lowSeverity = firstRow.clickOnSeverityLink();
-        IssuesDetailsTable lowSeverityTable = lowSeverity.openIssuesTable();
-        assertThat(lowSeverityTable).hasSize(6).hasTotal(6);
+        DryTable lowSeverityTable = lowSeverity.openDryTable();
+        assertThat(lowSeverityTable.getSize()).isEqualTo(6);
+        assertThat(lowSeverityTable.getTotal()).isEqualTo(6);
 
         for (int i = 0; i < 6; i++) {
-            DryIssuesTableRow row = lowSeverityTable.getRowAs(i, DryIssuesTableRow.class);
+            DryTableRow row = lowSeverityTable.getRow(i);
             assertThat(row).hasSeverity(WARNING_LOW_PRIORITY);
         }
 
@@ -176,14 +192,16 @@ abstract class UiTest extends AbstractJUnitTest {
     }
 
     protected void verifyFindBugs(final Build build) {
+        build.open();
+
         AnalysisSummary findbugs = new AnalysisSummary(build, FINDBUGS_ID);
-        assertThat(findbugs).isDisplayed()
+        assertThat(findbugs)
                 .hasTitleText("FindBugs: No warnings")
                 .hasNewSize(0)
                 .hasFixedSize(0)
                 .hasReferenceBuild(1)
                 .hasInfoType(InfoType.INFO)
-                .hasDetails("No warnings for 2 builds, i.e. since build 1");
+                .hasDetails("No issues for 2 builds, i.e. since build: #1");
 
         assertThat(openInfoView(build, FINDBUGS_ID))
                 .hasNoErrorMessages()
@@ -193,8 +211,10 @@ abstract class UiTest extends AbstractJUnitTest {
     }
 
     protected void verifyPmd(final Build build) {
+        build.open();
+
         AnalysisSummary pmd = new AnalysisSummary(build, PMD_ID);
-        assertThat(pmd).isDisplayed()
+        assertThat(pmd)
                 .hasTitleText("PMD: 2 warnings")
                 .hasNewSize(0)
                 .hasFixedSize(1)
@@ -215,9 +235,11 @@ abstract class UiTest extends AbstractJUnitTest {
     }
 
     protected void verifyCheckStyle(final Build build) {
+        build.open();
+
         AnalysisSummary checkstyle = new AnalysisSummary(build, CHECKSTYLE_ID);
-        assertThat(checkstyle).isDisplayed()
-                .hasTitleText("CheckStyle: 3 warnings")
+        assertThat(checkstyle)
+                .hasTitleText(CHECK_STYLE_NAME + ": 3 warnings")
                 .hasNewSize(3)
                 .hasFixedSize(1)
                 .hasReferenceBuild(1)
@@ -228,10 +250,11 @@ abstract class UiTest extends AbstractJUnitTest {
                 .hasTotal(3)
                 .hasOnlyAvailableTabs(Tab.CATEGORIES, Tab.TYPES, Tab.ISSUES);
 
-        IssuesDetailsTable issuesTable = checkstyleDetails.openIssuesTable();
-        assertThat(issuesTable).hasSize(3).hasTotal(3);
+        IssuesTable issuesTable = checkstyleDetails.openIssuesTable();
+        assertThat(issuesTable.getSize()).isEqualTo(3);
+        assertThat(issuesTable.getTotal()).isEqualTo(3);
 
-        DefaultIssuesTableRow tableRow = issuesTable.getRowAs(0, DefaultIssuesTableRow.class);
+        IssuesTableRow tableRow = issuesTable.getRow(0);
         assertThat(tableRow).hasFileName("RemoteLauncher.java")
                 .hasLineNumber(59)
                 .hasCategory("Checks")
@@ -310,25 +333,22 @@ abstract class UiTest extends AbstractJUnitTest {
     }
 
     protected void verifyPep8(final Build build, final int referenceBuild) {
+        build.open();
+
         AnalysisSummary pep8 = new AnalysisSummary(build, PEP8_ID);
-        assertThat(pep8).isDisplayed()
-                .hasTitleText(PEP8_NAME + ": 8 warnings")
+        assertThat(pep8)
+                .hasTitleText(PEP8_TOOL + ": 8 warnings")
                 .hasReferenceBuild(referenceBuild)
                 .hasInfoType(InfoType.ERROR);
 
         AnalysisResult pep8Details = verifyPep8Details(pep8);
 
         pep8Details.openTab(Tab.ISSUES);
-        IssuesDetailsTable issuesTable = pep8Details.openIssuesTable();
-        assertThat(issuesTable).hasSize(8);
+        IssuesTable issuesTable = pep8Details.openIssuesTable();
+        assertThat(issuesTable.getSize()).isEqualTo(8);
 
-        long normalIssueCount = issuesTable.getTableRows().stream()
-                .map(row -> row.getAs(IssuesTableRow.class).getSeverity())
-                .filter(severity -> severity.equals("Normal")).count();
-
-        long lowIssueCount = issuesTable.getTableRows().stream()
-                .map(row -> row.getAs(IssuesTableRow.class).getSeverity())
-                .filter(severity -> severity.equals("Low")).count();
+        long normalIssueCount = getCountOfSeverity(issuesTable, "Normal");
+        long lowIssueCount = getCountOfSeverity(issuesTable, "Low");
 
         assertThat(normalIssueCount).isEqualTo(6);
         assertThat(lowIssueCount).isEqualTo(2);
@@ -338,13 +358,19 @@ abstract class UiTest extends AbstractJUnitTest {
                         "-> found 8 issues (skipped 0 duplicates)")
                 .hasErrorMessages("Can't create fingerprints for some files:");
 
-        if(referenceBuild > 0) {
+        if (referenceBuild > 0) {
             assertThat(openInfoView(build, PEP8_ID))
                     .hasInfoMessages("Issues delta (vs. reference build): outstanding: 0, new: 8, fixed: 0");
         }
     }
 
-    protected AnalysisResult verifyPep8Details (final AnalysisSummary pep8) {
+    private long getCountOfSeverity(final IssuesTable issuesTable, final String normal) {
+        return issuesTable.getTableRows().stream()
+                .map(AbstractSeverityTableRow::getSeverity)
+                .filter(normal::equals).count();
+    }
+
+    protected AnalysisResult verifyPep8Details(final AnalysisSummary pep8) {
         AnalysisResult pep8Details = pep8.openOverallResult();
         assertThat(pep8Details).hasActiveTab(Tab.ISSUES)
                 .hasOnlyAvailableTabs(Tab.CATEGORIES, Tab.ISSUES);
@@ -352,20 +378,25 @@ abstract class UiTest extends AbstractJUnitTest {
     }
 
     InfoView openInfoView(final Build build, final String toolId) {
+        build.open();
+
         return new AnalysisSummary(build, toolId).openInfoView();
     }
 
-    protected Build shouldBuildSuccessfully(final Job job) {
+    protected Build buildSuccessfully(final Job job) {
         return job.startBuild().waitUntilFinished().shouldSucceed();
     }
 
-    protected DashboardView createDashboardWithStaticAnalysisPortlet(final boolean hideCleanJobs, final boolean showIcons) {
-        return createDashboardWithStaticAnalysisPortlet(jenkins, hideCleanJobs, showIcons);
+    protected DashboardView createDashboardWithStaticAnalysisPortlet(final boolean hideCleanJobs,
+            final boolean showIcons) {
+        return createDashboardWithStaticAnalysisPortlet(hideCleanJobs, showIcons, jenkins);
     }
 
-    protected DashboardView createDashboardWithStaticAnalysisPortlet(final Container container, final boolean hideCleanJobs, final boolean showIcons) {
+    protected DashboardView createDashboardWithStaticAnalysisPortlet(final boolean hideCleanJobs,
+            final boolean showIcons, final Container container) {
         DashboardView view = createDashboardView(container);
-        StaticAnalysisIssuesPerToolAndJobPortlet portlet = view.addTopPortlet(StaticAnalysisIssuesPerToolAndJobPortlet.class);
+        StaticAnalysisIssuesPerToolAndJobPortlet portlet = view.addTopPortlet(
+                StaticAnalysisIssuesPerToolAndJobPortlet.class);
         if (hideCleanJobs) {
             portlet.toggleHideCleanJobs();
         }
@@ -404,7 +435,7 @@ abstract class UiTest extends AbstractJUnitTest {
         GlobalWarningsSettings settings = new GlobalWarningsSettings(jenkins);
         settings.configure();
         GroovyConfiguration groovyConfiguration = settings.openGroovyConfiguration();
-        groovyConfiguration.enterName(PEP8_NAME);
+        groovyConfiguration.enterName(PEP8_TOOL);
         groovyConfiguration.enterId(PEP8_ID);
         groovyConfiguration.enterRegex("(.*):(\\d+):(\\d+): (\\D\\d*) (.*)");
         groovyConfiguration.enterScript("import edu.hm.hafner.analysis.Severity\n"

@@ -7,7 +7,8 @@ import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.FreeStyleJob;
 import org.jenkinsci.test.acceptance.po.ListView;
 
-import static org.assertj.core.api.Assertions.*;
+import static io.jenkins.plugins.analysis.warnings.Assertions.*;
+import static io.jenkins.plugins.analysis.warnings.IssuesColumnConfiguration.*;
 
 /**
  * Acceptance tests for the Warnings Issue Column.
@@ -17,34 +18,59 @@ import static org.assertj.core.api.Assertions.*;
  */
 @WithPlugins("warnings-ng")
 public class IssuesColumnUiTest extends UiTest {
-    private static final String WARNINGS_PLUGIN_PREFIX = "/";
+    private static final String CUSTOM_ISSUES_COLUMN_NAME = "Hello World";
+    private static final String CHECK_STYLE_LINK = CHECK_STYLE_NAME + " Warnings";
+    private static final String FIND_BUGS_LINK = FINDBUGS_TOOL + " Warnings";
+    private static final String PMD_LINK = PMD_TOOL + " Warnings";
+    private static final String CPD_LINK = "CPD Duplications";
 
     /**
-     * Configure a job with multiple recorders: Should display a table when hovering the issue column.
+     * Configure a job with multiple recorders: Should display a table when hovering over the issue column.
      */
     @Test
-    @WithPlugins({"token-macro", "pipeline-stage-step", "workflow-durable-task-step", "workflow-basic-steps"})
     public void shouldDisplayIssueCount() {
         FreeStyleJob job = createFreeStyleJob("build_status_test/build_02");
         addAllRecorders(job);
         job.save();
-        String jobName = job.name;
 
         Build build = job.startBuild().waitUntilFinished();
 
         jenkins.open();
 
-        IssuesColumn column = new IssuesColumn(build, jobName);
+        IssuesColumn column = new IssuesColumn(jenkins, DEFAULT_ISSUES_COLUMN_NAME);
+        assertThat(column).hasTotalCount("25");
 
-        String issueCount = column.getIssuesCountTextFromTable();
-        assertThat(issueCount).isEqualTo("25");
+        assertHoverValues(column, 1, CHECK_STYLE_LINK, "3");
+        assertHoverValues(column, 2, FIND_BUGS_LINK, "0");
+        assertHoverValues(column, 3, PMD_LINK, "2");
+        assertHoverValues(column, 4, CPD_LINK, "20");
 
-        column.hoverIssueCount();
+        ListView view = createListView();
 
-        assertHoverValues(column, 1, "CheckStyle Warnings", "3");
-        assertHoverValues(column, 2, "FindBugs Warnings", "0");
-        assertHoverValues(column, 3, "PMD Warnings", "2");
-        assertHoverValues(column, 4, "CPD Duplications", "20");
+        IssuesColumnConfiguration totalColumn = view.addColumn(IssuesColumnConfiguration.class);
+        totalColumn.setName(CUSTOM_ISSUES_COLUMN_NAME);
+        totalColumn.filterByTool(CHECKSTYLE_ID);
+
+        view.save();
+
+        IssuesColumn checkstyleColumn = new IssuesColumn(build, CUSTOM_ISSUES_COLUMN_NAME);
+        assertThat(checkstyleColumn).hasTotalCount("3");
+        assertThat(checkstyleColumn).hasLinkToResults();
+        assertThat(checkstyleColumn.getResultUrl()).endsWith("1/" + CHECKSTYLE_ID);
+
+        view.configure(() -> {
+            totalColumn.setType(StatisticProperties.TOTAL_HIGH);
+            totalColumn.disableToolFilter();
+        });
+
+        IssuesColumn highColumn = new IssuesColumn(build, CUSTOM_ISSUES_COLUMN_NAME);
+        assertThat(highColumn).hasTotalCount("5");
+        assertThat(highColumn).doesNotHaveLinkToResults();
+
+        assertHoverValues(highColumn, 1, CHECK_STYLE_LINK, "0");
+        assertHoverValues(highColumn, 2, FIND_BUGS_LINK, "0");
+        assertHoverValues(highColumn, 3, PMD_LINK, "0");
+        assertHoverValues(highColumn, 4, CPD_LINK, "5");
     }
 
     /**
@@ -52,103 +78,43 @@ public class IssuesColumnUiTest extends UiTest {
      * tool results. Should have a link in issue column.
      */
     @Test
-    @WithPlugins({"token-macro", "pipeline-stage-step", "workflow-durable-task-step", "workflow-basic-steps"})
     public void shouldShowConfiguredToolOnlyWithLink() {
         FreeStyleJob job = createFreeStyleJob("build_status_test/build_02");
-        addRecorder(job, "CheckStyle");
+        addCheckStyle(job);
         job.save();
         Build build = job.startBuild().waitUntilFinished();
 
         ListView view = createListView();
 
-        IssuesColumnConfiguration columnConfig = new IssuesColumnConfiguration(build, view);
-        columnConfig.selectSubsetOfTools("CheckStyle");
+        IssuesColumnConfiguration totalColumn = view.addColumn(IssuesColumnConfiguration.class);
+        totalColumn.filterByTool(CHECKSTYLE_TOOL);
+        totalColumn.setName(CUSTOM_ISSUES_COLUMN_NAME);
 
         view.save();
 
-        IssuesColumn column = new IssuesColumn(build, job.name);
+        IssuesColumn column = new IssuesColumn(build, CUSTOM_ISSUES_COLUMN_NAME);
 
-        assertThat(column.getIssuesCountTextFromTable()).isEqualTo("3");
-        assertThat(column.issuesCountFromTableHasLink()).isTrue();
+        assertThat(column).hasTotalCount("3");
+        assertThat(column).hasLinkToResults();
+        assertThat(column.getResultUrl()).endsWith("1/" + CHECKSTYLE_ID);
     }
 
-    /**
-     * Configure a job with multiple recorders, also create a ListView and configure the issue column to display only
-     * results from CheckStyle. Should have no link in column and display detailed table when hovering the column.
-     */
-    @Test
-    @WithPlugins({"token-macro", "pipeline-stage-step", "workflow-durable-task-step", "workflow-basic-steps"})
-    public void shouldShowConfiguredToolOnly() {
-        FreeStyleJob job = createFreeStyleJob("build_status_test/build_02");
-        addAllRecorders(job);
-        job.save();
-        Build build = job.startBuild().waitUntilFinished();
-
-        ListView view = createListView();
-
-        IssuesColumnConfiguration columnConfig = new IssuesColumnConfiguration(build, view);
-        columnConfig.selectSubsetOfTools("CheckStyle");
-
-        view.save();
-
-        IssuesColumn column = new IssuesColumn(build, job.name);
-        assertThat(column.getIssuesCountTextFromTable()).isEqualTo("3");
-        assertThat(column.issuesCountFromTableHasLink()).isFalse();
-
-        column.hoverIssueCount();
-
-        assertHoverValues(column, 1, "CheckStyle Warnings", "3");
-    }
-
-    /**
-     * Configure a job with multiple recorders, also create a ListView and configure the issue column to display only
-     * results of severity "high". Should have no link in column and display detailed table when hovering the column.
-     */
-    @Test
-    @WithPlugins({"token-macro", "pipeline-stage-step", "workflow-durable-task-step", "workflow-basic-steps"})
-    public void shouldShowConfiguredTypeOnly() {
-        FreeStyleJob job = createFreeStyleJob("build_status_test/build_02");
-        addAllRecorders(job);
-        job.save();
-        Build build = job.startBuild().waitUntilFinished();
-
-        ListView view = createListView();
-
-        IssuesColumnConfiguration columnConfig = new IssuesColumnConfiguration(build, view);
-        columnConfig.selectType(StatisticProperties.TOTAL_HIGH);
-
-        view.save();
-
-        IssuesColumn column = new IssuesColumn(build, job.name);
-        assertThat(column.getIssuesCountTextFromTable()).isEqualTo("5");
-        assertThat(column.issuesCountFromTableHasLink()).isFalse();
-
-        column.hoverIssueCount();
-
-        // TODO: see JENKINS-59591
-        assertHoverValues(column, 1, "CheckStyle Warnings", "3");
-        assertHoverValues(column, 2, "FindBugs Warnings", "0");
-        assertHoverValues(column, 3, "PMD Warnings", "2");
-        assertHoverValues(column, 4, "CPD Duplications", "20");
-    }
-
-    private void addRecorder(final FreeStyleJob job, final String recorderName) {
+    private void addCheckStyle(final FreeStyleJob job) {
         job.addPublisher(IssuesRecorder.class, recorder -> {
-            recorder.setTool(recorderName);
+            recorder.setTool(UiTest.CHECKSTYLE_TOOL);
             recorder.setEnabledForFailure(true);
         });
     }
 
     private void assertHoverValues(final IssuesColumn column, final int rowNumber, final String toolName, final String issueCount) {
-        assertThat(column.getToolNameFromHover(rowNumber)).isEqualTo(toolName);
-        assertThat(column.getIssueCountFromHover(rowNumber)).isEqualTo(issueCount);
+        assertThat(column.getToolFromTooltip(rowNumber)).isEqualTo(toolName);
+        assertThat(column.getTotalFromTooltip(rowNumber)).isEqualTo(issueCount);
     }
 
     private ListView createListView() {
-        ListView view = jenkins.views.create(ListView.class, "a_view");
+        ListView view = jenkins.getViews().create(ListView.class);
         view.configure();
-        view.check("Use a regular expression to include jobs into the view");
-        fillIn("includeRegex", ".*");
+        view.matchAllJobs();
         return view;
     }
 }

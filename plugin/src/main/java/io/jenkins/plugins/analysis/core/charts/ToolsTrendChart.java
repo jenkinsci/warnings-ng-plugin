@@ -23,7 +23,7 @@ public class ToolsTrendChart implements TrendChart {
         ToolSeriesBuilder builder = new ToolSeriesBuilder();
         LinesDataSet lineModel = builder.createDataSet(configuration, results);
 
-        LinesChartModel model = new LinesChartModel();
+        LinesChartModel model = new LinesChartModel(lineModel);
 
         Palette[] colors = Palette.values();
         int index = 0;
@@ -36,8 +36,6 @@ public class ToolsTrendChart implements TrendChart {
             lineSeries.addAll(lineModel.getSeries(name));
             model.addSeries(lineSeries);
         }
-
-        model.setDomainAxisLabels(lineModel.getDomainAxisLabels());
 
         return model;
     }

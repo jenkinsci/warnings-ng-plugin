@@ -24,7 +24,7 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings({"PMD.CouplingBetweenObjects", "PMD.ExcessivePublicCount", "PMD.CyclomaticComplexity", "PMD.GodClass", "ClassDataAbstractionCoupling", "ClassFanOutComplexity"})
+@SuppressWarnings({"PMD.CouplingBetweenObjects", "PMD.ExcessivePublicCount", "PMD.CyclomaticComplexity", "PMD.GodClass", "PMD.ExcessiveClassLength", "ClassDataAbstractionCoupling", "ClassFanOutComplexity"})
 public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String CODE_FRAGMENT = "<pre><code>#\n"
             + "\n"
@@ -76,6 +76,19 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
                 "json-issues.log");
     }
 
+    /** Runs the Dart analysis parser on an output file that contains 6 issues. */
+    @Test
+    public void shouldFindAllDartIssues() {
+        shouldFindIssuesOfTool(6, new Dart(), "dart.log");
+    }
+
+    /** Runs the SARIF parser on an output file that contains 2 issues. */
+    @Test
+    public void shouldFindAllSarifIssues() {
+        shouldFindIssuesOfTool(2, new Sarif(), "sarif.json");
+    }
+
+
     /** Runs the native parser on a file that contains 9 issues.. */
     @Test
     public void shouldReadNativeXmlFormat() {
@@ -112,31 +125,52 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         }
     }
 
-    /** Runs the Iar parser on an output file that contains 8 issues. */
+    /** Runs the CodeChecker parser on an output file that contains 3 issues. */
+    @Test
+    public void shouldFindAllCodeCheckerIssues() {
+        String logFile = "CodeChecker_with_linux_paths.txt";
+        shouldFindIssuesOfTool(3, new CodeChecker(), logFile);
+
+        WorkflowJob job = createPipeline();
+        copyMultipleFilesToWorkspace(job, logFile);
+        job.setDefinition(asStage(String.format(
+                "recordIssues tool:analysisParser("
+                        + "pattern:'**/%s', "
+                        + "reportEncoding:'UTF-8', "
+                        + "analysisModelId:'code-checker')", logFile)));
+
+        AnalysisResult result = scheduleSuccessfulBuild(job);
+
+        assertThat(result).hasTotalSize(3);
+        Report report = result.getIssues();
+        assertThat(report.filter(issue -> "code-checker".equals(issue.getOrigin()))).hasSize(3);
+    }
+
+    /** Runs the Cmake parser on an output file that contains 8 issues. */
     @Test
     public void shouldFindAllCmakeIssues() {
         shouldFindIssuesOfTool(8, new Cmake(), "cmake.txt");
     }
 
-    /** Runs the Iar parser on an output file that contains 2 issues. */
+    /** Runs the Cargo parser on an output file that contains 2 issues. */
     @Test
     public void shouldFindAllCargoIssues() {
         shouldFindIssuesOfTool(2, new Cargo(), "CargoCheck.json");
     }
 
-    /** Runs the Iar parser on an output file that contains 262 issues. */
+    /** Runs the Pmd parser on an output file that contains 262 issues. */
     @Test
     public void shouldFindAllIssuesForPmdAlias() {
         shouldFindIssuesOfTool(262, new Infer(), "pmd-6.xml");
     }
 
-    /** Runs the Iar parser on an output file that contains 262 issues. */
+    /** Runs the MSBuild parser on an output file that contains 262 issues. */
     @Test
     public void shouldFindAllIssuesForMsBuildAlias() {
         shouldFindIssuesOfTool(6, new PcLint(), "msbuild.txt");
     }
 
-    /** Runs the Iar parser on an output file that contains 4 issues. */
+    /** Runs the YamlLint parser on an output file that contains 4 issues. */
     @Test
     public void shouldFindAllYamlLintIssues() {
         shouldFindIssuesOfTool(4, new YamlLint(), "yamllint.txt");
@@ -497,10 +531,10 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         shouldFindIssuesOfTool(3, new ClangAnalyzer(), "ClangAnalyzer.txt");
     }
 
-    /** Runs the Clang-Tidy parser on an output file that contains 6 issues. */
+    /** Runs the Clang-Tidy parser on an output file that contains 7 issues. */
     @Test
     public void shouldFindAllClangTidyIssues() {
-        shouldFindIssuesOfTool(6, new ClangTidy(), "ClangTidy.txt");
+        shouldFindIssuesOfTool(7, new ClangTidy(), "ClangTidy.txt");
     }
 
     /** Runs the Clang parser on an output file that contains 9 issues. */
@@ -907,6 +941,12 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         shouldFindIssuesOfTool(3, new OTDockerLint(), "ot-docker-linter.json");
     }
 
+    /** Runs the OWASP dependency check parser on an output file that contains 2 issues. */
+    @Test
+    public void shouldFindOwaspDependencyCheckIssues() {
+        shouldFindIssuesOfTool(2, new OwaspDependencyCheck(), "dependency-check-report.json");
+    }
+
     /** Runs the Brakeman parser on an output file that contains 32 issues. */
     @Test
     public void shouldFindAllBrakemanIssues() {
@@ -923,6 +963,12 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     public void shouldFindAllQtTranslationIssues() {
         shouldFindIssuesOfTool(4, new QtTranslation(), "qttranslation.ts");
+    }
+
+    /** Runs the oelint-adv parser on an output file that contains 8 issues. */
+    @Test
+    public void shouldFindAllOELintAdvIssues() {
+        shouldFindIssuesOfTool(8, new OELintAdv(), "oelint-adv.txt");
     }
 
     private void shouldFindIssuesOfTool(final int expectedSizeOfIssues, final AnalysisModelParser tool,

@@ -4,7 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import edu.hm.hafner.analysis.FilteredLog;
 import edu.hm.hafner.analysis.Issue;
@@ -15,6 +16,8 @@ import edu.hm.hafner.util.VisibleForTesting;
 import hudson.FilePath;
 import hudson.model.Run;
 import hudson.remoting.VirtualChannel;
+
+import io.jenkins.plugins.prism.FilePermissionEnforcer;
 
 /**
  * Copies all affected files that are referenced in at least one of the issues to Jenkins build folder. These files can
@@ -93,20 +96,45 @@ public class AffectedFilesResolver {
      *
      * @param report
      *         the issues
+     * @param workspace
+     *         the workspace on the agent
+     * @param permittedSourceDirectories
+     *         additional permitted source code directories
      * @param buildFolder
      *         directory to store the copied files in
-     * @param affectedFilesFolder
-     *         paths to the affected files on the agent
      *
      * @throws InterruptedException
      *         if the user cancels the processing
      */
-    public void copyAffectedFilesToBuildFolder(final Report report, final FilePath buildFolder,
-            final FilePath affectedFilesFolder) throws InterruptedException {
-        copyAffectedFilesToBuildFolder(report, new RemoteFacade(buildFolder, affectedFilesFolder));
+    public void copyAffectedFilesToBuildFolder(final Report report, final FilePath workspace,
+            final Set<String> permittedSourceDirectories, final FilePath buildFolder) throws InterruptedException {
+        copyAffectedFilesToBuildFolder(report, new RemoteFacade(workspace, permittedSourceDirectories, buildFolder));
+    }
+
+    /**
+     * Copies all files with issues from the workspace to the build folder.
+     *
+     * @param report
+     *         the issues
+     * @param channel
+     *         virtual channel to access the files on the agent
+     * @param buildFolder
+     *         directory to store the copied files in
+     * @param permittedSourceDirectories
+     *         paths to the affected files on the agent
+     *
+     * @throws InterruptedException
+     *         if the user cancels the processing
+     * @deprecated use {@link #copyAffectedFilesToBuildFolder(Report, FilePath, Set, FilePath)}
+     */
+    @Deprecated
+    public void copyAffectedFilesToBuildFolder(final Report report, final VirtualChannel channel,
+            final FilePath buildFolder, final Set<String> permittedSourceDirectories) throws InterruptedException {
+        // do nothing
     }
 
     @VisibleForTesting
+    @SuppressWarnings("PMD.CognitiveComplexity")
     void copyAffectedFilesToBuildFolder(final Report report, final RemoteFacade remoteFacade)
             throws InterruptedException {
         int copied = 0;
@@ -146,14 +174,18 @@ public class AffectedFilesResolver {
 
     static class RemoteFacade {
         private static final PathUtil PATH_UTIL = new PathUtil();
-        private final FilePath buildFolder;
-        private final VirtualChannel channel;
-        private final String affectedFilesPrefix;
+        private static final FilePermissionEnforcer PERMISSION_ENFORCER = new FilePermissionEnforcer();
 
-        RemoteFacade(final FilePath buildFolder, final FilePath agentWorkspace) {
+        private final FilePath buildFolder;
+        private final FilePath workspace;
+        private final Set<String> permittedAbsolutePaths;
+
+        RemoteFacade(final FilePath workspace, final Set<String> permittedSourceDirectories, final FilePath buildFolder) {
+            this.workspace = workspace;
+            permittedAbsolutePaths = permittedSourceDirectories.stream()
+                    .map(PATH_UTIL::getAbsolutePath)
+                    .collect(Collectors.toSet());
             this.buildFolder = buildFolder;
-            channel = agentWorkspace.getChannel();
-            affectedFilesPrefix = PATH_UTIL.getAbsolutePath(agentWorkspace.getRemote());
         }
 
         boolean exists(final String fileName) {
@@ -166,11 +198,11 @@ public class AffectedFilesResolver {
         }
 
         private FilePath createFile(final String fileName) {
-            return new FilePath(channel, fileName);
+            return new FilePath(workspace.getChannel(), fileName);
         }
 
         /**
-         * Checks whether the source file is in the workspace. Due to security reasons copying of files outside of the
+         * Checks whether the source file is in the workspace. Due to security reasons copying of files outside the
          * workspace is prohibited.
          *
          * @param fileName
@@ -181,11 +213,7 @@ public class AffectedFilesResolver {
         boolean isInWorkspace(final String fileName) {
             String sourceFile = PATH_UTIL.getAbsolutePath(createFile(fileName).getRemote());
 
-            return isInWorkspace(sourceFile, affectedFilesPrefix);
-        }
-
-        boolean isInWorkspace(final String sourceFile, final String workspace) {
-            return Paths.get(sourceFile).startsWith(Paths.get(workspace));
+            return PERMISSION_ENFORCER.isInWorkspace(sourceFile, workspace, permittedAbsolutePaths);
         }
 
         public void copy(final String from, final String to) throws IOException, InterruptedException {

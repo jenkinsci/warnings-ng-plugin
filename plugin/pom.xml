@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>5.7.0</version>
+    <version>5.17.0</version>
     <relativePath />
   </parent>
 
@@ -14,68 +14,51 @@
   <name>Warnings Next Generation Plugin</name>
   <version>${revision}${changelist}</version>
 
-  <description>Jenkins Warnings Next Generation plugin collects compiler warnings or issues reported by static
-    analysis tools and visualizes the results. It has built-in support for numerous static analysis tools
-    (including several compilers), see the list of supported report formats.
+  <description>Jenkins Warnings Next Generation plugin collects compiler warnings or issues reported by static analysis
+    tools and visualizes the results. It has built-in support for numerous static analysis tools (including several
+    compilers), see the list of supported report formats.
   </description>
   <url>https://github.com/jenkinsci/warnings-ng-plugin</url>
 
   <properties>
-    <revision>9.2.0</revision>
+    <revision>9.12.0</revision>
     <changelist>-SNAPSHOT</changelist>
-
     <module.name>${project.groupId}.warnings.ng</module.name>
 
-    <analysis-model-api.version>10.2.5</analysis-model-api.version>
-    <analysis-model-tests.version>10.2.5</analysis-model-tests.version>
+    <analysis-model-api.version>10.9.1</analysis-model-api.version>
+    <analysis-model-tests.version>10.9.0</analysis-model-tests.version>
 
-    <forensics-api-plugin.version>1.0.0</forensics-api-plugin.version>
-    <plugin-util-api.version>2.2.0</plugin-util-api.version>
+    <forensics-api-plugin.version>1.7.0</forensics-api-plugin.version>
+    <plugin-util-api.version>2.12.0</plugin-util-api.version>
 
-    <data-tables-api.version>1.10.23-3</data-tables-api.version>
-    <echarts-api.version>5.1.0-2</echarts-api.version>
-    <font-awesome-api.version>5.15.3-2</font-awesome-api.version>
-    <jquery3-api.version>3.6.0-1</jquery3-api.version>
-    <bootstrap4-api.version>4.6.0-3</bootstrap4-api.version>
-    <popper-api.version>1.16.1-2</popper-api.version>
-    <error_prone_annotations.version>2.7.1</error_prone_annotations.version>
+    <data-tables-api.version>1.11.3-6</data-tables-api.version>
+    <echarts-api.version>5.2.2-2</echarts-api.version>
+    <bootstrap5-api.version>5.1.3-4</bootstrap5-api.version>
+    <font-awesome-api.version>5.15.4-5</font-awesome-api.version>
+    <prism-api.version>1.25.0-2</prism-api.version>
+
+    <error_prone_annotations.version>2.9.0</error_prone_annotations.version>
+    <pull-request-monitoring.version>1.7.8</pull-request-monitoring.version>
 
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
-    <j2html.version>1.4.0</j2html.version>
 
-    <json.version>20210307</json.version>
+    <json.version>20211205</json.version>
 
     <!-- Test Library Dependencies Versions -->
-    <xmlunit.version>2.8.2</xmlunit.version>
-    <jsoup.version>1.13.1</jsoup.version>
+    <xmlunit.version>2.8.4</xmlunit.version>
+    <jsoup.version>1.14.3</jsoup.version>
     <json-smart.version>2.4.7</json-smart.version>
-    <jmh.version>1.31</jmh.version>
+    <jmh.version>1.34</jmh.version>
 
     <!-- Jenkins Plug-in Dependencies Versions -->
     <autograding.version>3.3.1</autograding.version>
-    <git-forensics.version>1.0.0</git-forensics.version>
-    <token-macro.version>2.13</token-macro.version>
-    <jenkins-maven-plugin.version>3.8</jenkins-maven-plugin.version>
-    <matrix-project.version>1.18</matrix-project.version>
-    <junit-plugin.version>1.35</junit-plugin.version>
-    <antisamy-markup-formatter.version>2.1</antisamy-markup-formatter.version>
-    <dashboard-view.version>2.16</dashboard-view.version>
-    <script-security.version>1.76</script-security.version>
-    <httpcomponents-client.version>4.5.13-1.0</httpcomponents-client.version>
-    <configuration-as-code.version>1.47</configuration-as-code.version>
-    <job-dsl.version>1.77</job-dsl.version>
-    <envinject.version>2.3.0</envinject.version>
+    <git-forensics.version>1.3.0</git-forensics.version>
+    <jenkins-maven-plugin.version>3.16</jenkins-maven-plugin.version>
+    <antisamy-markup-formatter.version>2.5</antisamy-markup-formatter.version>
+    <job-dsl.version>1.78.3</job-dsl.version>
     <flexible-publish.version>0.15.2</flexible-publish.version>
-    <pipeline-stage-step.version>2.5</pipeline-stage-step.version>
     <docker-fixtures.version>1.11</docker-fixtures.version>
-    <jdk-tool.version>1.5</jdk-tool.version>
-    <workflow-support.version>3.8</workflow-support.version>
-    <pipeline-model-definition.version>1.8.4</pipeline-model-definition.version>
-    <form-element-path.version>1.10</form-element-path.version>
-    <folder.version>6.15</folder.version>
-    <scm-api.version>2.6.4</scm-api.version>
-    <checks-api.version>1.7.0</checks-api.version>
-    <credentials.version>2.3.18</credentials.version>
+    <form-element-path.version>1.11</form-element-path.version>
 
     <!-- Maven Surefire ArgLine -->
     <argLine>-Djava.awt.headless=true -Xmx1024m -Djenkins.test.timeout=1000</argLine>
@@ -96,36 +79,6 @@
     </developer>
   </developers>
 
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.jenkins-ci.plugins</groupId>
-        <artifactId>trilead-api</artifactId>
-        <version>1.0.13</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jenkins-ci.plugins</groupId>
-        <artifactId>script-security</artifactId>
-        <version>${script-security.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.jenkins.plugins</groupId>
-        <artifactId>popper-api</artifactId>
-        <version>${popper-api.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.google.errorprone</groupId>
-        <artifactId>error_prone_annotations</artifactId>
-        <version>${error_prone_annotations.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.google.code.gson</groupId>
-        <artifactId>gson</artifactId>
-        <version>2.8.6</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
   <dependencies>
 
     <!-- Project Library Dependencies -->
@@ -138,11 +91,6 @@
       <groupId>org.eclipse.collections</groupId>
       <artifactId>eclipse-collections</artifactId>
       <version>${eclipse-collections.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.j2html</groupId>
-      <artifactId>j2html</artifactId>
-      <version>${j2html.version}</version>
     </dependency>
     <dependency>
       <groupId>net.minidev</groupId>
@@ -173,13 +121,12 @@
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
-      <artifactId>bootstrap4-api</artifactId>
-      <version>${bootstrap4-api.version}</version>
+      <artifactId>bootstrap5-api</artifactId>
+      <version>${bootstrap5-api.version}</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>jquery3-api</artifactId>
-      <version>${jquery3-api.version}</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
@@ -190,6 +137,11 @@
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>data-tables-api</artifactId>
       <version>${data-tables-api.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>prism-api</artifactId>
+      <version>${prism-api.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
@@ -223,7 +175,6 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>checks-api</artifactId>
-      <version>${checks-api.version}</version>
       <exclusions>
         <exclusion>
           <groupId>com.github.spotbugs</groupId>
@@ -236,32 +187,40 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>credentials</artifactId>
-      <version>${credentials.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>apache-httpcomponents-client-4-api</artifactId>
-      <version>${httpcomponents-client.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>2.8.9</version>
     </dependency>
 
     <!-- Optional Jenkins Plug-in Dependencies -->
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>matrix-project</artifactId>
-      <version>${matrix-project.version}</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>token-macro</artifactId>
-      <version>${token-macro.version}</version>
       <optional>true</optional>
     </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>pull-request-monitoring</artifactId>
+      <version>${pull-request-monitoring.version}</version>
+      <optional>true</optional>
+    </dependency>
+
     <!-- ASM is required by token-macro but does not declare its dependency -->
     <dependency>
       <groupId>org.ow2.asm</groupId>
       <artifactId>asm</artifactId>
-      <version>9.1</version>
+      <version>9.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -272,7 +231,6 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>dashboard-view</artifactId>
-      <version>${dashboard-view.version}</version>
       <optional>true</optional>
     </dependency>
 
@@ -293,13 +251,11 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>git</artifactId>
-      <version>4.6.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>git-client</artifactId>
-      <version>3.6.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -382,9 +338,8 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>checks-api</artifactId>
-      <version>${checks-api.version}</version>
       <scope>test</scope>
-      <type>test-jar</type>
+      <classifier>tests</classifier>
       <exclusions>
         <exclusion>
           <groupId>com.github.spotbugs</groupId>
@@ -410,12 +365,6 @@
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>envinject</artifactId>
-      <version>${envinject.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>timestamper</artifactId>
       <scope>test</scope>
       <exclusions>
@@ -435,6 +384,10 @@
           <artifactId>annotations</artifactId>
           <groupId>com.google.code.findbugs</groupId>
         </exclusion>
+        <exclusion>
+          <groupId>commons-net</groupId>
+          <artifactId>commons-net</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -452,13 +405,11 @@
     <dependency>
       <groupId>io.jenkins</groupId>
       <artifactId>configuration-as-code</artifactId>
-      <version>${configuration-as-code.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>cloudbees-folder</artifactId>
-      <version>${folder.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -512,7 +463,6 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>pipeline-stage-step</artifactId>
-      <version>${pipeline-stage-step.version}</version>
       <scope>test</scope>
     </dependency>
     <!-- node -->
@@ -542,14 +492,12 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>jdk-tool</artifactId>
-      <version>${jdk-tool.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>scm-api</artifactId>
-      <version>${scm-api.version}</version>
-      <type>test-jar</type>
+      <classifier>tests</classifier>
       <scope>test</scope>
     </dependency>
 
@@ -557,13 +505,11 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins.workflow</groupId>
       <artifactId>workflow-support</artifactId>
-      <version>${workflow-support.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jenkinsci.plugins</groupId>
       <artifactId>pipeline-model-definition</artifactId>
-      <version>${pipeline-model-definition.version}</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -613,9 +559,11 @@
             <package>io.jenkins.plugins.analysis.core.scm</package>
             <package>io.jenkins.plugins.analysis.core.model</package>
             <package>io.jenkins.plugins.analysis.core.util</package>
+            <package>io.jenkins.plugins.analysis.warnings</package>
           </packages>
           <excludes combine.children="append">
             <exclude>.*Thresholds</exclude>
+            <exclude>.*TaskScanner.*</exclude>
           </excludes>
           <entryPointClassPackage>io.jenkins.plugins.analysis.core.assertions</entryPointClassPackage>
         </configuration>
@@ -634,6 +582,7 @@
         <groupId>org.revapi</groupId>
         <artifactId>revapi-maven-plugin</artifactId>
         <configuration>
+          <skip>true</skip> <!-- FIXME: find a better workaround for https://github.com/revapi/revapi/issues/253 -->
           <failBuildOnProblemsFound>true</failBuildOnProblemsFound>
           <!-- Including provided-scope dependencies like Jenkins core results in too many false positives -->
           <checkDependencies>false</checkDependencies>
@@ -701,6 +650,7 @@
             <excludes combine.children="append">
               <exclude>**/JenkinsFacade.*</exclude>
               <exclude>**/*BlameRunner.*</exclude>
+              <exclude>**/*Summary.class</exclude>
               <exclude>**/NullAnalysisHistory.*</exclude>
             </excludes>
           </configuration>

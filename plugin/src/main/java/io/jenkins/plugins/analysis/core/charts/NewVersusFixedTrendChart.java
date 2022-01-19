@@ -22,9 +22,7 @@ public class NewVersusFixedTrendChart implements TrendChart {
             final ChartModelConfiguration configuration) {
         NewVersusFixedSeriesBuilder builder = new NewVersusFixedSeriesBuilder();
         LinesDataSet dataSet = builder.createDataSet(configuration, results);
-
-        LinesChartModel model = new LinesChartModel();
-        model.setDomainAxisLabels(dataSet.getDomainAxisLabels());
+        LinesChartModel model = new LinesChartModel(dataSet);
 
         LineSeries newSeries = getSeries(dataSet, Messages.New_Warnings_Short(), Palette.RED,
                 NewVersusFixedSeriesBuilder.NEW);

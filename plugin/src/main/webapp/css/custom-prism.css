@@ -19,6 +19,12 @@ pre > code.highlight {
     box-shadow:         2px 2px 18px 0 #ccc;
 }
 
+.analysis-icon {
+    fill: var(--fa-image-color);
+    height: 24px;
+    width: 24px;
+}
+
 .analysis-warning-title {
     color: black;
     padding-left: 0.25em;
@@ -81,4 +87,11 @@ pre > code.highlight {
     position: absolute;
     right: 25px;
     vertical-align: center;
+}
+
+.code-mark {
+    text-decoration: underline;
+    text-decoration-style: solid;
+    text-decoration-color: red;
+    text-decoration-thickness: 5px;
 }

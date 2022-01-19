@@ -45,10 +45,16 @@ public class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldObtainBlamesAndForensicsWithScanAndPublishIssuesSteps() {
-        runStepAndVerifyBlamesAndForensics("def issues = scanForIssues "
-                + "sourceDirectory: 'forensics-api', "
-                + "tool: java(pattern:'**/*issues.txt', reportEncoding:'UTF-8')\n"
-                + PUBLISH_ISSUES_STEP);
+        runStepAndVerifyBlamesAndForensics(createScanForIssuesStep("sourceDirectory: 'forensics-api'"));
+        runStepAndVerifyBlamesAndForensics(createScanForIssuesStep("sourceDirectories: [[path: 'forensics-api']]"));
+        runStepAndVerifyBlamesAndForensics(createScanForIssuesStep("sourceDirectories: [[path: 'does-not-exist'], [path: 'forensics-api']]"));
+    }
+
+    private String createScanForIssuesStep(final String sourceDirectories) {
+        return "def issues = scanForIssues "
+                + sourceDirectories
+                + ", tool: java(pattern:'**/*issues.txt', reportEncoding:'UTF-8')\n"
+                + PUBLISH_ISSUES_STEP;
     }
 
     /**
@@ -57,9 +63,15 @@ public class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldObtainBlamesAndForensicsWithRecordIssuesStep() {
-        runStepAndVerifyBlamesAndForensics("recordIssues "
-                + "sourceDirectory: 'forensics-api', "
-                + "tool: java(pattern:'**/*issues.txt', reportEncoding:'UTF-8')");
+        runStepAndVerifyBlamesAndForensics(createRecordIssuesStep("sourceDirectory: 'forensics-api'"));
+        runStepAndVerifyBlamesAndForensics(createRecordIssuesStep("sourceDirectories: [[path: 'forensics-api']]"));
+        runStepAndVerifyBlamesAndForensics(createRecordIssuesStep("sourceDirectories: [[path: 'does-not-exist'], [path: 'forensics-api']]"));
+    }
+
+    private String createRecordIssuesStep(final String sourceDirectories) {
+        return "recordIssues "
+                + sourceDirectories
+                + ", tool: java(pattern:'**/*issues.txt', reportEncoding:'UTF-8')";
     }
 
     /**
@@ -73,8 +85,7 @@ public class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
         createFileInWorkspace(job, "java-issues.txt", createJavaWarning(SCM_RESOLVER, AFFECTED_LINE));
 
         GitSCM scm = new GitSCM(GitSCM.createRepoList(FORENSICS_API_PLUGIN, null),
-                Collections.singletonList(new BranchSpec(COMMIT)),
-                false, Collections.emptyList(), null, null,
+                Collections.singletonList(new BranchSpec(COMMIT)), null, null,
                 Collections.singletonList(new RelativeTargetDirectory("forensics-api")));
         job.setScm(scm);
         job.getPublishersList().add(new RepositoryMinerStep());
@@ -148,8 +159,7 @@ public class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
         createFileInWorkspace(job, "java-issues.txt", createJavaWarning(SCM_RESOLVER, AFFECTED_LINE));
 
         GitSCM scm = new GitSCM(GitSCM.createRepoList(FORENSICS_API_PLUGIN, null),
-                Collections.singletonList(new BranchSpec(COMMIT)),
-                false, Collections.emptyList(), null, null,
+                Collections.singletonList(new BranchSpec(COMMIT)), null, null,
                 Collections.singletonList(new RelativeTargetDirectory("forensics-api")));
         job.setScm(scm);
         job.getPublishersList().add(new RepositoryMinerStep());

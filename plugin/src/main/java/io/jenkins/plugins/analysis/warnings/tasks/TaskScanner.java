@@ -23,9 +23,9 @@ import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
-
 
 /**
  * Scans a given input stream for open tasks.
@@ -196,6 +196,7 @@ class TaskScanner {
      *
      * @return the open tasks
      */
+    @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE", justification = "https://github.com/spotbugs/spotbugs/issues/756")
     public Report scan(final Path file, final Charset charset) {
         try (Stream<String> lines = Files.lines(file, charset)) {
             return scanTasks(lines.iterator(), new IssueBuilder().setFileName(file.toString()));
@@ -244,24 +245,29 @@ class TaskScanner {
 
             for (Severity severity : Severity.getPredefinedValues()) {
                 if (patterns.containsKey(severity)) {
-                    Matcher matcher = patterns.get(severity).matcher(line);
-                    if (matcher.matches() && matcher.groupCount() == 2) {
-                        String message = StringUtils.defaultString(matcher.group(2)).trim();
-                        builder.setMessage(StringUtils.removeStart(message, ":").trim());
-
-                        String tag = StringUtils.defaultString(matcher.group(1));
-                        if (isUppercase) {
-                            builder.setType(StringUtils.upperCase(tag));
-                        }
-                        else {
-                            builder.setType(tag);
-                        }
-                        report.add(builder.setSeverity(severity).setLineStart(lineNumber).build());
-                    }
+                    createTask(builder, report, lineNumber, line, severity);
                 }
             }
         }
         return report;
+    }
+
+    private void createTask(final IssueBuilder builder, final Report report, final int lineNumber, final String line,
+            final Severity severity) {
+        Matcher matcher = patterns.get(severity).matcher(line);
+        if (matcher.matches() && matcher.groupCount() == 2) {
+            String message = StringUtils.defaultString(matcher.group(2)).trim();
+            builder.setMessage(StringUtils.removeStart(message, ":").trim());
+
+            String tag = StringUtils.defaultString(matcher.group(1));
+            if (isUppercase) {
+                builder.setType(StringUtils.upperCase(tag));
+            }
+            else {
+                builder.setType(tag);
+            }
+            report.add(builder.setSeverity(severity).setLineStart(lineNumber).build());
+        }
     }
 
     private static class IgnoreSection {

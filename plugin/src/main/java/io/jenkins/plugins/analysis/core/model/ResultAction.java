@@ -27,13 +27,14 @@ import io.jenkins.plugins.analysis.core.util.TrendChartType;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
- * Controls the live cycle of the analysis results in a job. This action persists the results of a build and displays a
- * summary on the build page. The actual visualization of the results is defined in the matching {@code
- * summary.jelly} file. This action also provides access to the static analysis details: these are rendered using a new
- * {@link IssuesDetail} instance.
+ * Controls the life cycle of the analysis results in a job. This action persists the results of a build and displays a
+ * summary on the build page. The actual visualization of the results is defined in the matching {@code summary.jelly}
+ * file. This action also provides access to the static analysis details: these are rendered using a new {@link
+ * IssuesDetail} instance.
  *
  * @author Ullrich Hafner
  */
+@SuppressWarnings("ClassFanOutComplexity")
 @SuppressFBWarnings(value = "SE", justification = "transient field owner ist restored using a Jenkins callback")
 public class ResultAction implements HealthReportingAction, LastBuildAction, RunAction2, StaplerProxy, Serializable {
     private static final long serialVersionUID = 6683647181785654908L;
@@ -160,7 +161,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
     @Whitelisted
     @Override
     public String getDisplayName() {
-        return getLabelProvider().getRawLinkName();
+        return getLabelProvider().getLinkName();
     }
 
     @Override
@@ -193,6 +194,10 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
     public HealthReport getBuildHealth() {
         return new HealthReportBuilder().computeHealth(healthDescriptor, getLabelProvider(),
                 getResult().getSizePerSeverity());
+    }
+
+    HealthDescriptor getHealthDescriptor() {
+        return healthDescriptor;
     }
 
     @Override
@@ -275,9 +280,22 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      * Returns a summary message of the static analysis run. This message is shown in the 'summary.jelly' view.
      *
      * @return summary message (HTML)
+     * @deprecated replaced by {@link #getSummaryModel()}
      */
+    @Deprecated
     public String getSummary() {
         return new Summary(getLabelProvider(), getResult()).create();
+    }
+
+    /**
+     * Returns the model for the summary of the static analysis run. This model is used as input in the 'summary.jelly'
+     * view.
+     *
+     * @return model to build the summary message on the client side
+     */
+    @SuppressWarnings("unused") // Called by jelly view
+    public SummaryModel getSummaryModel() {
+        return new SummaryModel(getLabelProvider(), getResult());
     }
 
     /**

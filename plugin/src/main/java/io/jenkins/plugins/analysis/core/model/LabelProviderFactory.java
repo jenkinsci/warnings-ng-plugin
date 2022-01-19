@@ -8,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 
-import hudson.DescriptorExtensionList;
 import hudson.ExtensionPoint;
 
 import io.jenkins.plugins.analysis.core.model.Tool.ToolDescriptor;

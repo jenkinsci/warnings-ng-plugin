@@ -4,6 +4,8 @@ import org.junit.Test;
 
 import com.google.inject.Inject;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import org.jenkinsci.test.acceptance.docker.DockerContainer;
 import org.jenkinsci.test.acceptance.docker.DockerContainerHolder;
 import org.jenkinsci.test.acceptance.docker.fixtures.JavaGitContainer;
@@ -19,6 +21,7 @@ import org.jenkinsci.test.acceptance.po.FreeStyleJob;
 import org.jenkinsci.test.acceptance.po.Slave;
 
 import io.jenkins.plugins.analysis.warnings.AnalysisResult.Tab;
+import io.jenkins.plugins.analysis.warnings.AnalysisSummary.QualityGateResult;
 import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateBuildResult;
 import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateType;
 
@@ -44,6 +47,7 @@ import static io.jenkins.plugins.analysis.warnings.Assertions.*;
  */
 @WithPlugins("warnings-ng")
 @SuppressWarnings({"checkstyle:ClassFanOutComplexity", "PMD.SystemPrintln", "PMD.ExcessiveImports"})
+@SuppressFBWarnings("BC")
 public class WarningsPluginUiTest extends UiTest {
     private static final String SOURCE_VIEW_FOLDER = "/source-view/";
 
@@ -64,6 +68,9 @@ public class WarningsPluginUiTest extends UiTest {
     @Inject
     private DockerContainerHolder<JavaGitContainer> dockerContainer;
 
+    /**
+     * Verifies that static analysise results are correctly shown when the job is part of a folder.
+     */
     @Test
     public void shouldRunInFolder() {
         Folder folder = jenkins.jobs.create(Folder.class, "singleSummary");
@@ -104,17 +111,14 @@ public class WarningsPluginUiTest extends UiTest {
         Build referenceBuild = buildJob(job).shouldBeUnstable();
         referenceBuild.open();
 
-        assertThat(new AnalysisSummary(referenceBuild, CHECKSTYLE_ID)).isNotDisplayed();
-        assertThat(new AnalysisSummary(referenceBuild, PMD_ID)).isNotDisplayed();
-        assertThat(new AnalysisSummary(referenceBuild, FINDBUGS_ID)).isNotDisplayed();
-
         AnalysisSummary referenceSummary = new AnalysisSummary(referenceBuild, ANALYSIS_ID);
-        assertThat(referenceSummary).isDisplayed()
-                .hasTitleText("Static Analysis: 4 warnings")
-                .hasAggregation("FindBugs, CPD, CheckStyle, PMD")
+        assertThat(referenceSummary)
+                .hasTitleText("Static Analysis: 4 warnings (from 4 analyses)")
+                .hasTools(FINDBUGS_TOOL, CPD_TOOL, CHECKSTYLE_TOOL, PMD_TOOL)
                 .hasNewSize(0)
                 .hasFixedSize(0)
-                .hasReferenceBuild(0);
+                .hasReferenceBuild(0)
+                .hasQualityGateResult(QualityGateResult.UNSTABLE);
 
         reconfigureJobWithResource(job, "build_status_test/build_02");
 
@@ -123,12 +127,13 @@ public class WarningsPluginUiTest extends UiTest {
         build.open();
 
         AnalysisSummary analysisSummary = new AnalysisSummary(build, ANALYSIS_ID);
-        assertThat(analysisSummary).isDisplayed()
-                .hasTitleText("Static Analysis: 25 warnings")
-                .hasAggregation("FindBugs, CPD, CheckStyle, PMD")
+        assertThat(analysisSummary)
+                .hasTitleText("Static Analysis: 25 warnings (from 4 analyses)")
+                .hasTools(FINDBUGS_TOOL, CPD_TOOL, CHECKSTYLE_TOOL, PMD_TOOL)
                 .hasNewSize(23)
                 .hasFixedSize(2)
-                .hasReferenceBuild(1);
+                .hasReferenceBuild(1)
+                .hasQualityGateResult(QualityGateResult.FAILED);
 
         AnalysisResult result = analysisSummary.openOverallResult();
         assertThat(result).hasActiveTab(Tab.TOOLS).hasTotal(25)
@@ -158,8 +163,8 @@ public class WarningsPluginUiTest extends UiTest {
         AnalysisResult resultPage = new AnalysisResult(build, "checkstyle");
         resultPage.open();
 
-        IssuesDetailsTable issuesTable = resultPage.openIssuesTable();
-        assertThat(issuesTable).hasSize(1);
+        IssuesTable issuesTable = resultPage.openIssuesTable();
+        assertThat(issuesTable.getSize()).isEqualTo(1);
     }
 
     /**
@@ -167,12 +172,13 @@ public class WarningsPluginUiTest extends UiTest {
      */
     @Test
     @WithPlugins("maven-plugin")
+    @SuppressWarnings("SystemOut")
     public void shouldShowMavenWarningsInMavenProject() {
         MavenModuleSet job = createMavenProject();
         copyResourceFilesToWorkspace(job, SOURCE_VIEW_FOLDER + "pom.xml");
 
         IssuesRecorder recorder = job.addPublisher(IssuesRecorder.class);
-        recorder.setToolWithPattern("Maven", "");
+        recorder.setToolWithPattern(MAVEN_TOOL, "");
         recorder.setEnabledForFailure(true);
 
         job.save();
@@ -186,8 +192,8 @@ public class WarningsPluginUiTest extends UiTest {
         build.open();
 
         AnalysisSummary summary = new AnalysisSummary(build, MAVEN_ID);
-        assertThat(summary).isDisplayed()
-                .hasTitleText("Maven: 4 warnings")
+        assertThat(summary)
+                .hasTitleText("Maven: 5 warnings")
                 .hasNewSize(0)
                 .hasFixedSize(0)
                 .hasReferenceBuild(0);
@@ -197,9 +203,9 @@ public class WarningsPluginUiTest extends UiTest {
                 .hasTotal(4)
                 .hasOnlyAvailableTabs(Tab.MODULES, Tab.TYPES, Tab.ISSUES);
 
-        IssuesDetailsTable issuesTable = mavenDetails.openIssuesTable();
+        IssuesTable issuesTable = mavenDetails.openIssuesTable();
 
-        DefaultIssuesTableRow firstRow = issuesTable.getRowAs(0, DefaultIssuesTableRow.class);
+        IssuesTableRow firstRow = issuesTable.getRow(0);
         ConsoleLogView sourceView = firstRow.openConsoleLog();
         assertThat(sourceView).hasTitle("Console Details")
                 .hasHighlightedText("[WARNING]\n"
@@ -213,7 +219,7 @@ public class WarningsPluginUiTest extends UiTest {
     }
 
     /**
-     * Verifies that warnings can be parsed on a agent as well.
+     * Verifies that warnings can be parsed on an agent as well.
      */
     @Test
     @WithDocker
@@ -229,11 +235,13 @@ public class WarningsPluginUiTest extends UiTest {
         build.open();
 
         AnalysisSummary summary = new AnalysisSummary(build, "checkstyle");
-        assertThat(summary).isDisplayed()
+        assertThat(summary)
                 .hasTitleText("CheckStyle: 4 warnings")
                 .hasNewSize(0)
                 .hasFixedSize(0)
                 .hasReferenceBuild(0);
+
+        getDockerContainer().close();
     }
 
     private FreeStyleJob createFreeStyleJobForDockerAgent(final Slave dockerAgent, final String... resourcesToCopy) {
@@ -259,6 +267,7 @@ public class WarningsPluginUiTest extends UiTest {
      *
      * @return the new agent ready for new builds
      */
+    @SuppressWarnings("PMD.CloseResource")
     private DumbSlave createDockerAgent() {
         DumbSlave agent = jenkins.slaves.create(DumbSlave.class);
 

@@ -9,7 +9,6 @@ import org.apache.commons.lang3.StringUtils;
  * @author Oliver Scholz
  */
 public enum StatisticProperties {
-
     TOTAL("Total (any severity)", StringUtils.EMPTY),
     TOTAL_ERROR("Total (errors only)", "error"),
     TOTAL_HIGH("Total (severity high only)", "high"),
@@ -39,9 +38,9 @@ public enum StatisticProperties {
     }
 
     /**
-     * Returns the localized human readable name of this instance.
+     * Returns the localized human-readable name of this instance.
      *
-     * @return human readable name
+     * @return human-readable name
      */
     public String getDisplayName() {
         return displayName;

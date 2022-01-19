@@ -91,6 +91,8 @@ class BlamesModelTest extends AbstractDetailsModelTest {
         BlamesModel model = createModel(report, blames);
 
         BlamesRow actualRow = model.getRow(issue);
+        assertThat(actualRow.getDescription()).isEqualTo(EXPECTED_DESCRIPTION);
+        
         assertThat(actualRow).hasDescription(EXPECTED_DESCRIPTION)
                 .hasAge("1")
                 .hasCommit(BlamesModel.UNDEFINED)

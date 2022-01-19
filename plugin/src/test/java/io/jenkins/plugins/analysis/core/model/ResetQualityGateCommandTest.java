@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.core.model;
 
+import java.util.Collections;
 import java.util.Optional;
 
 import org.assertj.core.util.Lists;
@@ -81,7 +82,7 @@ class ResetQualityGateCommandTest {
         FreeStyleBuild selectedBuild = mock(FreeStyleBuild.class);
         when(selectedBuild.getActions(ResetReferenceAction.class)).thenReturn(
                 Lists.list(new ResetReferenceAction("other")));
-        when(selectedBuild.getActions(ResultAction.class)).thenReturn(Lists.emptyList());
+        when(selectedBuild.getActions(ResultAction.class)).thenReturn(Collections.emptyList());
 
         assertThat(command.isEnabled(selectedBuild, ID)).isFalse();
     }
@@ -107,7 +108,7 @@ class ResetQualityGateCommandTest {
         FreeStyleBuild selectedBuild = attachReferenceBuild(true, resultAction);
         FreeStyleBuild next = mock(FreeStyleBuild.class);
         when(selectedBuild.getNextBuild()).thenReturn(next);
-        
+
         assertThat(command.isEnabled(selectedBuild, ID)).isFalse();
     }
 

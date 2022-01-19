@@ -111,9 +111,9 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
     }
 
     /**
-     * Returns the human readable name of the quality gate.
+     * Returns the human-readable name of the quality gate.
      *
-     * @return the human readable name
+     * @return the human-readable name
      */
     public String getName() {
         return type.getDisplayName();
@@ -164,7 +164,7 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
         /** The build will be marked as failed. */
         FAILURE(QualityGateStatus.FAILED);
 
-        private QualityGateStatus status;
+        private final QualityGateStatus status;
 
         QualityGateResult(final QualityGateStatus status) {
             this.status = status;
@@ -188,7 +188,7 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
      *
      * @return the list of quality gates
      */
-    @SuppressWarnings({"deprecation", "PMD.NPathComplexity", "PMD.CyclomaticComplexity"})
+    @SuppressWarnings({"deprecation", "PMD.NPathComplexity", "PMD.CyclomaticComplexity", "PMD.CognitiveComplexity"})
     public static List<QualityGate> map(@CheckForNull final Thresholds thresholds) {
         if (thresholds == null) {
             return Collections.emptyList();
@@ -279,9 +279,9 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
         }
 
         /**
-         * Returns the localized human readable name of this type.
+         * Returns the localized human-readable name of this type.
          *
-         * @return human readable name
+         * @return human-readable name
          */
         public String getDisplayName() {
             return properties.getDisplayName();

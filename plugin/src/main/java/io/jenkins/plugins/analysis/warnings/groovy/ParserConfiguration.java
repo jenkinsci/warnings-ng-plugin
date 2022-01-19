@@ -8,8 +8,10 @@ import edu.hm.hafner.util.NoSuchElementException;
 import edu.hm.hafner.util.VisibleForTesting;
 
 import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.QueryParameter;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
+import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import jenkins.model.GlobalConfiguration;
 import jenkins.model.Jenkins;
@@ -31,6 +33,7 @@ import io.jenkins.plugins.util.JenkinsFacade;
 @Symbol("warningsParsers")
 public class ParserConfiguration extends GlobalConfigurationItem {
     private List<GroovyParser> parsers = new ArrayList<>();
+    private boolean consoleLogScanningPermitted = false;
 
     /**
      * Creates the Groovy parser configuration for the warnings plugins.
@@ -82,6 +85,50 @@ public class ParserConfiguration extends GlobalConfigurationItem {
         this.parsers = new ArrayList<>(parsers);
 
         save();
+    }
+
+    /**
+     * Says if the admin has permitted groovy parsers to scan a build's console log.
+     *
+     * @return true if groovy parsers can scan the console, false if they are
+     *         limited to only scanning files on the build node.
+     */
+    public boolean isConsoleLogScanningPermitted() {
+        return consoleLogScanningPermitted;
+    }
+
+    /**
+     * Sets whether or not the admin has permitted groovy parsers to scan a build's
+     * console log.
+     *
+     * @param consoleLogScanningPermitted true if groovy parsers can scan the
+     *                                    console, false if they are limited to only
+     *                                    scanning files on the build node.
+     */
+    @DataBoundSetter
+    public void setConsoleLogScanningPermitted(final boolean consoleLogScanningPermitted) {
+        this.consoleLogScanningPermitted = consoleLogScanningPermitted;
+
+        save();
+    }
+
+    /**
+     * Called by jelly to validate the configured value that could be passed to
+     * {@link #setConsoleLogScanningPermitted(boolean)}.
+     * 
+     * @param value The current value.
+     * @return {@link FormValidation#ok()} if all is well, else a warning or error.
+     */
+    // Maintenance note: This is NOT annotated with @POST because it does not leak secrets.
+    // Similarly, there's no need to permission-check either.
+    // If it is ever changed to do anything non-trivial that might leak secrets then
+    // it must be changed to @POST and checkMethod="post" be added to the checkbox.
+    // There is a matching entry in archunit_ignore_patterns.txt to permit this.
+    public FormValidation doCheckConsoleLogScanningPermitted(@QueryParameter final boolean value) {
+        if (value) {
+            return FormValidation.warning(Messages.ParserConfiguration_consoleLogScanningPermitted());
+        }
+        return FormValidation.ok();
     }
 
     /**

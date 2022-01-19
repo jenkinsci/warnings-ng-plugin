@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
 import java.util.List;
-
 import java.util.Map;
 
 import org.junit.Test;
@@ -16,10 +15,10 @@ import org.jenkinsci.test.acceptance.po.FreeStyleJob;
 import org.jenkinsci.test.acceptance.po.WorkflowJob;
 
 import io.jenkins.plugins.analysis.warnings.AnalysisResult.Tab;
-
-import static io.jenkins.plugins.analysis.warnings.Assertions.assertThat;
-
 import io.jenkins.plugins.analysis.warnings.DashboardTable.DashboardTableEntry;
+
+import static io.jenkins.plugins.analysis.warnings.Assertions.*;
+import static io.jenkins.plugins.analysis.warnings.IssuesColumnConfiguration.*;
 
 /**
  * Smoke tests for the Warnings Next Generation Plugin. These tests are invoked during the validation of pull requests
@@ -30,6 +29,12 @@ import io.jenkins.plugins.analysis.warnings.DashboardTable.DashboardTableEntry;
  */
 @WithPlugins({"warnings-ng", "dashboard-view"})
 public class SmokeTests extends UiTest {
+    private static final String CHECKSTYLE_ICON = "/checkstyle-24x24.png";
+    private static final String FINDBUGS_ICON = "/findbugs-24x24.png";
+    private static final String ANALYSIS_ICON = "/analysis.svg";
+    private static final String DRY_ICON = "/dry.svg";
+    private static final String PMD_ICON = "/pmd-24x24.png";
+
     /**
      * Runs a pipeline with all tools two times. Verifies the analysis results in several views. Additionally, verifies
      * the expansion of tokens with the token-macro plugin.
@@ -75,47 +80,13 @@ public class SmokeTests extends UiTest {
         verifyDetailsTab(build);
 
         jenkins.open();
-        verifyIssuesColumnResults(build, job.name);
 
-        // Dashboard UI-Tests
+        verifyColumnCount(build);
+
         DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, true);
         DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
 
         verifyDashboardTablePortlet(dashboardTable, job.name);
-    }
-
-    private void verifyDashboardTablePortlet(final DashboardTable dashboardTable, final String jobName) {
-        assertThat(dashboardTable.getHeaders()).containsExactly(
-                "Job", "/checkstyle-24x24.png", "/dry-24x24.png", "/findbugs-24x24.png", "/analysis-24x24.png", "/pmd-24x24.png");
-
-        Map<String, Map<String, DashboardTableEntry>> table = dashboardTable.getTable();
-        assertThat(table.get(jobName).get("/findbugs-24x24.png")).hasWarningsCount(0);
-        assertThat(table.get(jobName).get("/checkstyle-24x24.png")).hasWarningsCount(3);
-        assertThat(table.get(jobName).get("/analysis-24x24.png")).hasWarningsCount(8);
-        assertThat(table.get(jobName).get("/pmd-24x24.png")).hasWarningsCount(2);
-        assertThat(table.get(jobName).get("/dry-24x24.png")).hasWarningsCount(20);
-    }
-
-    private void createRecordIssuesStep(final WorkflowJob job, final int buildNumber) {
-        job.script.set("node {\n"
-                + createReportFilesStep(job, buildNumber)
-                + "recordIssues tool: checkStyle(pattern: '**/checkstyle*')\n"
-                + "recordIssues tool: pmdParser(pattern: '**/pmd*')\n"
-                + "recordIssues tools: [cpd(pattern: '**/cpd*', highThreshold:8, normalThreshold:3), findBugs()], aggregatingResults: 'false' \n"
-                + "recordIssues tool: pep8(pattern: '**/" + PEP8_FILE + "')\n"
-                + "def total = tm('${ANALYSIS_ISSUES_COUNT}')\n"
-                + "echo '[total=' + total + ']' \n"
-                + "def checkstyle = tm('${ANALYSIS_ISSUES_COUNT, tool=\"checkstyle\"}')\n"
-                + "echo '[checkstyle=' + checkstyle + ']' \n"
-                + "def pmd = tm('${ANALYSIS_ISSUES_COUNT, tool=\"pmd\"}')\n"
-                + "echo '[pmd=' + pmd + ']' \n"
-                + "def pep8 = tm('${ANALYSIS_ISSUES_COUNT, tool=\"pep8\"}')\n"
-                + "echo '[pep8=' + pep8 + ']' \n"
-                + "def newSize = tm('${ANALYSIS_ISSUES_COUNT, type=\"NEW\"}')\n"
-                + "echo '[new=' + newSize + ']' \n"
-                + "def fixedSize = tm('${ANALYSIS_ISSUES_COUNT, type=\"FIXED\"}')\n"
-                + "echo '[fixed=' + fixedSize + ']' \n"
-                + "}");
     }
 
     /**
@@ -149,13 +120,52 @@ public class SmokeTests extends UiTest {
         verifyDetailsTab(build);
 
         folder.open();
-        verifyIssuesColumnResults(build, job.name);
 
-        // Dashboard UI-Tests
-        DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(folder, false, true);
+        verifyColumnCount(build);
+
+        DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, true, folder);
         DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
 
         verifyDashboardTablePortlet(dashboardTable, String.format("%s » %s", folder.name, job.name));
+    }
+
+    private void verifyColumnCount(final Build build) {
+        IssuesColumn column = new IssuesColumn(build, DEFAULT_ISSUES_COLUMN_NAME);
+        assertThat(column).hasTotalCount("33");
+    }
+
+    private void verifyDashboardTablePortlet(final DashboardTable dashboardTable, final String jobName) {
+        assertThat(dashboardTable.getHeaders()).containsExactly(
+                "Job", CHECKSTYLE_ICON, DRY_ICON, FINDBUGS_ICON, ANALYSIS_ICON, PMD_ICON);
+
+        Map<String, Map<String, DashboardTableEntry>> table = dashboardTable.getTable();
+        assertThat(table.get(jobName).get(FINDBUGS_ICON)).hasWarningsCount(0);
+        assertThat(table.get(jobName).get(CHECKSTYLE_ICON)).hasWarningsCount(3);
+        assertThat(table.get(jobName).get(ANALYSIS_ICON)).hasWarningsCount(8);
+        assertThat(table.get(jobName).get(PMD_ICON)).hasWarningsCount(2);
+        assertThat(table.get(jobName).get(DRY_ICON)).hasWarningsCount(20);
+    }
+
+    private void createRecordIssuesStep(final WorkflowJob job, final int buildNumber) {
+        job.script.set("node {\n"
+                + createReportFilesStep(job, buildNumber)
+                + "recordIssues(tool: checkStyle(pattern: '**/checkstyle*', name: '" + CHECK_STYLE_NAME + "'))\n"
+                + "recordIssues tool: pmdParser(pattern: '**/pmd*')\n"
+                + "recordIssues tools: [cpd(pattern: '**/cpd*', highThreshold:8, normalThreshold:3), findBugs()], aggregatingResults: 'false' \n"
+                + "recordIssues tool: pep8(pattern: '**/" + PEP8_FILE + "')\n"
+                + "def total = tm('${ANALYSIS_ISSUES_COUNT}')\n"
+                + "echo '[total=' + total + ']' \n"
+                + "def checkstyle = tm('${ANALYSIS_ISSUES_COUNT, tool=\"checkstyle\"}')\n"
+                + "echo '[checkstyle=' + checkstyle + ']' \n"
+                + "def pmd = tm('${ANALYSIS_ISSUES_COUNT, tool=\"pmd\"}')\n"
+                + "echo '[pmd=' + pmd + ']' \n"
+                + "def pep8 = tm('${ANALYSIS_ISSUES_COUNT, tool=\"pep8\"}')\n"
+                + "echo '[pep8=' + pep8 + ']' \n"
+                + "def newSize = tm('${ANALYSIS_ISSUES_COUNT, type=\"NEW\"}')\n"
+                + "echo '[new=' + newSize + ']' \n"
+                + "def fixedSize = tm('${ANALYSIS_ISSUES_COUNT, type=\"FIXED\"}')\n"
+                + "echo '[fixed=' + fixedSize + ']' \n"
+                + "}");
     }
 
     private void verifyDetailsTab(final Build build) {
@@ -165,8 +175,9 @@ public class SmokeTests extends UiTest {
         resultPage.open();
         assertThat(resultPage).hasOnlyAvailableTabs(Tab.ISSUES, Tab.TYPES, Tab.CATEGORIES);
         PropertyDetailsTable categoriesDetailsTable = resultPage.openPropertiesTable(Tab.CATEGORIES);
-        assertThat(categoriesDetailsTable).hasHeaders("Category", "Total", "Distribution");
-        assertThat(categoriesDetailsTable).hasSize(2).hasTotal(2);
+        assertThat(categoriesDetailsTable.getHeaders()).containsOnly("Category", "Total", "New", "Distribution");
+        assertThat(categoriesDetailsTable.getSize()).isEqualTo(2);
+        assertThat(categoriesDetailsTable.getTotal()).isEqualTo(2);
 
         WebElement categoryPaginate = resultPage.getPaginateElementByActiveTab();
         List<WebElement> categoryPaginateButtons = categoryPaginate.findElements(By.cssSelector("ul li"));
@@ -181,13 +192,6 @@ public class SmokeTests extends UiTest {
                     "/build_status_test/build_0" + build + "/" + fileName).replace("\\", "\\\\"));
         }
         return resourceCopySteps;
-    }
-
-    private void verifyIssuesColumnResults(final Build build, final String jobName) {
-        IssuesColumn column = new IssuesColumn(build, jobName);
-
-        String issueCount = column.getIssuesCountTextFromTable();
-        assertThat(issueCount).isEqualTo("33");
     }
 
     @Override

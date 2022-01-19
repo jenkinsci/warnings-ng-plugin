@@ -36,7 +36,6 @@ public class FindBugs extends AnalysisModelParser {
                         getUseRankAsPriority() ? "RANK" : "CONFIDENCE")};
     }
 
-
     @SuppressWarnings("PMD.BooleanGetMethodName")
     public boolean getUseRankAsPriority() {
         return useRankAsPriority;

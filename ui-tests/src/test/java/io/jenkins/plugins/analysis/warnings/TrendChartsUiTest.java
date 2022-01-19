@@ -2,11 +2,9 @@ package io.jenkins.plugins.analysis.warnings;
 
 import org.junit.Test;
 
-import org.jenkinsci.test.acceptance.junit.AbstractJUnitTest;
 import org.jenkinsci.test.acceptance.junit.WithPlugins;
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.FreeStyleJob;
-import org.jenkinsci.test.acceptance.po.Job;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 import static org.assertj.core.api.Assertions.*;
@@ -17,9 +15,8 @@ import static org.assertj.core.api.Assertions.*;
  * @author Mitja Oldenbourg
  */
 @WithPlugins("warnings-ng")
-public class TrendChartsUiTest extends AbstractJUnitTest {
-    private static final String WARNINGS_PLUGIN_PREFIX = "/";
-    private static final String SOURCE_VIEW_FOLDER = WARNINGS_PLUGIN_PREFIX + "trend_charts_tests/";
+public class TrendChartsUiTest extends UiTest {
+    private static final String SOURCE_VIEW_FOLDER = "trend_charts_tests/";
     private static final String SEVERITIES_TREND_CHART = "severities-trend-chart";
     private static final String TOOLS_TREND_CHART = "tools-trend-chart";
     private static final String NEW_VERSUS_FIXED_TREND_CHART = "new-versus-fixed-trend-chart";
@@ -29,12 +26,12 @@ public class TrendChartsUiTest extends AbstractJUnitTest {
      */
     @Test
     public void shouldDisplayDifferentTrendChartsOnClick() {
-        FreeStyleJob job = createFreeStyleJob("build_01");
+        FreeStyleJob job = createFreeStyleJob(SOURCE_VIEW_FOLDER + "build_01");
         job.addPublisher(IssuesRecorder.class,
-                recorder -> recorder.setToolWithPattern("Java", "**/*.txt"));
+                recorder -> recorder.setToolWithPattern(JAVA_COMPILER, "**/*.txt"));
         job.save();
 
-        Build build = shouldBuildJobSuccessfully(job);
+        Build build = buildSuccessfully(job);
 
         AnalysisResult analysisResultPage = new AnalysisResult(build, "java");
         analysisResultPage.open();
@@ -145,31 +142,16 @@ public class TrendChartsUiTest extends AbstractJUnitTest {
                 );
     }
 
-    private FreeStyleJob createFreeStyleJob(final String... resourcesToCopy) {
-        FreeStyleJob job = jenkins.jobs.create(FreeStyleJob.class);
-        ScrollerUtil.hideScrollerTabBar(driver);
-        for (String resource : resourcesToCopy) {
-            job.copyResource(SOURCE_VIEW_FOLDER + resource);
-        }
-        return job;
-    }
-
-    private Build shouldBuildJobSuccessfully(final Job job) {
-        Build build = job.startBuild().waitUntilFinished();
-        assertThat(build.isSuccess()).isTrue();
-        return build;
-    }
-
     private void reconfigureJobWithResource(final FreeStyleJob job) {
-        job.configure(() -> job.copyResource(SOURCE_VIEW_FOLDER + "build_02"));
+        job.configure(() -> job.copyResource("/" + SOURCE_VIEW_FOLDER + "build_02"));
     }
 
     private Build buildFreeStyleJobTwiceWithJavacIssues() {
-        FreeStyleJob job = createFreeStyleJob("build_01");
-        job.addPublisher(IssuesRecorder.class, recorder -> recorder.setToolWithPattern("Java", "**/*.txt"));
+        FreeStyleJob job = createFreeStyleJob(SOURCE_VIEW_FOLDER + "build_01");
+        job.addPublisher(IssuesRecorder.class, recorder -> recorder.setToolWithPattern(JAVA_COMPILER, "**/*.txt"));
         job.save();
-        shouldBuildJobSuccessfully(job);
+        buildSuccessfully(job);
         reconfigureJobWithResource(job);
-        return shouldBuildJobSuccessfully(job);
+        return buildSuccessfully(job);
     }
 }

@@ -2,7 +2,6 @@ package io.jenkins.plugins.analysis.warnings;
 
 import org.junit.Test;
 
-import org.jenkinsci.test.acceptance.junit.AbstractJUnitTest;
 import org.jenkinsci.test.acceptance.junit.WithPlugins;
 import org.jenkinsci.test.acceptance.po.WorkflowJob;
 
@@ -18,7 +17,7 @@ import static io.jenkins.plugins.analysis.warnings.Assertions.*;
  * @author Lion Kosiuk
  */
 @WithPlugins("warnings-ng")
-public class SnippetGeneratorUiTest extends AbstractJUnitTest {
+public class SnippetGeneratorUiTest extends UiTest {
     /**
      * Tests the default configuration of the RecordIssuesStep.
      */
@@ -26,7 +25,7 @@ public class SnippetGeneratorUiTest extends AbstractJUnitTest {
     public void defaultConfigurationTest() {
         SnippetGenerator snippetGenerator = createSnippetGenerator();
 
-        snippetGenerator.selectRecordIssues().setTool("Java");
+        snippetGenerator.selectRecordIssues().setTool(JAVA_COMPILER);
 
         String script = snippetGenerator.generateScript();
 
@@ -40,13 +39,14 @@ public class SnippetGeneratorUiTest extends AbstractJUnitTest {
     public void defaultConfigurationExplicitTest() {
         SnippetGenerator snippetGenerator = createSnippetGenerator();
 
-        snippetGenerator.selectRecordIssues().setTool("Java")
+        snippetGenerator.selectRecordIssues()
                 .setAggregatingResults(false)
                 .setSkipBlames(false)
                 .setEnabledForFailure(false)
                 .setIgnoreFailedBuilds(true)
                 .setIgnoreQualityGate(false)
-                .setSourceCodeEncoding("");
+                .setSourceCodeEncoding("")
+                .setTool(JAVA_COMPILER);
 
         String script = snippetGenerator.generateScript();
 
@@ -60,14 +60,14 @@ public class SnippetGeneratorUiTest extends AbstractJUnitTest {
     public void antiDefaultConfigurationExplicitTest() {
         SnippetGenerator snippetGenerator = createSnippetGenerator();
 
-        snippetGenerator
-                .selectRecordIssues().setToolWithPattern("Java", "firstText")
+        snippetGenerator.selectRecordIssues()
                 .setAggregatingResults(true)
                 .setSkipBlames(true)
                 .setEnabledForFailure(true)
                 .setIgnoreFailedBuilds(false)
                 .setIgnoreQualityGate(true)
-                .setSourceCodeEncoding("otherText");
+                .setSourceCodeEncoding("otherText")
+                .setToolWithPattern(JAVA_COMPILER, "firstText");
 
         String script = snippetGenerator.generateScript();
 
@@ -91,8 +91,9 @@ public class SnippetGeneratorUiTest extends AbstractJUnitTest {
     public void configureHealthReportTest() {
         SnippetGenerator snippetGenerator = createSnippetGenerator();
 
-        snippetGenerator.selectRecordIssues().setTool("Java")
-                .setHealthReport(1, 9, "LOW");
+        snippetGenerator.selectRecordIssues()
+                .setHealthReport(1, 9, "LOW")
+                .setTool(JAVA_COMPILER);
 
         String script = snippetGenerator.generateScript();
 
@@ -107,7 +108,6 @@ public class SnippetGeneratorUiTest extends AbstractJUnitTest {
         SnippetGenerator snippetGenerator = createSnippetGenerator();
 
         snippetGenerator.selectRecordIssues()
-                .setToolWithPattern("Java", "firstText")
                 .setAggregatingResults(true)
                 .setSkipBlames(true)
                 .setEnabledForFailure(true)
@@ -116,7 +116,8 @@ public class SnippetGeneratorUiTest extends AbstractJUnitTest {
                 .setIgnoreQualityGate(true)
                 .setSourceCodeEncoding("otherText")
                 .addIssueFilter("Exclude types", "*toExclude*")
-                .addQualityGateConfiguration(1, QualityGateType.NEW, QualityGateBuildResult.FAILED);
+                .addQualityGateConfiguration(1, QualityGateType.NEW, QualityGateBuildResult.FAILED)
+                .setToolWithPattern(JAVA_COMPILER, "firstText");
 
         String script = snippetGenerator.generateScript();
 
@@ -159,6 +160,8 @@ public class SnippetGeneratorUiTest extends AbstractJUnitTest {
         WorkflowJob job = createWorkflowJob();
         SnippetGenerator snippetGenerator = new SnippetGenerator(job);
         snippetGenerator.open();
+        elasticSleep(2000);
+
         return snippetGenerator;
     }
 }

@@ -1,0 +1,55 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:c="/charts" xmlns:st="jelly:stapler">
+
+  <st:adjunct includes="io.jenkins.plugins.echarts"/>
+
+  <!-- Trend chart configuration that adds a selection of the trend chart type. -->
+  <c:trend-setup suffix="warnings">
+    <div class="mb-3">
+      <label class="form-label fw-bold">
+        Type of chart
+      </label>
+    </div>
+    <div class="mb-3">
+      <input class="form-check-input" type="radio" name="chartType-warnings" id="severity-warnings" checked="true"/>
+      <label class="form-check-label" for="severity-warnings">
+        Issues by Severity
+      </label>
+    </div>
+    <div class="mb-3">
+      <input class="form-check-input" type="radio" name="chartType-warnings" id="health-warnings"/>
+      <label class="form-check-label" for="health-warnings">
+        Issues and Health
+      </label>
+    </div>
+    <div class="mb-3">
+      <input class="form-check-input" type="radio" name="chartType-warnings" id="new-warnings"/>
+      <label class="form-check-label" for="new-warnings">
+        New and fixed issues
+      </label>
+    </div>
+    <div class="mb-3">
+      <label class="form-label fw-bold">
+        General configuration
+      </label>
+    </div>
+  </c:trend-setup>
+
+  <script>
+    function fillWarnings(trendConfiguration, jsonConfiguration) {
+      const type = jsonConfiguration['chartType'];
+      if (type) {
+        trendConfiguration.find('#' + type + '-warnings').prop('checked', true);
+      }
+    }
+
+    function saveWarnings(trendConfiguration) {
+      return {
+        'chartType': trendConfiguration.find('input[name=chartType-warnings]:checked').attr('id').replace('-warnings', '')
+      };
+    }
+
+    echartsJenkinsApi.configureTrend('warnings', fillWarnings, saveWarnings)
+  </script>
+
+</j:jelly>

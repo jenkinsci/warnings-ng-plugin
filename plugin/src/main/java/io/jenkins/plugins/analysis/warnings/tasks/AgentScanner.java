@@ -16,9 +16,9 @@ import hudson.remoting.VirtualChannel;
 import jenkins.MasterToSlaveFileCallable;
 
 import io.jenkins.plugins.analysis.core.util.FileFinder;
-import io.jenkins.plugins.analysis.core.util.ModelValidation;
 import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.CaseMode;
 import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.MatcherMode;
+import io.jenkins.plugins.prism.CharsetValidation;
 
 /**
  * Searches in the workspace for files matching the given include and exclude pattern and scans each file for open
@@ -86,7 +86,7 @@ class AgentScanner extends MasterToSlaveFileCallable<Report> {
         report.logInfo(scanner.getTaskTags());
         report.logInfo("Scanning all %d files for open tasks", fileNames.length);
         for (String fileName : fileNames) {
-            report.addAll(scanner.scan(root.resolve(fileName), getCharset()));
+            report.addAll(scanner.scan(root.resolve(fileName), getCharset()).get());
 
             if (Thread.interrupted()) {
                 throw new ParsingCanceledException();
@@ -101,7 +101,7 @@ class AgentScanner extends MasterToSlaveFileCallable<Report> {
     }
 
     private Charset getCharset() {
-        return new ModelValidation().getCharset(sourceCodeEncoding);
+        return new CharsetValidation().getCharset(sourceCodeEncoding);
     }
 
     private TaskScanner createTaskScanner() {

@@ -55,7 +55,7 @@ import io.jenkins.plugins.util.EnvironmentResolver;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 /** Provides a parser and customized messages for the Axivion Suite. */
-@SuppressWarnings({"PMD.ExcessiveImports", "PMD.DataClass"})
+@SuppressWarnings({"PMD.ExcessiveImports", "PMD.DataClass", "ClassFanOutComplexity"})
 public final class AxivionSuite extends Tool {
     private static final long serialVersionUID = 967222727302169818L;
     private static final String ID = "axivion-suite";
@@ -160,12 +160,13 @@ public final class AxivionSuite extends Tool {
      *
      * @return this
      */
+    @Override
     protected Object readResolve() {
         // field was added in 9.1.0
         if (namedFilter == null) {
             namedFilter = StringUtils.EMPTY;
         }
-        return this;
+        return super.readResolve();
     }
 
     @Override

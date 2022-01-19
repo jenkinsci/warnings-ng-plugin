@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.util.VisibleForTesting;
 
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -40,6 +41,24 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
     private String id = StringUtils.EMPTY;
     private String name = StringUtils.EMPTY;
 
+    private JenkinsFacade jenkins = new JenkinsFacade();
+
+    @VisibleForTesting
+    public void setJenkinsFacade(final JenkinsFacade jenkinsFacade) {
+        this.jenkins = jenkinsFacade;
+    }
+
+    /**
+     * Called after de-serialization to retain backward compatibility.
+     *
+     * @return this
+     */
+    protected Object readResolve() {
+        jenkins = new JenkinsFacade();
+
+        return this;
+    }
+
     /**
      * Overrides the default ID of the results. The ID is used as URL of the results and as identifier in UI elements.
      * If no ID is given, then the default ID is used, see corresponding {@link ToolDescriptor}.
@@ -51,6 +70,8 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
      */
     @DataBoundSetter
     public void setId(final String id) {
+        new ModelValidation().ensureValidId(id);
+
         this.id = id;
     }
 
@@ -122,7 +143,7 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
 
     @Override
     public ToolDescriptor getDescriptor() {
-        return (ToolDescriptor) super.getDescriptor();
+        return (ToolDescriptor) jenkins.getDescriptorOrDie(getClass());
     }
 
     /**
@@ -177,7 +198,8 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckId(@AncestorInPath final AbstractProject<?, ?> project, @QueryParameter final String id) {
+        public FormValidation doCheckId(@AncestorInPath final AbstractProject<?, ?> project,
+                @QueryParameter final String id) {
             if (!new JenkinsFacade().hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
@@ -245,9 +267,9 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
         }
 
         /**
-         * Returns whether post processing on the agent is enabled for this tool. If enabled, for all issues
-         * absolute paths, fingerprints, packages and modules will be detected. Additionally, all affected files
-         * will be saved in the build so that these files can be shown in the UI later on.,
+         * Returns whether post processing on the agent is enabled for this tool. If enabled, for all issues absolute
+         * paths, fingerprints, packages and modules will be detected. Additionally, all affected files will be saved in
+         * the build so that these files can be shown in the UI later on.,
          *
          * @return {@code true} if post processing is enabled, {@code false} otherwise
          */

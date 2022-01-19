@@ -13,10 +13,10 @@ import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.FileNameRenderer;
 import io.jenkins.plugins.analysis.core.model.IssuesDetail;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
-import io.jenkins.plugins.analysis.core.model.SourceDetail;
 import io.jenkins.plugins.analysis.core.steps.PublishIssuesStep;
 import io.jenkins.plugins.analysis.core.steps.ScanForIssuesStep;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
+import io.jenkins.plugins.prism.SourceCodeViewModel;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
@@ -61,7 +61,8 @@ public class StepsOnAgentITest extends IntegrationTestWithJenkinsPerTest {
         IssuesDetail target = (IssuesDetail) result.getOwner().getAction(ResultAction.class).getTarget();
         String sourceCodeUrl = new FileNameRenderer(result.getOwner()).getSourceCodeUrl(
                 result.getIssues().get(rowIndex));
-        SourceDetail dynamic = (SourceDetail) target.getDynamic(sourceCodeUrl.replaceAll("/#.*", ""), null, null);
+        SourceCodeViewModel dynamic = (SourceCodeViewModel) target.getDynamic(
+                sourceCodeUrl.replaceAll("/#.*", ""), null, null);
         return dynamic.getSourceCode();
     }
 

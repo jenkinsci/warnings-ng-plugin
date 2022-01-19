@@ -1,11 +1,11 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:f="/lib/form" xmlns:i="/issues">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:f="/lib/form" xmlns:l="/lib/layout" xmlns:i="/issues">
 
   <st:documentation>
     Provides all required input fields to publish issues.
   </st:documentation>
 
-  <i:hr title="${%Miscellaneous options}"/>
+  <i:hr title="${%Publishing Options}"/>
 
   <f:entry field="skipPublishingChecks">
     <f:checkbox title="${%title.skipPublishingChecks}" />
@@ -37,7 +37,7 @@
     <f:checkbox default="true" title="${%title.ignoreFailedBuilds}"/>
   </f:entry>
 
-  <i:hr title="${%Quality Gates}"/>
+  <i:hr title="${%Thresholds}"/>
 
   <f:entry title="${%Quality gates}" description="${%qualityGates.description}">
     <div id="qualityGates">
@@ -51,6 +51,16 @@
     </div>
   </f:entry>
 
-  <i:health/>
+  <f:block><l:icon alt="Healthy" class="icon-health-80plus icon-md"/></f:block>
+  <f:entry title="${%Healthy Threshold}" description="${%description.healthy}" field="healthy">
+    <i:number/>
+  </f:entry>
+  <f:block><l:icon alt="Healthy" class="icon-health-00to19 icon-md"/></f:block>
+  <f:entry title="${%Unhealthy Threshold}" description="${%description.unhealthy}" field="unhealthy">
+    <i:number/>
+  </f:entry>
+  <f:entry title="${%Health Severities}" description="${%description.health.severities}" field="minimumSeverity">
+    <f:select default="LOW"/>
+  </f:entry>
 
 </j:jelly>

@@ -32,11 +32,10 @@ import io.jenkins.plugins.util.JenkinsFacade;
 @SuppressWarnings("PMD.GodClass")
 public class ModelValidation {
     private static final Set<String> ALL_CHARSETS = Charset.availableCharsets().keySet();
-    private static final Pattern VALID_ID_PATTERN = Pattern.compile("\\p{Alnum}[\\p{Alnum}-_]*");
+    private static final Pattern VALID_ID_PATTERN = Pattern.compile("\\p{Alnum}[\\p{Alnum}-_.]*");
 
     @VisibleForTesting
     static final String NO_REFERENCE_JOB = "-";
-    static final String NO_REFERENCE_BUILD = "-";
 
     private final JenkinsFacade jenkins;
 
@@ -56,7 +55,9 @@ public class ModelValidation {
      * Returns all available character set names.
      *
      * @return all available character set names
+     * @deprecated moved to Prism API Plugin
      */
+    @Deprecated
     public ComboBoxModel getAllCharsets() {
         return new ComboBoxModel(ALL_CHARSETS);
     }
@@ -69,7 +70,9 @@ public class ModelValidation {
      *         identifier of the character set
      *
      * @return the default charset for the specified encoding string
+     * @deprecated moved to Prism API Plugin
      */
+    @Deprecated
     public Charset getCharset(@CheckForNull final String charset) {
         try {
             if (StringUtils.isNotBlank(charset)) {
@@ -92,7 +95,7 @@ public class ModelValidation {
      */
     public void ensureValidId(final String id) {
         if (!isValidId(id)) {
-            throw new IllegalArgumentException(String.format("An ID must be a valid URL, but '%s' is not.", id));
+            throw new IllegalArgumentException(createInvalidIdMessage(id));
         }
     }
 
@@ -108,7 +111,11 @@ public class ModelValidation {
         if (isValidId(id)) {
             return FormValidation.ok();
         }
-        return FormValidation.error(Messages.FieldValidator_Error_WrongIdFormat());
+        return FormValidation.error(createInvalidIdMessage(id));
+    }
+
+    static String createInvalidIdMessage(final String id) {
+        return Messages.FieldValidator_Error_WrongIdFormat(VALID_ID_PATTERN.pattern(), id);
     }
 
     private boolean isValidId(final String id) {
@@ -122,7 +129,9 @@ public class ModelValidation {
      *         the character encoding
      *
      * @return the validation result
+     * @deprecated moved to Prism API Plugin
      */
+    @Deprecated
     public FormValidation validateCharset(final String reportEncoding) {
         try {
             if (StringUtils.isBlank(reportEncoding) || Charset.isSupported(reportEncoding)) {
@@ -310,7 +319,9 @@ public class ModelValidation {
      *         the file pattern
      *
      * @return the validation result
+     * @deprecated moved to Prism API Plugin
      */
+    @Deprecated
     public FormValidation doCheckSourceDirectory(@AncestorInPath final AbstractProject<?, ?> project,
             @QueryParameter final String sourceDirectory) {
         if (project != null) { // there is no workspace in pipelines

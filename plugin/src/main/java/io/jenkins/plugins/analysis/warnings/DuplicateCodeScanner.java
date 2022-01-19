@@ -27,11 +27,11 @@ import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.DescriptionProvider;
 import io.jenkins.plugins.analysis.core.model.DetailsTableModel;
 import io.jenkins.plugins.analysis.core.model.FileNameRenderer;
-import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
-import io.jenkins.plugins.analysis.core.util.Sanitizer;
+import io.jenkins.plugins.analysis.core.model.SvgIconLabelProvider;
 import io.jenkins.plugins.datatables.TableColumn;
 import io.jenkins.plugins.datatables.TableColumn.ColumnCss;
+import io.jenkins.plugins.prism.Sanitizer;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 import static edu.hm.hafner.analysis.registry.DryDescriptor.*;
@@ -101,7 +101,7 @@ public abstract class DuplicateCodeScanner extends AnalysisModelParser {
     }
 
     /** Provides icons for DRY parsers. */
-    static class DryLabelProvider extends IconLabelProvider {
+    static class DryLabelProvider extends SvgIconLabelProvider {
         private static final Sanitizer SANITIZER = new Sanitizer();
 
         protected DryLabelProvider(final String id, final String name) {

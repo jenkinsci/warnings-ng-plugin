@@ -21,10 +21,10 @@ import org.kohsuke.stapler.verb.POST;
 import hudson.Extension;
 import hudson.model.Job;
 import hudson.model.Run;
-import hudson.model.View;
 import hudson.util.ListBoxModel;
 import hudson.views.ListViewColumn;
 import hudson.views.ListViewColumnDescriptor;
+import jenkins.model.Jenkins;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
@@ -209,7 +209,7 @@ public class IssuesTotalColumn extends ListViewColumn {
         Set<String> actualIds = actions.stream().map(ResultAction::getId).collect(Collectors.toSet());
 
         String[] selectedIds = getIds(tools);
-        if (selectedIds.length == 1) {
+        if (selectedIds.length == 1 && selectTools) {
             String selectedId = selectedIds[0];
             if (actualIds.contains(selectedId)) {
                 ResultAction result = actions.stream().filter(action -> action.getId().equals(selectedId))
@@ -248,7 +248,7 @@ public class IssuesTotalColumn extends ListViewColumn {
         public ListBoxModel doFillTypeItems() {
             ListBoxModel model = new ListBoxModel();
 
-            if (new JenkinsFacade().hasPermission(View.CONFIGURE)) {
+            if (new JenkinsFacade().hasPermission(Jenkins.READ)) {
                 for (StatisticProperties qualityGateType : StatisticProperties.values()) {
                     model.add(qualityGateType.getDisplayName(), qualityGateType.name());
                 }
@@ -279,7 +279,7 @@ public class IssuesTotalColumn extends ListViewColumn {
             StaticAnalysisLabelProvider labelProvider = labelProviderFactory.create(result.getId(), result.getName());
             name = labelProvider.getLinkName();
             icon = labelProvider.getSmallIconUrl();
-            total = result.getResult().getTotalSize();
+            total = type.getSizeGetter().apply(result.getResult().getTotals());
             url = type.getUrl(result.getOwner().getNumber() + "/" + result.getUrlName());
         }
 

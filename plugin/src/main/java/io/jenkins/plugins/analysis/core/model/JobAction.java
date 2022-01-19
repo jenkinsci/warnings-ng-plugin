@@ -6,7 +6,6 @@ import java.util.Optional;
 import edu.hm.hafner.echarts.BuildResult;
 import edu.hm.hafner.echarts.ChartModelConfiguration;
 import edu.hm.hafner.echarts.JacksonFacade;
-import edu.hm.hafner.echarts.LinesChartModel;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 import org.kohsuke.stapler.StaplerRequest;
@@ -17,19 +16,23 @@ import hudson.model.Job;
 import hudson.model.Run;
 import jenkins.model.Jenkins;
 
+import io.jenkins.plugins.analysis.core.charts.HealthTrendChart;
+import io.jenkins.plugins.analysis.core.charts.NewVersusFixedTrendChart;
 import io.jenkins.plugins.analysis.core.charts.SeverityTrendChart;
 import io.jenkins.plugins.analysis.core.charts.ToolsTrendChart;
+import io.jenkins.plugins.analysis.core.charts.TrendChart;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
-import io.jenkins.plugins.echarts.AsyncTrendChart;
+import io.jenkins.plugins.echarts.AsyncConfigurableTrendChart;
 
 /**
  * A job action displays a link on the side panel of a job. This action also is responsible to render the historical
- * trend via its associated 'floatingBox.jelly' view.
+ * trend via its associated 'charts.jelly' view.
  *
  * @author Ullrich Hafner
  */
-public class JobAction implements Action, AsyncTrendChart {
+public class JobAction implements Action, AsyncConfigurableTrendChart {
+    private static final JacksonFacade JACKSON_FACADE = new JacksonFacade();
     private final Job<?, ?> owner;
     private final StaticAnalysisLabelProvider labelProvider;
     private final int numberOfTools;
@@ -42,6 +45,7 @@ public class JobAction implements Action, AsyncTrendChart {
      *         the job that owns this action
      * @param labelProvider
      *         the label provider
+     *
      * @deprecated use {@link #JobAction(Job, StaticAnalysisLabelProvider, int)}
      */
     @Deprecated
@@ -94,7 +98,7 @@ public class JobAction implements Action, AsyncTrendChart {
 
     @Override
     public String getDisplayName() {
-        return labelProvider.getRawLinkName();
+        return labelProvider.getLinkName();
     }
 
     /**
@@ -178,18 +182,50 @@ public class JobAction implements Action, AsyncTrendChart {
         return createBuildHistory().getBaselineAction();
     }
 
-    @JavaScriptMethod
-    @Override
+    /**
+     * Returns the trend chart model that renders the aggregated build results.
+     *
+     * @return the trend chart
+     * @deprecated replaced {@link #getConfigurableBuildTrendModel(String)}
+     */
+    @Deprecated
     public String getBuildTrendModel() {
-        return new JacksonFacade().toJson(createChartModel());
+        return getConfigurableBuildTrendModel("{}");
     }
 
-    private LinesChartModel createChartModel() {
+    /**
+     * Returns the trend chart model that renders the build results for a specific action.
+     *
+     * @param configuration
+     *         JSON configuration of the chart (number of builds, etc.)
+     *
+     * @return the trend chart
+     */
+    @Override
+    @JavaScriptMethod
+    @SuppressWarnings("unused") // Called by jelly view
+    public String getConfigurableBuildTrendModel(final String configuration) {
+        String chartType = JACKSON_FACADE.getString(configuration, "chartType", "severity");
+
+        return new JacksonFacade().toJson(selectChart(chartType).create(
+                createBuildHistory(), ChartModelConfiguration.fromJson(configuration)));
+    }
+
+    private TrendChart selectChart(final String chartType) {
+        if ("new".equals(chartType)) {
+            return new NewVersusFixedTrendChart();
+        }
+        if ("health".equals(chartType)) {
+            Optional<ResultAction> latestAction = getLatestAction();
+            if (latestAction.isPresent()) {
+                return new HealthTrendChart(latestAction.get().getHealthDescriptor());
+            }
+        }
         if (numberOfTools > 1) {
-            return new ToolsTrendChart().create(createBuildHistory(), new ChartModelConfiguration());
+            return new ToolsTrendChart();
         }
         else {
-            return new SeverityTrendChart().create(createBuildHistory(), new ChartModelConfiguration());
+            return new SeverityTrendChart();
         }
     }
 

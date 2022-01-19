@@ -1,11 +1,9 @@
 # Jenkins Warnings Next Generation Plugin
 
 [![Join the chat at https://gitter.im/jenkinsci/warnings-plugin](https://badges.gitter.im/jenkinsci/warnings-plugin.svg)](https://gitter.im/jenkinsci/warnings-plugin?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![Jenkins Plugin](https://img.shields.io/jenkins/plugin/v/warnings-ng.svg?label=latest%20version)](https://plugins.jenkins.io/warnings-ng)
 [![Jenkins Plugin Installs](https://img.shields.io/jenkins/plugin/i/warnings-ng.svg?color=red)](https://plugins.jenkins.io/warnings-ng)
 [![Jenkins](https://ci.jenkins.io/job/Plugins/job/warnings-ng-plugin/job/master/badge/icon?subject=Jenkins%20CI)](https://ci.jenkins.io/job/Plugins/job/warnings-ng-plugin/job/master/)
 [![GitHub Actions](https://github.com/jenkinsci/warnings-ng-plugin/workflows/GitHub%20CI/badge.svg?branch=master)](https://github.com/jenkinsci/warnings-ng-plugin/actions)
-[![Codacy](https://api.codacy.com/project/badge/Grade/2a5c80b9064749a09d128f89f661d1c3)](https://www.codacy.com/app/uhafner/warnings-ng-plugin?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=jenkinsci/warnings-ng-plugin&amp;utm_campaign=Badge_Grade)
 [![Codecov](https://codecov.io/gh/jenkinsci/warnings-ng-plugin/branch/master/graph/badge.svg)](https://codecov.io/gh/jenkinsci/warnings-ng-plugin/branch/master)
 
 The Jenkins Next Generation Warnings plugin collects compiler warnings or issues reported by static analysis tools and 
@@ -51,7 +49,10 @@ please share it and provide pull requests for the
 the [Analysis Parsers Library](https://github.com/jenkinsci/analysis-model/pulls). 
 
 For more details please refer to the [documentation](doc/Documentation.md) or to an 
-[introductory video](https://www.youtube.com/watch?v=0GcEqML8nys).
+[introductory video](https://www.youtube.com/watch?v=0GcEqML8nys). Contributions are welcome, please 
+refer to the separate [CONTRIBUTING](CONTRIBUTING.md) document
+for details on how to proceed!
+
 
 All source code is licensed under the MIT license.
 

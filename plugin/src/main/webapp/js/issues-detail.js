@@ -1,5 +1,11 @@
-/* global jQuery3, view, echartsJenkinsApi */
+/* global jQuery3, view, echartsJenkinsApi, bootstrap5 */
 (function ($) {
+    const trendConfigurationDialogId = 'chart-configuration-issues-history';
+
+    $('#' + trendConfigurationDialogId).on('hidden.bs.modal', function () {
+        redrawTrendCharts();
+    });
+
     redrawTrendCharts();
     storeAndRestoreCarousel('trend-carousel');
     storeAndRestoreCarousel('overview-carousel');
@@ -23,26 +29,23 @@
      * Activate the tab that has been visited the last time. If there is no such tab, highlight the first one.
      * If the user selects the tab using an #anchor prefer this tab.
      */
-    const detailsTabs = $('#tab-details');
-    detailsTabs.find('li:first-child a').tab('show');
-
+    selectTab('li:first-child a');
     const url = document.location.toString();
     if (url.match('#')) {
         const tabName = url.split('#')[1];
-
-        detailsTabs.find('a[href="#' + tabName + '"]').tab('show');
+        selectTab('a[href="#' + tabName + '"]');
     }
     else {
         const activeTab = localStorage.getItem('activeTab');
         if (activeTab) {
-            detailsTabs.find('a[href="' + activeTab + '"]').tab('show');
+            selectTab('a[href="' + activeTab + '"]');
         }
     }
 
     /**
      * Store the selected tab in browser's local storage.
      */
-    const tabToggleLink = $('a[data-toggle="tab"]');
+    const tabToggleLink = $('a[data-bs-toggle="tab"]');
     tabToggleLink.on('show.bs.tab', function (e) {
         window.location.hash = e.target.hash;
         const activeTab = $(e.target).attr('href');
@@ -53,38 +56,67 @@
      * Activate tooltips.
      */
     $(function () {
-        $('[data-toggle="tooltip"]').tooltip();
+        $('[data-bs-toggle="tooltip"]').each(function () {
+            const tooltip = new bootstrap5.Tooltip($(this)[0]);
+            tooltip.enable();
+        });
     });
+
+    /**
+     * Activates the specified tab.
+     *
+     * @param {String} selector - selector of the tab
+     */
+    function selectTab (selector) {
+        const detailsTabs = $('#tab-details');
+        const selectedTab = detailsTabs.find(selector);
+
+        if (selectedTab.length !== 0) {
+            const tab = new bootstrap5.Tab(selectedTab[0]);
+            tab.show();
+        }
+    }
 
     /**
      * Redraws the trend charts. Reads the last selected X-Axis type from the browser local storage and
      * redraws the trend charts.
      */
     function redrawTrendCharts () {
-        const isBuildOnXAxis = !(localStorage.getItem('#trendBuildAxis') === 'date');
+        const openBuild = function (build) {
+            view.getUrlForBuild(build, window.location.href, function (buildUrl) {
+                if (buildUrl.responseJSON.startsWith('http')) {
+                    window.location.assign(buildUrl.responseJSON);
+                }
+            });
+        };
+
+        const configuration = JSON.stringify(echartsJenkinsApi.readFromLocalStorage('jenkins-echarts-chart-configuration-issues-history'));
 
         /**
          * Creates a build trend chart that shows the number of issues for a couple of builds.
          * Requires that a DOM <div> element exists with the ID '#severities-trend-chart'.
          */
-        view.getBuildTrend(isBuildOnXAxis, function (lineModel) {
-            echartsJenkinsApi.renderZoomableTrendChart('severities-trend-chart', lineModel.responseJSON, redrawTrendCharts);
+        view.getBuildTrend(configuration, function (lineModel) {
+            echartsJenkinsApi.renderConfigurableZoomableTrendChart('severities-trend-chart',
+                lineModel.responseJSON, trendConfigurationDialogId, openBuild);
         });
 
         /**
          * Creates a build trend chart that shows the number of issues per tool.
          * Requires that a DOM <div> element exists with the ID '#tools-trend-chart'.
          */
-        view.getToolsTrend(isBuildOnXAxis, function (lineModel) {
-            echartsJenkinsApi.renderZoomableTrendChart('tools-trend-chart', lineModel.responseJSON, redrawTrendCharts);
+        view.getToolsTrend(configuration, function (lineModel) {
+            echartsJenkinsApi.renderConfigurableZoomableTrendChart('tools-trend-chart',
+                lineModel.responseJSON, trendConfigurationDialogId, openBuild);
         });
 
         /**
          * Creates a build trend chart that shows the number of issues per tool.
          * Requires that a DOM <div> element exists with the ID '#new-versus-fixed-trend-chart'.
          */
-        view.getNewVersusFixedTrend(isBuildOnXAxis, function (lineModel) {
-            echartsJenkinsApi.renderZoomableTrendChart('new-versus-fixed-trend-chart', lineModel.responseJSON, redrawTrendCharts);
+        view.getNewVersusFixedTrend(configuration, function (lineModel) {
+            echartsJenkinsApi.renderConfigurableZoomableTrendChart('new-versus-fixed-trend-chart',
+                lineModel.responseJSON, trendConfigurationDialogId, openBuild);
         });
 
         /**
@@ -92,8 +124,9 @@
          * Requires that a DOM <div> element exists with the ID '#health-trend-chart'.
          */
         if ($('#health-trend-chart').length) {
-            view.getHealthTrend(isBuildOnXAxis, function (lineModel) {
-                echartsJenkinsApi.renderZoomableTrendChart('health-trend-chart', lineModel.responseJSON, redrawTrendCharts);
+            view.getHealthTrend(configuration, function (lineModel) {
+                echartsJenkinsApi.renderConfigurableZoomableTrendChart('health-trend-chart',
+                    lineModel.responseJSON, trendConfigurationDialogId, openBuild);
             });
         }
     }
@@ -114,8 +147,10 @@
             }
         });
         const activeCarousel = localStorage.getItem(carouselId);
-        if (activeCarousel) {
-            carousel.carousel(parseInt(activeCarousel));
+        if (activeCarousel && carousel.is(':visible')) {
+            const carouselControl = new bootstrap5.Carousel(carousel[0]);
+            carouselControl.to(parseInt(activeCarousel));
+            carouselControl.pause();
         }
     }
 })(jQuery3);

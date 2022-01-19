@@ -1,13 +1,11 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:bs="/bootstrap">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:bs="/bootstrap5">
 
   <st:header name="Content-Type" value="text/html;charset=UTF-8"/>
 
   <bs:page it="${it}" notitle="true">
 
-    <script src="${resURL}/plugin/warnings-ng/js/libs/prism.js"/>
-
-    <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/prism.css"/>
+    <st:adjunct includes="io.jenkins.plugins.prism"/>
     <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-prism.css"/>
 
     <h1>${%sourcedetail.header(it.displayName)}</h1>

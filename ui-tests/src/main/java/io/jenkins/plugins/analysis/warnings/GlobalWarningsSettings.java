@@ -6,14 +6,13 @@ import org.jenkinsci.test.acceptance.po.Jenkins;
 import org.jenkinsci.test.acceptance.po.JenkinsConfig;
 
 /**
- * Global system configuration of the warnings plugin.
+ * Global system configuration of the Warnings Plugin.
  */
 public class GlobalWarningsSettings extends JenkinsConfig {
     private static final String XPATH_PLUGIN_CONFIG = "//*[@path='%s']";
 
-    private static final String PATH_PREFIX = "/io-jenkins-plugins-analysis-";
-    private static final String GROOVY_PATH = PATH_PREFIX + "warnings-groovy-ParserConfiguration/";
-    private static final String SOURCE_DIR_PATH = PATH_PREFIX + "core-model-WarningsPluginConfiguration/";
+    private static final String GROOVY_PATH = "/io-jenkins-plugins-analysis-warnings-groovy-ParserConfiguration/";
+    private static final String SOURCE_DIR_PATH = "/io-jenkins-plugins-prism-PrismConfiguration/";
     private static final String BUTTON_ADD = "repeatable-add";
     private static final String SOURCE_PATH_FIELD = "sourceDirectories/path";
     private static final String PARSERS_PREFIX = "parsers/";
@@ -44,7 +43,7 @@ public class GlobalWarningsSettings extends JenkinsConfig {
     public String getHomeDirectory() {
         ensureConfigPage();
 
-        return driver.findElement(By.xpath("//td[contains(text(), 'Home directory')]//..//*[@class='setting-main']"))
+        return driver.findElement(By.xpath("//div[contains(text(), 'Home directory')]//..//*[@class='setting-main']"))
                 .getText();
     }
 

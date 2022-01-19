@@ -10,7 +10,7 @@ categories:
     label: removed
   - title: ⚠️ Deprecated
     label: deprecated
-  - title: 🚀 New features
+  - title: 🚀 New Features
     labels:
       - feature
   - title: ✨ Improvements
@@ -22,11 +22,11 @@ categories:
       - fix
       - bugfix
       - regression
-  - title: 📝 Documentation updates
+  - title: 📝 Documentation Updates
     label: documentation
-  - title: 📦 Dependency updates
+  - title: 📦 Dependency Updates
     label: dependencies
-  - title: 🔧 Internal changes
+  - title: 🔧 Internal Changes
     label: internal
   - title: 🚦 Tests
     labels:
@@ -42,14 +42,15 @@ version-resolver:
       - 'feature'
       - 'enhancement'
       - 'deprecated'
-  patch:
-    labels:
       - 'dependencies'
       - 'documentation'
       - 'tests'
       - 'internal'
+  patch:
+    labels:
+      - 'bug'
   default: minor
 
 replacers:
   - search: '/\[*JENKINS-(\d+)\]*\s*-*\s*/g'
-    replace: '[JENKINS-$1](https://issues.jenkins-ci.org/browse/JENKINS-$1) - '
+    replace: '[JENKINS-$1](https://issues.jenkins.io/browse/JENKINS-$1) - '

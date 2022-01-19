@@ -32,6 +32,7 @@ import hudson.model.Run;
 import io.jenkins.plugins.analysis.core.charts.JenkinsBuild;
 import io.jenkins.plugins.analysis.core.util.IssuesStatistics;
 import io.jenkins.plugins.analysis.core.util.IssuesStatisticsBuilder;
+import io.jenkins.plugins.analysis.core.util.ModelValidation;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
@@ -223,6 +224,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
         this.owner = owner;
 
         Report allIssues = report.getAllIssues();
+        new ModelValidation().ensureValidId(id);
         this.id = id;
 
         totals = report.getStatistics();
@@ -414,6 +416,26 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
         Report merged = new Report();
         merged.addAll(getNewIssues(), getOutstandingIssues());
         return merged;
+    }
+
+    /**
+     * Check if {@link AnalysisResult} issues are empty (including new, outstanding and fixed).
+     *
+     * @return
+     *          true if {@link AnalysisResult} issues are empty, else false.
+     */
+    public boolean isEmpty() {
+        return getTotals().getTotalSize() + getTotals().getFixedSize() == 0;
+    }
+
+    /**
+     * Check if {@link AnalysisResult} issues does not have any new warnings.
+     *
+     * @return
+     *          true if {@link AnalysisResult} issues has no new warnings.
+     */
+    public boolean hasNoNewWarnings() {
+        return getTotals().getNewSize() == 0;
     }
 
     /**

@@ -1,14 +1,16 @@
 package io.jenkins.plugins.analysis.warnings;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.junit.Test;
 import org.openqa.selenium.NoSuchElementException;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import org.jenkinsci.test.acceptance.junit.WithPlugins;
 import org.jenkinsci.test.acceptance.po.Build;
@@ -25,6 +27,7 @@ import static io.jenkins.plugins.analysis.warnings.Assertions.*;
  * @author Lukas Kirner
  */
 @WithPlugins("warnings-ng")
+@SuppressFBWarnings("BC")
 public class GlobalConfigurationUiTest extends UiTest {
     private static final String GCC_ID = "gcc";
 
@@ -46,6 +49,7 @@ public class GlobalConfigurationUiTest extends UiTest {
 
         createFileInWorkspace(job, homeDir);
 
+        // First build contains an error and no source code
         Build build = buildJob(job);
         verifyGcc(build, LinkType.SHOULD_NOT_HAVE_SOURCE_CODE_LINK);
 
@@ -66,11 +70,10 @@ public class GlobalConfigurationUiTest extends UiTest {
             recorder.setTool("GNU C Compiler (gcc)", gcc -> gcc.setPattern("**/gcc.log"));
             recorder.setEnabledForFailure(true);
             recorder.setSourceCodeEncoding("UTF-8");
-            recorder.setSourceDirectory(getJobDir(homeDir, job));
+            recorder.addSourceDirectory(getJobDir(homeDir, job));
         });
     }
 
-    // TODO: use plugin?
     private void createFileInWorkspace(final FreeStyleJob job, final String homeDir) throws IOException {
         String content = String.format("%s/config.xml:451: warning: foo defined but not used%n",
                 getJobDir(homeDir, job));
@@ -84,15 +87,7 @@ public class GlobalConfigurationUiTest extends UiTest {
             Files.createDirectory(workspacePath);
         }
 
-        File newFile = workspacePath.resolve("gcc.log").toFile();
-        boolean newFile1 = newFile.createNewFile();
-        if (!newFile1) {
-            return;
-        }
-        FileWriter writer = new FileWriter(newFile);
-        writer.write(content);
-        writer.flush();
-        writer.close();
+        Files.write(workspacePath.resolve("gcc.log"), content.getBytes(StandardCharsets.UTF_8));
     }
 
     private void initGlobalSettingsForSourceDirectory(final FreeStyleJob job) {
@@ -109,17 +104,18 @@ public class GlobalConfigurationUiTest extends UiTest {
     }
 
     private void verifyGcc(final Build build, final LinkType linkType) {
+        build.open();
+
         AnalysisSummary gcc = new AnalysisSummary(build, GCC_ID);
-        assertThat(gcc).isDisplayed()
+        assertThat(gcc)
                 .hasTitleText("GNU C Compiler (gcc): One warning")
                 .hasReferenceBuild(linkType == LinkType.SHOULD_HAVE_SOURCE_CODE_LINK ? 1 : 0)
                 .hasInfoType(linkType == LinkType.SHOULD_HAVE_SOURCE_CODE_LINK ? InfoType.INFO : InfoType.ERROR);
 
         AnalysisResult gccDetails = gcc.openOverallResult();
-        assertThat(gccDetails).hasActiveTab(Tab.ISSUES)
-                .hasOnlyAvailableTabs(Tab.ISSUES);
+        assertThat(gccDetails).hasActiveTab(Tab.ISSUES).hasOnlyAvailableTabs(Tab.ISSUES);
 
-        IssuesTableRow row = gccDetails.openIssuesTable().getRowAs(0, IssuesTableRow.class);
+        AbstractSeverityTableRow row = gccDetails.openIssuesTable().getRow(0);
 
         if (linkType == LinkType.SHOULD_HAVE_SOURCE_CODE_LINK) {
             assertThat(row.getFileLink()).isNotNull();

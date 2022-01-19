@@ -1,87 +1,71 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.net.URL;
-
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.support.ui.Select;
-
-import com.google.inject.Injector;
-
-import org.jenkinsci.test.acceptance.po.Build;
+import org.jenkinsci.test.acceptance.po.AbstractListViewColumn;
+import org.jenkinsci.test.acceptance.po.Control;
+import org.jenkinsci.test.acceptance.po.Describable;
 import org.jenkinsci.test.acceptance.po.ListView;
-import org.jenkinsci.test.acceptance.po.PageObject;
 
 /**
- * Page object to configure the issues column in a {@link ListView}.
+ * Configuration page object of a list view column that shows the number of static analysis issues.
  *
- * @author Andreas Riepl
- * @author Oliver Scholz
+ * @author Ullrich Hafner
  */
-public class IssuesColumnConfiguration extends PageObject {
-    private ListView listView;
+@Describable("Number of static analysis issues")
+public class IssuesColumnConfiguration extends AbstractListViewColumn {
+    static final String DEFAULT_ISSUES_COLUMN_NAME = "# Issues";
 
-    /**
-     * Creates a new issue column configuration page object.
-     *
-     * @param injector
-     *         injector
-     * @param url
-     *         the URL of the view
-     */
-    public IssuesColumnConfiguration(final Injector injector, final URL url) {
-        super(injector, url);
-    }
-
-    /**
-     * Creates a new issue column configuration page object.
-     *
-     * @param context
-     *         context
-     * @param url
-     *         the URL of the view
-     */
-    protected IssuesColumnConfiguration(final PageObject context, final URL url) {
-        super(context, url);
-    }
+    private final Control name = control("/name");
+    private final Control type = control("/type");
+    private final Control selectTools = control("/selectTools");
+    private final Control tools = control("/tools/id");
 
     /**
      * Creates a new issue column configuration page object.
      *
      * @param parent
-     *         the build that contains the static analysis results
-     * @param listView
-     *         the associated view
+     *         the list view that contains this column
+     * @param path
+     *         the URL of the view
      */
-    public IssuesColumnConfiguration(final Build parent, final ListView listView) {
-        super(parent, parent.url(""));
-
-        this.listView = listView;
+    public IssuesColumnConfiguration(final ListView parent, final String path) {
+        super(parent, path);
     }
 
     /**
-     * checks the option "select subset of tools" and fills in a tool name.
+     * Sets the name of the column.
+     *
+     * @param name
+     *         the name to show as column header
+     */
+    public void setName(final String name) {
+        this.name.set(name);
+    }
+
+    /**
+     * Selects the static analysis tool for which the results should be shown.
      *
      * @param toolId
-     *         the tool to select
+     *         the ID of the static analysis tool
      */
-    public void selectSubsetOfTools(final String toolId) {
-        listView.check("Select subset of tools");
-        listView.fillIn("_.id", toolId);
+    public void filterByTool(final String toolId) {
+        selectTools.check(true);
+        tools.set(toolId);
     }
 
     /**
-     * selects a type from the "Type"-dropdown.
-     *
-     * @param statisticProperty
-     *         Property object holding the display name
+     * Disables the filtering by static analysis tool.
      */
-    public void selectType(final StatisticProperties statisticProperty) {
-        // scroll to bottom of page to ensure visibility of dropdown
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("window.scrollTo(0, document.body.scrollHeight)");
+    public void disableToolFilter() {
+        selectTools.check(false);
+    }
 
-        Select typeSelect = new Select(driver.findElement(By.name("_.type")));
-        typeSelect.selectByVisibleText(statisticProperty.getDisplayName());
+    /**
+     * Selects the type of the totals to show.
+     *
+     * @param properties
+     *         the property that should be shown
+     */
+    public void setType(final StatisticProperties properties) {
+        this.type.select(properties.getDisplayName());
     }
 }

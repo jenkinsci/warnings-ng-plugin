@@ -43,8 +43,8 @@ public class SourceView extends PageObject {
      * @return the file name
      */
     public String getFileName() {
-        String[] headerWords = find(By.tagName("h1")).getText().trim().split(" ");
-        
+        String[] headerWords = find(By.tagName("h1")).getText().trim().split(" ", -1);
+
         return headerWords[headerWords.length - 1];
     }
 

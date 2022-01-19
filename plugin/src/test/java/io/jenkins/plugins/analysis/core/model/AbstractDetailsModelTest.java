@@ -30,10 +30,11 @@ import static org.mockito.Mockito.*;
  */
 @SuppressWarnings("PMD.AbstractClassWithoutAbstractMethod")
 public abstract class AbstractDetailsModelTest {
+    private static final String REL_CONTENT = "nofollow noopener noreferrer";
     static final String DESCRIPTION
-            = join("Hello description with", a().withHref("url").withText("link").withRel("nofollow")).render();
+            = join("Hello description with", a().withHref("url").withText("link").withRel(REL_CONTENT)).render();
     private static final String MESSAGE
-            = join("Hello message with", a().withHref("url").withText("link").withRel("nofollow")).render();
+            = join("Hello message with", a().withHref("url").withText("link").withRel(REL_CONTENT)).render();
     /** Details icon that opens a new row. */
     protected static final String DETAILS_ICON = "<svg class=\"details-icon svg-icon\"><use href=\"/path/to/icon\"></use></svg>";
     static final String EXPECTED_DESCRIPTION = String.format(
@@ -72,7 +73,7 @@ public abstract class AbstractDetailsModelTest {
      * @return the file name column
      */
     protected String createExpectedFileName(final Issue issue) {
-        return String.format("<a href=\"source.%s/#15\" data-toggle=\"tooltip\" data-placement=\"bottom\" title=\"/path/to/file-1\">file-1:15</a>", issue.getId().toString());
+        return String.format("<a href=\"source.%s/#15\" data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" title=\"/path/to/file-1\">file-1:15</a>", issue.getId().toString());
     }
 
     /**

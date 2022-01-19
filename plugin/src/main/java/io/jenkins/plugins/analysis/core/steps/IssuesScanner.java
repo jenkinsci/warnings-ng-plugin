@@ -10,6 +10,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -35,6 +37,7 @@ import jenkins.MasterToSlaveFileCallable;
 
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.ReportLocations;
+import io.jenkins.plugins.analysis.core.model.SourceDirectory;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.model.WarningsPluginConfiguration;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
@@ -48,6 +51,9 @@ import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.forensics.blame.FileLocations;
 import io.jenkins.plugins.forensics.miner.MinerService;
 import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
+import io.jenkins.plugins.prism.PermittedSourceCodeDirectory;
+import io.jenkins.plugins.prism.PrismConfiguration;
+import io.jenkins.plugins.prism.SourceDirectoryFilter;
 
 import static io.jenkins.plugins.analysis.core.util.AffectedFilesResolver.*;
 
@@ -59,7 +65,7 @@ import static io.jenkins.plugins.analysis.core.util.AffectedFilesResolver.*;
 @SuppressWarnings("PMD.ExcessiveImports")
 class IssuesScanner {
     private final FilePath workspace;
-    private final String sourceDirectory;
+    private final Set<String> sourceDirectories;
     private final Run<?, ?> run;
     private final FilePath jenkinsRootDir;
     private final Charset sourceCodeEncoding;
@@ -75,14 +81,14 @@ class IssuesScanner {
 
     @SuppressWarnings("checkstyle:ParameterNumber")
     IssuesScanner(final Tool tool, final List<RegexpFilter> filters, final Charset sourceCodeEncoding,
-            final FilePath workspace, final String sourceDirectory, final Run<?, ?> run,
+            final FilePath workspace, final Set<String> sourceDirectories, final Run<?, ?> run,
             final FilePath jenkinsRootDir, final TaskListener listener,
             final String scm, final BlameMode blameMode) {
         this.filters = new ArrayList<>(filters);
         this.sourceCodeEncoding = sourceCodeEncoding;
         this.tool = tool;
         this.workspace = workspace;
-        this.sourceDirectory = sourceDirectory;
+        this.sourceDirectories = sourceDirectories;
         this.run = run;
         this.jenkinsRootDir = jenkinsRootDir;
         this.listener = listener;
@@ -129,17 +135,23 @@ class IssuesScanner {
 
     private ReportPostProcessor createPostProcessor(final Report report) {
         return new ReportPostProcessor(tool.getActualId(), report, sourceCodeEncoding.name(),
-                createBlamer(report), filters, getPermittedSourceDirectory(report).getRemote());
+                createBlamer(report), filters, getPermittedSourceDirectories(), sourceDirectories);
     }
 
-    private FilePath getPermittedSourceDirectory(final Report report) {
-        FilePath permittedSourceDirectory = WarningsPluginConfiguration.getInstance()
-                .getPermittedSourceDirectory(workspace, sourceDirectory);
-        if (StringUtils.isNotBlank(sourceDirectory) && permittedSourceDirectory.equals(workspace)) {
-            report.logError("Additional source directory '%s' must be registered in Jenkins system configuration",
-                    sourceDirectory);
-        }
-        return permittedSourceDirectory;
+    private Set<String> getPermittedSourceDirectories() {
+        Set<String> permittedSourceDirectories = PrismConfiguration.getInstance()
+                .getSourceDirectories()
+                .stream()
+                .map(PermittedSourceCodeDirectory::getPath)
+                .collect(Collectors.toSet());
+        List<String> permittedSourceCodeDirectoriesOfWarningsPlugin
+                = WarningsPluginConfiguration.getInstance()
+                .getSourceDirectories()
+                .stream()
+                .map(SourceDirectory::getPath)
+                .collect(Collectors.toList());
+        permittedSourceDirectories.addAll(permittedSourceCodeDirectoriesOfWarningsPlugin);
+        return permittedSourceDirectories;
     }
 
     private Blamer createBlamer(final Report report) {
@@ -167,8 +179,10 @@ class IssuesScanner {
             throws InterruptedException {
         report.logInfo("Copying affected files to Jenkins' build folder '%s'", buildFolder);
 
+        Set<String> permittedSourceDirectories = getPermittedSourceDirectories();
+        permittedSourceDirectories.add(workspace.getRemote());
         new AffectedFilesResolver().copyAffectedFilesToBuildFolder(
-                report, buildFolder, getPermittedSourceDirectory(report));
+                report, workspace, permittedSourceDirectories, buildFolder);
     }
 
     private FilePath createAffectedFilesFolder(final Report report) throws InterruptedException {
@@ -228,11 +242,13 @@ class IssuesScanner {
         private final Report originalReport;
         private final String sourceCodeEncoding;
         private final Blamer blamer;
-        private final String sourceDirectory;
+        private final Set<String> permittedSourceDirectories;
+        private final Set<String> requestedSourceDirectories;
         private final List<RegexpFilter> filters;
 
         ReportPostProcessor(final String id, final Report report, final String sourceCodeEncoding,
-                final Blamer blamer, final List<RegexpFilter> filters, final String sourceDirectory) {
+                final Blamer blamer, final List<RegexpFilter> filters, final Set<String> permittedSourceDirectories,
+                final Set<String> requestedSourceDirectories) {
             super();
 
             this.id = id;
@@ -240,12 +256,13 @@ class IssuesScanner {
             this.sourceCodeEncoding = sourceCodeEncoding;
             this.blamer = blamer;
             this.filters = filters;
-            this.sourceDirectory = sourceDirectory;
+            this.permittedSourceDirectories = permittedSourceDirectories;
+            this.requestedSourceDirectories = requestedSourceDirectories;
         }
 
         @Override
         public AnnotatedReport invoke(final File workspace, final VirtualChannel channel) {
-            resolvePaths(originalReport);
+            resolvePaths(workspace, originalReport);
             resolveModuleNames(originalReport, workspace);
             resolvePackageNames(originalReport);
 
@@ -270,16 +287,28 @@ class IssuesScanner {
             return blames;
         }
 
-        private void resolvePaths(final Report report) {
-            report.logInfo("Resolving file names for all issues in source directory '%s'", sourceDirectory);
-
+        private void resolvePaths(final File workspace, final Report report) {
             try {
-                FileNameResolver generator = new FileNameResolver();
-                generator.run(report, sourceDirectory, ConsoleLogHandler::isInConsoleLog);
+                FileNameResolver nameResolver = new FileNameResolver();
+                report.logInfo("Resolving file names for all issues in workspace '%s'", workspace);
+                nameResolver.run(report, workspace.getAbsolutePath(), ConsoleLogHandler::isInConsoleLog);
+                FilteredLog errors = new FilteredLog("Source-Directories");
+                Set<String> filteredSourceDirectories = filterSourceDirectories(workspace, errors);
+                errors.getErrorMessages().forEach(report::logError);
+                for (String sourceDirectory : filteredSourceDirectories) {
+                    report.logInfo("Resolving file names for all issues in source directory '%s'", sourceDirectory);
+                    nameResolver.run(report, sourceDirectory, ConsoleLogHandler::isInConsoleLog);
+                }
             }
             catch (InvalidPathException exception) {
                 report.logException(exception, "Resolving of file names aborted");
             }
+        }
+
+        private Set<String> filterSourceDirectories(final File workspace, final FilteredLog errors) {
+            SourceDirectoryFilter filter = new SourceDirectoryFilter();
+            return filter.getPermittedSourceDirectories(
+                    workspace.getAbsolutePath(), permittedSourceDirectories, requestedSourceDirectories, errors);
         }
 
         private void resolveModuleNames(final Report report, final File workspace) {

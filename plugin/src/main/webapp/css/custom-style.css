@@ -2,13 +2,13 @@
 /* Size of charts in a card.                                                                                           */
 /* ------------------------------------------------------------------------------------------------------------------- */
 
-.card-chart {
-    width: 90%;
+.card-chart-carousel {
+    width: 100%;
     min-height: 256px;
     min-width: 256px;
     display: block;
-    margin-left: auto;
-    margin-right: auto;
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
 .log-output {
@@ -29,6 +29,8 @@
 }
 
 .subsection-title {
+    margin-bottom: 0.5em;
+    margin-top: 0.5em;
     font-weight: bold;
 }
 
@@ -47,12 +49,6 @@
     fill: #009688;
     height: 200px;
     width: 200px;
-}
-
-.info-page-decorator {
-    fill: #b4b4b4;
-    height: 16px;
-    width: 16px;
 }
 
 /* ------------------------------------------------------------------------------------------------------------------- */

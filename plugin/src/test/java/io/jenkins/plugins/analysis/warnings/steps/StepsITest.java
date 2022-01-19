@@ -3,6 +3,8 @@ package io.jenkins.plugins.analysis.warnings.steps;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -36,6 +38,7 @@ import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.Tool;
+import io.jenkins.plugins.analysis.core.portlets.PullRequestMonitoringPortlet;
 import io.jenkins.plugins.analysis.core.steps.PublishIssuesStep;
 import io.jenkins.plugins.analysis.core.steps.ScanForIssuesStep;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
@@ -53,6 +56,7 @@ import io.jenkins.plugins.analysis.warnings.steps.pageobj.PropertyTable;
 import io.jenkins.plugins.analysis.warnings.steps.pageobj.PropertyTable.PropertyRow;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 
 /**
  * Integration tests of the warnings plug-in in pipelines.
@@ -61,7 +65,7 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  * @see ScanForIssuesStep
  * @see PublishIssuesStep
  */
-@SuppressWarnings({"PMD.ExcessiveImports", "PMD.ExcessiveClassLength", "PMD.GodClass", "checkstyle:ClassDataAbstractionCoupling", "checkstyle:ClassFanOutComplexity"})
+@SuppressWarnings({"PMD.ExcessiveImports", "PMD.ExcessiveClassLength", "PMD.ExcessivePublicCount", "PMD.GodClass", "checkstyle:ClassDataAbstractionCoupling", "checkstyle:ClassFanOutComplexity"})
 public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String NO_QUALITY_GATE = "";
 
@@ -74,7 +78,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
 
         job.setDefinition(new CpsFlowDefinition("node {\n"
                 + "  stage ('Integration Test') {\n"
-                + "         recordIssues tool: analysisParser(id: 'checkstyle', pattern: '**/" + "checkstyle1" + "*')\n"
+                + "         recordIssues tool: analysisParser(analysisModelId: 'checkstyle', pattern: '**/" + "checkstyle1" + "*')\n"
                 + "  }\n"
                 + "}", true));
 
@@ -717,7 +721,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      * error log with 8 issues.
      */
     @Test
-    public void shouldShowWarningsOfGroovyParser() {
+    public void shouldShowWarningsOfGroovyParserWhenScanningFileInWorkspace() {
         WorkflowJob job = createPipelineWithWorkspaceFiles("pep8Test.txt");
         job.setDefinition(asStage(
                 "def groovy = scanForIssues "
@@ -730,6 +734,63 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
                 new GroovyParser(id, "Groovy Pep8",
                         "(.*):(\\d+):(\\d+): (\\D\\d*) (.*)",
                         toString("groovy/pep8.groovy"), "")));
+        testGroovyPep8JobIsSuccessful(job, id);
+    }
+
+    /**
+     * Registers a new {@link GroovyParser} (a Pep8 parser) in Jenkins global configuration and runs this parser on the console that's showing an
+     * error log with 8 issues.
+     * @throws IOException if the test fails unexpectedly
+     */
+    @Test
+    public void shouldShowWarningsOfGroovyParserWhenScanningConsoleLogWhenThatIsPermitted() throws IOException {
+        WorkflowJob job = createPipeline();
+        ArrayList<String> stages = new ArrayList<>();
+        catFileContentsByAddingEchosSteps(stages, "pep8Test.txt");
+        stages.add("def groovy = scanForIssues "
+                + "tool: groovyScript(parserId: 'groovy-pep8', pattern:'', reportEncoding:'UTF-8')");
+        stages.add("publishIssues issues:[groovy]");
+        job.setDefinition(asStage(stages.toArray(new String[0])));
+
+        ParserConfiguration configuration = ParserConfiguration.getInstance();
+        configuration.setConsoleLogScanningPermitted(true);
+        String id = "groovy-pep8";
+        configuration.setParsers(Collections.singletonList(
+                new GroovyParser(id, "Groovy Pep8",
+                        "(.*):(\\d+):(\\d+): (\\D\\d*) (.*)",
+                        toString("groovy/pep8.groovy"), "")));
+        testGroovyPep8JobIsSuccessful(job, id);
+    }
+
+    /**
+     * Registers a new {@link GroovyParser} (a Pep8 parser) in Jenkins global
+     * configuration and runs this parser on the console that's showing an error log
+     * with 8 issues ... but when we're configured not to allow groovy parsers to
+     * scan the console at all so we expect it to fail.
+     *
+     * @throws IOException if the test fails unexpectedly
+     */
+    @Test
+    public void shouldFailUsingGroovyParserToScanConsoleLogWhenThatIsForbidden() throws IOException {
+        WorkflowJob job = createPipeline();
+        ArrayList<String> stages = new ArrayList<>();
+        catFileContentsByAddingEchosSteps(stages, "pep8Test.txt");
+        stages.add("def groovy = scanForIssues "
+                + "tool: groovyScript(parserId: 'groovy-pep8', pattern:'', reportEncoding:'UTF-8')");
+        stages.add("publishIssues issues:[groovy]");
+        job.setDefinition(asStage(stages.toArray(new String[0])));
+
+        ParserConfiguration configuration = ParserConfiguration.getInstance();
+        configuration.setConsoleLogScanningPermitted(false);
+        String id = "groovy-pep8";
+        configuration.setParsers(Collections.singletonList(
+                new GroovyParser(id, "Groovy Pep8",
+                        "(.*):(\\d+):(\\d+): (\\D\\d*) (.*)",
+                        toString("groovy/pep8.groovy"), "")));
+        buildWithResult(job, Result.FAILURE);
+    }
+
+    private void testGroovyPep8JobIsSuccessful(final WorkflowJob job, final String id) {
         Run<?, ?> run = buildSuccessfully(job);
 
         ResultAction action = getResultAction(run);
@@ -742,6 +803,15 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
 
         AnalysisResult second = scheduleSuccessfulBuild(job);
         assertThat(second).hasFixedSize(0).hasTotalSize(8).hasNewSize(0);
+    }
+
+    private void catFileContentsByAddingEchosSteps(final List<String> stagesToAddTo, final String nameOfReportFileToEcho) throws IOException {
+        Path reportFilePath = getResourceAsFile(nameOfReportFileToEcho);
+        List<String> reportFileContents = Files.readAllLines(reportFilePath);
+        for (String reportFileLine : reportFileContents) {
+            String stage = "echo '" + reportFileLine.replace("'", "\\'") + "'";
+            stagesToAddTo.add(stage);
+        }
     }
 
     /**
@@ -917,10 +987,8 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
 
         AnalysisResult result = scheduleSuccessfulBuild(job);
 
-        assertThat(not(result.getReferenceBuild().isPresent()));
-
-        assertThat(result.getNewIssues()).hasSize(0);
-        assertThat(result.getOutstandingIssues()).hasSize(2);
+        assertThat(result.getReferenceBuild()).isEmpty();
+        assertThat(result).hasNewSize(0).hasTotalSize(2);
         assertThat(result.getErrorMessages()).contains(
                 "Reference job 'reference' does not contain configured build '1'");
     }
@@ -1010,6 +1078,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
+<<<<<<< HEAD
      *  Verifies that a tool that have an ID that starts with the descriptor ID keeps the correct LabelProvider.
      */
     @Test
@@ -1023,6 +1092,30 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         List<ResultAction> actions = run.getActions(ResultAction.class);
         assertThat(actions.size()).isEqualTo(2);
         assertThat(actions.get(0).getLabelProvider()).hasName(actions.get(1).getLabelProvider().getName());
+=======
+     * Verifies that the json model for the pull request monitoring portlet is generated properly.
+     */
+    @Test
+    public void shouldGenerateJsonDataModel() {
+        WorkflowJob job = createPipelineWithWorkspaceFiles("checkstyle1.xml");
+
+        configurePublisher(job, "checkstyle1", NO_QUALITY_GATE);
+        Run<?, ?> baseline = buildSuccessfully(job);
+
+        ResultAction action = baseline.getAction(ResultAction.class);
+        PullRequestMonitoringPortlet portlet = new PullRequestMonitoringPortlet(action);
+
+        String model = portlet.getWarningsModel();
+        assertThatJson(model).node("fixed").isEqualTo(0);
+        assertThatJson(model).node("outstanding").isEqualTo(3);
+        assertThatJson(model).node("new").node("total").isEqualTo(0);
+        assertThatJson(model).node("new").node("low").isEqualTo(0);
+        assertThatJson(model).node("new").node("normal").isEqualTo(0);
+        assertThatJson(model).node("new").node("high").isEqualTo(0);
+        assertThatJson(model).node("new").node("error").isEqualTo(0);
+
+        assertThat(portlet.hasQualityGate()).isFalse();
+>>>>>>> jenkinsci/master
     }
 
     private void write(final String adaptedOobFileContent) {

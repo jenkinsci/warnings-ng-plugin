@@ -5,7 +5,9 @@ import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
@@ -24,11 +26,12 @@ import jenkins.model.Jenkins;
 
 import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
+import io.jenkins.plugins.bootstrap5.MessagesViewModel;
+import io.jenkins.plugins.prism.SourceCodeViewModel;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.*;
 
 /**
@@ -38,7 +41,7 @@ import static org.mockito.Mockito.*;
  */
 class DetailFactoryTest {
     private static final Charset ENCODING = StandardCharsets.UTF_8;
-    private static final Run RUN = mock(Run.class);
+    private static final Run<?, ?> RUN = mock(Run.class);
     private static final String[] ERROR_MESSAGES = {"error", "messages"};
     private static final String[] LOG_MESSAGES = {"log", "messages"};
 
@@ -60,9 +63,46 @@ class DetailFactoryTest {
     }
 
     @Test
+    void shouldCreateDetailsForEmpty() {
+        Report empty = new Report();
+
+        IssuesDetail originDetails = createTrendDetails("origin.123", createResult(),
+                empty, empty, empty, empty, createParent(),
+                IssuesDetail.class);
+        assertThat(originDetails).hasIssues(empty);
+        assertThat(originDetails).hasFixedIssues(empty);
+        assertThat(originDetails).hasNewIssues(empty);
+        assertThat(originDetails).hasOutstandingIssues(empty);
+
+        IssuesDetail fileDetails = createTrendDetails("file.123", createResult(),
+                empty, empty, empty, empty, createParent(),
+                IssuesDetail.class);
+        assertThat(fileDetails).hasIssues(empty);
+        assertThat(fileDetails).hasFixedIssues(empty);
+        assertThat(fileDetails).hasNewIssues(empty);
+        assertThat(fileDetails).hasOutstandingIssues(empty);
+    }
+
+    @Test
+    void shouldCreateOrigin() {
+        AnalysisResult result = createResult();
+        Map<String, Integer> sizes = new HashMap<>();
+        sizes.put(TOOL_ID, 20);
+        when(result.getSizePerOrigin()).thenReturn(sizes);
+        IssuesDetail details = createTrendDetails("origin." + TOOL_ID.hashCode(), result,
+                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, createParent(),
+                IssuesDetail.class);
+        assertThat(details).hasIssues(ALL_ISSUES);
+        IssuesDetail empty = createTrendDetails("origin.wrongID", result,
+                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, createParent(),
+                IssuesDetail.class);
+        assertThat(empty.getIssues()).isEmpty();
+    }
+
+    @Test
     void shouldReturnFixedWarningsDetailWhenCalledWithFixedLink() {
-        FixedWarningsDetail details = createTrendDetails("fixed", RUN, createResult(),
-                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent(),
+        FixedWarningsDetail details = createTrendDetails("fixed", createResult(),
+                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, createParent(),
                 FixedWarningsDetail.class);
         assertThat(details).hasIssues(FIXED_ISSUES);
         assertThat(details).hasFixedIssues(FIXED_ISSUES);
@@ -72,8 +112,8 @@ class DetailFactoryTest {
 
     @Test
     void shouldReturnAllIssues() {
-        IssuesDetail details = createTrendDetails("all", RUN, createResult(),
-                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent(),
+        IssuesDetail details = createTrendDetails("all", createResult(),
+                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, createParent(),
                 IssuesDetail.class);
         assertThat(details).hasIssues(ALL_ISSUES);
         assertThat(details).hasFixedIssues(FIXED_ISSUES);
@@ -96,8 +136,8 @@ class DetailFactoryTest {
 
     @Test
     void shouldReturnIssuesDetailWithNewIssuesWhenCalledWithNewLink() {
-        IssuesDetail details = createTrendDetails("new", RUN, createResult(),
-                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent(),
+        IssuesDetail details = createTrendDetails("new", createResult(),
+                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, createParent(),
                 IssuesDetail.class);
         assertThat(details).hasIssues(NEW_ISSUES);
         assertThat(details).hasFixedIssues(NO_ISSUES);
@@ -107,8 +147,8 @@ class DetailFactoryTest {
 
     @Test
     void shouldReturnIssuesDetailWithOutstandingIssuesWhenCalledWithOutstandingLink() {
-        IssuesDetail details = createTrendDetails("outstanding", RUN, createResult(),
-                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent(),
+        IssuesDetail details = createTrendDetails("outstanding", createResult(),
+                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, createParent(),
                 IssuesDetail.class);
         assertThat(details).hasIssues(OUTSTANDING_ISSUES);
         assertThat(details).hasFixedIssues(NO_ISSUES);
@@ -118,8 +158,8 @@ class DetailFactoryTest {
 
     @Test
     void shouldReturnPriorityDetailWithHighPriorityIssuesWhenCalledWithHighLink() {
-        IssuesDetail details = createTrendDetails("HIGH", RUN, createResult(),
-                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent(),
+        IssuesDetail details = createTrendDetails("HIGH", createResult(),
+                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, createParent(),
                 IssuesDetail.class);
         assertThatPrioritiesAreFiltered(details, Severity.WARNING_HIGH);
         assertThatPrioritiesAreCorrectlySet(details, 3, 0, 0);
@@ -127,8 +167,8 @@ class DetailFactoryTest {
 
     @Test
     void shouldReturnPriorityDetailWithNormalPriorityIssuesWhenCalledWithNormalLink() {
-        IssuesDetail details = createTrendDetails("NORMAL", RUN, createResult(),
-                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent(),
+        IssuesDetail details = createTrendDetails("NORMAL", createResult(),
+                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, createParent(),
                 IssuesDetail.class);
 
         assertThatPrioritiesAreFiltered(details, Severity.WARNING_NORMAL);
@@ -137,8 +177,8 @@ class DetailFactoryTest {
 
     @Test
     void shouldReturnPriorityDetailWithLowPriorityIssuesWhenCalledWithLowLink() {
-        IssuesDetail details = createTrendDetails("LOW", RUN, createResult(),
-                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent(),
+        IssuesDetail details = createTrendDetails("LOW", createResult(),
+                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, createParent(),
                 IssuesDetail.class);
 
         assertThatPrioritiesAreFiltered(details, Severity.WARNING_LOW);
@@ -154,9 +194,9 @@ class DetailFactoryTest {
 
     @Test
     void shouldReturnInfoErrorDetailWhenCalledWithInfoLink() {
-        InfoErrorDetail details = createTrendDetails("info", RUN, createResult(),
-                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent(),
-                InfoErrorDetail.class);
+        MessagesViewModel details = createTrendDetails("info", createResult(),
+                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, createParent(),
+                MessagesViewModel.class);
         assertThat(details.getErrorMessages()).containsExactly(ERROR_MESSAGES);
         assertThat(details.getDisplayName()).contains(PARENT_NAME);
     }
@@ -201,8 +241,8 @@ class DetailFactoryTest {
 
         Object details = createDetails(jenkins, buildFolder, "a-file");
 
-        assertThat(details).isInstanceOf(SourceDetail.class);
-        assertThat(((SourceDetail) details).getSourceCode()).contains("IOException: file error");
+        assertThat(details).isInstanceOfSatisfying(SourceCodeViewModel.class,
+                s -> assertThat(s.getSourceCode()).contains("IOException: file error"));
     }
 
     /**
@@ -216,8 +256,8 @@ class DetailFactoryTest {
 
         Object details = createDetails(jenkins, buildFolder, "a-file");
 
-        assertThat(details).isInstanceOf(SourceDetail.class);
-        assertThat(((SourceDetail) details).getSourceCode()).contains(AFFECTED_FILE_CONTENT);
+        assertThat(details).isInstanceOfSatisfying(SourceCodeViewModel.class,
+                s -> assertThat(s.getSourceCode()).contains(AFFECTED_FILE_CONTENT));
     }
 
     /**
@@ -239,14 +279,16 @@ class DetailFactoryTest {
     }
 
     @SuppressWarnings("ParameterNumber")
-    private <T extends ModelObject> T createTrendDetails(final String link, final Run<?, ?> owner,
+    private <T extends ModelObject> T createTrendDetails(final String link,
             final AnalysisResult result,
             final Report allIssues, final Report newIssues,
             final Report outstandingIssues, final Report fixedIssues,
-            final Charset sourceEncoding, final IssuesDetail parent, final Class<T> actualType) {
-        DetailFactory detailFactory = new DetailFactory();
-        Object details = detailFactory.createTrendDetails(link, owner,
-                result, allIssues, newIssues, outstandingIssues, fixedIssues, sourceEncoding, parent);
+            final IssuesDetail parent, final Class<T> actualType) {
+        JenkinsFacade jenkins = mock(JenkinsFacade.class);
+        when(jenkins.getDescriptorsFor(Tool.class)).thenReturn(DescriptorExtensionList.createDescriptorList((Jenkins) null, Tool.class));
+        DetailFactory detailFactory = new DetailFactory(jenkins, mock(BuildFolderFacade.class));
+        Object details = detailFactory.createTrendDetails(link, DetailFactoryTest.RUN,
+                result, allIssues, newIssues, outstandingIssues, fixedIssues, DetailFactoryTest.ENCODING, parent);
         assertThat(details).isInstanceOf(actualType);
         return actualType.cast(details);
     }
@@ -299,7 +341,7 @@ class DetailFactoryTest {
 
     private static Report createReportWith(final int high, final int normal, final int low, final String link) {
         try (IssueBuilder builder = new IssueBuilder().setOrigin(TOOL_ID)) {
-            Report issues = new Report();
+            Report issues = new Report(TOOL_ID, "SpotBugs");
             for (int i = 0; i < high; i++) {
                 issues.add(builder.setSeverity(Severity.WARNING_HIGH)
                         .setMessage(link + " - " + i)

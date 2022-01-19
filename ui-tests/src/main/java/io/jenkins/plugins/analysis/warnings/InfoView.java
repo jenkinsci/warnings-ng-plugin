@@ -15,7 +15,7 @@ import org.jenkinsci.test.acceptance.po.Control;
 import org.jenkinsci.test.acceptance.po.PageObject;
 
 /**
- * Page object for the error and info messages view.
+ * {@link PageObject} representing the error and info messages view.
  *
  * @author Alexander Praegla
  * @author Arne Schöntag
@@ -33,6 +33,7 @@ public class InfoView extends PageObject {
      * @param id
      *         the id of the analysis tool
      */
+    @SuppressWarnings("unused") // Required to dynamically create page object using reflection
     public InfoView(final Build build, final String id) {
         super(build, build.url(id + "/info/"));
     }

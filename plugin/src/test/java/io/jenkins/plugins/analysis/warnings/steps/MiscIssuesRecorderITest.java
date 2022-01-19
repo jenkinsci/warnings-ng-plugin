@@ -26,17 +26,20 @@ import io.jenkins.plugins.analysis.core.model.IssuesDetail;
 import io.jenkins.plugins.analysis.core.model.IssuesModel.IssuesRow;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
+import io.jenkins.plugins.analysis.core.portlets.PullRequestMonitoringPortlet;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.FindBugs;
+import io.jenkins.plugins.analysis.warnings.Java;
 import io.jenkins.plugins.analysis.warnings.Pmd;
 import io.jenkins.plugins.analysis.warnings.RegisteredParser;
 import io.jenkins.plugins.analysis.warnings.tasks.OpenTasks;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 
 /**
  * Integration tests of the warnings plug-in in freestyle jobs. Tests the new recorder {@link IssuesRecorder}.
@@ -46,9 +49,10 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  * @author Martin Weibel
  * @author Ullrich Hafner
  */
-@SuppressWarnings({"PMD.ExcessiveImports", "ClassDataAbstractionCoupling"})
+@SuppressWarnings({"PMD.ExcessiveImports", "checkstyle:ClassFanOutComplexity"})
 public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     private static final Pattern TAG_REGEX = Pattern.compile(">(.+?)</", Pattern.DOTALL);
+    private static final String ANALYSIS_ICON = "/plugin/warnings-ng/icons/analysis.svg";
 
     /**
      * Verifies that {@link FindBugs} handles the different severity mapping modes ({@link PriorityProperty}).
@@ -200,6 +204,11 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         assertThat(result).hasTotalSize(10);
         assertThat(result).hasId("analysis");
         assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
+        assertThat(result.getIssues().getOriginReportFiles()).satisfiesExactlyInAnyOrder(
+                first -> assertThat(first).endsWith("checkstyle-issues.txt"),
+                second -> assertThat(second).endsWith("pmd-warnings-issues.txt")
+        );
+
     }
 
     private List<AnalysisResult> runJobWithAggregation(final boolean isAggregationEnabled) {
@@ -232,6 +241,15 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         assertThat(result.getSizePerOrigin()).containsExactly(entry("checkstyle", 0), entry("pmd", 0));
         assertThat(result).hasId("analysis");
         assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
+
+        PullRequestMonitoringPortlet portlet = new PullRequestMonitoringPortlet(getResultAction(project));
+
+        assertThat(portlet.hasQualityGate()).isFalse();
+        assertThat(portlet.isEmpty()).isTrue();
+        assertThat(portlet.getId()).endsWith("analysis");
+        assertThat(portlet.getTitle()).endsWith("Static Analysis");
+        assertThat(portlet.getIconUrl()).contains(ANALYSIS_ICON);
+        assertThat(portlet.getDetailViewUrl()).contains("analysis");
     }
 
     /**
@@ -337,6 +355,44 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         assertThat(result.getTotalSize() - result.getNewSize()).isEqualTo(5); // Outstanding
         assertThat(result).hasTotalSize(5);
         assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
+
+        PullRequestMonitoringPortlet portlet = createPortlet(project);
+
+        String successfulModel = portlet.getWarningsModel();
+        assertThatJson(successfulModel).node("fixed").isEqualTo(3);
+        assertThatJson(successfulModel).node("outstanding").isEqualTo(5);
+        assertThatJson(successfulModel).node("new").node("total").isEqualTo(0);
+        assertThatJson(successfulModel).node("new").node("low").isEqualTo(0);
+        assertThatJson(successfulModel).node("new").node("normal").isEqualTo(0);
+        assertThatJson(successfulModel).node("new").node("high").isEqualTo(0);
+        assertThatJson(successfulModel).node("new").node("error").isEqualTo(0);
+
+        verifyNoNewWarningsPortletModel(portlet, 5, 3);
+    }
+
+    private void verifyNoNewWarningsPortletModel(final PullRequestMonitoringPortlet portlet,
+            final int expectedOutstandingWarnings, final int expectedFixedWarnings) {
+        assertThat(portlet.hasNoNewWarnings()).isTrue();
+
+        String simpleModel = portlet.getNoNewWarningsModel();
+        assertThatJson(simpleModel).node("data").isArray().hasSize(2);
+        assertThatJson(simpleModel).node("data[0]").node("name").isEqualTo("outstanding");
+        assertThatJson(simpleModel).node("data[0]").node("value").isEqualTo(expectedOutstandingWarnings);
+        assertThatJson(simpleModel).node("data[1]").node("name").isEqualTo("fixed");
+        assertThatJson(simpleModel).node("data[1]").node("value").isEqualTo(expectedFixedWarnings);
+    }
+
+    private PullRequestMonitoringPortlet createPortlet(final FreeStyleProject project) {
+        PullRequestMonitoringPortlet portlet = new PullRequestMonitoringPortlet(getResultAction(project));
+
+        assertThat(portlet.hasQualityGate()).isFalse();
+        assertThat(portlet.getId()).endsWith("eclipse");
+        assertThat(portlet.getTitle()).endsWith("Eclipse ECJ");
+        assertThat(portlet.getIconUrl()).contains(ANALYSIS_ICON);
+        assertThat(portlet.getDetailViewUrl()).contains("eclipse");
+        assertThat(portlet.isEmpty()).isFalse();
+
+        return portlet;
     }
 
     /**
@@ -362,6 +418,18 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         assertThat(result.getTotalSize() - result.getNewSize()).isEqualTo(5); // Outstanding
         assertThat(result).hasTotalSize(8);
         assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
+
+        PullRequestMonitoringPortlet portlet = createPortlet(project);
+        assertThat(portlet.hasNoNewWarnings()).isFalse();
+
+        String successfulModel = portlet.getWarningsModel();
+        assertThatJson(successfulModel).node("fixed").isEqualTo(0);
+        assertThatJson(successfulModel).node("outstanding").isEqualTo(5);
+        assertThatJson(successfulModel).node("new").node("total").isEqualTo(3);
+        assertThatJson(successfulModel).node("new").node("low").isEqualTo(0);
+        assertThatJson(successfulModel).node("new").node("normal").isEqualTo(3);
+        assertThatJson(successfulModel).node("new").node("high").isEqualTo(0);
+        assertThatJson(successfulModel).node("new").node("error").isEqualTo(0);
     }
 
     /**
@@ -387,6 +455,19 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         assertThat(result.getTotalSize() - result.getNewSize()).isEqualTo(8); // Outstanding
         assertThat(result).hasTotalSize(8);
         assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
+
+        PullRequestMonitoringPortlet portlet = createPortlet(project);
+
+        String successfulModel = portlet.getWarningsModel();
+        assertThatJson(successfulModel).node("fixed").isEqualTo(0);
+        assertThatJson(successfulModel).node("outstanding").isEqualTo(8);
+        assertThatJson(successfulModel).node("new").node("total").isEqualTo(0);
+        assertThatJson(successfulModel).node("new").node("low").isEqualTo(0);
+        assertThatJson(successfulModel).node("new").node("normal").isEqualTo(0);
+        assertThatJson(successfulModel).node("new").node("high").isEqualTo(0);
+        assertThatJson(successfulModel).node("new").node("error").isEqualTo(0);
+
+        verifyNoNewWarningsPortletModel(portlet, 8, 0);
     }
 
     /**
@@ -413,6 +494,19 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         assertThat(result.getTotalSize() - result.getNewSize()).isEqualTo(2); // Outstanding
         assertThat(result).hasTotalSize(4);
         assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
+
+        PullRequestMonitoringPortlet successPortlet = createPortlet(project);
+
+        String successfulModel = successPortlet.getWarningsModel();
+        assertThatJson(successfulModel).node("fixed").isEqualTo(3);
+        assertThatJson(successfulModel).node("outstanding").isEqualTo(2);
+        assertThatJson(successfulModel).node("new").node("total").isEqualTo(2);
+        assertThatJson(successfulModel).node("new").node("low").isEqualTo(0);
+        assertThatJson(successfulModel).node("new").node("normal").isEqualTo(2);
+        assertThatJson(successfulModel).node("new").node("high").isEqualTo(0);
+        assertThatJson(successfulModel).node("new").node("error").isEqualTo(0);
+
+        assertThat(successPortlet.hasQualityGate()).isFalse();
     }
 
     private ReportScanningTool createEclipse(final String pattern) {
@@ -561,6 +655,89 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         assertThatFailureFlagIsNotUsed(false);
     }
 
+    /**
+     * Make sure that a file pattern containing environment variables correctly matches the expected files.
+     */
+    @Test
+    public void shouldResolveEnvVariablesInPattern() {
+        FreeStyleProject project = createJavaWarningsFreestyleProject("**/*.${FILE_EXT}");
+
+        setEnvironmentVariables(env("FILE_EXT", "txt"));
+
+        createFileWithJavaWarnings("javac.txt", project, 1, 2, 3);
+        createFileWithJavaWarnings("javac.csv", project, 1, 2);
+
+        AnalysisResult analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+
+        assertThat(analysisResult).hasTotalSize(3);
+        assertThat(analysisResult.getInfoMessages()).contains(String.format(
+                "Searching for all files in '%s' that match the pattern '**/*.txt'", getWorkspace(project)));
+        assertThat(analysisResult.getInfoMessages()).contains("-> found 1 file");
+    }
+
+    /**
+     * Make sure that a file pattern containing environment variables which in turn contain environment variables again
+     * can be correctly resolved. The Environment variables should be injected with the EnvInject plugin.
+     */
+    @Test
+    public void shouldResolveNestedEnvVariablesInPattern() {
+        FreeStyleProject project = createJavaWarningsFreestyleProject("${FILE_PATTERN}");
+
+        setEnvironmentVariables(
+                env("FILE_PATTERN", "${FILE_NAME}.${FILE_EXT}"),
+                env("FILE_NAME", "*_javac"),
+                env("FILE_EXT", "txt"));
+
+        createFileWithJavaWarnings("A_javac.txt", project, 1, 2);
+        createFileWithJavaWarnings("B_javac.txt", project, 3, 4);
+        createFileWithJavaWarnings("C_javac.csv", project, 11, 12, 13);
+        createFileWithJavaWarnings("D_tmp.csv", project, 21, 22, 23);
+        createFileWithJavaWarnings("E_tmp.txt", project, 31, 32, 33);
+
+        AnalysisResult analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+
+        assertThat(analysisResult).hasTotalSize(4);
+        assertThat(analysisResult.getInfoMessages()).contains(String.format(
+                "Searching for all files in '%s' that match the pattern '*_javac.txt'", getWorkspace(project)));
+        assertThat(analysisResult.getInfoMessages()).contains("-> found 2 files");
+    }
+
+    /**
+     * Create a Freestyle Project with enabled Java warnings.
+     *
+     * @param pattern
+     *         The pattern that is set for the warning files.
+     *
+     * @return The created Freestyle Project.
+     */
+    private FreeStyleProject createJavaWarningsFreestyleProject(final String pattern) {
+        FreeStyleProject project = createFreeStyleProject();
+        Java java = new Java();
+        java.setPattern(pattern);
+        enableWarnings(project, java);
+        return project;
+    }
+
+    /**
+     * Create a file with some java warnings in the workspace of the project.
+     *
+     * @param fileName
+     *         of the file to which the warnings will be written
+     * @param project
+     *         in which the file will be placed
+     * @param linesWithWarning
+     *         all lines in which a mocked warning should be placed
+     */
+    private void createFileWithJavaWarnings(final String fileName, final FreeStyleProject project,
+            final int... linesWithWarning) {
+        StringBuilder warningText = new StringBuilder();
+        for (int lineNumber : linesWithWarning) {
+            warningText.append(createJavaWarning("C:\\Path\\SourceFile.java", lineNumber)).append("\n");
+        }
+
+        createFileInWorkspace(project, fileName, warningText.toString());
+    }
+
     private void assertThatFailureFlagIsNotUsed(final boolean isEnabledForFailure) {
         FreeStyleProject project = createCheckStyleProject(isEnabledForFailure);
 
@@ -603,6 +780,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         }
         return str;
     }
+
     private IssuesRow getIssuesModel(final AnalysisResult result, final int rowNumber) {
         IssuesDetail issuesDetail = (IssuesDetail) result.getOwner().getAction(ResultAction.class).getTarget();
         return (IssuesRow) issuesDetail.getTableModel("issues").getRows().get(rowNumber);

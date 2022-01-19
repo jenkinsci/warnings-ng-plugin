@@ -32,60 +32,64 @@ import static org.assertj.core.api.Assertions.*;
  * <p>
  * These tests work on several pom.xml, build.xml and MANIFEST.MF files that will be copied to the workspace for each
  * test. The following files are used:
+ * </p>
  *
  * <b>Maven:</b>
  *
  * <dl>
- * <dt>pom.xml<dt/>
- * <dd>a default pom.xml with a valid name tag<dd/>
- * <dt>m1/pom.xml<dt/>
+ * <dt>pom.xml</dt>
+ * <dd>a default pom.xml with a valid name tag</dd>
+ * <dt>m1/pom.xml</dt>
  * <dd>a default pom.xml with a valid name tag which could be used to detect additional modules in addition to
- * the previous mentioned pom.xml<dd/>
- * <dt>m2/pom.xml<dt/>
+ * the previous mentioned pom.xml</dd>
+ * <dt>m2/pom.xml</dt>
  * <dd>a default pom.xml with a valid name tag which could be used to detect additional modules in addition to
- * the previous mentioned pom.xml<dd/>
- * <dt>m3/pom.xml<dt/>
- * <dd>a broken XML-structure breaks the correct parsing of this file<dd/>
- * <dt>m4/pom.xml<dt/>
- * <dd>a pom.xml with an artifactId tag and without a name tag<dd/>
- * <dt>m5/pom.xml<dt/>
- * <dd>a pom.xml without an artifactId tag and without a name tag<dd/>
+ * the previous mentioned pom.xml</dd>
+ * <dt>m3/pom.xml</dt>
+ * <dd>a broken XML-structure breaks the correct parsing of this file</dd>
+ * <dt>m4/pom.xml</dt>
+ * <dd>a pom.xml with an artifactId tag and without a name tag</dd>
+ * <dt>m5/pom.xml</dt>
+ * <dd>a pom.xml without an artifactId tag and without a name tag</dd>
  * </dl>
- * <p>
  *
+ * <p>
  * <b>Ant:</b>
+ * </p>
  *
  * <dl>
- * <dt>build.xml<dt/>
- * <dd>a default build.xml with a valid name tag<dd/>
- * <dt>m1/build.xml<dt/>
+ * <dt>build.xml</dt>
+ * <dd>a default build.xml with a valid name tag</dd>
+ * <dt>m1/build.xml</dt>
  * <dd>a default build.xml with a valid name tag which could be used to detect additional modules in addition
- * * to the previous mentioned build.xml<dd/>
- * <dt>m2/build.xml<dt/>
- * <dd>a broken XML-structure breaks the correct parsing of this file<dd/>
- * <dt>m3/build.xml<dt/>
- * <dd>a build file without the name tag<dd/>
+ * * to the previous mentioned build.xml</dd>
+ * <dt>m2/build.xml</dt>
+ * <dd>a broken XML-structure breaks the correct parsing of this file</dd>
+ * <dt>m3/build.xml</dt>
+ * <dd>a build file without the name tag</dd>
  * </dl>
  *
  * <b>OSGI:</b>
  *
  * <dl>
- * <dt>META-INF/MANIFEST.MF<dt/>
- * <dd>a default MANIFEST.MF with a set Bundle-SymbolicName and a set Bundle-Vendor<dd/>
- * <dt>m1/META-INF/MANIFEST.MF<dt/>
- * <dd> a MANIFEST.MF with a wildcard Bundle-Name, a set Bundle-SymbolicName and a wildcard<dd/>
- * <dt>m2/META-INF/MANIFEST.MF<dt/>
- * <dd>a MANIFEST.MF with a set Bundle-Name and a wildcard Bundle-Vendor<dd/>
- * <dt>m3/META-INF/MANIFEST.MF<dt/>
- * <dd>an empty MANIFEST.MF<dd/>
- * <dt>plugin.properties<dt/>
- * <dd>a default plugin.properties file<dd/>
+ * <dt>META-INF/MANIFEST.MF</dt>
+ * <dd>a default MANIFEST.MF with a set Bundle-SymbolicName and a set Bundle-Vendor</dd>
+ * <dt>m1/META-INF/MANIFEST.MF</dt>
+ * <dd> a MANIFEST.MF with a wildcard Bundle-Name, a set Bundle-SymbolicName and a wildcard</dd>
+ * <dt>m2/META-INF/MANIFEST.MF</dt>
+ * <dd>a MANIFEST.MF with a set Bundle-Name and a wildcard Bundle-Vendor</dd>
+ * <dt>m3/META-INF/MANIFEST.MF</dt>
+ * <dd>an empty MANIFEST.MF</dd>
+ * <dt>plugin.properties</dt>
+ * <dd>a default plugin.properties file</dd>
  * </dl>
+ *
  * <p>
  * All tests work the same way: first of all a set of module files will be copied to the workspace. Each module file
  * will be copied to a separate folder, the first module file is the top-level module. Into each of the modules, a
  * source code file will be placed. Finally,  Eclipse parser log file will be generated, that has exactly one warning
  * for each file.
+ * </p>
  *
  * @author Frank Christian Geyer
  * @author Deniz Mardin

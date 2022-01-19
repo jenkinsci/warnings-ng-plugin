@@ -5,7 +5,7 @@
   <parent>
     <groupId>edu.hm.hafner</groupId>
     <artifactId>codingstyle-pom</artifactId>
-    <version>2.7.1</version>
+    <version>2.16.0</version>
     <relativePath/>
   </parent>
 
@@ -16,16 +16,26 @@
   <name>UI Tests of Warnings Plugin</name>
 
   <properties>
-    <jenkins.version>2.263.3</jenkins.version>
+    <jenkins.version>2.303.3</jenkins.version>
     <json-smart.version>2.3</json-smart.version>
-    <json-unit-assertj.version>2.25.0</json-unit-assertj.version>
+    <json-unit-assertj.version>2.28.0</json-unit-assertj.version>
   </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.jenkins-ci.main</groupId>
+        <artifactId>jenkins-core</artifactId>
+        <version>2.330</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <dependencies>
     <dependency>
       <groupId>org.jenkins-ci</groupId>
       <artifactId>acceptance-test-harness</artifactId>
-      <version>1.92</version>
+      <version>1.108</version>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
@@ -126,12 +136,23 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>org.assertj</groupId>
         <artifactId>assertj-assertions-generator-maven-plugin</artifactId>
         <configuration>
           <packages combine.children="append">
             <package>io.jenkins.plugins.analysis.warnings</package>
           </packages>
+          <excludes>
+            <exclude>.*Test</exclude>
+            <exclude>.*Table</exclude>
+          </excludes>
           <entryPointClassPackage>io.jenkins.plugins.analysis.warnings</entryPointClassPackage>
         </configuration>
       </plugin>
@@ -169,7 +190,7 @@
           <environmentVariables>
             <PLUGINS_DIR>../plugin/target/test-classes/test-dependencies</PLUGINS_DIR>
             <JENKINS_VERSION>${jenkins.version}</JENKINS_VERSION>
-            <BROWSER>chrome-container</BROWSER>
+            <BROWSER>firefox-container</BROWSER>
           </environmentVariables>
           <rerunFailingTestsCount>1</rerunFailingTestsCount>
           <includes>
@@ -190,6 +211,17 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <Automatic-Module-Name>warnings.ui.tests</Automatic-Module-Name>
+            </manifestEntries>
+          </archive>
+        </configuration>
       </plugin>
     </plugins>
   </build>

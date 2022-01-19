@@ -6,10 +6,13 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.Issue;
 
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import edu.hm.hafner.analysis.IssueBuilder;
+
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.CompositeLocalizable;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.DefaultAgeBuilder;
+
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
 /**
  * Tests the class {@link StaticAnalysisLabelProvider}.
@@ -21,15 +24,37 @@ class StaticAnalysisLabelProviderTest {
     private static final String NAME = "name";
     private static final String OTHER_NAME = "other";
 
-    @Test @Issue("JENKINS-61834")
-    void shouldNotEscapeHtmlEntities() {
+    @Test
+    void shouldShowDescriptionOfIssueByDefault() {
+        try (IssueBuilder issueBuilder = new IssueBuilder()) {
+            StaticAnalysisLabelProvider labelProvider = new StaticAnalysisLabelProvider("description", "-");
+
+            String text = "Hello Description";
+            issueBuilder.setDescription(text);
+            assertThat(labelProvider.getDescription(issueBuilder.build())).isEqualTo(text);
+
+            StaticAnalysisLabelProvider emptyDescription = new StaticAnalysisLabelProvider("description", "-", i -> "empty");
+            assertThat(emptyDescription.getDescription(issueBuilder.build())).isEqualTo("empty");
+        }
+    }
+
+    @Test
+    void shouldIgnoreUndefinedName() {
+        StaticAnalysisLabelProvider labelProvider = new StaticAnalysisLabelProvider("cpd", "-");
+
+        assertThat(labelProvider).hasId("cpd");
+        assertThat(labelProvider).hasName(labelProvider.getDefaultName());
+        assertThat(labelProvider).hasLinkName("Static Analysis Warnings");
+    }
+
+    @Test @Issue("JENKINS-61834, JENKINS-67245")
+    void shouldNotEscapeHtmlEntitiesAnymore() {
         StaticAnalysisLabelProvider labelProvider = new StaticAnalysisLabelProvider(ID, "C++");
 
         assertThat(labelProvider).hasId(ID);
-        assertThat(labelProvider).hasName("C&#43;&#43;");
-        assertThat(labelProvider.getLinkName()).contains("C&#43;&#43;");
-        assertThat(labelProvider.getRawLinkName()).contains("C++");
-        assertThat(labelProvider.getTrendName()).contains("C&#43;&#43;");
+        assertThat(labelProvider).hasName("C++");
+        assertThat(labelProvider.getLinkName()).contains("C++");
+        assertThat(labelProvider.getTrendName()).contains("C++");
     }
 
     @Test

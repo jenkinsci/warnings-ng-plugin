@@ -1,7 +1,7 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:i="/issues" xmlns:f="/lib/form">
 
-  <f:section title="${%Warnings Next Generation Plugin Global Settings}">
+  <f:section title="${%Warnings Plugin Global Settings}">
     <f:entry title="${%sourceDirectories.title}" description="${%sourceDirectories.description}">
       <i:repeatable field="sourceDirectories"/>
     </f:entry>

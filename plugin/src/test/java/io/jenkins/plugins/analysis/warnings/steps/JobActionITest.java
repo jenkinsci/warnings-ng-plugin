@@ -21,7 +21,7 @@ import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSu
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
-import io.jenkins.plugins.echarts.AsyncTrendChart;
+import io.jenkins.plugins.echarts.AsyncConfigurableTrendChart;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
@@ -35,8 +35,8 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String ECLIPSE = "Eclipse ECJ Warnings Trend";
     private static final String CHECKSTYLE = "CheckStyle Warnings Trend";
-    private static final String ANALYSIS_ICON = "analysis-24x24";
-    private static final String CHECKSTYLE_ICON = "checkstyle-24x24";
+    private static final String ANALYSIS_ICON = "plugin/warnings-ng/icons/analysis.svg";
+    private static final String CHECKSTYLE_ICON = "plugin/warnings-ng/icons/checkstyle-24x24.png";
     private static final String ECLIPSE_URL_NAME = "eclipse";
     private static final String ECLIPSE_LOG = "eclipse.txt";
     private static final String CHECKSTYLE_XML = "checkstyle.xml";
@@ -56,7 +56,7 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         List<JobAction> jobActions = project.getActions(JobAction.class);
 
         assertThatTrendChartIsHidden(jobActions.get(0)); // trend chart requires at least two builds
-        assertThat(jobActions.get(0).getIconFileName()).contains(ANALYSIS_ICON);
+        assertThat(jobActions.get(0).getIconFileName()).endsWith(ANALYSIS_ICON);
         assertThat(jobActions.get(0).getUrlName()).isEqualTo(ECLIPSE_URL_NAME);
 
         build = buildWithResult(project, Result.SUCCESS);
@@ -65,7 +65,7 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         jobActions = project.getActions(JobAction.class);
 
         assertThatTrendChartIsVisible(jobActions.get(0));
-        assertThat(jobActions.get(0).getIconFileName()).contains(ANALYSIS_ICON);
+        assertThat(jobActions.get(0).getIconFileName()).endsWith(ANALYSIS_ICON);
         assertThat(jobActions.get(0).getUrlName()).isEqualTo(ECLIPSE_URL_NAME);
     }
 
@@ -196,11 +196,11 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(jobAction).isNotNull();
     }
 
-    private void assertThatTrendChartIsVisible(final AsyncTrendChart trendChart) {
+    private void assertThatTrendChartIsVisible(final AsyncConfigurableTrendChart trendChart) {
         assertThat(trendChart.isTrendVisible()).isTrue();
     }
 
-    private void assertThatTrendChartIsHidden(final AsyncTrendChart trendChart) {
+    private void assertThatTrendChartIsHidden(final AsyncConfigurableTrendChart trendChart) {
         assertThat(trendChart.isTrendVisible()).isFalse();
     }
 
@@ -220,9 +220,9 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
             eclipse = jobActions.get(0);
         }
         assertThat(eclipse.getTrendName()).isEqualTo(ECLIPSE);
-        assertThat(eclipse.getIconFileName()).contains(ANALYSIS_ICON);
+        assertThat(eclipse.getIconFileName()).endsWith(ANALYSIS_ICON);
         assertThat(checkstyle.getTrendName()).isEqualTo(CHECKSTYLE);
-        assertThat(checkstyle.getIconFileName()).contains(CHECKSTYLE_ICON);
+        assertThat(checkstyle.getIconFileName()).endsWith(CHECKSTYLE_ICON);
 
         if (shouldChartBeVisible) {
             assertThatTrendChartIsVisible(eclipse);
