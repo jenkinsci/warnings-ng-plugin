@@ -24,6 +24,7 @@ import org.jenkinsci.test.acceptance.po.PageObject;
  * @author Mitja Oldenbourg
  */
 public class AnalysisResult extends PageObject {
+    private static final int MAX_ATTEMPTS = 5;
     private final String id;
 
     /**
@@ -174,8 +175,8 @@ public class AnalysisResult extends PageObject {
     }
 
     /**
-     * Opens the analysis details page, selects the tab {@link Tab#BLAMES} and returns
-     * the {@link PageObject} of the blames table.
+     * Opens the analysis details page, selects the tab {@link Tab#BLAMES} and returns the {@link PageObject} of the
+     * blames table.
      *
      * @return page object of the blames table.
      */
@@ -300,7 +301,8 @@ public class AnalysisResult extends PageObject {
      */
     public boolean trendChartIsDisplayed(final String chartName) {
         WebElement trendChart = getTrendChart();
-        return trendChart.findElement(By.id(chartName)).isDisplayed(); }
+        return trendChart.findElement(By.id(chartName)).isDisplayed();
+    }
 
     /**
      * Checks if the trendChart is visible on the Page.
@@ -311,13 +313,18 @@ public class AnalysisResult extends PageObject {
      * @return TrendChart as JSON String.
      */
     public String getTrendChartById(final String elementId) {
-        Object result = executeScript(String.format(
-                "delete(window.Array.prototype.toJSON) %n"
-                        + "return JSON.stringify(echarts.getInstanceByDom(document.getElementById(\"%s\")).getOption())",
-                elementId));
-        ScriptResult scriptResult = new ScriptResult(result);
-
-        return scriptResult.getJavaScriptResult().toString();
+        for (int i = 0; i < MAX_ATTEMPTS; i++) {
+            Object result = executeScript(String.format(
+                    "delete(window.Array.prototype.toJSON) %n"
+                            + "return JSON.stringify(echarts.getInstanceByDom(document.getElementById(\"%s\")).getOption())",
+                    elementId));
+            Object scriptResult = new ScriptResult(result).getJavaScriptResult();
+            if (scriptResult != null) {
+                return scriptResult.toString();
+            }
+            elasticSleep(1000);
+        }
+        throw new NoSuchElementException("Found no trend chart with ID '%s''" + elementId);
     }
 
     /**
