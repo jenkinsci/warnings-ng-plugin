@@ -35,7 +35,7 @@
     <echarts-api.version>5.2.2-2</echarts-api.version>
     <bootstrap5-api.version>5.1.3-4</bootstrap5-api.version>
     <font-awesome-api.version>5.15.4-5</font-awesome-api.version>
-    <prism-api.version>1.25.0-2</prism-api.version>
+    <prism-api.version>1.26.0-2</prism-api.version>
 
     <error_prone_annotations.version>2.9.0</error_prone_annotations.version>
     <pull-request-monitoring.version>1.7.8</pull-request-monitoring.version>
