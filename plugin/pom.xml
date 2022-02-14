@@ -47,7 +47,7 @@
     <!-- Test Library Dependencies Versions -->
     <xmlunit.version>2.9.0</xmlunit.version>
     <jsoup.version>1.14.3</jsoup.version>
-    <json-smart.version>2.4.7</json-smart.version>
+    <json-smart.version>2.4.8</json-smart.version>
     <jmh.version>1.34</jmh.version>
 
     <!-- Jenkins Plug-in Dependencies Versions -->
