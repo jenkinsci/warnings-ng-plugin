@@ -83,7 +83,7 @@ public class FiltersITest extends IntegrationTestWithJenkinsPerSuite {
         Map<RegexpFilter, Integer[]> expectedLinesByFilter = setupCategoryFilterForCheckStyle();
 
         for (Entry<RegexpFilter, Integer[]> entry : expectedLinesByFilter.entrySet()) {
-            FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("checkstyle-filtering.xml");
+            FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle-filtering.xml");
             enableGenericWarnings(project, recorder -> recorder.setFilters(toFilter(entry)), new CheckStyle());
 
             buildAndVerifyResults(project, entry.getValue());
@@ -124,7 +124,7 @@ public class FiltersITest extends IntegrationTestWithJenkinsPerSuite {
         Map<RegexpFilter, Integer[]> typeFiltersWithResult = setupCategoryFilterForPmd();
 
         for (Entry<RegexpFilter, Integer[]> entry : typeFiltersWithResult.entrySet()) {
-            FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("pmd-warnings.xml");
+            FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("pmd-warnings.xml");
             enableGenericWarnings(project, recorder -> recorder.setFilters(toFilter(entry)), new Pmd());
 
             buildAndVerifyResults(project, entry.getValue());

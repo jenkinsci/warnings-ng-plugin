@@ -119,7 +119,8 @@ public class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldFindNewCheckStyleWarnings() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("checkstyle1.xml", "checkstyle2.xml");
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle1.xml",
+                "checkstyle2.xml");
         IssuesRecorder recorder = enableWarnings(project, createCheckstyle("**/checkstyle1*"));
         buildWithResult(project, Result.SUCCESS);
         recorder.setTools(createCheckstyle("**/checkstyle2*"));
@@ -134,7 +135,8 @@ public class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
     /** Verifies that the remote API for the tools aggregation correctly returns the summary. */
     @Test
     public void shouldReturnAggregation() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("checkstyle1.xml", "checkstyle2.xml");
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle1.xml",
+                "checkstyle2.xml");
         enableWarnings(project, createCheckstyle("**/checkstyle1*"),
                 configurePattern(new Pmd()), configurePattern(new SpotBugs()));
         Run<?, ?> build = buildWithResult(project, Result.SUCCESS);
@@ -173,7 +175,7 @@ public class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private Run<?, ?> buildCheckStyleJob() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(CHECKSTYLE_FILE);
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(CHECKSTYLE_FILE);
         enableCheckStyleWarnings(project);
         return scheduleBuildAndAssertStatus(project, Result.SUCCESS).getOwner();
     }

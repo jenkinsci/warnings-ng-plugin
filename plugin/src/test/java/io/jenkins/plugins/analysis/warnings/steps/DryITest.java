@@ -44,7 +44,7 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldHaveDuplicateCodeWarnings() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(CPD_REPORT);
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(CPD_REPORT);
         enableGenericWarnings(project, new Cpd());
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
@@ -66,7 +66,7 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldConfigureSeverityThresholdTo2InJobConfigurationForCpd() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(CPD_REPORT);
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(CPD_REPORT);
         Cpd cpd = new Cpd();
         cpd.setNormalThreshold(1);
         enableGenericWarnings(project, cpd);
@@ -93,7 +93,7 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldConfigureSeverityThresholdTo5InJobConfigurationForCpd() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(CPD_REPORT);
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(CPD_REPORT);
         Cpd cpd = new Cpd();
         cpd.setNormalThreshold(1);
         enableGenericWarnings(project, cpd);
@@ -120,7 +120,7 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldConfigureSeverityNormalThresholdTo4InJobConfigurationForCpd() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(CPD_REPORT);
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(CPD_REPORT);
         Cpd cpd = new Cpd();
         cpd.setNormalThreshold(4);
         enableGenericWarnings(project, cpd);
@@ -144,7 +144,7 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldFilterIssuesBySeverity() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(CPD_REPORT);
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(CPD_REPORT);
         Cpd cpd = new Cpd();
         cpd.setNormalThreshold(2);
         cpd.setHighThreshold(4);
@@ -169,7 +169,7 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldDifferInAmountOfDuplicateWarningForPriorities() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(CPD_REPORT);
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(CPD_REPORT);
         Cpd cpd = new Cpd();
         enableGenericWarnings(project, cpd);
 

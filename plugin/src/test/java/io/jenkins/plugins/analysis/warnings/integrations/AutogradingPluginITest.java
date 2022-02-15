@@ -40,7 +40,8 @@ public class AutogradingPluginITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void checksCorrectGradingWithSeveralTools() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("checkstyle.xml", "spotbugs.xml", "cpd.xml", "pmd.xml");
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle.xml", "spotbugs.xml",
+                "cpd.xml", "pmd.xml");
 
         IssuesRecorder recorder = new IssuesRecorder();
 

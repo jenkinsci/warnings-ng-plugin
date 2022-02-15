@@ -62,7 +62,7 @@ public class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(secondReferenceResult.getReferenceBuild().get().getId()).isEqualTo("1");
         assertThat(secondReferenceResult.getOwner().getId()).isEqualTo("2");
 
-        WorkflowJob job = createPipelineWithWorkspaceFiles(JAVA_TWO_WARNINGS);
+        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix(JAVA_TWO_WARNINGS);
         job.setDefinition(asStage(createScanForIssuesStep(new Java()),
                 "publishIssues issues:[issues], referenceJobName:'reference', referenceBuildId: '1'"));
 
@@ -90,7 +90,7 @@ public class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(referenceResult).hasTotalSize(2);
         assertThat(referenceResult.getReferenceBuild()).isEmpty();
 
-        WorkflowJob job = createPipelineWithWorkspaceFiles(JAVA_ONE_WARNING);
+        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix(JAVA_ONE_WARNING);
         job.setDefinition(asStage(DISCOVER_REFERENCE_BUILD_STEP,
                 createScanForIssuesStep(new Java()),
                 PUBLISH_ISSUES_STEP));
@@ -117,7 +117,7 @@ public class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
         copyMultipleFilesToWorkspaceWithSuffix(reference, JAVA_ONE_WARNING);
         reference.setDefinition(createPipelineScriptWithScanAndPublishSteps(new Java()));
 
-        WorkflowJob job = createPipelineWithWorkspaceFiles(JAVA_TWO_WARNINGS);
+        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix(JAVA_TWO_WARNINGS);
         job.setDefinition(asStage(DISCOVER_REFERENCE_BUILD_STEP,
                 createScanForIssuesStep(new Java()),
                 PUBLISH_ISSUES_STEP));

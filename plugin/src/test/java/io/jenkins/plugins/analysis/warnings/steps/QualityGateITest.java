@@ -7,7 +7,6 @@ import org.eclipse.collections.impl.factory.Maps;
 import org.junit.Test;
 import org.jvnet.hudson.test.Issue;
 
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import hudson.model.AbstractProject;
@@ -76,7 +75,7 @@ public class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldCreateUnstableResult() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse.txt");
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("eclipse.txt");
         enableEclipseWarnings(project,
                 publisher -> publisher.addQualityGate(7, QualityGateType.TOTAL, QualityGateResult.UNSTABLE));
 
@@ -84,9 +83,6 @@ public class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
 
         assertThat(result).hasTotalSize(8);
         assertThat(result).hasQualityGateStatus(QualityGateStatus.WARNING);
-
-        HtmlPage page = getWebPage(JavaScriptSupport.JS_DISABLED, project, "eclipse");
-        assertThat(page.getElementsByIdAndOrName("statistics")).hasSize(1);
     }
 
     /**

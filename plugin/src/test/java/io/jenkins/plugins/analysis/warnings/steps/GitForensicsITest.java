@@ -95,7 +95,7 @@ public class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private void runStepAndVerifyBlamesAndForensics(final String step) {
-        WorkflowJob job = createPipelineWithWorkspaceFiles();
+        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix();
 
         createFileInWorkspace(job, "java-issues.txt", createJavaWarning(SCM_RESOLVER, AFFECTED_LINE));
 
@@ -169,7 +169,7 @@ public class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private void runStepAndVerifyScmSkipping(final String step) {
-        WorkflowJob job = createPipelineWithWorkspaceFiles(JAVA_ONE_WARNING);
+        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix(JAVA_ONE_WARNING);
         job.setDefinition(asStage(CHECKOUT_FORENSICS_API, MINE_REPOSITORY, step));
 
         verifySkippedScm(job);
