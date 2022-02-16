@@ -19,13 +19,7 @@ jobs:
           distribution: 'temurin'
           java-version: '11'
           check-latest: true
-      - name: Cache local Maven repository
-        uses: actions/cache@v2.1.7
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
+          cache: 'maven'
       - name: Build warnings plugin and download dependencies
         run: mvn -V -ntp verify -Pskip --file plugin/pom.xml -Dgpg.skip
       - name: Run UI tests for the details tabs
@@ -45,13 +39,7 @@ jobs:
           distribution: 'temurin'
           java-version: '11'
           check-latest: true
-      - name: Cache local Maven repository
-        uses: actions/cache@v2.1.7
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
+          cache: 'maven'
       - name: Build warnings plugin and download dependencies
         run: mvn -V -ntp verify -Pskip --file plugin/pom.xml -Dgpg.skip
       - name: Run UI tests for the dashboard view
@@ -71,13 +59,7 @@ jobs:
           distribution: 'temurin'
           java-version: '11'
           check-latest: true
-      - name: Cache local Maven repository
-        uses: actions/cache@v2.1.7
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
+          cache: 'maven'
       - name: Build warnings plugin and download dependencies
         run: mvn -V -ntp verify -Pskip --file plugin/pom.xml -Dgpg.skip
       - name: Run UI tests for the freestyle configuration
@@ -97,13 +79,7 @@ jobs:
           distribution: 'temurin'
           java-version: '11'
           check-latest: true
-      - name: Cache local Maven repository
-        uses: actions/cache@v2.1.7
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
+          cache: 'maven'
       - name: Build warnings plugin and download dependencies
         run: mvn -V -ntp verify -Pskip --file plugin/pom.xml -Dgpg.skip
       - name: Run UI tests for the pipeline snippet configurator
@@ -123,13 +99,7 @@ jobs:
           distribution: 'temurin'
           java-version: '11'
           check-latest: true
-      - name: Cache local Maven repository
-        uses: actions/cache@v2.1.7
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
+          cache: 'maven'
       - name: Build warnings plugin and download dependencies
         run: mvn -V -ntp verify -Pskip --file plugin/pom.xml -Dgpg.skip
       - name: Run UI tests for Jenkins' global configuration
@@ -144,9 +114,12 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Set up JDK 11
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
-          java-version: 11
+          distribution: 'temurin'
+          java-version: '11'
+          check-latest: true
+          cache: 'maven'
       - name: Build warnings plugin and download dependencies
         run: mvn -V -ntp verify -Pskip --file plugin/pom.xml -Dgpg.skip
       - name: Run UI tests for the issues column
@@ -166,13 +139,7 @@ jobs:
           distribution: 'temurin'
           java-version: '11'
           check-latest: true
-      - name: Cache local Maven repository
-        uses: actions/cache@v2.1.7
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
+          cache: 'maven'
       - name: Build warnings plugin and download dependencies
         run: mvn -V -ntp verify -Pskip --file plugin/pom.xml -Dgpg.skip
       - name: Run UI tests for the trend charts
@@ -192,13 +159,7 @@ jobs:
           distribution: 'temurin'
           java-version: '11'
           check-latest: true
-      - name: Cache local Maven repository
-        uses: actions/cache@v2.1.7
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
+          cache: 'maven'
       - name: Build warnings plugin and download dependencies
         run: mvn -V -ntp verify -Pskip --file plugin/pom.xml -Dgpg.skip
       - name: Run miscellaneous UI tests of the warnings plugin

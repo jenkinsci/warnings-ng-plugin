@@ -24,13 +24,7 @@ jobs:
         distribution: 'temurin'
         java-version: '11'
         check-latest: true
-    - name: Cache local Maven repository
-      uses: actions/cache@v2.1.7
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-
+        cache: 'maven'
     - name: Build with Maven
       env:
         BROWSER: firefox-container
