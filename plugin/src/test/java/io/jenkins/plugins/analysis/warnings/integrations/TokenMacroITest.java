@@ -23,7 +23,7 @@ public class TokenMacroITest extends IntegrationTestWithJenkinsPerTest {
      */
     @Test
     public void shouldExpandTokenMacro() {
-        WorkflowJob job = createPipelineWithWorkspaceFiles("checkstyle1.xml", "checkstyle2.xml");
+        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("checkstyle1.xml", "checkstyle2.xml");
 
         configureToken(job, "checkstyle1");
 
@@ -42,7 +42,7 @@ public class TokenMacroITest extends IntegrationTestWithJenkinsPerTest {
      */
     @Test
     public void shouldExpandDifferentSeverities() {
-        WorkflowJob job = createPipelineWithWorkspaceFiles("all-severities.xml");
+        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("all-severities.xml");
 
         job.setDefinition(new CpsFlowDefinition("node {\n"
                 + "  stage ('Integration Test') {\n"

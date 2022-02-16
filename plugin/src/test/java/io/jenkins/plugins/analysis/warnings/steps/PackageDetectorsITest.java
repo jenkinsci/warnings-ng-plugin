@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -9,26 +7,19 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
 import org.junit.Test;
-import org.jvnet.hudson.test.JenkinsRule.WebClient;
-import org.xml.sax.SAXException;
-
-import com.gargoylesoftware.htmlunit.html.DomElement;
-import com.gargoylesoftware.htmlunit.html.DomNodeList;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import edu.hm.hafner.analysis.Issue;
 
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
+import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.FindBugs;
 import io.jenkins.plugins.analysis.warnings.Java;
-import io.jenkins.plugins.analysis.warnings.steps.pageobj.PropertyTable;
-import io.jenkins.plugins.analysis.warnings.steps.pageobj.PropertyTable.PropertyRow;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -43,7 +34,6 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String PACKAGE_FILE_PATH = "detectors/";
     private static final String PACKAGE_WITH_FILES_CSHARP = PACKAGE_FILE_PATH + "csharp/";
     private static final String PACKAGE_WITH_FILES_JAVA = PACKAGE_FILE_PATH + "java/";
-    private static final String DEFAULT_ENTRY_PATH = "eclipse/";
     private static final String DEFAULT_TAB_TO_INVESTIGATE = "packageName";
     private static final String DEFAULT_DEBUG_LOG_LINE = "Resolving package names (or namespaces) by parsing the affected files";
 
@@ -73,14 +63,9 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
                 "four/SampleClassWithoutNamespace.cs");
 
         enableGenericWarnings(project, new Java());
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        Run<?, ?> build = buildSuccessfully(project);
 
-        HtmlPage details = getWebPage(JavaScriptSupport.JS_DISABLED, result);
-
-        PropertyTable propertyTable = new PropertyTable(details, "folder");
-        assertThat(propertyTable.getTitle()).isEqualTo("Folders");
-        assertThat(propertyTable.getColumnName()).isEqualTo("Source Folder");
-        assertThat(propertyTable.getRows()).containsExactlyInAnyOrder(
+        assertThat(PropertyRow.getRows(getResultAction(build), "folder")).containsExactlyInAnyOrder(
                 new PropertyRow("four", 1),
                 new PropertyRow("one", 1),
                 new PropertyRow("three", 1),
@@ -93,7 +78,7 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldShowNamespacesAndPackagesAltogetherForJavaAndCSharpInTheHtmlOutput() {
-        AnalysisResult result = buildProject(PACKAGE_WITH_FILES_CSHARP + "eclipseForCSharpVariousClasses.txt",
+        ResultAction result = buildProject(PACKAGE_WITH_FILES_CSHARP + "eclipseForCSharpVariousClasses.txt",
                 PACKAGE_WITH_FILES_JAVA + "eclipseForJavaVariousClasses.txt",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithPackage.java",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithoutPackage.java",
@@ -105,9 +90,7 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithoutNamespace.cs"
         );
 
-        HtmlPage details = getWebPage(JavaScriptSupport.JS_DISABLED, result);
-
-        verifyNamespaces(details,
+        verifyNamespaces(result,
                 new PropertyRow("edu.hm.hafner.analysis._123.int.naming.structure", 1),
                 new PropertyRow("SampleClassWithNamespace", 1),
                 new PropertyRow("NestedNamespace", 1),
@@ -120,14 +103,12 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldShowPackagesForJavaOnly() {
-        AnalysisResult result = buildProject(PACKAGE_WITH_FILES_JAVA + "eclipseForJavaVariousClasses.txt",
+        ResultAction details = buildProject(PACKAGE_WITH_FILES_JAVA + "eclipseForJavaVariousClasses.txt",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithPackage.java",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithoutPackage.java",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithUnconventionalPackageNaming.java",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithBrokenPackageNaming.java"
         );
-
-        HtmlPage details = getWebPage(JavaScriptSupport.JS_DISABLED, result);
 
         verifyPackages(details,
                 new PropertyRow("-", 5, 100),
@@ -139,13 +120,11 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldShowNamespacesForCSharpOnlyInTheHtmlOutput() {
-        AnalysisResult result = buildProject(PACKAGE_WITH_FILES_CSHARP + "eclipseForCSharpVariousClasses.txt",
+        ResultAction details = buildProject(PACKAGE_WITH_FILES_CSHARP + "eclipseForCSharpVariousClasses.txt",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNamespace.cs",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNamespaceBetweenCode.cs",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNestedAndNormalNamespace.cs",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithoutNamespace.cs");
-
-        HtmlPage details = getWebPage(JavaScriptSupport.JS_DISABLED, result);
 
         verifyNamespaces(details,
                 new PropertyRow("SampleClassWithNamespace", 1),
@@ -154,22 +133,12 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
                 new PropertyRow("-", 3));
     }
 
-    private void verifyNamespaces(final HtmlPage details, final PropertyRow... packages) {
-        PropertyTable propertyTable = new PropertyTable(details, "packageName");
-        assertThat(propertyTable.getTitle()).isEqualTo("Namespaces");
-        assertThat(propertyTable.getColumnName()).isEqualTo("Namespace");
-        assertThat(propertyTable.getRows()).containsExactlyInAnyOrder(packages);
-
-        // TODO: Click package links
+    private void verifyNamespaces(final ResultAction details, final PropertyRow... packages) {
+        assertThat(PropertyRow.getRows(details, "packageName")).containsExactlyInAnyOrder(packages);
     }
 
-    private void verifyPackages(final HtmlPage details, final PropertyRow... packages) {
-        PropertyTable propertyTable = new PropertyTable(details, "packageName");
-        assertThat(propertyTable.getTitle()).isEqualTo("Packages");
-        assertThat(propertyTable.getColumnName()).isEqualTo("Package");
-        assertThat(propertyTable.getRows()).containsExactlyInAnyOrder(packages);
-
-        // TODO: Click package links
+    private void verifyPackages(final ResultAction details, final PropertyRow... packages) {
+        assertThat(PropertyRow.getRows(details, "packageName")).containsExactlyInAnyOrder(packages);
     }
 
     /**
@@ -230,7 +199,7 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldDetectVariousNamespacesAndPackagesForCombinedJavaAndCSharpFiles() {
-        AnalysisResult result = buildProject(PACKAGE_WITH_FILES_JAVA + "eclipseForJavaVariousClasses.txt",
+        ResultAction action = buildProject(PACKAGE_WITH_FILES_JAVA + "eclipseForJavaVariousClasses.txt",
                 PACKAGE_WITH_FILES_CSHARP + "eclipseForCSharpVariousClasses.txt",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithPackage.java",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithoutPackage.java",
@@ -241,6 +210,7 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNestedAndNormalNamespace.cs",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithoutNamespace.cs"
         );
+        AnalysisResult result = action.getResult();
 
         assertThat(result.getIssues()).hasSize(10);
         assertThat(result.getIssues().getPackages())
@@ -271,7 +241,7 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
         enableGenericWarnings(jobWithFindBugsParser, new FindBugs());
         AnalysisResult resultWithFindBugsParser = scheduleBuildAndAssertStatus(jobWithFindBugsParser, Result.SUCCESS);
 
-        AnalysisResult resultWithEclipseParser = buildProject(
+        ResultAction action = buildProject(
                 PACKAGE_WITH_FILES_JAVA + "eclipseForJavaVariousClasses.txt",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithPackage.java",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithoutPackage.java",
@@ -296,6 +266,7 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(findBugsConsoleLog).contains(DEFAULT_DEBUG_LOG_LINE);
         assertThat(findBugsConsoleLog).contains("-> all affected files already have a valid package name");
 
+        AnalysisResult resultWithEclipseParser = action.getResult();
         assertThat(resultWithEclipseParser.getIssues()).hasSize(6);
         assertThat(resultWithEclipseParser.getIssues().getPackages())
                 .containsExactly("edu.hm.hafner.analysis._123.int.naming.structure", "-");
@@ -316,14 +287,15 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldDetectVariousNamespacesForCSharpFiles() {
-        AnalysisResult result = buildProject(
+        ResultAction action = buildProject(
                 PACKAGE_WITH_FILES_CSHARP + "eclipseForCSharpVariousClasses.txt",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNamespace.cs",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNamespaceBetweenCode.cs",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNestedAndNormalNamespace.cs",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithoutNamespace.cs");
 
-        String logOutput = getConsoleLog(result);
+        String logOutput = getConsoleLog(action.getOwner());
+        AnalysisResult result = action.getResult();
         Map<String, Long> collect = collectPackageNames(result);
 
         assertThat(result.getIssues()).hasSize(6);
@@ -344,7 +316,7 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldDetectVariousPackagesForJavaFiles() {
-        AnalysisResult result = buildProject(
+        ResultAction action = buildProject(
                 PACKAGE_WITH_FILES_JAVA + "eclipseForJavaVariousClasses.txt",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithPackage.java",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithoutPackage.java",
@@ -353,6 +325,7 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
 
         );
 
+        AnalysisResult result = action.getResult();
         assertThat(result.getIssues()).hasSize(6);
         assertThat(result.getIssues().getPackages()).containsExactly(
                 "edu.hm.hafner.analysis._123.int.naming.structure", "-");
@@ -371,43 +344,20 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
         return "-> resolved package names of " + expectedNumberOfResolvedPackageNames + " affected files";
     }
 
-    private WebClient createWebClient() {
-        WebClient webClient = getJenkins().createWebClient();
-        webClient.setJavaScriptEnabled(false);
-        return webClient;
-    }
-
     private Map<String, Long> collectPackageNames(final AnalysisResult result) {
         return result.getIssues().stream()
                 .collect(Collectors.groupingBy(Issue::getPackageName, Collectors.counting()));
     }
 
-    private void checkWebPageForExpectedEmptyResult(final AnalysisResult result) {
-        try (WebClient webClient = createWebClient()) {
-            HtmlPage htmlPage = webClient.getPage(result.getOwner(), DEFAULT_ENTRY_PATH).getPage();
-            assertThat(getLinksWithGivenTargetName(htmlPage, DEFAULT_TAB_TO_INVESTIGATE)).isEmpty();
-        }
-        catch (IOException | SAXException e) {
-            throw new AssertionError(e);
-        }
+    private void checkWebPageForExpectedEmptyResult(final ResultAction result) {
+        assertThat(result.getTarget().getDetails(DEFAULT_TAB_TO_INVESTIGATE).getKeys().size()).isLessThanOrEqualTo(1);
     }
 
-    private List<String> getLinksWithGivenTargetName(final HtmlPage page, final String targetName) {
-        List<DomElement> htmlElement = page.getElementsByIdAndOrName(targetName);
-        ArrayList<String> links = new ArrayList<>();
-        for (DomElement element : htmlElement) {
-            DomNodeList<HtmlElement> domNodeList = element.getElementsByTagName("a");
-            for (HtmlElement htmlElementHref : domNodeList) {
-                links.add(htmlElementHref.getAttribute("href"));
-            }
-        }
-        return links;
-    }
-
-    private AnalysisResult buildProject(final String... files) {
+    private ResultAction buildProject(final String... files) {
         FreeStyleProject project = createJobWithWorkspaceFiles(files);
         enableGenericWarnings(project, new Eclipse());
-        return scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        Run<?, ?> build = buildSuccessfully(project);
+        return getResultAction(build);
     }
 
     /**

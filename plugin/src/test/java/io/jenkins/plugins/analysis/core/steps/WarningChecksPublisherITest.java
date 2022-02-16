@@ -67,7 +67,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
      */
     @Test
     public void shouldCreateChecksDetailsWithNewIssuesAsAnnotations() {
-        WorkflowJob project = createPipelineWithWorkspaceFiles(OLD_CHECKSTYLE_REPORT, NEW_CHECKSTYLE_REPORT);
+        WorkflowJob project = createPipelineWithWorkspaceFilesWithSuffix(OLD_CHECKSTYLE_REPORT, NEW_CHECKSTYLE_REPORT);
 
         configureScanner(project, "checkstyle", "");
 
@@ -120,7 +120,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
      */
     @Test
     public void shouldConcludeChecksAsSuccessWhenQualityGateIsPassed() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(NEW_CHECKSTYLE_REPORT);
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
         enableAndConfigureCheckstyle(project,
                 recorder -> recorder.addQualityGate(10, QualityGateType.TOTAL, QualityGateResult.UNSTABLE));
 
@@ -198,7 +198,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
      */
     @Test
     public void shouldReportOnlyTotalIssuesInTitleWhenNoNewIssues() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(OLD_CHECKSTYLE_REPORT);
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(OLD_CHECKSTYLE_REPORT);
         enableCheckStyleWarnings(project);
 
         Run<?, ?> run = buildSuccessfully(project);
@@ -267,7 +267,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
      */
     @Test
     public void shouldUseDefaultChecksNamePublishIssues() {
-        WorkflowJob project = createPipelineWithWorkspaceFiles(NEW_CHECKSTYLE_REPORT);
+        WorkflowJob project = createPipelineWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
         project.setDefinition(asStage(createScanForIssuesStep(new CheckStyle()), PUBLISH_ISSUES_STEP));
         buildSuccessfully(project);
 
@@ -291,7 +291,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
     }
 
     private void buildCheckForNewAndOutstandingWarnings(final AnnotationScope scope, final int expectedSize) {
-        WorkflowJob project = createPipelineWithWorkspaceFiles(OLD_CHECKSTYLE_REPORT, NEW_CHECKSTYLE_REPORT);
+        WorkflowJob project = createPipelineWithWorkspaceFilesWithSuffix(OLD_CHECKSTYLE_REPORT, NEW_CHECKSTYLE_REPORT);
         configureScanner(project, "checkstyle", ", publishAllIssues: "
                 + (scope == AnnotationScope.PUBLISH_ALL_ISSUES));
         buildSuccessfully(project);
@@ -319,7 +319,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
      */
     @Test
     public void shouldUseDefaultChecksNameRecordIssues() {
-        WorkflowJob project = createPipelineWithWorkspaceFiles(NEW_CHECKSTYLE_REPORT);
+        WorkflowJob project = createPipelineWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
         project.setDefinition(asStage(createRecordIssuesStep(new CheckStyle())));
         buildSuccessfully(project);
 
@@ -338,7 +338,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
      */
     @Test
     public void shouldHonorWithChecksContextPublishIssues() {
-        WorkflowJob project = createPipelineWithWorkspaceFiles(NEW_CHECKSTYLE_REPORT);
+        WorkflowJob project = createPipelineWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
         project.setDefinition(asStage("withChecks('Custom Checks Name') {", createScanForIssuesStep(new CheckStyle()),
                 PUBLISH_ISSUES_STEP, "}"));
         buildSuccessfully(project);
@@ -359,7 +359,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
      */
     @Test
     public void shouldHonorWithChecksContextRecordIssues() {
-        WorkflowJob project = createPipelineWithWorkspaceFiles(NEW_CHECKSTYLE_REPORT);
+        WorkflowJob project = createPipelineWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
         project.setDefinition(
                 asStage("withChecks('Custom Checks Name') {", createRecordIssuesStep(new CheckStyle()), "}"));
         buildSuccessfully(project);
@@ -444,7 +444,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
     }
 
     private void assertChecksConclusionIsFailureWithQualityGateResult(final QualityGateResult qualityGateResult) {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(NEW_CHECKSTYLE_REPORT);
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
         enableAndConfigureCheckstyle(project,
                 recorder -> recorder.addQualityGate(1, QualityGateType.TOTAL, qualityGateResult));
 

@@ -139,7 +139,7 @@ public class HealthReportITest extends IntegrationTestWithJenkinsPerSuite {
      * @return a healthReport under test
      */
     private HealthReport createHealthReportTestSetupEclipse(final int health, final int unhealthy) {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse-healthReport.txt");
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("eclipse-healthReport.txt");
         enableGenericWarnings(project, publisher -> {
                     publisher.setHealthy(health);
                     publisher.setUnhealthy(unhealthy);
@@ -158,7 +158,7 @@ public class HealthReportITest extends IntegrationTestWithJenkinsPerSuite {
      * @return a healthReport under test
      */
     private HealthReport createHealthReportTestSetupCheckstyle(final Severity minimumSeverity) {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("checkstyle-healthReport.xml");
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle-healthReport.xml");
         enableGenericWarnings(project, publisher -> {
                     publisher.setHealthy(10);
                     publisher.setUnhealthy(15);

@@ -41,7 +41,8 @@ public class FlexiblePublishITest extends IntegrationTestWithJenkinsPerSuite {
     /** Test that different tools can be configured with different settings. */
     @Test
     public void shouldAnalyseTwoToolsWithDifferentSettings() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(CHECKSTYLE_WARNINGS, JAVA_WARNINGS);
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(CHECKSTYLE_WARNINGS,
+                JAVA_WARNINGS);
 
         CheckStyle checkStyle = new CheckStyle();
         checkStyle.setPattern("**/checkstyle*");

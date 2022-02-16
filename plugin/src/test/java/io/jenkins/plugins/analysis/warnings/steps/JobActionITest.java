@@ -46,7 +46,7 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldShowTrendChart() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(ECLIPSE_LOG);
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(ECLIPSE_LOG);
         enableEclipseWarnings(project);
 
         Run<?, ?> build = buildWithResult(project, Result.SUCCESS);
@@ -74,7 +74,7 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldShowTrendsAndAggregationFreestyle() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(ECLIPSE_LOG, CHECKSTYLE_XML);
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(ECLIPSE_LOG, CHECKSTYLE_XML);
         enableWarnings(project, createEclipse(), createCheckStyle());
 
         buildWithResult(project, Result.SUCCESS);
@@ -114,7 +114,7 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldShowTrendsAndAggregationPipeline() {
-        WorkflowJob job = createPipelineWithWorkspaceFiles(ECLIPSE_LOG, CHECKSTYLE_XML);
+        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix(ECLIPSE_LOG, CHECKSTYLE_XML);
         job.setDefinition(
                 asStage("def checkstyle = scanForIssues tool: checkStyle(pattern:'**/checkstyle.xml', reportEncoding:'UTF-8')",
                         "publishIssues issues:[checkstyle], trendChartType: 'TOOLS_AGGREGATION'",
@@ -172,7 +172,7 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private FreeStyleProject createAggregationJob(final TrendChartType chart) {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(ECLIPSE_LOG, CHECKSTYLE_XML);
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(ECLIPSE_LOG, CHECKSTYLE_XML);
         enableWarnings(project, r -> r.setTrendChartType(chart), createEclipse(), createCheckStyle());
 
         buildWithResult(project, Result.SUCCESS);
@@ -186,7 +186,7 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldHaveSidebarLinkEvenWhenLastActionHasNoResults() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(ECLIPSE_LOG);
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(ECLIPSE_LOG);
         enableWarnings(project, createTool(new Eclipse(), "**/no-valid-pattern"));
 
         AnalysisResult emptyResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);

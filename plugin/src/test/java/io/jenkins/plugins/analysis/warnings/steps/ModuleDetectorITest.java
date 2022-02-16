@@ -10,19 +10,14 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-
 import edu.hm.hafner.analysis.ModuleDetector;
 
 import hudson.FilePath;
 import hudson.model.FreeStyleProject;
-import hudson.model.Result;
 
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
-import io.jenkins.plugins.analysis.warnings.steps.pageobj.PropertyTable;
-import io.jenkins.plugins.analysis.warnings.steps.pageobj.PropertyTable.PropertyRow;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -122,7 +117,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m3/META-INF/MANIFEST.MF",
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties"};
 
-        AnalysisResult result = createResult(
+        ResultAction result = createResult(
                 workspaceFiles.length - 1,
                 true,
                 workspaceFiles);
@@ -144,7 +139,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
                 BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m1/pom.xml",
                 BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m2/pom.xml"};
 
-        AnalysisResult result = createResult(
+        ResultAction result = createResult(
                 workspaceFiles.length,
                 false,
                 workspaceFiles);
@@ -164,7 +159,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml",
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m1/build.xml"};
 
-        AnalysisResult result = createResult(workspaceFiles.length, false,
+        ResultAction result = createResult(workspaceFiles.length, false,
                 workspaceFiles);
 
         verifyModules(result,
@@ -184,7 +179,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m3/META-INF/MANIFEST.MF",
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties"};
 
-        AnalysisResult result = createResult(
+        ResultAction result = createResult(
                 workspaceFiles.length - 1,
                 false,
                 workspaceFiles);
@@ -213,7 +208,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m3/META-INF/MANIFEST.MF",
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties"};
 
-        AnalysisResult result = createResult(
+        ResultAction result = createResult(
                 workspaceFiles.length - 1,
                 true,
                 workspaceFiles);
@@ -238,7 +233,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
                 BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m4/pom.xml",
                 BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m5/pom.xml"};
 
-        AnalysisResult result = createResult(
+        ResultAction result = createResult(
                 workspaceFiles.length,
                 true,
                 workspaceFiles);
@@ -263,7 +258,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m3/build.xml"
         };
 
-        AnalysisResult result = createResult(
+        ResultAction result = createResult(
                 workspaceFiles.length,
                 true,
                 workspaceFiles);
@@ -286,7 +281,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m3/META-INF/MANIFEST.MF",
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties"};
 
-        AnalysisResult result = createResult(
+        ResultAction result = createResult(
                 workspaceFiles.length - 1,
                 true,
                 workspaceFiles);
@@ -338,28 +333,18 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
                 createResult(workspaceFiles.length, false, workspaceFiles));
     }
 
-    private void verifyModules(final AnalysisResult result, final PropertyRow... modules) {
-        HtmlPage details = getWebPage(JavaScriptSupport.JS_DISABLED, result);
+    private void verifyModules(final ResultAction result, final PropertyRow... modules) {
         assertThatModuleTableIsVisible(result, true);
 
-        PropertyTable propertyTable = new PropertyTable(details, PROPERTY);
-        assertThat(propertyTable.getTitle()).isEqualTo("Modules");
-        assertThat(propertyTable.getColumnName()).isEqualTo("Module");
-        assertThat(propertyTable.getRows()).containsExactlyInAnyOrder(modules);
+        assertThat(PropertyRow.getRows(result, PROPERTY)).containsExactlyInAnyOrder(modules);
 
-        verifyConsoleLog(result, Stream.of(modules).mapToInt(PropertyRow::getSize).sum());
-
-        // TODO: Click module links
+        verifyConsoleLog(result, Stream.of(modules).mapToLong(PropertyRow::getTotal).sum());
     }
 
-    private void verifyConsoleLog(final AnalysisResult result, final int modulesSize) {
-        String logOutput = getConsoleLog(result);
+    private void verifyConsoleLog(final ResultAction result, final long modulesSize) {
+        String logOutput = getConsoleLog(result.getOwner());
         assertThat(logOutput).contains(DEFAULT_DEBUG_LOG_LINE);
-        assertThat(logOutput).contains(getModulesResolvedMessage(modulesSize));
-    }
-
-    private String getModulesResolvedMessage(final int modulesSize) {
-        return String.format("-> resolved module names for %s issues", modulesSize);
+        assertThat(logOutput).contains(String.format("-> resolved module names for %s issues", modulesSize));
     }
 
     /**
@@ -421,16 +406,15 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
         }
     }
 
-    private void checkWebPageForExpectedEmptyResult(final AnalysisResult result) {
+    private void checkWebPageForExpectedEmptyResult(final ResultAction result) {
         assertThatModuleTableIsVisible(result, false);
     }
 
-    private void assertThatModuleTableIsVisible(final AnalysisResult result, final boolean isVisible) {
-        assertThat(PropertyTable.isVisible(getWebPage(JavaScriptSupport.JS_DISABLED, result), PROPERTY)).isEqualTo(
-                isVisible);
+    private void assertThatModuleTableIsVisible(final ResultAction result, final boolean isVisible) {
+        assertThat(result.getResult().getIssues().getModules().size() > 1).isEqualTo(isVisible);
     }
 
-    private AnalysisResult createResult(final int numberOfExpectedModules, final boolean appendNonExistingFile,
+    private ResultAction createResult(final int numberOfExpectedModules, final boolean appendNonExistingFile,
             final String... workspaceFiles) {
         FreeStyleProject project = createFreeStyleProject();
         copyWorkspaceFiles(project, workspaceFiles, file -> file.replaceFirst("detectors/buildfiles/\\w*/", ""));
@@ -439,6 +423,6 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
         createEclipseWarningsReport(numberOfExpectedModules, appendNonExistingFile,
                 getJenkins().jenkins.getWorkspaceFor(project));
 
-        return scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        return getResultAction(buildSuccessfully(project));
     }
 }

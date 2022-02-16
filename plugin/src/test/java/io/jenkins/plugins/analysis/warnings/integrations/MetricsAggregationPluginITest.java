@@ -25,7 +25,8 @@ public class MetricsAggregationPluginITest extends IntegrationTestWithJenkinsPer
     /** Verifies that the metrics action is available automatically. */
     @Test
     public void shouldAggregateMetrics() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("pmd.xml", "cpd.xml", "spotbugsXml.xml");
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("pmd.xml", "cpd.xml",
+                "spotbugsXml.xml");
 
         IssuesRecorder recorder = new IssuesRecorder();
         recorder.setTools(createTool(new Pmd(), "**/pmd*.txt"),
