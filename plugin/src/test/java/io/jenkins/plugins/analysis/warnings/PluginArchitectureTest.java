@@ -65,7 +65,7 @@ class PluginArchitectureTest {
     static final ArchRule NO_JUNIT_4 =
             noClasses().that(doNot(
                     have(simpleNameEndingWith("ITest"))
-                            .or(have(simpleNameStartingWith("Integration")))
+                            .or(have(simpleNameContaining("IntegrationTest")))
                             .or(have(simpleName("ToolsLister")))))
                     .should().dependOnClassesThat().resideInAnyPackage("org.junit");
 }
