@@ -28,10 +28,10 @@
 
       <j:choose>
         <j:when test="${size(s.errors) > 0}">
-          <fa:image-button label="${%Open log messages}" name="exclamation-triangle" tooltip="${%icon.error.tooltip}" url="${it.id}/info" class="fa-image-button-warning"/>
+          <fa:image-button label="${%Open log messages}" name="triangle-exclamation" tooltip="${%icon.error.tooltip}" url="${it.id}/info" class="fa-image-button-warning"/>
         </j:when>
         <j:otherwise>
-          <fa:image-button label="${%Open error messages}" name="info-circle" tooltip="${%icon.info.tooltip}" url="${it.id}/info"/>
+          <fa:image-button label="${%Open error messages}" name="circle-info" tooltip="${%icon.info.tooltip}" url="${it.id}/info"/>
         </j:otherwise>
       </j:choose>
 
