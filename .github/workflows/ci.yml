@@ -24,7 +24,7 @@ jobs:
         distribution: 'temurin'
         java-version: '11'
         check-latest: true
-        cache: 'maven'
+#       cache: 'maven'
     - name: Build with Maven
       env:
         BROWSER: firefox-container
