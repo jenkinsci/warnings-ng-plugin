@@ -33,7 +33,7 @@
   <div class="row py-3">
     <div class="col">
 
-      <bs:card title="${%Information Messages}" fontAwesomeIcon="circle-info" fontAwesomeStyle="regular">
+      <bs:card title="${%Information Messages}" fontAwesomeIcon="circle-info" >
 
         <pre>
           <samp id="info" class="log-output">
