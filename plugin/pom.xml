@@ -51,6 +51,8 @@
 
     <!-- Maven Surefire ArgLine -->
     <argLine>-Djava.awt.headless=true -Xmx1024m -Djenkins.test.timeout=1000</argLine>
+
+    <jenkins.version>2.332</jenkins.version>
   </properties>
 
   <licenses>
