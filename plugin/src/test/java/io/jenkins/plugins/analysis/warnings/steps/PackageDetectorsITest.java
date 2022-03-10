@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Issue;
 
@@ -30,7 +30,7 @@ import static org.assertj.core.api.Assertions.*;
  * @author Deniz Mardin
  * @author Ullrich Hafner
  */
-public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
+class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String PACKAGE_FILE_PATH = "detectors/";
     private static final String PACKAGE_WITH_FILES_CSHARP = PACKAGE_FILE_PATH + "csharp/";
     private static final String PACKAGE_WITH_FILES_JAVA = PACKAGE_FILE_PATH + "java/";
@@ -43,7 +43,7 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     @org.jvnet.hudson.test.Issue("JENKINS-58538")
-    public void shouldShowFolderDistributionRatherThanPackageDistribution() {
+    void shouldShowFolderDistributionRatherThanPackageDistribution() {
         FreeStyleProject project = createFreeStyleProject();
 
         createFileInWorkspace(project, "java-issues.txt",
@@ -77,7 +77,7 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      * in the expected HTML output.
      */
     @Test
-    public void shouldShowNamespacesAndPackagesAltogetherForJavaAndCSharpInTheHtmlOutput() {
+    void shouldShowNamespacesAndPackagesAltogetherForJavaAndCSharpInTheHtmlOutput() {
         ResultAction result = buildProject(PACKAGE_WITH_FILES_CSHARP + "eclipseForCSharpVariousClasses.txt",
                 PACKAGE_WITH_FILES_JAVA + "eclipseForJavaVariousClasses.txt",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithPackage.java",
@@ -102,7 +102,7 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that the output is correct if there are only packages (Java) in the expected HTML output.
      */
     @Test
-    public void shouldShowPackagesForJavaOnly() {
+    void shouldShowPackagesForJavaOnly() {
         ResultAction details = buildProject(PACKAGE_WITH_FILES_JAVA + "eclipseForJavaVariousClasses.txt",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithPackage.java",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithoutPackage.java",
@@ -119,7 +119,7 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that the output is correct if there are only namespaces (C#) in the expected HTML output.
      */
     @Test
-    public void shouldShowNamespacesForCSharpOnlyInTheHtmlOutput() {
+    void shouldShowNamespacesForCSharpOnlyInTheHtmlOutput() {
         ResultAction details = buildProject(PACKAGE_WITH_FILES_CSHARP + "eclipseForCSharpVariousClasses.txt",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNamespace.cs",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNamespaceBetweenCode.cs",
@@ -145,7 +145,7 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that the output of the HTML page is empty if the project is empty.
      */
     @Test
-    public void shouldContainNoSpecificHtmlOutputForAnEmptyProject() {
+    void shouldContainNoSpecificHtmlOutputForAnEmptyProject() {
         checkWebPageForExpectedEmptyResult(buildProject());
     }
 
@@ -153,7 +153,7 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that the output of the HTML page is empty if there is only one class without a package (Java).
      */
     @Test
-    public void shouldContainNoHtmlOutputForNoPackageDefinedJava() {
+    void shouldContainNoHtmlOutputForNoPackageDefinedJava() {
         checkWebPageForExpectedEmptyResult(
                 buildProject(PACKAGE_WITH_FILES_JAVA + "eclipseForJavaOneClassWithoutPackage.txt",
                         PACKAGE_WITH_FILES_JAVA + "SampleClassWithoutPackage.java"
@@ -164,7 +164,7 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that the output of the HTML page is empty if there is only one class with a package (Java).
      */
     @Test
-    public void shouldContainNoHtmlOutputForOnlyOnePackageDefinedJava() {
+    void shouldContainNoHtmlOutputForOnlyOnePackageDefinedJava() {
         checkWebPageForExpectedEmptyResult(
                 buildProject(PACKAGE_WITH_FILES_JAVA + "eclipseForJavaOneClassWithPackage.txt",
                         PACKAGE_WITH_FILES_JAVA + "SampleClassWithPackage.java"
@@ -175,7 +175,7 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that the output of the HTML page is empty if there is only one class without a namespace (C#).
      */
     @Test
-    public void shouldContainNoHtmlOutputForNoNamespaceDefinedCSharp() {
+    void shouldContainNoHtmlOutputForNoNamespaceDefinedCSharp() {
         checkWebPageForExpectedEmptyResult(buildProject(
                 PACKAGE_WITH_FILES_CSHARP + "eclipseForCSharpOneClassWithoutNamespace.txt",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithoutNamespace.cs"
@@ -186,7 +186,7 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that the output of the HTML page is empty if there is only one class with a namespace (C#).
      */
     @Test
-    public void shouldContainNoHtmlOutputForOnlyOneNamespaceDefinedCSharp() {
+    void shouldContainNoHtmlOutputForOnlyOneNamespaceDefinedCSharp() {
         checkWebPageForExpectedEmptyResult(
                 buildProject(PACKAGE_WITH_FILES_CSHARP + "eclipseForCSharpOneClassWithNamespace.txt",
                         PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNamespace.cs"
@@ -198,7 +198,7 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      * together in a build.
      */
     @Test
-    public void shouldDetectVariousNamespacesAndPackagesForCombinedJavaAndCSharpFiles() {
+    void shouldDetectVariousNamespacesAndPackagesForCombinedJavaAndCSharpFiles() {
         ResultAction action = buildProject(PACKAGE_WITH_FILES_JAVA + "eclipseForJavaVariousClasses.txt",
                 PACKAGE_WITH_FILES_CSHARP + "eclipseForCSharpVariousClasses.txt",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithPackage.java",
@@ -235,7 +235,7 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      * handled correctly.
      */
     @Test
-    public void shouldRunTwoIndependentBuildsWithTwoDifferentParsersAndCheckForCorrectPackageHandling() {
+    void shouldRunTwoIndependentBuildsWithTwoDifferentParsersAndCheckForCorrectPackageHandling() {
         FreeStyleProject jobWithFindBugsParser = createJobWithWorkspaceFiles(
                 PACKAGE_FILE_PATH + "various/findbugs-packages.xml");
         enableGenericWarnings(jobWithFindBugsParser, new FindBugs());
@@ -286,7 +286,7 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that various namespaces (C#) are handled correctly.
      */
     @Test
-    public void shouldDetectVariousNamespacesForCSharpFiles() {
+    void shouldDetectVariousNamespacesForCSharpFiles() {
         ResultAction action = buildProject(
                 PACKAGE_WITH_FILES_CSHARP + "eclipseForCSharpVariousClasses.txt",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNamespace.cs",
@@ -315,7 +315,7 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that various packages (Java) are handled correctly.
      */
     @Test
-    public void shouldDetectVariousPackagesForJavaFiles() {
+    void shouldDetectVariousPackagesForJavaFiles() {
         ResultAction action = buildProject(
                 PACKAGE_WITH_FILES_JAVA + "eclipseForJavaVariousClasses.txt",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithPackage.java",

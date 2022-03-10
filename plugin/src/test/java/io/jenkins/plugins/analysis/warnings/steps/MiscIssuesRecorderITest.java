@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
@@ -50,7 +50,7 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
  * @author Ullrich Hafner
  */
 @SuppressWarnings({"PMD.ExcessiveImports", "checkstyle:ClassFanOutComplexity"})
-public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
+class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     private static final Pattern TAG_REGEX = Pattern.compile(">(.+?)</", Pattern.DOTALL);
     private static final String ANALYSIS_ICON = "/plugin/warnings-ng/icons/analysis.svg";
 
@@ -58,7 +58,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
      * Verifies that {@link FindBugs} handles the different severity mapping modes ({@link PriorityProperty}).
      */
     @Test @org.jvnet.hudson.test.Issue("JENKINS-55514")
-    public void shouldMapSeverityFilterForFindBugs() {
+    void shouldMapSeverityFilterForFindBugs() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("findbugs-severities.xml");
 
         FindBugs findbugs = new FindBugs();
@@ -81,7 +81,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
      * Runs the Eclipse parser on an empty workspace: the build should report 0 issues and an error message.
      */
     @Test
-    public void shouldCreateEmptyResult() {
+    void shouldCreateEmptyResult() {
         FreeStyleProject project = createFreeStyleProject();
         enableEclipseWarnings(project);
 
@@ -95,7 +95,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
      * Runs the Eclipse parser on an output file that contains several issues: the build should report 8 issues.
      */
     @Test
-    public void shouldCreateResultWithWarnings() {
+    void shouldCreateResultWithWarnings() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("eclipse.txt");
         enableEclipseWarnings(project);
 
@@ -113,7 +113,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
      * issues.
      */
     @Test
-    public void shouldScanForOpenTasks() {
+    void shouldScanForOpenTasks() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("eclipse.txt");
         OpenTasks tasks = new OpenTasks();
         tasks.setIncludePattern("**/*.txt");
@@ -137,7 +137,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
      * Runs the Eclipse parser and changes name and ID.
      */
     @Test
-    public void shouldCreateResultWithDifferentNameAndId() {
+    void shouldCreateResultWithDifferentNameAndId() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("eclipse.txt");
         ReportScanningTool configuration = configurePattern(new Eclipse());
         String id = "new-id";
@@ -157,7 +157,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
      * Runs the CheckStyle parser without specifying a pattern: the default pattern should be used.
      */
     @Test
-    public void shouldUseDefaultFileNamePattern() {
+    void shouldUseDefaultFileNamePattern() {
         FreeStyleProject project = createFreeStyleProject();
         copySingleFileToWorkspace(project, "checkstyle.xml", "checkstyle-result.xml");
         enableWarnings(project, createTool(new CheckStyle(), StringUtils.EMPTY));
@@ -172,7 +172,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
      * build should report 6 and 4 issues.
      */
     @Test
-    public void shouldCreateMultipleActionsIfAggregationDisabled() {
+    void shouldCreateMultipleActionsIfAggregationDisabled() {
         List<AnalysisResult> results = runJobWithAggregation(false);
 
         assertThat(results).hasSize(2);
@@ -194,7 +194,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
      * to enabled aggregation, the build should report 10 issues.
      */
     @Test
-    public void shouldCreateSingleActionIfAggregationEnabled() {
+    void shouldCreateSingleActionIfAggregationEnabled() {
         List<AnalysisResult> results = runJobWithAggregation(true);
 
         assertThat(results).hasSize(1);
@@ -227,7 +227,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
      * reported with a total of 0 warnings per origin.
      */
     @Test
-    public void shouldHaveOriginsIfBuildContainsWarnings() {
+    void shouldHaveOriginsIfBuildContainsWarnings() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle.xml",
                 "pmd-warnings.xml");
         enableWarnings(project,
@@ -259,7 +259,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
      * will fail the build if the property {@link IssuesRecorder#setFailOnError(boolean)} is enabled.
      */
     @Test @org.jvnet.hudson.test.Issue("JENKINS-58056")
-    public void shouldFailBuildWhenFailBuildOnErrorsIsSet() {
+    void shouldFailBuildWhenFailBuildOnErrorsIsSet() {
         FreeStyleProject job = createFreeStyleProject();
         IssuesRecorder recorder = enableEclipseWarnings(job);
         scheduleBuildAndAssertStatus(job, Result.SUCCESS);
@@ -275,7 +275,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
      * Enables CheckStyle tool twice for two different files with varying amount of issues: should produce a failure.
      */
     @Test
-    public void shouldThrowExceptionIfSameToolIsConfiguredTwice() {
+    void shouldThrowExceptionIfSameToolIsConfiguredTwice() {
         Run<?, ?> build = runJobWithCheckStyleTwice(false, Result.FAILURE);
 
         AnalysisResult result = getAnalysisResult(build);
@@ -290,7 +290,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
      * tools so that no exception will be thrown.
      */
     @Test
-    public void shouldUseSameToolTwice() {
+    void shouldUseSameToolTwice() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle.xml",
                 "checkstyle-twice.xml");
         ReportScanningTool first = createTool(new CheckStyle(), "**/checkstyle-issues.txt");
@@ -312,7 +312,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
      * the build should report 6 issues.
      */
     @Test
-    public void shouldAggregateMultipleConfigurationsOfSameTool() {
+    void shouldAggregateMultipleConfigurationsOfSameTool() {
         Run<?, ?> build = runJobWithCheckStyleTwice(true, Result.SUCCESS);
 
         AnalysisResult result = getAnalysisResult(build);
@@ -338,7 +338,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
      * difference between the builds for the test. The build should report 0 new, 3 fixed, and 5 outstanding warnings.
      */
     @Test
-    public void shouldCreateFixedWarnings() {
+    void shouldCreateFixedWarnings() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("eclipse_8_Warnings.txt",
                 "eclipse_5_Warnings.txt");
         IssuesRecorder recorder = enableGenericWarnings(project, createEclipse("eclipse_8_Warnings-issues.txt"));
@@ -405,7 +405,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
      * difference between the builds for the test. The build should report 3 new, 0 fixed, and 5 outstanding warnings.
      */
     @Test
-    public void shouldCreateNewWarnings() {
+    void shouldCreateNewWarnings() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("eclipse_5_Warnings.txt",
                 "eclipse_8_Warnings.txt");
         IssuesRecorder recorder = enableWarnings(project, createEclipse("eclipse_5_Warnings-issues.txt"));
@@ -442,7 +442,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
      * test. The build should report 0 new, 0 fixed, and 8 outstanding warnings.
      */
     @Test
-    public void shouldCreateNoFixedWarningsOrNewWarnings() {
+    void shouldCreateNoFixedWarningsOrNewWarnings() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("eclipse_8_Warnings.txt");
         ReportScanningTool eclipse = createEclipse("eclipse_8_Warnings-issues.txt");
         IssuesRecorder recorder = enableWarnings(project, eclipse);
@@ -481,7 +481,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
      * and 4 Warnings Total.
      */
     @Test
-    public void shouldCreateSomeNewWarningsAndSomeFixedWarnings() {
+    void shouldCreateSomeNewWarningsAndSomeFixedWarnings() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("eclipse_5_Warnings.txt",
                 "eclipse_4_Warnings.txt");
         IssuesRecorder recorder = enableWarnings(project, createEclipse("eclipse_5_Warnings-issues.txt"));
@@ -524,7 +524,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
      */
     // TODO: there should be also some tests that use the fingerprinting algorithm on existing source files
     @Test
-    public void shouldFindNewCheckStyleWarnings() {
+    void shouldFindNewCheckStyleWarnings() {
         shouldFindNewCheckStyleWarnings(() -> new RegisteredParser("checkstyle"));
         shouldFindNewCheckStyleWarnings(CheckStyle::new);
     }
@@ -629,7 +629,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
      * enabledForFailure property has been enabled.
      */
     @Test
-    public void shouldParseCheckstyleReportEvenResultIsFailure() {
+    void shouldParseCheckstyleReportEvenResultIsFailure() {
         FreeStyleProject project = createCheckStyleProjectWithFailureStep(true);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.FAILURE);
@@ -644,7 +644,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
      * property has been disabled.
      */
     @Test
-    public void shouldNotRunWhenResultIsFailure() {
+    void shouldNotRunWhenResultIsFailure() {
         FreeStyleProject project = createCheckStyleProjectWithFailureStep(false);
 
         Run<?, ?> run = buildWithResult(project, Result.FAILURE);
@@ -655,7 +655,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
      * Runs a build with a build step that produces a SUCCESS. Checkstyle will report all 6 warnings.
      */
     @Test
-    public void shouldParseCheckstyleIfIsEnabledForFailureAndResultIsSuccess() {
+    void shouldParseCheckstyleIfIsEnabledForFailureAndResultIsSuccess() {
         assertThatFailureFlagIsNotUsed(true);
         assertThatFailureFlagIsNotUsed(false);
     }
@@ -664,7 +664,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
      * Make sure that a file pattern containing environment variables correctly matches the expected files.
      */
     @Test
-    public void shouldResolveEnvVariablesInPattern() {
+    void shouldResolveEnvVariablesInPattern() {
         FreeStyleProject project = createJavaWarningsFreestyleProject("**/*.${FILE_EXT}");
 
         setEnvironmentVariables(env("FILE_EXT", "txt"));
@@ -685,7 +685,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
      * can be correctly resolved. The Environment variables should be injected with the EnvInject plugin.
      */
     @Test
-    public void shouldResolveNestedEnvVariablesInPattern() {
+    void shouldResolveNestedEnvVariablesInPattern() {
         FreeStyleProject project = createJavaWarningsFreestyleProject("${FILE_PATTERN}");
 
         setEnvironmentVariables(

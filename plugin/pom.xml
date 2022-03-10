@@ -29,7 +29,7 @@
     <analysis-model-tests.version>10.9.0</analysis-model-tests.version>
 
     <forensics-api-plugin.version>1.8.0</forensics-api-plugin.version>
-    <plugin-util-api.version>2.14.0</plugin-util-api.version>
+    <plugin-util-api.version>2.15.0-rc470.b4bb738647b7</plugin-util-api.version>
 
     <data-tables-api.version>1.11.4-1</data-tables-api.version>
     <echarts-api.version>5.3.0-2</echarts-api.version>
@@ -49,6 +49,7 @@
     <jsoup.version>1.14.3</jsoup.version>
     <json-smart.version>2.4.8</json-smart.version>
     <jmh.version>1.34</jmh.version>
+    <testcontainers.version>1.16.3</testcontainers.version>
 
     <!-- Jenkins Plug-in Dependencies Versions -->
     <autograding.version>3.3.1</autograding.version>
@@ -56,7 +57,6 @@
     <jenkins-maven-plugin.version>3.16</jenkins-maven-plugin.version>
     <job-dsl.version>1.78.3</job-dsl.version>
     <flexible-publish.version>0.15.2</flexible-publish.version>
-    <docker-fixtures.version>1.11</docker-fixtures.version>
     <form-element-path.version>1.11</form-element-path.version>
 
     <!-- Maven Surefire ArgLine -->
@@ -346,6 +346,18 @@
       </exclusions>
     </dependency>
 
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers</artifactId>
+      <version>${testcontainers.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>${testcontainers.version}</version>
+      <scope>test</scope>
+    </dependency>
     <!-- Form element path plugin to simplify location of UI elements in HtmlUnit tests -->
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
@@ -477,12 +489,6 @@
     </dependency>
     <!-- Docker Agents -->
     <dependency>
-      <groupId>org.jenkins-ci.test</groupId>
-      <artifactId>docker-fixtures</artifactId>
-      <version>${docker-fixtures.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>ssh-slaves</artifactId>
       <scope>test</scope>
@@ -561,6 +567,7 @@
           </packages>
           <excludes combine.children="append">
             <exclude>.*Thresholds</exclude>
+            <exclude>.*Test</exclude>
             <exclude>.*TaskScanner.*</exclude>
           </excludes>
           <entryPointClassPackage>io.jenkins.plugins.analysis.core.assertions</entryPointClassPackage>
@@ -580,7 +587,6 @@
         <groupId>org.revapi</groupId>
         <artifactId>revapi-maven-plugin</artifactId>
         <configuration>
-          <skip>true</skip> <!-- FIXME: find a better workaround for https://github.com/revapi/revapi/issues/253 -->
           <failBuildOnProblemsFound>true</failBuildOnProblemsFound>
           <!-- Including provided-scope dependencies like Jenkins core results in too many false positives -->
           <checkDependencies>false</checkDependencies>

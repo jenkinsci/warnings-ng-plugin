@@ -2,7 +2,7 @@ package io.jenkins.plugins.analysis.core.model;
 
 import java.util.Optional;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.TestExtension;
 
 import edu.hm.hafner.analysis.IssueParser;
@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
  *
  * @author Ullrich Hafner
  */
-public class LabelProviderFactoryITest extends IntegrationTestWithJenkinsPerSuite {
+class LabelProviderFactoryITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String ANNOTATED_ID = "annotated-tool";
     private static final String PROVIDER_ID = "provider";
     private static final String UNDEFINED_ID = "undefined-id";
@@ -30,7 +30,7 @@ public class LabelProviderFactoryITest extends IntegrationTestWithJenkinsPerSuit
      * is empty. If the tool with the specified ID is not found, then the default name is returned.
      */
     @Test
-    public void shouldUseNameOfStaticAnalysisToolIfParameterNameIsBlank() {
+    void shouldUseNameOfStaticAnalysisToolIfParameterNameIsBlank() {
         LabelProviderFactory factory = new LabelProviderFactory();
 
         String[] ids = {ANNOTATED_ID, PROVIDER_ID};
@@ -53,7 +53,7 @@ public class LabelProviderFactoryITest extends IntegrationTestWithJenkinsPerSuit
      * Verifies that the name of the registered tool is not used, if the {@code name} parameter is provided.
      */
     @Test
-    public void shouldParameterNameIfNotBlank() {
+    void shouldParameterNameIfNotBlank() {
         LabelProviderFactory factory = new LabelProviderFactory();
 
         String[] ids = {ANNOTATED_ID, PROVIDER_ID, UNDEFINED_ID};

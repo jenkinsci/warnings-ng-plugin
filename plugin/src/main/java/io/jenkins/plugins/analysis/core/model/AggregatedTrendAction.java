@@ -158,7 +158,7 @@ public class AggregatedTrendAction implements Action, AsyncConfigurableTrendChar
         @Override
         public BuildResult<AnalysisBuildResult> next() {
             if (!latestAction.isPresent()) {
-                throw new NoSuchElementException();
+                throw new NoSuchElementException("No more build results available");
             }
             Run<?, ?> run = latestAction.get();
             latestAction = Optional.ofNullable(run.getPreviousBuild());

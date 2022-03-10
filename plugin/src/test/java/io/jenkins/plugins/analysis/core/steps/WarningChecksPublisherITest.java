@@ -5,8 +5,8 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import org.apache.commons.lang3.StringUtils;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.TestExtension;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
@@ -32,8 +32,10 @@ import io.jenkins.plugins.checks.api.ChecksDetails;
 import io.jenkins.plugins.checks.api.ChecksDetails.ChecksDetailsBuilder;
 import io.jenkins.plugins.checks.api.ChecksOutput;
 import io.jenkins.plugins.checks.api.ChecksOutput.ChecksOutputBuilder;
+import io.jenkins.plugins.checks.api.ChecksPublisherFactory;
 import io.jenkins.plugins.checks.api.ChecksStatus;
 import io.jenkins.plugins.checks.util.CapturingChecksPublisher;
+import io.jenkins.plugins.checks.util.CapturingChecksPublisher.Factory;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
@@ -42,31 +44,16 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  *
  * @author Kezhi Xiong
  */
-@SuppressWarnings("PMD.ExcessiveImports")
-public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
+class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String OLD_CHECKSTYLE_REPORT = "checkstyle.xml";
     private static final String NEW_CHECKSTYLE_REPORT = "checkstyle1.xml";
-
-    /**
-     * Capturing checks publisher for inspection of checks created during a run.
-     */
-    @TestExtension
-    public static final CapturingChecksPublisher.Factory PUBLISHER_FACTORY = new CapturingChecksPublisher.Factory();
-
-    /**
-     * Resets captured checks after each test.
-     */
-    @After
-    public void clearPublisher() {
-        PUBLISHER_FACTORY.getPublishedChecks().clear();
-    }
 
     /**
      * Verifies that {@link WarningChecksPublisher} constructs the {@link ChecksDetails} correctly with only new
      * issues.
      */
     @Test
-    public void shouldCreateChecksDetailsWithNewIssuesAsAnnotations() {
+    void shouldCreateChecksDetailsWithNewIssuesAsAnnotations() {
         WorkflowJob project = createPipelineWithWorkspaceFilesWithSuffix(OLD_CHECKSTYLE_REPORT, NEW_CHECKSTYLE_REPORT);
 
         configureScanner(project, "checkstyle", "");
@@ -119,7 +106,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
      * Verifies that {@link WarningChecksPublisher} correctly reports a successful quality gate.
      */
     @Test
-    public void shouldConcludeChecksAsSuccessWhenQualityGateIsPassed() {
+    void shouldConcludeChecksAsSuccessWhenQualityGateIsPassed() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
         enableAndConfigureCheckstyle(project,
                 recorder -> recorder.addQualityGate(10, QualityGateType.TOTAL, QualityGateResult.UNSTABLE));
@@ -135,7 +122,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
      * Verifies that {@link WarningChecksPublisher} correctly reports a failed quality gate.
      */
     @Test
-    public void shouldConcludeChecksAsFailureWhenQualityGateIsFailed() {
+    void shouldConcludeChecksAsFailureWhenQualityGateIsFailed() {
         assertChecksConclusionIsFailureWithQualityGateResult(QualityGateResult.FAILURE);
     }
 
@@ -143,7 +130,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
      * Verifies that {@link WarningChecksPublisher} correctly reports an unstable quality gate.
      */
     @Test
-    public void shouldConcludeChecksAsFailureWhenQualityGateResultIsUnstable() {
+    void shouldConcludeChecksAsFailureWhenQualityGateResultIsUnstable() {
         assertChecksConclusionIsFailureWithQualityGateResult(QualityGateResult.UNSTABLE);
     }
 
@@ -151,7 +138,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
      * Verifies that {@link WarningChecksPublisher} correctly handles HTML tags in messages.
      */
     @Test
-    public void shouldParseHtmlMessage() {
+    void shouldParseHtmlMessage() {
         FreeStyleProject project = createFreeStyleProject();
         enableWarnings(project, new PVSStudio());
 
@@ -176,7 +163,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
      * Verifies that {@link WarningChecksPublisher} correctly handles the special case of zero issues.
      */
     @Test
-    public void shouldReportNoIssuesInTitle() {
+    void shouldReportNoIssuesInTitle() {
         FreeStyleProject project = createFreeStyleProject();
         enableCheckStyleWarnings(project);
 
@@ -197,7 +184,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
      * issues.
      */
     @Test
-    public void shouldReportOnlyTotalIssuesInTitleWhenNoNewIssues() {
+    void shouldReportOnlyTotalIssuesInTitleWhenNoNewIssues() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(OLD_CHECKSTYLE_REPORT);
         enableCheckStyleWarnings(project);
 
@@ -217,7 +204,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
      * Verifies that {@link WarningChecksPublisher} correctly shows the totals and the new issues in the title.
      */
     @Test
-    public void shouldReportOnlyNewIssuesInTitleWhenAllIssuesAreNew() {
+    void shouldReportOnlyNewIssuesInTitleWhenAllIssuesAreNew() {
         FreeStyleProject project = createFreeStyleProject();
         enableCheckStyleWarnings(project);
 
@@ -243,7 +230,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
      * Verifies that {@link WarningChecksPublisher} correctly ignores the columns if the issue refers to several lines.
      */
     @Test
-    public void shouldIgnoreColumnsWhenBuildMultipleLineAnnotation() {
+    void shouldIgnoreColumnsWhenBuildMultipleLineAnnotation() {
         FreeStyleProject project = createFreeStyleProject();
         enableWarnings(project, new Pmd());
 
@@ -266,12 +253,12 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
      * Tests that {@code publishIssues} uses correct default name.
      */
     @Test
-    public void shouldUseDefaultChecksNamePublishIssues() {
+    void shouldUseDefaultChecksNamePublishIssues() {
         WorkflowJob project = createPipelineWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
         project.setDefinition(asStage(createScanForIssuesStep(new CheckStyle()), PUBLISH_ISSUES_STEP));
         buildSuccessfully(project);
 
-        List<ChecksDetails> publishedChecks = PUBLISHER_FACTORY.getPublishedChecks();
+        List<ChecksDetails> publishedChecks = getPublishedChecks();
 
         assertThat(publishedChecks).hasSize(1);
 
@@ -285,7 +272,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
      * Tests that {@code recordIssues} either reports all or only new issues.
      */
     @Test
-    public void shouldReportSelectedIssues() {
+    void shouldReportSelectedIssues() {
         buildCheckForNewAndOutstandingWarnings(AnnotationScope.PUBLISH_NEW_ISSUES, 2);
         buildCheckForNewAndOutstandingWarnings(AnnotationScope.PUBLISH_ALL_ISSUES, 6);
     }
@@ -295,13 +282,13 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
         configureScanner(project, "checkstyle", ", publishAllIssues: "
                 + (scope == AnnotationScope.PUBLISH_ALL_ISSUES));
         buildSuccessfully(project);
-        clearPublisher();
+        resetCapturedChecks();
 
         configureScanner(project, "checkstyle1", ", publishAllIssues: "
                 + (scope == AnnotationScope.PUBLISH_ALL_ISSUES));
         buildSuccessfully(project);
 
-        List<ChecksDetails> publishedChecks = PUBLISHER_FACTORY.getPublishedChecks();
+        List<ChecksDetails> publishedChecks = getPublishedChecks();
 
         assertThat(publishedChecks).hasSize(1);
 
@@ -318,12 +305,12 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
      * Tests that {@code recordIssues} uses correct default name.
      */
     @Test
-    public void shouldUseDefaultChecksNameRecordIssues() {
+    void shouldUseDefaultChecksNameRecordIssues() {
         WorkflowJob project = createPipelineWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
         project.setDefinition(asStage(createRecordIssuesStep(new CheckStyle())));
         buildSuccessfully(project);
 
-        List<ChecksDetails> publishedChecks = PUBLISHER_FACTORY.getPublishedChecks();
+        List<ChecksDetails> publishedChecks = getPublishedChecks();
 
         assertThat(publishedChecks).hasSize(1);
 
@@ -337,13 +324,13 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
      * Tests that {@code publishIssues} honors the checks name provided by a {@code withChecks} context.
      */
     @Test
-    public void shouldHonorWithChecksContextPublishIssues() {
+    void shouldHonorWithChecksContextPublishIssues() {
         WorkflowJob project = createPipelineWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
         project.setDefinition(asStage("withChecks('Custom Checks Name') {", createScanForIssuesStep(new CheckStyle()),
                 PUBLISH_ISSUES_STEP, "}"));
         buildSuccessfully(project);
 
-        List<ChecksDetails> publishedChecks = PUBLISHER_FACTORY.getPublishedChecks();
+        List<ChecksDetails> publishedChecks = getPublishedChecks();
 
         assertThat(publishedChecks).hasSize(
                 2);  // First from 'In progress' check provided by withChecks, second from publishIssues
@@ -358,13 +345,13 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
      * Tests that {@code recordIssues} honors the checks name provided by a {@code withChecks} context.
      */
     @Test
-    public void shouldHonorWithChecksContextRecordIssues() {
+    void shouldHonorWithChecksContextRecordIssues() {
         WorkflowJob project = createPipelineWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
         project.setDefinition(
                 asStage("withChecks('Custom Checks Name') {", createRecordIssuesStep(new CheckStyle()), "}"));
         buildSuccessfully(project);
 
-        List<ChecksDetails> publishedChecks = PUBLISHER_FACTORY.getPublishedChecks();
+        List<ChecksDetails> publishedChecks = getPublishedChecks();
 
         assertThat(publishedChecks).hasSize(
                 2);  // First from 'In progress' check provided by withChecks, second from recordIssues
@@ -456,5 +443,31 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
         WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(build), TaskListener.NULL, null);
         assertThat(publisher.extractChecksDetails(AnnotationScope.PUBLISH_NEW_ISSUES).getConclusion())
                 .isEqualTo(ChecksConclusion.FAILURE);
+    }
+
+    private List<ChecksDetails> getPublishedChecks() {
+        return getFactory().getPublishedChecks();
+    }
+
+    private CapturingChecksPublisher.Factory getFactory()  {
+        return getJenkins().getInstance().getExtensionList(ChecksPublisherFactory.class)
+                .stream()
+                .filter(f -> f instanceof Factory)
+                .map(f -> (Factory) f)
+                .findAny()
+                .orElseThrow(() -> new AssertionError("No CapturingChecksPublisher registered as @TestExtension?"));
+    }
+
+    @AfterEach
+    void resetCapturedChecks() {
+        getPublishedChecks().clear();
+    }
+
+    /**
+     * Capturing checks publisher for inspection of checks created during a run.
+     */
+    @TestExtension
+    public static class CapturingChecksPublisherTestExtension extends CapturingChecksPublisher.Factory {
+        // activate test extension
     }
 }

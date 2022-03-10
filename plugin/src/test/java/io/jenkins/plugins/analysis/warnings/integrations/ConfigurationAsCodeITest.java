@@ -2,7 +2,7 @@ package io.jenkins.plugins.analysis.warnings.integrations;
 
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.Issue;
 
 import hudson.model.FreeStyleProject;
@@ -28,12 +28,12 @@ import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
  *
  * @author Ullrich Hafner
  */
-public class ConfigurationAsCodeITest extends IntegrationTestWithJenkinsPerTest {
+class ConfigurationAsCodeITest extends IntegrationTestWithJenkinsPerTest {
     /**
      * Reads the YAML file with a parser and verifies that the parser has been loaded.
      */
     @Test
-    public void shouldImportParserSettingsFromYaml() {
+    void shouldImportParserSettingsFromYaml() {
         configureJenkins("parsers.yaml");
 
         List<GroovyParser> parsers = ParserConfiguration.getInstance().getParsers();
@@ -52,7 +52,7 @@ public class ConfigurationAsCodeITest extends IntegrationTestWithJenkinsPerTest 
      * Reads the YAML file with permitted source code directories and verifies that the directories have been loaded.
      */
     @Test
-    public void shouldImportSourceDirectoriesFromYaml() {
+    void shouldImportSourceDirectoriesFromYaml() {
         configureJenkins("sourceDirectories.yaml");
 
         List<SourceDirectory> parsers = WarningsPluginConfiguration.getInstance().getSourceDirectories();
@@ -65,7 +65,7 @@ public class ConfigurationAsCodeITest extends IntegrationTestWithJenkinsPerTest 
      * Reads the YAML file with a freestyle job and verifies that the job has been created.
      */
     @Test @Issue("JENKINS-57817")
-    public void shouldFreestyleJobWithSpotBugsUsingJobDsl() {
+    void shouldFreestyleJobWithSpotBugsUsingJobDsl() {
         configureJenkins("job-dsl-spotbugs.yaml");
 
         IssuesRecorder recorder = getIssuesRecorder();
@@ -82,7 +82,7 @@ public class ConfigurationAsCodeITest extends IntegrationTestWithJenkinsPerTest 
      * Reads the YAML file with a freestyle job and verifies that the job has been created.
      */
     @Test
-    public void shouldFreestyleJobWithTaskScannerUsingJobDsl() {
+    void shouldFreestyleJobWithTaskScannerUsingJobDsl() {
         configureJenkins("job-dsl-taskScanner.yaml");
 
         IssuesRecorder recorder = getIssuesRecorder();
@@ -104,7 +104,7 @@ public class ConfigurationAsCodeITest extends IntegrationTestWithJenkinsPerTest 
      * Reads the YAML file with a freestyle job and verifies that the job has been created.
      */
     @Test
-    public void shouldCreateFreestyleJobUsingJobDsl() {
+    void shouldCreateFreestyleJobUsingJobDsl() {
         configureJenkins("job-dsl-freestyle.yaml");
 
         IssuesRecorder recorder = getIssuesRecorder();

@@ -3,7 +3,7 @@ package io.jenkins.plugins.analysis.warnings.steps;
 import java.io.IOException;
 import java.util.Collections;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.model.FreeStyleProject;
@@ -25,7 +25,7 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  *
  * @author Ullrich Hafner
  */
-public class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
+class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String JAVA_ONE_WARNING = "java-start-rev0.txt";
     private static final String PUBLISH_ISSUES_STEP = "publishIssues issues:[issues]";
     private static final String FORENSICS_API_PLUGIN = "https://github.com/jenkinsci/forensics-api-plugin.git";
@@ -44,7 +44,7 @@ public class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
      * Git forensics plugin is correctly invoked.
      */
     @Test
-    public void shouldObtainBlamesAndForensicsWithScanAndPublishIssuesSteps() {
+    void shouldObtainBlamesAndForensicsWithScanAndPublishIssuesSteps() {
         runStepAndVerifyBlamesAndForensics(createScanForIssuesStep("sourceDirectory: 'forensics-api'"));
         runStepAndVerifyBlamesAndForensics(createScanForIssuesStep("sourceDirectories: [[path: 'forensics-api']]"));
         runStepAndVerifyBlamesAndForensics(createScanForIssuesStep("sourceDirectories: [[path: 'does-not-exist'], [path: 'forensics-api']]"));
@@ -62,7 +62,7 @@ public class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
      * plugin is correctly invoked.
      */
     @Test
-    public void shouldObtainBlamesAndForensicsWithRecordIssuesStep() {
+    void shouldObtainBlamesAndForensicsWithRecordIssuesStep() {
         runStepAndVerifyBlamesAndForensics(createRecordIssuesStep("sourceDirectory: 'forensics-api'"));
         runStepAndVerifyBlamesAndForensics(createRecordIssuesStep("sourceDirectories: [[path: 'forensics-api']]"));
         runStepAndVerifyBlamesAndForensics(createRecordIssuesStep("sourceDirectories: [[path: 'does-not-exist'], [path: 'forensics-api']]"));
@@ -79,7 +79,7 @@ public class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
      * Git forensics plugin is correctly invoked.
      */
     @Test
-    public void shouldObtainBlamesAndForensicsInFreestyleJob() throws IOException {
+    void shouldObtainBlamesAndForensicsInFreestyleJob() throws IOException {
         FreeStyleProject job = createFreeStyleProject();
 
         createFileInWorkspace(job, "java-issues.txt", createJavaWarning(SCM_RESOLVER, AFFECTED_LINE));
@@ -128,7 +128,7 @@ public class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
      * Git forensics plugin is correctly skipped.
      */
     @Test
-    public void shouldSkipBlamesAndForensicsWithScanAndPublishIssuesSteps() {
+    void shouldSkipBlamesAndForensicsWithScanAndPublishIssuesSteps() {
         runStepAndVerifyScmSkipping("def issues = scanForIssues "
                 + "sourceDirectory: 'forensics-api',"
                 + "scm: 'nothing', "
@@ -141,7 +141,7 @@ public class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
      * plugin is correctly skipped.
      */
     @Test
-    public void shouldSkipBlamesAndForensicsWithRecordIssuesStep() {
+    void shouldSkipBlamesAndForensicsWithRecordIssuesStep() {
         runStepAndVerifyScmSkipping("recordIssues "
                 + "sourceDirectory: 'forensics-api',"
                 + "scm: 'nothing', "
@@ -153,7 +153,7 @@ public class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
      * plugin is correctly skipped.
      */
     @Test
-    public void shouldSkipBlamesAndForensicsInFreestyleJob() throws IOException {
+    void shouldSkipBlamesAndForensicsInFreestyleJob() throws IOException {
         FreeStyleProject job = createFreeStyleProject();
 
         createFileInWorkspace(job, "java-issues.txt", createJavaWarning(SCM_RESOLVER, AFFECTED_LINE));

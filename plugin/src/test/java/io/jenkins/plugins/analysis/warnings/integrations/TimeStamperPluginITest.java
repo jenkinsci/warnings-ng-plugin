@@ -1,6 +1,6 @@
 package io.jenkins.plugins.analysis.warnings.integrations;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Severity;
@@ -20,14 +20,14 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  * @author Fabian Janker
  * @author Andreas Pabst
  */
-public class TimeStamperPluginITest extends IntegrationTestWithJenkinsPerSuite {
+class TimeStamperPluginITest extends IntegrationTestWithJenkinsPerSuite {
     private static final PathUtil PATH_UTIL = new PathUtil();
 
     /**
      * Tests for the correct parsing of javac warnings with enabled timestamper plugin.
      */
     @Test
-    public void shouldCorrectlyParseJavacErrors() {
+    void shouldCorrectlyParseJavacErrors() {
         WorkflowJob project = createPipeline();
 
         createFileInWorkspace(project, "Test.java", "public class Test {}");
@@ -66,7 +66,7 @@ public class TimeStamperPluginITest extends IntegrationTestWithJenkinsPerSuite {
      * Tests JENKINS-56484: Error while parsing clang errors with active timestamper plugin.
      */
     @Test @org.jvnet.hudson.test.Issue("JENKINS-56484")
-    public void shouldCorrectlyParseClangErrors() {
+    void shouldCorrectlyParseClangErrors() {
         WorkflowJob project = createPipeline();
 
         createFileInWorkspace(project, "test.c", "int main(void) { }");

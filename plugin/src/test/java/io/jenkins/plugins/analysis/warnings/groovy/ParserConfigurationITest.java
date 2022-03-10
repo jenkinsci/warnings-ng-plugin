@@ -3,7 +3,7 @@ package io.jenkins.plugins.analysis.warnings.groovy;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory.StaticAnalysisToolFactory;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
@@ -16,13 +16,13 @@ import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
  *
  * @author Ullrich Hafner
  */
-public class ParserConfigurationITest extends IntegrationTestWithJenkinsPerSuite {
+class ParserConfigurationITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String ID = "id";
     private static final String NAME = "name";
 
     /** Verifies that there is no parser defined and one factory. */
     @Test
-    public void shouldHaveNoParsersAndOneProviderConfiguredWhenCreated() {
+    void shouldHaveNoParsersAndOneProviderConfiguredWhenCreated() {
         ParserConfiguration configuration = getConfiguration();
 
         assertThat(configuration.getParsers()).isEmpty();
@@ -34,7 +34,7 @@ public class ParserConfigurationITest extends IntegrationTestWithJenkinsPerSuite
 
     /** Verifies that there is one parser defined and one factory. */
     @Test
-    public void shouldProvideOneParserForToolsRegistry() {
+    void shouldProvideOneParserForToolsRegistry() {
         ParserConfiguration configuration = getConfiguration();
         configuration.setParsers(Collections.singletonList(createParser()));
 

@@ -1,0 +1,16 @@
+ChallengeResponseAuthentication no
+LogLevel DEBUG1
+UsePAM yes
+X11Forwarding yes
+PrintMotd yes
+AcceptEnv LANG LC_*
+PermitRootLogin no
+PasswordAuthentication yes
+GSSAPIAuthentication yes
+GSSAPICleanupCredentials yes
+ClientAliveInterval 600
+ClientAliveCountMax 4
+Subsystem       sftp    /usr/lib/openssh/sftp-server
+PubkeyAcceptedKeyTypes ssh-rsa
+HostbasedAcceptedKeyTypes ssh-rsa
+HostKeyAlgorithms ssh-rsa

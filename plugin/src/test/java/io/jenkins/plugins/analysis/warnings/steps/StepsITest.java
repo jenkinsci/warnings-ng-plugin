@@ -12,7 +12,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.eclipse.collections.impl.factory.Lists;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.TestExtension;
 
 import edu.hm.hafner.analysis.Issue;
@@ -62,14 +62,14 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
  * @see PublishIssuesStep
  */
 @SuppressWarnings({"PMD.ExcessiveImports", "PMD.ExcessiveClassLength", "PMD.ExcessivePublicCount", "PMD.GodClass", "checkstyle:ClassDataAbstractionCoupling", "checkstyle:ClassFanOutComplexity"})
-public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
+class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String NO_QUALITY_GATE = "";
 
     /**
      * Runs a pipeline and verifies the {@code scanForIssues} step has some allowlisted methods.
      */
     @Test
-    public void shouldParseCheckstyleUsingTheParserRegistry() {
+    void shouldParseCheckstyleUsingTheParserRegistry() {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("checkstyle1.xml", "checkstyle2.xml");
 
         job.setDefinition(new CpsFlowDefinition("node {\n"
@@ -89,7 +89,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      * Runs a pipeline and verifies the {@code scanForIssues} step has some whitelisted methods.
      */
     @Test
-    public void shouldWhitelistScannerApi() {
+    void shouldWhitelistScannerApi() {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("checkstyle1.xml", "checkstyle2.xml");
 
         configureScanner(job, "checkstyle1");
@@ -108,7 +108,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      * Runs a pipeline and verifies the {@code recordIssues} step has some allowlisted methods.
      */
     @Test @org.jvnet.hudson.test.Issue("JENKINS-63109")
-    public void shouldWhitelistRecorderApi() {
+    void shouldWhitelistRecorderApi() {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("checkstyle1.xml", "checkstyle2.xml");
 
         configureRecorder(job, "checkstyle1");
@@ -179,7 +179,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      * Runs a pipeline and verifies that blames are skipped.
      */
     @Test
-    public void shouldSkipBlaming() {
+    void shouldSkipBlaming() {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("checkstyle1.xml");
 
         job.setDefinition(new CpsFlowDefinition("node {\n"
@@ -195,7 +195,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      * Runs a pipeline and verifies the {@code publishIssues} step has allowlisted methods.
      */
     @Test
-    public void shouldWhitelistPublisherApi() {
+    void shouldWhitelistPublisherApi() {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("checkstyle1.xml", "checkstyle2.xml");
 
         configurePublisher(job, "checkstyle1", NO_QUALITY_GATE);
@@ -252,7 +252,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
 
     /** Verifies that a {@link Tool} defines a {@link Symbol}. */
     @Test
-    public void shouldProvideSymbol() {
+    void shouldProvideSymbol() {
         FindBugs findBugs = new FindBugs();
 
         assertThat(findBugs.getSymbolName()).isEqualTo("findBugs");
@@ -262,7 +262,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      * Creates a declarative Pipeline and scans for a Gcc warning.
      */
     @Test
-    public void shouldRunInDeclarativePipeline() {
+    void shouldRunInDeclarativePipeline() {
         WorkflowJob job = createPipeline();
 
         job.setDefinition(new CpsFlowDefinition("pipeline {\n"
@@ -306,7 +306,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
 
     /** Runs the Clang parser on an output file that contains 1 issue. */
     @Test
-    public void shouldFindAllClangIssuesIfConsoleIsAnnotatedWithTimeStamps() {
+    void shouldFindAllClangIssuesIfConsoleIsAnnotatedWithTimeStamps() {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("issue56484.txt");
         job.setDefinition(asStage(
                 createCatStep("*.txt"),
@@ -330,7 +330,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      * Tries to expose JENKINS-64243.
      */
     @Test
-    public void issue64243() {
+    void issue64243() {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("maven-console.txt");
         job.setDefinition(asStage("def issues = scanForIssues tool: mavenConsole(id: 'id', name: 'MavenConsoleFile', pattern: '*.txt')", PUBLISH_ISSUES_STEP));
 
@@ -340,7 +340,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
 
     /** Runs the Clang parser on an output file that contains 1 issue. */
     @Test
-    public void shouldFindAllGhsIssuesIfConsoleIsAnnotatedWithTimeStamps() {
+    void shouldFindAllGhsIssuesIfConsoleIsAnnotatedWithTimeStamps() {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("issue59118.txt");
         job.setDefinition(asStage(
                 createCatStep("*.txt"),
@@ -374,7 +374,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      * before the color codes. Output is from ATH test case {@code WarningsNextGenerationPluginTest#should_show_maven_warnings_in_maven_project}.
      */
     @Test
-    public void shouldRemoveConsoleLogNotesBeforeRemovingColorCodes() {
+    void shouldRemoveConsoleLogNotesBeforeRemovingColorCodes() {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("ath-colored.log");
         job.setDefinition(asStage(
                 createCatStep("*.txt"),
@@ -393,7 +393,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
 
     /** Runs the Clang parser on an output file that contains 1 issue. */
     @Test
-    public void shouldFindAllJavaIssuesIfConsoleIsAnnotatedWithTimeStamps() {
+    void shouldFindAllJavaIssuesIfConsoleIsAnnotatedWithTimeStamps() {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("issue56484-maven.txt");
         job.setDefinition(asStage(
                 createCatStep("*.txt"),
@@ -413,7 +413,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      * @see <a href="https://issues.jenkins-ci.org/browse/JENKINS-55368">Issue 55368</a>
      */
     @Test
-    public void shouldRemoveConsoleNotes() {
+    void shouldRemoveConsoleNotes() {
         assertThatConsoleNotesAreRemoved("issue11675.txt", 8);
         assertThatConsoleNotesAreRemoved("issue55368.txt", 1);
     }
@@ -439,7 +439,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
 
     /** Runs the all Java parsers on three output files: the build should report issues of all tools. */
     @Test
-    public void shouldCombineIssuesOfSeveralFiles() {
+    void shouldCombineIssuesOfSeveralFiles() {
         publishResultsWithIdAndName(
                 "publishIssues issues:[java, eclipse, javadoc]",
                 "analysis", "Static Analysis");
@@ -447,7 +447,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
 
     /** Runs the JavaDoc parser and uses a message filter to change the number of recorded warnings. */
     @Test
-    public void shouldFilterByMessage() {
+    void shouldFilterByMessage() {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("javadoc.txt");
         job.setDefinition(asStage(
                 "recordIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8'), "
@@ -459,7 +459,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
 
     /** Runs the JavaDoc parser and enforces quality gates. */
     @Test
-    public void shouldEnforceQualityGate() {
+    void shouldEnforceQualityGate() {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("javadoc.txt");
 
         job.setDefinition(asStage(
@@ -486,7 +486,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the JavaDoc parser and enforces quality gates. */
     @Test
     @org.jvnet.hudson.test.Issue("JENKINS-58253")
-    public void shouldFailBuildWhenFailBuildOnErrorsIsSet() {
+    void shouldFailBuildWhenFailBuildOnErrorsIsSet() {
         WorkflowJob job = createPipeline();
 
         job.setDefinition(asStage(
@@ -503,7 +503,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the JavaDoc parser and enforces quality gates. */
     @Test
     @org.jvnet.hudson.test.Issue("JENKINS-58253")
-    public void shouldSupportDeprecatedAttributesInRecord() {
+    void shouldSupportDeprecatedAttributesInRecord() {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("javadoc.txt");
 
         job.setDefinition(asStage(
@@ -530,7 +530,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the JavaDoc parser and enforces quality gates. */
     @Test
     @org.jvnet.hudson.test.Issue("JENKINS-58253")
-    public void shouldSupportDeprecatedAttributesInPublish() {
+    void shouldSupportDeprecatedAttributesInPublish() {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("javadoc.txt");
 
         job.setDefinition(asStage(createScanForIssuesStep(new JavaDoc(), "java"),
@@ -555,7 +555,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      * be aggregated into a new action with the specified ID. Since no name is given the default name is used.
      */
     @Test
-    public void shouldProvideADefaultNameIfNoOneIsGiven() {
+    void shouldProvideADefaultNameIfNoOneIsGiven() {
         publishResultsWithIdAndName(
                 "publishIssues issues:[java, eclipse, javadoc], id:'my-id'",
                 "my-id", "Static Analysis Warnings");
@@ -566,7 +566,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      * be aggregated into a new action with the specified ID and the specified name.
      */
     @Test
-    public void shouldUseSpecifiedName() {
+    void shouldUseSpecifiedName() {
         publishResultsWithIdAndName(
                 "publishIssues issues:[java, eclipse, javadoc], id:'my-id', name:'my-name'",
                 "my-id", "my-name");
@@ -605,7 +605,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     @org.jvnet.hudson.test.Issue("JENKINS-57638")
-    public void shouldUseCustomIdsForOrigin() {
+    void shouldUseCustomIdsForOrigin() {
         verifyCustomIdsForOrigin(asStage(
                 "def java = scanForIssues tool: java(pattern:'**/*issues.txt', reportEncoding:'UTF-8', id:'id1', name:'name1')",
                 "def javaDoc = scanForIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8', id:'id2', name:'name2')",
@@ -618,7 +618,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     @org.jvnet.hudson.test.Issue("JENKINS-57638")
-    public void shouldUseCustomIdsForOriginSimpleStep() {
+    void shouldUseCustomIdsForOriginSimpleStep() {
         verifyCustomIdsForOrigin(asStage(
                 "recordIssues(\n"
                         + "                    aggregatingResults: true, \n"
@@ -653,7 +653,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      * Runs the Eclipse parsers using the 'tools' property.
      */
     @Test
-    public void shouldUseToolsProperty() {
+    void shouldUseToolsProperty() {
         runEclipse("tools: [eclipse(pattern:'**/*issues.txt', reportEncoding:'UTF-8')]");
     }
 
@@ -661,7 +661,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      * Runs the Eclipse parsers using the 'toolProxies' property.
      */
     @Test
-    public void shouldUseToolProxiesProperty() {
+    void shouldUseToolProxiesProperty() {
         runEclipse("toolProxies: [[tool: eclipse(pattern:'**/*issues.txt', reportEncoding:'UTF-8')]]");
     }
 
@@ -669,7 +669,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      * Runs the Eclipse parsers using the 'tool' property.
      */
     @Test
-    public void shouldUseToolProperty() {
+    void shouldUseToolProperty() {
         runEclipse("tool: eclipse(pattern:'**/*issues.txt', reportEncoding:'UTF-8')");
     }
 
@@ -687,7 +687,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      * the java ID and name.
      */
     @Test
-    public void shouldHaveActionWithIdAndNameWithEmptyResults() {
+    void shouldHaveActionWithIdAndNameWithEmptyResults() {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("pep8Test.txt");
         job.setDefinition(asStage(createScanForIssuesStep(new Java(), "java"),
                 "publishIssues issues:[java]"));
@@ -707,7 +707,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      * error log with 8 issues.
      */
     @Test
-    public void shouldShowWarningsOfGroovyParserWhenScanningFileInWorkspace() {
+    void shouldShowWarningsOfGroovyParserWhenScanningFileInWorkspace() {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("pep8Test.txt");
         job.setDefinition(asStage(
                 "def groovy = scanForIssues "
@@ -729,7 +729,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      * @throws IOException if the test fails unexpectedly
      */
     @Test
-    public void shouldShowWarningsOfGroovyParserWhenScanningConsoleLogWhenThatIsPermitted() throws IOException {
+    void shouldShowWarningsOfGroovyParserWhenScanningConsoleLogWhenThatIsPermitted() throws IOException {
         WorkflowJob job = createPipeline();
         ArrayList<String> stages = new ArrayList<>();
         catFileContentsByAddingEchosSteps(stages, "pep8Test.txt");
@@ -757,7 +757,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      * @throws IOException if the test fails unexpectedly
      */
     @Test
-    public void shouldFailUsingGroovyParserToScanConsoleLogWhenThatIsForbidden() throws IOException {
+    void shouldFailUsingGroovyParserToScanConsoleLogWhenThatIsForbidden() throws IOException {
         WorkflowJob job = createPipeline();
         ArrayList<String> stages = new ArrayList<>();
         catFileContentsByAddingEchosSteps(stages, "pep8Test.txt");
@@ -804,7 +804,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      * Registers a new {@link GroovyParser} (a Pep8 parser) in Jenkins global configuration and uses this parser twice.
      */
     @Test
-    public void shouldUseGroovyParserTwice() {
+    void shouldUseGroovyParserTwice() {
         List<AnalysisResult> results = getAnalysisResults(runWith2GroovyParsers(false));
         assertThat(results).hasSize(2);
 
@@ -816,7 +816,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that a warning will be logged if the user specified name and id <b>and not</b> {@code isAggregating}.
      */
     @Test
-    public void shouldLogWarningIfNameIsSetWhenNotAggregating() {
+    void shouldLogWarningIfNameIsSetWhenNotAggregating() {
         List<AnalysisResult> results = getAnalysisResults(runWith2GroovyParsers(false,
                 "name: 'name'", "id: 'id'"));
         assertThat(results).hasSize(2);
@@ -834,7 +834,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      * Publishes the results into a single result.
      */
     @Test
-    public void shouldUseGroovyParserTwiceAndAggregateIntoSingleResult() {
+    void shouldUseGroovyParserTwiceAndAggregateIntoSingleResult() {
         List<AnalysisResult> results = getAnalysisResults(runWith2GroovyParsers(true));
         assertThat(results).hasSize(1);
 
@@ -847,7 +847,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      * Publishes the results into a single result that uses a different ID and name.
      */
     @Test
-    public void shouldUseGroovyParserTwiceAndAggregateIntoSingleResultWithCustomizableIdAndName() {
+    void shouldUseGroovyParserTwiceAndAggregateIntoSingleResultWithCustomizableIdAndName() {
         Run<?, ?> build = runWith2GroovyParsers(true, "name: 'Custom Name'", "id: 'custom-id'");
         ResultAction action = getResultAction(build);
 
@@ -860,7 +860,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      * Publishes the results into a single result that uses a different ID and name.
      */
     @Test
-    public void shouldUseGroovyParserTwiceAndAggregateIntoSingleResultWithCustomizableName() {
+    void shouldUseGroovyParserTwiceAndAggregateIntoSingleResultWithCustomizableName() {
         Run<?, ?> build = runWith2GroovyParsers(true, "name: 'Custom Name'");
         ResultAction action = getResultAction(build);
 
@@ -890,7 +890,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      * issues.
      */
     @Test
-    public void shouldApplyFileFilters() {
+    void shouldApplyFileFilters() {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("pmd-filtering.xml");
 
         setFilter(job, "includeFile('File.*.java')");
@@ -918,7 +918,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      * Runs the PMD parser on an output file that contains 16 issues. Combines file filters that select 1 issue
      */
     @Test
-    public void shouldCombineFilter() {
+    void shouldCombineFilter() {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("pmd-filtering.xml");
 
         setFilter(job, "includeFile('File1.java'), includeCategory('Category1')");
@@ -963,7 +963,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      * job.
      */
     @Test
-    public void shouldHandleMissingJobBuildIdAsReference() {
+    void shouldHandleMissingJobBuildIdAsReference() {
         WorkflowJob reference = createPipeline("reference");
         reference.setDefinition(createPipelineScriptWithScanAndPublishSteps(new Java()));
 
@@ -987,7 +987,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     @org.jvnet.hudson.test.Issue("JENKINS-39203")
-    public void publishIssuesShouldMarkStepWithWarningAction() {
+    void publishIssuesShouldMarkStepWithWarningAction() {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("javac.txt");
         job.setDefinition(asStage(createScanForIssuesStep(new Java(), "java"),
                 "publishIssues(issues:[java], qualityGates: [[threshold: 1, type: 'TOTAL', unstable: true]])"));
@@ -1009,7 +1009,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     @org.jvnet.hudson.test.Issue("JENKINS-39203")
-    public void recordIssuesShouldMarkStepWithWarningAction() {
+    void recordIssuesShouldMarkStepWithWarningAction() {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("javac.txt");
         job.setDefinition(asStage("recordIssues(tool: java(pattern:'**/*issues.txt', reportEncoding:'UTF-8'),"
                 + "qualityGates: [[threshold: 1, type: 'TOTAL', unstable: true]])"));
@@ -1031,7 +1031,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      * @see <a href="https://jenkins.io/security/advisory/2018-01-22/">Jenkins Security Advisory 2018-01-22</a>
      */
     @Test
-    public void showPreventXxeSecurity656() {
+    void showPreventXxeSecurity656() {
         String oobInUserContentLink = getUrl("userContent/oob.xml");
         String triggerLink = getUrl("triggerMe");
 
@@ -1067,7 +1067,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that the json model for the pull request monitoring portlet is generated properly.
      */
     @Test
-    public void shouldGenerateJsonDataModel() {
+    void shouldGenerateJsonDataModel() {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("checkstyle1.xml");
 
         configurePublisher(job, "checkstyle1", NO_QUALITY_GATE);
