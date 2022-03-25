@@ -90,6 +90,7 @@ class LabelProviderFactoryITest extends IntegrationTestWithJenkinsPerSuite {
             /**
              * Creates a new descriptor.
              */
+            @SuppressWarnings("checkstyle:RedundantModifier")
             public TestToolDescriptor() {
                 super(ANNOTATED_ID);
             }
