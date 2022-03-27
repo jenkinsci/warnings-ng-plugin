@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>5.18.0</version>
+    <version>5.21.0</version>
     <relativePath />
   </parent>
 
@@ -29,7 +29,7 @@
     <analysis-model-tests.version>10.9.0</analysis-model-tests.version>
 
     <forensics-api-plugin.version>1.8.0</forensics-api-plugin.version>
-    <plugin-util-api.version>2.16.0-rc493.d2183b061b77</plugin-util-api.version>
+    <plugin-util-api.version>2.16.0-rc494.25bb2677a986</plugin-util-api.version>
 
     <data-tables-api.version>1.11.4-1</data-tables-api.version>
     <echarts-api.version>5.3.0-2</echarts-api.version>
