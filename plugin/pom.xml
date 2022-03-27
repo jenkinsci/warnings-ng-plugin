@@ -25,6 +25,8 @@
     <changelist>-SNAPSHOT</changelist>
     <module.name>${project.groupId}.warnings.ng</module.name>
 
+    <jenkins.baseline>2.319</jenkins.baseline>
+
     <analysis-model-api.version>10.9.2</analysis-model-api.version>
     <analysis-model-tests.version>10.9.0</analysis-model-tests.version>
 
