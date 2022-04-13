@@ -88,7 +88,6 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         shouldFindIssuesOfTool(2, new Sarif(), "sarif.json");
     }
 
-
     /** Runs the native parser on a file that contains 9 issues.. */
     @Test
     public void shouldReadNativeXmlFormat() {
@@ -957,6 +956,12 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     public void shouldFindAllTrivyIssues() {
         shouldFindIssuesOfTool(4, new Trivy(), "trivy_result.json");
+    }
+
+    /** Runs the Aqua Scanner parser on an output file that contains 14 issues. */
+    @Test
+    public void shouldFindAllAquaScannerIssues() {
+        shouldFindIssuesOfTool(14, new AquaScanner(), "aqua_scanner_result.json");
     }
 
     /** Runs the qt translation parser on an output file that contains 5 issues. */
