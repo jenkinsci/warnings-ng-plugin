@@ -2,7 +2,7 @@ package io.jenkins.plugins.analysis.warnings.integrations;
 
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.grading.AggregatedScore;
 import edu.hm.hafner.grading.AnalysisScore;
@@ -27,7 +27,7 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  *
  * @author Lion Kosiuk
  */
-public class AutogradingPluginITest extends IntegrationTestWithJenkinsPerSuite {
+class AutogradingPluginITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String AUTOGRADER_RESULT = "{\"analysis\":{\"maxScore\":100,\"errorImpact\":-10,\"highImpact\":-5,\"normalImpact\":-2,\"lowImpact\":-1}}";
     private static final String PMD = "pmd";
     private static final String CPD = "cpd";
@@ -39,7 +39,7 @@ public class AutogradingPluginITest extends IntegrationTestWithJenkinsPerSuite {
      * Used tools: CheckStyle, SpotBugs, CPD, and PMD.
      */
     @Test
-    public void checksCorrectGradingWithSeveralTools() {
+    void checksCorrectGradingWithSeveralTools() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle.xml", "spotbugs.xml",
                 "cpd.xml", "pmd.xml");
 

@@ -1,12 +1,12 @@
 package io.jenkins.plugins.analysis.core.util;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.jvnet.hudson.test.Issue;
 import org.jvnet.hudson.test.JenkinsRule;
 
@@ -27,19 +27,19 @@ import static org.assertj.core.api.Assumptions.*;
  *
  * @author Ullrich Hafner
  */
-public class AbsolutePathGeneratorITest extends IntegrationTestWithJenkinsPerSuite {
+class AbsolutePathGeneratorITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String SOURCE_CODE = "public class Test {}";
 
     /** Temporary workspace for the agent. */
-    @Rule
-    public TemporaryFolder agentWorkspace = new TemporaryFolder();
+    @TempDir
+    private File agentWorkspace;
 
     /**
      * Verifies that the affected files will be copied even if the file name uses the wrong case (Windows only).
      */
     @Test
     @Issue("JENKINS-58824")
-    public void shouldMapIssueToAffectedFileIfPathIsInWrongCase() {
+    void shouldMapIssueToAffectedFileIfPathIsInWrongCase() {
         assumeThat(isWindows()).as("Running not on Windows").isTrue();
 
         Slave agent = createAgentWithWrongWorkspaceFolder();
@@ -79,7 +79,7 @@ public class AbsolutePathGeneratorITest extends IntegrationTestWithJenkinsPerSui
             int size = jenkinsRule.jenkins.getNodes().size();
 
             DumbSlave slave = new DumbSlave("slave" + size,
-                    agentWorkspace.getRoot().getPath().toLowerCase(Locale.ENGLISH),
+                    agentWorkspace.getPath().toLowerCase(Locale.ENGLISH),
                     jenkinsRule.createComputerLauncher(null));
             slave.setLabelString("agent");
             jenkinsRule.jenkins.addNode(slave);

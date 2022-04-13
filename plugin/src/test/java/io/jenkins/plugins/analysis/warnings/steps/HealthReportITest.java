@@ -1,6 +1,6 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Severity;
 
@@ -21,7 +21,7 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  *
  * @author Alexandra Wenzel
  */
-public class HealthReportITest extends IntegrationTestWithJenkinsPerSuite {
+class HealthReportITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String H80PLUS = "icon-health-80plus";
     private static final String H60TO79 = "icon-health-60to79";
     private static final String H40TO59 = "icon-health-40to59";
@@ -33,7 +33,7 @@ public class HealthReportITest extends IntegrationTestWithJenkinsPerSuite {
      * healthReport should be null / empty because the healthReportDescriptor is not enabled with this setup.
      */
     @Test
-    public void shouldCreateEmptyHealthReportForBoundaryMismatch() {
+    void shouldCreateEmptyHealthReportForBoundaryMismatch() {
         HealthReport report = createHealthReportTestSetupEclipse(5, 2);
         assertThat(report).isNull();
     }
@@ -43,7 +43,7 @@ public class HealthReportITest extends IntegrationTestWithJenkinsPerSuite {
      * healthReport should be null / empty because the healthReportDescriptor is not enabled with this setup.
      */
     @Test
-    public void shouldCreateEmptyHealthReportForEqualBoundaries() {
+    void shouldCreateEmptyHealthReportForEqualBoundaries() {
         HealthReport report = createHealthReportTestSetupEclipse(15, 15);
         assertThat(report).isNull();
     }
@@ -52,7 +52,7 @@ public class HealthReportITest extends IntegrationTestWithJenkinsPerSuite {
      * Should create a health report with icon health-80plus (sun).
      */
     @Test
-    public void shouldCreate80plusHealthReport() {
+    void shouldCreate80plusHealthReport() {
         HealthReport report = createHealthReportTestSetupEclipse(10, 15);
         assertThat(report.getDescription()).isEqualTo("Eclipse ECJ: 8 warnings");
         assertThat(report.getIconClassName()).isEqualTo(H80PLUS);
@@ -62,7 +62,7 @@ public class HealthReportITest extends IntegrationTestWithJenkinsPerSuite {
      * Should create a health report with icon health-60to79 (cloudy sun).
      */
     @Test
-    public void shouldCreate60To79HealthReport() {
+    void shouldCreate60To79HealthReport() {
         HealthReport report = createHealthReportTestSetupEclipse(5, 15);
         assertThat(report.getDescription()).isEqualTo("Eclipse ECJ: 8 warnings");
         assertThat(report.getIconClassName()).isEqualTo(H60TO79);
@@ -72,7 +72,7 @@ public class HealthReportITest extends IntegrationTestWithJenkinsPerSuite {
      * Should create a health report with icon health-40to59 (cloudy).
      */
     @Test
-    public void shouldCreate40To59HealthReport() {
+    void shouldCreate40To59HealthReport() {
         HealthReport report = createHealthReportTestSetupEclipse(1, 15);
         assertThat(report.getDescription()).isEqualTo("Eclipse ECJ: 8 warnings");
         assertThat(report.getIconClassName()).isEqualTo(H40TO59);
@@ -82,7 +82,7 @@ public class HealthReportITest extends IntegrationTestWithJenkinsPerSuite {
      * Should create a health report with icon health-20to39 (rainy).
      */
     @Test
-    public void shouldCreate20To39HealthReport() {
+    void shouldCreate20To39HealthReport() {
         HealthReport report = createHealthReportTestSetupEclipse(4, 10);
         assertThat(report.getDescription()).isEqualTo("Eclipse ECJ: 8 warnings");
         assertThat(report.getIconClassName()).isEqualTo(H20TO39);
@@ -92,7 +92,7 @@ public class HealthReportITest extends IntegrationTestWithJenkinsPerSuite {
      * Should create a health report with icon health-00to19 (rainy).
      */
     @Test
-    public void shouldCreate00To19HealthReport() {
+    void shouldCreate00To19HealthReport() {
         HealthReport report = createHealthReportTestSetupEclipse(1, 5);
         assertThat(report.getDescription()).isEqualTo("Eclipse ECJ: 8 warnings");
         assertThat(report.getIconClassName()).isEqualTo(H00TO19);
@@ -102,7 +102,7 @@ public class HealthReportITest extends IntegrationTestWithJenkinsPerSuite {
      * Should create a health report for only high priority issues. Only error issues
      */
     @Test
-    public void shouldCreateHealthReportWithHighPriority() {
+    void shouldCreateHealthReportWithHighPriority() {
         HealthReport report = createHealthReportTestSetupCheckstyle(Severity.WARNING_HIGH);
         assertThat(report.getDescription()).isEqualTo("CheckStyle: 2 warnings");
         assertThat(report.getIconClassName()).isEqualTo(H80PLUS);
@@ -112,7 +112,7 @@ public class HealthReportITest extends IntegrationTestWithJenkinsPerSuite {
      * Should create a health report for normal priority issues. Error and warning issues.
      */
     @Test
-    public void shouldCreateHealthReportWithNormalPriority() {
+    void shouldCreateHealthReportWithNormalPriority() {
         HealthReport report = createHealthReportTestSetupCheckstyle(Severity.WARNING_NORMAL);
         assertThat(report.getDescription()).isEqualTo("CheckStyle: 4 warnings");
         assertThat(report.getIconClassName()).isEqualTo(H80PLUS);
@@ -122,7 +122,7 @@ public class HealthReportITest extends IntegrationTestWithJenkinsPerSuite {
      * Should create a health report for low priority issues. Error, warnings and info issues.
      */
     @Test
-    public void shouldCreateHealthReportWithLowPriority() {
+    void shouldCreateHealthReportWithLowPriority() {
         HealthReport report = createHealthReportTestSetupCheckstyle(Severity.WARNING_LOW);
         assertThat(report.getDescription()).isEqualTo("CheckStyle: 6 warnings");
         assertThat(report.getIconClassName()).isEqualTo(H80PLUS);

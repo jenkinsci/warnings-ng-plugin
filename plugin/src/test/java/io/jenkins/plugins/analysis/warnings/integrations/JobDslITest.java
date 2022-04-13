@@ -2,7 +2,7 @@ package io.jenkins.plugins.analysis.warnings.integrations;
 
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import hudson.model.Descriptor;
 import hudson.model.FreeStyleProject;
@@ -27,12 +27,12 @@ import static org.assertj.core.api.Assertions.*;
  * @author Artem Polovyi
  * @author Lorenz Munsch
  */
-public class JobDslITest extends IntegrationTestWithJenkinsPerTest {
+class JobDslITest extends IntegrationTestWithJenkinsPerTest {
     /**
      * Creates a freestyle job from a YAML file and verifies that issue recorder finds warnings.
      */
     @Test
-    public void shouldCreateFreestyleJobUsingJobDslAndVerifyIssueRecorderWithDefaultConfiguration() {
+    void shouldCreateFreestyleJobUsingJobDslAndVerifyIssueRecorderWithDefaultConfiguration() {
         configureJenkins("job-dsl-warnings-ng-default.yaml");
 
         TopLevelItem project = getJenkins().jenkins.getItem("dsl-freestyle-job");
@@ -74,7 +74,7 @@ public class JobDslITest extends IntegrationTestWithJenkinsPerTest {
      * Creates a freestyle job from a YAML file and verifies that all fields in issue recorder are set correct.
      */
     @Test
-    public void shouldCreateFreestyleJobUsingJobDslAndVerifyIssueRecorderWithValuesSet() {
+    void shouldCreateFreestyleJobUsingJobDslAndVerifyIssueRecorderWithValuesSet() {
         configureJenkins("job-dsl-warnings-ng.yaml");
 
         TopLevelItem project = getJenkins().jenkins.getItem("dsl-freestyle-job");

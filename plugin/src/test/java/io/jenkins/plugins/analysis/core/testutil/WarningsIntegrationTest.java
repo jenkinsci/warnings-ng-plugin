@@ -7,13 +7,8 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
-import org.junit.AssumptionViolatedException;
 import org.junit.jupiter.api.Tag;
 
-import com.cloudbees.plugins.credentials.CredentialsScope;
-import com.cloudbees.plugins.credentials.SystemCredentialsProvider;
-import com.cloudbees.plugins.credentials.domains.Domain;
-import com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import edu.hm.hafner.analysis.Report;
@@ -21,7 +16,6 @@ import edu.hm.hafner.analysis.Severity;
 
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
-import org.jenkinsci.test.acceptance.docker.DockerContainer;
 import hudson.matrix.MatrixBuild;
 import hudson.matrix.MatrixProject;
 import hudson.maven.MavenModuleSet;
@@ -32,8 +26,6 @@ import hudson.model.Job;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TopLevelItem;
-import hudson.plugins.sshslaves.SSHLauncher;
-import hudson.slaves.DumbSlave;
 import hudson.slaves.EnvironmentVariablesNodeProperty;
 import hudson.slaves.EnvironmentVariablesNodeProperty.Entry;
 import hudson.tasks.Publisher;
@@ -101,37 +93,6 @@ public abstract class WarningsIntegrationTest extends IntegrationTest {
         assertThat(report.getSizeOf(Severity.WARNING_HIGH)).isEqualTo(expectedSizeHigh);
         assertThat(report.getSizeOf(Severity.WARNING_NORMAL)).isEqualTo(expectedSizeNormal);
         assertThat(report.getSizeOf(Severity.WARNING_LOW)).isEqualTo(expectedSizeLow);
-    }
-
-    /**
-     * Creates a docker container agent.
-     *
-     * @param dockerContainer
-     *         The docker container of the agent
-     *
-     * @return A docker container agent.
-     */
-    @SuppressWarnings({"PMD.AvoidCatchingThrowable", "IllegalCatch"})
-    protected DumbSlave createDockerContainerAgent(final DockerContainer dockerContainer) {
-        try {
-            SystemCredentialsProvider.getInstance().getDomainCredentialsMap().put(Domain.global(),
-                    Collections.singletonList(
-                            new UsernamePasswordCredentialsImpl(CredentialsScope.SYSTEM, "dummyCredentialId",
-                                    null, "test", "test")
-                    )
-            );
-            DumbSlave agent = new DumbSlave("docker", "/home/test",
-                    new SSHLauncher(dockerContainer.ipBound(22), dockerContainer.port(22), "dummyCredentialId"));
-            agent.setNodeProperties(Collections.singletonList(new EnvironmentVariablesNodeProperty(
-                    new Entry("JAVA_HOME", "/usr/lib/jvm/java-8-openjdk-amd64/jre"))));
-            getJenkins().jenkins.addNode(agent);
-            getJenkins().waitOnline(agent);
-
-            return agent;
-        }
-        catch (Throwable e) {
-            throw new AssumptionViolatedException("Failed to create docker container", e);
-        }
     }
 
     protected String createJavaWarning(final String fileName, final int lineNumber) {
