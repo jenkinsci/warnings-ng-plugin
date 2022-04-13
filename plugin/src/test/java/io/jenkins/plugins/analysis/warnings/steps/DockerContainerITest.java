@@ -24,15 +24,14 @@ import static org.assertj.core.api.Assumptions.*;
  * @author Andreas Reiser
  * @author Andreas Moser
  */
-@Testcontainers
-
+@Testcontainers(disabledWithoutDocker = true)
 class DockerContainerITest extends IntegrationTestWithJenkinsPerSuite {
     @Container
     private static final AgentContainer AGENT_CONTAINER = new AgentContainer();
     private static final String EMPTY_PATTERN = "";
 
     @Test
-    void shouldBuildMavenProjectOnAgent() throws IOException, InterruptedException {
+    void shouldBuildMavenProjectOnAgent() throws IOException {
         assumeThat(isWindows()).as("Running on Windows").isFalse();
 
         FreeStyleProject project = createFreeStyleProject();
@@ -49,7 +48,7 @@ class DockerContainerITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     @Test
-    void shouldBuildMakefileOnAgent() throws IOException, InterruptedException {
+    void shouldBuildMakefileOnAgent() throws IOException {
         assumeThat(isWindows()).as("Running on Windows").isFalse();
 
         FreeStyleProject project = createFreeStyleProject();
