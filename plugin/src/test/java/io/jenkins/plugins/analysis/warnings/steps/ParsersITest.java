@@ -960,7 +960,7 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
 
     /** Runs the Aqua Scanner parser on an output file that contains 14 issues. */
     @Test
-    public void shouldFindAllAquaScannerIssues() {
+    void shouldFindAllAquaScannerIssues() {
         shouldFindIssuesOfTool(14, new AquaScanner(), "aqua_scanner_result.json");
     }
 
