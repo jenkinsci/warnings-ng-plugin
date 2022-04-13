@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import hudson.matrix.AxisList;
 import hudson.matrix.MatrixBuild;
@@ -24,7 +24,7 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  *
  * @author Ullrich Hafner
  */
-public class MatrixJobITest extends IntegrationTestWithJenkinsPerSuite {
+class MatrixJobITest extends IntegrationTestWithJenkinsPerSuite {
     /**
      * Build a matrix job with three configurations. For each configuration a different set of warnings will be parsed
      * with the same parser (GCC). After the successful build the total number of warnings at the root level should be
@@ -33,7 +33,7 @@ public class MatrixJobITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     @Test
-    public void shouldCreateIndividualAxisResults() {
+    void shouldCreateIndividualAxisResults() {
         MatrixProject project = createProject(MatrixProject.class);
         copySingleFileToWorkspace(project, "matrix-warnings-one.txt", "user_axis/one/issues.txt");
         copySingleFileToWorkspace(project, "matrix-warnings-two.txt", "user_axis/two/issues.txt");
@@ -68,7 +68,7 @@ public class MatrixJobITest extends IntegrationTestWithJenkinsPerSuite {
      * @see <a href="https://issues.jenkins-ci.org/browse/JENKINS-65482">Issue 65482</a>
      */
     @Test
-    public void shouldReportNoNewWarningsForSameAxisResults() {
+    void shouldReportNoNewWarningsForSameAxisResults() {
         MatrixProject project = createProject(MatrixProject.class);
 
         copySingleFileToWorkspace(project, "spotbugsXml.xml", "user_axis/JDK8/spotbugs-issues.txt");

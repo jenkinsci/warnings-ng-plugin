@@ -1,6 +1,6 @@
 package io.jenkins.plugins.analysis.warnings.integrations;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
@@ -17,12 +17,12 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  * @author Colin Kaschel
  * @author Nils Engelbrecht
  */
-public class TokenMacroITest extends IntegrationTestWithJenkinsPerTest {
+class TokenMacroITest extends IntegrationTestWithJenkinsPerTest {
     /**
      * Runs a pipeline and verifies the expansion of token ANALYSIS_ISSUES_COUNT with the token-macro plugin.
      */
     @Test
-    public void shouldExpandTokenMacro() {
+    void shouldExpandTokenMacro() {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("checkstyle1.xml", "checkstyle2.xml");
 
         configureToken(job, "checkstyle1");
@@ -41,7 +41,7 @@ public class TokenMacroITest extends IntegrationTestWithJenkinsPerTest {
      * Runs a pipeline and verifies the expansion of tokens for different severities.
      */
     @Test
-    public void shouldExpandDifferentSeverities() {
+    void shouldExpandDifferentSeverities() {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("all-severities.xml");
 
         job.setDefinition(new CpsFlowDefinition("node {\n"

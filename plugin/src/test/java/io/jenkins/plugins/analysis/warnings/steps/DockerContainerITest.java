@@ -2,20 +2,15 @@ package io.jenkins.plugins.analysis.warnings.steps;
 
 import java.io.IOException;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
-import org.jenkinsci.test.acceptance.docker.DockerRule;
-import org.jenkinsci.test.acceptance.docker.fixtures.JavaContainer;
-import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Node;
-import hudson.slaves.DumbSlave;
-import hudson.tasks.Maven;
 import hudson.tasks.Shell;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.testutil.GccDockerContainer;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.Gcc4;
 import io.jenkins.plugins.analysis.warnings.Java;
@@ -29,75 +24,44 @@ import static org.assertj.core.api.Assumptions.*;
  * @author Andreas Reiser
  * @author Andreas Moser
  */
-public class DockerContainerITest extends IntegrationTestWithJenkinsPerSuite {
-    /** Docker container for java/maven builds. */
-    @Rule
-    public DockerRule<JavaContainer> javaDockerRule = new DockerRule<>(JavaContainer.class);
+@Testcontainers(disabledWithoutDocker = true)
+class DockerContainerITest extends IntegrationTestWithJenkinsPerSuite {
+    @Container
+    private static final AgentContainer AGENT_CONTAINER = new AgentContainer();
+    private static final String EMPTY_PATTERN = "";
 
-    /** Docker container for gcc/makefile builds. */
-    @Rule
-    public DockerRule<GccDockerContainer> gccDockerRule = new DockerRule<>(GccDockerContainer.class);
-
-    /**
-     * Build a maven project on a docker container agent.
-     *
-     * @throws IOException
-     *         When the node assignment of the agent fails.
-     * @throws InterruptedException
-     *         If the creation of the docker container fails.
-     */
     @Test
-    public void shouldBuildMavenOnAgent() throws IOException, InterruptedException {
+    void shouldBuildMavenProjectOnAgent() throws IOException {
         assumeThat(isWindows()).as("Running on Windows").isFalse();
 
-        DumbSlave agent = createDockerContainerAgent(javaDockerRule.get());
-
         FreeStyleProject project = createFreeStyleProject();
-        project.setAssignedNode(agent);
+        Node node = createDockerAgent(AGENT_CONTAINER);
+        project.setAssignedNode(node);
 
-        createFileInAgentWorkspace(agent, project, "src/main/java/Test.java", getSampleJavaFile());
-        createFileInAgentWorkspace(agent, project, "pom.xml", getSampleMavenFile());
-        project.getBuildersList().add(new Maven("compile", null));
-        enableWarnings(project, createTool(new Java(), ""));
+        createFileInAgentWorkspace(node, project, "src/main/java/Test.java", getSampleJavaFile());
+        createFileInAgentWorkspace(node, project, "pom.xml", getSampleMavenFile());
+        project.getBuildersList().add(new Shell("JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64 mvn compile"));
+        enableWarnings(project, createTool(new Java(), EMPTY_PATTERN));
 
-        scheduleSuccessfulBuild(project);
-
-        FreeStyleBuild lastBuild = project.getLastBuild();
-        AnalysisResult result = getAnalysisResult(lastBuild);
-
+        AnalysisResult result = scheduleSuccessfulBuild(project);
         assertThat(result).hasTotalSize(2);
-        assertThat(lastBuild.getBuiltOn().getLabelString()).isEqualTo(((Node) agent).getLabelString());
     }
 
-    /**
-     * Runs a make file to compile a cpp file on a docker container agent.
-     *
-     * @throws IOException
-     *         When the node assignment of the agent fails.
-     * @throws InterruptedException
-     *         If the creation of the docker container fails.
-     */
     @Test
-    public void shouldBuildMakefileOnAgent() throws IOException, InterruptedException {
+    void shouldBuildMakefileOnAgent() throws IOException {
         assumeThat(isWindows()).as("Running on Windows").isFalse();
 
-        DumbSlave agent = createDockerContainerAgent(gccDockerRule.get());
-
         FreeStyleProject project = createFreeStyleProject();
-        project.setAssignedNode(agent);
+        Node node = createDockerAgent(AGENT_CONTAINER);
+        project.setAssignedNode(node);
 
-        createFileInAgentWorkspace(agent, project, "test.cpp", getSampleCppFile());
-        createFileInAgentWorkspace(agent, project, "makefile", getSampleMakefileFile());
+        createFileInAgentWorkspace(node, project, "test.cpp", getSampleCppFile());
+        createFileInAgentWorkspace(node, project, "makefile", getSampleMakefileFile());
         project.getBuildersList().add(new Shell("make"));
-        enableWarnings(project, createTool(new Gcc4(), ""));
+        enableWarnings(project, createTool(new Gcc4(), EMPTY_PATTERN));
 
-        scheduleSuccessfulBuild(project);
-
-        FreeStyleBuild lastBuild = project.getLastBuild();
-        AnalysisResult result = getAnalysisResult(lastBuild);
-
+        AnalysisResult result = scheduleSuccessfulBuild(project);
         assertThat(result).hasTotalSize(1);
-        assertThat(lastBuild.getBuiltOn().getLabelString()).isEqualTo(((Node) agent).getLabelString());
     }
 
     /**

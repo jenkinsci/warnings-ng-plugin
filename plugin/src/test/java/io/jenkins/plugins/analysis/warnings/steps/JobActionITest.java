@@ -2,7 +2,7 @@ package io.jenkins.plugins.analysis.warnings.steps;
 
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.model.Actionable;
@@ -32,7 +32,7 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  * @author Johannes Hintermaier
  * @author Ullrich Hafner
  */
-public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
+class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String ECLIPSE = "Eclipse ECJ Warnings Trend";
     private static final String CHECKSTYLE = "CheckStyle Warnings Trend";
     private static final String ANALYSIS_ICON = "plugin/warnings-ng/icons/analysis.svg";
@@ -45,7 +45,7 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that the trend chart is visible if there are two valid builds available.
      */
     @Test
-    public void shouldShowTrendChart() {
+    void shouldShowTrendChart() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(ECLIPSE_LOG);
         enableEclipseWarnings(project);
 
@@ -73,7 +73,7 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that the aggregation trend chart is visible for a freestyle job at the top, or bottom, or hidden.
      */
     @Test
-    public void shouldShowTrendsAndAggregationFreestyle() {
+    void shouldShowTrendsAndAggregationFreestyle() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(ECLIPSE_LOG, CHECKSTYLE_XML);
         enableWarnings(project, createEclipse(), createCheckStyle());
 
@@ -113,7 +113,7 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that the aggregation trend chart is visible for a pipeline job at the top, or bottom, or hidden.
      */
     @Test
-    public void shouldShowTrendsAndAggregationPipeline() {
+    void shouldShowTrendsAndAggregationPipeline() {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix(ECLIPSE_LOG, CHECKSTYLE_XML);
         job.setDefinition(
                 asStage("def checkstyle = scanForIssues tool: checkStyle(pattern:'**/checkstyle.xml', reportEncoding:'UTF-8')",
@@ -185,7 +185,7 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that the side bar link is not missing if there are no issues in the latest build.
      */
     @Test
-    public void shouldHaveSidebarLinkEvenWhenLastActionHasNoResults() {
+    void shouldHaveSidebarLinkEvenWhenLastActionHasNoResults() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(ECLIPSE_LOG);
         enableWarnings(project, createTool(new Eclipse(), "**/no-valid-pattern"));
 

@@ -1,26 +1,42 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import java.util.Arrays;
+import java.util.List;
+
+import com.tngtech.archunit.base.DescribedPredicate;
+import com.tngtech.archunit.core.domain.AccessTarget.ConstructorCallTarget;
+import com.tngtech.archunit.core.domain.JavaClass;
+import com.tngtech.archunit.core.domain.JavaConstructorCall;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
 
+import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.util.ArchitectureRules;
 
 import io.jenkins.plugins.util.PluginArchitectureRules;
 
-import static com.tngtech.archunit.base.DescribedPredicate.*;
-import static com.tngtech.archunit.core.domain.JavaClass.Predicates.*;
-import static com.tngtech.archunit.lang.conditions.ArchPredicates.*;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.*;
 
 /**
- * Defines several architecture rules for the static analysis utilities.
+ * Checks several architecture rules for the static analysis utilities.
  *
  * @author Ullrich Hafner
  */
 @SuppressWarnings("hideutilityclassconstructor")
 @AnalyzeClasses(packages = "io.jenkins.plugins.analysis")
 class PluginArchitectureTest {
+    @ArchTest
+    static final ArchRule NO_EXCEPTIONS_WITH_NO_ARG_CONSTRUCTOR = noClasses()
+            .that().haveSimpleNameNotContaining("Benchmark")
+            .should().callConstructorWhere(new ExceptionHasNoContext(ParsingCanceledException.class));
+
+    @ArchTest
+    static final ArchRule NO_PUBLIC_TEST_CLASSES = ArchitectureRules.NO_PUBLIC_TEST_CLASSES;
+
+    @ArchTest
+    static final ArchRule NO_PUBLIC_TEST_METHODS = ArchitectureRules.ONLY_PACKAGE_PRIVATE_TEST_METHODS;
+
     @ArchTest
     static final ArchRule NO_TEST_API_CALLED = ArchitectureRules.NO_TEST_API_CALLED;
 
@@ -31,16 +47,10 @@ class PluginArchitectureTest {
     static final ArchRule NO_FORBIDDEN_CLASSES_CALLED = ArchitectureRules.NO_FORBIDDEN_CLASSES_CALLED;
 
     @ArchTest
+    static final ArchRule NO_PUBLIC_ARCHITECTURE_TESTS = ArchitectureRules.NO_PUBLIC_ARCHITECTURE_TESTS;
+
+    @ArchTest
     static final ArchRule NO_JENKINS_INSTANCE_CALL = PluginArchitectureRules.NO_JENKINS_INSTANCE_CALL;
-
-    @ArchTest
-    static final ArchRule NO_PUBLIC_TEST_CLASSES = PluginArchitectureRules.NO_PUBLIC_TEST_CLASSES;
-
-    @ArchTest
-    static final ArchRule NO_PUBLIC_TEST_METHODS = PluginArchitectureRules.NO_PUBLIC_TEST_METHODS;
-
-    @ArchTest
-    static final ArchRule NO_PUBLIC_ARCHITECTURE_TESTS = PluginArchitectureRules.NO_PUBLIC_ARCHITECTURE_TESTS;
 
     @ArchTest
     static final ArchRule NO_FORBIDDEN_PACKAGE_ACCESSED = PluginArchitectureRules.NO_FORBIDDEN_PACKAGE_ACCESSED;
@@ -60,12 +70,28 @@ class PluginArchitectureTest {
     @ArchTest
     static final ArchRule USE_POST_FOR_LIST_MODELS_RULE = PluginArchitectureRules.USE_POST_FOR_LIST_AND_COMBOBOX_FILL;
 
-    /** Test classes should not use Junit 4. */
-    @ArchTest
-    static final ArchRule NO_JUNIT_4 =
-            noClasses().that(doNot(
-                    have(simpleNameEndingWith("ITest"))
-                            .or(have(simpleNameContaining("IntegrationTest")))
-                            .or(have(simpleName("ToolsLister")))))
-                    .should().dependOnClassesThat().resideInAnyPackage("org.junit");
+    private static class ExceptionHasNoContext extends DescribedPredicate<JavaConstructorCall> {
+        private final List<Class<? extends Throwable>> allowedExceptions;
+
+        @SafeVarargs
+        ExceptionHasNoContext(final Class<? extends Throwable>... allowedExceptions) {
+            super("exception context is missing");
+
+            this.allowedExceptions = Arrays.asList(allowedExceptions);
+        }
+
+        @Override
+        public boolean apply(final JavaConstructorCall javaConstructorCall) {
+            ConstructorCallTarget target = javaConstructorCall.getTarget();
+            if (target.getRawParameterTypes().size() > 0) {
+                return false;
+            }
+            return target.getOwner().isAssignableTo(Throwable.class)
+                    && !isPermittedException(target.getOwner());
+        }
+
+        private boolean isPermittedException(final JavaClass owner) {
+            return allowedExceptions.stream().anyMatch(owner::isAssignableTo);
+        }
+    }
 }

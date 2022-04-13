@@ -1,7 +1,7 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.ToolInstallations;
 
 import edu.hm.hafner.analysis.Severity;
@@ -21,12 +21,12 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  *
  * @author Ullrich Hafner
  */
-public class MavenIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
+class MavenIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     /**
      * Runs the Eclipse parser on an output file that contains several issues: the build should report 8 issues.
      */
     @Test
-    public void shouldCreateResultWithWarnings() {
+    void shouldCreateResultWithWarnings() {
         MavenModuleSet project = createMavenJob();
         copySingleFileToWorkspace(project, "pom.xml");
         copyMultipleFilesToWorkspaceWithSuffix(project, "eclipse.txt");
@@ -42,13 +42,13 @@ public class MavenIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite
     }
 
     /**
-     * Runs a maven build without a pom.xml. Enables reporting of maven warnings and errors. 
+     * Runs a maven build without a pom.xml. Enables reporting of maven warnings and errors.
      */
     @Test
-    public void shouldParseMavenError() {
+    void shouldParseMavenError() {
         MavenModuleSet project = createMavenJob();
         copySingleFileToWorkspace(project, "pom-error.xml", "pom.xml");
- 
+
         IssuesRecorder recorder = enableWarnings(project, createTool(new MavenConsole(), ""));
         recorder.setEnabledForFailure(true);
 
@@ -60,7 +60,7 @@ public class MavenIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite
     /**
      * Ensures that Maven 3.5 is installed before a test will be executed.
      */
-    @BeforeClass
+    @BeforeAll
     @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock", "PMD.AvoidCatchingGenericException"})
     public static void installMaven() {
         try {

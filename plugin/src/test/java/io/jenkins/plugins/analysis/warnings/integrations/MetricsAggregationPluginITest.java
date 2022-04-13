@@ -1,6 +1,6 @@
 package io.jenkins.plugins.analysis.warnings.integrations;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import hudson.model.FreeStyleProject;
 import hudson.model.Run;
@@ -21,10 +21,10 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  * the default integration (without creating a publisher) works, so that the metrics are available if there is
  * a static analysis result.
  */
-public class MetricsAggregationPluginITest extends IntegrationTestWithJenkinsPerSuite {
+class MetricsAggregationPluginITest extends IntegrationTestWithJenkinsPerSuite {
     /** Verifies that the metrics action is available automatically. */
     @Test
-    public void shouldAggregateMetrics() {
+    void shouldAggregateMetrics() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("pmd.xml", "cpd.xml",
                 "spotbugsXml.xml");
 
