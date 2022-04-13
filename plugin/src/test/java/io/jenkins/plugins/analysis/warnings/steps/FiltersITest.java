@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Issue;
 
@@ -38,14 +38,14 @@ import static org.assertj.core.api.Assertions.*;
  * @author Manuel Hampp
  */
 @SuppressWarnings("ClassDataAbstractionCoupling")
-public class FiltersITest extends IntegrationTestWithJenkinsPerSuite {
+class FiltersITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String MODULE_FILTER = "module-filter/";
 
     /**
      * Tests the module expression filter: provides a pom.xml in the workspace so that modules are correctly assigned.
      */
     @Test
-    public void shouldFilterPmdIssuesByModule() {
+    void shouldFilterPmdIssuesByModule() {
         Map<RegexpFilter, Integer[]> expectedLinesByFilter = setupModuleFilterForPmd();
 
         for (Entry<RegexpFilter, Integer[]> entry : expectedLinesByFilter.entrySet()) {
@@ -79,7 +79,7 @@ public class FiltersITest extends IntegrationTestWithJenkinsPerSuite {
      * Tests the category and file expression filter by comparing the result with expected.
      */
     @Test
-    public void shouldFilterCheckStyleIssuesByCategoryAndFile() {
+    void shouldFilterCheckStyleIssuesByCategoryAndFile() {
         Map<RegexpFilter, Integer[]> expectedLinesByFilter = setupCategoryFilterForCheckStyle();
 
         for (Entry<RegexpFilter, Integer[]> entry : expectedLinesByFilter.entrySet()) {
@@ -120,7 +120,7 @@ public class FiltersITest extends IntegrationTestWithJenkinsPerSuite {
      * Tests the package and type expression filter by comparing the result with expected.
      */
     @Test
-    public void shouldFilterPmdIssuesByPackageAndType() {
+    void shouldFilterPmdIssuesByPackageAndType() {
         Map<RegexpFilter, Integer[]> typeFiltersWithResult = setupCategoryFilterForPmd();
 
         for (Entry<RegexpFilter, Integer[]> entry : typeFiltersWithResult.entrySet()) {

@@ -9,7 +9,7 @@ import org.jenkins_ci.plugins.flexible_publish.ConditionalPublisher;
 import org.jenkins_ci.plugins.flexible_publish.FlexiblePublisher;
 import org.jenkins_ci.plugins.run_condition.BuildStepRunner.Run;
 import org.jenkins_ci.plugins.run_condition.core.AlwaysRun;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
@@ -34,13 +34,13 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  * @author Tobias Redl
  * @author Andreas Neumeier
  */
-public class FlexiblePublishITest extends IntegrationTestWithJenkinsPerSuite {
+class FlexiblePublishITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String JAVA_WARNINGS = "java-start.txt";
     private static final String CHECKSTYLE_WARNINGS = "checkstyle.xml";
 
     /** Test that different tools can be configured with different settings. */
     @Test
-    public void shouldAnalyseTwoToolsWithDifferentSettings() {
+    void shouldAnalyseTwoToolsWithDifferentSettings() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(CHECKSTYLE_WARNINGS,
                 JAVA_WARNINGS);
 

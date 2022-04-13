@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Locale;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser.AnalysisModelParserDescriptor;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
@@ -20,7 +20,7 @@ import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSu
  *
  * @author Ullrich Hafner
  */
-public class ToolsLister extends IntegrationTestWithJenkinsPerSuite {
+class ToolsLister extends IntegrationTestWithJenkinsPerSuite {
     /**
      * Creates the TOOLS.md file, that lists all registered tools.
      *
@@ -28,7 +28,7 @@ public class ToolsLister extends IntegrationTestWithJenkinsPerSuite {
      *         if hte file TOOLS.md cannot be written
      */
     @Test
-    public void shouldPrintAllRegisteredTools() throws IOException {
+    void shouldPrintAllRegisteredTools() throws IOException {
         ArrayList<ToolDescriptor> descriptors = new ArrayList<>(
                 getJenkins().getInstance().getDescriptorList(Tool.class));
         descriptors.sort(Comparator.comparing(d -> d.getLabelProvider().getName().toLowerCase(Locale.ENGLISH)));

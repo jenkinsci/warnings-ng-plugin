@@ -2,7 +2,7 @@ package io.jenkins.plugins.analysis.warnings.groovy;
 
 import java.util.Collections;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.Issue;
 
 import io.jenkins.plugins.analysis.core.model.Tool;
@@ -13,17 +13,17 @@ import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 /**
  * Tests the class {@link GroovyScript}.
  */
-public class GroovyScriptITest extends IntegrationTestWithJenkinsPerSuite {
+class GroovyScriptITest extends IntegrationTestWithJenkinsPerSuite {
 
     /** Tests that the descriptor's canScanConsoleLog method returns the same as the configured permission ... for the "true" case */
     @Test
-    public void descriptorMethodCanScanConsoleLogReturnsTrueIfConfigurationSaysConsoleLogScanningPermittedIsTrue() {
+    void descriptorMethodCanScanConsoleLogReturnsTrueIfConfigurationSaysConsoleLogScanningPermittedIsTrue() {
         testDescriptorCanScanConsoleLog(true);
     }
 
     /** Tests that the descriptor's canScanConsoleLog method returns the same as the configured permission ... for the "false" case */
     @Test
-    public void descriptorMethodCanScanConsoleLogReturnsFalsefConfigurationSaysConsoleLogScanningPermittedIsFalse() {
+    void descriptorMethodCanScanConsoleLogReturnsFalsefConfigurationSaysConsoleLogScanningPermittedIsFalse() {
         testDescriptorCanScanConsoleLog(false);
     }
 
@@ -42,7 +42,7 @@ public class GroovyScriptITest extends IntegrationTestWithJenkinsPerSuite {
     /** Verifies that the Groovy parser does not accept illegal IDs. */
     @Test
     @Issue("SECURITY-2090")
-    public void setIdShouldThrowExceptionIfCustomIdHasInvalidPattern() {
+    void setIdShouldThrowExceptionIfCustomIdHasInvalidPattern() {
         ParserConfiguration configuration = ParserConfiguration.getInstance();
         configuration.setParsers(Collections.singletonList(new GroovyParser("groovy", "", "", "", "")));
         Tool groovyScript = new GroovyScript("groovy");
