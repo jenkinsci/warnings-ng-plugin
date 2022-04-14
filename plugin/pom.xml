@@ -28,7 +28,7 @@
     <jenkins.baseline>2.319</jenkins.baseline>
 
     <analysis-model-api.version>10.10.0</analysis-model-api.version>
-    <analysis-model-tests.version>10.10.0</analysis-model-tests.version>
+    <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
 
     <forensics-api-plugin.version>1.12.0</forensics-api-plugin.version>
     <plugin-util-api.version>2.16.0</plugin-util-api.version>
