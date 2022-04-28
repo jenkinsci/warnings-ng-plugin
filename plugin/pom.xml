@@ -579,13 +579,24 @@
       <plugin>
         <groupId>org.revapi</groupId>
         <artifactId>revapi-maven-plugin</artifactId>
+        <dependencies>
+          <dependency>
+            <groupId>org.revapi</groupId>
+            <artifactId>revapi-java</artifactId>
+            <version>${revapi-java.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.revapi</groupId>
+            <artifactId>revapi-reporter-json</artifactId>
+            <version>${revapi-reporter-json-version}</version>
+          </dependency>
+        </dependencies>
         <configuration>
-          <skip>true</skip> <!-- FIXME: find a better workaround for https://github.com/revapi/revapi/issues/253 -->
           <failBuildOnProblemsFound>true</failBuildOnProblemsFound>
           <!-- Including provided-scope dependencies like Jenkins core results in too many false positives -->
-          <checkDependencies>false</checkDependencies>
-          <analysisConfiguration>
-            <revapi.ignore combine.children="append">
+          <checkDependencies>true</checkDependencies>
+          <analysisConfiguration combine.children="append">
+            <revapi.differences>
               <item>
                 <regex>true</regex>
                 <code>java.field.serialVersionUIDUnchanged</code>
@@ -626,7 +637,7 @@
                 <classSimpleName>Messages</classSimpleName>
                 <justification>Messages are now external API.</justification>
               </item>
-            </revapi.ignore>
+            </revapi.differences>
           </analysisConfiguration>
         </configuration>
       </plugin>
