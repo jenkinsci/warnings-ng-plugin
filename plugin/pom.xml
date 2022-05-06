@@ -54,7 +54,7 @@
 
     <!-- Jenkins Plug-in Dependencies Versions -->
     <autograding.version>3.3.1</autograding.version>
-    <git-forensics.version>1.7.0</git-forensics.version>
+    <git-forensics.version>1.8.0</git-forensics.version>
     <jenkins-maven-plugin.version>3.16</jenkins-maven-plugin.version>
     <job-dsl.version>1.78.3</job-dsl.version>
     <flexible-publish.version>0.15.2</flexible-publish.version>
