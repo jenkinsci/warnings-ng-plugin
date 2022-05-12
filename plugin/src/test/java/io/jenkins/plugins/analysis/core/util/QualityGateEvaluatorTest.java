@@ -1,5 +1,7 @@
 package io.jenkins.plugins.analysis.core.util;
 
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -9,8 +11,6 @@ import org.junit.jupiter.api.Test;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator.FormattedLogger;
-
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
 /**
  * Tests the class {@link QualityGateEvaluator}.
@@ -131,6 +131,21 @@ class QualityGateEvaluatorTest {
         assertThat(logger.getMessages()).containsExactly(
                 "-> WARNING - " + QualityGateType.TOTAL.getDisplayName() + ": 1 - Quality QualityGate: 1",
                 "-> WARNING - " + QualityGateType.NEW.getDisplayName() + ": 1 - Quality QualityGate: 1");
+    }
+
+    @Test
+    void shouldIgnoreThresholdZero() {
+        Logger logger = new Logger();
+
+        IssuesStatisticsBuilder builder = new IssuesStatisticsBuilder();
+
+        QualityGateEvaluator qualityGate = new QualityGateEvaluator();
+
+        qualityGate.add(0, QualityGateType.TOTAL, QualityGateResult.UNSTABLE);
+        assertThat(qualityGate.evaluate(builder.setTotalNormalSize(1).build(), logger)).isEqualTo(QualityGateStatus.PASSED);
+
+        qualityGate.add(0, QualityGateType.NEW, QualityGateResult.UNSTABLE);
+        assertThat(qualityGate.evaluate(builder.setNewNormalSize(1).build(), logger)).isEqualTo(QualityGateStatus.PASSED);
     }
 
     @Test
