@@ -167,10 +167,7 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      */
     @POST
     public ListBoxModel doFillTrendChartTypeItems(@AncestorInPath final AbstractProject<?, ?> project) {
-        if (JENKINS.hasPermission(Item.CONFIGURE, project)) {
-            return model.getAllTrendChartTypes();
-        }
-        return new ListBoxModel();
+        return model.getAllTrendChartTypes();
     }
 
     /**
