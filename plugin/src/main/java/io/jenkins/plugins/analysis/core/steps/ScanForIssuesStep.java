@@ -205,7 +205,7 @@ public class ScanForIssuesStep extends Step {
     /**
      * Actually performs the execution of the associated step.
      */
-    @SuppressFBWarnings(value = "EXCEPTION", justification = "false positive")
+    @SuppressFBWarnings(value = "THROWS", justification = "false positive")
     static class Execution extends AnalysisExecution<AnnotatedReport> {
         private static final long serialVersionUID = -4627988939459725361L;
 

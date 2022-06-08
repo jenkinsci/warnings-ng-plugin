@@ -819,7 +819,7 @@ public class PublishIssuesStep extends Step implements Serializable {
     /**
      * Actually performs the execution of the associated step.
      */
-    @SuppressFBWarnings(value = "EXCEPTION", justification = "false positive")
+    @SuppressFBWarnings(value = "THROWS", justification = "false positive")
     static class Execution extends AnalysisExecution<ResultAction> {
         private static final long serialVersionUID = 6438321240776419897L;
 

@@ -286,7 +286,7 @@ public class AnalysisResult extends PageObject {
     /**
      * Clicks the next-button to cycle through the Trend Charts.
      */
-    @SuppressFBWarnings(value = "EXCEPTION", justification = "3rd party library we cannot change")
+    @SuppressFBWarnings(value = "THROWS", justification = "3rd party library we cannot change")
     public void clickNextOnTrendCarousel() {
         WebElement trendChart = getTrendChart();
         WebElement activeChart = trendChart.findElement(By.className("active"));
