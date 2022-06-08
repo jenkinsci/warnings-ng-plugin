@@ -13,6 +13,8 @@ import org.openqa.selenium.support.ui.Select;
 import com.gargoylesoftware.htmlunit.ScriptResult;
 import com.google.inject.Injector;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.PageObject;
 
@@ -284,6 +286,7 @@ public class AnalysisResult extends PageObject {
     /**
      * Clicks the next-button to cycle through the Trend Charts.
      */
+    @SuppressFBWarnings(value = "EXCEPTION", justification = "3rd party library we cannot change")
     public void clickNextOnTrendCarousel() {
         WebElement trendChart = getTrendChart();
         WebElement activeChart = trendChart.findElement(By.className("active"));
