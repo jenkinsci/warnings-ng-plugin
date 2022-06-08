@@ -21,7 +21,7 @@
   <url>https://github.com/jenkinsci/warnings-ng-plugin</url>
 
   <properties>
-    <revision>9.12.0</revision>
+    <revision>9.15.0</revision>
     <changelist>-SNAPSHOT</changelist>
     <module.name>${project.groupId}.warnings.ng</module.name>
 
@@ -579,6 +579,7 @@
       <plugin>
         <groupId>org.revapi</groupId>
         <artifactId>revapi-maven-plugin</artifactId>
+        <version>${revapi-maven-plugin.version}</version>
         <dependencies>
           <dependency>
             <groupId>org.revapi</groupId>
@@ -588,58 +589,78 @@
           <dependency>
             <groupId>org.revapi</groupId>
             <artifactId>revapi-reporter-json</artifactId>
-            <version>${revapi-reporter-json-version}</version>
+            <version>0.4.5</version>
           </dependency>
         </dependencies>
         <configuration>
           <failBuildOnProblemsFound>true</failBuildOnProblemsFound>
-          <!-- Including provided-scope dependencies like Jenkins core results in too many false positives -->
           <checkDependencies>true</checkDependencies>
-          <analysisConfiguration combine.children="append">
+          <newVersion>${project.version}</newVersion>
+          <failOnUnresolvedArtifacts>true</failOnUnresolvedArtifacts>
+          <analysisConfiguration>
+            <revapi.reporter.json>
+              <minSeverity>POTENTIALLY_BREAKING</minSeverity>
+              <minCriticality>documented</minCriticality>
+              <output>target/revapi-result.json</output>
+              <indent>false</indent>
+              <append>false</append>
+              <keepEmptyFile>true</keepEmptyFile>
+            </revapi.reporter.json>
+            <revapi.versions>
+              <enabled>true</enabled>
+            </revapi.versions>
             <revapi.differences>
               <item>
                 <regex>true</regex>
-                <code>java.field.serialVersionUIDUnchanged</code>
-                <classQualifiedName>io.jenkins.plugins.analysis.core.steps.*Step</classQualifiedName>
-                <justification>Serialization is only used in interprocess communication using the same classes
-                </justification>
+                <code>java.class.nonPublicPartOfAPI</code>
+                <classQualifiedName>org.jvnet.hudson.*</classQualifiedName>
+                <justification>Not relevant</justification>
               </item>
               <item>
                 <regex>true</regex>
-                <code>java.missing.*</code>
-                <justification>Dependencies are not being checked, so they are reported as missing</justification>
+                <code>java.class.nonPublicPartOfAPI</code>
+                <classQualifiedName>net.sf.json.*</classQualifiedName>
+                <justification>Not relevant</justification>
+              </item>
+              <item>
+                <regex>true</regex>
+                <code>java.class.nonPublicPartOfAPI</code>
+                <classQualifiedName>org.jvnet.hudson.*</classQualifiedName>
+                <justification>Not relevant</justification>
+              </item>
+              <item>
+                <regex>true</regex>
+                <code>java.class.nonPublicPartOfAPI</code>
+                <classQualifiedName>net.sf.json.*</classQualifiedName>
+                <justification>Not relevant</justification>
+              </item>
+              <item>
+                <code>java.annotation.removed</code>
+                <annotation>@edu.umd.cs.findbugs.annotations.Nullable</annotation>
+                <justification>Annotation should be save to change.</justification>
               </item>
               <item>
                 <code>java.annotation.added</code>
-                <annotationType>org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted</annotationType>
-                <justification>Annotation should be save to add.</justification>
-              </item>
-              <item>
-                <regex>true</regex>
-                <code>java.annotation.*</code>
-                <annotation>@edu.umd.cs.findbugs.annotations.*</annotation>
+                <annotation>@edu.umd.cs.findbugs.annotations.CheckForNull</annotation>
                 <justification>Annotation should be save to change.</justification>
               </item>
               <item>
-                <regex>true</regex>
-                <code>java.annotation.*</code>
-                <annotation>@org.kohsuke.stapler.*</annotation>
+                <code>java.annotation.added</code>
+                <annotation>@edu.hm.hafner.util.Generated</annotation>
                 <justification>Annotation should be save to change.</justification>
-              </item>
-              <item>
-                <regex>true</regex>
-                <code>java.method.returnTypeChanged</code>
-                <methodName>getDescriptionProvider</methodName>
-                <justification>Return type must be part of the API.</justification>
-              </item>
-              <item>
-                <code>java.method.added</code>
-                <classSimpleName>Messages</classSimpleName>
-                <justification>Messages are now external API.</justification>
               </item>
             </revapi.differences>
           </analysisConfiguration>
         </configuration>
+        <executions>
+          <execution>
+            <id>run-revapi</id>
+            <goals>
+              <goal>report</goal>
+            </goals>
+            <phase>verify</phase>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
     <pluginManagement>
