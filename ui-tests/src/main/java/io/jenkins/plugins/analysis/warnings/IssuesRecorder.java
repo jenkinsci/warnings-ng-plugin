@@ -626,6 +626,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
         private final Control highThreshold = control("tool/highThreshold");
         private final Control id = control("tool/id");
         private final Control name = control("tool/name");
+        private final Control analysisModelId = control("tool/analysisModelId");
 
         StaticAnalysisTool(final PageArea issuesRecorder, final String path) {
             super(issuesRecorder, path);
@@ -710,6 +711,20 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
          */
         public StaticAnalysisTool setHighThreshold(final int highThreshold) {
             this.highThreshold.set(highThreshold);
+
+            return this;
+        }
+
+        /**
+         * Sets the name of the parser in the analysis-model component.
+         *
+         * @param name
+         *         name of the parser
+         *
+         * @return this
+         */
+        public StaticAnalysisTool setAnalysisModelId(final String name) {
+            this.analysisModelId.select(name);
 
             return this;
         }
