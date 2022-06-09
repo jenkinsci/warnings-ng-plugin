@@ -75,6 +75,11 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         shouldFindIssuesOfTool(9 + 5 + 5, new WarningsPlugin(), "warnings-issues.xml", "issues.json",
                 "json-issues.log");
     }
+   /** Runs the BluePearl an output file that contains 7 issues. */
+     @Test
+     void shouldFindAllBluePearlIssues() {
+         shouldFindIssuesOfTool(7, new BluePearl(), "bluepearl.log");
+     }
 
     /** Runs the Dart analysis parser on an output file that contains 6 issues. */
     @Test
