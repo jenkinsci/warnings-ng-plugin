@@ -718,13 +718,13 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
         /**
          * Sets the name of the parser in the analysis-model component.
          *
-         * @param name
+         * @param analysisModelName
          *         name of the parser
          *
          * @return this
          */
-        public StaticAnalysisTool setAnalysisModelId(final String name) {
-            this.analysisModelId.select(name);
+        public StaticAnalysisTool setAnalysisModelId(final String analysisModelName) {
+            this.analysisModelId.select(analysisModelName);
 
             return this;
         }
