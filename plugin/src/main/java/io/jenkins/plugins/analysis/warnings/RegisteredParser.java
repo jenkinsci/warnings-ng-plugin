@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.registry.ParserDescriptor;
 import edu.hm.hafner.analysis.registry.ParserRegistry;
+import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.AncestorInPath;
@@ -19,6 +20,7 @@ import hudson.Extension;
 import hudson.model.AbstractProject;
 import hudson.model.Item;
 import hudson.util.ListBoxModel;
+import hudson.util.ListBoxModel.Option;
 
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
@@ -92,14 +94,27 @@ public class RegisteredParser extends ReportScanningTool {
     @Symbol("analysisParser")
     @Extension
     public static class Descriptor extends ReportScanningToolDescriptor {
-        private final List<ParserDescriptor> allDescriptors;
+        @VisibleForTesting
+        static final String ANALYSIS_MODEL_ID = "analysis-model";
+        private static final ListBoxModel EMPTY_MODEL = new ListBoxModel();
+
+        private final ListBoxModel availableParsers;
+        private final JenkinsFacade jenkinsFacade;
 
         /** Creates the descriptor instance. */
         public Descriptor() {
-            super("analysis-model");
+            this(new JenkinsFacade());
+        }
 
-            allDescriptors = new ParserRegistry().getAllDescriptors();
+        @VisibleForTesting
+        Descriptor(final JenkinsFacade jenkinsFacade) {
+            super(ANALYSIS_MODEL_ID);
+
+            availableParsers = new ListBoxModel();
+            List<ParserDescriptor> allDescriptors = new ParserRegistry().getAllDescriptors();
             allDescriptors.sort(Comparator.comparing(ParserDescriptor::getName));
+            allDescriptors.stream().map(d -> new Option(d.getName(), d.getId())).forEach(availableParsers::add);
+            this.jenkinsFacade = jenkinsFacade;
         }
 
         /**
@@ -111,11 +126,10 @@ public class RegisteredParser extends ReportScanningTool {
          */
         @POST
         public ListBoxModel doFillAnalysisModelIdItems(@AncestorInPath final AbstractProject<?, ?> project) {
-            ListBoxModel ids = new ListBoxModel();
-            if (new JenkinsFacade().hasPermission(Item.CONFIGURE, project)) {
-                allDescriptors.stream().map(d -> new ListBoxModel.Option(d.getName(), d.getId())).forEach(ids::add);
+            if (jenkinsFacade.hasPermission(Item.CONFIGURE, project)) {
+                return availableParsers;
             }
-            return ids;
+            return EMPTY_MODEL;
         }
 
         @NonNull
