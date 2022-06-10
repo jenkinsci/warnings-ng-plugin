@@ -2,10 +2,15 @@ package io.jenkins.plugins.analysis.warnings;
 
 import java.util.NoSuchElementException;
 
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.parser.checkstyle.CheckStyleParser;
 
+import hudson.model.AbstractProject;
+import hudson.model.Item;
+
+import io.jenkins.plugins.analysis.warnings.RegisteredParser.Descriptor;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
@@ -61,5 +66,22 @@ class RegisteredParserTest {
 
         assertThat(parser.getLabelProvider()).hasId(CHECKSTYLE_ID); // get decorations for checkstyle
         assertThat(parser.getLabelProvider()).hasName(customName);
+    }
+
+    @Nested
+    class DescriptorTest {
+        @Test
+        void shouldPopulateListOfParsers() {
+            JenkinsFacade jenkins = mock(JenkinsFacade.class);
+            AbstractProject<?, ?> job = mock(AbstractProject.class);
+            when(jenkins.hasPermission(Item.CONFIGURE, job)).thenReturn(true);
+
+            Descriptor descriptor = new Descriptor(jenkins);
+            assertThat(descriptor.getId()).isEqualTo(Descriptor.ANALYSIS_MODEL_ID);
+            assertThat(descriptor.doFillAnalysisModelIdItems(job)).extracting(o -> o.value).first().isEqualTo("acu-cobol");
+
+            when(jenkins.hasPermission(Item.CONFIGURE, job)).thenReturn(false);
+            assertThat(descriptor.doFillAnalysisModelIdItems(job)).isEmpty();
+        }
     }
 }
