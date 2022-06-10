@@ -8,7 +8,7 @@ import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 
 /**
- * Selects a {@link BLue Pearl Parser} using the specified ID.
+ * Selects a {@link BluePearl} using the specified ID.
  *
  * @author Simon Matthews
  */
