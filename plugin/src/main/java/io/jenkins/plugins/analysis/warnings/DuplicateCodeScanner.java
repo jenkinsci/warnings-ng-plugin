@@ -30,6 +30,7 @@ import io.jenkins.plugins.analysis.core.model.FileNameRenderer;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
 import io.jenkins.plugins.analysis.core.model.SvgIconLabelProvider;
 import io.jenkins.plugins.datatables.TableColumn;
+import io.jenkins.plugins.datatables.TableColumn.ColumnBuilder;
 import io.jenkins.plugins.datatables.TableColumn.ColumnCss;
 import io.jenkins.plugins.prism.Sanitizer;
 import io.jenkins.plugins.util.JenkinsFacade;
@@ -342,14 +343,26 @@ public abstract class DuplicateCodeScanner extends AnalysisModelParser {
             List<TableColumn> columns = new ArrayList<>();
 
             columns.add(createDetailsColumn());
-            columns.add(createFileColumn().setWidth(2));
+            columns.add(createFileColumn());
             if (getReport().hasPackages()) {
-                columns.add(new TableColumn(Messages.DRY_Table_Column_Package(), "packageName").setWidth(2));
+                columns.add(createPackageColumn());
             }
-            columns.add(new TableColumn(Messages.DRY_Table_Column_Severity(), "severity"));
-            columns.add(new TableColumn(Messages.DRY_Table_Column_LinesCount(), "linesCount")
-                    .setHeaderClass(ColumnCss.NUMBER));
-            columns.add(new TableColumn(Messages.DRY_Table_Column_DuplicatedIn(), "duplicatedIn").setWidth(3));
+            TableColumn severity = new ColumnBuilder().withHeaderLabel(Messages.DRY_Table_Column_Severity())
+                    .withDataPropertyKey("severity")
+                    .withResponsivePriority(100)
+                    .build();
+            columns.add(severity);
+            TableColumn linesCount = new ColumnBuilder().withHeaderLabel(Messages.DRY_Table_Column_LinesCount())
+                    .withDataPropertyKey("linesCount")
+                    .withResponsivePriority(5)
+                    .withHeaderClass(ColumnCss.NUMBER)
+                    .build();
+            columns.add(linesCount);
+            TableColumn duplicatedIn = new ColumnBuilder().withHeaderLabel(Messages.DRY_Table_Column_DuplicatedIn())
+                    .withDataPropertyKey("duplicatedIn")
+                    .withResponsivePriority(50)
+                    .build();
+            columns.add(duplicatedIn);
             columns.add(createAgeColumn());
             return columns;
         }

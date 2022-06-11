@@ -10,6 +10,7 @@ import edu.hm.hafner.util.VisibleForTesting;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
 import io.jenkins.plugins.analysis.core.util.Blame;
 import io.jenkins.plugins.datatables.TableColumn;
+import io.jenkins.plugins.datatables.TableColumn.ColumnBuilder;
 import io.jenkins.plugins.datatables.TableColumn.ColumnCss;
 import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.forensics.util.CommitDecorator;
@@ -34,7 +35,6 @@ import io.jenkins.plugins.util.JenkinsFacade;
  */
 public class BlamesModel extends DetailsTableModel {
     static final String UNDEFINED = "-";
-    static final int UNDEFINED_DATE = 0;
 
     private final Blames blames;
     private final CommitDecorator commitDecorator;
@@ -67,11 +67,27 @@ public class BlamesModel extends DetailsTableModel {
         columns.add(createDetailsColumn());
         columns.add(createFileColumn());
         columns.add(createAgeColumn());
-        columns.add(new TableColumn(Messages.Table_Column_Author(), "author"));
-        columns.add(new TableColumn(Messages.Table_Column_Email(), "email"));
-        columns.add(new TableColumn(Messages.Table_Column_Commit(), "commit"));
-        columns.add(new TableColumn(Messages.Table_Column_AddedAt(), "addedAt")
-                .setHeaderClass(ColumnCss.DATE));
+        TableColumn author = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_Author())
+                .withDataPropertyKey("author")
+                .withResponsivePriority(1)
+                .build();
+        columns.add(author);
+        TableColumn email = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_Email())
+                .withDataPropertyKey("email")
+                .withResponsivePriority(50)
+                .build();
+        columns.add(email);
+        TableColumn commit = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_Commit())
+                .withDataPropertyKey("commit")
+                .withResponsivePriority(10)
+                .build();
+        columns.add(commit);
+        TableColumn addedAt = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_Commit())
+                .withDataPropertyKey("addedAt")
+                .withResponsivePriority(25)
+                .withHeaderClass(ColumnCss.DATE)
+                .build();
+        columns.add(addedAt);
         columns.add(createHiddenDetailsColumn());
 
         return columns;

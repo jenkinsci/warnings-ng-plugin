@@ -6,6 +6,8 @@ import java.util.stream.Stream;
 import org.apache.commons.text.StringEscapeUtils;
 import org.junit.jupiter.api.BeforeAll;
 
+import com.google.errorprone.annotations.MustBeClosed;
+
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Severity;
@@ -14,8 +16,8 @@ import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.DefaultAgeBuilder;
 import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
+import io.jenkins.plugins.datatables.DetailedCell;
 import io.jenkins.plugins.datatables.TableColumn;
-import io.jenkins.plugins.datatables.TableModel.DetailedColumnDefinition;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 import static j2html.TagCreator.*;
@@ -42,6 +44,7 @@ public abstract class AbstractDetailsModelTest {
                     + DETAILS_ICON + "</div>",
             StringEscapeUtils.escapeHtml4(MESSAGE), StringEscapeUtils.escapeHtml4(DESCRIPTION));
 
+    @MustBeClosed
     private IssueBuilder createBuilder() {
         return new IssueBuilder().setMessage(MESSAGE);
     }
@@ -96,7 +99,7 @@ public abstract class AbstractDetailsModelTest {
         return new DefaultAgeBuilder(1, "url");
     }
 
-    protected void assertThatDetailedColumnContains(final DetailedColumnDefinition actualColumn,
+    protected void assertThatDetailedColumnContains(final DetailedCell<String> actualColumn,
             final String expectedDisplayName, final String expectedSortOrder) {
         assertThat(actualColumn.getDisplay()).isEqualTo(expectedDisplayName);
         assertThat(actualColumn.getSort()).isEqualTo(expectedSortOrder);
