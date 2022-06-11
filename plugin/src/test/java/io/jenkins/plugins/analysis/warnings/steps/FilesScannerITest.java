@@ -208,7 +208,7 @@ class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
 
         assertThat(result).hasTotalSize(0);
         assertThat(result).hasInfoMessages(
-                "-> PASSED - Total (any severity): 0 - Quality QualityGate: 6");
+                "-> PASSED - Total (any severity): 0 - Quality Gate: 6");
     }
 
     private AnalysisModelParser createTool(final AnalysisModelParser tool, final boolean skipSymbolicLinks) {

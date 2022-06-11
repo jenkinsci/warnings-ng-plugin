@@ -39,14 +39,14 @@ public class QualityGateEvaluator {
         for (QualityGate qualityGate : qualityGates) {
             int actualSize = qualityGate.getActualSizeMethodReference().apply(report);
             if (actualSize >= qualityGate.getThreshold()) {
-                logger.print("-> %s - %s: %d - Quality QualityGate: %d",
+                logger.print("-> %s - %s: %d - Quality Gate: %d",
                         qualityGate.getStatus(), qualityGate.getName(), actualSize, qualityGate.getThreshold());
                 if (qualityGate.getStatus().isWorseThan(status)) {
                     status = qualityGate.getStatus();
                 }
             }
             else {
-                logger.print("-> PASSED - %s: %d - Quality QualityGate: %d",
+                logger.print("-> PASSED - %s: %d - Quality Gate: %d",
                         qualityGate.getName(), actualSize, qualityGate.getThreshold());
             }
         }
