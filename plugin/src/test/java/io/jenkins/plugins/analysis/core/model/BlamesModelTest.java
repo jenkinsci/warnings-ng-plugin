@@ -45,8 +45,6 @@ class BlamesModelTest extends AbstractDetailsModelTest {
 
         assertThat(getLabels(model))
                 .containsExactly("Details", "File", "Age", "Author", "Email", "Commit", "Added", "Hiddendetails");
-        assertThat(getWidths(model))
-                .containsExactly(1, 1, 1, 1, 1, 1, 1, 0);
 
         assertThat(model.getRows()).hasSize(2);
     }
@@ -92,7 +90,7 @@ class BlamesModelTest extends AbstractDetailsModelTest {
 
         BlamesRow actualRow = model.getRow(issue);
         assertThat(actualRow.getDescription()).isEqualTo(EXPECTED_DESCRIPTION);
-        
+
         assertThat(actualRow).hasDescription(EXPECTED_DESCRIPTION)
                 .hasAge("1")
                 .hasCommit(BlamesModel.UNDEFINED)

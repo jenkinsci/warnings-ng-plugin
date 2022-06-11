@@ -109,10 +109,6 @@ public abstract class AbstractDetailsModelTest {
         return model.getColumns().stream().map(TableColumn::getHeaderLabel);
     }
 
-    protected Stream<Integer> getWidths(final DetailsTableModel model) {
-        return model.getColumns().stream().map(TableColumn::getWidth);
-    }
-
     protected JenkinsFacade createJenkinsFacade() {
         JenkinsFacade jenkinsFacade = mock(JenkinsFacade.class);
         when(jenkinsFacade.getImagePath(anyString())).thenReturn("/path/to/icon");
@@ -127,11 +123,7 @@ public abstract class AbstractDetailsModelTest {
     }
 
     protected void verifyFileNameColumn(final String columnDefinitions) {
-        assertThatJson(columnDefinitions).node("[1].type")
-                .isEqualTo("string");
-        assertThatJson(columnDefinitions).node("[1].render._")
-                .isEqualTo("display");
-        assertThatJson(columnDefinitions).node("[1].render.sort")
-                .isEqualTo("sort");
+        assertThatJson(columnDefinitions).node("[1].render._").isEqualTo("display");
+        assertThatJson(columnDefinitions).node("[1].render.sort").isEqualTo("sort");
     }
 }

@@ -82,7 +82,7 @@ public class BlamesModel extends DetailsTableModel {
                 .withResponsivePriority(10)
                 .build();
         columns.add(commit);
-        TableColumn addedAt = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_Commit())
+        TableColumn addedAt = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_AddedAt())
                 .withDataPropertyKey("addedAt")
                 .withResponsivePriority(25)
                 .withHeaderClass(ColumnCss.DATE)
