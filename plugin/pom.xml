@@ -605,53 +605,7 @@
         <groupId>org.revapi</groupId>
         <artifactId>revapi-maven-plugin</artifactId>
         <configuration>
-          <failBuildOnProblemsFound>true</failBuildOnProblemsFound>
-          <!-- Including provided-scope dependencies like Jenkins core results in too many false positives -->
-          <checkDependencies>false</checkDependencies>
-          <analysisConfiguration>
-            <revapi.ignore combine.children="append">
-              <item>
-                <regex>true</regex>
-                <code>java.field.serialVersionUIDUnchanged</code>
-                <classQualifiedName>io.jenkins.plugins.analysis.core.steps.*Step</classQualifiedName>
-                <justification>Serialization is only used in interprocess communication using the same classes
-                </justification>
-              </item>
-              <item>
-                <regex>true</regex>
-                <code>java.missing.*</code>
-                <justification>Dependencies are not being checked, so they are reported as missing</justification>
-              </item>
-              <item>
-                <code>java.annotation.added</code>
-                <annotationType>org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted</annotationType>
-                <justification>Annotation should be save to add.</justification>
-              </item>
-              <item>
-                <regex>true</regex>
-                <code>java.annotation.*</code>
-                <annotation>@edu.umd.cs.findbugs.annotations.*</annotation>
-                <justification>Annotation should be save to change.</justification>
-              </item>
-              <item>
-                <regex>true</regex>
-                <code>java.annotation.*</code>
-                <annotation>@org.kohsuke.stapler.*</annotation>
-                <justification>Annotation should be save to change.</justification>
-              </item>
-              <item>
-                <regex>true</regex>
-                <code>java.method.returnTypeChanged</code>
-                <methodName>getDescriptionProvider</methodName>
-                <justification>Return type must be part of the API.</justification>
-              </item>
-              <item>
-                <code>java.method.added</code>
-                <classSimpleName>Messages</classSimpleName>
-                <justification>Messages are now external API.</justification>
-              </item>
-            </revapi.ignore>
-          </analysisConfiguration>
+          <skip>true</skip>
         </configuration>
       </plugin>
     </plugins>
