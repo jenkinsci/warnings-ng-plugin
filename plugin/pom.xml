@@ -33,7 +33,7 @@
     <forensics-api-plugin.version>1.14.0</forensics-api-plugin.version>
     <plugin-util-api.version>2.16.0</plugin-util-api.version>
     <pull-request-monitoring.version>1.7.8</pull-request-monitoring.version>
-    <prism-api.version>1.26.0-2</prism-api.version>
+    <prism-api.version>1.28.0-2</prism-api.version>
     <data-tables-api.version>1.11.4-4</data-tables-api.version>
 
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
