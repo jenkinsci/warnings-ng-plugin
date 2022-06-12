@@ -398,12 +398,8 @@ abstract class UiTest extends AbstractJUnitTest {
         DashboardView view = createDashboardView(container);
         StaticAnalysisIssuesPerToolAndJobPortlet portlet = view.addTopPortlet(
                 StaticAnalysisIssuesPerToolAndJobPortlet.class);
-        if (hideCleanJobs) {
-            portlet.toggleHideCleanJobs();
-        }
-        if (showIcons) {
-            portlet.toggleShowIcons();
-        }
+        portlet.setHideCleanJobs(hideCleanJobs);
+        portlet.setShowIcons(showIcons);
         view.save();
 
         return view;
