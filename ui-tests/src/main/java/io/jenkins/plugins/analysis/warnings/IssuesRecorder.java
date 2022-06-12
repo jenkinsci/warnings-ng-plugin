@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.events.EventFiringWebDriver;
+
 import org.jenkinsci.test.acceptance.po.AbstractStep;
 import org.jenkinsci.test.acceptance.po.Control;
 import org.jenkinsci.test.acceptance.po.Describable;
@@ -765,8 +768,9 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
         }
 
         public void setUnstable(final boolean isUnstable) {
-            self().findElement(by.xpath(".//input[@type='radio' and contains(@path,'unstable[" + isUnstable + "]')]"))
-                    .click();
+            WebElement radioButton = self().findElement(
+                    by.xpath(".//input[@type='radio' and contains(@path,'unstable[" + isUnstable + "]')]"));
+            ((EventFiringWebDriver) driver).executeScript("arguments[0].click();", radioButton);
         }
     }
 
