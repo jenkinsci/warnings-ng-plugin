@@ -152,7 +152,7 @@ public abstract class DetailsTableModel extends TableModel {
     protected TableColumn createPackageColumn() {
         return new ColumnBuilder().withHeaderLabel(Messages.Table_Column_Package())
                 .withDataPropertyKey("packageName")
-                .withResponsivePriority(50000)
+                .withResponsivePriority(50_000)
                 .build();
     }
 
