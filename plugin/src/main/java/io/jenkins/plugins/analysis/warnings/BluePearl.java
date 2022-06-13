@@ -29,8 +29,5 @@ public class BluePearl extends AnalysisModelParser {
         public Descriptor() {
             super(ID);
         }
-
-      
     }
-
 }
