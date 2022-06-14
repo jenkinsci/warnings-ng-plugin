@@ -5,13 +5,15 @@ import org.jenkinsci.Symbol;
 import hudson.Extension;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser.AnalysisModelParserDescriptor;
+import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 /**
  * Provides a parser and customized messages for RevApi. Delegates to {@link }
  */
 public class RevApi extends AnalysisModelParser {
     private static final long serialVersionUID = -8571635906342563283L;
-
     private static final String ID = "revapi";
 
     /** Creates a new instance of {@link RevApi}. */
@@ -22,17 +24,12 @@ public class RevApi extends AnalysisModelParser {
     }
 
     /** Descriptor for this static analysis tool. */
-    @Symbol("revApi")
+    @Symbol("revapi")
     @Extension
     public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
-        }
-
-        @Override
-        public boolean canScanConsoleLog() {
-            return false;
         }
     }
 }

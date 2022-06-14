@@ -69,6 +69,11 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
             + "files&#61;&#34;$files $directory/$i&#34;\n"
             + "done</code></pre>";
 
+    @Test
+    public void shouldReadRevApiJsonFormat() {
+        shouldFindIssuesOfTool(9, new RevApi(), "revapi-result.json");
+    }
+
     /** Runs the native parser on a file that contains 9 issues.. */
     @Test
     public void shouldReadNativeFormats() {
