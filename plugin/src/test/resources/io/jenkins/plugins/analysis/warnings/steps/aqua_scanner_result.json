@@ -1,0 +1,410 @@
+{
+  "image": "best-app-ever:faff111",
+  "registry": "someregistry-test",
+  "scan_started": {
+    "seconds": 1658360982,
+    "nanos": 974155304
+  },
+  "scan_duration": 16,
+  "image_size": 542786321,
+  "os": "rhel",
+  "version": "8.5",
+  "resources": [
+    {
+      "resource": {
+        "format": "rpm",
+        "name": "file-libs",
+        "version": "5.33-20.el8",
+        "arch": "x86_64",
+        "cpe": "pkg:/rhel:8.5:file-libs:5.33-20.el8",
+        "license": "BSD",
+        "layer_digest": "sha256:6axeb263db8e892cf93a62727ef9f183dbd31fcf8db84330e0b8a0943902a45e"
+      },
+      "scanned": true
+    },
+    {
+      "resource": {
+        "format": "rpm",
+        "name": "dbus-libs",
+        "version": "1:1.12.8-14.el8",
+        "arch": "x86_64",
+        "cpe": "pkg:/rhel:8.5:dbus-libs:1:1.12.8-14.el8",
+        "license": "(GPLv2+,AFL),GPLv2+",
+        "layer_digest": "sha256:4b803bb150821e015d54f3afc216a721a3060a4f1a6ff3b644fb8bcd4e251410"
+      },
+      "scanned": true
+    },
+    {
+      "resource": {
+        "format": "rpm",
+        "name": "unzip",
+        "version": "6.0-45.el8_4",
+        "arch": "x86_64",
+        "cpe": "pkg:/rhel:8.5:unzip:6.0-45.el8_4",
+        "license": "BSD",
+        "layer_digest": "sha256:4b803bb150821e015d54f3afc216a721a3060a4f1a6ff3b644fb8bcd4e251410"
+      },
+      "scanned": true,
+      "vulnerabilities": [
+        {
+          "name": "CVE-2022-0530",
+          "description": "A flaw was found in Unzip. The vulnerability occurs during the conversion of a wide string to a local string that leads to a heap of out-of-bound write. This flaw allows an attacker to input a specially crafted zip file, leading to a crash or code execution.A flaw was found in Unzip. The vulnerability occurs during the conversion of a UTF-8 string to a local string that leads to a segmentation fault. This flaw allows an attacker to input a specially crafted zip file, leading to a crash or code execution.",
+          "nvd_score": 6.8,
+          "nvd_score_version": "CVSS v2",
+          "nvd_vectors": "AV:N/AC:M/Au:N/C:P/I:P/A:P",
+          "nvd_severity": "medium",
+          "nvd_url": "https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2022-0530",
+          "vendor_score": 3,
+          "vendor_score_version": "Aqua",
+          "vendor_severity": "low",
+          "vendor_url": "https://access.redhat.com/security/cve/CVE-2022-0530",
+          "publish_date": "2022-02-09",
+          "modification_date": "2022-02-24",
+          "nvd_score_v3": 7.8,
+          "nvd_vectors_v3": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+          "nvd_severity_v3": "high",
+          "vendor_score_v3": 7.8,
+          "vendor_vectors_v3": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+          "vendor_severity_v3": "high",
+          "aqua_score": 3,
+          "aqua_severity": "low",
+          "aqua_scoring_system": "CVSS V2",
+          "heuristic_ref_id": 2015547
+        },
+        {
+          "name": "CVE-2022-0529",
+          "description": "A flaw was found in Unzip. The vulnerability occurs during the conversion of a wide string to a local string that leads to a heap of out-of-bound write. This flaw allows an attacker to input a specially crafted zip file, leading to a crash or code execution.A flaw was found in Unzip. The vulnerability occurs during the conversion of a wide string to a local string that leads to a heap of out-of-bound write. This flaw allows an attacker to input a specially crafted zip file, leading to a crash or code execution.",
+          "nvd_score": 6.8,
+          "nvd_score_version": "CVSS v2",
+          "nvd_vectors": "AV:N/AC:M/Au:N/C:P/I:P/A:P",
+          "nvd_severity": "medium",
+          "nvd_url": "https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2022-0529",
+          "vendor_score": 3,
+          "vendor_score_version": "Aqua",
+          "vendor_severity": "low",
+          "vendor_url": "https://access.redhat.com/security/cve/CVE-2022-0529",
+          "publish_date": "2022-02-09",
+          "modification_date": "2022-02-24",
+          "nvd_score_v3": 7.8,
+          "nvd_vectors_v3": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+          "nvd_severity_v3": "high",
+          "vendor_score_v3": 7.8,
+          "vendor_vectors_v3": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+          "vendor_severity_v3": "high",
+          "aqua_score": 3,
+          "aqua_severity": "low",
+          "aqua_scoring_system": "CVSS V2",
+          "heuristic_ref_id": 2015550
+        },
+        {
+          "name": "CVE-2021-4217",
+          "description": "A flaw was found in unzip.  The vulnerability occurs due to improper handling of Unicode strings, which can lead to a null pointer dereference. This flaw allows an attacker to input a specially crafted zip file, leading to a crash or code execution.",
+          "vendor_score": 3,
+          "vendor_score_version": "Aqua",
+          "vendor_severity": "low",
+          "vendor_url": "https://access.redhat.com/security/cve/CVE-2021-4217",
+          "vendor_score_v3": 4.7,
+          "vendor_vectors_v3": "CVSS:3.1/AV:L/AC:H/PR:N/UI:R/S:U/C:N/I:N/A:H",
+          "vendor_severity_v3": "medium",
+          "aqua_score": 3,
+          "aqua_severity": "high",
+          "aqua_scoring_system": "CVSS V2",
+          "heuristic_ref_id": 2003138
+        }
+      ]
+    },
+    {
+      "resource": {
+        "format": "rpm",
+        "name": "libgcrypt",
+        "version": "1.8.5-6.el8",
+        "arch": "x86_64",
+        "cpe": "pkg:/rhel:8.5:libgcrypt:1.8.5-6.el8",
+        "license": "LGPLv2+",
+        "layer_digest": "sha256:6axeb263db8e892cf93a62727ef9f183dbd31fcf8db84330e0b8a0943902a45e"
+      },
+      "scanned": true,
+      "vulnerabilities": [
+        {
+          "name": "CVE-2021-40528",
+          "description": "The ElGamal implementation in Libgcrypt before 1.9.4 allows plaintext recovery because, during interaction between two cryptographic libraries, a certain dangerous combination of the prime defined by the receiver's public key, the generator defined by the receiver's public key, and the sender's ephemeral exponents can lead to a cross-configuration attack against OpenPGP.A flaw was found in libgcrypt's ElGamal implementation, where it allows plain text recovery. During the interaction between two cryptographic libraries, a certain combination of the prime defined by the receiver's public key, the generator defined by the receiver's public key, and the sender's ephemeral exponents can lead to a cross-configuration attack against OpenPGP. The highest threat from this vulnerability is to confidentiality.",
+          "nvd_score": 2.6,
+          "nvd_score_version": "CVSS v2",
+          "nvd_vectors": "AV:N/AC:H/Au:N/C:P/I:N/A:N",
+          "nvd_severity": "low",
+          "nvd_url": "https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2021-40528",
+          "vendor_score": 5,
+          "vendor_score_version": "Aqua",
+          "vendor_severity": "medium",
+          "vendor_statement": "Please note that there was a mixup between this CVE and CVE-2021-33560. At this time, both CVEs should be assumed to refer to the same issue. More information will be provided in the near future. See the first link in External References for more information.",
+          "vendor_url": "https://access.redhat.com/security/cve/CVE-2021-40528",
+          "publish_date": "2021-09-06",
+          "modification_date": "2021-11-29",
+          "nvd_score_v3": 5.9,
+          "nvd_vectors_v3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N",
+          "nvd_severity_v3": "medium",
+          "vendor_score_v3": 5.9,
+          "vendor_vectors_v3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N",
+          "vendor_severity_v3": "medium",
+          "aqua_score": 5,
+          "aqua_severity": "medium",
+          "aqua_scoring_system": "CVSS V2",
+          "heuristic_ref_id": 1795408
+        }
+      ]
+    },
+    {
+      "resource": {
+        "format": "rpm",
+        "name": "openldap",
+        "version": "2.4.46-18.el8",
+        "arch": "x86_64",
+        "cpe": "pkg:/rhel:8.5:openldap:2.4.46-18.el8",
+        "license": "OpenLDAP",
+        "layer_digest": "sha256:6axeb263db8e892cf93a62727ef9f183dbd31fcf8db84330e0b8a0943902a45e"
+      },
+      "scanned": true
+    },
+    {
+      "resource": {
+        "format": "rpm",
+        "name": "libgpg-error",
+        "version": "1.31-1.el8",
+        "arch": "x86_64",
+        "cpe": "pkg:/rhel:8.5:libgpg-error:1.31-1.el8",
+        "license": "LGPLv2+",
+        "layer_digest": "sha256:6axeb263db8e892cf93a62727ef9f183dbd31fcf8db84330e0b8a0943902a45e"
+      },
+      "scanned": true
+    },
+    {
+      "resource": {
+        "format": "rpm",
+        "name": "rpm",
+        "version": "4.14.3-19.el8",
+        "arch": "x86_64",
+        "cpe": "pkg:/rhel:8.5:rpm:4.14.3-19.el8",
+        "license": "GPLv2+",
+        "layer_digest": "sha256:6axeb263db8e892cf93a62727ef9f183dbd31fcf8db84330e0b8a0943902a45e"
+      },
+      "scanned": true,
+      "vulnerabilities": [
+        {
+          "name": "CVE-2021-35938",
+          "description": "A symbolic link issue was found in rpm. It occurs when rpm sets the desired permissions and credentials after installing a file. A local unprivileged user could use this flaw to exchange the original file with a symbolic link to a security-critical file and escalate their privileges on the system. The highest threat from this vulnerability is to data confidentiality and integrity as well as system availability.",
+          "vendor_score": 5,
+          "vendor_score_version": "Aqua",
+          "vendor_severity": "medium",
+          "vendor_statement": "System and service accounts may have the required permissions to exploit this flaw. Conversely, regular user accounts should not be allowed to manipulate RPM artifacts during installation, thus reducing the attack surface and hence the impact of this flaw considerably.",
+          "vendor_url": "https://access.redhat.com/security/cve/CVE-2021-35938",
+          "vendor_score_v3": 6.5,
+          "vendor_vectors_v3": "CVSS:3.1/AV:L/AC:L/PR:H/UI:R/S:U/C:H/I:H/A:H",
+          "vendor_severity_v3": "medium",
+          "aqua_score": 5,
+          "aqua_severity": "medium",
+          "aqua_scoring_system": "CVSS V2",
+          "heuristic_ref_id": 1722397
+        },
+        {
+          "name": "CVE-2021-35937",
+          "description": "A race condition vulnerability was found in rpm. A local unprivileged user could use this flaw to bypass the checks that were introduced in response to CVE-2017-7500 and CVE-2017-7501, potentially gaining root privileges. The highest threat from this vulnerability is to data confidentiality and integrity as well as system availability.",
+          "vendor_score": 5,
+          "vendor_score_version": "Aqua",
+          "vendor_severity": "medium",
+          "vendor_statement": "System and service accounts may have the required permissions to exploit this flaw. Conversely, regular user accounts should not be allowed to manipulate RPM artifacts during installation, thus reducing the attack surface and hence the impact of this flaw considerably.",
+          "vendor_url": "https://access.redhat.com/security/cve/CVE-2021-35937",
+          "vendor_score_v3": 6.3,
+          "vendor_vectors_v3": "CVSS:3.1/AV:L/AC:H/PR:H/UI:R/S:U/C:H/I:H/A:H",
+          "vendor_severity_v3": "medium",
+          "aqua_score": 5,
+          "aqua_severity": "medium",
+          "aqua_scoring_system": "CVSS V2",
+          "heuristic_ref_id": 1722404
+        },
+        {
+          "name": "CVE-2021-35939",
+          "description": "It was found that the fix for CVE-2017-7500 and CVE-2017-7501 was incomplete: the check was only implemented for the parent directory of the file to be created. A local unprivileged user who owns another ancestor directory could potentially use this flaw to gain root privileges. The highest threat from this vulnerability is to data confidentiality and integrity as well as system availability.",
+          "vendor_score": 5,
+          "vendor_score_version": "Aqua",
+          "vendor_severity": "medium",
+          "vendor_statement": "System and service accounts may have the required permissions to exploit this flaw. Conversely, regular user accounts should not be allowed to manipulate RPM artifacts during installation, thus reducing the attack surface and hence the impact of this flaw considerably.",
+          "vendor_url": "https://access.redhat.com/security/cve/CVE-2021-35939",
+          "vendor_score_v3": 6.5,
+          "vendor_vectors_v3": "CVSS:3.1/AV:L/AC:L/PR:H/UI:R/S:U/C:H/I:H/A:H",
+          "vendor_severity_v3": "medium",
+          "aqua_score": 5,
+          "aqua_severity": "medium",
+          "aqua_scoring_system": "CVSS V2",
+          "heuristic_ref_id": 1722408
+        },
+        {
+          "name": "RHSA-2022:0368",
+          "description": "An update for rpm is now available for Red Hat Enterprise Linux 8.\nRed Hat Product Security has rated this update as having a security impact of Moderate. A Common Vulnerability Scoring System (CVSS) base score, which gives a detailed severity rating, is available for each vulnerability from the CVE link(s) in the References section.\nThe RPM Package Manager (RPM) is a command-line driven package management system capable of installing, uninstalling, verifying, querying, and updating software packages.\nSecurity Fix(es):\n* rpm: RPM does not require subkeys to have a valid binding signature (CVE-2021-3521)\nFor more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.\nThis content is licensed under the Creative Commons Attribution 4.0 International License (https://creativecommons.org/licenses/by/4.0/). If you distribute this content, or a modified version of it, you must provide attribution to Red Hat Inc. and provide a link to the original.\nrpm: RPM does not require subkeys to have a valid binding signature",
+          "vendor_score": 5,
+          "vendor_score_version": "Aqua",
+          "vendor_severity": "medium",
+          "vendor_url": "https://rhn.redhat.com/errata/RHSA-2022-0368.html",
+          "publish_date": "2022-02-01",
+          "fix_version": "0:4.14.3-19.el8_5.2",
+          "solution": "Upgrade package rpm to version 0:4.14.3-19.el8_5.2 or above.",
+          "ref_vulns": [
+            {
+              "name": "CVE-2021-3521",
+              "description": "There is a flaw in RPM's signature functionality. OpenPGP subkeys are associated with a primary key via a \"binding signature.\"[1] RPM does not check the binding signature of subkeys prior to importing them. If an attacker is able to add or socially engineer another party to add a malicious subkey to a legitimate public key, RPM could wrongly trust a malicious signature. The greatest impact of this flaw is to data integrity.\n1. https://tools.ietf.org/html/rfc4880#section-5.2.1",
+              "vendor_score": 5,
+              "vendor_score_version": "Aqua",
+              "vendor_severity": "medium",
+              "vendor_url": "https://access.redhat.com/security/cve/CVE-2021-3521",
+              "fix_version": "0:4.14.3-19.el8_5.2",
+              "solution": "Upgrade package rpm to version 0:4.14.3-19.el8_5.2 or above.",
+              "vendor_score_v3": 4.4,
+              "vendor_vectors_v3": "CVSS:3.1/AV:L/AC:H/PR:L/UI:R/S:U/C:N/I:H/A:N",
+              "vendor_severity_v3": "medium",
+              "aqua_score": 5,
+              "aqua_severity": "medium",
+              "aqua_scoring_system": "CVSS V2",
+              "heuristic_ref_id": 2007176
+            }
+          ],
+          "vendor_score_v3": 4.4,
+          "vendor_vectors_v3": "CVSS:3.1/AV:L/AC:H/PR:L/UI:R/S:U/C:N/I:H/A:N",
+          "vendor_severity_v3": "medium",
+          "aqua_score": 5,
+          "aqua_severity": "medium",
+          "aqua_scoring_system": "CVSS V2"
+        }
+      ]
+    },
+    {
+      "resource": {
+        "type": 1,
+        "path": "/opt/app/app-runner.jar:io/netty/handler/codec/compression/SnappyFrameEncoder.class",
+        "cpe": "file:/1159e5d7075a5a5d3a2581e45e8c9bf7eac3a6e6",
+        "hash": "sha1:1159e5d7075a5a5d3a2581e45e8c9bf7eac3a6e6",
+        "layer": "/bin/sh -c #(nop) CMD [\"bash\", \"-c\", \"java $JAVA_OPTIONS -jar app-runner.jar\"]",
+        "layer_digest": "sha256:hdus7994efe44f8037820d1c43d95h7516a9d87ce2e72ee7b54f3fb0b420f5ss"
+      },
+      "scanned": true
+    },
+    {
+      "resource": {
+        "type": 1,
+        "path": "/opt/app/app-runner.jar:org/jose4j/json/JsonHeaderUtil.class",
+        "cpe": "file:/83862240b554a658fdde79c9c30c1c1964abcc95",
+        "hash": "sha1:83862240b554a658fdde79c9c30c1c1964abcc95",
+        "layer": "/bin/sh -c #(nop) CMD [\"bash\", \"-c\", \"java $JAVA_OPTIONS -jar app-runner.jar\"]",
+        "layer_digest": "sha256:hdus7994efe44f8037820d1c43d95h7516a9d87ce2e72ee7b54f3fb0b420f5ss"
+      },
+      "scanned": true,
+      "vulnerabilities": [
+        {
+          "name": "CVE-1111-1234",
+          "description": "A flaw was found.",
+          "vendor_score": 3,
+          "vendor_score_version": "Aqua",
+          "vendor_severity": "low",
+          "vendor_url": "https://access.redhat.com/security/cve/CVE-2021-4217",
+          "vendor_score_v3": 4.7,
+          "vendor_vectors_v3": "CVSS:3.1/AV:L/AC:H/PR:N/UI:R/S:U/C:N/I:N/A:H",
+          "vendor_severity_v3": "medium",
+          "aqua_score": 3,
+          "aqua_severity": "high",
+          "aqua_scoring_system": "CVSS V2",
+          "heuristic_ref_id": 2003138
+        },
+        {
+          "name": "CVE-1112-1234",
+          "description": "A flaw was found.",
+          "vendor_score": 3,
+          "vendor_score_version": "Aqua",
+          "vendor_severity": "low",
+          "vendor_url": "https://access.redhat.com/security/cve/CVE-2021-4217",
+          "vendor_score_v3": 4.7,
+          "vendor_vectors_v3": "CVSS:3.1/AV:L/AC:H/PR:N/UI:R/S:U/C:N/I:N/A:H",
+          "vendor_severity_v3": "medium",
+          "aqua_score": 3,
+          "aqua_severity": "invalid_severity",
+          "aqua_scoring_system": "CVSS V2",
+          "heuristic_ref_id": 2003138
+        },
+        {
+          "name": "CVE-1113-1234",
+          "description": "A flaw was found.",
+          "vendor_score": 3,
+          "vendor_score_version": "Aqua",
+          "vendor_severity": "low",
+          "vendor_url": "https://access.redhat.com/security/cve/CVE-2021-4217",
+          "vendor_score_v3": 4.7,
+          "vendor_vectors_v3": "CVSS:3.1/AV:L/AC:H/PR:N/UI:R/S:U/C:N/I:N/A:H",
+          "vendor_severity_v3": "critical",
+          "aqua_score": 3,
+          "aqua_severity": "invalid_severity",
+          "aqua_scoring_system": "CVSS V2",
+          "heuristic_ref_id": 2003138
+        },
+        {
+          "name": "CVE-1114-1234",
+          "description": "A flaw was found.",
+          "vendor_score": 3,
+          "vendor_score_version": "Aqua",
+          "vendor_severity": "low",
+          "vendor_url": "https://access.redhat.com/security/cve/CVE-2021-4217",
+          "vendor_score_v3": 4.7,
+          "vendor_vectors_v3": "CVSS:3.1/AV:L/AC:H/PR:N/UI:R/S:U/C:N/I:N/A:H",
+          "vendor_severity_v3": "critical",
+          "aqua_score": 3,
+          "aqua_severity": "malware",
+          "aqua_scoring_system": "CVSS V2",
+          "heuristic_ref_id": 2003138
+        },
+        {
+          "name": "CVE-1115-1234",
+          "description": "A flaw was found.",
+          "vendor_score": 3,
+          "vendor_score_version": "Aqua",
+          "vendor_severity": "low",
+          "vendor_url": "https://access.redhat.com/security/cve/CVE-2021-4217",
+          "vendor_score_v3": 4.7,
+          "vendor_vectors_v3": "CVSS:3.1/AV:L/AC:H/PR:N/UI:R/S:U/C:N/I:N/A:H",
+          "vendor_severity_v3": "critical",
+          "aqua_score": 3,
+          "aqua_severity": "negligible",
+          "aqua_scoring_system": "CVSS V2",
+          "heuristic_ref_id": 2003138
+        },
+        {
+          "name": "CVE-1116-1234",
+          "description": "A flaw was found.",
+          "vendor_score": 3,
+          "vendor_score_version": "Aqua",
+          "vendor_severity": "low",
+          "vendor_url": "https://access.redhat.com/security/cve/CVE-2021-4217",
+          "vendor_score_v3": 4.7,
+          "vendor_vectors_v3": "CVSS:3.1/AV:L/AC:H/PR:N/UI:R/S:U/C:N/I:N/A:H",
+          "vendor_severity_v3": "critical",
+          "aqua_score": 3,
+          "aqua_severity": "sensitive",
+          "aqua_scoring_system": "CVSS V2",
+          "heuristic_ref_id": 2003138
+        }
+      ]
+    }
+  ],
+  "vulnerability_summary": {
+    "total": 1,
+    "high": 2,
+    "medium": 3,
+    "low": 4,
+    "negligible": 0,
+    "sensitive": 0,
+    "malware": 0,
+    "score_average": 5.6666665,
+    "max_score": 5,
+    "max_fixable_score": 6,
+    "critical": 0
+  },
+  "build_number": "1",
+  "changed_result": false,
+  "required_image_platform": "amd64:::",
+  "scanned_image_platform": "amd64::linux:"
+}

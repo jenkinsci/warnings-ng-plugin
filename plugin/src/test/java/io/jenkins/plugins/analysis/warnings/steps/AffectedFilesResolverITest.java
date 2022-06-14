@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
@@ -47,7 +47,7 @@ import static org.assertj.core.api.Assertions.*;
  * @author Oliver Scholz
  */
 @SuppressWarnings("PMD.ExcessiveImports")
-public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
+class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String FOLDER = "affected-files";
     private static final String SOURCE_AFFECTED_FILE = FOLDER + "/Main.java";
     private static final String ECLIPSE_REPORT = FOLDER + "/eclipseOneAffectedAndThreeNotExistingFiles.txt";
@@ -59,7 +59,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
      * build folder, then the link to open the file disappears.
      */
     @Test
-    public void shouldShowNoLinkIfSourceCodeHasBeenDeleted() {
+    void shouldShowNoLinkIfSourceCodeHasBeenDeleted() {
         FreeStyleProject project = createEclipseProject();
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
@@ -93,7 +93,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
      * unreadable in the build folder, then the link to open the file disappears.
      */
     @Test
-    public void shouldShowNoLinkIfSourceCodeHasBeenMadeUnreadable() {
+    void shouldShowNoLinkIfSourceCodeHasBeenMadeUnreadable() {
         FreeStyleProject project = createEclipseProject();
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
@@ -134,7 +134,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
      * Verifies that all copied affected files are found by the {@link AffectedFilesResolver#getFile(Run, String)}.
      */
     @Test
-    public void shouldRetrieveAffectedFilesInBuildFolder() {
+    void shouldRetrieveAffectedFilesInBuildFolder() {
         FreeStyleProject project = createEclipseProject();
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
@@ -167,7 +167,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
      * Verifies that the AffectedFilesResolver produces an I/O error, when the affected files could not be copied.
      */
     @Test
-    public void shouldGetIoErrorBySearchingForAffectedFiles() {
+    void shouldGetIoErrorBySearchingForAffectedFiles() {
         FreeStyleProject project = createEclipseProject();
 
         makeFileUnreadable(getSourceAbsolutePath(project));
@@ -188,7 +188,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
      * Verifies that the {@link AffectedFilesResolver} finds only one file in a report with 4 files.
      */
     @Test
-    public void shouldFindAffectedFilesWhereasThreeFilesAreNotFound() {
+    void shouldFindAffectedFilesWhereasThreeFilesAreNotFound() {
         AnalysisResult result = buildEclipseProject(ECLIPSE_REPORT, SOURCE_AFFECTED_FILE);
 
         assertThat(getConsoleLog(result)).contains("1 copied", "3 not-found", "0 with I/O error");
@@ -198,7 +198,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
      * Verifies that a source code file cannot be shown if the file is not in the workspace.
      */
     @Test
-    public void shouldShowNoFilesOutsideWorkspace() {
+    void shouldShowNoFilesOutsideWorkspace() {
         FreeStyleProject job = createFreeStyleProject();
         prepareGccLog(job);
         enableWarnings(job, createTool(new Gcc4(), "**/gcc.log"));
@@ -211,7 +211,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
      */
     @Test
     @org.jvnet.hudson.test.Issue("JENKINS-55998")
-    public void shouldShowFileOutsideWorkspaceIfConfigured() {
+    void shouldShowFileOutsideWorkspaceIfConfigured() {
         FreeStyleProject job = createFreeStyleProject();
         prepareGccLog(job);
 
@@ -288,7 +288,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
      * Verifies that the {@link AffectedFilesResolver} can find one existing file.
      */
     @Test
-    public void shouldFindOneAffectedFile() {
+    void shouldFindOneAffectedFile() {
         AnalysisResult result = buildEclipseProject(ECLIPSE_REPORT_ONE_AFFECTED_AFFECTED_FILE, SOURCE_AFFECTED_FILE);
 
         assertThat(getConsoleLog(result)).contains("1 copied", "0 not-found", "0 with I/O error");

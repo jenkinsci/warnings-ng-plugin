@@ -2,7 +2,7 @@ package io.jenkins.plugins.analysis.warnings.steps;
 
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
@@ -27,7 +27,7 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  * @see ScanForIssuesStep
  * @see PublishIssuesStep
  */
-public class StepsOnAgentITest extends IntegrationTestWithJenkinsPerTest {
+class StepsOnAgentITest extends IntegrationTestWithJenkinsPerTest {
     private static final String JAVA_CONTENT = "public class Test {}";
 
     /**
@@ -36,7 +36,7 @@ public class StepsOnAgentITest extends IntegrationTestWithJenkinsPerTest {
      */
     @Test
     @org.jvnet.hudson.test.Issue("JENKINS-56007")
-    public void shouldCopySourcesIfMasterAgentSecurityIsActive() {
+    void shouldCopySourcesIfMasterAgentSecurityIsActive() {
         Slave agent = createAgentWithEnabledSecurity("agent");
 
         WorkflowJob project = createPipeline();
@@ -70,7 +70,7 @@ public class StepsOnAgentITest extends IntegrationTestWithJenkinsPerTest {
      * Creates a JenkinsFile with parallel steps and aggregates the warnings.
      */
     @Test
-    public void shouldRecordOutputOfParallelSteps() {
+    void shouldRecordOutputOfParallelSteps() {
         WorkflowJob job = createPipeline();
 
         copySingleFileToAgentWorkspace(createAgent("node1"), job, "eclipse.txt", "issues.txt");

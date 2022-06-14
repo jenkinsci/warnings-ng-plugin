@@ -3,7 +3,7 @@ package io.jenkins.plugins.analysis.warnings.steps;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
@@ -28,7 +28,7 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  * @author Stephan Plöderl
  * @author Lukas Kirner
  */
-public class DryITest extends IntegrationTestWithJenkinsPerSuite {
+class DryITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String DETAILS = "Details";
     private static final String FILE = "File";
     private static final String SEVERITY = "Severity";
@@ -43,7 +43,7 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that the right amount of duplicate code warnings are detected.
      */
     @Test
-    public void shouldHaveDuplicateCodeWarnings() {
+    void shouldHaveDuplicateCodeWarnings() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(CPD_REPORT);
         enableGenericWarnings(project, new Cpd());
 
@@ -65,7 +65,7 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
      * cpd warnings.
      */
     @Test
-    public void shouldConfigureSeverityThresholdTo2InJobConfigurationForCpd() {
+    void shouldConfigureSeverityThresholdTo2InJobConfigurationForCpd() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(CPD_REPORT);
         Cpd cpd = new Cpd();
         cpd.setNormalThreshold(1);
@@ -92,7 +92,7 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
      * cpd warnings.
      */
     @Test
-    public void shouldConfigureSeverityThresholdTo5InJobConfigurationForCpd() {
+    void shouldConfigureSeverityThresholdTo5InJobConfigurationForCpd() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(CPD_REPORT);
         Cpd cpd = new Cpd();
         cpd.setNormalThreshold(1);
@@ -119,7 +119,7 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
      * cpd warnings.
      */
     @Test
-    public void shouldConfigureSeverityNormalThresholdTo4InJobConfigurationForCpd() {
+    void shouldConfigureSeverityNormalThresholdTo4InJobConfigurationForCpd() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(CPD_REPORT);
         Cpd cpd = new Cpd();
         cpd.setNormalThreshold(4);
@@ -143,7 +143,7 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that the priority links are redirecting to a filtered side, showing only the warnings of this priority.
      */
     @Test
-    public void shouldFilterIssuesBySeverity() {
+    void shouldFilterIssuesBySeverity() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(CPD_REPORT);
         Cpd cpd = new Cpd();
         cpd.setNormalThreshold(2);
@@ -168,7 +168,7 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that the total amount of low, normal, and high warnings should change according to the thresholds.
      */
     @Test
-    public void shouldDifferInAmountOfDuplicateWarningForPriorities() {
+    void shouldDifferInAmountOfDuplicateWarningForPriorities() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(CPD_REPORT);
         Cpd cpd = new Cpd();
         enableGenericWarnings(project, cpd);

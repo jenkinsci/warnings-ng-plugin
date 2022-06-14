@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.events.EventFiringWebDriver;
+
 import org.jenkinsci.test.acceptance.po.AbstractStep;
 import org.jenkinsci.test.acceptance.po.Control;
 import org.jenkinsci.test.acceptance.po.Describable;
@@ -27,7 +30,6 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     private final Control qualityGatesRepeatable = findRepeatableAddButtonFor("qualityGates");
     private final Control qualityGateThreshold = control("/qualityGates/threshold");
     private final Control qualityGateType = control("/qualityGates/type");
-    private final Control qualityGateResult = control("/qualityGates/unstable[true]");
     private final Control advancedButton = control("advanced-button");
     private final Control enabledForFailureCheckBox = control("enabledForFailure");
     private final Control ignoreQualityGate = control("ignoreQualityGate");
@@ -265,12 +267,8 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      * @return the quality gate result
      **/
     public QualityGateBuildResult getQualityGateResult() {
-        if (isChecked(qualityGateResult)) {
-            return QualityGateBuildResult.UNSTABLE;
-        }
-        else {
-            return QualityGateBuildResult.FAILED;
-        }
+        return findUnstableRadioButton(self(), true).isSelected()
+                ? QualityGateBuildResult.UNSTABLE : QualityGateBuildResult.FAILED;
     }
 
     /**
@@ -578,6 +576,11 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
         return this;
     }
 
+    static WebElement findUnstableRadioButton(final WebElement pageArea, final boolean isUnstable) {
+        return pageArea.findElement(
+                by.xpath(".//input[@type='radio' and contains(@path,'unstable[" + isUnstable + "]')]"));
+    }
+
     /**
      * Available quality gate types.
      */
@@ -626,6 +629,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
         private final Control highThreshold = control("tool/highThreshold");
         private final Control id = control("tool/id");
         private final Control name = control("tool/name");
+        private final Control analysisModelId = control("tool/analysisModelId");
 
         StaticAnalysisTool(final PageArea issuesRecorder, final String path) {
             super(issuesRecorder, path);
@@ -713,6 +717,20 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
 
             return this;
         }
+
+        /**
+         * Sets the name of the parser in the analysis-model component.
+         *
+         * @param analysisModelName
+         *         name of the parser
+         *
+         * @return this
+         */
+        public StaticAnalysisTool setAnalysisModelId(final String analysisModelName) {
+            this.analysisModelId.select(analysisModelName);
+
+            return this;
+        }
     }
 
     /**
@@ -750,8 +768,8 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
         }
 
         public void setUnstable(final boolean isUnstable) {
-            self().findElement(by.xpath(".//input[@type='radio' and contains(@path,'unstable[" + isUnstable + "]')]"))
-                    .click();
+            WebElement radioButton = IssuesRecorder.findUnstableRadioButton(self(), isUnstable);
+            ((EventFiringWebDriver) driver).executeScript("arguments[0].click();", radioButton);
         }
     }
 

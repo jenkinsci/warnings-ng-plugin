@@ -37,7 +37,7 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      */
     @POST
     public ComboBoxModel doFillSourceCodeEncodingItems(@AncestorInPath final AbstractProject<?, ?> project) {
-        if (JENKINS.hasPermission(Item.CONFIGURE, project)) {
+        if (JENKINS.hasPermission(Item.READ, project)) {
             return new CharsetValidation().getAllCharsets();
         }
         return new ComboBoxModel();
@@ -92,7 +92,7 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      */
     @POST
     public ListBoxModel doFillMinimumSeverityItems(@AncestorInPath final AbstractProject<?, ?> project) {
-        if (JENKINS.hasPermission(Item.CONFIGURE, project)) {
+        if (JENKINS.hasPermission(Item.READ, project)) {
             return model.getAllSeverityFilters();
         }
         return new ListBoxModel();
@@ -167,7 +167,7 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      */
     @POST
     public ListBoxModel doFillTrendChartTypeItems(@AncestorInPath final AbstractProject<?, ?> project) {
-        if (JENKINS.hasPermission(Item.CONFIGURE, project)) {
+        if (JENKINS.hasPermission(Item.READ, project)) {
             return model.getAllTrendChartTypes();
         }
         return new ListBoxModel();

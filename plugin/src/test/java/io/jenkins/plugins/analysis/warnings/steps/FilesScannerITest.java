@@ -6,7 +6,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.opentest4j.TestAbortedException;
 
 import hudson.FilePath;
 import hudson.model.FreeStyleProject;
@@ -23,7 +24,7 @@ import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
-import static org.junit.Assume.*;
+import static org.assertj.core.api.Assumptions.*;
 
 /**
  * Integration tests for {@link FilesScanner}. This test is using a ZIP file with all the necessary files. The structure
@@ -46,7 +47,7 @@ import static org.junit.Assume.*;
  *
  * @author Alexander Praegla
  */
-public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
+class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String WORKSPACE_DIRECTORY = "files-scanner";
     private static final String CHECKSTYLE_WORKSPACE = WORKSPACE_DIRECTORY + "/checkstyle";
     private static final String MULTIPLE_FILES_WORKSPACE = WORKSPACE_DIRECTORY + "/multiple_files";
@@ -60,7 +61,7 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
      * Runs the {@link FilesScanner} on a workspace with no files: the report should contain an error message.
      */
     @Test
-    public void shouldReportErrorOnEmptyWorkspace() {
+    void shouldReportErrorOnEmptyWorkspace() {
         FreeStyleProject project = createFreeStyleProject();
         enableCheckStyleWarnings(project);
 
@@ -74,7 +75,7 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
      * Runs the {@link FilesScanner} on a workspace with a not readable file.
      */
     @Test
-    public void cantReadFile() {
+    void cantReadFile() {
         FreeStyleProject project = createCheckStyleJob(NON_READABLE_FILE_WORKSPACE);
 
         makeFileUnreadable(project);
@@ -94,7 +95,7 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
      * Runs the {@link FilesScanner} on a workspace with a file with zero length.
      */
     @Test
-    public void fileLengthIsZero() {
+    void fileLengthIsZero() {
         FreeStyleProject project = createCheckStyleJob(ZERO_LENGTH_WORKSPACE);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
@@ -107,7 +108,7 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
      * Runs the {@link FilesScanner} on a workspace with files that do not match the file pattern.
      */
     @Test
-    public void filePatternDoesNotMatchAnyFile() {
+    void filePatternDoesNotMatchAnyFile() {
         FreeStyleProject project = createCheckStyleJob(NO_FILE_PATTERN_MATCH_WORKSPACE);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
@@ -122,7 +123,7 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
      * @see <a href="https://issues.jenkins-ci.org/browse/JENKINS-51588">Issue 51588</a>
      */
     @Test
-    public void findIssuesWithMultipleFiles() {
+    void findIssuesWithMultipleFiles() {
         FreeStyleProject project = createJobWithWorkspaceFile(MULTIPLE_FILES_WORKSPACE);
         IssuesRecorder recorder = enableWarnings(project, createTool(new CheckStyle(), "*.xml"));
         recorder.addQualityGate(6, QualityGateType.TOTAL, QualityGateResult.FAILURE);
@@ -145,8 +146,8 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
      * @see <a href="https://issues.jenkins-ci.org/browse/JENKINS-56065">Issue 56065</a>
      */
     @Test
-    public void findIssuesWithMultipleFilesReachableWithSymbolicLinks() {
-        assumeFalse(isWindows());
+    void findIssuesWithMultipleFilesReachableWithSymbolicLinks() {
+        assumeThat(isWindows()).isFalse();
 
         FreeStyleProject project = createJobWithWorkspaceFile(SYMLINKS_WORKSPACE);
 
@@ -161,7 +162,7 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
 
         createSymbolicLinkAssumingSupported(realPath, subdirPath.resolve("link_to_actual_files"));
 
-        IssuesRecorder recorder = enableWarnings(project, createTool(new CheckStyle(), "subdir/**/*.xml", false));
+        IssuesRecorder recorder = enableWarnings(project, createTool(new CheckStyle(), false));
         recorder.addQualityGate(6, QualityGateType.TOTAL, QualityGateResult.FAILURE);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.FAILURE);
@@ -184,8 +185,8 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
      * @see <a href="https://issues.jenkins-ci.org/browse/JENKINS-56065">Issue 56065</a>
      */
     @Test
-    public void findNoIssuesWithMultipleFilesReachableWithSymlinksWithSkipSymbolicLinks() {
-        assumeFalse(isWindows());
+    void findNoIssuesWithMultipleFilesReachableWithSymlinksWithSkipSymbolicLinks() {
+        assumeThat(isWindows()).isFalse();
 
         FreeStyleProject project = createJobWithWorkspaceFile(SYMLINKS_WORKSPACE);
 
@@ -200,19 +201,18 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
 
         createSymbolicLinkAssumingSupported(realPath, subdirPath.resolve("link_to_actual_files"));
 
-        IssuesRecorder recorder = enableWarnings(project, createTool(new CheckStyle(), "subdir/**/*.xml", true));
+        IssuesRecorder recorder = enableWarnings(project, createTool(new CheckStyle(), true));
         recorder.addQualityGate(6, QualityGateType.TOTAL, QualityGateResult.FAILURE);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(0);
         assertThat(result).hasInfoMessages(
-                "-> PASSED - Total (any severity): 0 - Quality QualityGate: 6");
+                "-> PASSED - Total (any severity): 0 - Quality Gate: 6");
     }
 
-    private AnalysisModelParser createTool(final AnalysisModelParser tool, final String pattern,
-            final boolean skipSymbolicLinks) {
-        tool.setPattern(pattern);
+    private AnalysisModelParser createTool(final AnalysisModelParser tool, final boolean skipSymbolicLinks) {
+        tool.setPattern("subdir/**/*.xml");
         tool.setSkipSymbolicLinks(skipSymbolicLinks);
         return tool;
     }
@@ -222,7 +222,7 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
             Files.createSymbolicLink(linkPath, realPath);
         }
         catch (UnsupportedOperationException e) {
-            assumeTrue(false);
+            throw new TestAbortedException("Files.createSymbolicLink not supported on this OS", e);
         }
         catch (IOException e) {
             fail("Unable to create symbolic link", e);
@@ -233,7 +233,7 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
      * Runs the {@link FilesScanner} on a workspace with a correct file that can be parsed.
      */
     @Test
-    public void parseCheckstyleFileCorrectly() {
+    void parseCheckstyleFileCorrectly() {
         FreeStyleProject project = createCheckStyleJob(CHECKSTYLE_WORKSPACE);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);

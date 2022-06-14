@@ -5,7 +5,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule.JSONWebResponse;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -37,7 +37,7 @@ import static org.xmlunit.assertj.XmlAssert.assertThat;
  * @author Manuel Hampp
  */
 @SuppressWarnings("PMD.ExcessiveImports")
-public class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
+class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String CHECKSTYLE_FILE = "checkstyle-filtering.xml";
     private static final String RESULT_REMOTE_API_EXPECTED_XML = "result.xml";
     private static final String ISSUES_REMOTE_API_EXPECTED_XML = "issues.xml";
@@ -47,7 +47,7 @@ public class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies a top-level REST API call that returns a representation of {@link AnalysisResultApi}.
      */
     @Test
-    public void shouldReturnSummaryForTopLevelApiCall() {
+    void shouldReturnSummaryForTopLevelApiCall() {
         // Skip elements with absolute paths or other platform specific information
         verifyRemoteApi("/checkstyle/api/xml"
                 + "?exclude=/*/errorMessage"
@@ -59,7 +59,7 @@ public class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies a REST API call for url "/all" that returns a representation of {@link ReportApi}.
      */
     @Test
-    public void shouldReturnIssuesForNewApiCall() {
+    void shouldReturnIssuesForNewApiCall() {
         verifyRemoteApi("/checkstyle/all/api/xml", ISSUES_REMOTE_API_EXPECTED_XML);
     }
 
@@ -81,7 +81,7 @@ public class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
      * Tests the xpath navigation within the xml api.
      */
     @Test
-    public void assertXmlApiWithXPathNavigationMatchesExpected() {
+    void assertXmlApiWithXPathNavigationMatchesExpected() {
         Run<?, ?> build = buildCheckStyleJob();
 
         Document actualDocument = callXmlRemoteApi(build.getUrl() + "/checkstyle/api/xml?xpath=/*/qualityGateStatus");
@@ -97,7 +97,7 @@ public class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
      *         if the path could not be resolved
      */
     @Test
-    public void assertXmlApiWithDepthContainsDeepElements() throws XPathExpressionException {
+    void assertXmlApiWithDepthContainsDeepElements() throws XPathExpressionException {
         Run<?, ?> build = buildCheckStyleJob();
 
         Document actualDocument = callXmlRemoteApi(build.getUrl() + "/checkstyle/api/xml?depth=1");
@@ -118,7 +118,7 @@ public class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
      * results.
      */
     @Test
-    public void shouldFindNewCheckStyleWarnings() {
+    void shouldFindNewCheckStyleWarnings() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle1.xml",
                 "checkstyle2.xml");
         IssuesRecorder recorder = enableWarnings(project, createCheckstyle("**/checkstyle1*"));
@@ -134,7 +134,7 @@ public class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
 
     /** Verifies that the remote API for the tools aggregation correctly returns the summary. */
     @Test
-    public void shouldReturnAggregation() {
+    void shouldReturnAggregation() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle1.xml",
                 "checkstyle2.xml");
         enableWarnings(project, createCheckstyle("**/checkstyle1*"),

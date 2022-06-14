@@ -8,7 +8,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.ModuleDetector;
 
@@ -89,7 +89,7 @@ import static org.assertj.core.api.Assertions.*;
  * @author Frank Christian Geyer
  * @author Deniz Mardin
  */
-public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
+class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String BUILD_FILE_PATH = "detectors/buildfiles/";
     private static final String REPORT_FILE_NAME = "eclipse_prepared-issues.txt";
     private static final String MAVEN_BUILD_FILE_LOCATION = "maven/";
@@ -104,7 +104,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      * test doesn't check for correct precedence in every possible case as this might fail.
      */
     @Test
-    public void shouldShowModulesForVariousModulesDetectedForOsgiMavenAndAntInTheHtmlOutput() {
+    void shouldShowModulesForVariousModulesDetectedForOsgiMavenAndAntInTheHtmlOutput() {
         String[] workspaceFiles = {
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml",
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m1/build.xml",
@@ -133,7 +133,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that the output is correct if there are only Maven modules in the expected HTML output.
      */
     @Test
-    public void shouldShowModulesForVariousMavenModulesInTheHtmlOutput() {
+    void shouldShowModulesForVariousMavenModulesInTheHtmlOutput() {
         String[] workspaceFiles = {
                 BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "pom.xml",
                 BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m1/pom.xml",
@@ -154,7 +154,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that the output is correct if there are only Ant modules in the expected HTML output.
      */
     @Test
-    public void shouldShowModulesForVariousAntModulesInTheHtmlOutput() {
+    void shouldShowModulesForVariousAntModulesInTheHtmlOutput() {
         String[] workspaceFiles = {
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml",
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m1/build.xml"};
@@ -171,7 +171,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that the output is correct if there are only OSGI modules in the expected HTML output.
      */
     @Test
-    public void shouldShowModulesForVariousOsgiModulesInTheHtmlOutput() {
+    void shouldShowModulesForVariousOsgiModulesInTheHtmlOutput() {
         String[] workspaceFiles = {
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "META-INF/MANIFEST.MF",
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m1/META-INF/MANIFEST.MF",
@@ -195,7 +195,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      * doesn't check for correct precedence in every possible case as this might fail.
      */
     @Test
-    public void shouldRunMavenAntAndOsgiAndCheckCorrectExecutionSequence() {
+    void shouldRunMavenAntAndOsgiAndCheckCorrectExecutionSequence() {
         String[] workspaceFiles = {
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml",
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m1/build.xml",
@@ -224,7 +224,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that various Maven .pom files are handled correctly.
      */
     @Test
-    public void shouldVerifyTheModuleDetectionBehaviorForVariousMavenPomFiles() {
+    void shouldVerifyTheModuleDetectionBehaviorForVariousMavenPomFiles() {
         String[] workspaceFiles = {
                 BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "pom.xml",
                 BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m1/pom.xml",
@@ -250,7 +250,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that various Ant .build files are handled correctly.
      */
     @Test
-    public void shouldVerifyTheModuleDetectionBehaviorForVariousAntBuildFiles() {
+    void shouldVerifyTheModuleDetectionBehaviorForVariousAntBuildFiles() {
         String[] workspaceFiles = {
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml",
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m1/build.xml",
@@ -273,7 +273,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that various OSGI .MF files are handled correctly.
      */
     @Test
-    public void shouldVerifyTheModuleDetectionBehaviorForVariousOsgiMfFiles() {
+    void shouldVerifyTheModuleDetectionBehaviorForVariousOsgiMfFiles() {
         String[] workspaceFiles = {
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "META-INF/MANIFEST.MF",
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m1/META-INF/MANIFEST.MF",
@@ -297,7 +297,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that the output of the HTML page is empty if the project is empty.
      */
     @Test
-    public void shouldContainNoSpecificHtmlOutputForAnEmptyProject() {
+    void shouldContainNoSpecificHtmlOutputForAnEmptyProject() {
         checkWebPageForExpectedEmptyResult(createResult(0, false));
     }
 
@@ -305,7 +305,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that the output of the HTML page is empty if only one module is set by Maven.
      */
     @Test
-    public void shouldContainNoSpecificHtmlOutputForASingleModuleMavenProject() {
+    void shouldContainNoSpecificHtmlOutputForASingleModuleMavenProject() {
         verifyThatModulesTabIsNotShownForSingleModule(
                 BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "pom.xml");
     }
@@ -314,7 +314,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that the output of the HTML page is empty if only one module is set by Ant.
      */
     @Test
-    public void shouldContainNoHtmlOutputForASingleModuleAntProject() {
+    void shouldContainNoHtmlOutputForASingleModuleAntProject() {
         verifyThatModulesTabIsNotShownForSingleModule(
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml");
     }
@@ -323,7 +323,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that the output of the HTML page is empty if only one module is set by Ant.
      */
     @Test
-    public void shouldContainNoHtmlOutputForASingleModuleOsgiProject() {
+    void shouldContainNoHtmlOutputForASingleModuleOsgiProject() {
         verifyThatModulesTabIsNotShownForSingleModule(
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "META-INF/MANIFEST.MF");
     }

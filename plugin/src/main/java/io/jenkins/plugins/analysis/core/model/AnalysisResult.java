@@ -699,14 +699,14 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      * @deprecated Replaced by {@link AnalysisResult#totals}.
      */
     @Deprecated
-    private transient int size;
+    private final transient int size = 0;
     /**
      * Old serialization item.
      *
      * @deprecated Replaced by {@link AnalysisResult#totals}.
      */
     @Deprecated
-    private transient int newSize;
+    private final transient int newSize = 0;
     /**
      * Old serialization item.
      *
