@@ -6,9 +6,8 @@ import hudson.Extension;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
-
 /**
- * Selects a {@link BluePearl} using the specified ID.
+ * Provides a parser for the Blue Pearl Software Visual Verification tool.
  *
  * @author Simon Matthews
  */
@@ -22,10 +21,15 @@ public class BluePearl extends AnalysisModelParser {
         super();
         // empty constructor required for stapler
     }
-    @Symbol("bluePearl")
+
+    /** Descriptor for this static analysis tool. */
+    @Symbol("bluepearl")
     @Extension
+
     public static class Descriptor extends AnalysisModelParserDescriptor {
-        /** Creates the descriptor instance. */
+        /** 
+         * Creates a new instance of {@link Descriptor}. 
+         */
         public Descriptor() {
             super(ID);
         }

@@ -473,6 +473,7 @@ Time to generate Missing Modules/Objects report: 0.27 seconds
 --BPS-0730: Status: Running Connection Analysis Phase Seven on Net (207 of 207).
 --BPS-0730: Status: Running Connection Analysis Phase Eight on Net (1 of 207).
 W-BPS-0802: top_adapter_bram.v(22): Module: 'top_adapter_bram' Signal 'top_adapter_bram.output_dout' is used but has no driver(s).
+F-VERI-1330: top_adapter_bram2.v(32): actual bit length 1 differs from formal bit length 4 for port 'bram02_addr'
 --BPS-0730: Status: Running Connection Analysis Phase Eight on Net (207 of 207).
 --BPS-0730: Status: Running Connection Analysis Phase Nine on Net (1 of 207).
 --BPS-0730: Status: Running Connection Analysis Phase Nine on Net (207 of 207).
@@ -624,6 +625,10 @@ Time to generate Gated Clocks report: 0.06 seconds
 --BPS-0730: Status: Completed Symbolic Simulation. Elapsed Time: 0 seconds.
 --BPS-0730: Status: Finished dynamic property checks...
 --BPS-0730: Status: Performing Design Reports Processing...
+F-BPS-0646: Could not find top module 'top_altfp_mult' in design.
+F-BPS-0093: simple_fp.v(7): Module: 'counter' Cannot find module 'counter' for instantiation.
+E-BPS-0752: ERROR: Termination due to non-recoverable errors
+E-VHDL-1494: 'work.altera_primitives_components' failed to restore
 ===============================
 Blue Pearl Latches Report created on: Tue May 24 15:26:03 2022
 --BPS-0730: Status: Creating 'D:/TestArea/TestArea-Windows64/2022.2.62558/Clean-Xilinx_2021_1/fpga/Xilinx/Xilinx_2021.1/verilog/adapter_bram/results/top_adapter_bram.lth.rpt'.
