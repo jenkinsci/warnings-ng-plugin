@@ -69,11 +69,17 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
             + "files&#61;&#34;$files $directory/$i&#34;\n"
             + "done</code></pre>";
 
-    /** Runs the native parser on a file that contains 9 issues.. */
+    /** Runs the native parser on a file that contains 9 issues. */
     @Test
     void shouldReadNativeFormats() {
         shouldFindIssuesOfTool(9 + 5 + 5, new WarningsPlugin(), "warnings-issues.xml", "issues.json",
                 "json-issues.log");
+    }
+
+    /** Runs the BluePearl an output file that contains 7 issues. */
+    @Test
+    void shouldFindAllBluePearlIssues() {
+        shouldFindIssuesOfTool(12, new BluePearl(), "bluepearl.log");
     }
 
     /** Runs the Dart analysis parser on an output file that contains 6 issues. */
@@ -88,19 +94,19 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         shouldFindIssuesOfTool(2, new Sarif(), "sarif.json");
     }
 
-    /** Runs the native parser on a file that contains 9 issues.. */
+    /** Runs the native parser on a file that contains 9 issues. */
     @Test
     void shouldReadNativeXmlFormat() {
         shouldFindIssuesOfTool(9, new WarningsPlugin(), "warnings-issues.xml");
     }
 
-    /** Runs the native parser on a file that contains 5 issues.. */
+    /** Runs the native parser on a file that contains 5 issues. */
     @Test
     void shouldReadNativeJsonFormat() {
         shouldFindIssuesOfTool(5, new WarningsPlugin(), "issues.json");
     }
 
-    /** Runs the native parser on a file that contains 8 issues.. */
+    /** Runs the native parser on a file that contains 8 issues. */
     @Test
     void shouldReadNativeJsonLogFormat() {
         shouldFindIssuesOfTool(5, new WarningsPlugin(), "json-issues.log");
