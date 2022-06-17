@@ -15,7 +15,7 @@ public class BluePearl extends AnalysisModelParser {
     private static final long serialVersionUID = 1L;
     private static final String ID = "bluepearl";
 
-  /** Creates a new instance of {@link BluePearl}. */
+    /** Creates a new instance of {@link BluePearl}. */
     @DataBoundConstructor
     public BluePearl() {
         super();
@@ -25,10 +25,9 @@ public class BluePearl extends AnalysisModelParser {
     /** Descriptor for this static analysis tool. */
     @Symbol("bluepearl")
     @Extension
-
     public static class Descriptor extends AnalysisModelParserDescriptor {
-        /** 
-         * Creates a new instance of {@link Descriptor}. 
+        /**
+         * Creates a new instance of {@link Descriptor}.
          */
         public Descriptor() {
             super(ID);
