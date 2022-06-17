@@ -1,11 +1,12 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>5.23.0</version>
-    <relativePath />
+    <version>5.28.0</version>
+    <relativePath/>
   </parent>
 
   <groupId>io.jenkins.plugins</groupId>
@@ -27,19 +28,13 @@
 
     <jenkins.baseline>2.319</jenkins.baseline>
 
-    <analysis-model-api.version>10.10.0</analysis-model-api.version>
+    <analysis-model-api.version>10.11.0</analysis-model-api.version>
     <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
-
-    <forensics-api-plugin.version>1.12.0</forensics-api-plugin.version>
-    <plugin-util-api.version>2.16.0</plugin-util-api.version>
-
-    <data-tables-api.version>1.11.4-4</data-tables-api.version>
-    <echarts-api.version>5.3.0-2</echarts-api.version>
-    <bootstrap5-api.version>5.1.3-6</bootstrap5-api.version>
-    <font-awesome-api.version>6.0.0-1</font-awesome-api.version>
-    <prism-api.version>1.26.0-2</prism-api.version>
-
+    <forensics-api-plugin.version>1.15.1</forensics-api-plugin.version>
+    <plugin-util-api.version>2.17.0</plugin-util-api.version>
     <pull-request-monitoring.version>1.7.8</pull-request-monitoring.version>
+    <prism-api.version>1.28.0-2</prism-api.version>
+    <data-tables-api.version>1.11.4-4</data-tables-api.version>
 
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
 
@@ -47,16 +42,16 @@
 
     <!-- Test Library Dependencies Versions -->
     <xmlunit.version>2.9.0</xmlunit.version>
-    <jsoup.version>1.14.3</jsoup.version>
+    <jsoup.version>1.15.1</jsoup.version>
     <json-smart.version>2.4.8</json-smart.version>
     <jmh.version>1.35</jmh.version>
-    <testcontainers.version>1.17.1</testcontainers.version>
+    <testcontainers.version>1.17.2</testcontainers.version>
 
     <!-- Jenkins Plug-in Dependencies Versions -->
     <autograding.version>3.3.1</autograding.version>
-    <git-forensics.version>1.7.0</git-forensics.version>
+    <git-forensics.version>1.9.0</git-forensics.version>
     <jenkins-maven-plugin.version>3.16</jenkins-maven-plugin.version>
-    <job-dsl.version>1.78.3</job-dsl.version>
+    <job-dsl.version>1.79</job-dsl.version>
     <flexible-publish.version>0.15.2</flexible-publish.version>
     <form-element-path.version>1.11</form-element-path.version>
 
@@ -106,23 +101,20 @@
     <!-- Required Jenkins Plug-in Dependencies -->
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
-      <artifactId>plugin-util-api</artifactId>
-      <version>${plugin-util-api.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
       <artifactId>analysis-model-api</artifactId>
       <version>${analysis-model-api.version}</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
+      <artifactId>plugin-util-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
       <artifactId>font-awesome-api</artifactId>
-      <version>${font-awesome-api.version}</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>bootstrap5-api</artifactId>
-      <version>${bootstrap5-api.version}</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
@@ -131,12 +123,10 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>echarts-api</artifactId>
-      <version>${echarts-api.version}</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>data-tables-api</artifactId>
-      <version>${data-tables-api.version}</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
@@ -181,6 +171,11 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>forensics-api</artifactId>
+      <version>${forensics-api-plugin.version}</version>
+    </dependency>
 
     <!-- AxivionSuite Dependencies -->
     <dependency>
@@ -205,6 +200,11 @@
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>dashboard-view</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>token-macro</artifactId>
       <optional>true</optional>
     </dependency>
@@ -221,16 +221,6 @@
       <artifactId>asm</artifactId>
       <version>9.3</version>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
-      <artifactId>forensics-api</artifactId>
-      <version>${forensics-api-plugin.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>dashboard-view</artifactId>
-      <optional>true</optional>
     </dependency>
 
     <!-- Test Dependencies -->
@@ -288,6 +278,10 @@
           <artifactId>*</artifactId>
           <groupId>org.ow2.asm</groupId>
         </exclusion>
+        <exclusion>
+          <groupId>com.google.errorprone</groupId>
+          <artifactId>error_prone_annotations</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -324,14 +318,20 @@
       <artifactId>plugin-util-api</artifactId>
       <version>${plugin-util-api.version}</version>
       <scope>test</scope>
-      <type>test-jar</type>
+      <classifier>tests</classifier>
+      <exclusions>
+        <exclusion>
+          <groupId>com.google.errorprone</groupId>
+          <artifactId>error_prone_annotations</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>data-tables-api</artifactId>
       <version>${data-tables-api.version}</version>
       <scope>test</scope>
-      <type>test-jar</type>
+      <classifier>tests</classifier>
     </dependency>
 
     <dependency>
@@ -398,6 +398,10 @@
         <exclusion>
           <groupId>commons-net</groupId>
           <artifactId>commons-net</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.jenkins-ci</groupId>
+          <artifactId>symbol-annotation</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -466,6 +470,18 @@
         <exclusion>
           <groupId>edu.hm.hafner</groupId>
           <artifactId>codingstyle</artifactId>
+        </exclusion>
+        <exclusion>
+          <artifactId>error_prone_annotations</artifactId>
+          <groupId>com.google.errorprone</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-lang3</artifactId>
+          <groupId>org.apache.commons</groupId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.jenkins-ci</groupId>
+          <artifactId>symbol-annotation</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

@@ -67,7 +67,8 @@ abstract class UiTest extends AbstractJUnitTest {
         return job.addPublisher(IssuesRecorder.class, recorder -> {
             recorder.setTool("CheckStyle").setName(CHECK_STYLE_NAME);
             recorder.addTool("FindBugs");
-            recorder.addTool("PMD");
+            recorder.addTool("Registered Parser",
+                    analysisModel -> analysisModel.setAnalysisModelId("PMD"));
             recorder.addTool("CPD",
                     cpd -> cpd.setHighThreshold(8).setNormalThreshold(3));
             recorder.setEnabledForFailure(true);
@@ -397,12 +398,8 @@ abstract class UiTest extends AbstractJUnitTest {
         DashboardView view = createDashboardView(container);
         StaticAnalysisIssuesPerToolAndJobPortlet portlet = view.addTopPortlet(
                 StaticAnalysisIssuesPerToolAndJobPortlet.class);
-        if (hideCleanJobs) {
-            portlet.toggleHideCleanJobs();
-        }
-        if (showIcons) {
-            portlet.toggleShowIcons();
-        }
+        portlet.setHideCleanJobs(hideCleanJobs);
+        portlet.setShowIcons(showIcons);
         view.save();
 
         return view;
