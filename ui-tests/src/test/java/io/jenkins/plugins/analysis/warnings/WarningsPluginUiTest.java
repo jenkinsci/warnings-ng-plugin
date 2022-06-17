@@ -1,8 +1,8 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import org.junit.Test;
+import javax.inject.Inject;
 
-import com.google.inject.Inject;
+import org.junit.Test;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
