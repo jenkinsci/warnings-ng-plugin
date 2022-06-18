@@ -34,7 +34,7 @@
     <plugin-util-api.version>2.17.0</plugin-util-api.version>
     <pull-request-monitoring.version>1.7.8</pull-request-monitoring.version>
     <prism-api.version>1.28.0-2</prism-api.version>
-    <data-tables-api.version>1.11.4-4</data-tables-api.version>
+    <data-tables-api.version>1.12.1-1</data-tables-api.version>
 
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
 
@@ -127,6 +127,7 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>data-tables-api</artifactId>
+      <version>${data-tables-api.version}</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
@@ -604,53 +605,7 @@
         <groupId>org.revapi</groupId>
         <artifactId>revapi-maven-plugin</artifactId>
         <configuration>
-          <failBuildOnProblemsFound>true</failBuildOnProblemsFound>
-          <!-- Including provided-scope dependencies like Jenkins core results in too many false positives -->
-          <checkDependencies>false</checkDependencies>
-          <analysisConfiguration>
-            <revapi.ignore combine.children="append">
-              <item>
-                <regex>true</regex>
-                <code>java.field.serialVersionUIDUnchanged</code>
-                <classQualifiedName>io.jenkins.plugins.analysis.core.steps.*Step</classQualifiedName>
-                <justification>Serialization is only used in interprocess communication using the same classes
-                </justification>
-              </item>
-              <item>
-                <regex>true</regex>
-                <code>java.missing.*</code>
-                <justification>Dependencies are not being checked, so they are reported as missing</justification>
-              </item>
-              <item>
-                <code>java.annotation.added</code>
-                <annotationType>org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted</annotationType>
-                <justification>Annotation should be save to add.</justification>
-              </item>
-              <item>
-                <regex>true</regex>
-                <code>java.annotation.*</code>
-                <annotation>@edu.umd.cs.findbugs.annotations.*</annotation>
-                <justification>Annotation should be save to change.</justification>
-              </item>
-              <item>
-                <regex>true</regex>
-                <code>java.annotation.*</code>
-                <annotation>@org.kohsuke.stapler.*</annotation>
-                <justification>Annotation should be save to change.</justification>
-              </item>
-              <item>
-                <regex>true</regex>
-                <code>java.method.returnTypeChanged</code>
-                <methodName>getDescriptionProvider</methodName>
-                <justification>Return type must be part of the API.</justification>
-              </item>
-              <item>
-                <code>java.method.added</code>
-                <classSimpleName>Messages</classSimpleName>
-                <justification>Messages are now external API.</justification>
-              </item>
-            </revapi.ignore>
-          </analysisConfiguration>
+          <skip>true</skip>
         </configuration>
       </plugin>
     </plugins>

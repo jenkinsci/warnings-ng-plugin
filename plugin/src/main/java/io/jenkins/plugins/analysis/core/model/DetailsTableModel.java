@@ -14,8 +14,12 @@ import j2html.tags.UnescapedText;
 
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
+import io.jenkins.plugins.datatables.DetailedCell;
 import io.jenkins.plugins.datatables.TableColumn;
+import io.jenkins.plugins.datatables.TableColumn.ColumnBuilder;
 import io.jenkins.plugins.datatables.TableColumn.ColumnCss;
+import io.jenkins.plugins.datatables.TableColumn.ColumnType;
+import io.jenkins.plugins.datatables.TableConfiguration;
 import io.jenkins.plugins.datatables.TableModel;
 import io.jenkins.plugins.prism.Sanitizer;
 import io.jenkins.plugins.util.JenkinsFacade;
@@ -55,10 +59,9 @@ public abstract class DetailsTableModel extends TableModel {
      * @param jenkinsFacade
      *         Jenkins facade to replaced with a stub during unit tests
      */
-    protected DetailsTableModel(final Report report,
-            final FileNameRenderer fileNameRenderer,
-            final AgeBuilder ageBuilder,
-            final DescriptionProvider descriptionProvider, final JenkinsFacade jenkinsFacade) {
+    protected DetailsTableModel(final Report report, final FileNameRenderer fileNameRenderer,
+            final AgeBuilder ageBuilder, final DescriptionProvider descriptionProvider,
+            final JenkinsFacade jenkinsFacade) {
         super();
 
         this.report = report;
@@ -66,6 +69,13 @@ public abstract class DetailsTableModel extends TableModel {
         this.ageBuilder = ageBuilder;
         this.descriptionProvider = descriptionProvider;
         this.jenkinsFacade = jenkinsFacade;
+    }
+
+    @Override
+    public TableConfiguration getTableConfiguration() {
+        TableConfiguration tableConfiguration = new TableConfiguration();
+        tableConfiguration.responsive();
+        return tableConfiguration;
     }
 
     protected JenkinsFacade getJenkinsFacade() {
@@ -103,25 +113,48 @@ public abstract class DetailsTableModel extends TableModel {
     }
 
     protected TableColumn createDetailsColumn() {
-        return new TableColumn(Messages.Table_Column_Details(), "description").setHeaderClass(ColumnCss.NO_SORT);
+        return new ColumnBuilder().withHeaderLabel(Messages.Table_Column_Details())
+                .withDataPropertyKey("description")
+                .withResponsivePriority(1)
+                .withHeaderClass(ColumnCss.NO_SORT)
+                .build();
     }
 
     protected TableColumn createHiddenDetailsColumn() {
-        return new TableColumn("Hiddendetails", "message")
-            .setHeaderClass(ColumnCss.HIDDEN)
-            .setWidth(0);
+        return new ColumnBuilder().withHeaderLabel("Hiddendetails")
+                .withDataPropertyKey("message")
+                .withHeaderClass(ColumnCss.HIDDEN)
+                .build();
     }
 
     protected TableColumn createFileColumn() {
-        return new TableColumn(Messages.Table_Column_File(), "fileName", "string");
+        return new ColumnBuilder().withHeaderLabel(Messages.Table_Column_File())
+                .withDataPropertyKey("fileName")
+                .withResponsivePriority(1)
+                .withDetailedCell()
+                .build();
     }
 
     protected TableColumn createAgeColumn() {
-        return new TableColumn(Messages.Table_Column_Age(), "age").setHeaderClass(ColumnCss.NUMBER);
+        return new ColumnBuilder().withHeaderLabel(Messages.Table_Column_Age())
+                .withDataPropertyKey("age")
+                .withType(ColumnType.NUMBER)
+                .withResponsivePriority(10)
+                .build();
     }
 
     protected TableColumn createSeverityColumn() {
-        return new TableColumn(Messages.Table_Column_Severity(), "severity");
+        return new ColumnBuilder().withHeaderLabel(Messages.Table_Column_Severity())
+                .withDataPropertyKey("severity")
+                .withResponsivePriority(5)
+                .build();
+    }
+
+    protected TableColumn createPackageColumn() {
+        return new ColumnBuilder().withHeaderLabel(Messages.Table_Column_Package())
+                .withDataPropertyKey("packageName")
+                .withResponsivePriority(50_000)
+                .build();
     }
 
     /**
@@ -143,7 +176,7 @@ public abstract class DetailsTableModel extends TableModel {
 
         private final String description;
         private final String message;
-        private final DetailedColumnDefinition fileName;
+        private final DetailedCell<String> fileName;
         private final String age;
         private final JenkinsFacade jenkinsFacade;
 
@@ -161,10 +194,8 @@ public abstract class DetailsTableModel extends TableModel {
          * @param jenkinsFacade
          *         Jenkins facade to replaced with a stub during unit tests
          */
-        protected TableRow(final AgeBuilder ageBuilder,
-                final FileNameRenderer fileNameRenderer,
-                final DescriptionProvider descriptionProvider,
-                final Issue issue,
+        protected TableRow(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
+                final DescriptionProvider descriptionProvider, final Issue issue,
                 final JenkinsFacade jenkinsFacade) {
             this.jenkinsFacade = jenkinsFacade;
             message = render(issue.getMessage());
@@ -173,8 +204,8 @@ public abstract class DetailsTableModel extends TableModel {
             fileName = createFileName(fileNameRenderer, issue);
         }
 
-        private DetailedColumnDefinition createFileName(final FileNameRenderer fileNameRenderer, final Issue issue) {
-            return new DetailedColumnDefinition(fileNameRenderer.renderAffectedFileLink(issue),
+        private DetailedCell<String> createFileName(final FileNameRenderer fileNameRenderer, final Issue issue) {
+            return new DetailedCell<>(fileNameRenderer.renderAffectedFileLink(issue),
                     String.format("%s:%07d", issue.getFileName(), issue.getLineStart()));
         }
 
@@ -262,7 +293,7 @@ public abstract class DetailsTableModel extends TableModel {
             return message;
         }
 
-        public DetailedColumnDefinition getFileName() {
+        public DetailedCell<String> getFileName() {
             return fileName;
         }
 

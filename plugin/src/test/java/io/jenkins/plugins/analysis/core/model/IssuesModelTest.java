@@ -62,27 +62,19 @@ class IssuesModelTest extends AbstractDetailsModelTest {
         DetailsTableModel model = createModel(report);
         assertThat(getLabels(model))
                 .containsExactly("Details", "File", "Severity", "Age", "Hiddendetails");
-        assertThat(getWidths(model))
-                .containsExactly(1, 1, 1, 1, 0);
         assertThat(model.getRows()).hasSize(1);
 
         when(report.hasPackages()).thenReturn(true);
         assertThat(getLabels(model))
                 .containsExactly("Details", "File", "Package", "Severity", "Age", "Hiddendetails");
-        assertThat(getWidths(model))
-                .containsExactly(1, 1, 2, 1, 1, 0);
 
         when(report.hasCategories()).thenReturn(true);
         assertThat(getLabels(model))
                 .containsExactly("Details", "File", "Package", "Category", "Severity", "Age", "Hiddendetails");
-        assertThat(getWidths(model))
-                .containsExactly(1, 1, 2, 1, 1, 1, 0);
 
         when(report.hasTypes()).thenReturn(true);
         assertThat(getLabels(model))
                 .containsExactly("Details", "File", "Package", "Category", "Type", "Severity", "Age", "Hiddendetails");
-        assertThat(getWidths(model))
-                .containsExactly(1, 1, 2, 1, 1, 1, 1, 0);
     }
 
     private IssuesModel createModel(final Report report) {
