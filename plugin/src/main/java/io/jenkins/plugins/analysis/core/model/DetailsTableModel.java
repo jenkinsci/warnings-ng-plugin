@@ -18,6 +18,7 @@ import io.jenkins.plugins.datatables.DetailedCell;
 import io.jenkins.plugins.datatables.TableColumn;
 import io.jenkins.plugins.datatables.TableColumn.ColumnBuilder;
 import io.jenkins.plugins.datatables.TableColumn.ColumnCss;
+import io.jenkins.plugins.datatables.TableColumn.ColumnType;
 import io.jenkins.plugins.datatables.TableConfiguration;
 import io.jenkins.plugins.datatables.TableModel;
 import io.jenkins.plugins.prism.Sanitizer;
@@ -137,7 +138,7 @@ public abstract class DetailsTableModel extends TableModel {
     protected TableColumn createAgeColumn() {
         return new ColumnBuilder().withHeaderLabel(Messages.Table_Column_Age())
                 .withDataPropertyKey("age")
-                .withHeaderClass(ColumnCss.NUMBER)
+                .withType(ColumnType.NUMBER)
                 .withResponsivePriority(10)
                 .build();
     }

@@ -11,6 +11,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBui
 import io.jenkins.plugins.datatables.TableColumn;
 import io.jenkins.plugins.datatables.TableColumn.ColumnBuilder;
 import io.jenkins.plugins.datatables.TableColumn.ColumnCss;
+import io.jenkins.plugins.datatables.TableColumn.ColumnType;
 import io.jenkins.plugins.forensics.miner.FileStatistics;
 import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
 import io.jenkins.plugins.util.JenkinsFacade;
@@ -71,13 +72,13 @@ public class ForensicsModel extends DetailsTableModel {
         TableColumn authorsSize = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_AuthorsSize())
                 .withDataPropertyKey("authorsSize")
                 .withResponsivePriority(1)
-                .withHeaderClass(ColumnCss.NUMBER)
+                .withType(ColumnType.NUMBER)
                 .build();
         columns.add(authorsSize);
         TableColumn commitsSize = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_CommitsSize())
                 .withDataPropertyKey("commitsSize")
                 .withResponsivePriority(1)
-                .withHeaderClass(ColumnCss.NUMBER)
+                .withType(ColumnType.NUMBER)
                 .build();
         columns.add(commitsSize);
         TableColumn modifiedAt = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_LastCommit())
@@ -95,13 +96,13 @@ public class ForensicsModel extends DetailsTableModel {
         TableColumn linesOfCode = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_LOC())
                 .withDataPropertyKey("linesOfCode")
                 .withResponsivePriority(25)
-                .withHeaderClass(ColumnCss.NUMBER)
+                .withType(ColumnType.NUMBER)
                 .build();
         columns.add(linesOfCode);
         TableColumn churn = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_Churn())
                 .withDataPropertyKey("churn")
                 .withResponsivePriority(25)
-                .withHeaderClass(ColumnCss.NUMBER)
+                .withType(ColumnType.NUMBER)
                 .build();
         columns.add(churn);
         columns.add(createHiddenDetailsColumn());
