@@ -24,7 +24,7 @@ public class RevApi extends AnalysisModelParser {
     }
 
     /** Descriptor for this static analysis tool. */
-    @Symbol("revapi")
+    @Symbol("revapiParser")
     @Extension
     public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
