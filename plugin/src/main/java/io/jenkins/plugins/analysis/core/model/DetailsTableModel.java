@@ -138,7 +138,7 @@ public abstract class DetailsTableModel extends TableModel {
     protected TableColumn createAgeColumn() {
         return new ColumnBuilder().withHeaderLabel(Messages.Table_Column_Age())
                 .withDataPropertyKey("age")
-                .withType(ColumnType.NUMBER)
+                .withType(ColumnType.HTML_NUMBER)
                 .withResponsivePriority(10)
                 .build();
     }
