@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>5.28.0</version>
+    <version>5.29.0</version>
     <relativePath />
   </parent>
 
@@ -29,11 +29,9 @@
 
     <analysis-model-api.version>10.12.0</analysis-model-api.version>
     <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
-    <forensics-api-plugin.version>1.15.1</forensics-api-plugin.version>
-    <plugin-util-api.version>2.17.0</plugin-util-api.version>
     <pull-request-monitoring.version>1.7.8</pull-request-monitoring.version>
     <prism-api.version>1.28.0-2</prism-api.version>
-    <data-tables-api.version>1.12.1-1</data-tables-api.version>
+    <data-tables-api.version>1.12.1-2</data-tables-api.version>
 
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
 
@@ -174,7 +172,6 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>forensics-api</artifactId>
-      <version>${forensics-api-plugin.version}</version>
     </dependency>
 
     <!-- AxivionSuite Dependencies -->
@@ -227,8 +224,7 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>forensics-api</artifactId>
-      <version>${forensics-api-plugin.version}</version>
-      <type>test-jar</type>
+      <classifier>tests</classifier>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -316,7 +312,6 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>plugin-util-api</artifactId>
-      <version>${plugin-util-api.version}</version>
       <scope>test</scope>
       <classifier>tests</classifier>
       <exclusions>
