@@ -70,8 +70,8 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
             + "done</code></pre>";
 
     @Test
-    public void shouldReadRevApiJsonFormat() {
-        shouldFindIssuesOfTool(9, new RevApi(), "revapi-result.json");
+    void shouldFindAllRevapiIssues() {
+        shouldFindIssuesOfTool(7, new RevApi(), "revapi-result.json");
     }
 
     /** Runs the native parser on a file that contains 9 issues.. */
