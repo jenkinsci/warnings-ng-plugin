@@ -125,7 +125,7 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     void shouldFindAllIssuesForCheckStyleAlias() {
         for (AnalysisModelParser tool : Arrays.asList(new Detekt(), new EsLint(), new KtLint(), new PhpCodeSniffer(),
-                new SwiftLint(), new TsLint())) {
+                new SwiftLint(), new StyleLint(), new TsLint())) {
             shouldFindIssuesOfTool(6, tool, "checkstyle.xml");
         }
     }
