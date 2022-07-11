@@ -25,13 +25,10 @@
     <changelist>-SNAPSHOT</changelist>
     <module.name>${project.groupId}.warnings.ng</module.name>
 
-    <jenkins.baseline>2.319</jenkins.baseline>
-
     <analysis-model-api.version>10.12.0</analysis-model-api.version>
     <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
     <pull-request-monitoring.version>1.7.8</pull-request-monitoring.version>
     <prism-api.version>1.28.0-2</prism-api.version>
-    <data-tables-api.version>1.12.1-2</data-tables-api.version>
 
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
 
@@ -124,7 +121,6 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>data-tables-api</artifactId>
-      <version>${data-tables-api.version}</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
@@ -324,7 +320,6 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>data-tables-api</artifactId>
-      <version>${data-tables-api.version}</version>
       <scope>test</scope>
       <classifier>tests</classifier>
     </dependency>
@@ -594,13 +589,6 @@
             <phase>none</phase>
           </execution>
         </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.revapi</groupId>
-        <artifactId>revapi-maven-plugin</artifactId>
-        <configuration>
-          <skip>true</skip>
-        </configuration>
       </plugin>
     </plugins>
     <pluginManagement>
