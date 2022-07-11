@@ -40,7 +40,7 @@ public class CheckStyle extends AnalysisModelParser {
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new SvgIconLabelProvider(ID, getDisplayName(), getDescriptionProvider(), "checkstyle");
+            return new SvgIconLabelProvider(ID, getDisplayName(), getDescriptionProvider());
         }
     }
 }
