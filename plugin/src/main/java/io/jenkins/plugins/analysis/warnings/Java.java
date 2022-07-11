@@ -5,8 +5,8 @@ import org.jenkinsci.Symbol;
 import hudson.Extension;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
-import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import io.jenkins.plugins.analysis.core.model.SvgIconLabelProvider;
 
 /**
  * Provides a parser and customized messages for the Java compiler.
@@ -35,7 +35,7 @@ public class Java extends AnalysisModelParser {
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new IconLabelProvider(getId(), getDisplayName(), getDescriptionProvider());
+            return new SvgIconLabelProvider(getId(), getDisplayName(), getDescriptionProvider(), "java");
         }
     }
 }
