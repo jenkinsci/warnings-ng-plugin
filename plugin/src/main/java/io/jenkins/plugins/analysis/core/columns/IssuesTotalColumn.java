@@ -212,6 +212,7 @@ public class IssuesTotalColumn extends ListViewColumn {
         if (selectedIds.length == 1 && selectTools) {
             String selectedId = selectedIds[0];
             if (actualIds.contains(selectedId)) {
+                //noinspection OptionalGetWithoutIsPresent
                 ResultAction result = actions.stream().filter(action -> action.getId().equals(selectedId))
                         .findFirst().get(); // We are sure it contains the selected id
                 return type.getUrl(result.getOwner().getNumber() + "/" + result.getUrlName());
