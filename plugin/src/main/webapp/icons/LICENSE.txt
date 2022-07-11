@@ -234,3 +234,8 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------------------------------------------------------------------------------
+
+The Stylelint logo is licensed under CC BY 4.0.
+https://icon-icons.com/icon/Stylelint/131966
+
+------------------------------------------------------------------------------
