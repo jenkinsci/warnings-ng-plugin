@@ -35,7 +35,7 @@ public class Java extends AnalysisModelParser {
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new SvgIconLabelProvider(getId(), getDisplayName(), getDescriptionProvider(), "java");
+            return new SvgIconLabelProvider(getId(), getDisplayName(), getDescriptionProvider());
         }
     }
 }
