@@ -42,7 +42,7 @@ public class EsLint extends AnalysisModelParser {
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new SvgIconLabelProvider(getId(), getDisplayName(), getDescriptionProvider(), "eslint");
+            return new SvgIconLabelProvider(getId(), getDisplayName(), getDescriptionProvider());
         }
     }
 }
