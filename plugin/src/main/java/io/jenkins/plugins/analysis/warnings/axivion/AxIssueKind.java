@@ -13,17 +13,17 @@ enum AxIssueKind {
     MV("metric violations", DefaultTransformations::createMVIssue),
     SV("style violations", DefaultTransformations::createSVIssue);
 
-    private final String plural;
+    private final String pluralName;
     private final AxIssueTransformation transformation;
 
-    AxIssueKind(final String plural,
+    AxIssueKind(final String pluralName,
             final AxIssueTransformation transformation) {
-        this.plural = plural;
+        this.pluralName = pluralName;
         this.transformation = transformation;
     }
 
     public String plural() {
-        return plural;
+        return pluralName;
     }
 
     public Issue transform(final AxRawIssue rawIssue) {
