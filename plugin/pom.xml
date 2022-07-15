@@ -618,96 +618,30 @@
         </dependencies>
         <configuration>
           <failBuildOnProblemsFound>true</failBuildOnProblemsFound>
-          <checkDependencies>true</checkDependencies>
-          <newVersion>${project.version}</newVersion>
-          <failOnUnresolvedArtifacts>true</failOnUnresolvedArtifacts>
+          <pipelineConfiguration>
+            <transformBlocks>
+              <blok>
+                <item>manually-vetted</item>
+                <item>revapi.versions</item>
+              </blok>
+            </transformBlocks>
+          </pipelineConfiguration>
           <analysisConfiguration>
             <revapi.reporter.json>
-              <minSeverity>POTENTIALLY_BREAKING</minSeverity>
-              <minCriticality>documented</minCriticality>
+              <minSeverity>EQUIVALENT</minSeverity>
+              <minCriticality>allowed</minCriticality>
               <output>target/revapi-result.json</output>
               <indent>false</indent>
               <append>false</append>
               <keepEmptyFile>true</keepEmptyFile>
             </revapi.reporter.json>
-            <revapi.versions>
-              <enabled>true</enabled>
-            </revapi.versions>
-            <revapi.differences>
-              <item>
-                <regex>true</regex>
-                <code>java.class.nonPublicPartOfAPI</code>
-                <classQualifiedName>org.jvnet.hudson.*</classQualifiedName>
-                <justification>Not relevant</justification>
-              </item>
-              <item>
-                <regex>true</regex>
-                <code>java.class.nonPublicPartOfAPI</code>
-                <classQualifiedName>net.sf.json.*</classQualifiedName>
-                <justification>Not relevant</justification>
-              </item>
-              <item>
-                <regex>true</regex>
-                <code>java.class.nonPublicPartOfAPI</code>
-                <classQualifiedName>org.jvnet.hudson.*</classQualifiedName>
-                <justification>Not relevant</justification>
-              </item>
-              <item>
-                <regex>true</regex>
-                <code>java.class.nonPublicPartOfAPI</code>
-                <classQualifiedName>net.sf.json.*</classQualifiedName>
-                <justification>Not relevant</justification>
-              </item>
-              <item>
-                <code>java.annotation.removed</code>
-                <annotation>@edu.umd.cs.findbugs.annotations.Nullable</annotation>
-                <justification>Annotation should be save to change.</justification>
-              </item>
-              <item>
-                <code>java.annotation.added</code>
-                <annotation>@edu.umd.cs.findbugs.annotations.CheckForNull</annotation>
-                <justification>Annotation should be save to change.</justification>
-              </item>
-              <item>
-                <code>java.annotation.added</code>
-                <annotation>@edu.hm.hafner.util.Generated</annotation>
-                <justification>Annotation should be save to change.</justification>
-              </item>
+            <revapi.differences id="manually-vetted">
+              <attachments>
+                <vetted>ok</vetted>
+              </attachments>
+              <differences combine.children="append">
+              </differences>
             </revapi.differences>
-            <revapi.filter>
-              <elements>
-                <include>
-                  <item>
-                    <matcher>java-package</matcher>
-                    <match>com</match>
-                  </item>
-                  <item>
-                    <matcher>java-package</matcher>
-                    <match>edu</match>
-                  </item>
-                  <item>
-                    <matcher>java-package</matcher>
-                    <match>io</match>
-                  </item>
-                  <item>
-                    <matcher>java-package</matcher>
-                    <match>javax</match>
-                  </item>
-                  <item>
-                    <matcher>java-package</matcher>
-                    <match>net</match>
-                  </item>
-                  <item>
-                    <matcher>java-package</matcher>
-                    <match>org.jenkins</match>
-                  </item>
-                  <item>
-                    <matcher>java-package</matcher>
-                    <match>org.jenkins_ci</match>
-                  </item>
-                </include>
-              </elements>
-            </revapi.filter>
           </analysisConfiguration>
         </configuration>
         <executions>
