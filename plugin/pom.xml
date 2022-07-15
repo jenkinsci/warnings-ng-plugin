@@ -28,7 +28,7 @@
 
     <jenkins.baseline>2.319</jenkins.baseline>
 
-    <analysis-model-api.version>10.10.1</analysis-model-api.version>
+    <analysis-model-api.version>10.14.0-SNAPSHOT</analysis-model-api.version>
     <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
     <forensics-api-plugin.version>1.15.1</forensics-api-plugin.version>
     <plugin-util-api.version>2.17.0</plugin-util-api.version>
@@ -674,13 +674,47 @@
                 <justification>Annotation should be save to change.</justification>
               </item>
             </revapi.differences>
+            <revapi.filter>
+              <elements>
+                <include>
+                  <item>
+                    <matcher>java-package</matcher>
+                    <match>com</match>
+                  </item>
+                  <item>
+                    <matcher>java-package</matcher>
+                    <match>edu</match>
+                  </item>
+                  <item>
+                    <matcher>java-package</matcher>
+                    <match>io</match>
+                  </item>
+                  <item>
+                    <matcher>java-package</matcher>
+                    <match>javax</match>
+                  </item>
+                  <item>
+                    <matcher>java-package</matcher>
+                    <match>net</match>
+                  </item>
+                  <item>
+                    <matcher>java-package</matcher>
+                    <match>org.jenkins</match>
+                  </item>
+                  <item>
+                    <matcher>java-package</matcher>
+                    <match>org.jenkins_ci</match>
+                  </item>
+                </include>
+              </elements>
+            </revapi.filter>
           </analysisConfiguration>
         </configuration>
         <executions>
           <execution>
             <id>run-revapi</id>
             <goals>
-              <goal>report</goal>
+              <goal>check</goal>
             </goals>
             <phase>verify</phase>
           </execution>
