@@ -29,7 +29,7 @@ import static io.jenkins.plugins.analysis.warnings.IssuesColumnConfiguration.*;
  */
 @WithPlugins({"warnings-ng", "dashboard-view"})
 public class SmokeTests extends UiTest {
-    private static final String CHECKSTYLE_ICON = "/checkstyle-24x24.png";
+    private static final String CHECKSTYLE_ICON = "/checkstyle.svg";
     private static final String FINDBUGS_ICON = "/findbugs-24x24.png";
     private static final String ANALYSIS_ICON = "/analysis.svg";
     private static final String DRY_ICON = "/dry.svg";

@@ -9,6 +9,7 @@ import edu.hm.hafner.util.VisibleForTesting;
 
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
 import io.jenkins.plugins.datatables.TableColumn;
+import io.jenkins.plugins.datatables.TableColumn.ColumnBuilder;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
@@ -53,13 +54,21 @@ public class IssuesModel extends DetailsTableModel {
         columns.add(createDetailsColumn());
         columns.add(createFileColumn());
         if (getReport().hasPackages()) {
-            columns.add(new TableColumn(Messages.Table_Column_Package(), "packageName").setWidth(2));
+            columns.add(createPackageColumn());
         }
         if (getReport().hasCategories()) {
-            columns.add(new TableColumn(Messages.Table_Column_Category(), "category"));
+            TableColumn category = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_Category())
+                    .withDataPropertyKey("category")
+                    .withResponsivePriority(100)
+                    .build();
+            columns.add(category);
         }
         if (getReport().hasTypes()) {
-            columns.add(new TableColumn(Messages.Table_Column_Type(), "type"));
+            TableColumn type = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_Type())
+                    .withDataPropertyKey("type")
+                    .withResponsivePriority(1000)
+                    .build();
+            columns.add(type);
         }
         columns.add(createSeverityColumn());
         columns.add(createAgeColumn());

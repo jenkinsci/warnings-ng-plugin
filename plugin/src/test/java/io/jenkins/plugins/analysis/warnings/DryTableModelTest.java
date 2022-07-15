@@ -63,8 +63,6 @@ class DryTableModelTest extends AbstractDetailsModelTest {
 
             assertThat(getLabels(model))
                     .containsExactly("Details", "File", "Severity", "#Lines", "Duplicated In", "Age");
-            assertThat(getWidths(model))
-                    .containsExactly(1, 2, 1, 1, 3, 1);
 
             DuplicationRow actualRow = model.getRow(issue);
             assertThat(actualRow)

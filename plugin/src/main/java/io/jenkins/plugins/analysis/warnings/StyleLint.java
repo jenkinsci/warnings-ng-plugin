@@ -11,23 +11,23 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.SvgIconLabelProvider;
 
 /**
- * Provides a parser and customized messages for ESlint. Delegates to {@link CheckStyleParser}.
+ * Provides a parser and customized messages for Stylelint. Delegates to {@link CheckStyleParser}.
  *
- * @author Ullrich Hafner
+ * @author Alexander Brandes
  */
-public class EsLint extends AnalysisModelParser {
-    private static final long serialVersionUID = -3634797822059504099L;
-    private static final String ID = "eslint";
+public class StyleLint extends AnalysisModelParser {
+    private static final long serialVersionUID = -7803000148685522042L;
+    private static final String ID = "stylelint";
 
-    /** Creates a new instance of {@link EsLint}. */
+    /** Creates a new instance of {@link StyleLint}. */
     @DataBoundConstructor
-    public EsLint() {
+    public StyleLint() {
         super();
         // empty constructor required for stapler
     }
 
     /** Descriptor for this static analysis tool. */
-    @Symbol("esLint")
+    @Symbol("styleLint")
     @Extension
     public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
@@ -42,7 +42,7 @@ public class EsLint extends AnalysisModelParser {
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new SvgIconLabelProvider(getId(), getDisplayName(), getDescriptionProvider());
+            return new SvgIconLabelProvider(getId(), getDisplayName(), getDescriptionProvider(), "stylelint");
         }
     }
 }

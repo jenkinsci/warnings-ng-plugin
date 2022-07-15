@@ -207,6 +207,21 @@ The lettering was removed to have a better fitting.
 
 ------------------------------------------------------------------------------
 
+The Checkstyle icon is (c) Copyright 2006-2022 by CheckStyle-IDEA Contributors.
+https://github.com/jshiell/checkstyle-idea/blob/main/src/main/resources/META-INF/pluginIcon.svg
+
+------------------------------------------------------------------------------
+
+The ESLint icon is licensed under the MIT license.
+https://github.com/eslint/archive-website/blob/master/assets/img/logo.svg
+
+------------------------------------------------------------------------------
+
+The Java icon is licensed under the BSD license.
+https://commons.wikimedia.org/wiki/File:ThumbsUp.svg
+
+------------------------------------------------------------------------------
+
 License for the Axivion icons:
 
 Copyright (c) 2021, Axivion GmbH
@@ -232,5 +247,10 @@ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
 LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+------------------------------------------------------------------------------
+
+The Stylelint logo is licensed under CC BY 4.0.
+https://icon-icons.com/icon/Stylelint/131966
 
 ------------------------------------------------------------------------------
