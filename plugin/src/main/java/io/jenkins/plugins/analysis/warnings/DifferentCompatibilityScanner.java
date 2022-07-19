@@ -8,7 +8,7 @@ import java.util.Map;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
-import edu.hm.hafner.analysis.RevapiInfoExtension;
+import edu.hm.hafner.analysis.RevApiInfoExtension;
 import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
@@ -65,8 +65,8 @@ public class DifferentCompatibilityScanner extends AnalysisModelParser {
         protected TableRow getRow(final Issue issue) {
             CompatibilityRow row = new CompatibilityRow(getAgeBuilder(), getFileNameRenderer(), getDescriptionProvider(), issue, getJenkinsFacade());
             final Serializable additionalInfos = issue.getAdditionalProperties();
-            if (additionalInfos instanceof RevapiInfoExtension) {
-                final RevapiInfoExtension revapiInfo = (RevapiInfoExtension) additionalInfos;
+            if (additionalInfos instanceof RevApiInfoExtension) {
+                final RevApiInfoExtension revapiInfo = (RevApiInfoExtension) additionalInfos;
                 row.setOldFile(revapiInfo.getOldFile());
                 row.setNewFile(revapiInfo.getNewFile());
                 row.setIssueName(revapiInfo.getIssueName());
