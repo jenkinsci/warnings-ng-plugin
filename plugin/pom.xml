@@ -26,7 +26,7 @@
     <module.name>${project.groupId}.warnings.ng</module.name>
 
     <analysis-model-api.version>10.14.0-rc601.15a_3a_e9b_5358</analysis-model-api.version>
-    <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
+    <analysis-model-tests.version>10.13.0</analysis-model-tests.version>
     <pull-request-monitoring.version>1.7.8</pull-request-monitoring.version>
     <prism-api.version>1.28.0-2</prism-api.version>
 
