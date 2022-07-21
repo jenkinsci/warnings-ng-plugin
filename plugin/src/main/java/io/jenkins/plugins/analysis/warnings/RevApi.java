@@ -17,9 +17,7 @@ public class RevApi extends DifferentCompatibilityScanner {
     @DataBoundConstructor
     public RevApi() {
         super();
-        // empty constructor required for stapler
     }
-
 
     /** Descriptor for this static analysis tool. */
     @Symbol("revApi")
@@ -48,7 +46,5 @@ public class RevApi extends DifferentCompatibilityScanner {
        LabelProvider(final String displayName) {
             super(ID, displayName);
         }
-
-
     }
 }

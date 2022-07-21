@@ -64,13 +64,14 @@ public class DifferentCompatibilityScanner extends AnalysisModelParser {
         @Override
         protected TableRow getRow(final Issue issue) {
             CompatibilityRow row = new CompatibilityRow(getAgeBuilder(), getFileNameRenderer(), getDescriptionProvider(), issue, getJenkinsFacade());
-            final Serializable additionalInfos = issue.getAdditionalProperties();
-            if (additionalInfos instanceof RevApiInfoExtension) {
-                final RevApiInfoExtension revapiInfo = (RevApiInfoExtension) additionalInfos;
-                row.setOldFile(revapiInfo.getOldFile());
-                row.setNewFile(revapiInfo.getNewFile());
-                row.setIssueName(revapiInfo.getIssueName());
-                row.setSeverities(revapiInfo.getSeverities());
+            final Serializable additionalInfo = issue.getAdditionalProperties();
+            if (additionalInfo instanceof RevApiInfoExtension) {
+                final RevApiInfoExtension revApiInfo = (RevApiInfoExtension) additionalInfo;
+                row.setOldFile(revApiInfo.getOldFile());
+                row.setNewFile(revApiInfo.getNewFile());
+                row.setIssueName(revApiInfo.getIssueName());
+                row.setSeverities(revApiInfo.getSeverities());
+                row.setCategory(issue.getCategory());
             }
             row.setSeverity(issue);
             return row;
@@ -84,18 +85,14 @@ public class DifferentCompatibilityScanner extends AnalysisModelParser {
         @Override
         public List<TableColumn> getColumns() {
             List<TableColumn> columns = new ArrayList<>();
+            columns.add(createDetailsColumn());
             columns.add(new TableColumn("Name", "issueName").setWidth(2));
-
             columns.add(new TableColumn("old file", "oldFile").setWidth(2));
             columns.add(new TableColumn("new file", "newFile").setWidth(2));
-            columns.add(createFileColumn());
+            columns.add(new TableColumn("Category", "category").setWidth(2));
             columns.add(new TableColumn("binary", "binary"));
             columns.add(new TableColumn("source", "source"));
-
-            //columns.add(new TableColumn("severity", "severity"));
             columns.add(createSeverityColumn().setWidth(2));
-            columns.add(createDetailsColumn());
-
             columns.add(createAgeColumn());
             columns.add(createHiddenDetailsColumn());
             return columns;
@@ -108,6 +105,7 @@ public class DifferentCompatibilityScanner extends AnalysisModelParser {
             private String oldFile;
             private String newFile;
             private String severity;
+            private String category;
 
             protected CompatibilityRow(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
                     final DescriptionProvider descriptionProvider, final Issue issue,
@@ -139,6 +137,10 @@ public class DifferentCompatibilityScanner extends AnalysisModelParser {
                 return severity;
             }
 
+            public String getCategory() {
+                return  category;
+            }
+
             public void setIssueName(final String issueName) {
                 this.issueName = issueName;
             }
@@ -153,6 +155,10 @@ public class DifferentCompatibilityScanner extends AnalysisModelParser {
 
             public void setSeverities(final Map<String,String> severities){
                 this.severities = severities;
+            }
+
+            public void setCategory(final String category) {
+                this.category = category;
             }
 
             void setSeverity(final Issue issue) {
