@@ -21,7 +21,7 @@ import io.jenkins.plugins.analysis.warnings.RevApi.RevApiModel.RevApiRow;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 import static org.assertj.core.api.Assertions.*;
 
-public class RevApiModelTest extends AbstractDetailsModelTest {
+class RevApiModelTest extends AbstractDetailsModelTest {
 
     private static final String DESCRIPTION = "DESCRIPTION";
 
