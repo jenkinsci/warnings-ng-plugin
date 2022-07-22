@@ -184,7 +184,7 @@ public class RevApi extends AnalysisModelParser {
                     setSeverity(issue);
                 }
                 else {
-                    throw new IllegalStateException();
+                    throw new IllegalStateException("Additional info of revApi Issue not an instance of RevApiInfoExtension");
                 }
             }
 
