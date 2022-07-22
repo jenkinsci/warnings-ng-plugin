@@ -26,7 +26,7 @@
     <module.name>${project.groupId}.warnings.ng</module.name>
 
     <analysis-model-api.version>10.14.0-rc601.15a_3a_e9b_5358</analysis-model-api.version>
-    <analysis-model-tests.version>10.13.0</analysis-model-tests.version>
+    <analysis-model-tests.version>10.14.0-rc4746.02007cc277a_d</analysis-model-tests.version>
     <pull-request-monitoring.version>1.7.8</pull-request-monitoring.version>
     <prism-api.version>1.28.0-2</prism-api.version>
 
@@ -593,19 +593,6 @@
       <plugin>
         <groupId>org.revapi</groupId>
         <artifactId>revapi-maven-plugin</artifactId>
-        <version>${revapi-maven-plugin.version}</version>
-        <dependencies>
-          <dependency>
-            <groupId>org.revapi</groupId>
-            <artifactId>revapi-java</artifactId>
-            <version>${revapi-java.version}</version>
-          </dependency>
-          <dependency>
-            <groupId>org.revapi</groupId>
-            <artifactId>revapi-reporter-json</artifactId>
-            <version>0.4.5</version>
-          </dependency>
-        </dependencies>
         <configuration>
           <failBuildOnProblemsFound>true</failBuildOnProblemsFound>
           <pipelineConfiguration>
