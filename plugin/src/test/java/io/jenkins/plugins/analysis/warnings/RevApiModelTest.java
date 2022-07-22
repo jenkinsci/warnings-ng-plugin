@@ -49,7 +49,7 @@ class RevApiModelTest extends AbstractDetailsModelTest {
             String columnDefinitions = model.getColumnsDefinition();
             assertThatJson(columnDefinitions).isArray().hasSize(9);
 
-            String[] columns = {"description", "issueName","oldFile", "newFile", "category", "binary", "source", "severity", "age"};
+            String[] columns = {"description", "issueName", "oldFile", "newFile", "category", "binary", "source", "severity", "age"};
             for (int column = 0; column < columns.length; column++) {
                 verifyColumnProperty(model, column, columns[column]);
             }
@@ -59,13 +59,13 @@ class RevApiModelTest extends AbstractDetailsModelTest {
             TableRow tableRow = model.getRow(issue);
             if (tableRow instanceof RevApiRow) {
                 RevApiRow row = (RevApiRow) tableRow;
-                assertThat(row.getBinary().equals("BREAKING")).isTrue();
-                assertThat(row.getSource().equals("NON_BREAKING")).isTrue();
-                assertThat(row.getCategory().equals("class")).isTrue();
-                assertThat(row.getIssueName().equals("java.class.added")).isTrue();
-                assertThat(row.getSeverity().equals("<a href=\"HIGH\">High</a>")).isTrue();
-                assertThat(row.getOldFile().equals("java.io.jenkins.plugins.analysis.warnings.RevApiModelTest")).isTrue();
-                assertThat(row.getNewFile().equals("-")).isTrue();
+                assertThat("BREAKING".equals(row.getBinary())).isTrue();
+                assertThat("NON_BREAKING".equals(row.getSource())).isTrue();
+                assertThat("class".equals(row.getCategory())).isTrue();
+                assertThat("java.class.added".equals(row.getIssueName())).isTrue();
+                assertThat("<a href=\"HIGH\">High</a>".equals(row.getSeverity())).isTrue();
+                assertThat("java.io.jenkins.plugins.analysis.warnings.RevApiModelTest".equals(row.getOldFile())).isTrue();
+                assertThat("-".equals(row.getNewFile())).isTrue();
             }
         }
     }

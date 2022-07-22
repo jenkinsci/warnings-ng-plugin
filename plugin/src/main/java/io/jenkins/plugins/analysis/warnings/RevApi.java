@@ -2,13 +2,14 @@ package io.jenkins.plugins.analysis.warnings;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.RevApiInfoExtension;
+import edu.hm.hafner.analysis.parser.RevApiParser;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
@@ -26,7 +27,7 @@ import io.jenkins.plugins.datatables.TableColumn.ColumnBuilder;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
- * Provides a parser and customized messages for RevApi. Delegates to {@link }
+ * Provides a parser and customized messages for RevApi. Delegates to {@link RevApiParser}
  */
 public class RevApi extends AnalysisModelParser {
     private static final long serialVersionUID = -8571635906342563283L;
@@ -163,11 +164,11 @@ public class RevApi extends AnalysisModelParser {
          */
         @SuppressWarnings("PMD.DataClass")
         protected static class RevApiRow extends TableRow {
-            private Map<String, String> severities = new HashMap<>();
-            private String issueName;
-            private String oldFile;
-            private String newFile;
-            private String severity;
+            private Map<String, String> severities;
+            private final String issueName;
+            private final String oldFile;
+            private final String newFile;
+            private final String severity;
             private String category;
 
             protected RevApiRow(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
@@ -176,12 +177,12 @@ public class RevApi extends AnalysisModelParser {
                 super(ageBuilder, fileNameRenderer, descriptionProvider, issue, jenkinsFacade);
                 if (additionalData instanceof RevApiInfoExtension) {
                     final RevApiInfoExtension revApiInfo = (RevApiInfoExtension) additionalData;
-                    setOldFile(revApiInfo.getOldFile());
-                    setNewFile(revApiInfo.getNewFile());
-                    setIssueName(revApiInfo.getIssueName());
-                    setSeverities(revApiInfo.getSeverities());
-                    setCategory(issue.getCategory());
-                    setSeverity(issue);
+                    this.oldFile = !Objects.equals("null", revApiInfo.getOldFile()) ? revApiInfo.getOldFile() : "-";
+                    this.newFile = !Objects.equals("null", revApiInfo.getNewFile()) ? revApiInfo.getNewFile() : "-";
+                    this.issueName = revApiInfo.getIssueName();
+                    this.severities = revApiInfo.getSeverities();
+                    this.category = issue.getCategory();
+                    this.severity = formatSeverity(issue.getSeverity());
                 }
                 else {
                     throw new IllegalStateException("Additional info of revApi Issue not an instance of RevApiInfoExtension");
@@ -216,28 +217,6 @@ public class RevApi extends AnalysisModelParser {
                 return category;
             }
 
-            public void setIssueName(final String issueName) {
-                this.issueName = issueName;
-            }
-
-            public void setOldFile(final String oldFile) {
-                if (oldFile.equals("null")) {
-                    this.oldFile = "-";
-                }
-                else {
-                    this.oldFile = oldFile;
-                }
-            }
-
-            public void setNewFile(final String newFile) {
-                if (newFile.equals("null")) {
-                    this.newFile = "-";
-                }
-                else {
-                    this.newFile = newFile;
-                }
-            }
-
             public void setSeverities(final Map<String, String> severities) {
                 this.severities = severities;
             }
@@ -246,9 +225,6 @@ public class RevApi extends AnalysisModelParser {
                 this.category = category;
             }
 
-            void setSeverity(final Issue issue) {
-                severity = formatSeverity(issue.getSeverity());
-            }
         }
     }
 }
