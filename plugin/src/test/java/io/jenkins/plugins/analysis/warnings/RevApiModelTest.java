@@ -65,6 +65,7 @@ class RevApiModelTest extends AbstractDetailsModelTest {
                 assertThat("java.class.added".equals(row.getIssueName())).isTrue();
                 assertThat("<a href=\"HIGH\">High</a>".equals(row.getSeverity())).isTrue();
                 assertThat("java.io.jenkins.plugins.analysis.warnings.RevApiModelTest".equals(row.getOldFile())).isTrue();
+                assertThat("-".equals(row.getNewFile())).isTrue();
             }
         }
     }
