@@ -45,7 +45,7 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  *
  * @author Kezhi Xiong
  */
-@SuppressWarnings({"ClassDataAbstractionCouplingCheck", "ClassFanOutComplexityCheck"})
+@SuppressWarnings({"checkstyle:ClassDataAbstractionCoupling", "checkstyle:ClassFanOutComplexity"})
 class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String OLD_CHECKSTYLE_REPORT = "checkstyle.xml";
     private static final String NEW_CHECKSTYLE_REPORT = "checkstyle1.xml";
