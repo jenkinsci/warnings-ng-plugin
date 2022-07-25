@@ -177,8 +177,8 @@ public class RevApi extends AnalysisModelParser {
                 super(ageBuilder, fileNameRenderer, descriptionProvider, issue, jenkinsFacade);
                 if (additionalData instanceof RevApiInfoExtension) {
                     final RevApiInfoExtension revApiInfo = (RevApiInfoExtension) additionalData;
-                    this.oldFile = !Objects.equals("null", revApiInfo.getOldFile()) ? revApiInfo.getOldFile() : "-";
-                    this.newFile = !Objects.equals("null", revApiInfo.getNewFile()) ? revApiInfo.getNewFile() : "-";
+                    this.oldFile = revApiInfo.getOldFile();
+                    this.newFile = revApiInfo.getNewFile();
                     this.issueName = revApiInfo.getIssueName();
                     this.severities = revApiInfo.getSeverities();
                     this.category = issue.getCategory();
