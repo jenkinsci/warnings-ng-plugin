@@ -23,6 +23,7 @@ import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSu
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
+import io.jenkins.plugins.analysis.warnings.MsBuild;
 import io.jenkins.plugins.analysis.warnings.PVSStudio;
 import io.jenkins.plugins.analysis.warnings.Pmd;
 import io.jenkins.plugins.checks.api.ChecksAnnotation.ChecksAnnotationBuilder;
@@ -44,6 +45,7 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  *
  * @author Kezhi Xiong
  */
+@SuppressWarnings({"checkstyle:ClassDataAbstractionCoupling", "checkstyle:ClassFanOutComplexity"})
 class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String OLD_CHECKSTYLE_REPORT = "checkstyle.xml";
     private static final String NEW_CHECKSTYLE_REPORT = "checkstyle1.xml";
@@ -360,6 +362,26 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
 
         assertThat(publishedChecks.get(1).getOutput()).isPresent().hasValueSatisfying(
                 output -> assertThat(output.getTitle()).isPresent().get().isEqualTo("No new issues, 6 total."));
+    }
+
+    /**
+     * Verifies that {@link WarningChecksPublisher} uses issue category when type is not provided.
+     */
+    @Test
+    void shouldFallbackToIssueCategory() {
+        FreeStyleProject project = createFreeStyleProject();
+        enableWarnings(project, createTool(new MsBuild(), "msbuild.log"));
+
+        buildSuccessfully(project);
+
+        copySingleFileToWorkspace(project, "msbuild.log");
+        Run<?, ?> run = buildSuccessfully(project);
+
+        WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(run), TaskListener.NULL, null);
+        ChecksDetails details = publisher.extractChecksDetails(AnnotationScope.PUBLISH_NEW_ISSUES);
+
+        assertThat(details.getOutput().get().getChecksAnnotations().get(0))
+                .hasFieldOrPropertyWithValue("title", Optional.of("C4101"));
     }
 
     private ChecksDetails createExpectedCheckStyleDetails() {

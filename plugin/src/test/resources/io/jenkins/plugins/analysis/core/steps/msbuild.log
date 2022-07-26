@@ -1,0 +1,11 @@
+[1/10] Building CXX object CMakeFiles\merge_count.dir\merge_count.cpp.obj
+[2/10] Building CXX object CMakeFiles\palyndrome.dir\palyndrome.cpp.obj
+[3/10] Building CXX object CMakeFiles\bubble.dir\bubble.cpp.obj
+..\bubble.cpp(17): warning C4101: 'a': unreferenced local variable
+[4/10] Building CXX object CMakeFiles\merge.dir\merge.cpp.obj
+[5/10] Building CXX object CMakeFiles\olymp.dir\olymp.cpp.obj
+[6/10] Linking CXX executable merge_count.exe
+[7/10] Linking CXX executable bubble.exe
+[8/10] Linking CXX executable palyndrome.exe
+[9/10] Linking CXX executable merge.exe
+[10/10] Linking CXX executable olymp.exe
