@@ -55,6 +55,10 @@ class WarningChecksPublisher {
         PUBLISH_NEW_ISSUES
     }
 
+    // fallback name for issue type / category.
+    // see: https://github.com/jenkinsci/analysis-model/blob/edf2a00e96bd2372da4f1fe34a226b984b7e0961/src/main/java/edu/hm/hafner/analysis/Issue.java#L30
+    private static final String UNDEFINED_ISSUE_STRING = "-";
+
     private final ResultAction action;
     private final TaskListener listener;
     @CheckForNull
@@ -215,7 +219,7 @@ class WarningChecksPublisher {
         for (Issue issue : issues) {
             ChecksAnnotationBuilder builder = new ChecksAnnotationBuilder()
                     .withPath(issue.getFileName())
-                    .withTitle(issue.getType())
+                    .withTitle(getIssueTitle(issue))
                     .withAnnotationLevel(ChecksAnnotationLevel.WARNING)
                     .withMessage(issue.getSeverity() + ":\n" + parseHtml(issue.getMessage()))
                     .withStartLine(issue.getLineStart())
@@ -252,5 +256,14 @@ class WarningChecksPublisher {
                 parseHtml(child, contents);
             }
         }
+    }
+
+    private static String getIssueTitle(final Issue issue) {
+        String title = issue.getType();
+        if (StringUtils.isBlank(title) || UNDEFINED_ISSUE_STRING.equals(title)) {
+            title = issue.getCategory();
+        }
+
+        return title;
     }
 }
