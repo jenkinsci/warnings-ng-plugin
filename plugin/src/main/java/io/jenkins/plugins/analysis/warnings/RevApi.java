@@ -8,7 +8,6 @@ import java.util.Map;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.RevApiInfoExtension;
-import edu.hm.hafner.analysis.parser.RevApiParser;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
@@ -26,7 +25,7 @@ import io.jenkins.plugins.datatables.TableColumn.ColumnBuilder;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
- * Provides a parser and customized messages for RevApi. Delegates to {@link RevApiParser}
+ * Provides a parser and customized messages for Revapi.
  */
 public class RevApi extends AnalysisModelParser {
     private static final long serialVersionUID = -8571635906342563283L;
@@ -45,6 +44,7 @@ public class RevApi extends AnalysisModelParser {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
+            // empty constructor required for stapler
         }
 
         @Override
@@ -54,16 +54,12 @@ public class RevApi extends AnalysisModelParser {
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new RevApi.RevApiLabelProvider(getId(), getDisplayName());
+            return new RevApiLabelProvider(getId(), getDisplayName());
         }
     }
 
-    /**
-     * Label for revApi Issues.
-     */
-    protected static class RevApiLabelProvider extends StaticAnalysisLabelProvider {
-
-        public RevApiLabelProvider(final String id, final String name) {
+    private static class RevApiLabelProvider extends StaticAnalysisLabelProvider {
+        RevApiLabelProvider(final String id, final String name) {
             super(id, name);
         }
 
@@ -75,25 +71,10 @@ public class RevApi extends AnalysisModelParser {
     }
 
     /**
-     * Custom RevApiModel to show different columns.
+     * Provides a customized table for Revapi issues.
      */
-    protected static class RevApiModel extends DetailsTableModel {
-
-        /**
-         * Creates a new instance of {@link DetailsTableModel}.
-         *
-         * @param report
-         *         the report to render
-         * @param fileNameRenderer
-         *         renders the file name column
-         * @param ageBuilder
-         *         renders the age column
-         * @param descriptionProvider
-         *         renders the description text
-         * @param jenkinsFacade
-         *         Jenkins facade to replaced with a stub during unit tests
-         */
-        public RevApiModel(final Report report,
+    public static class RevApiModel extends DetailsTableModel {
+        RevApiModel(final Report report,
                 final FileNameRenderer fileNameRenderer,
                 final AgeBuilder ageBuilder,
                 final DescriptionProvider descriptionProvider,
@@ -157,12 +138,11 @@ public class RevApi extends AnalysisModelParser {
             return columns;
         }
 
-
         /**
-         * Custom RevApi Issue rows.
+         * A table row that shows the properties of a Revapi issue.
          */
         @SuppressWarnings("PMD.DataClass")
-        protected static class RevApiRow extends TableRow {
+        public static class RevApiRow extends TableRow {
             private Map<String, String> severities;
             private final String issueName;
             private final String oldFile;
@@ -170,7 +150,7 @@ public class RevApi extends AnalysisModelParser {
             private final String severity;
             private String category;
 
-            protected RevApiRow(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
+            RevApiRow(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
                     final DescriptionProvider descriptionProvider, final Issue issue,
                     final JenkinsFacade jenkinsFacade, final Serializable additionalData) {
                 super(ageBuilder, fileNameRenderer, descriptionProvider, issue, jenkinsFacade);
@@ -223,7 +203,6 @@ public class RevApi extends AnalysisModelParser {
             public void setCategory(final String category) {
                 this.category = category;
             }
-
         }
     }
 }

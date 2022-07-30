@@ -1,40 +1,37 @@
 package io.jenkins.plugins.analysis.warnings;
 
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.DefaultLocale;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.RevApiInfoExtension;
 import edu.hm.hafner.analysis.Severity;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import io.jenkins.plugins.analysis.core.model.AbstractDetailsModelTest;
-import io.jenkins.plugins.analysis.core.model.DetailsTableModel.TableRow;
 import io.jenkins.plugins.analysis.warnings.RevApi.RevApiModel;
 import io.jenkins.plugins.analysis.warnings.RevApi.RevApiModel.RevApiRow;
 
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.assertThat;
+import static io.jenkins.plugins.analysis.warnings.RevApiRevApiModelRevApiRowAssert.assertThat;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
-import static org.assertj.core.api.Assertions.*;
 
+@DefaultLocale("en")
 class RevApiModelTest extends AbstractDetailsModelTest {
-
     private static final String DESCRIPTION = "DESCRIPTION";
 
     @Test
-    @SuppressFBWarnings("DMI")
     void shouldConvertIssueToArrayOfColumns() {
         try (IssueBuilder builder = new IssueBuilder()) {
-            Locale.setDefault(Locale.ENGLISH);
             Map<String, String> severities = new HashMap<>();
             severities.put("BINARY", "BREAKING");
             severities.put("SOURCE", "NON_BREAKING");
             RevApiInfoExtension additionalData = new RevApiInfoExtension("java.class.added",
-                    "java.io.jenkins.plugins.analysis.warnings.RevApiModelTest", "null", severities);
+                    "java.io.jenkins.plugins.analysis.warnings.RevApiModelTest", "-", severities);
             Issue issue = builder.setFileName("/path/to/file-1")
                     .setCategory("class")
                     .setSeverity(Severity.WARNING_HIGH)
@@ -44,7 +41,8 @@ class RevApiModelTest extends AbstractDetailsModelTest {
             Report report = new Report();
             report.add(issue);
 
-            RevApiModel model = new RevApiModel(report, createFileNameRenderer(), createAgeBuilder(), i -> DESCRIPTION, createJenkinsFacade());
+            RevApiModel model = new RevApiModel(report, createFileNameRenderer(), createAgeBuilder(), i -> DESCRIPTION,
+                    createJenkinsFacade());
 
             String columnDefinitions = model.getColumnsDefinition();
             assertThatJson(columnDefinitions).isArray().hasSize(9);
@@ -54,18 +52,19 @@ class RevApiModelTest extends AbstractDetailsModelTest {
                 verifyColumnProperty(model, column, columns[column]);
             }
             assertThat(getLabels(model))
-                    .containsExactly("Details", "Name", "Old File", "New File", "Category", "Binary", "Source", "Severity", "Age");
+                    .containsExactly("Details", "Name", "Old File", "New File", "Category", "Binary", "Source",
+                            "Severity", "Age");
 
-            TableRow tableRow = model.getRow(issue);
-            if (tableRow instanceof RevApiRow) {
-                RevApiRow row = (RevApiRow) tableRow;
-                assertThat("BREAKING".equals(row.getBinary())).isTrue();
-                assertThat("NON_BREAKING".equals(row.getSource())).isTrue();
-                assertThat("class".equals(row.getCategory())).isTrue();
-                assertThat("java.class.added".equals(row.getIssueName())).isTrue();
-                assertThat("<a href=\"HIGH\">High</a>".equals(row.getSeverity())).isTrue();
-                assertThat("java.io.jenkins.plugins.analysis.warnings.RevApiModelTest".equals(row.getOldFile())).isTrue();
-            }
+            assertThat(model.getRow(issue)).isInstanceOfSatisfying(RevApiRow.class,
+                    row -> assertThat(row)
+                            .hasBinary("BREAKING")
+                            .hasSource("NON_BREAKING")
+                            .hasCategory("class")
+                            .hasIssueName("java.class.added")
+                            .hasSeverity("<a href=\"HIGH\">High</a>")
+                            .hasOldFile("java.io.jenkins.plugins.analysis.warnings.RevApiModelTest")
+                            .hasNewFile("-")
+            );
         }
     }
 }
