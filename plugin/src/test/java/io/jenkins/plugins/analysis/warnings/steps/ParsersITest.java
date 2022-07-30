@@ -970,13 +970,13 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         shouldFindIssuesOfTool(14, new AquaScanner(), "aqua_scanner_result.json");
     }
 
-    /** Runs the Veracode Pipeline Scanner parser on an output file that contains 4 issues. */
+    /** Runs the Veracode Pipeline Scanner parser on an output file that contains 5 issues. */
     @Test
     void shouldFindAllVeracodePipelineScannerIssues() {
-        shouldFindIssuesOfTool(4, new VeracodePipelineScanner(), "veracode_pipeline_scanner_result.json");
+        shouldFindIssuesOfTool(5, new VeracodePipelineScanner(), "veracode_pipeline_scanner_result.json");
     }
 
-    /** Runs the qt translation parser on an output file that contains 5 issues. */
+    /** Runs the qt translation parser on an output file that contains 4 issues. */
     @Test
     void shouldFindAllQtTranslationIssues() {
         shouldFindIssuesOfTool(4, new QtTranslation(), "qttranslation.ts");
