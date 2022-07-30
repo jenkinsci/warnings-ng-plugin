@@ -7,7 +7,7 @@ import hudson.Extension;
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
- * Provides a parser and customized messages for Veracode Pipeline Scanner reports.
+ * Provides a parser and customized messages for Veracode Pipeline Scanner tool.
  *
  * @author Juri Duval
  */
