@@ -254,3 +254,8 @@ The Stylelint logo is licensed under CC BY 4.0.
 https://icon-icons.com/icon/Stylelint/131966
 
 ------------------------------------------------------------------------------
+
+The Aquasec logo is licensed under the GNU GENERAL PUBLIC LICENSE.
+https://icon-icons.com/icon/aquasec-logo/170524
+
+------------------------------------------------------------------------------
