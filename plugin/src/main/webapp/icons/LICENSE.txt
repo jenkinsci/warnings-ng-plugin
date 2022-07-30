@@ -254,3 +254,8 @@ The Stylelint logo is licensed under CC BY 4.0.
 https://icon-icons.com/icon/Stylelint/131966
 
 ------------------------------------------------------------------------------
+
+The Veracode 24x24 & 48x48 icons are licensed under the MIT license.
+https://github.com/jenkinsci/veracode-scan-plugin/tree/master/src/main/webapp/icons
+
+------------------------------------------------------------------------------
