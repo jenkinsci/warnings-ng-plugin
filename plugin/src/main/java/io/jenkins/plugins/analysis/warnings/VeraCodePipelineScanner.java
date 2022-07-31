@@ -13,16 +13,16 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
  *
  * @author Juri Duval
  */
-public class VeracodePipelineScanner extends AnalysisModelParser {
+public class VeraCodePipelineScanner extends AnalysisModelParser {
     private static final long serialVersionUID = 1L;
     private static final String ID = "veracode-pipeline-scanner";
     private static final String ICON_NAME = "veracode";
 
     /**
-     * Creates a new instance of {@link VeracodePipelineScanner}.
+     * Creates a new instance of {@link VeraCodePipelineScanner}.
      */
     @DataBoundConstructor
-    public VeracodePipelineScanner() {
+    public VeraCodePipelineScanner() {
         super();
         // empty constructor required for stapler
     }
