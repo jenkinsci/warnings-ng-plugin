@@ -15,6 +15,7 @@
 
   <properties>
     <java.version>1.8</java.version>
+    <hpi-plugin.version>3.32</hpi-plugin.version>
     <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
     <maven-deploy-plugin.version>3.0.0</maven-deploy-plugin.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -31,6 +32,11 @@
         <configuration>
           <skip>true</skip>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.jenkins-ci.tools</groupId>
+        <artifactId>maven-hpi-plugin</artifactId>
+        <version>${hpi-plugin.version}</version>
       </plugin>
     </plugins>
     <pluginManagement>
