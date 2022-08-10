@@ -16,7 +16,8 @@
   <name>UI Tests of Warnings Plugin</name>
 
   <properties>
-    <jenkins.version>2.363</jenkins.version>
+    <jenkins.version>2.361</jenkins.version>
+    <hpi-plugin.version>3.32</hpi-plugin.version>
     <json-smart.version>2.3</json-smart.version>
     <json-unit-assertj.version>2.35.0</json-unit-assertj.version>
     <module.name>${project.groupId}.warnings.ui.tests</module.name>
@@ -230,6 +231,11 @@
             </manifestEntries>
           </archive>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.jenkins-ci.tools</groupId>
+        <artifactId>maven-hpi-plugin</artifactId>
+        <version>${hpi-plugin.version}</version>
       </plugin>
     </plugins>
   </build>
