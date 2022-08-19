@@ -8,7 +8,7 @@ import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.verb.POST;
 import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
-import hudson.model.AbstractProject;
+import hudson.model.BuildableItem;
 import hudson.model.Item;
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
@@ -36,7 +36,7 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      * @return a model with all available charsets
      */
     @POST
-    public ComboBoxModel doFillSourceCodeEncodingItems(@AncestorInPath final AbstractProject<?, ?> project) {
+    public ComboBoxModel doFillSourceCodeEncodingItems(@AncestorInPath final BuildableItem project) {
         if (JENKINS.hasPermission(Item.READ, project)) {
             return new CharsetValidation().getAllCharsets();
         }
@@ -54,7 +54,7 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      * @return the validation result
      */
     @POST
-    public FormValidation doCheckReportEncoding(@AncestorInPath final AbstractProject<?, ?> project,
+    public FormValidation doCheckReportEncoding(@AncestorInPath final BuildableItem project,
             @QueryParameter final String reportEncoding) {
         if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
             return FormValidation.ok();
@@ -74,7 +74,7 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      * @return the validation result
      */
     @POST
-    public FormValidation doCheckSourceCodeEncoding(@AncestorInPath final AbstractProject<?, ?> project,
+    public FormValidation doCheckSourceCodeEncoding(@AncestorInPath final BuildableItem project,
             @QueryParameter final String sourceCodeEncoding) {
         if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
             return FormValidation.ok();
@@ -91,7 +91,7 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      * @return a model with all available severity filters
      */
     @POST
-    public ListBoxModel doFillMinimumSeverityItems(@AncestorInPath final AbstractProject<?, ?> project) {
+    public ListBoxModel doFillMinimumSeverityItems(@AncestorInPath final BuildableItem project) {
         if (JENKINS.hasPermission(Item.READ, project)) {
             return model.getAllSeverityFilters();
         }
@@ -109,7 +109,7 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      */
     @Deprecated
     @POST
-    public ComboBoxModel doFillReferenceJobNameItems(@AncestorInPath final AbstractProject<?, ?> project) {
+    public ComboBoxModel doFillReferenceJobNameItems(@AncestorInPath final BuildableItem project) {
         if (JENKINS.hasPermission(Item.CONFIGURE, project)) {
             return model.getAllJobs();
         }
@@ -129,7 +129,7 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      * @return the validation result
      */
     @POST
-    public FormValidation doCheckHealthy(@AncestorInPath final AbstractProject<?, ?> project,
+    public FormValidation doCheckHealthy(@AncestorInPath final BuildableItem project,
             @QueryParameter final int healthy, @QueryParameter final int unhealthy) {
         if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
             return FormValidation.ok();
@@ -150,7 +150,7 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      * @return the validation result
      */
     @POST
-    public FormValidation doCheckUnhealthy(@AncestorInPath final AbstractProject<?, ?> project,
+    public FormValidation doCheckUnhealthy(@AncestorInPath final BuildableItem project,
             @QueryParameter final int healthy, @QueryParameter final int unhealthy) {
         if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
             return FormValidation.ok();
@@ -166,7 +166,7 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      * @return a model with all  aggregation trend chart positions
      */
     @POST
-    public ListBoxModel doFillTrendChartTypeItems(@AncestorInPath final AbstractProject<?, ?> project) {
+    public ListBoxModel doFillTrendChartTypeItems(@AncestorInPath final BuildableItem project) {
         if (JENKINS.hasPermission(Item.READ, project)) {
             return model.getAllTrendChartTypes();
         }
@@ -184,7 +184,7 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      * @return the validation result
      */
     @POST
-    public FormValidation doCheckId(@AncestorInPath final AbstractProject<?, ?> project,
+    public FormValidation doCheckId(@AncestorInPath final BuildableItem project,
             @QueryParameter final String id) {
         if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
             return FormValidation.ok();
