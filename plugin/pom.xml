@@ -109,6 +109,7 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>bootstrap5-api</artifactId>
+      <version>5.2.0-2</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
