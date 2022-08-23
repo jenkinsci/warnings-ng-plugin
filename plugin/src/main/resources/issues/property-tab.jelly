@@ -15,8 +15,8 @@
   </st:documentation>
 
   <j:if test="${size(elements) > 1}">
-    <li class="nav-item">
-      <a class="nav-link" role="tab" data-bs-toggle="tab" href="#${property}Content">${name}</a>
+    <li class="nav-item tab">
+      <a class="nav-link" id="${property}Content-tab" data-bs-toggle="tab" data-bs-target="#${property}Content" type="button" role="tab" aria-controls="${property}Content" aria-selected="false">${name}</a>
     </li>
   </j:if>
 
