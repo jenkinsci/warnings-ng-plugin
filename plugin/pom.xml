@@ -28,7 +28,7 @@
     <jenkins.baseline>2.346</jenkins.baseline>
     <jenkins.version>2.346.3</jenkins.version>
 
-    <analysis-model-api.version>10.16.0</analysis-model-api.version>
+    <analysis-model-api.version>10.16.1</analysis-model-api.version>
     <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
     <pull-request-monitoring.version>1.7.8</pull-request-monitoring.version>
     <prism-api.version>1.28.0-2</prism-api.version>
@@ -53,7 +53,7 @@
     <form-element-path.version>1.11</form-element-path.version>
 
     <!-- Maven Surefire ArgLine -->
-    <argLine>-Djava.awt.headless=true -Xmx1024m -Djenkins.test.timeout=1000</argLine>
+    <argLine>-Djava.awt.headless=true -Xmx1024m -Djenkins.test.timeout=1000 --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.util.concurrent=ALL-UNNAMED</argLine>
   </properties>
 
   <licenses>
@@ -112,6 +112,7 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>bootstrap5-api</artifactId>
+      <version>5.2.0-2</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
@@ -592,6 +593,37 @@
             <phase>none</phase>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.revapi</groupId>
+        <artifactId>revapi-maven-plugin</artifactId>
+        <configuration>
+          <failBuildOnProblemsFound>false</failBuildOnProblemsFound>
+          <analysisConfiguration>
+            <revapi.differences id="manually-vetted">
+              <differences combine.children="append">
+                <item>
+                  <ignore>true</ignore>
+                  <regex>true</regex>
+                  <classQualifiedName>(org.jenkinsci.*|com.google.*)</classQualifiedName>
+                  <code>java.annotation.*</code>
+                </item>
+                <item>
+                  <ignore>true</ignore>
+                  <regex>true</regex>
+                  <classQualifiedName>jenkins.model.*</classQualifiedName>
+                  <code>java.field.removed</code>
+                </item>
+                <item>
+                  <ignore>true</ignore>
+                  <regex>true</regex>
+                  <classQualifiedName>jenkins.model.*</classQualifiedName>
+                  <code>java.class.externalClassExposedInAPI</code>
+                </item>
+              </differences>
+            </revapi.differences>
+          </analysisConfiguration>
+        </configuration>
       </plugin>
     </plugins>
     <pluginManagement>
