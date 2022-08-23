@@ -25,6 +25,9 @@
     <changelist>-SNAPSHOT</changelist>
     <module.name>${project.groupId}.warnings.ng</module.name>
 
+    <jenkins.baseline>2.346</jenkins.baseline>
+    <jenkins.version>2.346.3</jenkins.version>
+
     <analysis-model-api.version>10.16.1</analysis-model-api.version>
     <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
     <pull-request-monitoring.version>1.7.8</pull-request-monitoring.version>
@@ -109,6 +112,7 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>bootstrap5-api</artifactId>
+      <version>5.2.0-2</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
@@ -589,6 +593,37 @@
             <phase>none</phase>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.revapi</groupId>
+        <artifactId>revapi-maven-plugin</artifactId>
+        <configuration>
+          <failBuildOnProblemsFound>false</failBuildOnProblemsFound>
+          <analysisConfiguration>
+            <revapi.differences id="manually-vetted">
+              <differences combine.children="append">
+                <item>
+                  <ignore>true</ignore>
+                  <regex>true</regex>
+                  <classQualifiedName>(org.jenkinsci.*|com.google.*)</classQualifiedName>
+                  <code>java.annotation.*</code>
+                </item>
+                <item>
+                  <ignore>true</ignore>
+                  <regex>true</regex>
+                  <classQualifiedName>jenkins.model.*</classQualifiedName>
+                  <code>java.field.removed</code>
+                </item>
+                <item>
+                  <ignore>true</ignore>
+                  <regex>true</regex>
+                  <classQualifiedName>jenkins.model.*</classQualifiedName>
+                  <code>java.class.externalClassExposedInAPI</code>
+                </item>
+              </differences>
+            </revapi.differences>
+          </analysisConfiguration>
+        </configuration>
       </plugin>
     </plugins>
     <pluginManagement>

@@ -290,7 +290,7 @@ public class AnalysisResult extends PageObject {
     public void clickNextOnTrendCarousel() {
         WebElement trendChart = getTrendChart();
         WebElement activeChart = trendChart.findElement(By.className("active"));
-        trendChart.findElement(By.className("carousel-control-next-icon")).click();
+        trendChart.findElement(By.className("carousel-control-next")).click();
         waitFor().until(() -> !activeChart.isDisplayed());
     }
 

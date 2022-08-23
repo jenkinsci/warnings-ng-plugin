@@ -7,32 +7,22 @@
 
   <bs:card title="${%History}" fontAwesomeIcon="chart-line">
 
-    <div id="trend-carousel" class="carousel slide carousel-dark" data-bs-interval="false">
-      <div class="carousel-inner">
-        <div class="carousel-item active">
-          <div id="severities-trend-chart" class="graph-cursor-pointer card-chart-carousel"/>
-        </div>
-        <div class="carousel-item">
-          <div id="tools-trend-chart" class="graph-cursor-pointer card-chart-carousel"/>
-        </div>
-        <div class="carousel-item">
-          <div id="new-versus-fixed-trend-chart" class="graph-cursor-pointer card-chart-carousel"/>
-        </div>
-        <j:if test="${it.healthReportEnabled}">
-          <div class="carousel-item">
-            <div id="health-trend-chart" class="graph-cursor-pointer card-chart-carousel"/>
-          </div>
-        </j:if>
+    <bs:carousel id="trend-carousel">
+      <div class="carousel-item active">
+        <div id="severities-trend-chart" class="graph-cursor-pointer card-chart-carousel"/>
       </div>
-      <button class="carousel-control-prev" type="button" data-bs-target="#trend-carousel" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"/>
-        <span class="visually-hidden">Previous</span>
-      </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#trend-carousel" data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"/>
-        <span class="visually-hidden">Next</span>
-      </button>
-    </div>
+      <div class="carousel-item">
+        <div id="tools-trend-chart" class="graph-cursor-pointer card-chart-carousel"/>
+      </div>
+      <div class="carousel-item">
+        <div id="new-versus-fixed-trend-chart" class="graph-cursor-pointer card-chart-carousel"/>
+      </div>
+      <j:if test="${it.healthReportEnabled}">
+        <div class="carousel-item">
+          <div id="health-trend-chart" class="graph-cursor-pointer card-chart-carousel"/>
+        </div>
+      </j:if>
+    </bs:carousel>
 
   </bs:card>
 
