@@ -27,6 +27,7 @@ import org.jenkinsci.test.acceptance.po.PageObject;
  */
 public class AnalysisResult extends PageObject {
     private static final int MAX_ATTEMPTS = 5;
+    private static final String TARGET_HREF = "data-bs-target";
     private final String id;
 
     /**
@@ -69,7 +70,7 @@ public class AnalysisResult extends PageObject {
     public Tab getActiveTab() {
         WebElement activeTab = find(By.xpath("//a[@role='tab' and contains(@class, 'active')]"));
 
-        return Tab.valueWithHref(extractRelativeUrl(activeTab.getAttribute("href")));
+        return Tab.valueWithHref(extractRelativeUrl(activeTab.getAttribute(TARGET_HREF)));
     }
 
     /**
@@ -79,7 +80,7 @@ public class AnalysisResult extends PageObject {
      */
     public Collection<Tab> getAvailableTabs() {
         return all(By.xpath("//a[@role='tab']")).stream()
-                .map(tab -> tab.getAttribute("data-bs-target"))
+                .map(tab -> tab.getAttribute(TARGET_HREF))
                 .map(this::extractRelativeUrl)
                 .map(Tab::valueWithHref)
                 .collect(Collectors.toList());
