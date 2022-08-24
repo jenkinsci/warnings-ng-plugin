@@ -79,7 +79,7 @@ public class AnalysisResult extends PageObject {
      */
     public Collection<Tab> getAvailableTabs() {
         return all(By.xpath("//a[@role='tab']")).stream()
-                .map(tab -> tab.getAttribute("href"))
+                .map(tab -> tab.getAttribute("data-bs-target"))
                 .map(this::extractRelativeUrl)
                 .map(Tab::valueWithHref)
                 .collect(Collectors.toList());
