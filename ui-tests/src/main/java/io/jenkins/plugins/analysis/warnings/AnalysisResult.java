@@ -360,7 +360,7 @@ public class AnalysisResult extends PageObject {
          * @return the selenium filter rule
          */
         By getXpath() {
-            return By.xpath("//a[@href='#" + contentId + "']");
+            return By.xpath("//a[@" + TARGET_HREF + "='#" + contentId + "']");
         }
 
         /**
