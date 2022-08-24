@@ -33,12 +33,12 @@
     const url = document.location.toString();
     if (url.match('#')) {
         const tabName = url.split('#')[1];
-        selectTab('a[href="#' + tabName + '"]');
+        selectTab('a[data-bs-target="#' + tabName + '"]');
     }
     else {
         const activeTab = localStorage.getItem('activeTab');
         if (activeTab) {
-            selectTab('a[href="' + activeTab + '"]');
+            selectTab('a[data-bs-target="' + activeTab + '"]');
         }
     }
 
@@ -48,7 +48,7 @@
     const tabToggleLink = $('a[data-bs-toggle="tab"]');
     tabToggleLink.on('show.bs.tab', function (e) {
         window.location.hash = e.target.hash;
-        const activeTab = $(e.target).attr('href');
+        const activeTab = $(e.target).attr('data-bs-target');
         localStorage.setItem('activeTab', activeTab);
     });
 
