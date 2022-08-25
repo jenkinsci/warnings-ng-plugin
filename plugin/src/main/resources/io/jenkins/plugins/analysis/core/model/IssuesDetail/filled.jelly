@@ -7,24 +7,14 @@
     <div class="col-xs-12 col-sm-6 col-md-5 col-lg-4 d-none d-block d-sm-block d-xl-none d-xxl-none">
 
       <bs:card title="${%Overview}" fontAwesomeIcon="bell">
-        <div id="overview-carousel" class="carousel slide carousel-dark" data-bs-interval="false">
-          <div class="carousel-inner">
-            <div class="carousel-item active" data-bs-interval="false">
-              <c:pie-chart id="severities" model="${it.severityModel}" height="256" enableLinks="true" />
-            </div>
-            <div class="carousel-item" data-bs-interval="false">
-              <c:pie-chart id="trend" model="${it.trendModel}" height="256" enableLinks="true"/>
-            </div>
+        <bs:carousel id="overview-carousel">
+          <div class="carousel-item active" data-bs-interval="false">
+            <c:pie-chart id="severities" model="${it.severityModel}" height="256" enableLinks="true"/>
           </div>
-          <button class="carousel-control-prev" type="button" data-bs-target="#overview-carousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"/>
-            <span class="visually-hidden">Previous</span>
-          </button>
-          <button class="carousel-control-next" type="button" data-bs-target="#overview-carousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"/>
-            <span class="visually-hidden">Next</span>
-          </button>
-        </div>
+          <div class="carousel-item" data-bs-interval="false">
+            <c:pie-chart id="trend" model="${it.trendModel}" height="256" enableLinks="true"/>
+          </div>
+        </bs:carousel>
       </bs:card>
 
     </div>
@@ -33,7 +23,7 @@
     <div class="col-xl-3 col-xxl-2 d-none d-xl-block">
 
       <bs:card title="${%Severities Distribution}" fontAwesomeIcon="chart-pie">
-        <c:pie-chart id="severities-solo" model="${it.severityModel}" height="256" enableLinks="true" />
+        <c:pie-chart id="severities-solo" model="${it.severityModel}" height="256" enableLinks="true"/>
       </bs:card>
 
     </div>
@@ -42,7 +32,7 @@
     <div class="col-xl-3 col-xxl-2 d-none d-xl-block">
 
       <bs:card title="${%Reference Comparison}" fontAwesomeIcon="bell">
-        <c:pie-chart id="trend-solo" model="${it.trendModel}" height="256" enableLinks="true" />
+        <c:pie-chart id="trend-solo" model="${it.trendModel}" height="256" enableLinks="true"/>
       </bs:card>
 
     </div>
@@ -64,35 +54,37 @@
         <div id="statistics">
 
           <bs:card title="${%Details}" pngIcon="${resURL}/${it.labelProvider.largeIconUrl}">
-            <ul class="nav nav-tabs flex-wrap" role="tablist" id="tab-details">
+            <div class="tabBarFrame">
+              <ul class="flex-wrap tabBar" role="tablist" id="tab-details">
 
-              <issues:property-tab property="origin" name="${l.tools}" elements="${i.tools}"/>
-              <issues:property-tab property="moduleName" name="${l.modules}" elements="${i.modules}"/>
-              <issues:property-tab property="packageName" name="${l.packages}" elements="${i.packages}"/>
-              <j:if test="${i.hasFolders()}">
-                <issues:property-tab property="folder" name="${l.folders}" elements="${i.folders}"/>
-              </j:if>
-              <issues:property-tab property="fileName" name="${l.files}" elements="${i.files}"/>
-              <issues:property-tab property="category" name="${l.categories}" elements="${i.categories}"/>
-              <issues:property-tab property="type" name="${l.types}" elements="${i.types}"/>
-
-              <j:if test="${i.isNotEmpty()}">
-                <li class="nav-item">
-                  <a class="nav-link" role="tab" data-bs-toggle="tab" href="#issuesContent">${l.issues}</a>
-                </li>
-                <j:if test="${it.isBlameVisible()}">
-                  <li class="nav-item">
-                    <a class="nav-link" role="tab" data-bs-toggle="tab" href="#blamesContent">${%SCM Blames}</a>
-                  </li>
+                <issues:property-tab property="origin" name="${l.tools}" elements="${i.tools}"/>
+                <issues:property-tab property="moduleName" name="${l.modules}" elements="${i.modules}"/>
+                <issues:property-tab property="packageName" name="${l.packages}" elements="${i.packages}"/>
+                <j:if test="${i.hasFolders()}">
+                  <issues:property-tab property="folder" name="${l.folders}" elements="${i.folders}"/>
                 </j:if>
-                <j:if test="${it.isForensicsVisible()}">
-                  <li class="nav-item">
-                    <a class="nav-link" role="tab" data-bs-toggle="tab" href="#forensicsContent">${%SCM Forensics}</a>
-                  </li>
-                </j:if>
-              </j:if>
+                <issues:property-tab property="fileName" name="${l.files}" elements="${i.files}"/>
+                <issues:property-tab property="category" name="${l.categories}" elements="${i.categories}"/>
+                <issues:property-tab property="type" name="${l.types}" elements="${i.types}"/>
 
-            </ul>
+                <j:if test="${i.isNotEmpty()}">
+                  <li class="nav-item tab" role="presentation">
+                    <a class="nav-link" id="issuesContent-tab" data-bs-toggle="tab" data-bs-target="#issuesContent" type="button" role="tab" aria-controls="issuesContent" aria-selected="false">${l.issues}</a>
+                  </li>
+                  <j:if test="${it.isBlameVisible()}">
+                    <li class="nav-item tab" role="presentation">
+                      <a class="nav-link" id="blamesContent-tab" data-bs-toggle="tab" data-bs-target="#blamesContent" type="button" role="tab" aria-controls="blamesContent" aria-selected="false">${%SCM Blames}</a>
+                    </li>
+                  </j:if>
+                  <j:if test="${it.isForensicsVisible()}">
+                    <li class="nav-item tab" role="presentation">
+                      <a class="nav-link" id="forensicsContent-tab" data-bs-toggle="tab" data-bs-target="#forensicsContent" type="button" role="tab" aria-controls="forensicsContent" aria-selected="false">${%SCM Forensics}</a>
+                    </li>
+                  </j:if>
+                </j:if>
+
+              </ul>
+            </div>
 
             <div class="tab-content">
 
@@ -107,16 +99,16 @@
               <issues:property property="type" name="${l.type}" elements="${i.types}"/>
 
               <j:if test="${i.isNotEmpty()}">
-                <div role="tabpanel" id="issuesContent" class="tab-pane fade">
+                <div role="tabpanel" id="issuesContent" class="tab-pane fade" aria-labelledby="issuesContent-tab">
                   <dt:table model="${it.getTableModel('issues')}"/>
                 </div>
                 <j:if test="${it.isBlameVisible()}">
-                  <div role="tabpanel" id="blamesContent" class="tab-pane fade">
+                  <div role="tabpanel" id="blamesContent" class="tab-pane fade" aria-labelledby="blamesContent-tab">
                     <dt:table model="${it.getTableModel('blames')}"/>
                   </div>
                 </j:if>
                 <j:if test="${it.isForensicsVisible()}">
-                  <div role="tabpanel" id="forensicsContent" class="tab-pane fade">
+                  <div role="tabpanel" id="forensicsContent" class="tab-pane fade" aria-labelledby="forensicsContent-tab">
                     <dt:table model="${it.getTableModel('forensics')}"/>
                   </div>
                 </j:if>

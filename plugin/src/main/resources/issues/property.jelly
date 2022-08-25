@@ -15,7 +15,7 @@
   </st:documentation>
 
   <j:if test="${size(elements) > 1}">
-    <div role="tabpanel" id="${property}Content" class="tab-pane fade">
+    <div role="tabpanel" id="${property}Content" class="tab-pane fade" aria-labelledby="${property}Content-tab">
       <j:set var="l" value="${it.tabLabelProvider}"/>
       <j:set var="t" value="${it.getDetails(property)}"/>
       <div class="table-responsive">
