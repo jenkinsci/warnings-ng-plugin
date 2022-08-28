@@ -620,6 +620,12 @@
                   <classQualifiedName>jenkins.model.*</classQualifiedName>
                   <code>java.class.externalClassExposedInAPI</code>
                 </item>
+                <item>
+                  <ignore>true</ignore>
+                  <regex>true</regex>
+                  <classQualifiedName>io.jenkins.plugins.analysis.core.steps.AnalysisStepDescriptor</classQualifiedName>
+                  <code>java.method.parameterTypeChanged</code>
+                </item>
               </differences>
             </revapi.differences>
           </analysisConfiguration>
