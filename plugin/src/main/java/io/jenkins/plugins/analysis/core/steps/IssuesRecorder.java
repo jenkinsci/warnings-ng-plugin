@@ -749,7 +749,7 @@ public class IssuesRecorder extends Recorder {
         }
         else {
             for (Tool tool : analysisTools) {
-                AnnotatedReport report = new AnnotatedReport(tool.getActualId());
+                AnnotatedReport report = new AnnotatedReport(StringUtils.defaultIfEmpty(id, tool.getActualId()));
                 if (isAggregatingResults) {
                     report.logInfo("Ignoring 'aggregatingResults' and ID '%s' since only a single tool is defined.",
                             id);
