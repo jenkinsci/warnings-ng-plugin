@@ -27,7 +27,7 @@ import hudson.model.Run;
 import hudson.util.FormValidation;
 
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.model.SvgIconLabelProvider;
+import io.jenkins.plugins.analysis.core.model.SymbolIconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
@@ -185,9 +185,9 @@ public class OpenTasks extends Tool {
     }
 
     /** Label provider with customized messages. */
-    private static class LabelProvider extends SvgIconLabelProvider {
+    private static class LabelProvider extends SymbolIconLabelProvider {
         LabelProvider() {
-            super(ID, Messages.Warnings_OpenTasks_Name(), i -> StringUtils.EMPTY);
+            super(ID, Messages.Warnings_OpenTasks_Name(), i -> StringUtils.EMPTY, "symbol-solid/clipboard-check plugin-font-awesome-api");
         }
 
         @Override

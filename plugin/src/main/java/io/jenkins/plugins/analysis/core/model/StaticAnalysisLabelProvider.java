@@ -29,8 +29,7 @@ import static j2html.TagCreator.*;
  * @author Ullrich Hafner
  */
 public class StaticAnalysisLabelProvider implements DescriptionProvider {
-    private static final String ICONS_PREFIX = "/plugin/warnings-ng/icons/";
-    private static final String ANALYSIS_SVG_ICON = ICONS_PREFIX + "analysis.svg";
+    private static final String ANALYSIS_SVG_ICON = "symbol-solid/triangle-exclamation plugin-font-awesome-api";
 
     /** Provides an empty description. */
     protected static final DescriptionProvider EMPTY_DESCRIPTION = Issue::getDescription;
