@@ -395,7 +395,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
     }
 
     /**
-     * Computes the age of a build as a hyper link.
+     * Computes the age of a build as a hyperlink.
      */
     public static class DefaultAgeBuilder implements AgeBuilder {
         private final int currentBuild;
