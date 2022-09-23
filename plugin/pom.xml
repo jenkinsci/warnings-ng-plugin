@@ -31,7 +31,7 @@
     <analysis-model-api.version>10.16.1</analysis-model-api.version>
     <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
     <pull-request-monitoring.version>1.7.8</pull-request-monitoring.version>
-    <prism-api.version>1.28.0-2</prism-api.version>
+    <prism-api.version>1.29.0-1</prism-api.version>
 
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
 
