@@ -29,8 +29,9 @@ import static j2html.TagCreator.*;
  * @author Ullrich Hafner
  */
 public class StaticAnalysisLabelProvider implements DescriptionProvider {
-    private static final String ICONS_PREFIX = "/plugin/warnings-ng/icons/";
-    private static final String ANALYSIS_SVG_ICON = ICONS_PREFIX + "analysis.svg";
+    /** Default icon for all tools. */
+    @VisibleForTesting
+    public static final String ANALYSIS_SVG_ICON = "symbol-solid/triangle-exclamation plugin-font-awesome-api";
 
     /** Provides an empty description. */
     protected static final DescriptionProvider EMPTY_DESCRIPTION = Issue::getDescription;
@@ -394,7 +395,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
     }
 
     /**
-     * Computes the age of a build as a hyper link.
+     * Computes the age of a build as a hyperlink.
      */
     public static class DefaultAgeBuilder implements AgeBuilder {
         private final int currentBuild;

@@ -14,7 +14,6 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
 import hudson.model.Action;
 import hudson.model.Job;
 import hudson.model.Run;
-import jenkins.model.Jenkins;
 
 import io.jenkins.plugins.analysis.core.charts.HealthTrendChart;
 import io.jenkins.plugins.analysis.core.charts.NewVersusFixedTrendChart;
@@ -144,7 +143,7 @@ public class JobAction implements Action, AsyncConfigurableTrendChart {
     @CheckForNull
     public String getIconFileName() {
         return createBuildHistory().getBaselineResult()
-                .map(result -> Jenkins.RESOURCE_PATH + labelProvider.getSmallIconUrl())
+                .map(result -> labelProvider.getSmallIconUrl())
                 .orElse(null);
     }
 

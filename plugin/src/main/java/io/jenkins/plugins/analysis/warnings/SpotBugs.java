@@ -4,6 +4,9 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import io.jenkins.plugins.analysis.core.model.SvgIconLabelProvider;
+
 /**
  * Provides a parser and customized messages for FindBugs.
  *
@@ -32,6 +35,11 @@ public class SpotBugs extends FindBugs {
         @Override
         public boolean canScanConsoleLog() {
             return false;
+        }
+
+        @Override
+        public StaticAnalysisLabelProvider getLabelProvider() {
+            return new SvgIconLabelProvider(getId(), getName(), getDescriptionProvider());
         }
     }
 }

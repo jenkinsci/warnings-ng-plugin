@@ -28,7 +28,7 @@ import io.jenkins.plugins.analysis.core.model.DescriptionProvider;
 import io.jenkins.plugins.analysis.core.model.DetailsTableModel;
 import io.jenkins.plugins.analysis.core.model.FileNameRenderer;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
-import io.jenkins.plugins.analysis.core.model.SvgIconLabelProvider;
+import io.jenkins.plugins.analysis.core.model.SymbolIconLabelProvider;
 import io.jenkins.plugins.datatables.TableColumn;
 import io.jenkins.plugins.datatables.TableColumn.ColumnBuilder;
 import io.jenkins.plugins.datatables.TableColumn.ColumnCss;
@@ -102,11 +102,11 @@ public abstract class DuplicateCodeScanner extends AnalysisModelParser {
     }
 
     /** Provides icons for DRY parsers. */
-    static class DryLabelProvider extends SvgIconLabelProvider {
+    static class DryLabelProvider extends SymbolIconLabelProvider {
         private static final Sanitizer SANITIZER = new Sanitizer();
 
         protected DryLabelProvider(final String id, final String name) {
-            super(id, name, EMPTY_DESCRIPTION, "dry");
+            super(id, name, EMPTY_DESCRIPTION, "symbol-regular/clone plugin-font-awesome-api");
         }
 
         @Override

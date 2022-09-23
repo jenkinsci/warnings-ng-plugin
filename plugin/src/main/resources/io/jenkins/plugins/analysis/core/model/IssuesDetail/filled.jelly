@@ -53,7 +53,18 @@
 
         <div id="statistics">
 
-          <bs:card title="${%Details}" pngIcon="${resURL}/${it.labelProvider.largeIconUrl}">
+          <j:choose>
+            <j:when test="${it.labelProvider.largeIconUrl.startsWith('symbol')}">
+              <j:set var="png" value="${null}"/>
+              <j:set var="symbol" value="${it.labelProvider.largeIconUrl}"/>
+            </j:when>
+            <j:otherwise>
+              <j:set var="png" value="${resURL}/${it.labelProvider.largeIconUrl}"/>
+              <j:set var="symbol" value="${null}"/>
+            </j:otherwise>
+          </j:choose>
+
+          <bs:card title="${%Details}" pngIcon="${png}" symbol="${symbol}">
             <div class="tabBarFrame">
               <ul class="flex-wrap tabBar" role="tablist" id="tab-details">
 
@@ -69,16 +80,23 @@
 
                 <j:if test="${i.isNotEmpty()}">
                   <li class="nav-item tab" role="presentation">
-                    <a class="nav-link" id="issuesContent-tab" data-bs-toggle="tab" data-bs-target="#issuesContent" type="button" role="tab" aria-controls="issuesContent" aria-selected="false">${l.issues}</a>
+                    <a class="nav-link" id="issuesContent-tab" data-bs-toggle="tab" data-bs-target="#issuesContent"
+                       type="button" role="tab" aria-controls="issuesContent" aria-selected="false">${l.issues}
+                    </a>
                   </li>
                   <j:if test="${it.isBlameVisible()}">
                     <li class="nav-item tab" role="presentation">
-                      <a class="nav-link" id="blamesContent-tab" data-bs-toggle="tab" data-bs-target="#blamesContent" type="button" role="tab" aria-controls="blamesContent" aria-selected="false">${%SCM Blames}</a>
+                      <a class="nav-link" id="blamesContent-tab" data-bs-toggle="tab" data-bs-target="#blamesContent"
+                         type="button" role="tab" aria-controls="blamesContent" aria-selected="false">${%SCM Blames}
+                      </a>
                     </li>
                   </j:if>
                   <j:if test="${it.isForensicsVisible()}">
                     <li class="nav-item tab" role="presentation">
-                      <a class="nav-link" id="forensicsContent-tab" data-bs-toggle="tab" data-bs-target="#forensicsContent" type="button" role="tab" aria-controls="forensicsContent" aria-selected="false">${%SCM Forensics}</a>
+                      <a class="nav-link" id="forensicsContent-tab" data-bs-toggle="tab"
+                         data-bs-target="#forensicsContent" type="button" role="tab" aria-controls="forensicsContent"
+                         aria-selected="false">${%SCM Forensics}
+                      </a>
                     </li>
                   </j:if>
                 </j:if>
@@ -108,7 +126,8 @@
                   </div>
                 </j:if>
                 <j:if test="${it.isForensicsVisible()}">
-                  <div role="tabpanel" id="forensicsContent" class="tab-pane fade" aria-labelledby="forensicsContent-tab">
+                  <div role="tabpanel" id="forensicsContent" class="tab-pane fade"
+                       aria-labelledby="forensicsContent-tab">
                     <dt:table model="${it.getTableModel('forensics')}"/>
                   </div>
                 </j:if>
