@@ -1,0 +1,169 @@
+[
+  {
+  "code":"java.class.removed",
+  "old":"class edu.hm.hafner.analysis.parser.AquaScannerParser",
+  "new":null,
+  "name":"Incompatible with the current version: class removed",
+  "description":"Class was removed. (breaks semantic versioning)",
+  "criticality":"error",
+  "justification":null,
+  "classification":[
+    {"compatibility":"OTHER","severity":"BREAKING"},
+    {"compatibility":"SOURCE","severity":"BREAKING"},
+    {"compatibility":"BINARY","severity":"BREAKING"}],
+  "attachments":[
+    {"name":"package","value":"edu.hm.hafner.analysis.parser"},
+    {"name":"classQualifiedName","value":"edu.hm.hafner.analysis.parser.AquaScannerParser"},
+    {"name":"classSimpleName","value":"AquaScannerParser"},{"name":"elementKind","value":"class"},
+    {"name":"oldArchive","value":"edu.hm.hafner:analysis-model:jar:10.10.0"},
+    {"name":"oldArchiveRole", "value":"primary"},{"name":"breaksSemanticVersioning","value":"true"},
+    {"name":"breaksVersioningRules","value":"true"}]
+  },
+
+
+  {
+    "code":"java.class.added",
+    "old":null,
+    "new":"class edu.hm.hafner.analysis.parser.RevApiParser",
+    "name":"Incompatible with the current version: class added",
+    "description":"Class was added. (breaks semantic versioning)",
+    "criticality":"error",
+    "justification":null,
+    "classification":[
+      {"compatibility":"OTHER","severity":"BREAKING"},
+      {"compatibility":"SOURCE","severity":"NON_BREAKING"},
+      {"compatibility":"BINARY","severity":"NON_BREAKING"}],
+    "attachments":[
+      {"name":"package","value":"edu.hm.hafner.analysis.parser"},
+      {"name":"classQualifiedName","value":"edu.hm.hafner.analysis.parser.RevApiParser"},
+      {"name":"classSimpleName","value":"RevApiParser"},{"name":"elementKind","value":"class"},
+      {"name":"newArchive","value":"edu.hm.hafner:analysis-model:jar:10.10.2-SNAPSHOT"},
+      {"name":"newArchiveRole","value":"primary"},
+      {"name":"breaksSemanticVersioning","value":"true"},
+      {"name":"breaksVersioningRules","value":"true"}]
+  },
+
+
+  {
+    "code":"java.class.added",
+    "old":null,
+    "new":"class edu.hm.hafner.analysis.registry.RevApiDescriptor",
+    "name":"Incompatible with the current version: class added",
+    "description":"Class was added. (breaks semantic versioning)",
+    "criticality":"error",
+    "justification":null,
+    "classification":[
+      {"compatibility":"OTHER","severity":"BREAKING"},
+      {"compatibility":"SOURCE","severity":"NON_BREAKING"},
+      {"compatibility":"BINARY","severity":"NON_BREAKING"}],
+    "attachments":[
+      {"name":"package","value":"edu.hm.hafner.analysis.registry"},
+      {"name":"classQualifiedName","value":"edu.hm.hafner.analysis.registry.RevApiDescriptor"},
+      {"name":"classSimpleName","value":"RevApiDescriptor"},
+      {"name":"elementKind","value":"class"},
+      {"name":"newArchive","value":"edu.hm.hafner:analysis-model:jar:10.10.2-SNAPSHOT"},
+      {"name":"newArchiveRole","value":"primary"},
+      {"name":"breaksSemanticVersioning","value":"true"},
+      {"name":"breaksVersioningRules","value":"true"}]
+  },
+
+
+  {
+    "code":"java.class.added",
+    "old":null,
+    "new":"class edu.hm.hafner.util.RevApiNewClass",
+    "name":"Incompatible with the current version: class added",
+    "description":"Class was added. (breaks semantic versioning)",
+    "criticality":"error",
+    "justification":null,
+    "classification":[
+      {"compatibility":"OTHER","severity":"BREAKING"},
+      {"compatibility":"SOURCE","severity":"NON_BREAKING"},
+      {"compatibility":"BINARY","severity":"NON_BREAKING"}],
+    "attachments":[
+      {"name":"package","value":"edu.hm.hafner.util"},
+      {"name":"classQualifiedName","value":"edu.hm.hafner.util.RevApiNewClass"},
+      {"name":"classSimpleName","value":"RevApiNewClass"},
+      {"name":"elementKind","value":"class"},
+      {"name":"newArchive","value":"edu.hm.hafner:analysis-model:jar:10.10.2-SNAPSHOT"},
+      {"name":"newArchiveRole","value":"primary"},
+      {"name":"breaksSemanticVersioning","value":"true"},
+      {"name":"breaksVersioningRules","value":"true"}]
+  },
+
+
+  {
+    "code":"java.method.removed",
+    "old":"method int shaded.org.objectweb.asm.ByteVector::size()",
+    "new":null,
+    "name":"Incompatible with the current version: method removed",
+    "description":"Method was removed. (breaks semantic versioning)",
+    "criticality":"error",
+    "justification":null,
+    "classification":[
+      {"compatibility":"OTHER","severity":"BREAKING"},
+      {"compatibility":"SOURCE","severity":"BREAKING"},
+      {"compatibility":"BINARY","severity":"BREAKING"}],
+    "attachments":[
+      {"name":"package","value":"shaded.org.objectweb.asm"},
+      {"name":"classQualifiedName","value":"shaded.org.objectweb.asm.ByteVector"},
+      {"name":"classSimpleName","value":"ByteVector"},
+      {"name":"methodName","value":"size"},
+      {"name":"elementKind","value":"method"},
+      {"name":"oldArchive","value":"edu.hm.hafner:analysis-model:jar:10.10.0"},
+      {"name":"oldArchiveRole","value":"primary"},
+      {"name":"breaksSemanticVersioning","value":"true"},
+      {"name":"breaksVersioningRules","value":"true"}]
+  },
+
+
+  {
+    "code":"java.method.removed",
+    "old":"method boolean shaded.org.objectweb.asm.ClassWriter::hasFlags(int)",
+    "new":null,
+    "name":"Incompatible with the current version: method removed",
+    "description":"Method was removed. (breaks semantic versioning)",
+    "criticality":"error",
+    "justification":null,
+    "classification":[
+      {"compatibility":"OTHER","severity":"BREAKING"},
+      {"compatibility":"SOURCE","severity":"BREAKING"},
+      {"compatibility":"BINARY","severity":"BREAKING"}],
+    "attachments": [
+      {"name":"package","value":"shaded.org.objectweb.asm"},
+      {"name":"classQualifiedName","value":"shaded.org.objectweb.asm.ClassWriter"},
+      {"name":"classSimpleName","value":"ClassWriter"},
+      {"name":"methodName","value":"hasFlags"},
+      {"name":"elementKind","value":"method"},
+      {"name":"oldArchive","value":"edu.hm.hafner:analysis-model:jar:10.10.0"},
+      {"name":"oldArchiveRole","value":"primary"},
+      {"name":"breaksSemanticVersioning","value":"true"},
+      {"name":"breaksVersioningRules","value":"true"}]
+  },
+
+
+  {
+    "code":"java.field.removedWithConstant",
+    "old":"field shaded.org.objectweb.asm.Opcodes.V19",
+    "new":null,
+    "name":"Incompatible with the current version: field with constant removed",
+    "description":"Field with constant value has been removed. (breaks semantic versioning)",
+    "criticality":"error",
+    "justification":null,
+    "classification":[
+      {"compatibility":"OTHER","severity":"BREAKING"},
+      {"compatibility":"SOURCE","severity":"BREAKING"},
+      {"compatibility":"SEMANTIC","severity":"POTENTIALLY_BREAKING"},
+      {"compatibility":"BINARY","severity":"NON_BREAKING"}],
+    "attachments":[
+      {"name":"package","value":"shaded.org.objectweb.asm"},
+      {"name":"classQualifiedName","value":"shaded.org.objectweb.asm.Opcodes"},
+      {"name":"classSimpleName","value":"Opcodes"},
+      {"name":"fieldName","value":"V19"},
+      {"name":"elementKind","value":"field"},
+      {"name":"oldArchive","value":"edu.hm.hafner:analysis-model:jar:10.10.0"},
+      {"name":"oldArchiveRole","value":"primary"},
+      {"name":"breaksSemanticVersioning","value":"true"},
+      {"name":"breaksVersioningRules","value":"true"}]
+  }
+]

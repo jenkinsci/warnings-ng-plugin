@@ -29,10 +29,10 @@ import static io.jenkins.plugins.analysis.warnings.IssuesColumnConfiguration.*;
  */
 @WithPlugins({"warnings-ng", "dashboard-view"})
 public class SmokeTests extends UiTest {
-    private static final String CHECKSTYLE_ICON = "/checkstyle-24x24.png";
+    private static final String CHECKSTYLE_ICON = "/checkstyle.svg";
     private static final String FINDBUGS_ICON = "/findbugs-24x24.png";
-    private static final String ANALYSIS_ICON = "/analysis.svg";
-    private static final String DRY_ICON = "/dry.svg";
+    private static final String ANALYSIS_ICON = "/triangle-exclamation%20plugin-font-awesome-api";
+    private static final String DRY_ICON = "/clone%20plugin-font-awesome-api";
     private static final String PMD_ICON = "/pmd-24x24.png";
 
     /**
@@ -150,7 +150,7 @@ public class SmokeTests extends UiTest {
         job.script.set("node {\n"
                 + createReportFilesStep(job, buildNumber)
                 + "recordIssues(tool: checkStyle(pattern: '**/checkstyle*', name: '" + CHECK_STYLE_NAME + "'))\n"
-                + "recordIssues tool: pmdParser(pattern: '**/pmd*')\n"
+                + "recordIssues tool: analysisParser(analysisModelId: 'pmd', pattern: '**/pmd*')\n"
                 + "recordIssues tools: [cpd(pattern: '**/cpd*', highThreshold:8, normalThreshold:3), findBugs()], aggregatingResults: 'false' \n"
                 + "recordIssues tool: pep8(pattern: '**/" + PEP8_FILE + "')\n"
                 + "def total = tm('${ANALYSIS_ISSUES_COUNT}')\n"

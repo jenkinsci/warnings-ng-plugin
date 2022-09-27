@@ -19,7 +19,7 @@
     </j:choose>
     <j:if test="${total.isPresent()}">
       <div class="jenkins-tooltip healthReportDetails">
-        <table class="bigtable stripped-odd">
+        <table class="jenkins-table">
           <thead>
             <tr>
               <th/>
@@ -31,7 +31,7 @@
             <j:forEach var="result" items="${it.getDetails(job)}">
               <tr>
                 <td align="left">
-                  <img src="${resURL}/${result.icon}" style="width: 16px; height: 16px; " />
+                  <img src="${resURL}/${result.icon}" style="width: 24px; height: 24px; " />
                 </td>
                 <td><a href="${rootURL}/${job.url}/${result.url}">${result.name}</a></td>
                 <td align="right">${result.total}</td>

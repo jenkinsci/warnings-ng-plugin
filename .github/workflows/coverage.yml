@@ -13,7 +13,7 @@ jobs:
     name: Coverage on Ubuntu
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v3
       - name: Set up JDK 11
         uses: actions/setup-java@v3
         with:
@@ -24,10 +24,10 @@ jobs:
       - name: Generate coverage with JaCoCo
         env:
           BROWSER: firefox-container
-        run: mvn -V -ntp clean verify jacoco:prepare-agent test integration-test jacoco:report --file plugin/pom.xml '-Dgpg.skip'
+        run: mvn -V --color always -ntp clean verify jacoco:prepare-agent test integration-test jacoco:report --file plugin/pom.xml '-Dgpg.skip'
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3.0.0
+        uses: codecov/codecov-action@v3.1.1
         with:
           token: ${{secrets.CODECOV_TOKEN}}
           file: ./plugin/target/site/jacoco/jacoco.xml

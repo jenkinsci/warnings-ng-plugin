@@ -13,6 +13,8 @@ import org.openqa.selenium.support.ui.Select;
 import com.gargoylesoftware.htmlunit.ScriptResult;
 import com.google.inject.Injector;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.PageObject;
 
@@ -25,6 +27,7 @@ import org.jenkinsci.test.acceptance.po.PageObject;
  */
 public class AnalysisResult extends PageObject {
     private static final int MAX_ATTEMPTS = 5;
+    private static final String TARGET_HREF = "data-bs-target";
     private final String id;
 
     /**
@@ -67,7 +70,7 @@ public class AnalysisResult extends PageObject {
     public Tab getActiveTab() {
         WebElement activeTab = find(By.xpath("//a[@role='tab' and contains(@class, 'active')]"));
 
-        return Tab.valueWithHref(extractRelativeUrl(activeTab.getAttribute("href")));
+        return Tab.valueWithHref(extractRelativeUrl(activeTab.getAttribute(TARGET_HREF)));
     }
 
     /**
@@ -77,7 +80,7 @@ public class AnalysisResult extends PageObject {
      */
     public Collection<Tab> getAvailableTabs() {
         return all(By.xpath("//a[@role='tab']")).stream()
-                .map(tab -> tab.getAttribute("href"))
+                .map(tab -> tab.getAttribute(TARGET_HREF))
                 .map(this::extractRelativeUrl)
                 .map(Tab::valueWithHref)
                 .collect(Collectors.toList());
@@ -284,10 +287,11 @@ public class AnalysisResult extends PageObject {
     /**
      * Clicks the next-button to cycle through the Trend Charts.
      */
+    @SuppressFBWarnings(value = "THROWS", justification = "3rd party library we cannot change")
     public void clickNextOnTrendCarousel() {
         WebElement trendChart = getTrendChart();
         WebElement activeChart = trendChart.findElement(By.className("active"));
-        trendChart.findElement(By.className("carousel-control-next-icon")).click();
+        trendChart.findElement(By.className("carousel-control-next")).click();
         waitFor().until(() -> !activeChart.isDisplayed());
     }
 
@@ -356,7 +360,7 @@ public class AnalysisResult extends PageObject {
          * @return the selenium filter rule
          */
         By getXpath() {
-            return By.xpath("//a[@href='#" + contentId + "']");
+            return By.xpath("//a[@" + TARGET_HREF + "='#" + contentId + "']");
         }
 
         /**

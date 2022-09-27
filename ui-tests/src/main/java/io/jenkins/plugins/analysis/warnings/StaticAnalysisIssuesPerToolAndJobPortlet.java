@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.warnings;
 
 import org.jenkinsci.test.acceptance.plugins.dashboard_view.AbstractDashboardViewPortlet;
 import org.jenkinsci.test.acceptance.plugins.dashboard_view.DashboardView;
+import org.jenkinsci.test.acceptance.po.Control;
 import org.jenkinsci.test.acceptance.po.Describable;
 
 /**
@@ -9,8 +10,12 @@ import org.jenkinsci.test.acceptance.po.Describable;
  *
  * @author Lukas Kirner
  */
+// TODO: add tool selection
 @Describable("Static analysis issues per tool and job")
 public class StaticAnalysisIssuesPerToolAndJobPortlet extends AbstractDashboardViewPortlet {
+    private final Control hideCleanJobs = control("hideCleanJobs");
+    private final Control showIcons = control("showIcons");
+
     /**
      * Creates a new portlet page object.
      *
@@ -23,11 +28,11 @@ public class StaticAnalysisIssuesPerToolAndJobPortlet extends AbstractDashboardV
         super(parent, path);
     }
 
-    void toggleHideCleanJobs() {
-        this.find(by.name("_.hideCleanJobs")).click();
+    void setHideCleanJobs(final boolean checked) {
+        hideCleanJobs.check(checked);
     }
 
-    void toggleShowIcons() {
-        this.find(by.name("_.showIcons")).click();
+    void setShowIcons(final boolean checked) {
+        showIcons.check(checked);
     }
 }

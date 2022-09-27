@@ -1,0 +1,104 @@
+{
+  "scan_id": "1234",
+  "scan_status": "SUCCESS",
+  "message": "Scan successful. Results size: 100 bytes",
+  "modules": [
+    "samlemodule"
+  ],
+  "modules_count": 1,
+  "findings": [
+    {
+      "title": "org.slf4j.Logger.info",
+      "issue_id": 1000,
+      "gob": "B",
+      "severity": 4,
+      "issue_type_id": "taint",
+      "issue_type": "Improper Output Neutralization for Logs",
+      "cwe_id": "117",
+      "display_text": "\u003cspan\u003eThis call to org.slf4j.Logger.info() could result in a log forging attack.  Writing untrusted data into a log file allows an attacker to forge log entries or inject malicious content into log files.  Corrupted log files can be used to cover an attacker\u0027s tracks or as a delivery mechanism for an attack on a log viewing or processing utility.  For example, if a web administrator uses a browser-based utility to review logs, a cross-site scripting attack might be possible. The second argument to info() contains tainted data from the variables (new Object\\[...\\]). The tainted data originated from an earlier call to AnnotationVirtualController.vc_annotation_entry.\u003c/span\u003e \u003cspan\u003eAvoid directly embedding user input in log files when possible.  Sanitize untrusted data used to construct log entries by using a safe logging mechanism such as the OWASP ESAPI Logger, which will automatically remove unexpected carriage returns and line feeds and can be configured to use HTML entity encoding for non-alphanumeric data.  Alternatively, some of the XSS escaping functions from the OWASP Java Encoder project will also sanitize CRLF sequences.  Only create a custom blocklist when absolutely necessary.  Always validate untrusted input to ensure that it conforms to the expected format, using centralized data validation routines when possible.\u003c/span\u003e \u003cspan\u003eReferences: \u003ca href\u003d\"https://cwe.mitre.org/data/definitions/117.html\"\u003eCWE\u003c/a\u003e \u003ca href\u003d\"https://owasp.org/www-community/attacks/Log_Injection\"\u003eOWASP\u003c/a\u003e \u003ca href\u003d\"https://docs.veracode.com/r/review_cleansers?tocId\u003dnYnZqAenFFZmB75MQrZwuA\"\u003eSupported Cleansers\u003c/a\u003e\u003c/span\u003e",
+      "files": {
+        "source_file": {
+          "file": "com/sample/LoggingFilter.java",
+          "line": 28,
+          "function_name": "preMatchingFilter",
+          "qualified_function_name": "com.sample.LoggingFilter.preMatchingFilter",
+          "function_prototype": "void preMatchingFilter(javax.ws.rs.container.ContainerRequestContext)",
+          "scope": "com.sample.LoggingFilter"
+        }
+      },
+      "flaw_details_link": "http://localhost/details/1"
+    },
+    {
+      "title": "set",
+      "issue_id": 1001,
+      "gob": "B",
+      "severity": 3,
+      "issue_type_id": "crypto",
+      "issue_type": "Use of Hard-coded Password",
+      "cwe_id": "259",
+      "display_text": "\u003cspan\u003eThis variable assignment uses a hard-coded password that may compromise system security in a way that cannot be easily remedied.  The use of a hard-coded password significantly increases the possibility that the account being protected will be compromised.  Moreover, the password cannot be changed without patching the software.  If a hard-coded password is compromised in a commercial product, all deployed instances may be vulnerable to attack.  In some cases, this finding may indicate a reference to a password (e.g. the name of a key in a properties file) rather than an actual password. set\u003c/span\u003e \u003cspan\u003eStore passwords out-of-band from the application code.  Follow best practices for protecting credentials stored in locations such as configuration or properties files. An HSM may be appropriate for particularly sensitive credentials.\u003c/span\u003e \u003cspan\u003eReferences: \u003ca href\u003d\"https://cwe.mitre.org/data/definitions/259.html\"\u003eCWE\u003c/a\u003e\u003c/span\u003e",
+      "files": {
+        "source_file": {
+          "file": "react/dist/esm/data.js",
+          "line": 25,
+          "function_name": "fetchData",
+          "qualified_function_name": "fetchData",
+          "function_prototype": "fetchData(: any,  : any,  : any,  : any,  : any, ...) : any",
+          "scope": "UNKNOWN"
+        }
+      },
+      "flaw_details_link": "http://localhost/details/2"
+    },
+    {
+      "title": "management:endpoint:health:show-details:",
+      "issue_id": 1000,
+      "gob": "B",
+      "severity": 2,
+      "issue_type_id": "crypto",
+      "issue_type": "Information Exposure Through Sent Data",
+      "cwe_id": "201",
+      "display_text": "\u003cspan\u003eWhile processing an exception, the application calls the management:endpoint:health:show-details:() function, which may expose sensitive information about the application.  This information can be useful in executing other attacks and can also enable the attacker to target known vulnerabilities in application components. \u003c/span\u003e \u003cspan\u003eCapture exceptions for debugging purposes, but ensure that only generic error messages are returned to the end user that do not reveal any additional details.\u003c/span\u003e \u003cspan\u003eReferences: \u003ca href\u003d\"https://cwe.mitre.org/data/definitions/201.html\"\u003eCWE\u003c/a\u003e\u003c/span\u003e",
+      "files": {
+        "source_file": {
+          "file": "BOOT-INF/classes/application.yml",
+          "line": 1,
+          "function_name": "application",
+          "qualified_function_name": "application.application.application",
+          "function_prototype": "void application(void)",
+          "scope": "application.application"
+        }
+      },
+      "flaw_details_link": "http://localhost/details/3"
+    },
+    {
+      "title": "nosourcefile",
+      "issue_id": 1000,
+      "gob": "B",
+      "severity": 1,
+      "issue_type_id": "other",
+      "issue_type": "No source_file present",
+      "cwe_id": "201",
+      "display_text": "No source_file present",
+      "files": {
+      },
+      "flaw_details_link": "http://localhost/details/4"
+    },
+    {
+      "title": "nofiles",
+      "issue_id": 1000,
+      "gob": "B",
+      "severity": 1,
+      "issue_type_id": "other",
+      "issue_type": "No files present",
+      "cwe_id": "201",
+      "display_text": "No files present",
+      "flaw_details_link": "http://localhost/details/5"
+    }
+  ],
+  "pipeline_scan": "22.7.0-0",
+  "project_name": "someproject",
+  "project_uri": "http://localhost/nowhere",
+  "project_ref": "someref",
+  "scan_app_id": "someapp",
+  "dev_stage": "DEVELOPMENT"
+}

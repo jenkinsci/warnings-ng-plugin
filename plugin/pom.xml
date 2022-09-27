@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>5.23.0</version>
+    <version>5.33.0</version>
     <relativePath />
   </parent>
 
@@ -21,25 +21,17 @@
   <url>https://github.com/jenkinsci/warnings-ng-plugin</url>
 
   <properties>
-    <revision>9.13.0</revision>
+    <revision>9.21.0</revision>
     <changelist>-SNAPSHOT</changelist>
     <module.name>${project.groupId}.warnings.ng</module.name>
 
-    <jenkins.baseline>2.319</jenkins.baseline>
+    <jenkins.baseline>2.346</jenkins.baseline>
+    <jenkins.version>2.346.3</jenkins.version>
 
-    <analysis-model-api.version>10.10.0</analysis-model-api.version>
+    <analysis-model-api.version>10.17.0</analysis-model-api.version>
     <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
-
-    <forensics-api-plugin.version>1.12.0</forensics-api-plugin.version>
-    <plugin-util-api.version>2.16.0</plugin-util-api.version>
-
-    <data-tables-api.version>1.11.4-4</data-tables-api.version>
-    <echarts-api.version>5.3.0-2</echarts-api.version>
-    <bootstrap5-api.version>5.1.3-6</bootstrap5-api.version>
-    <font-awesome-api.version>6.0.0-1</font-awesome-api.version>
-    <prism-api.version>1.26.0-2</prism-api.version>
-
     <pull-request-monitoring.version>1.7.8</pull-request-monitoring.version>
+    <prism-api.version>1.29.0-1</prism-api.version>
 
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
 
@@ -47,21 +39,21 @@
 
     <!-- Test Library Dependencies Versions -->
     <xmlunit.version>2.9.0</xmlunit.version>
-    <jsoup.version>1.14.3</jsoup.version>
+    <jsoup.version>1.15.3</jsoup.version>
     <json-smart.version>2.4.8</json-smart.version>
     <jmh.version>1.35</jmh.version>
-    <testcontainers.version>1.17.1</testcontainers.version>
+    <testcontainers.version>1.17.3</testcontainers.version>
 
     <!-- Jenkins Plug-in Dependencies Versions -->
     <autograding.version>3.3.1</autograding.version>
-    <git-forensics.version>1.7.0</git-forensics.version>
-    <jenkins-maven-plugin.version>3.16</jenkins-maven-plugin.version>
-    <job-dsl.version>1.78.3</job-dsl.version>
+    <git-forensics.version>1.10.0</git-forensics.version>
+    <jenkins-maven-plugin.version>3.19</jenkins-maven-plugin.version>
+    <job-dsl.version>1.81</job-dsl.version>
     <flexible-publish.version>0.15.2</flexible-publish.version>
     <form-element-path.version>1.11</form-element-path.version>
 
     <!-- Maven Surefire ArgLine -->
-    <argLine>-Djava.awt.headless=true -Xmx1024m -Djenkins.test.timeout=1000</argLine>
+    <argLine>-Djava.awt.headless=true -Xmx1024m -Djenkins.test.timeout=1000 --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.util.concurrent=ALL-UNNAMED</argLine>
   </properties>
 
   <licenses>
@@ -106,23 +98,22 @@
     <!-- Required Jenkins Plug-in Dependencies -->
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
-      <artifactId>plugin-util-api</artifactId>
-      <version>${plugin-util-api.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
       <artifactId>analysis-model-api</artifactId>
       <version>${analysis-model-api.version}</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
+      <artifactId>plugin-util-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
       <artifactId>font-awesome-api</artifactId>
-      <version>${font-awesome-api.version}</version>
+      <version>6.2.0-3</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>bootstrap5-api</artifactId>
-      <version>${bootstrap5-api.version}</version>
+      <version>5.2.1-2</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
@@ -131,12 +122,10 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>echarts-api</artifactId>
-      <version>${echarts-api.version}</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>data-tables-api</artifactId>
-      <version>${data-tables-api.version}</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
@@ -181,6 +170,10 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>forensics-api</artifactId>
+    </dependency>
 
     <!-- AxivionSuite Dependencies -->
     <dependency>
@@ -194,13 +187,18 @@
     <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
-      <version>2.9.0</version>
+      <version>2.9.1</version>
     </dependency>
 
     <!-- Optional Jenkins Plug-in Dependencies -->
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>matrix-project</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>dashboard-view</artifactId>
       <optional>true</optional>
     </dependency>
     <dependency>
@@ -222,23 +220,12 @@
       <version>9.3</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
-      <artifactId>forensics-api</artifactId>
-      <version>${forensics-api-plugin.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>dashboard-view</artifactId>
-      <optional>true</optional>
-    </dependency>
 
     <!-- Test Dependencies -->
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>forensics-api</artifactId>
-      <version>${forensics-api-plugin.version}</version>
-      <type>test-jar</type>
+      <classifier>tests</classifier>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -288,6 +275,10 @@
           <artifactId>*</artifactId>
           <groupId>org.ow2.asm</groupId>
         </exclusion>
+        <exclusion>
+          <groupId>com.google.errorprone</groupId>
+          <artifactId>error_prone_annotations</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -322,16 +313,20 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>plugin-util-api</artifactId>
-      <version>${plugin-util-api.version}</version>
       <scope>test</scope>
-      <type>test-jar</type>
+      <classifier>tests</classifier>
+      <exclusions>
+        <exclusion>
+          <groupId>com.google.errorprone</groupId>
+          <artifactId>error_prone_annotations</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>data-tables-api</artifactId>
-      <version>${data-tables-api.version}</version>
       <scope>test</scope>
-      <type>test-jar</type>
+      <classifier>tests</classifier>
     </dependency>
 
     <dependency>
@@ -399,6 +394,10 @@
           <groupId>commons-net</groupId>
           <artifactId>commons-net</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.jenkins-ci</groupId>
+          <artifactId>symbol-annotation</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -426,7 +425,7 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>ansicolor</artifactId>
-      <version>1.0.0</version>
+      <version>1.0.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -466,6 +465,18 @@
         <exclusion>
           <groupId>edu.hm.hafner</groupId>
           <artifactId>codingstyle</artifactId>
+        </exclusion>
+        <exclusion>
+          <artifactId>error_prone_annotations</artifactId>
+          <groupId>com.google.errorprone</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-lang3</artifactId>
+          <groupId>org.apache.commons</groupId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.jenkins-ci</groupId>
+          <artifactId>symbol-annotation</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -588,52 +599,36 @@
         <groupId>org.revapi</groupId>
         <artifactId>revapi-maven-plugin</artifactId>
         <configuration>
-          <failBuildOnProblemsFound>true</failBuildOnProblemsFound>
-          <!-- Including provided-scope dependencies like Jenkins core results in too many false positives -->
-          <checkDependencies>false</checkDependencies>
+          <failBuildOnProblemsFound>false</failBuildOnProblemsFound>
           <analysisConfiguration>
-            <revapi.ignore combine.children="append">
-              <item>
-                <regex>true</regex>
-                <code>java.field.serialVersionUIDUnchanged</code>
-                <classQualifiedName>io.jenkins.plugins.analysis.core.steps.*Step</classQualifiedName>
-                <justification>Serialization is only used in interprocess communication using the same classes
-                </justification>
-              </item>
-              <item>
-                <regex>true</regex>
-                <code>java.missing.*</code>
-                <justification>Dependencies are not being checked, so they are reported as missing</justification>
-              </item>
-              <item>
-                <code>java.annotation.added</code>
-                <annotationType>org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted</annotationType>
-                <justification>Annotation should be save to add.</justification>
-              </item>
-              <item>
-                <regex>true</regex>
-                <code>java.annotation.*</code>
-                <annotation>@edu.umd.cs.findbugs.annotations.*</annotation>
-                <justification>Annotation should be save to change.</justification>
-              </item>
-              <item>
-                <regex>true</regex>
-                <code>java.annotation.*</code>
-                <annotation>@org.kohsuke.stapler.*</annotation>
-                <justification>Annotation should be save to change.</justification>
-              </item>
-              <item>
-                <regex>true</regex>
-                <code>java.method.returnTypeChanged</code>
-                <methodName>getDescriptionProvider</methodName>
-                <justification>Return type must be part of the API.</justification>
-              </item>
-              <item>
-                <code>java.method.added</code>
-                <classSimpleName>Messages</classSimpleName>
-                <justification>Messages are now external API.</justification>
-              </item>
-            </revapi.ignore>
+            <revapi.differences id="manually-vetted">
+              <differences combine.children="append">
+                <item>
+                  <ignore>true</ignore>
+                  <regex>true</regex>
+                  <classQualifiedName>(org.jenkinsci.*|com.google.*)</classQualifiedName>
+                  <code>java.annotation.*</code>
+                </item>
+                <item>
+                  <ignore>true</ignore>
+                  <regex>true</regex>
+                  <classQualifiedName>jenkins.model.*</classQualifiedName>
+                  <code>java.field.removed</code>
+                </item>
+                <item>
+                  <ignore>true</ignore>
+                  <regex>true</regex>
+                  <classQualifiedName>jenkins.model.*</classQualifiedName>
+                  <code>java.class.externalClassExposedInAPI</code>
+                </item>
+                <item>
+                  <ignore>true</ignore>
+                  <regex>true</regex>
+                  <classQualifiedName>io.jenkins.plugins.analysis.core.steps.AnalysisStepDescriptor</classQualifiedName>
+                  <code>java.method.parameterTypeChanged</code>
+                </item>
+              </differences>
+            </revapi.differences>
           </analysisConfiguration>
         </configuration>
       </plugin>

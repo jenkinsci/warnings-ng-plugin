@@ -47,7 +47,7 @@ public class IconLabelProvider extends StaticAnalysisLabelProvider {
      * @param descriptionProvider
      *         provides additional descriptions for an issue
      * @param iconName
-     *         the the unique name of the icon file
+     *         the unique name of the icon file
      */
     public IconLabelProvider(final String id, final String name, final DescriptionProvider descriptionProvider,
             final String iconName) {

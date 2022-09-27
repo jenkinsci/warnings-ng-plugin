@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
 
 /**
  * Tests the class {@link JobAction}.
- * 
+ *
  * @author Kasper Heyndrickx
  * @author Ullrich Hafner
  */
@@ -26,6 +26,7 @@ class JobActionTest {
     private static final String TREND_NAME = "trend-name";
     private static final String ID = "jobaction-id";
     private static final String ANALYSIS_ID = "analysis-id";
+    private static final String ICON = "icon";
 
     @Test
     void shouldUseLabelProvider() {
@@ -49,6 +50,7 @@ class JobActionTest {
     void shouldShowIconIfThereIsABuildResultAvailable() throws IOException {
         StaticAnalysisLabelProvider labelProvider = mock(StaticAnalysisLabelProvider.class);
         when(labelProvider.getId()).thenReturn(ANALYSIS_ID);
+        when(labelProvider.getSmallIconUrl()).thenReturn(ICON);
 
         Job<?, ?> job = mock(Job.class);
         JobAction action = new JobAction(job, labelProvider, 1);
@@ -57,7 +59,7 @@ class JobActionTest {
         Run<?, ?> reference = createValidReferenceBuild(0);
         when(job.getLastCompletedBuild()).thenAnswer(i -> reference);
 
-        assertThat(action.getIconFileName()).isNotEmpty();
+        assertThat(action.getIconFileName()).isEqualTo(ICON);
         assertThat(action.isTrendVisible()).isFalse();
         assertThat(action.isTrendEmpty()).isTrue();
 

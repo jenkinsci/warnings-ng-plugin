@@ -12,6 +12,7 @@ import org.eclipse.collections.impl.factory.Sets;
 import edu.hm.hafner.analysis.Severity;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -818,6 +819,7 @@ public class PublishIssuesStep extends Step implements Serializable {
     /**
      * Actually performs the execution of the associated step.
      */
+    @SuppressFBWarnings(value = "THROWS", justification = "false positive")
     static class Execution extends AnalysisExecution<ResultAction> {
         private static final long serialVersionUID = 6438321240776419897L;
 

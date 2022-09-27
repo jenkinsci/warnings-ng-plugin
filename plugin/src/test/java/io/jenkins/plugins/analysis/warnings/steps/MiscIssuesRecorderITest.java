@@ -26,6 +26,7 @@ import io.jenkins.plugins.analysis.core.model.IssuesDetail;
 import io.jenkins.plugins.analysis.core.model.IssuesModel.IssuesRow;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.portlets.PullRequestMonitoringPortlet;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
@@ -52,7 +53,6 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 @SuppressWarnings({"PMD.ExcessiveImports", "checkstyle:ClassFanOutComplexity"})
 class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     private static final Pattern TAG_REGEX = Pattern.compile(">(.+?)</", Pattern.DOTALL);
-    private static final String ANALYSIS_ICON = "/plugin/warnings-ng/icons/analysis.svg";
 
     /**
      * Verifies that {@link FindBugs} handles the different severity mapping modes ({@link PriorityProperty}).
@@ -250,7 +250,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(portlet.isEmpty()).isTrue();
         assertThat(portlet.getId()).endsWith("analysis");
         assertThat(portlet.getTitle()).endsWith("Static Analysis");
-        assertThat(portlet.getIconUrl()).contains(ANALYSIS_ICON);
+        assertThat(portlet.getIconUrl()).contains(StaticAnalysisLabelProvider.ANALYSIS_SVG_ICON);
         assertThat(portlet.getDetailViewUrl()).contains("analysis");
     }
 
@@ -392,7 +392,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(portlet.hasQualityGate()).isFalse();
         assertThat(portlet.getId()).endsWith("eclipse");
         assertThat(portlet.getTitle()).endsWith("Eclipse ECJ");
-        assertThat(portlet.getIconUrl()).contains(ANALYSIS_ICON);
+        assertThat(portlet.getIconUrl()).contains(StaticAnalysisLabelProvider.ANALYSIS_SVG_ICON);
         assertThat(portlet.getDetailViewUrl()).contains("eclipse");
         assertThat(portlet.isEmpty()).isFalse();
 
@@ -787,7 +787,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private IssuesRow getIssuesModel(final AnalysisResult result, final int rowNumber) {
-        IssuesDetail issuesDetail = (IssuesDetail) result.getOwner().getAction(ResultAction.class).getTarget();
+        IssuesDetail issuesDetail = result.getOwner().getAction(ResultAction.class).getTarget();
         return (IssuesRow) issuesDetail.getTableModel("issues").getRows().get(rowNumber);
     }
 }

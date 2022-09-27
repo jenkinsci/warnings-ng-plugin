@@ -38,10 +38,10 @@ public class DashboardViewPortletUiTest extends UiTest {
 
         List<String> headers = dashboardTable.getHeaders();
         assertThat(headers.get(0)).contains("Job");
-        assertThat(headers.get(1)).contains("/checkstyle-24x24.png");
+        assertThat(headers.get(1)).contains("/checkstyle.svg");
 
         Map<String, Map<String, DashboardTableEntry>> table = dashboardTable.getTable();
-        assertThat(table.get(job.name).get("/checkstyle-24x24.png")).hasWarningsCount(4);
+        assertThat(table.get(job.name).get("/checkstyle.svg")).hasWarningsCount(4);
     }
 
     /**

@@ -35,8 +35,7 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String ECLIPSE = "Eclipse ECJ Warnings Trend";
     private static final String CHECKSTYLE = "CheckStyle Warnings Trend";
-    private static final String ANALYSIS_ICON = "plugin/warnings-ng/icons/analysis.svg";
-    private static final String CHECKSTYLE_ICON = "plugin/warnings-ng/icons/checkstyle-24x24.png";
+    private static final String CHECKSTYLE_ICON = "plugin/warnings-ng/icons/checkstyle.svg";
     private static final String ECLIPSE_URL_NAME = "eclipse";
     private static final String ECLIPSE_LOG = "eclipse.txt";
     private static final String CHECKSTYLE_XML = "checkstyle.xml";
@@ -56,7 +55,7 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         List<JobAction> jobActions = project.getActions(JobAction.class);
 
         assertThatTrendChartIsHidden(jobActions.get(0)); // trend chart requires at least two builds
-        assertThat(jobActions.get(0).getIconFileName()).endsWith(ANALYSIS_ICON);
+        assertThat(jobActions.get(0).getIconFileName()).endsWith(StaticAnalysisLabelProvider.ANALYSIS_SVG_ICON);
         assertThat(jobActions.get(0).getUrlName()).isEqualTo(ECLIPSE_URL_NAME);
 
         build = buildWithResult(project, Result.SUCCESS);
@@ -65,7 +64,7 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         jobActions = project.getActions(JobAction.class);
 
         assertThatTrendChartIsVisible(jobActions.get(0));
-        assertThat(jobActions.get(0).getIconFileName()).endsWith(ANALYSIS_ICON);
+        assertThat(jobActions.get(0).getIconFileName()).endsWith(StaticAnalysisLabelProvider.ANALYSIS_SVG_ICON);
         assertThat(jobActions.get(0).getUrlName()).isEqualTo(ECLIPSE_URL_NAME);
     }
 
@@ -220,7 +219,7 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
             eclipse = jobActions.get(0);
         }
         assertThat(eclipse.getTrendName()).isEqualTo(ECLIPSE);
-        assertThat(eclipse.getIconFileName()).endsWith(ANALYSIS_ICON);
+        assertThat(eclipse.getIconFileName()).endsWith(StaticAnalysisLabelProvider.ANALYSIS_SVG_ICON);
         assertThat(checkstyle.getTrendName()).isEqualTo(CHECKSTYLE);
         assertThat(checkstyle.getIconFileName()).endsWith(CHECKSTYLE_ICON);
 

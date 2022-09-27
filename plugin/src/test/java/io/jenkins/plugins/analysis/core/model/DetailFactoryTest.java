@@ -333,6 +333,8 @@ class DetailFactoryTest {
 
         StaticAnalysisLabelProvider labelProvider = mock(StaticAnalysisLabelProvider.class);
         when(labelProvider.getName()).thenReturn(PARENT_NAME);
+        when(labelProvider.getSmallIconUrl()).thenReturn(PARENT_NAME);
+        when(labelProvider.getLargeIconUrl()).thenReturn(PARENT_NAME);
 
         when(parent.getLabelProvider()).thenReturn(labelProvider);
 

@@ -115,9 +115,7 @@ public class DetailFactory {
                 }
             }
             else {
-                String description = labelProvider.getSourceCodeDescription(owner, issue);
-                String icon = jenkins.getImagePath(labelProvider.getSmallIconUrl());
-                Marker marker = asMarker(issue, description, icon);
+                Marker marker = asMarker(issue, labelProvider.getSourceCodeDescription(owner, issue), labelProvider.getSmallIconUrl());
                 try (Reader affectedFile = buildFolder.readFile(owner, issue.getFileName(), sourceEncoding)) {
                     return new SourceCodeViewModel(owner, issue.getBaseName(), affectedFile, marker);
                 }
