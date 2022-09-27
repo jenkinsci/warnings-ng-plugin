@@ -182,8 +182,6 @@ public abstract class ReportScanningTool extends Tool {
                 "Static analysis tool %s cannot scan console log output, please define a file pattern",
                 getActualName());
 
-        waitForConsoleToFlush(logger);
-
         Report consoleReport = new Report();
         consoleReport.logInfo("Parsing console log (workspace: '%s')", workspace);
         logger.log(consoleReport);
@@ -212,16 +210,6 @@ public abstract class ReportScanningTool extends Tool {
         builder.insert(0, ' ');
         builder.insert(0, count);
         return builder.toString();
-    }
-
-    private void waitForConsoleToFlush(final LogHandler logger) {
-        try {
-            logger.log("Sleeping for 5 seconds due to JENKINS-32191...");
-            Thread.sleep(5000);
-        }
-        catch (final InterruptedException ignored) {
-            // ignore
-        }
     }
 
     /**
