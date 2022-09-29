@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.core.model; // NOPMD
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,6 @@ import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import static io.jenkins.plugins.analysis.core.model.AnalysisHistory.JobResultEvaluationMode.*;
 import static io.jenkins.plugins.analysis.core.model.AnalysisHistory.QualityGateEvaluationMode.*;
 import static io.jenkins.plugins.analysis.core.model.AnalysisHistoryTest.ExpectedResult.*;
-import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -40,27 +40,27 @@ class AnalysisHistoryTest {
      */
     @Test
     void issue41598() {
-        Run last = createFailingBuild();
+        Run<?, ?> last = createFailingBuild();
 
         ResultAction lastAction = mock(ResultAction.class);
         AnalysisResult lastResult = mock(AnalysisResult.class);
         when(lastAction.getResult()).thenReturn(lastResult);
-        when(lastAction.getOwner()).thenReturn(last);
+        when(lastAction.getOwner()).thenAnswer(a -> last);
 
-        Run middle = createFailingBuild();
+        Run<?, ?> middle = createFailingBuild();
         ResultAction middleAction = mock(ResultAction.class);
         AnalysisResult middleResult = mock(AnalysisResult.class);
         when(middleAction.getResult()).thenReturn(middleResult);
-        when(middleAction.getOwner()).thenReturn(middle);
+        when(middleAction.getOwner()).thenAnswer(a -> middle);
 
-        Run first = createFailingBuild();
+        Run<?, ?> first = createFailingBuild();
         ResultAction firstAction = mock(ResultAction.class);
         AnalysisResult firstResult = mock(AnalysisResult.class);
         when(firstAction.getResult()).thenReturn(firstResult);
-        when(firstAction.getOwner()).thenReturn(first);
+        when(firstAction.getOwner()).thenAnswer(a -> first);
 
-        when(last.getPreviousBuild()).thenReturn(middle);
-        when(middle.getPreviousBuild()).thenReturn(first);
+        when(last.getPreviousBuild()).thenAnswer(a -> middle);
+        when(middle.getPreviousBuild()).thenAnswer(a -> first);
 
         ResultSelector resultSelector = mock(ResultSelector.class);
         when(resultSelector.get(last)).thenReturn(Optional.of(lastAction));
@@ -73,13 +73,13 @@ class AnalysisHistoryTest {
         assertThat(history.hasMultipleResults()).isTrue();
     }
 
-    private Run createFailingBuild() {
+    private Run<?, ?> createFailingBuild() {
         return createBuildWithResult(Result.FAILURE);
     }
 
     @Test
     void firstBaselineShouldHaveNoPreviousResult() {
-        Run baseline = mock(Run.class);
+        Run<?, ?> baseline = mock(Run.class);
         ResultSelector resultSelector = mock(ResultSelector.class);
         when(resultSelector.get(baseline)).thenReturn(Optional.empty());
 
@@ -97,12 +97,12 @@ class AnalysisHistoryTest {
      */
     @Test
     void baselineResultIsPreviousResultIfAlreadySet() {
-        Run baseline = mock(Run.class);
+        Run<?, ?> baseline = mock(Run.class);
         ResultSelector resultSelector = mock(ResultSelector.class);
         ResultAction baselineAction = mock(ResultAction.class);
         AnalysisResult baselineResult = mock(AnalysisResult.class);
         when(baselineAction.getResult()).thenReturn(baselineResult);
-        when(baselineAction.getOwner()).thenReturn(baseline);
+        when(baselineAction.getOwner()).thenAnswer(a -> baseline);
         when(resultSelector.get(baseline)).thenReturn(Optional.of(baselineAction));
 
         AnalysisHistory history = new AnalysisHistory(baseline, resultSelector);
@@ -149,7 +149,7 @@ class AnalysisHistoryTest {
             final JobResultEvaluationMode jobResultEvaluationMode,
             final QualityGateStatus qualityGateStatus, final Result jobStatus, final ExpectedResult expectedResult) {
         ResultSelector resultSelector = mock(ResultSelector.class);
-        Run baseline = createBuild(qualityGateStatus, jobStatus, resultSelector);
+        Run<?, ?> baseline = createBuild(qualityGateStatus, jobStatus, resultSelector);
 
         AnalysisHistory history = new AnalysisHistory(baseline, resultSelector, qualityGateEvaluationMode,
                 jobResultEvaluationMode);
@@ -164,26 +164,26 @@ class AnalysisHistoryTest {
         }
     }
 
-    private Run createBuild(final QualityGateStatus qualityGateStatus, final Result jobStatus,
+    private Run<?, ?> createBuild(final QualityGateStatus qualityGateStatus, final Result jobStatus,
             final ResultSelector resultSelector) {
-        Run baseline = createBuildWithResult(jobStatus);
+        Run<?, ?> baseline = createBuildWithResult(jobStatus);
 
         AnalysisResult result = mock(AnalysisResult.class);
-        when(result.getOwner()).thenReturn(baseline);
+        when(result.getOwner()).thenAnswer(a -> baseline);
         when(result.getQualityGateStatus()).thenReturn(qualityGateStatus);
-        
+
         ResultAction resultAction = mock(ResultAction.class);
         when(resultAction.getResult()).thenReturn(result);
-        when(resultAction.getOwner()).thenReturn(baseline);
+        when(resultAction.getOwner()).thenAnswer(a -> baseline);
         when(resultAction.isSuccessful()).thenReturn(qualityGateStatus.isSuccessful());
-        
+
         when(resultSelector.get(baseline)).thenReturn(Optional.of(resultAction));
-        
+
         return baseline;
     }
 
-    private Run createBuildWithResult(final Result jobStatus) {
-        Run baseline = mock(Run.class);
+    private Run<?, ?> createBuildWithResult(final Result jobStatus) {
+        Run<?, ?> baseline = mock(Run.class);
         when(baseline.getResult()).thenReturn(jobStatus);
         return baseline;
     }
@@ -193,8 +193,8 @@ class AnalysisHistoryTest {
      *
      * @return list of test data objects
      */
-    private static Iterable<Object> createTestDataForSuccessfulQualityGateAndNoFailedBuild() {
-        return asList(
+    private static Stream<Arguments> createTestDataForSuccessfulQualityGateAndNoFailedBuild() {
+        return Stream.of(
                 new BuildHistoryBuilder().setExpectedResult(FIRST)
                         .setJobResult(Result.SUCCESS)
                         .setQualityGateStatus(QualityGateStatus.INACTIVE)
@@ -244,8 +244,8 @@ class AnalysisHistoryTest {
      *
      * @return list of test data objects
      */
-    private static Iterable<Object> createTestDataForIgnoredQualityGateAndIgnoredBuildResult() {
-        return asList(
+    private static Stream<Arguments> createTestDataForIgnoredQualityGateAndIgnoredBuildResult() {
+        return Stream.of(
                 new BuildHistoryBuilder().setExpectedResult(FIRST)
                         .setJobResult(Result.SUCCESS)
                         .setQualityGateStatus(QualityGateStatus.INACTIVE)
@@ -295,8 +295,8 @@ class AnalysisHistoryTest {
      *
      * @return list of test data objects
      */
-    private static Iterable<Object> createTestDataForSuccessfulQualityGateAndIgnoredBuildResult() {
-        return asList(
+    private static Stream<Arguments> createTestDataForSuccessfulQualityGateAndIgnoredBuildResult() {
+        return Stream.of(
                 new BuildHistoryBuilder().setExpectedResult(FIRST)
                         .setJobResult(Result.SUCCESS)
                         .setQualityGateStatus(QualityGateStatus.INACTIVE)
@@ -347,8 +347,8 @@ class AnalysisHistoryTest {
      *
      * @return list of test data objects
      */
-    private static Iterable<Object> createTestDataForIgnoredQualityGateAndNoFailedBuild() {
-        return asList(
+    private static Stream<Arguments> createTestDataForIgnoredQualityGateAndNoFailedBuild() {
+        return Stream.of(
                 new BuildHistoryBuilder().setExpectedResult(FIRST)
                         .setJobResult(Result.SUCCESS)
                         .setQualityGateStatus(QualityGateStatus.INACTIVE)
@@ -436,7 +436,7 @@ class AnalysisHistoryTest {
          *
          * @return test arg
          */
-        Object build() {
+        Arguments build() {
             return Arguments.of(testName, expectedResult, qualityGateStatus, jobResult);
         }
     }
