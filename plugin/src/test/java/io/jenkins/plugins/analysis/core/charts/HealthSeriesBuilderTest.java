@@ -3,6 +3,7 @@ package io.jenkins.plugins.analysis.core.charts;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -28,8 +29,8 @@ class HealthSeriesBuilderTest {
 
     @SuppressFBWarnings("UPM")
     @SuppressWarnings("PMD.UnusedPrivateMethod")
-    private static Iterable<Object> testData() {
-        return asList(
+    private static Stream<Arguments> testData() {
+        return Stream.of(
                 new TestArgumentsBuilder()
                         .setTestName("all healthy when descriptor disabled")
                         .setDescriptor(createDisabledDescriptor())
@@ -205,7 +206,7 @@ class HealthSeriesBuilderTest {
          *
          * @return test arg
          */
-        Object build() {
+        Arguments build() {
             return Arguments.of(
                     name,
                     descriptor,
