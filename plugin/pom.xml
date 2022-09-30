@@ -42,7 +42,7 @@
     <jsoup.version>1.15.3</jsoup.version>
     <json-smart.version>2.4.8</json-smart.version>
     <jmh.version>1.35</jmh.version>
-    <testcontainers.version>1.17.3</testcontainers.version>
+    <testcontainers.version>1.17.4</testcontainers.version>
 
     <!-- Jenkins Plug-in Dependencies Versions -->
     <autograding.version>3.3.1</autograding.version>
