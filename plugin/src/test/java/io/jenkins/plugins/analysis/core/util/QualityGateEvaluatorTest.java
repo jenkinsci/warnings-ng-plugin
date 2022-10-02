@@ -134,6 +134,23 @@ class QualityGateEvaluatorTest {
     }
 
     @Test
+    void shouldIgnoreThresholdZero() {
+        Logger logger = new Logger();
+
+        IssuesStatisticsBuilder builder = new IssuesStatisticsBuilder();
+
+        QualityGateEvaluator qualityGate = new QualityGateEvaluator();
+
+        qualityGate.add(0, QualityGateType.TOTAL, QualityGateResult.UNSTABLE);
+        assertThat(qualityGate.evaluate(builder.setTotalNormalSize(1).build(), logger)).isEqualTo(QualityGateStatus.PASSED);
+        assertThat(logger.getMessages()).isEmpty();
+
+        qualityGate.add(0, QualityGateType.NEW, QualityGateResult.UNSTABLE);
+        assertThat(qualityGate.evaluate(builder.setNewNormalSize(1).build(), logger)).isEqualTo(QualityGateStatus.PASSED);
+        assertThat(logger.getMessages()).isEmpty();
+    }
+
+    @Test
     void shouldOverrideWarningWithFailure() {
         Logger logger = new Logger();
 
