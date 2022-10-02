@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.core.util;
 
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -11,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator.FormattedLogger;
+
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
 /**
  * Tests the class {@link QualityGateEvaluator}.
@@ -143,9 +143,11 @@ class QualityGateEvaluatorTest {
 
         qualityGate.add(0, QualityGateType.TOTAL, QualityGateResult.UNSTABLE);
         assertThat(qualityGate.evaluate(builder.setTotalNormalSize(1).build(), logger)).isEqualTo(QualityGateStatus.PASSED);
+        assertThat(logger.getMessages()).isEmpty();
 
         qualityGate.add(0, QualityGateType.NEW, QualityGateResult.UNSTABLE);
         assertThat(qualityGate.evaluate(builder.setNewNormalSize(1).build(), logger)).isEqualTo(QualityGateStatus.PASSED);
+        assertThat(logger.getMessages()).isEmpty();
     }
 
     @Test
