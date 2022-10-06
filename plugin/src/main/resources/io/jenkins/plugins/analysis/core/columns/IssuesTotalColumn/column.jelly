@@ -1,5 +1,6 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core">
+<j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout">
+
   <j:set var="total" value="${it.getTotal(job)}"/>
   <j:set var="url" value="${it.getUrl(job)}"/>
   <j:set var="tooltip">
@@ -7,22 +8,29 @@
       <div class="jenkins-tooltip healthReportDetails jenkins-tooltip--table-wrapper">
         <table class="jenkins-table">
           <thead>
-          <tr>
-            <th/>
-            <th align="left">${%Tool}</th>
-            <th align="right">${%Total}</th>
-          </tr>
+            <tr>
+              <th/>
+              <th align="left">${%Tool}</th>
+              <th align="right">${%Total}</th>
+            </tr>
           </thead>
           <tbody>
-          <j:forEach var="result" items="${it.getDetails(job)}">
-            <tr>
-              <td align="left">
-                <img src="${resURL}/${result.icon}" style="width: 24px; height: 24px; " />
-              </td>
-              <td><a href="${rootURL}/${job.url}/${result.url}">${result.name}</a></td>
-              <td align="right">${result.total}</td>
-            </tr>
-          </j:forEach>
+            <j:forEach var="result" items="${it.getDetails(job)}">
+              <tr>
+                <td align="left">
+                  <j:choose>
+                    <j:when test="${result.icon.startsWith('symbol')}">
+                      <l:icon class="icon-md" src="${result.icon}" />
+                    </j:when>
+                    <j:otherwise>
+                      <img src="${resURL}/${result.icon}" style="width: 24px; height: 24px; " />
+                    </j:otherwise>
+                  </j:choose>
+                </td>
+                <td><a href="${rootURL}/${job.url}/${result.url}">${result.name}</a></td>
+                <td align="right">${result.total}</td>
+              </tr>
+            </j:forEach>
           </tbody>
         </table>
       </div>
