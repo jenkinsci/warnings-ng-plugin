@@ -37,6 +37,7 @@
     </j:if>
   </j:set>
   <td class="healthReport issues-total" data-html-tooltip="${total.isPresent() ? tooltip : null}"
+      data-tooltip-interactive="true"
       onmouseover="this.className='healthReport hover';return true;"
       onmouseout="this.className='healthReport';return true;">
     <j:choose>
