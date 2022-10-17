@@ -47,7 +47,7 @@
     <!-- Jenkins Plug-in Dependencies Versions -->
     <autograding.version>3.3.1</autograding.version>
     <git-forensics.version>1.11.0</git-forensics.version>
-    <jenkins-maven-plugin.version>3.19</jenkins-maven-plugin.version>
+    <jenkins-maven-plugin.version>3.20</jenkins-maven-plugin.version>
     <job-dsl.version>1.81</job-dsl.version>
     <flexible-publish.version>0.15.2</flexible-publish.version>
     <form-element-path.version>1.11</form-element-path.version>
