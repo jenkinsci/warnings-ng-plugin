@@ -4,6 +4,11 @@ The findbugs logo is a trademark by The University of Maryland. These icons are 
 
 ------------------------------------------------------------------------------
 
+
+The Ansible logo Ansible_default-logo.svg generted from https://github.com/ansible/ansible-hub-ui/blob/master/static/images/default-logo.svg
+
+------------------------------------------------------------------------------
+
 SpotBugs Logos and Icons are licensed under CC BY 4.0.
 
 ------------------------------------------------------------------------------
