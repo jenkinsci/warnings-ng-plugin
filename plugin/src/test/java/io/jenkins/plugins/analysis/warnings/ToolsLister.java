@@ -69,7 +69,7 @@ class ToolsLister extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private String getIcon(final StaticAnalysisLabelProvider labelProvider, final String icon) {
-        if (icon.matches(".*analysis-\\d\\dx\\d\\d.png")) {
+        if (icon.startsWith("symbol")) {
             return "-";
         }
         return String.format("![%s](%s)", labelProvider.getName(),
