@@ -12,9 +12,9 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 
-import j2html.TagCreator;
 import j2html.tags.ContainerTag;
 import j2html.tags.DomContent;
+import j2html.tags.DomContentJoiner;
 import j2html.tags.EmptyTag;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser.AnalysisModelParserDescriptor;
@@ -92,7 +92,7 @@ class ToolsLister extends IntegrationTestWithJenkinsPerSuite {
         if (StringUtils.isNotBlank(descriptor.getHelp())) {
             rows.add(tr().with(td()
                     .attr("colspan", "5")
-                    .with(TagCreator.join(BULB_EMOJI, rawHtml(descriptor.getHelp())))));
+                    .with(DomContentJoiner.join(" ", true, BULB_EMOJI, rawHtml(descriptor.getHelp())))));
         }
         return rows;
     }
