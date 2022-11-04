@@ -384,11 +384,11 @@ target branch). That means we want to see what new warnings will be submitted by
 if the team merges the changes. 
 
 If you are using a Git branch source project, the Jenkins job that builds the target branch 
-will be selected automatically by running the reference recorder step. Simply call the step `discoverGitReferenceBuild` 
+will be selected automatically by running the reference recorder step. Simply call the step `discoverReferenceBuild` 
 before any of static analysis steps:
 
 ```groovy
-discoverGitReferenceBuild
+discoverReferenceBuild
 recordIssues tool: checkStyle(pattern: 'checkstyle-result.xml')
 ```
 
@@ -408,7 +408,7 @@ specify the Jenkins job that builds the target branch in the parameter `referenc
 snippet for an example on how to discover a baseline from such a reference job:
 
 ```groovy
-    discoverGitReferenceBuild referenceJob: 'my-reference-job'
+    discoverReferenceBuild referenceJob: 'my-reference-job'
     recordIssues tool: checkStyle(pattern: 'checkstyle-result.xml')
 ```
 
@@ -419,7 +419,7 @@ main branch diverged too heavily from the starting point of the current branch. 
 snippet that shows the relevant options for this feature. 
 
 ```groovy
-    discoverGitReferenceBuild referenceJob: 'my-project/main-branch'
+    discoverReferenceBuild referenceJob: 'my-project/main-branch'
     recordIssues tool: java(), ignoreQualityGate: false, ignoreFailedBuilds: true
 ```
 

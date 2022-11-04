@@ -4,7 +4,7 @@ node('java11-agent') {
     }
 
     stage ('Git mining') {
-        discoverGitReferenceBuild()
+        discoverReferenceBuild()
         mineRepository()
         gitDiffStat()
     }
