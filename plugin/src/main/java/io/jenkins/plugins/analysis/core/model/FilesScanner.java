@@ -83,7 +83,7 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report> {
                 report.logError("Skipping file '%s' because Jenkins has no permission to read the file", fileName);
             }
             else if (isEmpty(file)) {
-                report.logError("Skipping file '%s' because it's empty", fileName);
+                report.logInfo("Skipping file '%s' because it's empty", fileName);
             }
             else {
                 aggregateIssuesOfFile(file, report);
