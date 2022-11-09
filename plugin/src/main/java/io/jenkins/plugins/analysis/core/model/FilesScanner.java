@@ -13,6 +13,7 @@ import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.analysis.parser.DoxygenParser;
 
 import hudson.remoting.VirtualChannel;
 import jenkins.MasterToSlaveFileCallable;
@@ -83,7 +84,12 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report> {
                 report.logError("Skipping file '%s' because Jenkins has no permission to read the file", fileName);
             }
             else if (isEmpty(file)) {
-                report.logInfo("Skipping file '%s' because it's empty", fileName);
+                if (parser instanceof DoxygenParser) {
+                    report.logInfo("File is empty '%s' ", fileName);
+                }
+                else {
+                    report.logError("Skipping file '%s' because it's empty", fileName);
+                }
             }
             else {
                 aggregateIssuesOfFile(file, report);
