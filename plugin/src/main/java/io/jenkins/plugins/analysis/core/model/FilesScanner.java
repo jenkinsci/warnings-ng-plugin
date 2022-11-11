@@ -34,6 +34,7 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report> {
     private final IssueParser parser;
     private final String encoding;
     private final boolean followSymbolicLinks;
+    private final boolean stdoutReport;
 
     /**
      * Creates a new instance of {@link FilesScanner}.
@@ -55,6 +56,8 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report> {
         this.parser = parser;
         this.encoding = encoding;
         this.followSymbolicLinks = followSymbolicLinks;
+        String stdoutReportProp = System.getProperty("warningsNgStdoutReport");
+        this.stdoutReport = stdoutReportProp == null ? true : Boolean.parseBoolean(stdoutReportProp);
     }
 
     @Override
@@ -106,10 +109,12 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report> {
 
             aggregatedReport.addAll(fileReport);
             aggregatedReport.setOriginReportFile(file.toString());
-            aggregatedReport.logInfo("Successfully parsed file %s", file);
-            aggregatedReport.logInfo("-> found %s (skipped %s)",
-                    plural(fileReport.getSize(), "issue"),
-                    plural(fileReport.getDuplicatesSize(), "duplicate"));
+            if (stdoutReport) {
+                aggregatedReport.logInfo("Successfully parsed file %s", file);
+                aggregatedReport.logInfo("-> found %s (skipped %s)",
+                        plural(fileReport.getSize(), "issue"),
+                        plural(fileReport.getDuplicatesSize(), "duplicate"));
+            }
         }
         catch (ParsingException exception) {
             aggregatedReport.logException(exception, "Parsing of file '%s' failed due to an exception:", file);
