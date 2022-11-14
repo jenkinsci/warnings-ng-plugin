@@ -56,8 +56,8 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report> {
         this.parser = parser;
         this.encoding = encoding;
         this.followSymbolicLinks = followSymbolicLinks;
-        String stdoutReportProp = System.getProperty("warningsNgStdoutReport");
-        this.stdoutReport = stdoutReportProp == null ? true : Boolean.parseBoolean(stdoutReportProp);
+        String stdoutReportProp = System.getProperty("io.jenkins.plugins.analysis.core.model.FilesScanner.logParsedFiles");
+        this.stdoutReport = stdoutReportProp == null || Boolean.parseBoolean(stdoutReportProp);
     }
 
     @Override
