@@ -607,6 +607,16 @@ node {
 }
 ``` 
   
+### Parsed files logging
+
+By default parsed file generates console output with number of found issues. This behaviour can be overriden by system property `io.jenkins.plugins.analysis.core.model.FilesScanner.logParsedFiles`.
+Jenkins service configuration suppressing such console output would then be like:
+
+```
+[Service]
+Environment="JAVA_OPTS=-Dio.jenkins.plugins.analysis.core.model.FilesScanner.logParsedFiles=false"
+```
+
 ## New features
 
 The most important new features are described in the following sections. 
