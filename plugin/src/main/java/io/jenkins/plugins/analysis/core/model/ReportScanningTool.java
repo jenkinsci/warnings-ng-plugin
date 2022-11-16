@@ -30,6 +30,7 @@ import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
 import io.jenkins.plugins.prism.CharsetValidation;
 import io.jenkins.plugins.util.EnvironmentResolver;
+import io.jenkins.plugins.util.FilesScanner.ScannerResult;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 import static io.jenkins.plugins.analysis.core.util.ConsoleLogHandler.*;
@@ -162,12 +163,12 @@ public abstract class ReportScanningTool extends Tool {
 
     private Report scanInWorkspace(final FilePath workspace, final String expandedPattern, final LogHandler logger) {
         try {
-            Report report = workspace.act(
-                    new FilesScanner(expandedPattern, reportEncoding, followSymlinks(), createParser()));
+            ScannerResult<Report> report = workspace.act(
+                    new IssueReportScanner(expandedPattern, reportEncoding, followSymlinks(), createParser()));
 
-            logger.log(report);
+            logger.log(report.getLog());
 
-            return report;
+            return new Report(report.getResults());
         }
         catch (IOException e) {
             throw new ParsingException(e);
