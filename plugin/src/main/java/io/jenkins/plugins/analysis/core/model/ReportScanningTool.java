@@ -29,8 +29,8 @@ import io.jenkins.plugins.analysis.core.util.ConsoleLogReaderFactory;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
 import io.jenkins.plugins.prism.CharsetValidation;
+import io.jenkins.plugins.util.AgentFileVisitor.ScannerResult;
 import io.jenkins.plugins.util.EnvironmentResolver;
-import io.jenkins.plugins.util.FilesScanner.ScannerResult;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 import static io.jenkins.plugins.analysis.core.util.ConsoleLogHandler.*;
@@ -296,7 +296,7 @@ public abstract class ReportScanningTool extends Tool {
         }
 
         /**
-         * Indicates whether or not this scanning tool has a default pattern. If it
+         * Indicates whether this scanning tool has a default pattern, or not. If it
          * does, it means it can never scan the console, but also means that we don't
          * require a user-specified pattern as we have a usable default.
          *
@@ -304,8 +304,7 @@ public abstract class ReportScanningTool extends Tool {
          */
         public boolean hasDefaultPattern() {
             // Maintenance note: We must use the same "is this empty/blank" logic as used in the runtime code.
-            final String defaultPattern = getPattern();
-            return StringUtils.isNotBlank(defaultPattern);
+            return StringUtils.isNotBlank(getPattern());
         }
 
         /**
