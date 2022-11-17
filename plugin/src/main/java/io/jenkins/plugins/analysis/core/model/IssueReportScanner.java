@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 
@@ -11,16 +10,18 @@ import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.FilteredLog;
 
-import io.jenkins.plugins.util.FilesScanner;
+import io.jenkins.plugins.util.FilesVisitor;
 
 /**
- * Scans files that match a specified Ant files pattern for issues and aggregates the found issues into a single {@link
- * Report issues} instance. This callable will be invoked on an agent so all fields and the returned issues need to
- * be {@link Serializable}.
+ * Scans the workspace for issues reports that match a specified Ant file pattern and parse these files with the
+ * specified parser. Creates a new {@link Report} for each parsed file. For files that cannot be read, an empty
+ * report will be returned.
  *
  * @author Ullrich Hafner
  */
-public class IssueReportScanner extends FilesScanner<Report> {
+public class IssueReportScanner extends FilesVisitor<Report> {
+    private static final long serialVersionUID = 1743707071107346225L;
+
     private final IssueParser parser;
 
     /**
@@ -61,16 +62,5 @@ public class IssueReportScanner extends FilesScanner<Report> {
             log.logInfo("Parsing of file %s has been canceled", file);
         }
         return new Report();
-    }
-
-    @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
-    private String plural(final int count, final String itemName) {
-        StringBuilder builder = new StringBuilder(itemName);
-        if (count != 1) {
-            builder.append('s');
-        }
-        builder.insert(0, ' ');
-        builder.insert(0, count);
-        return builder.toString();
     }
 }
