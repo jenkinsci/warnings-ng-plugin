@@ -101,7 +101,7 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>plugin-util-api</artifactId>
-      <version>2.19.0-rc607.916c48694a_4b</version>
+      <version>2.19.0-rc615.7fa_3366c35f1</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
