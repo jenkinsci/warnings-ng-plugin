@@ -10,7 +10,7 @@ import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.FilteredLog;
 
-import io.jenkins.plugins.util.FilesVisitor;
+import io.jenkins.plugins.util.AgentFileVisitor;
 
 /**
  * Scans the workspace for issues reports that match a specified Ant file pattern and parse these files with the
@@ -19,7 +19,7 @@ import io.jenkins.plugins.util.FilesVisitor;
  *
  * @author Ullrich Hafner
  */
-public class IssueReportScanner extends FilesVisitor<Report> {
+public class IssueReportScanner extends AgentFileVisitor<Report> {
     private static final long serialVersionUID = 1743707071107346225L;
 
     private final IssueParser parser;
