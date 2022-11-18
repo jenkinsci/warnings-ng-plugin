@@ -121,6 +121,10 @@ class ToolsLister extends IntegrationTestWithJenkinsPerSuite {
                 String fontAwesomeIcon = StringUtils.substringBefore(StringUtils.substringAfter(url, "symbol-"), " ");
                 return asImg(descriptor, "https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/" + fontAwesomeIcon + ".svg");
             }
+            if (url.endsWith("plugin-warnings-ng")) {
+                String warningsIcon = StringUtils.substringBefore(StringUtils.substringAfter(url, "symbol-"), " ");
+                return asImg(descriptor, "https://raw.githubusercontent.com/jenkinsci/warnings-ng-plugin/master/plugin/src/main/resources/images/symbols/" + warningsIcon + ".svg");
+            }
             return text(EMPTY);
         }
         return asImg(descriptor, url.replace("/plugin/warnings-ng/", "plugin/src/main/webapp/"));
