@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.core.model;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -10,6 +11,7 @@ import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.Ensure;
+import edu.hm.hafner.util.FilteredLog;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 import org.kohsuke.stapler.AncestorInPath;
@@ -79,7 +81,7 @@ public abstract class ReportScanningTool extends Tool {
 
     @Override
     public ReportScanningToolDescriptor getDescriptor() {
-        return (ReportScanningToolDescriptor)super.getDescriptor();
+        return (ReportScanningToolDescriptor) super.getDescriptor();
     }
 
     /**
@@ -166,9 +168,23 @@ public abstract class ReportScanningTool extends Tool {
             ScannerResult<Report> report = workspace.act(
                     new IssueReportScanner(expandedPattern, reportEncoding, followSymlinks(), createParser()));
 
-            logger.log(report.getLog());
+            FilteredLog log = report.getLog();
+            logger.log(log);
 
-            return new Report(report.getResults());
+            List<Report> results = report.getResults();
+            Report aggregation;
+            if (results.size() == 0) {
+                aggregation = new Report();
+            }
+            else if (results.size() == 1) {
+                aggregation = results.get(0);
+            }
+            else {
+                aggregation = new Report(results);
+            }
+            log.getInfoMessages().forEach(aggregation::logInfo);
+            log.getErrorMessages().forEach(aggregation::logError);
+            return aggregation;
         }
         catch (IOException e) {
             throw new ParsingException(e);
@@ -296,9 +312,8 @@ public abstract class ReportScanningTool extends Tool {
         }
 
         /**
-         * Indicates whether this scanning tool has a default pattern, or not. If it
-         * does, it means it can never scan the console, but also means that we don't
-         * require a user-specified pattern as we have a usable default.
+         * Indicates whether this scanning tool has a default pattern, or not. If it does, it means it can never scan
+         * the console, but also means that we don't require a user-specified pattern as we have a usable default.
          *
          * @return true if {@link #getPattern()} returns a non-empty string.
          */
