@@ -173,7 +173,7 @@ public abstract class ReportScanningTool extends Tool {
 
             List<Report> results = report.getResults();
             Report aggregation;
-            if (results.size() == 0) {
+            if (results.isEmpty()) {
                 aggregation = new Report();
             }
             else if (results.size() == 1) {
