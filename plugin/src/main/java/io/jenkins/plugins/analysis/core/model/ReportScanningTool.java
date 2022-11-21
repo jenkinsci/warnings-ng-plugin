@@ -31,7 +31,7 @@ import io.jenkins.plugins.analysis.core.util.ConsoleLogReaderFactory;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
 import io.jenkins.plugins.prism.CharsetValidation;
-import io.jenkins.plugins.util.AgentFileVisitor.ScannerResult;
+import io.jenkins.plugins.util.AgentFileVisitor.FileVisitorResult;
 import io.jenkins.plugins.util.EnvironmentResolver;
 import io.jenkins.plugins.util.JenkinsFacade;
 
@@ -165,7 +165,7 @@ public abstract class ReportScanningTool extends Tool {
 
     private Report scanInWorkspace(final FilePath workspace, final String expandedPattern, final LogHandler logger) {
         try {
-            ScannerResult<Report> report = workspace.act(
+            FileVisitorResult<Report> report = workspace.act(
                     new IssueReportScanner(expandedPattern, reportEncoding, followSymlinks(), createParser()));
 
             FilteredLog log = report.getLog();
