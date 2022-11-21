@@ -648,6 +648,7 @@
             <excludes combine.children="append">
               <exclude>**/JenkinsFacade.*</exclude>
               <exclude>**/*BlameRunner.*</exclude>
+              <exclude>**/*FilesScanner.*</exclude>
               <exclude>**/*Summary.class</exclude>
               <exclude>**/NullAnalysisHistory.*</exclude>
             </excludes>
