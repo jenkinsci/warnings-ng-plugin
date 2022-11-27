@@ -897,6 +897,12 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         shouldFindIssuesOfTool(12, new DiabC(), "diabc.txt");
     }
 
+    /** Runs the Polyspace parser on an output file that contains 9 issues. */
+    @Test
+    void shouldFindAllPolyspaceIssues() {
+        shouldFindIssuesOfTool(9, new PolyspaceParse(), "polyspace.csv");
+    }
+
     /** Runs the Doxygen parser on an output file that contains 18 issues. */
     @Test
     void shouldFindAllDoxygenIssues() {
