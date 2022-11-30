@@ -38,7 +38,7 @@ public class IssueReportScanner extends AgentFileVisitor<Report> {
      */
     public IssueReportScanner(final String filePattern, final String encoding,
             final boolean followSymbolicLinks, final IssueParser parser) {
-        super(filePattern, encoding, followSymbolicLinks);
+        super(filePattern, encoding, followSymbolicLinks, true);
 
         this.parser = parser;
     }
