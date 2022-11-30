@@ -65,6 +65,8 @@ public class PublishIssuesStep extends Step implements Serializable {
     private boolean skipPublishingChecks; // by default, warnings should be published to SCM platforms
     private boolean publishAllIssues; // by default, only new issues will be published
 
+    private boolean quiet = false; // by default, logger content goes to loghandler output
+
     private int healthy;
     private int unhealthy;
     private Severity minimumSeverity = Severity.WARNING_LOW;
@@ -220,6 +222,24 @@ public class PublishIssuesStep extends Step implements Serializable {
     @SuppressWarnings({"PMD.BooleanGetMethodName", "WeakerAccess"})
     public boolean getIgnoreFailedBuilds() {
         return ignoreFailedBuilds;
+    }
+
+    /**
+     * If {@code true}, then logger content is muted
+     * If {@code false}, then logger content goes to loghandler output
+     *
+     * @param quiet
+     *         if {@code true} then logger content is muted 
+     */
+    @DataBoundSetter
+    @SuppressWarnings("unused") // Used by Stapler
+    public void setQuiet(final boolean quiet) {
+        this.quiet = quiet;
+    }
+
+    @SuppressWarnings({"PMD.BooleanGetMethodName", "WeakerAccess"})
+    public boolean getQuiet() {
+        return quiet;
     }
 
     /**
@@ -886,7 +906,7 @@ public class PublishIssuesStep extends Step implements Serializable {
         private LogHandler getLogger(final AnnotatedReport report) throws InterruptedException {
             String toolName = new LabelProviderFactory().create(report.getId(),
                     StringUtils.defaultString(step.getName())).getName();
-            return new LogHandler(getTaskListener(), toolName, report.getReport());
+            return new LogHandler(getTaskListener(), toolName, step.getQuiet(), report.getReport());
         }
     }
 

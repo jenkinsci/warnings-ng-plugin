@@ -74,6 +74,7 @@ class IssuesScanner {
     private final TaskListener listener;
     private final String scm;
     private final BlameMode blameMode;
+    private final boolean quiet;
 
     enum BlameMode {
         ENABLED, DISABLED
@@ -83,7 +84,7 @@ class IssuesScanner {
     IssuesScanner(final Tool tool, final List<RegexpFilter> filters, final Charset sourceCodeEncoding,
             final FilePath workspace, final Set<String> sourceDirectories, final Run<?, ?> run,
             final FilePath jenkinsRootDir, final TaskListener listener,
-            final String scm, final BlameMode blameMode) {
+            final String scm, final BlameMode blameMode, final boolean quiet) {
         this.filters = new ArrayList<>(filters);
         this.sourceCodeEncoding = sourceCodeEncoding;
         this.tool = tool;
@@ -94,10 +95,11 @@ class IssuesScanner {
         this.listener = listener;
         this.scm = scm;
         this.blameMode = blameMode;
+        this.quiet = quiet;
     }
 
     public AnnotatedReport scan() throws IOException, InterruptedException {
-        LogHandler logger = new LogHandler(listener, tool.getActualName());
+        LogHandler logger = new LogHandler(listener, tool.getActualName(), quiet);
         Report report = tool.scan(run, workspace, sourceCodeEncoding, logger);
 
         AnnotatedReport annotatedReport = postProcessReport(report);

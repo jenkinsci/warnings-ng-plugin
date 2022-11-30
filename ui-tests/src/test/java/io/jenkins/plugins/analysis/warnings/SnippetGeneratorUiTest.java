@@ -77,6 +77,7 @@ public class SnippetGeneratorUiTest extends UiTest {
         assertThat(script).contains("enabledForFailure: true");
         assertThat(script).contains("ignoreFailedBuilds: false");
         assertThat(script).contains("ignoreQualityGate: true");
+        assertThat(script).contains("quiet: true");
 
         assertThat(script).contains("pattern: 'firstText'");
         assertThat(script).contains("sourceCodeEncoding: 'otherText'");
@@ -129,6 +130,7 @@ public class SnippetGeneratorUiTest extends UiTest {
         assertThat(script).contains("ignoreFailedBuilds: false");
         assertThat(script).contains("ignoreQualityGate: true");
         assertThat(script).contains("qualityGates: [[threshold: 1, type: 'NEW', unstable: false]]");
+        assertThat(script).contains("quiet: false");
 
         assertThat(script).contains("pattern: 'firstText'");
         assertThat(script).contains("sourceCodeEncoding: 'otherText'");

@@ -21,6 +21,8 @@ public class LogHandler {
     private final PluginLogger logger;
     private int infoPosition = 0;
     private int errorPosition = 0;
+    //private final boolean stdoutReport;
+    private boolean quiet = false;
 
     /**
      * Creates a new {@link LogHandler}.
@@ -30,8 +32,8 @@ public class LogHandler {
      * @param name
      *         the name of the logger
      */
-    public LogHandler(final TaskListener listener, final String name) {
-        this(listener, name, 0, 0);
+    public LogHandler(final TaskListener listener, final String name, final boolean quiet) {
+        this(listener, name, quiet, 0, 0);
     }
 
     /**
@@ -44,14 +46,20 @@ public class LogHandler {
      * @param report
      *         the report to log the messages from
      */
-    public LogHandler(final TaskListener listener, final String name, final Report report) {
-        this(listener, name, report.getInfoMessages().size(), report.getErrorMessages().size());
+    public LogHandler(final TaskListener listener, final String name, final boolean quiet,
+           final Report report) {
+        this(listener, name, quiet, report.getInfoMessages().size(), report.getErrorMessages().size());
     }
 
-    private LogHandler(final TaskListener listener, final String name, final int infoPosition,
-            final int errorPosition) {
+    private LogHandler(final TaskListener listener, final String name, final boolean quiet,
+            final int infoPosition, final int errorPosition) {
+
+        //String stdoutReportProp = System.getProperty("io.jenkins.plugins.analysis.core.model.FilesScanner.logParsedFiles");
+        //this.stdoutReport = stdoutReportProp == null || Boolean.parseBoolean(stdoutReportProp);
+
         logger = createLogger(listener, name);
         errorLogger = createErrorLogger(listener, name);
+        this.quiet = quiet;
         this.infoPosition = infoPosition;
         this.errorPosition = errorPosition;
     }
@@ -72,8 +80,10 @@ public class LogHandler {
      *         the issues with the collected logging messages
      */
     public void log(final Report report) {
-        logErrorMessages(report);
-        logInfoMessages(report);
+        if (!quiet) {
+            logErrorMessages(report);
+            logInfoMessages(report);
+        }
     }
 
     /**
