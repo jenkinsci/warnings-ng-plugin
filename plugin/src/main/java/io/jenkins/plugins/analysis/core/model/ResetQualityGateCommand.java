@@ -79,7 +79,7 @@ public class ResetQualityGateCommand {
      * @return {@code true} if the command is enabled, {@code false} otherwise
      */
     public boolean isEnabled(final Run<?, ?> selectedBuild, final String id) {
-        if (!jenkinsFacade.hasPermission(Item.CONFIGURE)) {
+        if (!selectedBuild.hasPermission(Item.CONFIGURE) && !jenkinsFacade.hasPermission(Item.CONFIGURE)) {
             return false;
         }
 

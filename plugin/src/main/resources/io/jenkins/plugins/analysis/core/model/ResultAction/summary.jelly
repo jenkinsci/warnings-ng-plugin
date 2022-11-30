@@ -84,7 +84,7 @@
         <j:if test="${s.qualityGateStatus.name() != 'INACTIVE'}">
           <li>
             ${%Quality gate}: ${s.qualityGateStatus.description}
-            <l:icon alt="${s.qualityGateStatus.description}" class="${s.qualityGateStatus.iconClass} icon-sm"/>
+            <l:icon style="width: 16px; height: 16px; margin-left: 0; position: relative; top: -0.1rem;" alt="${s.qualityGateStatus.description}" class="${s.qualityGateStatus.iconClass} icon-sm"/>
             <j:if test="${s.resetQualityGateVisible}">
               <span class="yui-button">
                 <button id="${it.id}-reset-reference"
