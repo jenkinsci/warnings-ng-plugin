@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.core.model;
 
 import java.nio.charset.Charset;
 import java.nio.file.Path;
+import java.util.Optional;
 
 import edu.hm.hafner.analysis.FileReaderFactory;
 import edu.hm.hafner.analysis.IssueParser;
@@ -44,7 +45,7 @@ public class IssueReportScanner extends AgentFileVisitor<Report> {
     }
 
     @Override
-    protected Report processFile(final Path file, final Charset charset, final FilteredLog log) {
+    protected Optional<Report> processFile(final Path file, final Charset charset, final FilteredLog log) {
         try {
             Report fileReport = parser.parseFile(new FileReaderFactory(file, charset));
 
@@ -53,7 +54,7 @@ public class IssueReportScanner extends AgentFileVisitor<Report> {
                     plural(fileReport.getSize(), "issue"),
                     plural(fileReport.getDuplicatesSize(), "duplicate"));
 
-            return fileReport;
+            return Optional.of(fileReport);
         }
         catch (ParsingException exception) {
             log.logException(exception, "Parsing of file '%s' failed due to an exception:", file);
@@ -61,6 +62,6 @@ public class IssueReportScanner extends AgentFileVisitor<Report> {
         catch (ParsingCanceledException ignored) {
             log.logInfo("Parsing of file %s has been canceled", file);
         }
-        return new Report();
+        return Optional.empty();
     }
 }
