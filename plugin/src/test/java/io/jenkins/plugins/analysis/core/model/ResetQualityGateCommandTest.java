@@ -145,7 +145,7 @@ class ResetQualityGateCommandTest {
     }
 
     private FreeStyleBuild attachReferenceBuild(final boolean hasNoReferenceBuild,
-            final boolean hasRight, final ResultAction resultAction) {
+            final boolean hasConfigurePermission, final ResultAction resultAction) {
         FreeStyleBuild selectedBuild = mock(FreeStyleBuild.class);
         when(selectedBuild.getActions(ResetReferenceAction.class)).thenReturn(
                 Lists.list(new ResetReferenceAction(hasNoReferenceBuild ? "other" : ID)));
