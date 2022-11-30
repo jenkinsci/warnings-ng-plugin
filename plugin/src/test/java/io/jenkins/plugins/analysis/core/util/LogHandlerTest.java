@@ -6,6 +6,7 @@ import java.io.PrintStream;
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.util.FilteredLog;
 
 import hudson.model.TaskListener;
 
@@ -23,6 +24,20 @@ class LogHandlerTest {
     private static final String NOT_SHOWN = "Not shown";
     private static final String ADDITIONAL_MESSAGE = "Additional";
     private static final String LOGGER_MESSAGE = "Logger message";
+
+    @Test
+    void shouldLogNothing() {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(outputStream);
+        TaskListener taskListener = createTaskListener(printStream);
+
+        Report report = new Report();
+
+        LogHandler logHandler = new LogHandler(taskListener, LOG_HANDLER_NAME, report);
+        logHandler.log(report);
+
+        assertThat(outputStream.toString()).isEmpty();
+    }
 
     @Test
     void shouldLogInfoAndErrorMessage() {
@@ -66,6 +81,22 @@ class LogHandlerTest {
         LogHandler logHandler = new LogHandler(taskListener, LOG_HANDLER_NAME);
 
         logHandler.log(LOGGER_MESSAGE);
+
+        assertThat(outputStream.toString())
+                .isEqualTo(String.format("[%s] %s%n", LOG_HANDLER_NAME, LOGGER_MESSAGE));
+    }
+
+    @Test
+    void shouldLogFormattedLogger() {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(outputStream);
+        TaskListener taskListener = createTaskListener(printStream);
+        LogHandler logHandler = new LogHandler(taskListener, LOG_HANDLER_NAME);
+
+        FilteredLog filteredLog = new FilteredLog("Error");
+        filteredLog.logInfo(LOGGER_MESSAGE);
+
+        logHandler.log(filteredLog);
 
         assertThat(outputStream.toString())
                 .isEqualTo(String.format("[%s] %s%n", LOG_HANDLER_NAME, LOGGER_MESSAGE));

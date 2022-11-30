@@ -5,6 +5,7 @@ import java.util.List;
 import com.google.errorprone.annotations.FormatMethod;
 
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.util.FilteredLog;
 
 import hudson.model.TaskListener;
 
@@ -77,6 +78,18 @@ public class LogHandler {
     }
 
     /**
+     * Log all info and error messages that are stored in the {@link FilteredLog} instance. Note that subsequent calls
+     * to this method will only log messages that have not yet been logged.
+     *
+     * @param log
+     *         the issues with the collected logging messages
+     */
+    public void log(final FilteredLog log) {
+        logErrorMessages(log.getErrorMessages());
+        logInfoMessages(log.getInfoMessages());
+    }
+
+    /**
      * Logs the specified message.
      *
      * @param format
@@ -92,7 +105,10 @@ public class LogHandler {
     }
 
     private void logErrorMessages(final Report report) {
-        List<String> errorMessages = report.getErrorMessages();
+        logErrorMessages(report.getErrorMessages());
+    }
+
+    private void logErrorMessages(final List<String> errorMessages) {
         if (errorPosition < errorMessages.size()) {
             errorLogger.logEachLine(errorMessages.subList(errorPosition, errorMessages.size()));
             errorPosition = errorMessages.size();
@@ -100,7 +116,10 @@ public class LogHandler {
     }
 
     private void logInfoMessages(final Report report) {
-        List<String> infoMessages = report.getInfoMessages();
+        logInfoMessages(report.getInfoMessages());
+    }
+
+    private void logInfoMessages(final List<String> infoMessages) {
         if (infoPosition < infoMessages.size()) {
             logger.logEachLine(infoMessages.subList(infoPosition, infoMessages.size()));
             infoPosition = infoMessages.size();
