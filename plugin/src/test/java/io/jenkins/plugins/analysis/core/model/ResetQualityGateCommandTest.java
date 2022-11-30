@@ -151,7 +151,7 @@ class ResetQualityGateCommandTest {
                 Lists.list(new ResetReferenceAction(hasNoReferenceBuild ? "other" : ID)));
         when(selectedBuild.getActions(ResultAction.class)).thenReturn(Lists.list(resultAction));
         when(selectedBuild.getAction(ResultAction.class)).thenReturn(resultAction);
-        when(selectedBuild.hasPermission(Item.CONFIGURE)).thenReturn(hasRight);
+        when(selectedBuild.hasPermission(Item.CONFIGURE)).thenReturn(hasConfigurePermission);
         return selectedBuild;
     }
 }
