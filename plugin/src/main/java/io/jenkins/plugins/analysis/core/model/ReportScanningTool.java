@@ -110,6 +110,9 @@ public abstract class ReportScanningTool extends Tool {
     private boolean followSymlinks() {
         return !getSkipSymbolicLinks();
     }
+    public boolean errorOnEmptyFiles() {
+        return getDescriptor().canScanConsoleLog();
+    }
 
     /**
      * Sets the encoding to use to read the log files that contain the warnings.
@@ -166,7 +169,7 @@ public abstract class ReportScanningTool extends Tool {
     private Report scanInWorkspace(final FilePath workspace, final String expandedPattern, final LogHandler logger) {
         try {
             FileVisitorResult<Report> report = workspace.act(
-                    new IssueReportScanner(expandedPattern, reportEncoding, followSymlinks(), createParser()));
+                    new IssueReportScanner(expandedPattern, reportEncoding, followSymlinks(), createParser(), errorOnEmptyFiles()));
 
             FilteredLog log = report.getLog();
             logger.log(log);
