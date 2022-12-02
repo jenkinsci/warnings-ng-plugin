@@ -24,7 +24,6 @@ public class IssueReportScanner extends AgentFileVisitor<Report> {
     private static final long serialVersionUID = 1743707071107346225L;
 
     private final IssueParser parser;
-    private final boolean errorOnEmptyFiles;
 
     /**
      * Creates a new instance of {@link IssueReportScanner}.
@@ -45,7 +44,6 @@ public class IssueReportScanner extends AgentFileVisitor<Report> {
         super(filePattern, encoding, followSymbolicLinks, errorOnEmptyFiles);
 
         this.parser = parser;
-        this.errorOnEmptyFiles = errorOnEmptyFiles;
     }
 
     @Override
