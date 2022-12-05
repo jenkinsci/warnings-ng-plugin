@@ -21,7 +21,6 @@ public class LogHandler {
     private final PluginLogger logger;
     private int infoPosition = 0;
     private int errorPosition = 0;
-    //private final boolean stdoutReport;
     private boolean quiet = false;
 
     /**
@@ -32,8 +31,8 @@ public class LogHandler {
      * @param name
      *         the name of the logger
      */
-    public LogHandler(final TaskListener listener, final String name, final boolean quiet) {
-        this(listener, name, quiet, 0, 0);
+    public LogHandler(final TaskListener listener, final String name) {
+        this(listener, name, 0, 0);
     }
 
     /**
@@ -46,20 +45,15 @@ public class LogHandler {
      * @param report
      *         the report to log the messages from
      */
-    public LogHandler(final TaskListener listener, final String name, final boolean quiet,
-           final Report report) {
-        this(listener, name, quiet, report.getInfoMessages().size(), report.getErrorMessages().size());
+    public LogHandler(final TaskListener listener, final String name, final Report report) {
+        this(listener, name, report.getInfoMessages().size(), report.getErrorMessages().size());
     }
 
-    private LogHandler(final TaskListener listener, final String name, final boolean quiet,
-            final int infoPosition, final int errorPosition) {
-
-        //String stdoutReportProp = System.getProperty("io.jenkins.plugins.analysis.core.model.FilesScanner.logParsedFiles");
-        //this.stdoutReport = stdoutReportProp == null || Boolean.parseBoolean(stdoutReportProp);
+    private LogHandler(final TaskListener listener, final String name, final int infoPosition,
+            final int errorPosition) {
 
         logger = createLogger(listener, name);
         errorLogger = createErrorLogger(listener, name);
-        this.quiet = quiet;
         this.infoPosition = infoPosition;
         this.errorPosition = errorPosition;
     }
@@ -80,10 +74,8 @@ public class LogHandler {
      *         the issues with the collected logging messages
      */
     public void log(final Report report) {
-        if (!quiet) {
-            logErrorMessages(report);
-            logInfoMessages(report);
-        }
+        logErrorMessages(report);
+        logInfoMessages(report);
     }
 
     /**
@@ -102,18 +94,26 @@ public class LogHandler {
     }
 
     private void logErrorMessages(final Report report) {
-        List<String> errorMessages = report.getErrorMessages();
-        if (errorPosition < errorMessages.size()) {
-            errorLogger.logEachLine(errorMessages.subList(errorPosition, errorMessages.size()));
-            errorPosition = errorMessages.size();
+        if (!quiet) {
+            List<String> errorMessages = report.getErrorMessages();
+            if (errorPosition < errorMessages.size()) {
+                errorLogger.logEachLine(errorMessages.subList(errorPosition, errorMessages.size()));
+                errorPosition = errorMessages.size();
+            }
         }
     }
 
     private void logInfoMessages(final Report report) {
-        List<String> infoMessages = report.getInfoMessages();
-        if (infoPosition < infoMessages.size()) {
-            logger.logEachLine(infoMessages.subList(infoPosition, infoMessages.size()));
-            infoPosition = infoMessages.size();
+        if (!quiet) {
+            List<String> infoMessages = report.getInfoMessages();
+            if (infoPosition < infoMessages.size()) {
+                logger.logEachLine(infoMessages.subList(infoPosition, infoMessages.size()));
+                infoPosition = infoMessages.size();
+            }
         }
+    }
+
+    public void setQuiet(final boolean quiet) {
+        this.quiet = quiet;
     }
 }

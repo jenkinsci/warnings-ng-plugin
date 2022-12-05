@@ -226,10 +226,10 @@ public class PublishIssuesStep extends Step implements Serializable {
 
     /**
      * If {@code true}, then logger content is muted
-     * If {@code false}, then logger content goes to loghandler output
+     * If {@code false}, then logger content goes to loghandler output.
      *
      * @param quiet
-     *         if {@code true} then logger content is muted 
+     *         if {@code true} then logger content is muted.
      */
     @DataBoundSetter
     @SuppressWarnings("unused") // Used by Stapler
@@ -238,7 +238,7 @@ public class PublishIssuesStep extends Step implements Serializable {
     }
 
     @SuppressWarnings({"PMD.BooleanGetMethodName", "WeakerAccess"})
-    public boolean getQuiet() {
+    public boolean isQuiet() {
         return quiet;
     }
 
@@ -906,7 +906,9 @@ public class PublishIssuesStep extends Step implements Serializable {
         private LogHandler getLogger(final AnnotatedReport report) throws InterruptedException {
             String toolName = new LabelProviderFactory().create(report.getId(),
                     StringUtils.defaultString(step.getName())).getName();
-            return new LogHandler(getTaskListener(), toolName, step.getQuiet(), report.getReport());
+            LogHandler logHandler = new LogHandler(getTaskListener(), toolName, report.getReport());
+            logHandler.setQuiet(step.isQuiet());
+            return logHandler;
         }
     }
 

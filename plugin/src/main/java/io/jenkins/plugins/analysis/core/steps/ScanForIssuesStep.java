@@ -81,9 +81,18 @@ public class ScanForIssuesStep extends Step {
         this.filters = new ArrayList<>(filters);
     }
 
-//    @SuppressWarnings("PMD.BooleanGetMethodName")
+    /**
+     * Sets whether logging output should be enabled.
+     *
+     * @param quiet
+     *         boolean flag to mute logging
+     */
     @DataBoundSetter
-    public boolean getQuiet() {
+    public void setQuiet(final boolean quiet) {
+        this.quiet = quiet;
+    }
+
+    public boolean isQuiet() {
         return quiet;
     }
 
@@ -241,7 +250,7 @@ public class ScanForIssuesStep extends Step {
             filters = step.getFilters();
             sourceDirectories = step.getAllSourceDirectories();
             scm = step.getScm();
-            quiet = step.getQuiet();
+            quiet = step.isQuiet();
         }
 
         @Override

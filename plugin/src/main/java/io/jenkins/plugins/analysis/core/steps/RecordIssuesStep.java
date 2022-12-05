@@ -805,7 +805,7 @@ public class RecordIssuesStep extends Step implements Serializable {
      *         {@code false} if report logging is enabled
      */
     @SuppressWarnings("PMD.BooleanGetMethodName")
-    public boolean getQuiet() {
+    public boolean isQuiet() {
         return quiet;
     }
 
@@ -1150,7 +1150,7 @@ public class RecordIssuesStep extends Step implements Serializable {
             recorder.setTrendChartType(step.getTrendChartType());
             recorder.setSourceDirectories(step.getAllSourceDirectories());
             recorder.setChecksInfo(getContext().get(ChecksInfo.class));
-            recorder.setQuiet(step.getQuiet());
+            recorder.setQuiet(step.isQuiet());
             StageResultHandler statusHandler = new PipelineResultHandler(getRun(),
                     getContext().get(FlowNode.class));
 

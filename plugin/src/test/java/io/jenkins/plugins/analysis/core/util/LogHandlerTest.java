@@ -29,13 +29,12 @@ class LogHandlerTest {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(outputStream);
         TaskListener taskListener = createTaskListener(printStream);
-        boolean quiet = false;
 
         Report report = new Report();
         report.logInfo(NOT_SHOWN);
         report.logError(NOT_SHOWN);
 
-        LogHandler logHandler = new LogHandler(taskListener, LOG_HANDLER_NAME, quiet, report);
+        LogHandler logHandler = new LogHandler(taskListener, LOG_HANDLER_NAME, report);
         report.logInfo(MESSAGE);
         report.logError(MESSAGE);
 
@@ -64,8 +63,7 @@ class LogHandlerTest {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(outputStream);
         TaskListener taskListener = createTaskListener(printStream);
-        boolean quiet = false;
-        LogHandler logHandler = new LogHandler(taskListener, LOG_HANDLER_NAME, quiet);
+        LogHandler logHandler = new LogHandler(taskListener, LOG_HANDLER_NAME);
 
         logHandler.log(LOGGER_MESSAGE);
 

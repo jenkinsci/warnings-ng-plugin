@@ -404,6 +404,10 @@ public class IssuesRecorder extends Recorder {
      * @return {@code true}  report logging is disabled
      *         {@code false} report logging is enabled
      */
+    @SuppressWarnings("PMD.BooleanGetMethodName")
+    public boolean getQuiet() {
+        return quiet;
+    }
 
     @DataBoundSetter
     public void setQuiet(final boolean quiet) {
@@ -740,7 +744,8 @@ public class IssuesRecorder extends Recorder {
             return record(run, workspace, listener, statusHandler);
         }
         else {
-            LogHandler logHandler = new LogHandler(listener, createLoggerPrefix(), quiet);
+            LogHandler logHandler = new LogHandler(listener, createLoggerPrefix());
+            logHandler.setQuiet(quiet);
             logHandler.log("Skipping execution of recorder since overall result is '%s'", overallResult);
             return Collections.emptyList();
         }
@@ -845,11 +850,12 @@ public class IssuesRecorder extends Recorder {
             qualityGates.addAll(QualityGate.map(thresholds));
         }
         qualityGate.addAll(qualityGates);
+        LogHandler logHandler = new LogHandler(listener, loggerName, report.getReport());
+        logHandler.setQuiet(quiet);
         IssuesPublisher publisher = new IssuesPublisher(run, report,
                 new HealthDescriptor(healthy, unhealthy, minimumSeverity), qualityGate,
                 reportName, getReferenceJobName(), getReferenceBuildId(), ignoreQualityGate, ignoreFailedBuilds,
-                getSourceCodeCharset(),
-                new LogHandler(listener, loggerName, quiet, report.getReport()), statusHandler, failOnError);
+                getSourceCodeCharset(), logHandler, statusHandler, failOnError);
         ResultAction action = publisher.attachAction(trendChartType);
 
         if (!skipPublishingChecks) {

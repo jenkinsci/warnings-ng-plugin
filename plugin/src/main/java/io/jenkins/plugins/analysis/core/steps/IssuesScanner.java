@@ -99,7 +99,8 @@ class IssuesScanner {
     }
 
     public AnnotatedReport scan() throws IOException, InterruptedException {
-        LogHandler logger = new LogHandler(listener, tool.getActualName(), quiet);
+        LogHandler logger = new LogHandler(listener, tool.getActualName());
+        logger.setQuiet(quiet);
         Report report = tool.scan(run, workspace, sourceCodeEncoding, logger);
 
         AnnotatedReport annotatedReport = postProcessReport(report);
