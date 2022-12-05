@@ -15,7 +15,7 @@ import hudson.model.Result;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.model.FilesScanner;
+import io.jenkins.plugins.analysis.core.model.IssueReportScanner;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
@@ -27,7 +27,7 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import static org.assertj.core.api.Assumptions.*;
 
 /**
- * Integration tests for {@link FilesScanner}. This test is using a ZIP file with all the necessary files. The structure
+ * Integration tests for {@link IssueReportScanner}. This test is using a ZIP file with all the necessary files. The structure
  * of the ZIP file is:
  * <pre>
  * filesscanner_workspace.zip
@@ -58,7 +58,7 @@ class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String NON_READABLE_FILE = "no_read_permissions.xml";
 
     /**
-     * Runs the {@link FilesScanner} on a workspace with no files: the report should contain an error message.
+     * Runs the {@link IssueReportScanner} on a workspace with no files: the report should contain an error message.
      */
     @Test
     void shouldReportErrorOnEmptyWorkspace() {
@@ -72,7 +72,7 @@ class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Runs the {@link FilesScanner} on a workspace with a not readable file.
+     * Runs the {@link IssueReportScanner} on a workspace with a not readable file.
      */
     @Test
     void cantReadFile() {
@@ -92,7 +92,7 @@ class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Runs the {@link FilesScanner} on a workspace with a file with zero length.
+     * Runs the {@link IssueReportScanner} on a workspace with a file with zero length.
      */
     @Test
     void fileLengthIsZero() {
@@ -105,7 +105,7 @@ class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Runs the {@link FilesScanner} on a workspace with files that do not match the file pattern.
+     * Runs the {@link IssueReportScanner} on a workspace with files that do not match the file pattern.
      */
     @Test
     void filePatternDoesNotMatchAnyFile() {
@@ -118,7 +118,7 @@ class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Runs the {@link FilesScanner} on a workspace with multiple files where some do match the criteria.
+     * Runs the {@link IssueReportScanner} on a workspace with multiple files where some do match the criteria.
      *
      * @see <a href="https://issues.jenkins-ci.org/browse/JENKINS-51588">Issue 51588</a>
      */
@@ -141,7 +141,7 @@ class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
 
 
     /**
-     * Runs the {@link FilesScanner} on a directory contain symbolic links and expects to traverse them.
+     * Runs the {@link IssueReportScanner} on a directory contain symbolic links and expects to traverse them.
      *
      * @see <a href="https://issues.jenkins-ci.org/browse/JENKINS-56065">Issue 56065</a>
      */
@@ -180,7 +180,7 @@ class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Runs the {@link FilesScanner} on a directory contain symbolic links and expects to skip them.
+     * Runs the {@link IssueReportScanner} on a directory contain symbolic links and expects to skip them.
      *
      * @see <a href="https://issues.jenkins-ci.org/browse/JENKINS-56065">Issue 56065</a>
      */
@@ -230,7 +230,7 @@ class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Runs the {@link FilesScanner} on a workspace with a correct file that can be parsed.
+     * Runs the {@link IssueReportScanner} on a workspace with a correct file that can be parsed.
      */
     @Test
     void parseCheckstyleFileCorrectly() {

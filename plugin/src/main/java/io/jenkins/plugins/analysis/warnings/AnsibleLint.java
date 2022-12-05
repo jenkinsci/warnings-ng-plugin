@@ -5,6 +5,8 @@ import org.jenkinsci.Symbol;
 import hudson.Extension;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import io.jenkins.plugins.analysis.core.model.SymbolIconLabelProvider;
 
 /**
  * Provides a parser and customized messages for the Ansible Lint Compiler.
@@ -29,6 +31,12 @@ public class AnsibleLint extends AnalysisModelParser {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
+        }
+
+        @Override
+        public StaticAnalysisLabelProvider getLabelProvider() {
+            return new SymbolIconLabelProvider(getId(), getDisplayName(), getDescriptionProvider(),
+                    "symbol-cib-ansible plugin-warnings-ng");
         }
     }
 }
