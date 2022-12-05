@@ -52,7 +52,6 @@ public class LogHandler {
 
     private LogHandler(final TaskListener listener, final String name, final int infoPosition,
             final int errorPosition) {
-
         logger = createLogger(listener, name);
         errorLogger = createErrorLogger(listener, name);
         this.infoPosition = infoPosition;
