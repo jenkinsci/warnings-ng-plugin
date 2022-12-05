@@ -110,7 +110,8 @@ public abstract class ReportScanningTool extends Tool {
     private boolean followSymlinks() {
         return !getSkipSymbolicLinks();
     }
-    public boolean errorOnEmptyFiles() {
+
+    private boolean isEmptyFileValid() {
         return getDescriptor().canScanConsoleLog();
     }
 
@@ -169,7 +170,7 @@ public abstract class ReportScanningTool extends Tool {
     private Report scanInWorkspace(final FilePath workspace, final String expandedPattern, final LogHandler logger) {
         try {
             FileVisitorResult<Report> report = workspace.act(
-                    new IssueReportScanner(expandedPattern, reportEncoding, followSymlinks(), createParser(), errorOnEmptyFiles()));
+                    new IssueReportScanner(expandedPattern, reportEncoding, followSymlinks(), createParser(), !isEmptyFileValid()));
 
             FilteredLog log = report.getLog();
             logger.log(log);
