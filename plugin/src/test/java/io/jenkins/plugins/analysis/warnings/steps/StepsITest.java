@@ -192,6 +192,38 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
+     * Runs a pipeline and verifies that logging is not suppressed.
+     */
+    @Test
+    void shouldLog() {
+        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("checkstyle1.xml");
+
+        job.setDefinition(new CpsFlowDefinition("node {\n"
+                + "  stage ('Integration Test') {\n"
+                + "         recordIssues quiet: false, tool: checkStyle(pattern: '**/" + "checkstyle1" + "*')\n"
+                + "  }\n"
+                + "}", true));
+        Run<?, ?> baseline = buildSuccessfully(job);
+        assertThat(getConsoleLog(baseline)).contains("Searching for all files in");
+    }
+
+    /**
+     * Runs a pipeline and verifies that logging is suppressed.
+     */
+    @Test
+    void shouldSuppressLog() {
+        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("checkstyle1.xml");
+
+        job.setDefinition(new CpsFlowDefinition("node {\n"
+                + "  stage ('Integration Test') {\n"
+                + "         recordIssues quiet: true, tool: checkStyle(pattern: '**/" + "checkstyle1" + "*')\n"
+                + "  }\n"
+                + "}", true));
+        Run<?, ?> baseline = buildSuccessfully(job);
+        assertThat(getConsoleLog(baseline)).hasTotalSize(0);
+    }
+
+    /**
      * Runs a pipeline and verifies the {@code publishIssues} step has allowlisted methods.
      */
     @Test

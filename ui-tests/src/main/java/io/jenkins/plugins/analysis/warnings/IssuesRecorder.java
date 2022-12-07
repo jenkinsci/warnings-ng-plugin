@@ -192,8 +192,6 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      *
      * @return {@code true} then the report logging of each static analysis tool is muted
      *         {@code false} then reports logging goes to loghandler output
-     *
-     * @return this recorder
      */
     public boolean isQuiet() {
         return isChecked(quiet);

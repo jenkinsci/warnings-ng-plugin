@@ -405,7 +405,7 @@ public class IssuesRecorder extends Recorder {
      *         {@code false} report logging is enabled
      */
     @SuppressWarnings("PMD.BooleanGetMethodName")
-    public boolean getQuiet() {
+    public boolean isQuiet() {
         return quiet;
     }
 
