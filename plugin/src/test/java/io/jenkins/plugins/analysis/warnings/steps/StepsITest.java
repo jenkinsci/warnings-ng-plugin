@@ -220,7 +220,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
                 + "  }\n"
                 + "}", true));
         Run<?, ?> baseline = buildSuccessfully(job);
-        assertThat(getConsoleLog(baseline)).hasSize(0);
+        assertThat(getConsoleLog(baseline)).doesNotContain("Searching for all files in");
     }
 
     /**
