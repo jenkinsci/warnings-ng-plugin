@@ -228,8 +228,8 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldSuppressLogTest() {
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("checkstyle1.xml");
-
+//        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("checkstyle1.xml");
+        WorkflowJob job = createPipeline();
         job.setDefinition(new CpsFlowDefinition("pipeline {\n"
                 + "    agent 'any'\n"
                 + "    stages {\n"
@@ -241,13 +241,21 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
                 + "    }\n"
                 + "    post {\n"
                 + "        always {\n"
-                + "            recordIssues quiet: true, tool: gcc4(pattern: 'warnings.log')\n"
+                + "            def report = recordIssues quiet: true, tool: gcc4(pattern: 'warnings.log')\n"
+                + "            echo '[experiment - total=' + report.size() + ']' \n"
+                + "            echo '[experiment - id=' + report.getId() + ']' \n"
+                + "            def issues = report.getIssues()\n"
+                + "            issues.each { issue ->\n"
+                + "                echo issue.toString()\n"
+                + "                echo issue.getOrigin()\n"
+                + "                echo issue.getAuthorName()\n"
+                + "            }\n"
                 + "        }\n"
                 + "    }\n"
                 + "}", true));
 
-        AnalysisResult result = scheduleSuccessfulBuild(job);
-        assertThat(result).hasTotalSize(5);
+//        AnalysisResult result = scheduleSuccessfulBuild(job);
+//        assertThat(result).hasTotalSize(5);
 
         Run<?, ?> baseline = buildSuccessfully(job);
         assertThat(getConsoleLog(baseline)).doesNotContain("Searching for all files in");
