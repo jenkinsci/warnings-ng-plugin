@@ -804,7 +804,6 @@ public class RecordIssuesStep extends Step implements Serializable {
      * @return {@code true}  if report logging is disabled
      *         {@code false} if report logging is enabled
      */
-    @SuppressWarnings("PMD.BooleanGetMethodName")
     public boolean isQuiet() {
         return quiet;
     }

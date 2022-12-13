@@ -4,7 +4,7 @@
   <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
 
   <i:advanced-step-warning/>
-  
+
   <f:entry title="${%title.id}" description="${%description.id}" field="id">
     <f:textbox/>
   </f:entry>
@@ -18,6 +18,10 @@
     <f:combobox />
   </f:entry>
 
+  <f:entry field="quiet">
+    <f:checkbox title="${%title.quiet}"/>
+  </f:entry>
+
   <i:publish-parameters/>
- 
+
 </j:jelly>

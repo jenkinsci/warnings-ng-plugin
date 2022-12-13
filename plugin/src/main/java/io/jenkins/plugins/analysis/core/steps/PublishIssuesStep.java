@@ -237,7 +237,6 @@ public class PublishIssuesStep extends Step implements Serializable {
         this.quiet = quiet;
     }
 
-    @SuppressWarnings({"PMD.BooleanGetMethodName", "WeakerAccess"})
     public boolean isQuiet() {
         return quiet;
     }

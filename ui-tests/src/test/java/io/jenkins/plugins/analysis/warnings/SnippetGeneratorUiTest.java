@@ -62,6 +62,7 @@ public class SnippetGeneratorUiTest extends UiTest {
 
         snippetGenerator.selectRecordIssues()
                 .setAggregatingResults(true)
+                .setQuiet(true)
                 .setSkipBlames(true)
                 .setEnabledForFailure(true)
                 .setIgnoreFailedBuilds(false)
