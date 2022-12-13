@@ -10,6 +10,7 @@ import com.tngtech.archunit.core.domain.JavaConstructorCall;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
+import com.tngtech.archunit.lang.syntax.ArchRuleDefinition;
 
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.util.ArchitectureRules;
@@ -47,7 +48,7 @@ class PluginArchitectureTest {
     static final ArchRule NO_FORBIDDEN_CLASSES_CALLED = ArchitectureRules.NO_FORBIDDEN_CLASSES_CALLED;
 
     @ArchTest
-    static final ArchRule NO_PUBLIC_ARCHITECTURE_TESTS = ArchitectureRules.NO_PUBLIC_ARCHITECTURE_TESTS;
+    static final ArchRule NO_PUBLIC_ARCHITECTURE_TESTS = ArchRuleDefinition.fields().that().areAnnotatedWith(ArchTest.class).should().notBePublic();
 
     @ArchTest
     static final ArchRule NO_JENKINS_INSTANCE_CALL = PluginArchitectureRules.NO_JENKINS_INSTANCE_CALL;
