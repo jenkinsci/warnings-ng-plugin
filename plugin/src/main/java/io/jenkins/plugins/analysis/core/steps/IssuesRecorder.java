@@ -852,6 +852,9 @@ public class IssuesRecorder extends Recorder {
         qualityGate.addAll(qualityGates);
         LogHandler logHandler = new LogHandler(listener, loggerName, report.getReport());
         logHandler.setQuiet(quiet);
+        if (quiet) {
+            logHandler.log("Suppressing logging as requested");
+        }
         IssuesPublisher publisher = new IssuesPublisher(run, report,
                 new HealthDescriptor(healthy, unhealthy, minimumSeverity), qualityGate,
                 reportName, getReferenceJobName(), getReferenceBuildId(), ignoreQualityGate, ignoreFailedBuilds,

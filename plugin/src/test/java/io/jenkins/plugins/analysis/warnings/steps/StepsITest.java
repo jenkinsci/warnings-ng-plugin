@@ -204,7 +204,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
                 + "  }\n"
                 + "}", true));
         Run<?, ?> baseline = buildSuccessfully(job);
-        assertThat(getConsoleLog(baseline)).contains("Searching for all files in");
+        assertThat(getConsoleLog(baseline)).doesNotContain("Suppressing logging as requested");
     }
 
     /**
@@ -220,37 +220,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
                 + "  }\n"
                 + "}", true));
         Run<?, ?> baseline = buildSuccessfully(job);
-        assertThat(getConsoleLog(baseline)).doesNotContain("Searching for all files in");
-    }
-
-    /**
-     * Runs a pipeline and verifies that logging is suppressed.
-     */
-    @Test
-    void shouldSuppressLogTest() {
-//        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("checkstyle1.xml");
-        WorkflowJob job = createPipeline();
-        job.setDefinition(new CpsFlowDefinition("pipeline {\n"
-                + "    agent 'any'\n"
-                + "    stages {\n"
-                + "        stage ('Create a fake warning') {\n"
-                + "            steps {\n"
-                + createShellStep("echo \"foo.cc:4:39: error: foo.h: No such file or directory\" >warnings.log")
-                + "            }\n"
-                + "        }\n"
-                + "    }\n"
-                + "    post {\n"
-                + "        always {\n"
-                + "            recordIssues quiet: true, tool: gcc4(pattern: 'warnings.log')\n"
-                + "        }\n"
-                + "    }\n"
-                + "}", true));
-
-        Run<?, ?> baseline = buildSuccessfully(job);
-        assertThat(getConsoleLog(baseline)).doesNotContain("Searching for all files in");
-
-        AnalysisResult result = scheduleSuccessfulBuild(job);
-        assertThat(result).hasTotalSize(5);
+        assertThat(getConsoleLog(baseline)).contains("Suppressing logging as requested");
     }
 
     /**
