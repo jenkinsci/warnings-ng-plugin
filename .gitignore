@@ -10,4 +10,3 @@ pom.xml.releaseBackup
 release.properties
 .DS_Store
 /package-lock.json
-.idea
