@@ -47,6 +47,7 @@ public class FreeStyleConfigurationUiTest extends AbstractJUnitTest {
         issuesRecorder.setSkipPublishingChecks(true);
         issuesRecorder.setPublishAllIssues(true);
         issuesRecorder.setFailOnError(true);
+        issuesRecorder.setQuiet(true);
         issuesRecorder.setHealthReport(1, 9, SEVERITY);
         issuesRecorder.setReportFilePattern(PATTERN);
         issuesRecorder.addIssueFilter("Exclude categories", REGEX);
@@ -68,6 +69,7 @@ public class FreeStyleConfigurationUiTest extends AbstractJUnitTest {
         assertThat(issuesRecorder).isSkipPublishingChecks();
         assertThat(issuesRecorder).isPublishAllIssues();
         assertThat(issuesRecorder).isFailingOnError();
+        assertThat(issuesRecorder).isQuiet();
         assertThat(issuesRecorder).hasHealthThreshold("1");
         assertThat(issuesRecorder).hasUnhealthyThreshold("9");
         assertThat(issuesRecorder).hasHealthSeverity(SEVERITY);
@@ -85,6 +87,7 @@ public class FreeStyleConfigurationUiTest extends AbstractJUnitTest {
         issuesRecorder.setIgnoreQualityGate(false);
         issuesRecorder.setIgnoreFailedBuilds(false);
         issuesRecorder.setFailOnError(false);
+        issuesRecorder.setQuiet(false);
 
         issuesRecorder.addSourceDirectory("second");
 
@@ -98,6 +101,7 @@ public class FreeStyleConfigurationUiTest extends AbstractJUnitTest {
         assertThat(issuesRecorder).isNotIgnoringQualityGate();
         assertThat(issuesRecorder).isNotIgnoringFailedBuilds();
         assertThat(issuesRecorder).isNotFailingOnError();
+        assertThat(issuesRecorder).isNotQuiet();
 
         assertThat(issuesRecorder).hasSourceDirectories(SOURCE_DIRECTORY, "second");
     }

@@ -22,6 +22,7 @@ public class LogHandler {
     private final PluginLogger logger;
     private int infoPosition = 0;
     private int errorPosition = 0;
+    private boolean quiet = false;
 
     /**
      * Creates a new {@link LogHandler}.
@@ -109,7 +110,7 @@ public class LogHandler {
     }
 
     private void logErrorMessages(final List<String> errorMessages) {
-        if (errorPosition < errorMessages.size()) {
+        if (errorPosition < errorMessages.size() && !quiet) {
             errorLogger.logEachLine(errorMessages.subList(errorPosition, errorMessages.size()));
             errorPosition = errorMessages.size();
         }
@@ -120,9 +121,13 @@ public class LogHandler {
     }
 
     private void logInfoMessages(final List<String> infoMessages) {
-        if (infoPosition < infoMessages.size()) {
+        if (infoPosition < infoMessages.size() && !quiet) {
             logger.logEachLine(infoMessages.subList(infoPosition, infoMessages.size()));
             infoPosition = infoMessages.size();
         }
+    }
+
+    public void setQuiet(final boolean quiet) {
+        this.quiet = quiet;
     }
 }

@@ -8,6 +8,7 @@ jobs:
                     blameDisabled(true)
                     forensicsDisabled(true)
                     enabledForFailure(true)
+                    quiet(false)
                     healthy(10)
                     ignoreFailedBuilds(false)
                     ignoreQualityGate(true)
