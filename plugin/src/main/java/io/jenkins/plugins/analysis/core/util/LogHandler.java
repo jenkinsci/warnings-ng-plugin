@@ -106,26 +106,22 @@ public class LogHandler {
     }
 
     private void logErrorMessages(final Report report) {
-        if (!quiet) {
-            logErrorMessages(report.getErrorMessages());
-        }
+        logErrorMessages(report.getErrorMessages());
     }
 
     private void logErrorMessages(final List<String> errorMessages) {
-        if (errorPosition < errorMessages.size()) {
+        if (errorPosition < errorMessages.size() && !quiet) {
             errorLogger.logEachLine(errorMessages.subList(errorPosition, errorMessages.size()));
             errorPosition = errorMessages.size();
         }
     }
 
     private void logInfoMessages(final Report report) {
-        if (!quiet) {
-            logInfoMessages(report.getInfoMessages());
-        }
+        logInfoMessages(report.getInfoMessages());
     }
 
     private void logInfoMessages(final List<String> infoMessages) {
-        if (infoPosition < infoMessages.size()) {
+        if (infoPosition < infoMessages.size() && !quiet) {
             logger.logEachLine(infoMessages.subList(infoPosition, infoMessages.size()));
             infoPosition = infoMessages.size();
         }
