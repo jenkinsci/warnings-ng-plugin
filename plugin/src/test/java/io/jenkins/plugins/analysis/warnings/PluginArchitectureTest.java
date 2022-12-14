@@ -10,7 +10,6 @@ import com.tngtech.archunit.core.domain.JavaConstructorCall;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
-import com.tngtech.archunit.lang.syntax.ArchRuleDefinition;
 
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.util.ArchitectureRules;
