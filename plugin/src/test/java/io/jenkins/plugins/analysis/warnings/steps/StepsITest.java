@@ -204,9 +204,6 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(getConsoleLog(baseline)).contains("Skipping SCM blames as requested");
     }
 
-    /**
-     * Runs a pipeline and verifies that logging is not suppressed.
-     */
     @ParameterizedTest(name = "{index} => Logging quiet flag: {0}")
     @ValueSource(booleans = {true, false})
     @DisplayName("Verify quiet property for logger")
