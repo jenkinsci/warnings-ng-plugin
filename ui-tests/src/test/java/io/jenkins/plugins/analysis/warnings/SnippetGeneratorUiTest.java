@@ -138,15 +138,9 @@ public class SnippetGeneratorUiTest extends UiTest {
         assertThat(script).contains("healthy: 1");
         assertThat(script).contains("unhealthy: 9");
         assertThat(script).contains("minimumSeverity: 'HIGH'");
-        assertThat(script).contains("tools: [java(");
-        assertThat(script).contains(")]");
+        assertThat(script).contains("tools: [java(pattern: 'firstText')]");
     }
 
-    /**
-     * Creates a WorkflowJob (Pipeline) and saves the job.
-     *
-     * @return WorkflowJob
-     */
     private WorkflowJob createWorkflowJob() {
         WorkflowJob job = jenkins.getJobs().create(WorkflowJob.class);
         job.save();
