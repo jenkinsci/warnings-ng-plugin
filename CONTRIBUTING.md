@@ -54,7 +54,7 @@ the inspection rules will be automatically picked up by IntelliJ.
 ## Proposing Changes
 
 All proposed changes are submitted and code reviewed using the 
-[GitHub Pull Request](https://help.github.com/articles/about-pull-requests/) process.
+[GitHub Pull Request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests) process.
 
 To submit a pull request:
 
