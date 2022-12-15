@@ -4,12 +4,13 @@ on:
   push:
     branches:
       - master
+      - main
   pull_request:
 
 jobs:
   coverage:
 
-    runs-on: [ubuntu-latest]
+    runs-on: ubuntu-latest
     name: Coverage on Ubuntu
 
     steps:
@@ -20,14 +21,10 @@ jobs:
           distribution: 'temurin'
           java-version: '11'
           check-latest: true
-          cache: 'maven'
       - name: Generate coverage with JaCoCo
-        env:
-          BROWSER: firefox-container
-        run: mvn -V --color always -ntp clean verify jacoco:prepare-agent test integration-test jacoco:report --file plugin/pom.xml '-Dgpg.skip'
-
+        run: mvn -V --color always -ntp clean verify --file pom.xml '-Dgpg.skip'
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3.1.1
+        uses: codecov/codecov-action@v3
         with:
+          files: 'target/site/jacoco/jacoco.xml'
           token: ${{secrets.CODECOV_TOKEN}}
-          file: ./plugin/target/site/jacoco/jacoco.xml

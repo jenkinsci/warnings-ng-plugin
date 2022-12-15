@@ -9,6 +9,10 @@
     <f:dropdownDescriptorSelector field="tool" title="${%title.tool}"/>
   </f:entry>
 
+  <f:entry field="quiet">
+    <f:checkbox title="${%title.quiet}"/>
+  </f:entry>
+
   <i:scan-parameters/>
 
 </j:jelly>

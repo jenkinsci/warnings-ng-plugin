@@ -7,8 +7,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: fix permission issue
-        run: git config --global --add safe.directory /github/workspace
       - uses: gaurav-nelson/github-action-markdown-link-check@v1
         with:
-          check-modified-files-only: 'yes'
+          check-modified-files-only: 'no'

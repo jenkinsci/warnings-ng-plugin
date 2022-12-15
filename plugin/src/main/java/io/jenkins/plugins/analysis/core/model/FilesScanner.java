@@ -19,6 +19,7 @@ import jenkins.MasterToSlaveFileCallable;
 
 import io.jenkins.plugins.analysis.core.util.FileFinder;
 import io.jenkins.plugins.prism.CharsetValidation;
+import io.jenkins.plugins.util.AgentFileVisitor;
 
 /**
  * Scans files that match a specified Ant files pattern for issues and aggregates the found issues into a single {@link
@@ -26,7 +27,9 @@ import io.jenkins.plugins.prism.CharsetValidation;
  * be {@link Serializable}.
  *
  * @author Ullrich Hafner
+ * @deprecated replaced by {@link AgentFileVisitor} in plugin-util
  */
+@Deprecated
 public class FilesScanner extends MasterToSlaveFileCallable<Report> {
     private static final long serialVersionUID = -4242755766101768715L;
 

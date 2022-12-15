@@ -12,7 +12,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.eclipse.collections.impl.factory.Lists;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.jvnet.hudson.test.TestExtension;
 
 import edu.hm.hafner.analysis.Issue;
@@ -74,7 +77,8 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
 
         job.setDefinition(new CpsFlowDefinition("node {\n"
                 + "  stage ('Integration Test') {\n"
-                + "         recordIssues tool: analysisParser(analysisModelId: 'checkstyle', pattern: '**/" + "checkstyle1" + "*')\n"
+                + "         recordIssues tool: analysisParser(analysisModelId: 'checkstyle', pattern: '**/"
+                + "checkstyle1" + "*')\n"
                 + "  }\n"
                 + "}", true));
 
@@ -107,7 +111,8 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     /**
      * Runs a pipeline and verifies the {@code recordIssues} step has some allowlisted methods.
      */
-    @Test @org.jvnet.hudson.test.Issue("JENKINS-63109")
+    @Test
+    @org.jvnet.hudson.test.Issue("JENKINS-63109")
     void shouldWhitelistRecorderApi() {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("checkstyle1.xml", "checkstyle2.xml");
 
@@ -124,8 +129,10 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
                 "X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(17,5): DesignForExtensionCheck: Design: Die Methode 'accepts' ",
                 "X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(17,5): DesignForExtensionCheck: Design: Die Methode 'accepts' ",
                 "X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(17,5): DesignForExtensionCheck: Design: Die Methode 'accepts' ");
-        assertThat(getConsoleLog(baseline)).contains("X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(42,0): LineLengthCheck: Sizes: Zeile ");
-        assertThat(getConsoleLog(baseline)).contains("X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(22,5): DesignForExtensionCheck: Design: Die Methode 'detectPackageName' ");
+        assertThat(getConsoleLog(baseline)).contains(
+                "X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(42,0): LineLengthCheck: Sizes: Zeile ");
+        assertThat(getConsoleLog(baseline)).contains(
+                "X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(22,5): DesignForExtensionCheck: Design: Die Methode 'detectPackageName' ");
 
         configureRecorder(job, "checkstyle2");
         Run<?, ?> build = buildWithResult(job, Result.UNSTABLE);
@@ -135,16 +142,21 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(getConsoleLog(build)).contains("[fixedSize=" + 2 + "]");
         assertThat(getConsoleLog(build)).contains("[qualityGate=" + "WARNING" + "]");
         assertThat(getConsoleLog(build)).contains("[id=checkstyle]");
-        assertThat(getConsoleLog(build)).contains("X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(29,0): LineLengthCheck: Sizes: Zeile ");
-        assertThat(getConsoleLog(build)).contains("X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(30,21): RightCurlyCheck: Blocks: '}' sollte in derselben Zeile stehen.");
-        assertThat(getConsoleLog(build)).contains("X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(37,9): RightCurlyCheck: Blocks: '}' sollte in derselben Zeile stehen.");
-        assertThat(getConsoleLog(build)).contains("X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(22,5): DesignForExtensionCheck: Design: Die Methode 'detectPackageName' ");
+        assertThat(getConsoleLog(build)).contains(
+                "X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(29,0): LineLengthCheck: Sizes: Zeile ");
+        assertThat(getConsoleLog(build)).contains(
+                "X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(30,21): RightCurlyCheck: Blocks: '}' sollte in derselben Zeile stehen.");
+        assertThat(getConsoleLog(build)).contains(
+                "X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(37,9): RightCurlyCheck: Blocks: '}' sollte in derselben Zeile stehen.");
+        assertThat(getConsoleLog(build)).contains(
+                "X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(22,5): DesignForExtensionCheck: Design: Die Methode 'detectPackageName' ");
     }
 
     private void configureRecorder(final WorkflowJob job, final String fileName) {
         job.setDefinition(new CpsFlowDefinition("node {\n"
                 + "  stage ('Integration Test') {\n"
-                + "         def reports = recordIssues tool: checkStyle(pattern: '**/" + fileName + "*'), qualityGates: [[threshold: 4, type: 'TOTAL', unstable: true]]\n"
+                + "         def reports = recordIssues tool: checkStyle(pattern: '**/" + fileName
+                + "*'), qualityGates: [[threshold: 4, type: 'TOTAL', unstable: true]]\n"
                 + "         echo '[reportsSize=' + reports.size() + ']' \n"
                 + "         def result = reports.get(0) \n"
                 + "         echo '[totalSize=' + result.getTotals().getTotalSize() + ']' \n"
@@ -184,11 +196,37 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
 
         job.setDefinition(new CpsFlowDefinition("node {\n"
                 + "  stage ('Integration Test') {\n"
-                + "         recordIssues forensicsDisabled: true, skipBlames: true, tool: checkStyle(pattern: '**/" + "checkstyle1" + "*')\n"
+                + "         recordIssues forensicsDisabled: true, skipBlames: true, tool: checkStyle(pattern: '**/"
+                + "checkstyle1" + "*')\n"
                 + "  }\n"
                 + "}", true));
         Run<?, ?> baseline = buildSuccessfully(job);
         assertThat(getConsoleLog(baseline)).contains("Skipping SCM blames as requested");
+    }
+
+    @ParameterizedTest(name = "{index} => Logging quiet flag: {0}")
+    @ValueSource(booleans = {true, false})
+    @DisplayName("Verify quiet property for logger")
+    void shouldToggleQuietStatusOfLogger(final boolean quiet) {
+        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("checkstyle1.xml");
+
+        job.setDefinition(new CpsFlowDefinition("node {\n"
+                + "  stage ('Integration Test') {\n"
+                + "         recordIssues "
+                + "             quiet: " + quiet + ", "
+                + "             tool: checkStyle(pattern: '**/" + "checkstyle1" + "*')\n"
+                + "  }\n"
+                + "}", true));
+        Run<?, ?> baseline = buildSuccessfully(job);
+        String consoleLog = getConsoleLog(baseline);
+        String message = "Successfully processed file 'checkstyle1-issues.txt'";
+        if (quiet) {
+            assertThat(consoleLog).doesNotContain(message);
+            assertThat(consoleLog).contains("[CheckStyle] Suppressing logging as requested");
+        }
+        else {
+            assertThat(consoleLog).contains(message);
+        }
     }
 
     /**
@@ -332,7 +370,9 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     void issue64243() {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("maven-console.txt");
-        job.setDefinition(asStage("def issues = scanForIssues tool: mavenConsole(id: 'id', name: 'MavenConsoleFile', pattern: '*.txt')", PUBLISH_ISSUES_STEP));
+        job.setDefinition(
+                asStage("def issues = scanForIssues tool: mavenConsole(id: 'id', name: 'MavenConsoleFile', pattern: '*.txt')",
+                        PUBLISH_ISSUES_STEP));
 
         AnalysisResult result = scheduleSuccessfulBuild(job);
         assertThat(result).hasTotalSize(4);
@@ -371,7 +411,8 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
 
     /**
      * Parses a colored console log that also contains console notes. Verifies that the console notes will be removed
-     * before the color codes. Output is from ATH test case {@code WarningsNextGenerationPluginTest#should_show_maven_warnings_in_maven_project}.
+     * before the color codes. Output is from ATH test case
+     * {@code WarningsNextGenerationPluginTest#should_show_maven_warnings_in_maven_project}.
      */
     @Test
     void shouldRemoveConsoleLogNotesBeforeRemovingColorCodes() {
@@ -724,9 +765,11 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Registers a new {@link GroovyParser} (a Pep8 parser) in Jenkins global configuration and runs this parser on the console that's showing an
-     * error log with 8 issues.
-     * @throws IOException if the test fails unexpectedly
+     * Registers a new {@link GroovyParser} (a Pep8 parser) in Jenkins global configuration and runs this parser on the
+     * console that's showing an error log with 8 issues.
+     *
+     * @throws IOException
+     *         if the test fails unexpectedly
      */
     @Test
     void shouldShowWarningsOfGroovyParserWhenScanningConsoleLogWhenThatIsPermitted() throws IOException {
@@ -749,12 +792,12 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Registers a new {@link GroovyParser} (a Pep8 parser) in Jenkins global
-     * configuration and runs this parser on the console that's showing an error log
-     * with 8 issues ... but when we're configured not to allow groovy parsers to
+     * Registers a new {@link GroovyParser} (a Pep8 parser) in Jenkins global configuration and runs this parser on the
+     * console that's showing an error log with 8 issues ... but when we're configured not to allow groovy parsers to
      * scan the console at all so we expect it to fail.
      *
-     * @throws IOException if the test fails unexpectedly
+     * @throws IOException
+     *         if the test fails unexpectedly
      */
     @Test
     void shouldFailUsingGroovyParserToScanConsoleLogWhenThatIsForbidden() throws IOException {
@@ -791,7 +834,8 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(second).hasFixedSize(0).hasTotalSize(8).hasNewSize(0);
     }
 
-    private void catFileContentsByAddingEchosSteps(final List<String> stagesToAddTo, final String nameOfReportFileToEcho) throws IOException {
+    private void catFileContentsByAddingEchosSteps(final List<String> stagesToAddTo,
+            final String nameOfReportFileToEcho) throws IOException {
         Path reportFilePath = getResourceAsFile(nameOfReportFileToEcho);
         List<String> reportFileContents = Files.readAllLines(reportFilePath);
         for (String reportFileLine : reportFileContents) {

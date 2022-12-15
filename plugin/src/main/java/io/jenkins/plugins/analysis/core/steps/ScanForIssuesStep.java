@@ -41,6 +41,7 @@ public class ScanForIssuesStep extends Step {
     private String sourceDirectory = StringUtils.EMPTY;
     private Set<SourceCodeDirectory> sourceDirectories = new HashSet<>(); // @since 9.11.0
     private boolean isBlameDisabled;
+    private boolean quiet;
 
     private List<RegexpFilter> filters = new ArrayList<>();
     private String scm = StringUtils.EMPTY;
@@ -78,6 +79,21 @@ public class ScanForIssuesStep extends Step {
     @DataBoundSetter
     public void setFilters(final List<RegexpFilter> filters) {
         this.filters = new ArrayList<>(filters);
+    }
+
+    /**
+     * Sets whether logging output should be enabled.
+     *
+     * @param quiet
+     *         boolean flag to mute logging
+     */
+    @DataBoundSetter
+    public void setQuiet(final boolean quiet) {
+        this.quiet = quiet;
+    }
+
+    public boolean isQuiet() {
+        return quiet;
     }
 
     /**
@@ -215,6 +231,7 @@ public class ScanForIssuesStep extends Step {
         private final List<RegexpFilter> filters;
         private final Set<String> sourceDirectories;
         private final String scm;
+        private final boolean quiet;
 
         /**
          * Creates a new instance of the step execution object.
@@ -233,6 +250,7 @@ public class ScanForIssuesStep extends Step {
             filters = step.getFilters();
             sourceDirectories = step.getAllSourceDirectories();
             scm = step.getScm();
+            quiet = step.isQuiet();
         }
 
         @Override
@@ -243,7 +261,7 @@ public class ScanForIssuesStep extends Step {
             IssuesScanner issuesScanner = new IssuesScanner(tool, filters,
                     getCharset(sourceCodeEncoding), workspace, sourceDirectories,
                     getRun(), new FilePath(getRun().getRootDir()), listener,
-                    scm, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED);
+                    scm, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED, quiet);
 
             return issuesScanner.scan();
         }

@@ -5,6 +5,7 @@ import java.util.List;
 import com.google.errorprone.annotations.FormatMethod;
 
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.util.FilteredLog;
 
 import hudson.model.TaskListener;
 
@@ -21,6 +22,7 @@ public class LogHandler {
     private final PluginLogger logger;
     private int infoPosition = 0;
     private int errorPosition = 0;
+    private boolean quiet = false;
 
     /**
      * Creates a new {@link LogHandler}.
@@ -77,6 +79,18 @@ public class LogHandler {
     }
 
     /**
+     * Log all info and error messages that are stored in the {@link FilteredLog} instance. Note that subsequent calls
+     * to this method will only log messages that have not yet been logged.
+     *
+     * @param log
+     *         the issues with the collected logging messages
+     */
+    public void log(final FilteredLog log) {
+        logErrorMessages(log.getErrorMessages());
+        logInfoMessages(log.getInfoMessages());
+    }
+
+    /**
      * Logs the specified message.
      *
      * @param format
@@ -92,18 +106,28 @@ public class LogHandler {
     }
 
     private void logErrorMessages(final Report report) {
-        List<String> errorMessages = report.getErrorMessages();
-        if (errorPosition < errorMessages.size()) {
+        logErrorMessages(report.getErrorMessages());
+    }
+
+    private void logErrorMessages(final List<String> errorMessages) {
+        if (errorPosition < errorMessages.size() && !quiet) {
             errorLogger.logEachLine(errorMessages.subList(errorPosition, errorMessages.size()));
             errorPosition = errorMessages.size();
         }
     }
 
     private void logInfoMessages(final Report report) {
-        List<String> infoMessages = report.getInfoMessages();
-        if (infoPosition < infoMessages.size()) {
+        logInfoMessages(report.getInfoMessages());
+    }
+
+    private void logInfoMessages(final List<String> infoMessages) {
+        if (infoPosition < infoMessages.size() && !quiet) {
             logger.logEachLine(infoMessages.subList(infoPosition, infoMessages.size()));
             infoPosition = infoMessages.size();
         }
+    }
+
+    public void setQuiet(final boolean quiet) {
+        this.quiet = quiet;
     }
 }
