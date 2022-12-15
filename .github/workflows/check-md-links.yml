@@ -1,4 +1,4 @@
-name: Check Markdown links
+name: 'Check Markdown links'
 
 on: push
 
@@ -10,3 +10,4 @@ jobs:
       - uses: gaurav-nelson/github-action-markdown-link-check@v1
         with:
           check-modified-files-only: 'no'
+          config-file: '.github/check-md-links.json'
