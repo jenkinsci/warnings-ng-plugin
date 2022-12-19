@@ -7,7 +7,7 @@ jobs:
   enforce-label:
     runs-on: ubuntu-latest
     steps:
-      - uses: yogevbd/enforce-label-action@2.1.0
+      - uses: yogevbd/enforce-label-action@2.2.2
         with:
           REQUIRED_LABELS_ANY: 'bug,feature,enhancement,deprecated,removed,tests,documentation,internal,dependencies'
           REQUIRED_LABELS_ANY_DESCRIPTION: 'Maintainer needs to assign at least one label before merge'
