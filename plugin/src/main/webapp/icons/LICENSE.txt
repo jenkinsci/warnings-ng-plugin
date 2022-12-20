@@ -259,10 +259,3 @@ The Veracode 24x24 & 48x48 icons are licensed under the MIT license.
 https://github.com/jenkinsci/veracode-scan-plugin/tree/master/src/main/webapp/icons
 
 ------------------------------------------------------------------------------
-
-Polyspace icon:
-
-The Polyspace icon is based on tool logo from https://w...mathworks.com/products/polyspace.html
-Licensed by The MathWorks, Inc
-Logo created based on Polyspace logo
-------------------------------------------------------------------------------

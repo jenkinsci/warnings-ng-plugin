@@ -5,8 +5,6 @@ import org.jenkinsci.Symbol;
 import hudson.Extension;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.model.SvgIconLabelProvider;
 
 /**
  * Provides a parser and customized messages for Polyspace tool.
@@ -15,8 +13,7 @@ import io.jenkins.plugins.analysis.core.model.SvgIconLabelProvider;
  */
 public class PolyspaceParse extends AnalysisModelParser {
     private static final long serialVersionUID = 5776036181982740586L;
-    private static final String ID = "PolyspaceParse";
-    private static final String ICON_NAME = "polyspace";
+    private static final String ID = "polyspace-parser";
 
     /** Creates a new instance of {@link PolyspaceParse}. */
     @DataBoundConstructor
@@ -26,7 +23,7 @@ public class PolyspaceParse extends AnalysisModelParser {
     }
 
     /** Descriptor for this static analysis tool. */
-    @Symbol("PolyspaceParse")
+    @Symbol("polyspaceParser")
     @Extension
     public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
@@ -34,9 +31,5 @@ public class PolyspaceParse extends AnalysisModelParser {
             super(ID);
         }
 
-        @Override
-        public StaticAnalysisLabelProvider getLabelProvider() {
-            return new SvgIconLabelProvider(getId(), getDisplayName(), getDescriptionProvider(), ICON_NAME);
-        }
     }
 }
