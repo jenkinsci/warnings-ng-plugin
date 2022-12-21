@@ -1,0 +1,32 @@
+{
+  "rows": [
+    {
+      "id": 1,
+      "state": "added",
+      "errorNumber": "Justified_Issue",
+      "message": "",
+      "entity": "parent",
+      "path": "src/mainwindow.h",
+      "line": 18,
+      "provider": "axivion",
+      "severity": "required",
+      "justification": "This is a justification.",
+      "tags": [],
+      "errorLink": null
+    },
+    {
+      "id": 2,
+      "state": "added",
+      "errorNumber": "Suppressed_Issue",
+      "message": "A parameter which is not modified shall be const qualified.",
+      "entity": "parent",
+      "path": "src/mainwindow.h",
+      "line": 18,
+      "provider": "axivion",
+      "severity": "required",
+      "suppressed": true,
+      "tags": [],
+      "errorLink": null
+    }
+  ]
+}

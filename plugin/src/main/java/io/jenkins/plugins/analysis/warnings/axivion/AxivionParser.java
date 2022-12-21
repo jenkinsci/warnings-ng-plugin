@@ -15,15 +15,24 @@ import edu.hm.hafner.analysis.Report;
  */
 class AxivionParser implements Serializable {
     private static final long serialVersionUID = -1055658369957572701L;
+    private final Config config;
 
-    private final String projectUrl;
-    private final String baseDir;
+    AxivionParser(final Config config) {
+        this.config = config;
+    }
 
-    AxivionParser(
-            final String projectUrl,
-            final String baseDir) {
-        this.baseDir = baseDir;
-        this.projectUrl = projectUrl;
+    static class Config {
+        private final String projectUrl;
+        private final String baseDir;
+        private final boolean ignoreSuppressedOrJustified;
+
+        public Config(final String projectUrl,
+                final String baseDir,
+                final boolean ignoreSuppressedOrJustified) {
+            this.baseDir = baseDir;
+            this.projectUrl = projectUrl;
+            this.ignoreSuppressedOrJustified = ignoreSuppressedOrJustified;
+        }
     }
 
     /**
@@ -44,7 +53,8 @@ class AxivionParser implements Serializable {
             StreamSupport.stream(jsonArray.spliterator(), false)
                     .filter(JsonObject.class::isInstance)
                     .map(JsonObject.class::cast)
-                    .map(issueAsJson -> new AxRawIssue(projectUrl, baseDir, issueAsJson, kind))
+                    .map(issueAsJson -> new AxRawIssue(config.projectUrl, config.baseDir, issueAsJson, kind))
+                    .filter((issue) -> !config.ignoreSuppressedOrJustified || !issue.isSuppressedOrJustified())
                     .map(kind::transform)
                     .forEach(report::add);
         }
