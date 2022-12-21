@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.warnings.axivion;
 
-import java.io.Serializable;
 import java.util.stream.StreamSupport;
 
 import com.google.gson.JsonArray;
@@ -13,8 +12,7 @@ import edu.hm.hafner.analysis.Report;
 /**
  * Is aware of how to parse json payloads according to different issue kinds.
  */
-class AxivionParser implements Serializable {
-    private static final long serialVersionUID = -1055658369957572701L;
+class AxivionParser {
     private final Config config;
 
     AxivionParser(final Config config) {
