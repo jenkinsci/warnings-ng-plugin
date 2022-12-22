@@ -19,20 +19,6 @@ class AxivionParser {
         this.config = config;
     }
 
-    static class Config {
-        private final String projectUrl;
-        private final String baseDir;
-        private final boolean ignoreSuppressedOrJustified;
-
-        public Config(final String projectUrl,
-                final String baseDir,
-                final boolean ignoreSuppressedOrJustified) {
-            this.baseDir = baseDir;
-            this.projectUrl = projectUrl;
-            this.ignoreSuppressedOrJustified = ignoreSuppressedOrJustified;
-        }
-    }
-
     /**
      * Converts given json structure to {@link Issue}'s and stores them in the given report.
      *
@@ -52,7 +38,7 @@ class AxivionParser {
                     .filter(JsonObject.class::isInstance)
                     .map(JsonObject.class::cast)
                     .map(issueAsJson -> new AxRawIssue(config.projectUrl, config.baseDir, issueAsJson, kind))
-                    .filter((issue) -> !config.ignoreSuppressedOrJustified || !issue.isSuppressedOrJustified())
+                    .filter(issue -> !config.ignoreSuppressedOrJustified || !issue.isSuppressedOrJustified())
                     .map(kind::transform)
                     .forEach(report::add);
         }
@@ -65,6 +51,20 @@ class AxivionParser {
         if (version != null && errorType != null && message != null) {
             report.logError("Dashboard '%s' threw '%s' with message '%s' ('%s').",
                     version, errorType, message, kind);
+        }
+    }
+
+    static class Config {
+        private final String projectUrl;
+        private final String baseDir;
+        private final boolean ignoreSuppressedOrJustified;
+
+        Config(final String projectUrl,
+                final String baseDir,
+                final boolean ignoreSuppressedOrJustified) {
+            this.baseDir = baseDir;
+            this.projectUrl = projectUrl;
+            this.ignoreSuppressedOrJustified = ignoreSuppressedOrJustified;
         }
     }
 }

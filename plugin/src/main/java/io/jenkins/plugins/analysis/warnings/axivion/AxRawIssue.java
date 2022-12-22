@@ -44,7 +44,7 @@ final class AxRawIssue {
     }
 
     private boolean isJustified() {
-        return payload.has("justification") && !payload.get("justification").getAsString().equals("");
+        return payload.has("justification") && !payload.get("justification").getAsString().isEmpty();
     }
 
     boolean isSuppressedOrJustified() {
