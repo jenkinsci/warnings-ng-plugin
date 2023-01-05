@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
-import edu.hm.hafner.util.StringContainsUtils;
 import edu.hm.hafner.util.VisibleForTesting;
 
 import org.kohsuke.stapler.AncestorInPath;
@@ -75,7 +74,7 @@ public class ToolSelection extends AbstractDescribableImpl<ToolSelection> {
     public static Predicate<ResultAction> createToolFilter(final boolean canSelectTools,
             final List<ToolSelection> selectedTools) {
         if (canSelectTools) {
-            return action -> StringContainsUtils.containsAnyIgnoreCase(action.getId(), getIds(selectedTools));
+            return action -> StringUtils.containsAnyIgnoreCase(action.getId(), getIds(selectedTools));
         }
         else {
             return jobAction -> true;
