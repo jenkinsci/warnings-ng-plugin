@@ -17,6 +17,10 @@
     <co:safe-textbox/>
   </f:entry>
 
+  <f:entry title="${%title.ignoreSuppressedOrJustified}" field="ignoreSuppressedOrJustified" description="${%description.ignoreSuppressedOrJustified}">
+    <f:checkbox/>
+  </f:entry>
+
   <i:tool-defaults/>
 
 </j:jelly>

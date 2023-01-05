@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 
+import io.jenkins.plugins.analysis.warnings.axivion.AxivionParser.Config;
+
 import static org.assertj.core.api.Assertions.*;
 
 /**
@@ -12,7 +14,7 @@ import static org.assertj.core.api.Assertions.*;
  * Issue}'s.
  */
 class AxivionParserTest {
-    private final AxivionParser parser = new AxivionParser("testUrl", "/root");
+    private final AxivionParser parser = new AxivionParser(new Config("testUrl", "/root", true));
     private final TestDashboard dashboard = new TestDashboard();
 
     @Test
@@ -169,6 +171,17 @@ class AxivionParserTest {
                 "/io/jenkins/plugins/analysis/warnings/axivion/dashboard_error.json"));
 
         assertThat(report.hasErrors()).isTrue();
+        assertThat(report.getSize()).isZero();
+    }
+
+    @Test
+    void parserIgnoresSuppressedOrJustifiedIssues() {
+        Report report = new Report();
+
+        parser.parse(report, AxIssueKind.SV, dashboard.getIssuesFrom(
+                "/io/jenkins/plugins/analysis/warnings/axivion/sv_justified_and_suppressed.json"));
+
+        assertThat(report.hasErrors()).isFalse();
         assertThat(report.getSize()).isZero();
     }
 }
