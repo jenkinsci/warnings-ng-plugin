@@ -21,14 +21,13 @@
   <url>https://github.com/jenkinsci/warnings-ng-plugin</url>
 
   <properties>
-    <revision>9.23.0</revision>
+    <revision>10.0.0</revision>
     <changelist>-SNAPSHOT</changelist>
     <module.name>${project.groupId}.warnings.ng</module.name>
 
-    <analysis-model-api.version>10.21.0</analysis-model-api.version>
-    <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
+    <analysis-model-api.version>11.0.0-rc645.3b_6973434c0b</analysis-model-api.version>
+    <analysis-model-tests.version>11.0.0-rc4947.d37dc2873c20</analysis-model-tests.version>
     <pull-request-monitoring.version>1.7.8</pull-request-monitoring.version>
-    <prism-api.version>1.29.0-1</prism-api.version>
 
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
 
@@ -51,7 +50,11 @@
 
     <!-- Maven Surefire ArgLine -->
     <argLine>-Djava.awt.headless=true -Xmx1024m -Djenkins.test.timeout=1000 --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.util.concurrent=ALL-UNNAMED</argLine>
-    <plugin-util-api.version>3.0.0-rc671.616d7b_b_f88a_0</plugin-util-api.version>
+
+    <prism-api.version>1.29.0-3-rc205.6b_6980cca_b_76</prism-api.version>
+    <plugin-util-api.version>3.0.0-rc676.39c5d554b_82f</plugin-util-api.version>
+    <forensics-api.version>2.0.0-rc1380.c93c627cd828</forensics-api.version>
+
   </properties>
 
   <licenses>
@@ -172,6 +175,7 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>forensics-api</artifactId>
+      <version>${forensics-api.version}</version>
     </dependency>
 
     <!-- AxivionSuite Dependencies -->
@@ -226,6 +230,7 @@
       <artifactId>forensics-api</artifactId>
       <classifier>tests</classifier>
       <scope>test</scope>
+      <version>${forensics-api.version}</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
@@ -247,7 +252,7 @@
       <groupId>edu.hm.hafner</groupId>
       <artifactId>analysis-model</artifactId>
       <version>${analysis-model-tests.version}</version>
-      <type>test-jar</type>
+      <classifier>tests</classifier>
       <scope>test</scope>
       <exclusions>
         <exclusion>

@@ -29,11 +29,10 @@ import hudson.util.FormValidation;
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser.AnalysisModelParserDescriptor;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogReaderFactory;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
-import io.jenkins.plugins.analysis.core.util.ModelValidation;
-import io.jenkins.plugins.prism.CharsetValidation;
 import io.jenkins.plugins.util.AgentFileVisitor.FileVisitorResult;
 import io.jenkins.plugins.util.EnvironmentResolver;
 import io.jenkins.plugins.util.JenkinsFacade;
+import io.jenkins.plugins.util.ValidationUtilities;
 
 import static io.jenkins.plugins.analysis.core.util.ConsoleLogHandler.*;
 
@@ -45,6 +44,8 @@ import static io.jenkins.plugins.analysis.core.util.ConsoleLogHandler.*;
  */
 public abstract class ReportScanningTool extends Tool {
     private static final long serialVersionUID = 2250515287336975478L;
+    private static final ValidationUtilities VALIDATION_UTILITIES = new ValidationUtilities();
+
     private String pattern = StringUtils.EMPTY;
     private String reportEncoding = StringUtils.EMPTY;
     // Use negative case to allow defaulting to false and defaulting to existing behaviour.
@@ -237,8 +238,6 @@ public abstract class ReportScanningTool extends Tool {
     public static class ReportScanningToolDescriptor extends ToolDescriptor {
         private static final JenkinsFacade JENKINS = new JenkinsFacade();
 
-        private final ModelValidation model = new ModelValidation();
-
         /**
          * Creates a new instance of {@link ReportScanningToolDescriptor} with the given ID.
          *
@@ -260,7 +259,7 @@ public abstract class ReportScanningTool extends Tool {
         @POST
         public ComboBoxModel doFillReportEncodingItems(@AncestorInPath final AbstractProject<?, ?> project) {
             if (JENKINS.hasPermission(Item.CONFIGURE, project)) {
-                return new CharsetValidation().getAllCharsets();
+                return VALIDATION_UTILITIES.getAllCharsets();
             }
             return new ComboBoxModel();
         }
@@ -282,7 +281,7 @@ public abstract class ReportScanningTool extends Tool {
                 return FormValidation.ok();
             }
 
-            return new CharsetValidation().validateCharset(reportEncoding);
+            return VALIDATION_UTILITIES.validateCharset(reportEncoding);
         }
 
         /**
@@ -308,7 +307,7 @@ public abstract class ReportScanningTool extends Tool {
                 }
             }
 
-            return model.doCheckPattern(project, pattern);
+            return VALIDATION_UTILITIES.doCheckPattern(project, pattern);
         }
 
         /**

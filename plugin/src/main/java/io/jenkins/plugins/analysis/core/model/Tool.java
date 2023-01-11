@@ -27,6 +27,7 @@ import jenkins.security.MasterToSlaveCallable;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
 import io.jenkins.plugins.util.JenkinsFacade;
+import io.jenkins.plugins.util.ValidationUtilities;
 
 /**
  * A tool that can produce a {@link Report report of issues} in some way. If your tool produces issues by scanning a
@@ -37,6 +38,7 @@ import io.jenkins.plugins.util.JenkinsFacade;
  */
 public abstract class Tool extends AbstractDescribableImpl<Tool> implements Serializable {
     private static final long serialVersionUID = 3305739700153168629L;
+    private static final ValidationUtilities VALIDATION_UTILITIES = new ValidationUtilities();
 
     private String id = StringUtils.EMPTY;
     private String name = StringUtils.EMPTY;
@@ -70,7 +72,7 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
      */
     @DataBoundSetter
     public void setId(final String id) {
-        new ModelValidation().ensureValidId(id);
+        VALIDATION_UTILITIES.ensureValidId(id);
 
         this.id = id;
     }
@@ -183,7 +185,7 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
         protected ToolDescriptor(final String defaultId) {
             super();
 
-            new ModelValidation().ensureValidId(defaultId);
+            VALIDATION_UTILITIES.ensureValidId(defaultId);
             this.defaultId = defaultId;
         }
 
@@ -204,7 +206,7 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
                 return FormValidation.ok();
             }
 
-            return model.validateId(id);
+            return VALIDATION_UTILITIES.validateId(id);
         }
 
         @Override
@@ -267,11 +269,11 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
         }
 
         /**
-         * Returns whether post processing on the agent is enabled for this tool. If enabled, for all issues absolute
+         * Returns whether post-processing on the agent is enabled for this tool. If enabled, for all issues absolute
          * paths, fingerprints, packages and modules will be detected. Additionally, all affected files will be saved in
          * the build so that these files can be shown in the UI later on.,
          *
-         * @return {@code true} if post processing is enabled, {@code false} otherwise
+         * @return {@code true} if post-processing is enabled, {@code false} otherwise
          */
         public boolean isPostProcessingEnabled() {
             return true;

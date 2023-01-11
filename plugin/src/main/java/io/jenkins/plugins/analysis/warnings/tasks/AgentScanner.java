@@ -18,7 +18,7 @@ import jenkins.MasterToSlaveFileCallable;
 import io.jenkins.plugins.analysis.core.util.FileFinder;
 import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.CaseMode;
 import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.MatcherMode;
-import io.jenkins.plugins.prism.CharsetValidation;
+import io.jenkins.plugins.util.ValidationUtilities;
 
 /**
  * Searches in the workspace for files matching the given include and exclude pattern and scans each file for open
@@ -101,7 +101,7 @@ class AgentScanner extends MasterToSlaveFileCallable<Report> {
     }
 
     private Charset getCharset() {
-        return new CharsetValidation().getCharset(sourceCodeEncoding);
+        return new ValidationUtilities().getCharset(sourceCodeEncoding);
     }
 
     private TaskScanner createTaskScanner() {

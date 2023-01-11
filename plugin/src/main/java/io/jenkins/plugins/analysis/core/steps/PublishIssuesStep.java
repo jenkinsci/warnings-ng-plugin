@@ -32,7 +32,6 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.steps.WarningChecksPublisher.AnnotationScope;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
-import io.jenkins.plugins.analysis.core.util.ModelValidation;
 import io.jenkins.plugins.analysis.core.util.PipelineResultHandler;
 import io.jenkins.plugins.analysis.core.util.QualityGate;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
@@ -41,6 +40,7 @@ import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.StageResultHandler;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
 import io.jenkins.plugins.checks.steps.ChecksInfo;
+import io.jenkins.plugins.util.ValidationUtilities;
 
 /**
  * Publish issues created by a static analysis build. The recorded issues are stored as a {@link ResultAction} in the
@@ -51,6 +51,7 @@ import io.jenkins.plugins.checks.steps.ChecksInfo;
 @SuppressWarnings({"InstanceVariableMayNotBeInitialized", "PMD.ExcessiveImports", "PMD.ExcessivePublicCount", "PMD.DataClass", "PMD.GodClass", "PMD.TooManyFields"})
 public class PublishIssuesStep extends Step implements Serializable {
     private static final long serialVersionUID = -1833335402353771148L;
+    private static final ValidationUtilities VALIDATION_UTILITIES = new ValidationUtilities();
 
     private final List<AnnotatedReport> reports;
 
@@ -112,7 +113,7 @@ public class PublishIssuesStep extends Step implements Serializable {
      */
     @DataBoundSetter
     public void setId(final String id) {
-        new ModelValidation().ensureValidId(id);
+        VALIDATION_UTILITIES.ensureValidId(id);
 
         this.id = id;
     }
