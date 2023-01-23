@@ -13,6 +13,7 @@ import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
  */
 public class SimulinkCheck extends AnalysisModelParser {
     private static final String ID = "simulink-check-parser";
+    private static final long serialVersionUID = 1814097426285660166L;
 
     /** Creates a new instance of {@link SimulinkCheck}. */
     @DataBoundConstructor
