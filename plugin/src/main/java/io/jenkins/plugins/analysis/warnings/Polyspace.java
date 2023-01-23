@@ -7,7 +7,7 @@ import hudson.Extension;
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
- * Provides a parser and customized messages for Polyspace tool.
+ * Provides a parser and customized messages for the Polyspace tool.
  *
  * @author Eva Habeeb
  */

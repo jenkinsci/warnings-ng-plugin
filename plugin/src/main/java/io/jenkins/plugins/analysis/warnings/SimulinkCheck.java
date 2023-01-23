@@ -7,20 +7,18 @@ import hudson.Extension;
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
- * A parser for Simulink Check Code Generator Report Files.
+ * A parser for Simulink Check code generator report files.
  *
  * @author Eva Habeeb
  */
-
-public class SimulinkCheckParse extends AnalysisModelParser {
-
-    private static final long serialVersionUID = 5776036181964740586L;
+public class SimulinkCheck extends AnalysisModelParser {
     private static final String ID = "simulink-check-parser";
 
-    /** Creates a new instance of {@link SimulinkCheckParse}. */
+    /** Creates a new instance of {@link SimulinkCheck}. */
     @DataBoundConstructor
-    public SimulinkCheckParse() {
+    public SimulinkCheck() {
         super();
+        // empty constructor required for stapler
     }
 
     /** Descriptor for this static analysis tool. */

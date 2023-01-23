@@ -972,7 +972,7 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the Simulink Check parser on an output file that contains 12 issues. */
     @Test
     void shouldFindAllSimulinkCheckIssues() {
-        shouldFindIssuesOfTool(12, new SimulinkCheckParse(), "simulink.html");
+        shouldFindIssuesOfTool(12, new SimulinkCheck(), "simulink.html");
     }
 
     /** Runs the trivy parser on an output file that contains 4 issues. */
