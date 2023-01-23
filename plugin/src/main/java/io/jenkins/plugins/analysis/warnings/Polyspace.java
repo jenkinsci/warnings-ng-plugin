@@ -11,13 +11,13 @@ import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
  *
  * @author Eva Habeeb
  */
-public class PolyspaceParse extends AnalysisModelParser {
+public class Polyspace extends AnalysisModelParser {
     private static final long serialVersionUID = 5776036181982740586L;
     private static final String ID = "polyspace-parser";
 
-    /** Creates a new instance of {@link PolyspaceParse}. */
+    /** Creates a new instance of {@link Polyspace}. */
     @DataBoundConstructor
-    public PolyspaceParse() {
+    public Polyspace() {
         super();
         // empty constructor required for stapler
     }
@@ -30,6 +30,5 @@ public class PolyspaceParse extends AnalysisModelParser {
         public Descriptor() {
             super(ID);
         }
-
     }
 }
