@@ -963,6 +963,12 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         shouldFindIssuesOfTool(32, new Brakeman(), "brakeman.json");
     }
 
+    /** Runs the Simulink Check parser on an output file that contains 12 issues. */
+    @Test
+    void shouldFindAllSimulinkCheckIssues() {
+        shouldFindIssuesOfTool(12, new SimulinkCheckParse(), "simulink.html");
+    }
+
     /** Runs the trivy parser on an output file that contains 4 issues. */
     @Test
     void shouldFindAllTrivyIssues() {
