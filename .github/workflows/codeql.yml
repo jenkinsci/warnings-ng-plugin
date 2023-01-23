@@ -35,6 +35,7 @@ jobs:
         with:
           distribution: temurin
           java-version: 11
+          cache: 'maven'
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
