@@ -35,7 +35,7 @@
     <json.version>20220924</json.version>
 
     <!-- Test Library Dependencies Versions -->
-    <xmlunit.version>2.9.0</xmlunit.version>
+    <xmlunit.version>2.9.1</xmlunit.version>
     <jsoup.version>1.15.3</jsoup.version>
     <json-smart.version>2.4.8</json-smart.version>
     <jmh.version>1.36</jmh.version>
