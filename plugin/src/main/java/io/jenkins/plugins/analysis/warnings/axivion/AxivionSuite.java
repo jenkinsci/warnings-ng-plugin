@@ -51,6 +51,7 @@ import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
+import io.jenkins.plugins.analysis.warnings.axivion.AxivionParser.Config;
 import io.jenkins.plugins.util.EnvironmentResolver;
 import io.jenkins.plugins.util.JenkinsFacade;
 
@@ -64,7 +65,12 @@ public final class AxivionSuite extends Tool {
     private String projectUrl = StringUtils.EMPTY;
     private String credentialsId = StringUtils.EMPTY;
     private String basedir = "$";
+
+    // field was added in 9.1.0
     private String namedFilter = StringUtils.EMPTY;
+
+    // field was added in 9.23.0
+    private boolean ignoreSuppressedOrJustified = true;
 
     @VisibleForTesting
     AxivionSuite(final String projectUrl, final String credentialsId, final String basedir) {
@@ -91,7 +97,8 @@ public final class AxivionSuite extends Tool {
         }
         AxivionSuite that = (AxivionSuite) o;
         return projectUrl.equals(that.projectUrl) && credentialsId.equals(that.credentialsId) && basedir.equals(
-                that.basedir) && namedFilter.equals(that.namedFilter);
+                that.basedir) && namedFilter.equals(that.namedFilter)
+                && ignoreSuppressedOrJustified == that.ignoreSuppressedOrJustified;
     }
 
     @Override
@@ -155,6 +162,15 @@ public final class AxivionSuite extends Tool {
         this.namedFilter = namedFilter;
     }
 
+    public boolean isIgnoreSuppressedOrJustified() {
+        return ignoreSuppressedOrJustified;
+    }
+
+    @DataBoundSetter
+    public void setIgnoreSuppressedOrJustified(final boolean ignoreSuppressedOrJustified) {
+        this.ignoreSuppressedOrJustified = ignoreSuppressedOrJustified;
+    }
+
     /**
      * Called after de-serialization to retain backward compatibility.
      *
@@ -173,13 +189,16 @@ public final class AxivionSuite extends Tool {
     public Report scan(final Run<?, ?> run, final FilePath workspace, final Charset sourceCodeEncoding,
             final LogHandler logger) throws ParsingException, ParsingCanceledException {
 
-        AxivionDashboard dashboard = new RemoteAxivionDashboard(projectUrl, withValidCredentials(), namedFilter);
-        AxivionParser parser = new AxivionParser(projectUrl, expandBaseDir(run, basedir));
+        final AxivionDashboard dashboard = new RemoteAxivionDashboard(projectUrl, withValidCredentials(), namedFilter);
+        final AxivionParser.Config config = new Config(projectUrl, expandBaseDir(run, basedir),
+                ignoreSuppressedOrJustified);
+        final AxivionParser parser = new AxivionParser(config);
 
-        Report report = new Report(ID, NAME);
+        final Report report = new Report(ID, NAME);
         report.logInfo("Axivion webservice: %s", projectUrl);
         report.logInfo("Local basedir: %s", basedir);
         report.logInfo("Named Filter: %s", namedFilter);
+        report.logInfo("Ignore suppressed or justified: %s", ignoreSuppressedOrJustified);
 
         for (AxIssueKind kind : AxIssueKind.values()) {
             final JsonObject payload = dashboard.getIssues(kind);
@@ -385,10 +404,10 @@ public final class AxivionSuite extends Tool {
                 }
             }
             return result.includeAs(
-                    ACL.SYSTEM,
-                    item,
-                    StandardUsernamePasswordCredentials.class,
-                    Collections.emptyList())
+                            ACL.SYSTEM,
+                            item,
+                            StandardUsernamePasswordCredentials.class,
+                            Collections.emptyList())
                     .includeCurrentValue(credentialsId);
         }
     }

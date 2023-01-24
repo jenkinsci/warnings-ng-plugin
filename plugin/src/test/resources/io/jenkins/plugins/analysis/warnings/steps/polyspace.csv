@@ -1,0 +1,10 @@
+ID	Family	Group	Color	New	Check	Information	Function	File	Status	Severity	Comment	CWE ID	Key	Line	Col
+3547	Defect	memory	Red	yes	Null pointer	Impact: High	calculate()	D:\Jenkins\workspace\example.c	Unreviewed	Unset		CWE-476 CWE-690	123456789	222	49
+1320	Defect	Programming	Red	yes	Qualifier removed in conversion	Impact: Low		D:\example/test.c	Unreviewed	Unset		CWE-704	123456789	276	5
+184	Custom Rule	4 Structs	Not Applicable	yes	4.3 All struct fields must follow the specified pattern.		File()	D:\sample.h	Unreviewed	High		123456789	631	16
+5630	Run-time Check	memory	Red	yes	Out of bounds array index		tester()	/jenkins/example.c	Unreviewed	Medium		123456789	468	55
+15484	Run-time Check	Data flow	Gray	yes	Unreachable code		init()	/jenkins/example.c	Unreviewed	Low		123456789	27	4
+420	MISRA C:2012	11 Pointer type conversions	Not Applicable	yes	11.1 Conversions shall not be performed between a pointer to a function and any other type.	Category: Required	tester()	/example/myinit.c	Unreviewed	Unset		123456789	512	48
+421	MISRA C:2012	11 Pointer type conversions	Not Applicable	yes	11.8 A cast shall not remove any const or volatile qualification from the type pointed to by a pointer.	Category: Required	calculate()	/jenkins/main.c	Unreviewed	Unset		123456789	70	5
+3528	Guidelines	Software Complexity	Not Applicable	no	123 Depth of call nesting exceeds threshold	Category: HIS	init()	D:\workspace/math.c	Unreviewed	Unset		123456789	406	10
+3529	Guidelines	Software Complexity	Not Applicable	no	123 Number of calling functions exceeds threshold	Category: HIS	main()	D:\Jenkins\main.c	Unreviewed	Unset		123456789	131	10
