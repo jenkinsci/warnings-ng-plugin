@@ -503,6 +503,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     void shouldNotReportError() {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("emptyFile.txt");
+
         job.setDefinition(asStage(
                 "recordIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8')"));
 
@@ -516,6 +517,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     void shouldReportError() {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("emptyFile.txt");
+
         job.setDefinition(asStage(
                 "recordIssues tool: checkStyle(pattern:'**/*issues.txt', reportEncoding:'UTF-8')"));
 
