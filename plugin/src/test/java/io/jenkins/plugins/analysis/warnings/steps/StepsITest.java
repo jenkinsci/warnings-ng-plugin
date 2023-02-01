@@ -513,7 +513,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
                 "Skipping file 'emptyFile-issues.txt' because it's empty");
     }
 
-    /** Runs the checkStyle parser that read XML on empty file , shoud report an error */
+    /** Verifies that the CheckStyle parser reports an error when reading an empty XML file. */
     @Test
     void shouldReportError() {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("emptyFile.txt");
