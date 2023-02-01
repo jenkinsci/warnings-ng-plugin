@@ -27,6 +27,7 @@ import org.jenkinsci.plugins.workflow.graph.FlowNode;
 import org.jenkinsci.plugins.workflow.graphanalysis.DepthFirstScanner;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
+import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.UnprotectedRootAction;
@@ -455,6 +456,31 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
 
         AnalysisResult result = scheduleSuccessfulBuild(job);
         assertThat(result.getIssues()).hasSize(3);
+    }
+
+    /** Runs the JavaDoc parser on empty file , shoud not report an error */
+    @Test
+    void shouldNotReportError() {
+        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("emptyFile.txt");
+        job.setDefinition(asStage(
+                "recordIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8')"));
+
+        AnalysisResult result = scheduleSuccessfulBuild(job);
+        assertThat(result.getIssues()).hasSize(0);
+        assertThat(result).hasInfoMessages(
+                "Skipping file 'emptyFile-issues.txt' because it's empty");
+    }
+
+    /** Runs the checkStyle parser that read XML on empty file , shoud report an error */
+    @Test
+    void shouldReportError() {
+        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("emptyFile.txt");
+        job.setDefinition(asStage(
+                "recordIssues tool: checkStyle(pattern:'**/*issues.txt', reportEncoding:'UTF-8')"));
+
+        AnalysisResult result = scheduleSuccessfulBuild(job);
+        assertThat(result.getIssues()).hasSize(0);
+        assertThat(result).hasErrorMessages("Skipping file 'emptyFile-issues.txt' because it's empty");
     }
 
     /** Runs the JavaDoc parser and enforces quality gates. */
