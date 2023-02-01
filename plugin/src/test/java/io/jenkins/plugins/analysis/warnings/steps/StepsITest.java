@@ -501,7 +501,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
 
     /** Verifies that the JavaDoc parser reports just an information message when reading an empty file. */
     @Test
-    void shouldNotReportError() {
+    void javaDocShouldNotReportErrorOnEmptyFiles() {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("emptyFile.txt");
 
         job.setDefinition(asStage(
