@@ -515,7 +515,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
 
     /** Verifies that the CheckStyle parser reports an error when reading an empty XML file. */
     @Test
-    void shouldReportError() {
+    void checkStyleShouldReportErrorOnEmptyFiles() {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("emptyFile.txt");
 
         job.setDefinition(asStage(
