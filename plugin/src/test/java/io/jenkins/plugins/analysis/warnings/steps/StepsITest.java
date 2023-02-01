@@ -498,6 +498,33 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(result.getIssues()).hasSize(3);
     }
 
+    /** Verifies that the JavaDoc parser reports just an information message when reading an empty file. */
+    @Test
+    void javaDocShouldNotReportErrorOnEmptyFiles() {
+        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("emptyFile.txt");
+
+        job.setDefinition(asStage(
+                "recordIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8')"));
+
+        AnalysisResult result = scheduleSuccessfulBuild(job);
+        assertThat(result.getIssues()).hasSize(0);
+        assertThat(result).hasInfoMessages(
+                "Skipping file 'emptyFile-issues.txt' because it's empty");
+    }
+
+    /** Verifies that the CheckStyle parser reports an error when reading an empty XML file. */
+    @Test
+    void checkStyleShouldReportErrorOnEmptyFiles() {
+        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("emptyFile.txt");
+
+        job.setDefinition(asStage(
+                "recordIssues tool: checkStyle(pattern:'**/*issues.txt', reportEncoding:'UTF-8')"));
+
+        AnalysisResult result = scheduleSuccessfulBuild(job);
+        assertThat(result.getIssues()).hasSize(0);
+        assertThat(result).hasErrorMessages("Skipping file 'emptyFile-issues.txt' because it's empty");
+    }
+
     /** Runs the JavaDoc parser and enforces quality gates. */
     @Test
     void shouldEnforceQualityGate() {
