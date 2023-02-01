@@ -47,6 +47,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     private final Control unhealthyThreshold = control("unhealthy");
     private final Control healthSeverity = control("minimumSeverity");
     private final Control scm = control("scm");
+    private final Control quiet = control("quiet");
 
     /**
      * Determines the result of the quality gate.
@@ -184,6 +185,16 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      */
     public boolean isAggregatingResults() {
         return isChecked(aggregatingResults);
+    }
+
+    /**
+     * Returns whether the report results is in logger output.  
+     *
+     * @return {@code true} then the report logging of each static analysis tool is muted
+     *         {@code false} then reports logging goes to loghandler output
+     */
+    public boolean isQuiet() {
+        return isChecked(quiet);
     }
 
     public boolean isIgnoringQualityGate() {
@@ -359,6 +370,21 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      */
     public IssuesRecorder setAggregatingResults(final boolean aggregatingResults) {
         this.aggregatingResults.check(aggregatingResults);
+
+        return this;
+    }
+
+    /**
+     * Determines whether the report results will go to logger output. 
+     *
+     * @param quiet
+     *         if {@code true} then the report logging of each static analysis tool is muted
+     *         if {@code false} then reports logging goes to loghandler output
+     *
+     * @return this recorder
+     */
+    public IssuesRecorder setQuiet(final boolean quiet) {
+        this.quiet.check(quiet);
 
         return this;
     }

@@ -38,4 +38,16 @@ final class AxRawIssue {
     String getKindName() {
         return getKind().name();
     }
+
+    private boolean isSuppressed() {
+        return payload.has("suppressed") && payload.get("suppressed").getAsBoolean();
+    }
+
+    private boolean isJustified() {
+        return payload.has("justification") && !payload.get("justification").getAsString().isEmpty();
+    }
+
+    boolean isSuppressedOrJustified() {
+        return isSuppressed() || isJustified();
+    }
 }

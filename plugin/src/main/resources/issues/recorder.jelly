@@ -21,6 +21,9 @@
     <f:entry field="enabledForFailure">
       <f:checkbox title="${%title.enabledForFailure}"/>
     </f:entry>
+    <f:entry field="quiet">
+      <f:checkbox title="${%title.quiet}"/>
+    </f:entry>
     <i:scan-parameters/>
     <i:publish-parameters/>
   </f:advanced>

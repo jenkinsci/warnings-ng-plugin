@@ -62,6 +62,7 @@ public class SnippetGeneratorUiTest extends UiTest {
 
         snippetGenerator.selectRecordIssues()
                 .setAggregatingResults(true)
+                .setQuiet(true)
                 .setSkipBlames(true)
                 .setEnabledForFailure(true)
                 .setIgnoreFailedBuilds(false)
@@ -77,6 +78,7 @@ public class SnippetGeneratorUiTest extends UiTest {
         assertThat(script).contains("enabledForFailure: true");
         assertThat(script).contains("ignoreFailedBuilds: false");
         assertThat(script).contains("ignoreQualityGate: true");
+        assertThat(script).contains("quiet: true");
 
         assertThat(script).contains("pattern: 'firstText'");
         assertThat(script).contains("sourceCodeEncoding: 'otherText'");
@@ -136,15 +138,9 @@ public class SnippetGeneratorUiTest extends UiTest {
         assertThat(script).contains("healthy: 1");
         assertThat(script).contains("unhealthy: 9");
         assertThat(script).contains("minimumSeverity: 'HIGH'");
-        assertThat(script).contains("tools: [java(");
-        assertThat(script).contains(")]");
+        assertThat(script).contains("tools: [java(pattern: 'firstText')]");
     }
 
-    /**
-     * Creates a WorkflowJob (Pipeline) and saves the job.
-     *
-     * @return WorkflowJob
-     */
     private WorkflowJob createWorkflowJob() {
         WorkflowJob job = jenkins.getJobs().create(WorkflowJob.class);
         job.save();

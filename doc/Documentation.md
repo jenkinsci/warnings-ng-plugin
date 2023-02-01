@@ -164,6 +164,12 @@ If you are using a single tool you can use the property `tool` instead of `tools
 recordIssues enabledForFailure: true, aggregatingResults: true, tool: checkStyle(pattern: 'checkstyle-result.xml')
 ```
 
+If you prefer to hide logging: 
+
+```groovy
+recordIssues quiet: true, enabledForFailure: true, aggregatingResults: true, tool: checkStyle(pattern: 'checkstyle-result.xml')
+```
+
 ### Referencing tools by id
 
 As seen in the section above, a parser can be selected by specifying a pre-defined pipeline symbol in a Jenkinsfile.

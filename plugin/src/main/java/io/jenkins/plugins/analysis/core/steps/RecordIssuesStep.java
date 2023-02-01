@@ -102,6 +102,8 @@ public class RecordIssuesStep extends Step implements Serializable {
     private boolean failOnError;
     private String scm = StringUtils.EMPTY;
 
+    private boolean quiet = false;
+
     /**
      * Creates a new instance of {@link RecordIssuesStep}.
      */
@@ -797,6 +799,21 @@ public class RecordIssuesStep extends Step implements Serializable {
     }
 
     /**
+     * Returns whether report logging output should be enabled.
+     *
+     * @return {@code true}  if report logging is disabled
+     *         {@code false} if report logging is enabled
+     */
+    public boolean isQuiet() {
+        return quiet;
+    }
+
+    @DataBoundSetter
+    public void setQuiet(final boolean quiet) {
+        this.quiet = quiet;
+    }
+
+    /**
      * Returns whether SCM blaming should be disabled.
      *
      * @return {@code true} if SCM blaming should be disabled
@@ -1132,6 +1149,7 @@ public class RecordIssuesStep extends Step implements Serializable {
             recorder.setTrendChartType(step.getTrendChartType());
             recorder.setSourceDirectories(step.getAllSourceDirectories());
             recorder.setChecksInfo(getContext().get(ChecksInfo.class));
+            recorder.setQuiet(step.isQuiet());
             StageResultHandler statusHandler = new PipelineResultHandler(getRun(),
                     getContext().get(FlowNode.class));
 

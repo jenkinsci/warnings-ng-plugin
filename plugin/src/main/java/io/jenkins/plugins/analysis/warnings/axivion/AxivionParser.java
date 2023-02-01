@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.warnings.axivion;
 
-import java.io.Serializable;
 import java.util.stream.StreamSupport;
 
 import com.google.gson.JsonArray;
@@ -13,17 +12,11 @@ import edu.hm.hafner.analysis.Report;
 /**
  * Is aware of how to parse json payloads according to different issue kinds.
  */
-class AxivionParser implements Serializable {
-    private static final long serialVersionUID = -1055658369957572701L;
+class AxivionParser {
+    private final Config config;
 
-    private final String projectUrl;
-    private final String baseDir;
-
-    AxivionParser(
-            final String projectUrl,
-            final String baseDir) {
-        this.baseDir = baseDir;
-        this.projectUrl = projectUrl;
+    AxivionParser(final Config config) {
+        this.config = config;
     }
 
     /**
@@ -44,7 +37,8 @@ class AxivionParser implements Serializable {
             StreamSupport.stream(jsonArray.spliterator(), false)
                     .filter(JsonObject.class::isInstance)
                     .map(JsonObject.class::cast)
-                    .map(issueAsJson -> new AxRawIssue(projectUrl, baseDir, issueAsJson, kind))
+                    .map(issueAsJson -> new AxRawIssue(config.projectUrl, config.baseDir, issueAsJson, kind))
+                    .filter(issue -> !config.ignoreSuppressedOrJustified || !issue.isSuppressedOrJustified())
                     .map(kind::transform)
                     .forEach(report::add);
         }
@@ -57,6 +51,20 @@ class AxivionParser implements Serializable {
         if (version != null && errorType != null && message != null) {
             report.logError("Dashboard '%s' threw '%s' with message '%s' ('%s').",
                     version, errorType, message, kind);
+        }
+    }
+
+    static class Config {
+        private final String projectUrl;
+        private final String baseDir;
+        private final boolean ignoreSuppressedOrJustified;
+
+        Config(final String projectUrl,
+                final String baseDir,
+                final boolean ignoreSuppressedOrJustified) {
+            this.baseDir = baseDir;
+            this.projectUrl = projectUrl;
+            this.ignoreSuppressedOrJustified = ignoreSuppressedOrJustified;
         }
     }
 }
