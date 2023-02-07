@@ -31,15 +31,15 @@ import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.steps.WarningChecksPublisher.AnnotationScope;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
-import io.jenkins.plugins.analysis.core.util.LogHandler;
-import io.jenkins.plugins.analysis.core.util.PipelineResultHandler;
 import io.jenkins.plugins.analysis.core.util.QualityGate;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
-import io.jenkins.plugins.analysis.core.util.StageResultHandler;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
 import io.jenkins.plugins.checks.steps.ChecksInfo;
+import io.jenkins.plugins.util.LogHandler;
+import io.jenkins.plugins.util.PipelineResultHandler;
+import io.jenkins.plugins.util.StageResultHandler;
 import io.jenkins.plugins.util.ValidationUtilities;
 
 /**
@@ -903,11 +903,16 @@ public class PublishIssuesStep extends Step implements Serializable {
             return action;
         }
 
-        private LogHandler getLogger(final AnnotatedReport report) throws InterruptedException {
-            String toolName = new LabelProviderFactory().create(report.getId(),
+        private LogHandler getLogger(final AnnotatedReport annotatedReport) throws InterruptedException {
+            String toolName = new LabelProviderFactory().create(annotatedReport.getId(),
                     StringUtils.defaultString(step.getName())).getName();
-            LogHandler logHandler = new LogHandler(getTaskListener(), toolName, report.getReport());
+            LogHandler logHandler = new LogHandler(getTaskListener(), toolName);
             logHandler.setQuiet(step.isQuiet());
+
+            var report = annotatedReport.getReport();
+            logHandler.logInfoMessages(report.getInfoMessages());
+            logHandler.logErrorMessages(report.getErrorMessages());
+
             return logHandler;
         }
     }

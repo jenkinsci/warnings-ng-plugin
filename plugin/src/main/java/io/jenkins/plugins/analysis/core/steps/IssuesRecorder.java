@@ -51,18 +51,18 @@ import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.IssuesScanner.BlameMode;
 import io.jenkins.plugins.analysis.core.steps.WarningChecksPublisher.AnnotationScope;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
-import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
 import io.jenkins.plugins.analysis.core.util.QualityGate;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
-import io.jenkins.plugins.analysis.core.util.RunResultHandler;
-import io.jenkins.plugins.analysis.core.util.StageResultHandler;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
 import io.jenkins.plugins.checks.steps.ChecksInfo;
 import io.jenkins.plugins.prism.SourceCodeDirectory;
 import io.jenkins.plugins.util.JenkinsFacade;
+import io.jenkins.plugins.util.LogHandler;
+import io.jenkins.plugins.util.RunResultHandler;
+import io.jenkins.plugins.util.StageResultHandler;
 import io.jenkins.plugins.util.ValidationUtilities;
 
 /**
@@ -831,7 +831,7 @@ public class IssuesRecorder extends Recorder {
      *         the listener
      * @param loggerName
      *         the name of the logger
-     * @param report
+     * @param annotatedReport
      *         the analysis report to publish
      * @param reportName
      *         the name of the report (might be empty)
@@ -841,15 +841,18 @@ public class IssuesRecorder extends Recorder {
      * @return the created results
      */
     AnalysisResult publishResult(final Run<?, ?> run, final TaskListener listener, final String loggerName,
-            final AnnotatedReport report, final String reportName, final StageResultHandler statusHandler) {
+            final AnnotatedReport annotatedReport, final String reportName, final StageResultHandler statusHandler) {
         QualityGateEvaluator qualityGate = new QualityGateEvaluator();
         qualityGate.addAll(qualityGates);
-        LogHandler logHandler = new LogHandler(listener, loggerName, report.getReport());
+        LogHandler logHandler = new LogHandler(listener, loggerName);
+
         logHandler.setQuiet(quiet);
-        if (quiet) {
-            logHandler.log("Suppressing logging as requested");
-        }
-        IssuesPublisher publisher = new IssuesPublisher(run, report,
+
+        var report = annotatedReport.getReport();
+        logHandler.logInfoMessages(report.getInfoMessages());
+        logHandler.logErrorMessages(report.getErrorMessages());
+
+        IssuesPublisher publisher = new IssuesPublisher(run, annotatedReport,
                 new HealthDescriptor(healthy, unhealthy, minimumSeverity), qualityGate,
                 reportName, getReferenceJobName(), getReferenceBuildId(), ignoreQualityGate, ignoreFailedBuilds,
                 getSourceCodeCharset(), logHandler, statusHandler, failOnError);

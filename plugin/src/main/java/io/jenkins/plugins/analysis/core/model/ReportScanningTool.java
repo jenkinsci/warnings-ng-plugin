@@ -28,10 +28,10 @@ import hudson.util.FormValidation;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser.AnalysisModelParserDescriptor;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogReaderFactory;
-import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.util.AgentFileVisitor.FileVisitorResult;
 import io.jenkins.plugins.util.EnvironmentResolver;
 import io.jenkins.plugins.util.JenkinsFacade;
+import io.jenkins.plugins.util.LogHandler;
 import io.jenkins.plugins.util.ValidationUtilities;
 
 import static io.jenkins.plugins.analysis.core.util.ConsoleLogHandler.*;
@@ -202,7 +202,9 @@ public abstract class ReportScanningTool extends Tool {
 
         Report consoleReport = new Report();
         consoleReport.logInfo("Parsing console log (workspace: '%s')", workspace);
-        logger.log(consoleReport);
+
+        logger.logInfoMessages(consoleReport.getInfoMessages());
+        logger.logErrorMessages(consoleReport.getErrorMessages());
 
         Report report = createParser().parse(new ConsoleLogReaderFactory(run));
 
@@ -214,7 +216,8 @@ public abstract class ReportScanningTool extends Tool {
 
         consoleReport.addAll(report);
 
-        logger.log(consoleReport);
+        logger.logInfoMessages(consoleReport.getInfoMessages());
+        logger.logErrorMessages(consoleReport.getErrorMessages());
 
         return consoleReport;
     }

@@ -24,9 +24,9 @@ import hudson.model.Run;
 import hudson.util.FormValidation;
 import jenkins.security.MasterToSlaveCallable;
 
-import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
 import io.jenkins.plugins.util.JenkinsFacade;
+import io.jenkins.plugins.util.LogHandler;
 import io.jenkins.plugins.util.ValidationUtilities;
 
 /**
