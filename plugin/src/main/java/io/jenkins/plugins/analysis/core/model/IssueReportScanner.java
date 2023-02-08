@@ -33,13 +33,15 @@ public class IssueReportScanner extends AgentFileVisitor<Report> {
      * @param encoding
      *         encoding of the files to parse
      * @param followSymbolicLinks
-     *         if the scanner should traverse symbolic links
+     *         determines whether the visitor should traverse symbolic
      * @param parser
      *         the parser to use
+     * @param errorOnEmptyFiles
+     *         determines whether the visitor should log errors if a file is empty
      */
     public IssueReportScanner(final String filePattern, final String encoding,
-            final boolean followSymbolicLinks, final IssueParser parser) {
-        super(filePattern, encoding, followSymbolicLinks, true);
+            final boolean followSymbolicLinks, final IssueParser parser, final boolean errorOnEmptyFiles) {
+        super(filePattern, encoding, followSymbolicLinks, errorOnEmptyFiles);
 
         this.parser = parser;
     }
