@@ -975,6 +975,12 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         shouldFindIssuesOfTool(12, new SimulinkCheck(), "simulink.html");
     }
 
+    /** Runs the Embedded Engineer parser on an output file that contains 6 issues. */
+    @Test
+    void shouldFindAllEmbeddedEngineerIssues() {
+        shouldFindIssuesOfTool(6, new EmbeddedEngineer(), "ea.log");
+    }
+
     /** Runs the trivy parser on an output file that contains 4 issues. */
     @Test
     void shouldFindAllTrivyIssues() {
