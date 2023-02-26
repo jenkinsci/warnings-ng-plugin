@@ -41,7 +41,6 @@ import hudson.model.AbstractProject;
 import hudson.model.Item;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-import hudson.security.ACL;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import hudson.util.Secret;
@@ -124,7 +123,7 @@ public final class AxivionSuite extends Tool {
      * names.
      *
      * @param projectUrl
-     *         url to a Axivion dashboard project
+     *         url to an Axivion dashboard project
      */
     @DataBoundSetter
     public void setProjectUrl(final String projectUrl) {
@@ -213,10 +212,10 @@ public final class AxivionSuite extends Tool {
                 CredentialsProvider.lookupCredentials(
                         StandardUsernamePasswordCredentials.class,
                         (Item) null,
-                        ACL.SYSTEM,
+                        null,
                         Collections.emptyList());
 
-        StandardUsernamePasswordCredentials jenkinsCredentials =
+        final StandardUsernamePasswordCredentials jenkinsCredentials =
                 CredentialsMatchers.firstOrNull(all,
                         CredentialsMatchers.withId(credentialsId));
 
@@ -369,7 +368,7 @@ public final class AxivionSuite extends Tool {
                     CredentialsProvider.lookupCredentials(
                             StandardUsernamePasswordCredentials.class,
                             item,
-                            ACL.SYSTEM,
+                            null,
                             Collections.emptyList()),
                     CredentialsMatchers.withId(credentialsId))
                     == null) {
@@ -391,7 +390,7 @@ public final class AxivionSuite extends Tool {
         @POST
         public ListBoxModel doFillCredentialsIdItems(
                 @AncestorInPath final Item item, @QueryParameter final String credentialsId) {
-            StandardListBoxModel result = new StandardListBoxModel();
+            final StandardListBoxModel result = new StandardListBoxModel();
             if (item == null) {
                 if (!JENKINS.hasPermission(Jenkins.ADMINISTER)) {
                     return result.includeCurrentValue(credentialsId);
@@ -403,12 +402,17 @@ public final class AxivionSuite extends Tool {
                     return result.includeCurrentValue(credentialsId);
                 }
             }
-            return result.includeAs(
-                            ACL.SYSTEM,
-                            item,
-                            StandardUsernamePasswordCredentials.class,
-                            Collections.emptyList())
-                    .includeCurrentValue(credentialsId);
+
+            final ListBoxModel credentials = CredentialsProvider.listCredentials(
+                    StandardUsernamePasswordCredentials.class,
+                    item,
+                    null,
+                    Collections.emptyList(),
+                    CredentialsMatchers.always()
+            );
+
+            result.addMissing(credentials);
+            return result.includeCurrentValue(credentialsId);
         }
     }
 }
