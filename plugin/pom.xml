@@ -32,7 +32,7 @@
 
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
 
-    <json.version>20220924</json.version>
+    <json.version>20230227</json.version>
 
     <!-- Test Library Dependencies Versions -->
     <xmlunit.version>2.9.1</xmlunit.version>
