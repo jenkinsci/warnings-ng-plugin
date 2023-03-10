@@ -1,7 +1,7 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:p="/parser" xmlns:c="/controls" >
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:p="/parser" >
   <f:entry field="name" title="${%Name}" description="${%name.description}">
-    <c:safe-textbox/>
+    <f:textbox/>
   </f:entry>
   <j:choose>
     <j:when test="${instance.valid}">
