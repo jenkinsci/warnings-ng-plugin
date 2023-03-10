@@ -1,0 +1,8 @@
+Warning: 'A_123 interface' is no longer available in the Configuration Parameters dialog box and will be removed in a future release. Set 'GenerateASAP2' to 'off' by using thecommand line. To generate ASAP2 files, use the <a href="matlab:helpview(fullfile(docroot,'rtw','helptargets.map'),'export_asap2_cdf')">"Generate Calibration Files"</a> tool instead.
+Warning: Alias data type 'uint64_t' has multiword base type 'uint64'.  Code generation does not support multiword aliases; reverting to base type.
+Warning: Unnecessary Data Type Conversion 'xooo_ll/D Type Conversion1'. The input and output data types are the same
+Warning: Unnecessary Data Type Conversion 'nnnn_jjj/D Type Conversion2'. The input and output data types are the same
+Warning: Cannot close the model 'xx_xxx_wws' because it has been changed. Use the command'save_system' to first save the model
+Warning: Cannot find library called 'L_1_sample'.  To use this library, install Sample.
+Warning: Minimum '-1E+09' and maximum '1E+09' from 'S_data/K_data velocity to a/u_conv/b' are mapped to a portion of the wide signal coming from 'Out 1' of 'S_data/K_data velocity to a/u_conv/b' and have been ignored during range checking. To enable the range checking for the minimum and maximum values, insert a Signal Conversion block with its 'Output' parameter set to 'S_data/K_data velocity to a/u_conv/b'.
+Warning: File not found or permission denied

@@ -975,6 +975,12 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         shouldFindIssuesOfTool(12, new SimulinkCheck(), "simulink.html");
     }
 
+    /** Runs the Simulink Code Generator parser on an output file that contains 8 issues. */
+    @Test
+    void shouldFindAllCodeGeneratorIssues() {
+        shouldFindIssuesOfTool(8, new CodeGenerator(), "CodeGenerator.log");
+    }
+
     /** Runs the trivy parser on an output file that contains 4 issues. */
     @Test
     void shouldFindAllTrivyIssues() {
