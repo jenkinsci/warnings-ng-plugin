@@ -55,7 +55,7 @@
     <plugin-util-api.version>3.0.0-rc693.c098b_871ea_49</plugin-util-api.version>
     <forensics-api.version>2.0.0-rc1380.c93c627cd828</forensics-api.version>
 
-    <jquery3-api.version>3.6.3-1-rc365.70899fb_d9e1d</jquery3-api.version>
+    <jquery3-api.version>3.6.3-1</jquery3-api.version>
     <plugin-util-api.version>3.0.0-rc693.c098b_871ea_49</plugin-util-api.version>
     <bootstrap5-api.version>5.2.2-1-rc442.6631330fec41</bootstrap5-api.version>
     <font-awesome-api.version>6.3.0-1-rc517.f6b_6e5a_dd4ef</font-awesome-api.version>
