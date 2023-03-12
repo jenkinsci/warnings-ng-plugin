@@ -12,14 +12,14 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 
-import io.jenkins.plugins.prism.CharsetValidation;
+import io.jenkins.plugins.util.ValidationUtilities;
 
 /**
  * Base class for static analysis step executions. Provides several helper methods to obtain the defined {@link
  * StepContext context} elements.
  *
  * @param <T>
- *         the type of the return value (may be {@link Void})
+ *         the type of the return value (or {@link Void})
  *
  * @author Ullrich Hafner
  */
@@ -130,7 +130,7 @@ abstract class AnalysisExecution<T> extends SynchronousNonBlockingStepExecution<
      * @return the default charset for the specified encoding string
      */
     protected Charset getCharset(final String charset) {
-        return new CharsetValidation().getCharset(charset);
+        return new ValidationUtilities().getCharset(charset);
     }
 
 }

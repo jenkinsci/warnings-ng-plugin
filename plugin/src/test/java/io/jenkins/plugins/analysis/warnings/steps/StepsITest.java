@@ -219,10 +219,9 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
                 + "}", true));
         Run<?, ?> baseline = buildSuccessfully(job);
         String consoleLog = getConsoleLog(baseline);
-        String message = "Successfully processed file 'checkstyle1-issues.txt'";
+        String message = "[CheckStyle]";
         if (quiet) {
             assertThat(consoleLog).doesNotContain(message);
-            assertThat(consoleLog).contains("[CheckStyle] Suppressing logging as requested");
         }
         else {
             assertThat(consoleLog).contains(message);

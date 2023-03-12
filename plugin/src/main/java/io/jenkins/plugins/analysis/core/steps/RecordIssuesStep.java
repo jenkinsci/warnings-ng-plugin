@@ -35,16 +35,16 @@ import io.jenkins.plugins.analysis.core.model.HealthReportBuilder;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
-import io.jenkins.plugins.analysis.core.util.ModelValidation;
-import io.jenkins.plugins.analysis.core.util.PipelineResultHandler;
 import io.jenkins.plugins.analysis.core.util.QualityGate;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
-import io.jenkins.plugins.analysis.core.util.StageResultHandler;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
 import io.jenkins.plugins.checks.steps.ChecksInfo;
 import io.jenkins.plugins.prism.SourceCodeDirectory;
+import io.jenkins.plugins.util.PipelineResultHandler;
+import io.jenkins.plugins.util.StageResultHandler;
+import io.jenkins.plugins.util.ValidationUtilities;
 
 /**
  * Pipeline step that scans report files or the console log for issues. Stores the created issues in an {@link
@@ -66,6 +66,7 @@ import io.jenkins.plugins.prism.SourceCodeDirectory;
 @SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveImports", "PMD.TooManyFields", "PMD.DataClass", "PMD.CyclomaticComplexity", "PMD.ExcessiveClassLength", "PMD.GodClass"})
 public class RecordIssuesStep extends Step implements Serializable {
     private static final long serialVersionUID = 1L;
+    private static final ValidationUtilities VALIDATION_UTILITIES = new ValidationUtilities();
 
     private List<Tool> analysisTools = new ArrayList<>();
 
@@ -590,7 +591,7 @@ public class RecordIssuesStep extends Step implements Serializable {
      */
     @DataBoundSetter
     public void setId(final String id) {
-        new ModelValidation().ensureValidId(id);
+        VALIDATION_UTILITIES.ensureValidId(id);
 
         this.id = id;
     }

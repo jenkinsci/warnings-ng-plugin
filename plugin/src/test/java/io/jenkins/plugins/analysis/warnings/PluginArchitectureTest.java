@@ -81,7 +81,7 @@ class PluginArchitectureTest {
         }
 
         @Override
-        public boolean apply(final JavaConstructorCall javaConstructorCall) {
+        public boolean test(final JavaConstructorCall javaConstructorCall) {
             ConstructorCallTarget target = javaConstructorCall.getTarget();
             if (target.getRawParameterTypes().size() > 0) {
                 return false;

@@ -25,7 +25,7 @@ main build page. From there you can also dive into the details:
 - distribution of the issues by severity, category, type, module, or package
 - list of all issues including helpful comments from the reporting tool
 - annotated source code of the affected files
-- trend charts of the issues
+- trend charts of the issues over time
 
 If you are using Git as source code management system then the warnings plugin will optionally mine 
 the repository in the style of 

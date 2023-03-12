@@ -43,7 +43,6 @@ import io.jenkins.plugins.analysis.core.model.WarningsPluginConfiguration;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 import io.jenkins.plugins.analysis.core.util.FileFinder;
-import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.forensics.blame.Blamer;
 import io.jenkins.plugins.forensics.blame.Blamer.NullBlamer;
 import io.jenkins.plugins.forensics.blame.BlamerFactory;
@@ -54,6 +53,7 @@ import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
 import io.jenkins.plugins.prism.PermittedSourceCodeDirectory;
 import io.jenkins.plugins.prism.PrismConfiguration;
 import io.jenkins.plugins.prism.SourceDirectoryFilter;
+import io.jenkins.plugins.util.LogHandler;
 
 import static io.jenkins.plugins.analysis.core.util.AffectedFilesResolver.*;
 
@@ -108,7 +108,8 @@ class IssuesScanner {
         RepositoryStatistics statistics = getRepositoryStatistics(annotatedReport.getReport());
         annotatedReport.addRepositoryStatistics(statistics);
 
-        logger.log(annotatedReport.getReport());
+        logger.logInfoMessages(annotatedReport.getReport().getInfoMessages());
+        logger.logErrorMessages(annotatedReport.getReport().getErrorMessages());
 
         return annotatedReport;
     }

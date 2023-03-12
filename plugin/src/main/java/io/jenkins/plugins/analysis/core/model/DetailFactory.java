@@ -5,6 +5,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -17,7 +18,6 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
-import edu.hm.hafner.util.NoSuchElementException;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -188,7 +188,7 @@ public class DetailFactory {
                         labelProvider, sourceEncoding);
             }
         }
-        throw new NoSuchElementException("There is no URL mapping for %s and %s", parent.getUrl(), link);
+        throw new NoSuchElementException(String.format("There is no URL mapping for %s and %s", parent.getUrl(), link));
     }
 
     private Predicate<Issue> createPropertyFilter(final String plainLink, final String property) {
