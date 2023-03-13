@@ -230,7 +230,7 @@ public abstract class DetailsTableModel extends TableModel {
                 details = DomContentJoiner.join(" ", false,
                         p(strong().with(new UnescapedText(issue.getMessage()))), additionalDescription);
             }
-            return TableColumn.renderDetailsColumn(render(details));
+            return TableColumn.renderDetailsColumn(render(details), jenkinsFacade);
         }
 
         /**
