@@ -700,6 +700,13 @@
         </plugins>
       </build>
     </profile>
+      <profile>
+        <id>fast</id>
+        <properties>
+          <skipTests>true</skipTests>
+          <skipITs>true</skipITs>
+        </properties>
+      </profile>
   </profiles>
 
   <scm>
