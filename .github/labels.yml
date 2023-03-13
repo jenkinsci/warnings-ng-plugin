@@ -7,11 +7,8 @@
 - name: enhancement
   description: Enhancement of existing functionality
   color: 0366d6
-- name: deprecated
-  description: Deprecating API
-  color: f4c21d
-- name: removed
-  description: Removing API
+- name: breaking
+  description: Breaking Changes
   color: e4b21d
 - name: tests
   description: Enhancement of tests
@@ -26,14 +23,14 @@
   description: Update of dependencies
   color: e6e6e6
 - name: java
-  desccription: Pull requests that update Maven Java dependencies
+  description: Pull requests that update Maven Java dependencies
   color: b6b6b6
 - name: javascript
-  desccription: Pull requests that update Node Javascript dependencies
+  description: Pull requests that update Node Javascript dependencies
   color: b6b6b6
 - name: github_actions
-  desccription: Pull requests that update Github Actions code
+  description: Pull requests that update Github Actions workflows
   color: 909090
 - name: hacktoberfest
-  desccription: Pull requests that participate in Hacktoberfest 2021
+  description: Pull requests that participate in Hacktoberfest
   color: 7057ff
