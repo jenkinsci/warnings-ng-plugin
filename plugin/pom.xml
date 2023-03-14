@@ -446,22 +446,6 @@
       <version>1.0.2</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
-      <artifactId>metrics-aggregation</artifactId>
-      <version>0.2.0</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>warnings-ng</artifactId>
-          <groupId>io.jenkins.plugins</groupId>
-        </exclusion>
-        <exclusion>
-          <groupId>io.jenkins.plugins</groupId>
-          <artifactId>code-coverage-api</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
 
     <!-- stage -->
     <dependency>
