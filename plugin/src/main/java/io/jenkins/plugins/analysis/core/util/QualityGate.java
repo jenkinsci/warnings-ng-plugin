@@ -1,14 +1,10 @@
 package io.jenkins.plugins.analysis.core.util;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
 import edu.hm.hafner.util.VisibleForTesting;
-import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -178,76 +174,6 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
         public QualityGateStatus getStatus() {
             return status;
         }
-    }
-
-    /**
-     * Maps the old style {@link Thresholds} to the new style list of {@link QualityGate} instances.
-     *
-     * @param thresholds
-     *         the thresholds
-     *
-     * @return the list of quality gates
-     */
-    @SuppressWarnings({"deprecation", "PMD.NPathComplexity", "PMD.CyclomaticComplexity", "PMD.CognitiveComplexity"})
-    public static List<QualityGate> map(@CheckForNull final Thresholds thresholds) {
-        if (thresholds == null) {
-            return Collections.emptyList();
-        }
-
-        List<QualityGate> gates = new ArrayList<>();
-        if (thresholds.failedTotalAll > 0) {
-            gates.add(new QualityGate(thresholds.failedTotalAll, QualityGateType.TOTAL, FAILURE));
-        }
-        if (thresholds.failedTotalHigh > 0) {
-            gates.add(new QualityGate(thresholds.failedTotalHigh, QualityGateType.TOTAL_HIGH, FAILURE));
-        }
-        if (thresholds.failedTotalNormal > 0) {
-            gates.add(new QualityGate(thresholds.failedTotalNormal, QualityGateType.TOTAL_NORMAL, FAILURE));
-        }
-        if (thresholds.failedTotalLow > 0) {
-            gates.add(new QualityGate(thresholds.failedTotalLow, QualityGateType.TOTAL_LOW, FAILURE));
-        }
-
-        if (thresholds.unstableTotalAll > 0) {
-            gates.add(new QualityGate(thresholds.unstableTotalAll, QualityGateType.TOTAL, UNSTABLE));
-        }
-        if (thresholds.unstableTotalHigh > 0) {
-            gates.add(new QualityGate(thresholds.unstableTotalHigh, QualityGateType.TOTAL_HIGH, UNSTABLE));
-        }
-        if (thresholds.unstableTotalNormal > 0) {
-            gates.add(new QualityGate(thresholds.unstableTotalNormal, QualityGateType.TOTAL_NORMAL, UNSTABLE));
-        }
-        if (thresholds.unstableTotalLow > 0) {
-            gates.add(new QualityGate(thresholds.unstableTotalLow, QualityGateType.TOTAL_LOW, UNSTABLE));
-        }
-
-        if (thresholds.failedNewAll > 0) {
-            gates.add(new QualityGate(thresholds.failedNewAll, QualityGateType.NEW, FAILURE));
-        }
-        if (thresholds.failedNewHigh > 0) {
-            gates.add(new QualityGate(thresholds.failedNewHigh, QualityGateType.NEW_HIGH, FAILURE));
-        }
-        if (thresholds.failedNewNormal > 0) {
-            gates.add(new QualityGate(thresholds.failedNewNormal, QualityGateType.NEW_NORMAL, FAILURE));
-        }
-        if (thresholds.failedNewLow > 0) {
-            gates.add(new QualityGate(thresholds.failedNewLow, QualityGateType.NEW_LOW, FAILURE));
-        }
-
-        if (thresholds.unstableNewAll > 0) {
-            gates.add(new QualityGate(thresholds.unstableNewAll, QualityGateType.NEW, UNSTABLE));
-        }
-        if (thresholds.unstableNewHigh > 0) {
-            gates.add(new QualityGate(thresholds.unstableNewHigh, QualityGateType.NEW_HIGH, UNSTABLE));
-        }
-        if (thresholds.unstableNewNormal > 0) {
-            gates.add(new QualityGate(thresholds.unstableNewNormal, QualityGateType.NEW_NORMAL, UNSTABLE));
-        }
-        if (thresholds.unstableNewLow > 0) {
-            gates.add(new QualityGate(thresholds.unstableNewLow, QualityGateType.NEW_LOW, UNSTABLE));
-        }
-
-        return gates;
     }
 
     /**

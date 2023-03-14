@@ -2,9 +2,9 @@ package io.jenkins.plugins.analysis.warnings.groovy;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import edu.hm.hafner.util.NoSuchElementException;
 import edu.hm.hafner.util.VisibleForTesting;
 
 import org.kohsuke.stapler.DataBoundSetter;
@@ -115,7 +115,7 @@ public class ParserConfiguration extends GlobalConfigurationItem {
     /**
      * Called by jelly to validate the configured value that could be passed to
      * {@link #setConsoleLogScanningPermitted(boolean)}.
-     * 
+     *
      * @param value The current value.
      * @return {@link FormValidation#ok()} if all is well, else a warning or error.
      */
@@ -157,7 +157,7 @@ public class ParserConfiguration extends GlobalConfigurationItem {
                 return parser;
             }
         }
-        throw new NoSuchElementException("No Groovy parser with ID '%s' found.", id);
+        throw new NoSuchElementException(String.format("No Groovy parser with ID '%s' found.", id));
     }
 
     /**

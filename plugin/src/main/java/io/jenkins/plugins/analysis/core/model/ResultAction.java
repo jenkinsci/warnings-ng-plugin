@@ -277,17 +277,6 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
     }
 
     /**
-     * Returns a summary message of the static analysis run. This message is shown in the 'summary.jelly' view.
-     *
-     * @return summary message (HTML)
-     * @deprecated replaced by {@link #getSummaryModel()}
-     */
-    @Deprecated
-    public String getSummary() {
-        return new Summary(getLabelProvider(), getResult()).create();
-    }
-
-    /**
      * Returns the model for the summary of the static analysis run. This model is used as input in the 'summary.jelly'
      * view.
      *

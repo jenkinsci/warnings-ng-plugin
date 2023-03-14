@@ -38,6 +38,12 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
     private static final String SINGLE_LINE_REGEXP = "^\\s*(.*):(\\d+):(.*):\\s*(.*)$";
     private static final String OK_SCRIPT = ";";
 
+    @Override
+    protected void assertThatRestoredInstanceEqualsOriginalInstance(
+            final GroovyParser original, final GroovyParser restored) {
+        assertThat(restored).isEqualTo(original);
+    }
+
     @Test
     void shouldShortenExample() {
         char[] example = new char[GroovyParser.MAX_EXAMPLE_SIZE * 2];

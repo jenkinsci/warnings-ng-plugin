@@ -20,7 +20,7 @@ import hudson.model.BuildListener;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
-import io.jenkins.plugins.analysis.core.util.RunResultHandler;
+import io.jenkins.plugins.util.RunResultHandler;
 
 /**
  * Aggregates the {@link AnalysisResult}s of all {@link ResultAction}s of several {@link MatrixRun}s into {@link

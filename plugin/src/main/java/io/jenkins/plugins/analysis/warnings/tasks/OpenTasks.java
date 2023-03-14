@@ -29,12 +29,12 @@ import hudson.util.FormValidation;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.SymbolIconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
-import io.jenkins.plugins.analysis.core.util.LogHandler;
-import io.jenkins.plugins.analysis.core.util.ModelValidation;
 import io.jenkins.plugins.analysis.warnings.Messages;
 import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.CaseMode;
 import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.MatcherMode;
 import io.jenkins.plugins.util.JenkinsFacade;
+import io.jenkins.plugins.util.LogHandler;
+import io.jenkins.plugins.util.ValidationUtilities;
 
 /**
  * Provides a files scanner that detects open tasks in source code files.
@@ -187,7 +187,8 @@ public class OpenTasks extends Tool {
     /** Label provider with customized messages. */
     private static class LabelProvider extends SymbolIconLabelProvider {
         LabelProvider() {
-            super(ID, Messages.Warnings_OpenTasks_Name(), i -> StringUtils.EMPTY, "symbol-solid/clipboard-check plugin-font-awesome-api");
+            super(ID, Messages.Warnings_OpenTasks_Name(), i -> StringUtils.EMPTY,
+                    "symbol-solid/clipboard-check plugin-font-awesome-api");
         }
 
         @Override
@@ -206,7 +207,7 @@ public class OpenTasks extends Tool {
     @Extension
     public static class Descriptor extends ToolDescriptor {
         private static final JenkinsFacade JENKINS = new JenkinsFacade();
-        private final ModelValidation model = new ModelValidation();
+        private static final ValidationUtilities VALIDATION_UTILITIES = new ValidationUtilities();
 
         /** Creates the descriptor instance. */
         public Descriptor() {
@@ -241,7 +242,7 @@ public class OpenTasks extends Tool {
                 return FormValidation.ok();
             }
 
-            return model.doCheckPattern(project, includePattern);
+            return VALIDATION_UTILITIES.doCheckPattern(project, includePattern);
         }
 
         /**
@@ -261,7 +262,7 @@ public class OpenTasks extends Tool {
                 return FormValidation.ok();
             }
 
-            return model.doCheckPattern(project, excludePattern);
+            return VALIDATION_UTILITIES.doCheckPattern(project, excludePattern);
         }
 
         /**
@@ -308,8 +309,9 @@ public class OpenTasks extends Tool {
                 return FormValidation.error(scanner.getErrors());
             }
 
-            try (BufferedReader reader = new BufferedReader(new StringReader(example))) {
-                Report tasks = scanner.scanTasks(reader.lines().iterator(), new IssueBuilder().setFileName("UI example"));
+            try (var reader = new BufferedReader(new StringReader(example)); var issueBuilder = new IssueBuilder()) {
+                issueBuilder.setFileName("UI example");
+                Report tasks = scanner.scanTasks(reader.lines().iterator(), issueBuilder);
                 if (tasks.isEmpty()) {
                     return FormValidation.warning(Messages.OpenTasks_Validation_NoTask());
                 }

@@ -8,8 +8,8 @@ import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.*;
-import static com.tngtech.archunit.library.plantuml.PlantUmlArchCondition.Configurations.*;
-import static com.tngtech.archunit.library.plantuml.PlantUmlArchCondition.*;
+import static com.tngtech.archunit.library.plantuml.rules.PlantUmlArchCondition.Configuration.*;
+import static com.tngtech.archunit.library.plantuml.rules.PlantUmlArchCondition.*;
 
 /**
  * Checks the package architecture of this plugin.

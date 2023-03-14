@@ -32,7 +32,6 @@ import hudson.model.Run;
 import io.jenkins.plugins.analysis.core.charts.JenkinsBuild;
 import io.jenkins.plugins.analysis.core.util.IssuesStatistics;
 import io.jenkins.plugins.analysis.core.util.IssuesStatisticsBuilder;
-import io.jenkins.plugins.analysis.core.util.ModelValidation;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
@@ -41,6 +40,7 @@ import io.jenkins.plugins.forensics.blame.BlamesXmlStream;
 import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
 import io.jenkins.plugins.forensics.miner.RepositoryStatisticsXmlStream;
 import io.jenkins.plugins.util.JenkinsFacade;
+import io.jenkins.plugins.util.ValidationUtilities;
 
 /**
  * Stores the results of a static analysis run. Provides support for persisting the results of the build and loading and
@@ -224,7 +224,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
         this.owner = owner;
 
         Report allIssues = report.getAllIssues();
-        new ModelValidation().ensureValidId(id);
+        new ValidationUtilities().ensureValidId(id);
         this.id = id;
 
         totals = report.getStatistics();

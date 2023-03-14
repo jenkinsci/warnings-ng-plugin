@@ -4,10 +4,10 @@
 [![Jenkins Plugin Installs](https://img.shields.io/jenkins/plugin/i/warnings-ng.svg?color=red)](https://plugins.jenkins.io/warnings-ng)
 [![Jenkins](https://ci.jenkins.io/job/Plugins/job/warnings-ng-plugin/job/master/badge/icon?subject=Jenkins%20CI)](https://ci.jenkins.io/job/Plugins/job/warnings-ng-plugin/job/master/)
 [![GitHub Actions](https://github.com/jenkinsci/warnings-ng-plugin/workflows/GitHub%20CI/badge.svg?branch=master)](https://github.com/jenkinsci/warnings-ng-plugin/actions)
-[![Codecov](https://codecov.io/gh/jenkinsci/warnings-ng-plugin/branch/master/graph/badge.svg)](https://codecov.io/gh/jenkinsci/warnings-ng-plugin/branch/master)
+[![Codecov](https://codecov.io/gh/jenkinsci/warnings-ng-plugin/branch/master/graph/badge.svg)](https://app.codecov.io/gh/jenkinsci/warnings-ng-plugin)
 
 The Jenkins Next Generation Warnings plugin collects compiler warnings or issues reported by static analysis tools and 
-visualizes the results. It has built-in support for more than hundred [report formats](SUPPORTED-FORMATS.md). 
+visualizes the results. It has built-in support for more than a hundred [report formats](SUPPORTED-FORMATS.md). 
 Among the problems it can detect:
 - errors from your compiler (C, C#, Java, etc.)
 - warnings from a static analysis tool (CheckStyle, StyleCop, SpotBugs, etc.)
@@ -25,7 +25,7 @@ main build page. From there you can also dive into the details:
 - distribution of the issues by severity, category, type, module, or package
 - list of all issues including helpful comments from the reporting tool
 - annotated source code of the affected files
-- trend charts of the issues
+- trend charts of the issues over time
 
 If you are using Git as source code management system then the warnings plugin will optionally mine 
 the repository in the style of 
