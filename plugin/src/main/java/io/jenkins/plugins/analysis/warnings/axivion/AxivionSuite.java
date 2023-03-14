@@ -49,10 +49,10 @@ import jenkins.model.Jenkins;
 import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
-import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.warnings.axivion.AxivionParser.Config;
 import io.jenkins.plugins.util.EnvironmentResolver;
 import io.jenkins.plugins.util.JenkinsFacade;
+import io.jenkins.plugins.util.LogHandler;
 
 /** Provides a parser and customized messages for the Axivion Suite. */
 @SuppressWarnings({"PMD.ExcessiveImports", "PMD.DataClass", "ClassFanOutComplexity"})

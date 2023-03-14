@@ -7,9 +7,9 @@ import java.nio.file.Path;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import edu.hm.hafner.analysis.FilteredLog;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.util.FilteredLog;
 import edu.hm.hafner.util.PathUtil;
 import edu.hm.hafner.util.VisibleForTesting;
 
@@ -141,8 +141,7 @@ public class AffectedFilesResolver {
         int notFound = 0;
         int notInWorkspace = 0;
 
-        FilteredLog log = new FilteredLog(report,
-                "Can't copy some affected workspace files to Jenkins build folder:");
+        FilteredLog log = new FilteredLog("Can't copy some affected workspace files to Jenkins build folder:");
 
         for (Issue issue : report) {
             if (!remoteFacade.existsInBuildFolder(issue.getFileName())) { // skip already processed files
@@ -167,6 +166,8 @@ public class AffectedFilesResolver {
             }
         }
 
+        log.getInfoMessages().forEach(report::logInfo);
+        log.getErrorMessages().forEach(report::logError);
         report.logInfo("-> %d copied, %d not in workspace, %d not-found, %d with I/O error",
                 copied, notInWorkspace, notFound, log.size());
         log.logSummary();

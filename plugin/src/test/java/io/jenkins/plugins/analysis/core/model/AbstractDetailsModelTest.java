@@ -38,7 +38,7 @@ public abstract class AbstractDetailsModelTest {
     private static final String MESSAGE
             = join("Hello message with", a().withHref("url").withText("link").withRel(REL_CONTENT)).render();
     /** Details icon that opens a new row. */
-    protected static final String DETAILS_ICON = "<svg class=\"details-icon svg-icon\"><use href=\"/path/to/icon\"></use></svg>";
+    protected static final String DETAILS_ICON = "my-symbol my-symbol";
     static final String EXPECTED_DESCRIPTION = String.format(
             "<div class=\"details-control\" data-description=\"&lt;p&gt;&lt;strong&gt;%s&lt;/strong&gt;&lt;/p&gt; %s\">"
                     + DETAILS_ICON + "</div>",
@@ -111,7 +111,7 @@ public abstract class AbstractDetailsModelTest {
 
     protected JenkinsFacade createJenkinsFacade() {
         JenkinsFacade jenkinsFacade = mock(JenkinsFacade.class);
-        when(jenkinsFacade.getImagePath(anyString())).thenReturn("/path/to/icon");
+        when(jenkinsFacade.getSymbol(any())).thenReturn("my-symbol");
         return jenkinsFacade;
     }
 

@@ -1,15 +1,10 @@
 package io.jenkins.plugins.analysis.core.util;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.jvnet.hudson.test.Issue;
 
 import edu.hm.hafner.analysis.Severity;
@@ -33,55 +28,6 @@ import static org.mockito.Mockito.*;
  * @author Ullrich Hafner
  */
 class ModelValidationTest {
-    @ParameterizedTest(name = "{index} => Should be marked as illegal ID: \"{0}\"")
-    @ValueSource(strings = {"a b", "a/b", "a#b", "äöü", "aö", ".", ".."})
-    @DisplayName("should reject IDs")
-    void shouldRejectId(final String id) {
-        ModelValidation model = new ModelValidation();
-
-        assertThat(model.validateId(id)).isError().hasMessage(createInvalidIdMessage(id));
-        assertThatIllegalArgumentException().isThrownBy(() -> model.ensureValidId(id));
-    }
-
-    @ParameterizedTest(name = "{index} => Should be marked as valid ID: \"{0}\"")
-    @ValueSource(strings = {"", "a", "awordb", "a-b", "a_b", "0", "a0b", "12a34", "A", "aBc", "a.b-c_e", "z.."})
-    @DisplayName("should accept IDs")
-    void shouldAcceptId(final String id) {
-        ModelValidation model = new ModelValidation();
-
-        assertThat(model.validateId(id)).isOk();
-        assertThatCode(() -> model.ensureValidId(id)).doesNotThrowAnyException();
-    }
-
-    @Test
-    void shouldValidateCharsets() {
-        ModelValidation model = new ModelValidation();
-
-        assertThat(model.validateCharset("")).isOk();
-        assertThat(model.validateCharset("UTF-8")).isOk();
-        assertThat(model.validateCharset("Some wrong text"))
-                .isError()
-                .hasMessage(createWrongEncodingErrorMessage());
-    }
-
-    @Test
-    void shouldContainDefaultCharsets() {
-        ModelValidation model = new ModelValidation();
-
-        ComboBoxModel allCharsets = model.getAllCharsets();
-        assertThat(allCharsets).isNotEmpty().contains("UTF-8", "ISO-8859-1");
-    }
-
-    @Test
-    void shouldFallbackToPlatformCharset() {
-        ModelValidation model = new ModelValidation();
-
-        assertThat(model.getCharset("UTF-8")).isEqualTo(StandardCharsets.UTF_8);
-        assertThat(model.getCharset("nothing")).isEqualTo(Charset.defaultCharset());
-        assertThat(model.getCharset("")).isEqualTo(Charset.defaultCharset());
-        assertThat(model.getCharset(null)).isEqualTo(Charset.defaultCharset());
-    }
-
     @Test
     void doFillMinimumPriorityItemsShouldBeNotEmpty() {
         ModelValidation model = new ModelValidation();

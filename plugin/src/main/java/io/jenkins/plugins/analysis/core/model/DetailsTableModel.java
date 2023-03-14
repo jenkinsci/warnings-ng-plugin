@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
+import edu.hm.hafner.analysis.util.IntegerParser;
 
 import j2html.tags.DomContentJoiner;
 import j2html.tags.UnescapedText;
@@ -24,7 +25,6 @@ import io.jenkins.plugins.datatables.TableModel;
 import io.jenkins.plugins.prism.Sanitizer;
 import io.jenkins.plugins.util.JenkinsFacade;
 
-import static edu.hm.hafner.util.IntegerParser.*;
 import static j2html.TagCreator.*;
 
 /**
@@ -200,7 +200,7 @@ public abstract class DetailsTableModel extends TableModel {
             this.jenkinsFacade = jenkinsFacade;
             message = render(issue.getMessage());
             description = formatDetails(issue, descriptionProvider.getDescription(issue));
-            age = ageBuilder.apply(parseInt(issue.getReference()));
+            age = ageBuilder.apply(IntegerParser.parseInt(issue.getReference()));
             fileName = createFileName(fileNameRenderer, issue);
         }
 

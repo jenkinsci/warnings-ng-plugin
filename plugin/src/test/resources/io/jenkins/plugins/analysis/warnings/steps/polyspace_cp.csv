@@ -1,0 +1,5 @@
+ID	Family	Group	Color	New	Check	Information	Function	File	Status	Severity	Comment	Key	Line	Col
+16153	Run-time Check	Data flow	Red	yes	Unreachable code		xinitialize()	D:\workspace/math.c	Unreviewed	Unset		CC1849A44441	30	4
+16155	Run-time Check	Data flow	Gray	yes	Unreachable code		method_a()	D:\sample.h	Unreviewed	Medium		CC10009C49A1	34	4
+16144	Run-time Check	Data flow	Gray	yes	Unreachable code		errorCheck()	D:\Jenkins\main.c	Unreviewed	High		81111559C49A1	66	4
+2436	MISRA C:2012	10 The essential type model	Not Applicable	yes	10.1 Operands shall not be of an inappropriate essential type.	Category: Required	a_message()	/file/SERVICE.c	Unreviewed	Unset		844C182E62C8B9	217	27

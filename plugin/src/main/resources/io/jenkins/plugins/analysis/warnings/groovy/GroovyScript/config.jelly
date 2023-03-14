@@ -1,5 +1,5 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:i="/issues" xmlns:f="/lib/form" xmlns:c="/controls">
+<j:jelly xmlns:j="jelly:core" xmlns:i="/issues" xmlns:f="/lib/form">
 
   <f:entry title="${%title.tool}" description="${%description.tool(rootURL)}" field="parserId">
     <f:select/>
@@ -10,28 +10,28 @@
       <f:entry title="${%title.pattern}" field="pattern"
                description="${%description.patternOrDefault('https://ant.apache.org/manual/Types/fileset.html', descriptor.pattern)}"
                help="${descriptor.getHelpFile('patternOrDefault')}">
-        <c:safe-textbox/>
+        <f:textbox/>
       </f:entry>
     </j:when>
     <j:when test="${descriptor.canScanConsoleLog()}">
       <f:entry title="${%title.pattern}" field="pattern"
                description="${%description.patternOrConsole('https://ant.apache.org/manual/Types/fileset.html')}"
                help="${descriptor.getHelpFile('patternOrConsole')}">
-        <c:safe-textbox/>
+        <f:textbox/>
       </f:entry>
     </j:when>
     <j:otherwise>
       <f:entry title="${%title.pattern}" field="pattern"
                description="${%description.patternRequired('https://ant.apache.org/manual/Types/fileset.html')}"
                help="${descriptor.getHelpFile('patternRequired')}">
-        <c:safe-textbox/>
+        <f:textbox/>
       </f:entry>
     </j:otherwise>
   </j:choose>
 
   <f:entry title="${%title.reportEncoding}" field="reportEncoding"
            description="${%description.reportEncoding}">
-    <c:safe-combobox/>
+    <f:combobox/>
   </f:entry>
 
   <i:tool-defaults/>

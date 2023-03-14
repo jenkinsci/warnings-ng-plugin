@@ -32,8 +32,8 @@ import hudson.util.FormValidation;
 import hudson.util.FormValidation.Kind;
 import jenkins.model.Jenkins;
 
-import io.jenkins.plugins.analysis.core.util.ModelValidation;
 import io.jenkins.plugins.util.JenkinsFacade;
+import io.jenkins.plugins.util.ValidationUtilities;
 
 /**
  * Defines the properties of a warnings parser that uses a Groovy script to parse the warnings log.
@@ -43,6 +43,7 @@ import io.jenkins.plugins.util.JenkinsFacade;
 @SuppressWarnings("PMD.ExcessiveImports")
 public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implements Serializable {
     private static final long serialVersionUID = 2447124045452896581L;
+    private static final ValidationUtilities VALIDATION_UTILITIES = new ValidationUtilities();
     static final int MAX_EXAMPLE_SIZE = 4096;
 
     private final String id;
@@ -73,7 +74,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
             final String regexp, final String script, final String example) {
         super();
 
-        new ModelValidation().ensureValidId(id);
+        VALIDATION_UTILITIES.ensureValidId(id);
 
         this.id = id;
         this.name = name;
@@ -254,7 +255,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
             if (!jenkinsFacade.hasPermission(Item.CONFIGURE)) {
                 return FormValidation.ok();
             }
-            return new ModelValidation().validateId(id);
+            return VALIDATION_UTILITIES.validateId(id);
         }
 
         /**

@@ -15,8 +15,8 @@ import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
-import io.jenkins.plugins.prism.CharsetValidation;
 import io.jenkins.plugins.util.JenkinsFacade;
+import io.jenkins.plugins.util.ValidationUtilities;
 
 /**
  * Descriptor base class for all analysis steps. Provides generic validation methods, and list box models for UI select
@@ -25,6 +25,7 @@ import io.jenkins.plugins.util.JenkinsFacade;
  * @author Ullrich Hafner
  */
 public abstract class AnalysisStepDescriptor extends StepDescriptor {
+    private static final ValidationUtilities VALIDATION_UTILITIES = new ValidationUtilities();
     private static final JenkinsFacade JENKINS = new JenkinsFacade();
     private final ModelValidation model = new ModelValidation();
 
@@ -38,7 +39,7 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
     @POST
     public ComboBoxModel doFillSourceCodeEncodingItems(@AncestorInPath final BuildableItem project) {
         if (JENKINS.hasPermission(Item.READ, project)) {
-            return new CharsetValidation().getAllCharsets();
+            return VALIDATION_UTILITIES.getAllCharsets();
         }
         return new ComboBoxModel();
     }
@@ -60,7 +61,7 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
             return FormValidation.ok();
         }
 
-        return new CharsetValidation().validateCharset(reportEncoding);
+        return VALIDATION_UTILITIES.validateCharset(reportEncoding);
     }
 
     /**
@@ -80,7 +81,7 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
             return FormValidation.ok();
         }
 
-        return new CharsetValidation().validateCharset(sourceCodeEncoding);
+        return VALIDATION_UTILITIES.validateCharset(sourceCodeEncoding);
     }
 
     /**
@@ -190,7 +191,7 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
             return FormValidation.ok();
         }
 
-        return model.validateId(id);
+        return VALIDATION_UTILITIES.validateId(id);
     }
 
     @Override

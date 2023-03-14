@@ -33,7 +33,6 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  *
  * @author Michaela Reitschuster
  */
-@SuppressWarnings("deprecation") // old API should be still working
 // TODO: add some tests for severity HIGH
 class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     private static final Map<Result, QualityGateStatus> RESULT_TO_STATUS_MAPPING
@@ -108,16 +107,6 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Tests if the build is considered unstable when its defined threshold for new issues (overall) is reached.
-     */
-    @Test
-    void shouldBeUnstableWhenUnstableNewAllIsReached() {
-        FreeStyleProject project = createFreeStyleProject();
-        enableAndConfigureCheckstyle(project, recorder -> recorder.setUnstableNewAll(11));
-        runJobTwice(project, Result.UNSTABLE);
-    }
-
-    /**
      * Tests if the build is considered unstable when its defined threshold for delta with high severity is reached.
      */
     @Test
@@ -164,17 +153,6 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Tests if the build is considered unstable when its defined threshold for new issues with normal severity is
-     * reached.
-     */
-    @Test
-    void shouldBeUnstableWhenUnstableNewNormalIsReached() {
-        FreeStyleProject project = createFreeStyleProject();
-        enableAndConfigureCheckstyle(project, recorder -> recorder.setUnstableNewNormal(2));
-        runJobTwice(project, Result.UNSTABLE);
-    }
-
-    /**
      * Tests if the build is considered unstable when its defined threshold for new issues with low severity is
      * reached.
      */
@@ -199,17 +177,6 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Tests if the build is considered unstable when its defined threshold for new issues with low severity is
-     * reached.
-     */
-    @Test
-    void shouldBeUnstableWhenUnstableNewLowIsReached() {
-        FreeStyleProject project = createFreeStyleProject();
-        enableAndConfigureCheckstyle(project, recorder -> recorder.setUnstableNewLow(3));
-        runJobTwice(project, Result.UNSTABLE);
-    }
-
-    /**
      * Tests if the build is considered unstable when its defined threshold for all issues is reached.
      */
     @Test
@@ -217,16 +184,6 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
         FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project,
                 recorder -> recorder.addQualityGate(11, QualityGateType.TOTAL, QualityGateResult.UNSTABLE));
-        runJobTwice(project, Result.UNSTABLE);
-    }
-
-    /**
-     * Tests if the build is considered unstable when its defined threshold for all issues is reached.
-     */
-    @Test
-    void shouldBeUnstableWhenUnstableTotalAllIsReached() {
-        FreeStyleProject project = createFreeStyleProject();
-        enableAndConfigureCheckstyle(project, recorder -> recorder.setUnstableTotalAll(11));
         runJobTwice(project, Result.UNSTABLE);
     }
 
@@ -255,17 +212,6 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Tests if the build is considered unstable when its defined threshold for all issues with normal severity is
-     * reached.
-     */
-    @Test
-    void shouldBeUnstableWhenUnstableTotalNormalIsReached() {
-        FreeStyleProject project = createFreeStyleProject();
-        enableAndConfigureCheckstyle(project, recorder -> recorder.setUnstableTotalNormal(2));
-        runJobTwice(project, Result.UNSTABLE);
-    }
-
-    /**
      * Tests if the build is considered unstable when its defined threshold for all issues with low severity is
      * reached.
      */
@@ -278,17 +224,6 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Tests if the build is considered unstable when its defined threshold for all issues with low severity is
-     * reached.
-     */
-    @Test
-    void shouldBeUnstableWhenUnstableTotalLowIsReached() {
-        FreeStyleProject project = createFreeStyleProject();
-        enableAndConfigureCheckstyle(project, recorder -> recorder.setUnstableTotalLow(3));
-        runJobTwice(project, Result.UNSTABLE);
-    }
-
-    /**
      * Tests if the build is considered a failure when its defined threshold for all new issues(overall) is reached.
      */
     @Test
@@ -296,16 +231,6 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
         FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project,
                 recorder -> recorder.addQualityGate(9, QualityGateType.NEW, QualityGateResult.FAILURE));
-        runJobTwice(project, Result.FAILURE);
-    }
-
-    /**
-     * Tests if the build is considered a failure when its defined threshold for all new issues(overall) is reached.
-     */
-    @Test
-    void shouldBeFailureWhenFailedNewAllIsReached() {
-        FreeStyleProject project = createFreeStyleProject();
-        enableAndConfigureCheckstyle(project, recorder -> recorder.setFailedNewAll(9));
         runJobTwice(project, Result.FAILURE);
     }
 
@@ -334,17 +259,6 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Tests if the build is considered a failure when its defined threshold for new issues with normal priority is
-     * reached.
-     */
-    @Test
-    void shouldBeFailureWhenFailedNewNormalIsReached() {
-        FreeStyleProject project = createFreeStyleProject();
-        enableAndConfigureCheckstyle(project, recorder -> recorder.setFailedNewNormal(2));
-        runJobTwice(project, Result.FAILURE);
-    }
-
-    /**
      * Tests if the build is considered a failure when its defined threshold for new issues with low priority is
      * reached.
      */
@@ -357,17 +271,6 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Tests if the build is considered a failure when its defined threshold for new issues with low priority is
-     * reached.
-     */
-    @Test
-    void shouldBeFailureWhenFailedNewLowIsReached() {
-        FreeStyleProject project = createFreeStyleProject();
-        enableAndConfigureCheckstyle(project, recorder -> recorder.setFailedNewLow(3));
-        runJobTwice(project, Result.FAILURE);
-    }
-
-    /**
      * Tests if the build is considered a failure when its defined threshold for all issues is reached.
      */
     @Test
@@ -375,16 +278,6 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
         FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project,
                 recorder -> recorder.addQualityGate(11, QualityGateType.TOTAL, QualityGateResult.FAILURE));
-        runJobTwice(project, Result.FAILURE);
-    }
-
-    /**
-     * Tests if the build is considered a failure when its defined threshold for all issues is reached.
-     */
-    @Test
-    void shouldBeFailureWhenFailureTotalAllIsReached() {
-        FreeStyleProject project = createFreeStyleProject();
-        enableAndConfigureCheckstyle(project, recorder -> recorder.setFailedTotalAll(11));
         runJobTwice(project, Result.FAILURE);
     }
 
@@ -412,17 +305,6 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Tests if the build is considered a failure when its defined threshold for issues with normal severity is
-     * reached.
-     */
-    @Test
-    void shouldBeFailureWhenFailureTotalNormalIsReached() {
-        FreeStyleProject project = createFreeStyleProject();
-        enableAndConfigureCheckstyle(project, recorder -> recorder.setFailedTotalNormal(2));
-        runJobTwice(project, Result.FAILURE);
-    }
-
-    /**
      * Tests if the build is considered a failure when its defined threshold for issues with low severity is reached.
      */
     @Test
@@ -430,16 +312,6 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
         FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project,
                 recorder -> recorder.addQualityGate(3, QualityGateType.TOTAL_LOW, QualityGateResult.FAILURE));
-        runJobTwice(project, Result.FAILURE);
-    }
-
-    /**
-     * Tests if the build is considered a failure when its defined threshold for issues with low severity is reached.
-     */
-    @Test
-    void shouldBeFailureWhenFailureTotalLowIsReached() {
-        FreeStyleProject project = createFreeStyleProject();
-        enableAndConfigureCheckstyle(project, recorder -> recorder.setFailedTotalLow(3));
         runJobTwice(project, Result.FAILURE);
     }
 
@@ -452,19 +324,6 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
         enableAndConfigureCheckstyle(project, recorder -> {
             recorder.addQualityGate(1, QualityGateType.TOTAL, QualityGateResult.UNSTABLE);
             recorder.addQualityGate(3, QualityGateType.TOTAL_LOW, QualityGateResult.FAILURE);
-        });
-        runJobTwice(project, Result.FAILURE);
-    }
-
-    /**
-     * Tests if the build is considered a failure when thresholds for unstable and for failure are reached.
-     */
-    @Test
-    void shouldOverrideUnstableWhenFailureAndUnstableThresholdIsReached() {
-        FreeStyleProject project = createFreeStyleProject();
-        enableAndConfigureCheckstyle(project, recorder -> {
-            recorder.setUnstableTotalAll(1);
-            recorder.setFailedTotalLow(3);
         });
         runJobTwice(project, Result.FAILURE);
     }

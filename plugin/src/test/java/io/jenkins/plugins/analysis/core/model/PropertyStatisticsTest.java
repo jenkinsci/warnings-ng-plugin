@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.core.model;
 
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -8,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
-import edu.hm.hafner.util.NoSuchElementException;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
