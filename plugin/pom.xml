@@ -41,7 +41,6 @@
     <testcontainers.version>1.17.6</testcontainers.version>
 
     <!-- Jenkins Plug-in Dependencies Versions -->
-    <autograding.version>3.3.1</autograding.version>
     <git-forensics.version>2.0.0</git-forensics.version>
     <jenkins-maven-plugin.version>3.21</jenkins-maven-plugin.version>
     <job-dsl.version>1.81</job-dsl.version>
@@ -460,42 +459,6 @@
         <exclusion>
           <groupId>io.jenkins.plugins</groupId>
           <artifactId>code-coverage-api</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
-      <artifactId>autograding</artifactId>
-      <version>${autograding.version}</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>warnings-ng</artifactId>
-          <groupId>io.jenkins.plugins</groupId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.github.spotbugs</groupId>
-          <artifactId>spotbugs-annotations</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>commons-beanutils</groupId>
-          <artifactId>commons-beanutils</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>edu.hm.hafner</groupId>
-          <artifactId>codingstyle</artifactId>
-        </exclusion>
-        <exclusion>
-          <artifactId>error_prone_annotations</artifactId>
-          <groupId>com.google.errorprone</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>commons-lang3</artifactId>
-          <groupId>org.apache.commons</groupId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.jenkins-ci</groupId>
-          <artifactId>symbol-annotation</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
