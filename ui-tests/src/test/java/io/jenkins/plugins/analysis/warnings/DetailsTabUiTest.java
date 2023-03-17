@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
 
@@ -317,8 +316,7 @@ public class DetailsTabUiTest extends UiTest {
      *         WebElement that should contain the expected string
      */
     private void waitUntilCondition(final WebElement target, final String expectedString) {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2L), Duration.ofMillis(100L));
+        WebDriverWait wait = new WebDriverWait(driver, 2, 100);
         wait.until(ExpectedConditions.textToBePresentInElement(target, expectedString));
-
     }
 }
