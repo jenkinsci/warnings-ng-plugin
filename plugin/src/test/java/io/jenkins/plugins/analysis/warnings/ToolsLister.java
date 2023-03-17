@@ -31,7 +31,7 @@ import static j2html.TagCreator.*;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings("ClassNamingConventions")
+@SuppressWarnings("PMD.ClassNamingConventions")
 class ToolsLister extends IntegrationTestWithJenkinsPerSuite {
     private static final String BULB_EMOJI = ":bulb:";
     private static final String EMPTY = "-";
