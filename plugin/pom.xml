@@ -50,7 +50,7 @@
     <!-- Maven Surefire ArgLine -->
     <argLine>-Djava.awt.headless=true -Xmx1024m -Djenkins.test.timeout=1000 --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.util.concurrent=ALL-UNNAMED</argLine>
 
-    <forensics-api.version>2.0.0</forensics-api.version>
+    <forensics-api.version>2.0.1</forensics-api.version>
 
     <plugin-util-api.version>3.1.0</plugin-util-api.version>
     <jquery3-api.version>3.6.3-1</jquery3-api.version>
