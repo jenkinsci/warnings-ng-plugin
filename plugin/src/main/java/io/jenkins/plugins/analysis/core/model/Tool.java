@@ -24,7 +24,6 @@ import hudson.model.Run;
 import hudson.util.FormValidation;
 import jenkins.security.MasterToSlaveCallable;
 
-import io.jenkins.plugins.analysis.core.util.ModelValidation;
 import io.jenkins.plugins.util.JenkinsFacade;
 import io.jenkins.plugins.util.LogHandler;
 import io.jenkins.plugins.util.ValidationUtilities;
@@ -172,8 +171,6 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
 
     /** Descriptor for {@link Tool}. **/
     public abstract static class ToolDescriptor extends Descriptor<Tool> {
-        private final ModelValidation model = new ModelValidation();
-
         private final String defaultId;
 
         /**

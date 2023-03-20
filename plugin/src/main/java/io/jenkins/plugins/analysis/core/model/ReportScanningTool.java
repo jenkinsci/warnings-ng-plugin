@@ -187,8 +187,7 @@ public abstract class ReportScanningTool extends Tool {
             else {
                 aggregation = new Report(results);
             }
-            log.getInfoMessages().forEach(aggregation::logInfo);
-            log.getErrorMessages().forEach(aggregation::logError);
+            aggregation.mergeLogMessages(log);
             return aggregation;
         }
         catch (IOException e) {
