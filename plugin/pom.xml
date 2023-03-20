@@ -35,7 +35,7 @@
 
     <!-- Test Library Dependencies Versions -->
     <xmlunit.version>2.9.1</xmlunit.version>
-    <jsoup.version>1.15.3</jsoup.version>
+    <jsoup.version>1.15.4</jsoup.version>
     <json-smart.version>2.4.10</json-smart.version>
     <jmh.version>1.36</jmh.version>
     <testcontainers.version>1.17.6</testcontainers.version>
