@@ -244,8 +244,7 @@ class IssuesPublisher {
                     log.logInfo("Obtaining reference build from same job (%s)", run.getParent().getDisplayName());
                     return run;
                 });
-        log.getInfoMessages().forEach(issues::logInfo);
-        log.getErrorMessages().forEach(issues::logError);
+        issues.mergeLogMessages(log);
         return reference;
     }
 

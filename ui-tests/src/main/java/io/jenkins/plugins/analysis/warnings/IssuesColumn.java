@@ -112,7 +112,9 @@ public class IssuesColumn extends PageObject {
      * @return Name of the tool in the given row
      */
     public String getToolFromTooltip(final int rowNumber) {
-        return getTooltipRow(rowNumber, TOOLTIP_TOOL_COLUMN).getText();
+        return getTooltipRow(rowNumber, TOOLTIP_TOOL_COLUMN)
+                .findElement(By.xpath("a"))
+                .getAttribute("innerHTML"); // somehow Tippy tooltips return an empty text
     }
 
     /**
@@ -124,7 +126,8 @@ public class IssuesColumn extends PageObject {
      * @return issue count in the given row
      */
     public String getTotalFromTooltip(final int rowNumber) {
-        return getTooltipRow(rowNumber, TOOLTIP_TOTAL_COLUMN).getText();
+        return getTooltipRow(rowNumber, TOOLTIP_TOTAL_COLUMN)
+                .getAttribute("innerHTML"); // somehow Tippy tooltips return an empty text
     }
 
     private WebElement getTooltipRow(final int row, final int column) {

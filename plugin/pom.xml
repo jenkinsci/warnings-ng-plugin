@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>6.2.0</version>
+    <version>6.4.0</version>
     <relativePath />
   </parent>
 
@@ -21,12 +21,12 @@
   <url>https://github.com/jenkinsci/warnings-ng-plugin</url>
 
   <properties>
-    <revision>10.0.3</revision>
+    <revision>10.1.0</revision>
     <changelist>-SNAPSHOT</changelist>
     <module.name>${project.groupId}.warnings.ng</module.name>
 
-    <analysis-model-api.version>11.0.0</analysis-model-api.version>
-    <analysis-model-tests.version>11.0.0</analysis-model-tests.version>
+    <analysis-model-api.version>11.0.1</analysis-model-api.version>
+    <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
     <pull-request-monitoring.version>1.7.8</pull-request-monitoring.version>
 
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
@@ -36,22 +36,21 @@
     <!-- Test Library Dependencies Versions -->
     <xmlunit.version>2.9.1</xmlunit.version>
     <jsoup.version>1.15.3</jsoup.version>
-    <json-smart.version>2.4.8</json-smart.version>
+    <json-smart.version>2.4.10</json-smart.version>
     <jmh.version>1.36</jmh.version>
     <testcontainers.version>1.17.6</testcontainers.version>
 
     <!-- Jenkins Plug-in Dependencies Versions -->
-    <autograding.version>3.3.1</autograding.version>
     <git-forensics.version>2.0.0</git-forensics.version>
     <jenkins-maven-plugin.version>3.21</jenkins-maven-plugin.version>
-    <job-dsl.version>1.81</job-dsl.version>
+    <job-dsl.version>1.81.1</job-dsl.version>
     <flexible-publish.version>0.15.2</flexible-publish.version>
     <form-element-path.version>1.11</form-element-path.version>
 
     <!-- Maven Surefire ArgLine -->
     <argLine>-Djava.awt.headless=true -Xmx1024m -Djenkins.test.timeout=1000 --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.util.concurrent=ALL-UNNAMED</argLine>
 
-    <forensics-api.version>2.0.0</forensics-api.version>
+    <forensics-api.version>2.0.1</forensics-api.version>
 
     <plugin-util-api.version>3.1.0</plugin-util-api.version>
     <jquery3-api.version>3.6.3-1</jquery3-api.version>
@@ -446,58 +445,6 @@
       <artifactId>ansicolor</artifactId>
       <version>1.0.2</version>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
-      <artifactId>metrics-aggregation</artifactId>
-      <version>0.2.0</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>warnings-ng</artifactId>
-          <groupId>io.jenkins.plugins</groupId>
-        </exclusion>
-        <exclusion>
-          <groupId>io.jenkins.plugins</groupId>
-          <artifactId>code-coverage-api</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
-      <artifactId>autograding</artifactId>
-      <version>${autograding.version}</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>warnings-ng</artifactId>
-          <groupId>io.jenkins.plugins</groupId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.github.spotbugs</groupId>
-          <artifactId>spotbugs-annotations</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>commons-beanutils</groupId>
-          <artifactId>commons-beanutils</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>edu.hm.hafner</groupId>
-          <artifactId>codingstyle</artifactId>
-        </exclusion>
-        <exclusion>
-          <artifactId>error_prone_annotations</artifactId>
-          <groupId>com.google.errorprone</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>commons-lang3</artifactId>
-          <groupId>org.apache.commons</groupId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.jenkins-ci</groupId>
-          <artifactId>symbol-annotation</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <!-- stage -->
