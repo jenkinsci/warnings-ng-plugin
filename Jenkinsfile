@@ -7,8 +7,9 @@ def params = [
     failFast: false,
     configurations: configurations,
     checkstyle: [qualityGates: [[threshold: 1, type: 'NEW', unstable: true]]],
-    pmd: [qualityGates: [[threshold: 1, type: 'NEW', unstable: true]]]],
+    pmd: [qualityGates: [[threshold: 1, type: 'NEW', unstable: true]]],
     jacoco: [sourceCodeRetention: 'MODIFIED']
+    ]
 
   properties([
     disableConcurrentBuilds(abortPrevious: true),
