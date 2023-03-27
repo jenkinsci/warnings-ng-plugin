@@ -54,7 +54,7 @@
 
     <plugin-util-api.version>3.1.0</plugin-util-api.version>
     <jquery3-api.version>3.6.3-1</jquery3-api.version>
-    <bootstrap5-api.version>5.2.2-1</bootstrap5-api.version>
+    <bootstrap5-api.version>5.2.2-2</bootstrap5-api.version>
     <font-awesome-api.version>6.3.0-1</font-awesome-api.version>
     <data-tables-api.version>1.13.3-2</data-tables-api.version>
     <echarts-api.version>5.4.0-2</echarts-api.version>
