@@ -45,7 +45,7 @@ import io.jenkins.plugins.util.ValidationUtilities;
 /**
  * Publish issues created by a static analysis build. The recorded issues are stored as a {@link ResultAction} in the
  * associated Jenkins build. If the issues report has a unique ID, then the created action will use this ID as well.
- * Otherwise a default ID is used to publish the results. In any case, the computed ID can be overwritten by specifying
+ * Otherwise, a default ID is used to publish the results. In any case, the computed ID can be overwritten by specifying
  * an ID as step parameter.
  */
 @SuppressWarnings({"InstanceVariableMayNotBeInitialized", "PMD.ExcessiveImports", "PMD.ExcessivePublicCount", "PMD.DataClass", "PMD.GodClass", "PMD.TooManyFields"})
