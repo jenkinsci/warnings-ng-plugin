@@ -978,7 +978,7 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the Embedded Engineer parser on an output file that contains 6 issues. */
     @Test
     void shouldFindAllEmbeddedEngineerIssues() {
-        shouldFindIssuesOfTool(6, new EmbeddedEngineer(), "ea.log");
+        shouldFindIssuesOfTool(8, new EmbeddedEngineer(), "ea.log");
     }
     
     /** Runs the Simulink Code Generator parser on an output file that contains 8 issues. */
