@@ -250,7 +250,7 @@
       <artifactId>analysis-model</artifactId>
       <version>${analysis-model-tests.version}</version>
       <classifier>tests</classifier>
-      <scope>compile</scope>
+      <scope>test</scope>
       <exclusions>
         <exclusion>
           <groupId>edu.hm.hafner</groupId>
