@@ -127,22 +127,22 @@ class WarningChecksPublisher {
 
     private String extractChecksTitle(final IssuesStatistics statistics) {
         if (statistics.getTotalSize() == 0) {
-            return "No issues.";
+            return "No issues";
         }
         else if (statistics.getNewSize() == 0) {
-            return String.format("No new issues, %d total.", statistics.getTotalSize());
+            return String.format("No new issues, %d total", statistics.getTotalSize());
         }
         else if (statistics.getNewSize() == statistics.getTotalSize()) {
             if (statistics.getNewSize() == 1) {
-                return "1 new issue.";
+                return "1 new issue";
             }
-            return String.format("%d new issues.", statistics.getNewSize());
+            return String.format("%d new issues", statistics.getNewSize());
         }
         else {
             if (statistics.getNewSize() == 1) {
-                return String.format("1 new issue, %d total.", statistics.getTotalSize());
+                return String.format("1 new issue, %d total", statistics.getTotalSize());
             }
-            return String.format("%d new issues, %d total.", statistics.getNewSize(), statistics.getTotalSize());
+            return String.format("%d new issues, %d total", statistics.getNewSize(), statistics.getTotalSize());
         }
     }
 
