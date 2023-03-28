@@ -178,7 +178,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
                 .extractChecksDetails(AnnotationScope.PUBLISH_NEW_ISSUES).getOutput())
                 .isPresent()
                 .get()
-                .hasFieldOrPropertyWithValue("title", Optional.of("No issues."));
+                .hasFieldOrPropertyWithValue("title", Optional.of("No issues"));
     }
 
     /**
@@ -199,7 +199,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
                 .extractChecksDetails(AnnotationScope.PUBLISH_NEW_ISSUES).getOutput())
                 .isPresent()
                 .get()
-                .hasFieldOrPropertyWithValue("title", Optional.of("No new issues, 4 total."));
+                .hasFieldOrPropertyWithValue("title", Optional.of("No new issues, 4 total"));
     }
 
     /**
@@ -225,7 +225,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
                 .extractChecksDetails(AnnotationScope.PUBLISH_NEW_ISSUES).getOutput())
                 .isPresent()
                 .get()
-                .hasFieldOrPropertyWithValue("title", Optional.of("6 new issues."));
+                .hasFieldOrPropertyWithValue("title", Optional.of("6 new issues"));
     }
 
     /**
@@ -267,7 +267,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(publishedChecks.get(0).getName()).isPresent().get().isEqualTo("CheckStyle");
 
         assertThat(publishedChecks.get(0).getOutput()).isPresent().hasValueSatisfying(
-                output -> assertThat(output.getTitle()).isPresent().get().isEqualTo("No new issues, 6 total."));
+                output -> assertThat(output.getTitle()).isPresent().get().isEqualTo("No new issues, 6 total"));
     }
 
     /**
@@ -298,7 +298,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(details.getName()).isPresent().get().isEqualTo("CheckStyle");
         assertThat(details.getOutput()).isPresent().hasValueSatisfying(
                 output -> {
-                    assertThat(output.getTitle()).isPresent().get().isEqualTo("2 new issues, 6 total.");
+                    assertThat(output.getTitle()).isPresent().get().isEqualTo("2 new issues, 6 total");
                     assertThat(output.getChecksAnnotations()).hasSize(expectedSize);
                 });
     }
@@ -319,7 +319,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
         ChecksDetails details = publishedChecks.get(0);
         assertThat(details.getName()).isPresent().get().isEqualTo("CheckStyle");
         assertThat(details.getOutput()).isPresent().hasValueSatisfying(
-                output -> assertThat(output.getTitle()).isPresent().get().isEqualTo("No new issues, 6 total."));
+                output -> assertThat(output.getTitle()).isPresent().get().isEqualTo("No new issues, 6 total"));
     }
 
     /**
@@ -340,7 +340,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
         publishedChecks.forEach(check -> assertThat(check.getName()).isPresent().get().isEqualTo("Custom Checks Name"));
 
         assertThat(publishedChecks.get(1).getOutput()).isPresent().hasValueSatisfying(
-                output -> assertThat(output.getTitle()).isPresent().get().isEqualTo("No new issues, 6 total."));
+                output -> assertThat(output.getTitle()).isPresent().get().isEqualTo("No new issues, 6 total"));
     }
 
     /**
@@ -361,7 +361,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
         publishedChecks.forEach(check -> assertThat(check.getName()).isPresent().get().isEqualTo("Custom Checks Name"));
 
         assertThat(publishedChecks.get(1).getOutput()).isPresent().hasValueSatisfying(
-                output -> assertThat(output.getTitle()).isPresent().get().isEqualTo("No new issues, 6 total."));
+                output -> assertThat(output.getTitle()).isPresent().get().isEqualTo("No new issues, 6 total"));
     }
 
     /**
@@ -391,7 +391,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
                 .withConclusion(ChecksConclusion.SUCCESS);
 
         ChecksOutput output = new ChecksOutputBuilder()
-                .withTitle("2 new issues, 6 total.")
+                .withTitle("2 new issues, 6 total")
                 .withSummary("") // summary value is checked directly since it is using a random port
                 .withText("## Severity distribution of new issues\n"
                         + "|Error|Warning High|Warning Normal|Warning Low\n"
