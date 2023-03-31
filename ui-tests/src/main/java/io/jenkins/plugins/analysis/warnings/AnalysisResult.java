@@ -10,7 +10,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 
-import com.gargoylesoftware.htmlunit.ScriptResult;
 import com.google.inject.Injector;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -322,9 +321,8 @@ public class AnalysisResult extends PageObject {
                     "delete(window.Array.prototype.toJSON) %n"
                             + "return JSON.stringify(echarts.getInstanceByDom(document.getElementById(\"%s\")).getOption())",
                     elementId));
-            Object scriptResult = new ScriptResult(result).getJavaScriptResult();
-            if (scriptResult != null) {
-                return scriptResult.toString();
+            if (result != null) {
+                return result.toString();
             }
             elasticSleep(1000);
         }
