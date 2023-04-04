@@ -149,7 +149,7 @@ def params = [
                   mavenOptions += 'clean install'
                   def pit = params.containsKey('pit') ? params.pit : false
                   if (pit && first) {
-                    mavenOptions += ' org.pitest:pitest-maven:mutationCoverage'
+                    mavenOptions += '-Ppit'
                   }
                   try {
                     infra.runMaven(mavenOptions, jdk, null, addToolEnv, useArtifactCachingProxy)
