@@ -33,11 +33,18 @@
         <artifactId>jenkins-core</artifactId>
         <version>${jenkins.version}</version>
       </dependency>
+	<!-- need to match any BOM imports from ATH due to https://issues.apache.org/jira/browse/MNG-5761 -->
       <dependency>
-        <!-- class not found exceptions if omitted -->
         <groupId>io.netty</groupId>
         <artifactId>netty-bom</artifactId>
-        <version>4.1.90.Final</version>
+        <version>4.1.91.Final</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson</groupId>
+        <artifactId>jackson-bom</artifactId>
+        <version>2.14.2</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -48,7 +55,7 @@
     <dependency>
       <groupId>org.jenkins-ci</groupId>
       <artifactId>acceptance-test-harness</artifactId>
-      <version>5523.vd392288d2b_22</version>
+      <version>5535.v48093a_7cc4a_c</version>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
