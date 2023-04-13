@@ -394,7 +394,7 @@ will be selected automatically by running the reference recorder step. Simply ca
 before any of static analysis steps:
 
 ```groovy
-discoverGitReferenceBuild
+discoverGitReferenceBuild()
 recordIssues tool: checkStyle(pattern: 'checkstyle-result.xml')
 ```
 
