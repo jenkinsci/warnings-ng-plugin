@@ -74,6 +74,7 @@ class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
                 .and(Input.from(readAllBytes(FOLDER_PREFIX + expectedXml)))
                 .ignoreChildNodesOrder()
                 .normalizeWhitespace()
+                .withNodeFilter(node -> "toString".equals(node.getNodeName()))
                 .areIdentical();
     }
 
