@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>6.4.0</version>
+    <version>6.7.0</version>
     <relativePath />
   </parent>
 
@@ -21,12 +21,12 @@
   <url>https://github.com/jenkinsci/warnings-ng-plugin</url>
 
   <properties>
-    <revision>10.0.3</revision>
+    <revision>10.2.0</revision>
     <changelist>-SNAPSHOT</changelist>
     <module.name>${project.groupId}.warnings.ng</module.name>
 
-    <analysis-model-api.version>11.0.0</analysis-model-api.version>
-    <analysis-model-tests.version>11.0.0</analysis-model-tests.version>
+    <analysis-model-api.version>11.2.0</analysis-model-api.version>
+    <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
     <pull-request-monitoring.version>1.7.8</pull-request-monitoring.version>
 
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
@@ -35,30 +35,22 @@
 
     <!-- Test Library Dependencies Versions -->
     <xmlunit.version>2.9.1</xmlunit.version>
-    <jsoup.version>1.15.3</jsoup.version>
-    <json-smart.version>2.4.8</json-smart.version>
+    <jsoup.version>1.16.1</jsoup.version>
+    <json-smart.version>2.4.10</json-smart.version>
     <jmh.version>1.36</jmh.version>
-    <testcontainers.version>1.17.6</testcontainers.version>
+    <testcontainers.version>1.18.1</testcontainers.version>
 
     <!-- Jenkins Plug-in Dependencies Versions -->
     <git-forensics.version>2.0.0</git-forensics.version>
-    <jenkins-maven-plugin.version>3.21</jenkins-maven-plugin.version>
-    <job-dsl.version>1.81</job-dsl.version>
+    <jenkins-maven-plugin.version>3.22</jenkins-maven-plugin.version>
+    <job-dsl.version>1.83</job-dsl.version>
     <flexible-publish.version>0.15.2</flexible-publish.version>
     <form-element-path.version>1.11</form-element-path.version>
 
     <!-- Maven Surefire ArgLine -->
     <argLine>-Djava.awt.headless=true -Xmx1024m -Djenkins.test.timeout=1000 --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.util.concurrent=ALL-UNNAMED</argLine>
 
-    <forensics-api.version>2.0.0</forensics-api.version>
-
-    <plugin-util-api.version>3.1.0</plugin-util-api.version>
-    <jquery3-api.version>3.6.3-1</jquery3-api.version>
-    <bootstrap5-api.version>5.2.2-1</bootstrap5-api.version>
-    <font-awesome-api.version>6.3.0-1</font-awesome-api.version>
-    <data-tables-api.version>1.13.3-2</data-tables-api.version>
-    <echarts-api.version>5.4.0-2</echarts-api.version>
-    <prism-api.version>1.29.0-3</prism-api.version>
+    <prism-api.version>1.29.0-4</prism-api.version>
 
   </properties>
 
@@ -110,32 +102,26 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>plugin-util-api</artifactId>
-      <version>${plugin-util-api.version}</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>font-awesome-api</artifactId>
-      <version>${font-awesome-api.version}</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>bootstrap5-api</artifactId>
-      <version>${bootstrap5-api.version}</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>jquery3-api</artifactId>
-      <version>${jquery3-api.version}</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>echarts-api</artifactId>
-      <version>${echarts-api.version}</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>data-tables-api</artifactId>
-      <version>${data-tables-api.version}</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
@@ -183,7 +169,6 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>forensics-api</artifactId>
-      <version>${forensics-api.version}</version>
     </dependency>
 
     <!-- AxivionSuite Dependencies -->
@@ -228,7 +213,7 @@
     <dependency>
       <groupId>org.ow2.asm</groupId>
       <artifactId>asm</artifactId>
-      <version>9.4</version>
+      <version>9.5</version>
       <scope>test</scope>
     </dependency>
 
@@ -238,7 +223,6 @@
       <artifactId>forensics-api</artifactId>
       <classifier>tests</classifier>
       <scope>test</scope>
-      <version>${forensics-api.version}</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
@@ -330,7 +314,6 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>plugin-util-api</artifactId>
-      <version>${plugin-util-api.version}</version>
       <scope>test</scope>
       <classifier>tests</classifier>
       <exclusions>

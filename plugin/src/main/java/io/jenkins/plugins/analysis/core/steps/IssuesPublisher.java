@@ -202,7 +202,7 @@ class IssuesPublisher {
     private History findConfiguredReference(final ResultSelector selector, final Report issues) {
         final String message = "Setting the reference job has been deprecated, please use the new reference recorder";
         if (failOnErrors) {
-            // Log at info level otherwise this will fail the build, even if everything else is ok.
+            // Log at info level otherwise this will fail the step, even if everything else is ok.
             issues.logInfo(message);
         }
         else {
@@ -244,8 +244,7 @@ class IssuesPublisher {
                     log.logInfo("Obtaining reference build from same job (%s)", run.getParent().getDisplayName());
                     return run;
                 });
-        log.getInfoMessages().forEach(issues::logInfo);
-        log.getErrorMessages().forEach(issues::logError);
+        issues.mergeLogMessages(log);
         return reference;
     }
 

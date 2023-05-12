@@ -1,0 +1,10 @@
+[2023-03-10 12:04:21.5224] Info - Starting code generation for '01_first_sw'; {EF31393-1234-5678-8710-03561AD6E297}
+[2023-03-10 12:04:25.0577] Warn - Complex type definition without referenced element found 'index_module' (uint8_t); {98CF1FE6-EC9C-43f1-e476-40EFCD63cA8D}
+[2023-03-10 12:04:25.0577] Warn - Complex type definition without referenced element found 'sample_func' (uint8_t); {007064-C8B8-49b2-9440-eeeEAE028D}
+[2023-03-10 12:04:25.0777] Warn - Complex type definition without referenced element found 'id_reset_45' (return_status_t); {A55-4b86-A9B7-71A12345B873}
+[2023-03-10 12:04:25.0777] Warn - Complex type definition without referenced element found 'id_reset_45' (return_status_t); {A55-4b86-A9B7-71A12345B873}
+[2023-03-10 12:04:25.0777] Warn - Code generation for 'Module1' skipped because the class is empty. ; {BC8A57E7-8BA3-eeff4578}
+[2023-03-10 12:04:25.0777] Warn - Code generation for element 'Module1' failed. Could not start code generation ; {ffeee99-9BD1-12345678}
+[2023-03-10 12:04:25.0777] Warn - Code generation for element 'Module1' passed. Could not start code generation ; {ffeee99-9BD1-12345678}
+[2023-03-10 12:04:25.1377] Warn - SampleValidation: no requirement linked to final node 'Module1_Node'.
+[2023-03-10 12:04:22.1045] Error - Error loading plugins from: C:\file1\idc\sample_ext.x64.dll

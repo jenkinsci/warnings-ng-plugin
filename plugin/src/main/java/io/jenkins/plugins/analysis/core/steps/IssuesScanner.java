@@ -118,8 +118,7 @@ class IssuesScanner {
         MinerService minerService = new MinerService();
         FilteredLog log = new FilteredLog("Errors while obtaining repository statistics");
         RepositoryStatistics statistics = minerService.queryStatisticsFor(scm, run, report.getFiles(), log);
-        log.getErrorMessages().forEach(report::logError);
-        log.getInfoMessages().forEach(report::logInfo);
+        report.mergeLogMessages(log);
         return statistics;
     }
 
@@ -172,8 +171,7 @@ class IssuesScanner {
             }
             Blamer blamer = BlamerFactory.findBlamer(scm, run, workspace, listener, log);
             log.logSummary();
-            log.getInfoMessages().forEach(report::logInfo);
-            log.getErrorMessages().forEach(report::logError);
+            report.mergeLogMessages(log);
 
             return blamer;
         }
@@ -286,8 +284,7 @@ class IssuesScanner {
             FilteredLog log = new FilteredLog("Errors while extracting author and commit information from Git:");
             Blames blames = blamer.blame(fileLocations, log);
             log.logSummary();
-            log.getInfoMessages().forEach(filtered::logInfo);
-            log.getErrorMessages().forEach(filtered::logError);
+            filtered.mergeLogMessages(log);
             return blames;
         }
 

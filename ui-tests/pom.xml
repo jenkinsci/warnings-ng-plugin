@@ -16,7 +16,7 @@
   <name>UI Tests of Warnings Plugin</name>
 
   <properties>
-    <jenkins.version>2.400</jenkins.version>
+    <jenkins.version>2.403</jenkins.version>
     <hpi-plugin.version>3.43</hpi-plugin.version>
     <json-smart.version>2.3</json-smart.version>
     <json-unit-assertj.version>2.37.0</json-unit-assertj.version>
@@ -34,7 +34,7 @@
         <version>${jenkins.version}</version>
       </dependency>
       <dependency>
-        <!-- class not found exceptions if omitted -->
+        <!-- ClassNotFoundException if omitted -->
         <groupId>io.netty</groupId>
         <artifactId>netty-bom</artifactId>
         <version>4.1.90.Final</version>

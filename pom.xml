@@ -15,12 +15,19 @@
 
   <properties>
     <java.version>1.8</java.version>
-    <hpi-plugin.version>3.38</hpi-plugin.version>
+    <hpi-plugin.version>3.43</hpi-plugin.version>
     <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
-    <maven-deploy-plugin.version>3.1.0</maven-deploy-plugin.version>
+    <maven-deploy-plugin.version>3.1.1</maven-deploy-plugin.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
   </properties>
+
+  <scm child.scm.connection.inherit.append.path="false" child.scm.developerConnection.inherit.append.path="false" child.scm.url.inherit.append.path="false">
+    <connection>scm:git:https://github.com/jenkinsci/warnings-ng-plugin.git</connection>
+    <developerConnection>scm:git:git@github.com:jenkinsci/warnings-ng-plugin.git</developerConnection>
+    <url>https://github.com/jenkinsci/warnings-ng-plugin</url>
+    <tag>${scmTag}</tag>
+  </scm>
 
   <pluginRepositories>
     <pluginRepository>
