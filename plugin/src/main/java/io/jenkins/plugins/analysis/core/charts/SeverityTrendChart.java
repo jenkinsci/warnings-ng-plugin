@@ -66,7 +66,7 @@ public class SeverityTrendChart implements TrendChart {
 
     private LineSeries createSeries(final Severity severity) {
         return new LineSeries(LocalizedSeverity.getLocalizedString(severity),
-                SeverityPalette.getJenkinsPalette(severity).normal(),
+                SeverityPalette.mapToColor(severity).normal(),
                 StackedMode.STACKED, FilledMode.FILLED);
     }
 }

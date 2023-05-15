@@ -7,7 +7,6 @@ import edu.hm.hafner.echarts.LineSeries.FilledMode;
 import edu.hm.hafner.echarts.LineSeries.StackedMode;
 import edu.hm.hafner.echarts.LinesChartModel;
 import edu.hm.hafner.echarts.LinesDataSet;
-import edu.hm.hafner.echarts.Palette;
 
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
@@ -50,7 +49,7 @@ public class HealthTrendChart implements TrendChart {
             model.addSeries(healthy, intermediate, unhealthy);
         }
         else {
-            LineSeries total = new LineSeries(Messages.Total_Name(), Palette.YELLOW.getNormal(),
+            LineSeries total = new LineSeries(Messages.Total_Name(), JenkinsPalette.YELLOW.normal(),
                     StackedMode.SEPARATE_LINES, FilledMode.LINES);
             total.addAll(dataSet.getSeries(HealthSeriesBuilder.TOTAL));
             model.addSeries(total);
