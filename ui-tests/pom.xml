@@ -129,7 +129,7 @@
               <environmentVariables>
                 <PLUGINS_DIR>../plugin/target/test-classes/test-dependencies</PLUGINS_DIR>
                 <JENKINS_VERSION>${jenkins.version}</JENKINS_VERSION>
-                <BROWSER>firefox</BROWSER>
+                <BROWSER>chrome-container</BROWSER>
               </environmentVariables>
               <rerunFailingTestsCount>1</rerunFailingTestsCount>
               <includes>
