@@ -11,6 +11,7 @@ import edu.hm.hafner.echarts.Palette;
 
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
+import io.jenkins.plugins.echarts.JenkinsPalette;
 
 /**
  * Builds the model for a trend chart showing all issues for a given number of builds. The issues are colored according
@@ -40,11 +41,11 @@ public class HealthTrendChart implements TrendChart {
         LinesChartModel model = new LinesChartModel(dataSet);
 
         if (healthDescriptor.isEnabled()) {
-            LineSeries healthy = createSeries(Messages.Healthy_Name(), Palette.GREEN);
+            LineSeries healthy = createSeries(Messages.Healthy_Name(), JenkinsPalette.GREEN);
             healthy.addAll(dataSet.getSeries(HealthSeriesBuilder.HEALTHY));
-            LineSeries intermediate = createSeries(Messages.Satisfactory_Name(), Palette.YELLOW);
+            LineSeries intermediate = createSeries(Messages.Satisfactory_Name(), JenkinsPalette.YELLOW);
             intermediate.addAll(dataSet.getSeries(HealthSeriesBuilder.BETWEEN));
-            LineSeries unhealthy = createSeries(Messages.Unhealthy_Name(), Palette.RED);
+            LineSeries unhealthy = createSeries(Messages.Unhealthy_Name(), JenkinsPalette.RED);
             unhealthy.addAll(dataSet.getSeries(HealthSeriesBuilder.UNHEALTHY));
             model.addSeries(healthy, intermediate, unhealthy);
         }
@@ -58,7 +59,7 @@ public class HealthTrendChart implements TrendChart {
         return model;
     }
 
-    private LineSeries createSeries(final String name, final Palette color) {
-        return new LineSeries(name, color.getNormal(), StackedMode.STACKED, FilledMode.FILLED);
+    private LineSeries createSeries(final String name, final JenkinsPalette color) {
+        return new LineSeries(name, color.normal(), StackedMode.STACKED, FilledMode.FILLED);
     }
 }
