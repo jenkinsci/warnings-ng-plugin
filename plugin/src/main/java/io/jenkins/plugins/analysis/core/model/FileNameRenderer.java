@@ -93,7 +93,7 @@ public class FileNameRenderer {
             return a().withHref(prefix + getSourceCodeUrl(issue))
                     .withText(getFileNameAtLine(issue))
                     .attr("data-bs-toggle", "tooltip")
-                    .attr("data-bs-placement", "left")
+                    .attr("data-bs-placement", "top")
                     .withTitle(issue.getFileName());
         }
         else {
