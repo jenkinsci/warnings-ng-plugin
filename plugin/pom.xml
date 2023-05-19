@@ -118,6 +118,7 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>echarts-api</artifactId>
+      <version>5.4.0-4-rc820.fc605555db_b_c</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>

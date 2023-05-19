@@ -5,9 +5,10 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Report;
-import edu.hm.hafner.echarts.Palette;
 import edu.hm.hafner.echarts.PieChartModel;
 import edu.hm.hafner.echarts.PieData;
+
+import io.jenkins.plugins.echarts.JenkinsPalette;
 
 import static io.jenkins.plugins.analysis.core.charts.Messages.*;
 import static org.assertj.core.api.Assertions.*;
@@ -23,7 +24,7 @@ class NewVersusFixedPieChartTest {
     void testCreate() {
         int[] sizes = {2, 3, 4};
         String[] names = {New_Warnings_Short(), Outstanding_Warnings_Short(), Fixed_Warnings_Short()};
-        Palette[] colors = {Palette.RED, Palette.YELLOW, Palette.GREEN};
+        JenkinsPalette[] colors = {JenkinsPalette.RED, JenkinsPalette.YELLOW, JenkinsPalette.GREEN};
 
         NewVersusFixedPieChart chart = new NewVersusFixedPieChart();
 
@@ -35,7 +36,7 @@ class NewVersusFixedPieChartTest {
         for (int i = 0; i < 3; i++) {
             assertThat(data.get(i).getName()).isEqualTo(names[i]);
             assertThat(data.get(i).getValue()).isEqualTo(sizes[i]);
-            assertThat(model.getColors().get(i)).isEqualTo(colors[i].getNormal());
+            assertThat(model.getColors().get(i)).isEqualTo(colors[i].normal());
         }
     }
 
