@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>6.7.0</version>
+    <version>6.8.0</version>
     <relativePath />
   </parent>
 
@@ -21,7 +21,7 @@
   <url>https://github.com/jenkinsci/warnings-ng-plugin</url>
 
   <properties>
-    <revision>10.2.0</revision>
+    <revision>10.3.0</revision>
     <changelist>-SNAPSHOT</changelist>
     <module.name>${project.groupId}.warnings.ng</module.name>
 
@@ -36,7 +36,7 @@
     <!-- Test Library Dependencies Versions -->
     <xmlunit.version>2.9.1</xmlunit.version>
     <jsoup.version>1.16.1</jsoup.version>
-    <json-smart.version>2.4.10</json-smart.version>
+    <json-smart.version>2.4.11</json-smart.version>
     <jmh.version>1.36</jmh.version>
     <testcontainers.version>1.18.1</testcontainers.version>
 
@@ -50,7 +50,7 @@
     <!-- Maven Surefire ArgLine -->
     <argLine>-Djava.awt.headless=true -Xmx1024m -Djenkins.test.timeout=1000 --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.util.concurrent=ALL-UNNAMED</argLine>
 
-    <prism-api.version>1.29.0-4</prism-api.version>
+    <prism-api.version>1.29.0-5</prism-api.version>
 
   </properties>
 
@@ -118,6 +118,7 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>echarts-api</artifactId>
+      <version>5.4.0-4</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>

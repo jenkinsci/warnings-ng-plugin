@@ -80,7 +80,7 @@ class DryTableModelTest extends AbstractDetailsModelTest {
     }
 
     private String getFileNameFor(final Issue issue, final int index) {
-        return String.format("<a href=\"source.%s/#%d\" data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" title=\"/path/to/file-"
+        return String.format("<a href=\"source.%s/#%d\" data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" title=\"/path/to/file-"
                         + index + "\">file-%d:%d</a>",  issue.getId().toString(),
                 issue.getLineStart(), index, issue.getLineStart());
     }

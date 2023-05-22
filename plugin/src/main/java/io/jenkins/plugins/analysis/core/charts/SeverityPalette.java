@@ -1,7 +1,8 @@
 package io.jenkins.plugins.analysis.core.charts;
 
 import edu.hm.hafner.analysis.Severity;
-import edu.hm.hafner.echarts.Palette;
+
+import io.jenkins.plugins.echarts.JenkinsPalette;
 
 /**
  * Provides colors for {@link Severity}.
@@ -17,20 +18,20 @@ final class SeverityPalette {
      *
      * @return color of the specified severity
      */
-    static Palette getColor(final Severity severity) {
+    static JenkinsPalette mapToColor(final Severity severity) {
         if (Severity.ERROR.equals(severity)) {
-            return Palette.RED;
+            return JenkinsPalette.RED;
         }
         if (Severity.WARNING_HIGH.equals(severity)) {
-            return Palette.ORANGE;
+            return JenkinsPalette.PINK;
         }
         if (Severity.WARNING_NORMAL.equals(severity)) {
-            return Palette.YELLOW;
+            return JenkinsPalette.ORANGE;
         }
         if (Severity.WARNING_LOW.equals(severity)) {
-            return Palette.LIME;
+            return JenkinsPalette.YELLOW;
         }
-        return Palette.PURPLE;
+        return JenkinsPalette.BROWN;
     }
 
     private SeverityPalette() {

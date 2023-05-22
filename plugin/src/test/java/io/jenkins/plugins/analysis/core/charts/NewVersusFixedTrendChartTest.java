@@ -9,9 +9,9 @@ import edu.hm.hafner.echarts.BuildResult;
 import edu.hm.hafner.echarts.ChartModelConfiguration;
 import edu.hm.hafner.echarts.LineSeries;
 import edu.hm.hafner.echarts.LinesChartModel;
-import edu.hm.hafner.echarts.Palette;
 
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
+import io.jenkins.plugins.echarts.JenkinsPalette;
 
 import static io.jenkins.plugins.analysis.core.charts.BuildResultStubs.*;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
@@ -32,8 +32,8 @@ class NewVersusFixedTrendChartTest {
 
         LinesChartModel model = chart.create(results, new ChartModelConfiguration());
 
-        verifySeries(model.getSeries().get(0), Palette.RED, "New", 10, 20);
-        verifySeries(model.getSeries().get(1), Palette.GREEN, "Fixed", 11, 21);
+        verifySeries(model.getSeries().get(0), JenkinsPalette.RED, "New", 10, 20);
+        verifySeries(model.getSeries().get(1), JenkinsPalette.GREEN, "Fixed", 11, 21);
 
         assertThatJson(model).node("domainAxisLabels")
                 .isArray().hasSize(2)
@@ -44,9 +44,9 @@ class NewVersusFixedTrendChartTest {
                 .isArray().hasSize(2);
     }
 
-    private void verifySeries(final LineSeries series, final Palette normalColor,
+    private void verifySeries(final LineSeries series, final JenkinsPalette normalColor,
             final String newVersusFixedSeriesBuilderName, final int... values) {
-        assertThatJson(series).node("itemStyle").node("color").isEqualTo(normalColor.getNormal());
+        assertThatJson(series).node("itemStyle").node("color").isEqualTo(normalColor.normal());
         assertThatJson(series).node("name").isEqualTo(newVersusFixedSeriesBuilderName);
         for (int value : values) {
             assertThatJson(series).node("data").isArray().hasSize(values.length).contains(value);

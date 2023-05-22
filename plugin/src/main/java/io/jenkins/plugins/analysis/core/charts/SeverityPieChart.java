@@ -28,7 +28,7 @@ public class SeverityPieChart {
             int total = report.getSizeOf(severity);
             if (total > 0 || !severity.equals(Severity.ERROR)) {
                 model.add(new PieData(LocalizedSeverity.getLocalizedString(severity), total),
-                        SeverityPalette.getColor(severity));
+                        SeverityPalette.mapToColor(severity).normal());
             }
         }
 
