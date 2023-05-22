@@ -48,7 +48,7 @@
     <dependency>
       <groupId>org.jenkins-ci</groupId>
       <artifactId>acceptance-test-harness</artifactId>
-      <version>5581.vfd8e43f46a_03</version>
+      <version>5588.vd13b_52985008</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
@@ -125,11 +125,11 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
               <reuseForks>false</reuseForks>
-              <trimStackTrace>false</trimStackTrace> <!-- SUREFIRE-1798 -->
+              <trimStackTrace>false</trimStackTrace>
               <environmentVariables>
                 <PLUGINS_DIR>../plugin/target/test-classes/test-dependencies</PLUGINS_DIR>
                 <JENKINS_VERSION>${jenkins.version}</JENKINS_VERSION>
-                <BROWSER>chrome-container</BROWSER>
+                <BROWSER>firefox</BROWSER>
               </environmentVariables>
               <rerunFailingTestsCount>1</rerunFailingTestsCount>
               <includes>
