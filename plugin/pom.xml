@@ -118,7 +118,7 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>echarts-api</artifactId>
-      <version>5.4.0-4</version>
+      <version>5.4.0-5</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
