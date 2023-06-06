@@ -43,7 +43,7 @@
     <!-- Jenkins Plug-in Dependencies Versions -->
     <git-forensics.version>2.0.0</git-forensics.version>
     <jenkins-maven-plugin.version>3.22</jenkins-maven-plugin.version>
-    <job-dsl.version>1.83</job-dsl.version>
+    <job-dsl.version>1.84</job-dsl.version>
     <flexible-publish.version>0.15.2</flexible-publish.version>
     <form-element-path.version>1.11</form-element-path.version>
 
