@@ -31,10 +31,10 @@ public class IssuesSizeTokenMacro extends DataBoundTokenMacro {
     }
 
     /**
-     * Defines which value should be shown in the column.
+     * Defines which value should be computed in the macro.
      *
      * @param type
-     *         the type of the values to show
+     *         the type to show
      */
     @Parameter
     public void setType(final String type) {
