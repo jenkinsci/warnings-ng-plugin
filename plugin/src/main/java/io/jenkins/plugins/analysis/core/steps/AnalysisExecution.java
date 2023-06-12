@@ -35,7 +35,7 @@ abstract class AnalysisExecution<T> extends SynchronousNonBlockingStepExecution<
      *
      * @return the run
      * @throws IOException
-     *         if the run could be be resolved
+     *         if the run could be resolved
      * @throws InterruptedException
      *         if the user canceled the run
      */
