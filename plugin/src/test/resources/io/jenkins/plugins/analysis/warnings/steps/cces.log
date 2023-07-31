@@ -1,0 +1,33 @@
+Building libdummy for toolchain sharc_21565...
+  CC      src/dummy_1.c
+"src/dummy_1.c", line 333: cc0188: {D} warning: 
+          enumerated type mixed with another type
+  		dummy_get();
+  		^
+
+"src/dummy_2.c", line 36: cc0188: {D} warning: enumerated type
+          mixed with another type
+  			dummy_get();
+  			^
+
+  CC      src/dummy_3.c
+"src/dummy_3.c", line 149: cc0111: {D} warning: statement is
+          unreachable
+  	break;
+  	^
+
+  CC      src/dummy_4.c
+"src/dummy_4.c", line 85: cc0188: {D} warning: enumerated type
+          mixed with another type
+  			dummy_get();
+  			^
+
+"src/dummy_4.c", line 295: cc0111: {D} warning: statement is
+          unreachable
+  	break;
+  	^
+
+  CC      src/dummy_5.c
+"src/dummy_5.c", line 125 (col. 22): cc1462: {D} warning: call to
+          dummy_btc has not been inlined
+
