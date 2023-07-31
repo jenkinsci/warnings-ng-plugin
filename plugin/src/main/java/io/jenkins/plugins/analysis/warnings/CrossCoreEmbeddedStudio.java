@@ -7,7 +7,7 @@ import hudson.Extension;
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
- * A parser for CrossCore Embedded Studio (CCES) from Analog Devices
+ * A parser for CrossCore Embedded Studio (CCES) from Analog Devices.
  */
 public class CrossCoreEmbeddedStudio extends AnalysisModelParser {
     private static final long serialVersionUID = 1814097426285660166L;
