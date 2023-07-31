@@ -10,7 +10,7 @@ import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
  */
 public class Grype extends AnalysisModelParser {
     private static final long serialVersionUID = -7721519870683487886L;
-    private static final String ID = "grype";
+    private static final String ID = "grypescanner";
 
     /** Create instance. */
     @DataBoundConstructor
