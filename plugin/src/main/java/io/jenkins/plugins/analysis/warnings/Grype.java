@@ -6,8 +6,8 @@ import hudson.Extension;
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
- * Provides parser for grype reports.
- */
+* Provides parser for grype reports.
+*/
 public class Grype extends AnalysisModelParser {
     private static final long serialVersionUID = -7721519870683487886L;
     private static final String ID = "grype";
