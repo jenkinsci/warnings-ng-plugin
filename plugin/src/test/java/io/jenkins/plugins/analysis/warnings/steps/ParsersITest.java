@@ -1023,6 +1023,12 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         shouldFindIssuesOfTool(8, new OELintAdv(), "oelint-adv.txt");
     }
 
+    /** Runs the Grype analysis parser on an output file that contains 3 issues. */
+    @Test
+    void shouldFindAllGrypeIssues() {
+        shouldFindIssuesOfTool(3, new Grype(), "grype-report.json");
+    }
+
     private void shouldFindIssuesOfTool(final int expectedSizeOfIssues, final AnalysisModelParser tool,
             final String... fileNames) {
         String defaultPipelineDefinition = "recordIssues tool: %s(pattern:'**/%s', reportEncoding:'UTF-8')";

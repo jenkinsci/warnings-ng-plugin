@@ -1,0 +1,520 @@
+{
+ "matches": [
+  {
+   "vulnerability": {
+    "id": "CVE-2015-5345",
+    "dataSource": "https://nvd.nist.gov/vuln/detail/CVE-2015-5345",
+    "namespace": "nvd:cpe",
+    "severity": "Medium",
+    "urls": [
+     "http://lists.opensuse.org/opensuse-security-announce/2016-03/msg00047.html",
+     "http://lists.opensuse.org/opensuse-security-announce/2016-03/msg00069.html",
+     "http://lists.opensuse.org/opensuse-security-announce/2016-03/msg00082.html",
+     "http://lists.opensuse.org/opensuse-security-announce/2016-03/msg00085.html",
+     "http://marc.info/?l=bugtraq&m=145974991225029&w=2",
+     "http://packetstormsecurity.com/files/135892/Apache-Tomcat-Directory-Disclosure.html",
+     "http://rhn.redhat.com/errata/RHSA-2016-1089.html",
+     "http://rhn.redhat.com/errata/RHSA-2016-2045.html",
+     "http://rhn.redhat.com/errata/RHSA-2016-2599.html",
+     "http://seclists.org/bugtraq/2016/Feb/146",
+     "http://seclists.org/fulldisclosure/2016/Feb/122",
+     "http://svn.apache.org/viewvc?view=revision&revision=1715206",
+     "http://svn.apache.org/viewvc?view=revision&revision=1715207",
+     "http://svn.apache.org/viewvc?view=revision&revision=1715213",
+     "http://svn.apache.org/viewvc?view=revision&revision=1715216",
+     "http://svn.apache.org/viewvc?view=revision&revision=1716882",
+     "http://svn.apache.org/viewvc?view=revision&revision=1716894",
+     "http://svn.apache.org/viewvc?view=revision&revision=1717209",
+     "http://svn.apache.org/viewvc?view=revision&revision=1717212",
+     "http://svn.apache.org/viewvc?view=revision&revision=1717216",
+     "http://tomcat.apache.org/security-6.html",
+     "http://tomcat.apache.org/security-7.html",
+     "http://tomcat.apache.org/security-8.html",
+     "http://tomcat.apache.org/security-9.html",
+     "http://www.debian.org/security/2016/dsa-3530",
+     "http://www.debian.org/security/2016/dsa-3552",
+     "http://www.debian.org/security/2016/dsa-3609",
+     "http://www.oracle.com/technetwork/security-advisory/cpujul2018-4258247.html",
+     "http://www.oracle.com/technetwork/topics/security/bulletinapr2016-2952098.html",
+     "http://www.oracle.com/technetwork/topics/security/linuxbulletinoct2016-3090545.html",
+     "http://www.qcsec.com/blog/CVE-2015-5345-apache-tomcat-vulnerability.html",
+     "http://www.securityfocus.com/bid/83328",
+     "http://www.securitytracker.com/id/1035071",
+     "http://www.ubuntu.com/usn/USN-3024-1",
+     "https://access.redhat.com/errata/RHSA-2016:1087",
+     "https://access.redhat.com/errata/RHSA-2016:1088",
+     "https://bto.bluecoat.com/security-advisory/sa118",
+     "https://bz.apache.org/bugzilla/show_bug.cgi?id=58765",
+     "https://h20566.www2.hpe.com/portal/site/hpsc/public/kb/docDisplay?docId=emr_na-c05054964",
+     "https://h20566.www2.hpe.com/portal/site/hpsc/public/kb/docDisplay?docId=emr_na-c05150442",
+     "https://h20566.www2.hpe.com/portal/site/hpsc/public/kb/docDisplay?docId=emr_na-c05158626",
+     "https://kc.mcafee.com/corporate/index?page=content&id=SB10156",
+     "https://lists.apache.org/thread.html/37220405a377c0182d2afdbc36461c4783b2930fbeae3a17f1333113@%3Cdev.tomcat.apache.org%3E",
+     "https://lists.apache.org/thread.html/39ae1f0bd5867c15755a6f959b271ade1aea04ccdc3b2e639dcd903b@%3Cdev.tomcat.apache.org%3E",
+     "https://lists.apache.org/thread.html/b84ad1258a89de5c9c853c7f2d3ad77e5b8b2930be9e132d5cef6b95@%3Cdev.tomcat.apache.org%3E",
+     "https://lists.apache.org/thread.html/b8a1bf18155b552dcf9a928ba808cbadad84c236d85eab3033662cfb@%3Cdev.tomcat.apache.org%3E",
+     "https://lists.apache.org/thread.html/r03c597a64de790ba42c167efacfa23300c3d6c9fe589ab87fe02859c@%3Cdev.tomcat.apache.org%3E",
+     "https://lists.apache.org/thread.html/r587e50b86c1a96ee301f751d50294072d142fd6dc08a8987ae9f3a9b@%3Cdev.tomcat.apache.org%3E",
+     "https://lists.apache.org/thread.html/r9136ff5b13e4f1941360b5a309efee2c114a14855578c3a2cbe5d19c@%3Cdev.tomcat.apache.org%3E",
+     "https://security.gentoo.org/glsa/201705-09",
+     "https://security.netapp.com/advisory/ntap-20180531-0001/"
+    ],
+    "description": "The Mapper component in Apache Tomcat 6.x before 6.0.45, 7.x before 7.0.68, 8.x before 8.0.30, and 9.x before 9.0.0.M2 processes redirects before considering security constraints and Filters, which allows remote attackers to determine the existence of a directory via a URL that lacks a trailing / (slash) character.",
+    "cvss": [
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "version": "2.0",
+      "vector": "AV:N/AC:L/Au:N/C:P/I:N/A:N",
+      "metrics": {
+       "baseScore": 5,
+       "exploitabilityScore": 10,
+       "impactScore": 2.9
+      },
+      "vendorMetadata": {}
+     },
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "version": "3.0",
+      "vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+      "metrics": {
+       "baseScore": 5.3,
+       "exploitabilityScore": 3.9,
+       "impactScore": 1.4
+      },
+      "vendorMetadata": {}
+     }
+    ],
+    "fix": {
+     "versions": [],
+     "state": "unknown"
+    },
+    "advisories": []
+   },
+   "relatedVulnerabilities": [],
+   "matchDetails": [
+    {
+     "type": "cpe-match",
+     "matcher": "java-matcher",
+     "searchedBy": {
+      "namespace": "nvd:cpe",
+      "cpes": [
+       "cpe:2.3:a:apache:tomcat:8.0.28:*:*:*:*:*:*:*"
+      ],
+      "Package": {
+       "name": "tomcat-jdbc",
+       "version": "8.0.28"
+      }
+     },
+     "found": {
+      "vulnerabilityID": "CVE-2015-5345",
+      "versionConstraint": "= 6.0.0 || = 6.0.0 || = 6.0.1 || = 6.0.1 || = 6.0.2 || = 6.0.2 || = 6.0.2 || = 6.0.4 || = 6.0.4 || = 6.0.10 || = 6.0.11 || = 6.0.13 || = 6.0.14 || = 6.0.16 || = 6.0.18 || = 6.0.20 || = 6.0.24 || = 6.0.26 || = 6.0.28 || = 6.0.29 || = 6.0.30 || = 6.0.32 || = 6.0.33 || = 6.0.35 || = 6.0.36 || = 6.0.37 || = 6.0.39 || = 6.0.41 || = 6.0.43 || = 6.0.44 || = 7.0.0 || = 7.0.2 || = 7.0.4 || = 7.0.5 || = 7.0.6 || = 7.0.10 || = 7.0.11 || = 7.0.12 || = 7.0.14 || = 7.0.16 || = 7.0.19 || = 7.0.20 || = 7.0.21 || = 7.0.22 || = 7.0.23 || = 7.0.25 || = 7.0.26 || = 7.0.27 || = 7.0.28 || = 7.0.29 || = 7.0.30 || = 7.0.32 || = 7.0.33 || = 7.0.34 || = 7.0.35 || = 7.0.37 || = 7.0.39 || = 7.0.40 || = 7.0.41 || = 7.0.42 || = 7.0.47 || = 7.0.50 || = 7.0.52 || = 7.0.53 || = 7.0.54 || = 7.0.55 || = 7.0.56 || = 7.0.57 || = 7.0.59 || = 7.0.61 || = 7.0.62 || = 7.0.63 || = 7.0.64 || = 7.0.65 || = 8.0.0 || = 8.0.0 || = 8.0.0 || = 8.0.0 || = 8.0.1 || = 8.0.3 || = 8.0.11 || = 8.0.12 || = 8.0.14 || = 8.0.15 || = 8.0.17 || = 8.0.18 || = 8.0.20 || = 8.0.21 || = 8.0.22 || = 8.0.23 || = 8.0.24 || = 8.0.26 || = 8.0.27 || = 8.0.28 || = 8.0.29 || = 9.0.0 (unknown)",
+      "cpes": [
+       "cpe:2.3:a:apache:tomcat:8.0.28:*:*:*:*:*:*:*"
+      ]
+     }
+    }
+   ],
+   "artifact": {
+    "id": "c1c07c89ccdbbc49",
+    "name": "tomcat-jdbc",
+    "version": "8.0.28",
+    "type": "java-archive",
+    "locations": [
+     {
+      "path": "tomcat-jdbc/8.0.28/tomcat-jdbc-8.0.28.jar"
+     }
+    ],
+    "language": "java",
+    "licenses": [],
+    "cpes": [
+     "cpe:2.3:a:apache:tomcat-jdbc:8.0.28:*:*:*:*:*:*:*",
+     "cpe:2.3:a:apache:tomcat_jdbc:8.0.28:*:*:*:*:*:*:*",
+     "cpe:2.3:a:apache:tomcat:8.0.28:*:*:*:*:*:*:*",
+     "cpe:2.3:a:apache:jdbc:8.0.28:*:*:*:*:*:*:*"
+    ],
+    "purl": "pkg:maven/org.apache.tomcat.jdbc/tomcat-jdbc@8.0.28",
+    "upstreams": [],
+    "metadataType": "JavaMetadata",
+    "metadata": {
+     "virtualPath": "tomcat-jdbc/8.0.28/tomcat-jdbc-8.0.28.jar",
+     "pomArtifactID": "",
+     "pomGroupID": "",
+     "manifestName": "",
+     "archiveDigests": [
+      {
+       "algorithm": "sha1",
+       "value": "3b322b35a7081d3aa2051d2d8317bdbf09d4853a"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "vulnerability": {   
+    "id": "CVE-2015-5346",
+    "dataSource": "https://nvd.nist.gov/vuln/detail/CVE-2015-5346",
+    "namespace": "nvd:cpe",
+    "severity": "High",
+    "urls": [
+     "http://lists.opensuse.org/opensuse-security-announce/2016-03/msg00047.html",
+     "http://lists.opensuse.org/opensuse-security-announce/2016-03/msg00069.html",
+     "http://lists.opensuse.org/opensuse-security-announce/2016-03/msg00085.html",
+     "http://packetstormsecurity.com/files/135890/Apache-Tomcat-Session-Fixation.html",
+     "http://rhn.redhat.com/errata/RHSA-2016-1089.html",
+     "http://rhn.redhat.com/errata/RHSA-2016-2046.html",
+     "http://rhn.redhat.com/errata/RHSA-2016-2807.html",
+     "http://rhn.redhat.com/errata/RHSA-2016-2808.html",
+     "http://seclists.org/bugtraq/2016/Feb/143",
+     "http://svn.apache.org/viewvc?view=revision&revision=1713184",
+     "http://svn.apache.org/viewvc?view=revision&revision=1713185",
+     "http://svn.apache.org/viewvc?view=revision&revision=1713187",
+     "http://svn.apache.org/viewvc?view=revision&revision=1723414",
+     "http://svn.apache.org/viewvc?view=revision&revision=1723506",
+     "http://tomcat.apache.org/security-7.html",
+     "http://tomcat.apache.org/security-8.html",
+     "http://tomcat.apache.org/security-9.html",
+     "http://www.debian.org/security/2016/dsa-3530",
+     "http://www.debian.org/security/2016/dsa-3552",
+     "http://www.debian.org/security/2016/dsa-3609",
+     "http://www.oracle.com/technetwork/security-advisory/cpujul2018-4258247.html",
+     "http://www.oracle.com/technetwork/topics/security/bulletinjan2016-2867206.html",
+     "http://www.oracle.com/technetwork/topics/security/linuxbulletinoct2016-3090545.html",
+     "http://www.securityfocus.com/bid/83323",
+     "http://www.securitytracker.com/id/1035069",
+     "http://www.ubuntu.com/usn/USN-3024-1",
+     "https://access.redhat.com/errata/RHSA-2016:1087",
+     "https://access.redhat.com/errata/RHSA-2016:1088",
+     "https://bto.bluecoat.com/security-advisory/sa118",
+     "https://bz.apache.org/bugzilla/show_bug.cgi?id=58809",
+     "https://h20566.www2.hpe.com/portal/site/hpsc/public/kb/docDisplay?docId=emr_na-c05150442",
+     "https://h20566.www2.hpe.com/portal/site/hpsc/public/kb/docDisplay?docId=emr_na-c05158626",
+     "https://lists.apache.org/thread.html/r9136ff5b13e4f1941360b5a309efee2c114a14855578c3a2cbe5d19c@%3Cdev.tomcat.apache.org%3E",
+     "https://security.gentoo.org/glsa/201705-09",
+     "https://security.netapp.com/advisory/ntap-20180531-0001/"
+    ],
+    "description": "Session fixation vulnerability in Apache Tomcat 7.x before 7.0.66, 8.x before 8.0.30, and 9.x before 9.0.0.M2, when different session settings are used for deployments of multiple versions of the same web application, might allow remote attackers to hijack web sessions by leveraging use of a requestedSessionSSL field for an unintended request, related to CoyoteAdapter.java and Request.java.",
+    "cvss": [
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "version": "2.0",
+      "vector": "AV:N/AC:M/Au:N/C:P/I:P/A:P",
+      "metrics": {
+       "baseScore": 6.8,
+       "exploitabilityScore": 8.6,
+       "impactScore": 6.4
+      },
+      "vendorMetadata": {}
+     },
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "version": "3.0",
+      "vector": "CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H",
+      "metrics": {
+       "baseScore": 8.1,
+       "exploitabilityScore": 2.2,
+       "impactScore": 5.9
+      },
+      "vendorMetadata": {}
+     }
+    ],
+    "fix": {
+     "versions": [],
+     "state": "unknown"
+    },
+    "advisories": []
+   },
+   "relatedVulnerabilities": [],
+   "matchDetails": [
+    {
+     "type": "cpe-match",
+     "matcher": "java-matcher",
+     "searchedBy": {
+      "namespace": "nvd:cpe",
+      "cpes": [
+       "cpe:2.3:a:apache:tomcat:8.0.28:*:*:*:*:*:*:*"
+      ],
+      "Package": {
+       "name": "tomcat-jdbc",
+       "version": "8.0.28"
+      }
+     },
+     "found": {
+      "vulnerabilityID": "CVE-2015-5346",
+      "versionConstraint": "= 7.0.0 || = 7.0.2 || = 7.0.4 || = 7.0.5 || = 7.0.6 || = 7.0.10 || = 7.0.11 || = 7.0.12 || = 7.0.14 || = 7.0.16 || = 7.0.19 || = 7.0.20 || = 7.0.21 || = 7.0.22 || = 7.0.23 || = 7.0.25 || = 7.0.26 || = 7.0.27 || = 7.0.28 || = 7.0.29 || = 7.0.30 || = 7.0.32 || = 7.0.33 || = 7.0.34 || = 7.0.35 || = 7.0.37 || = 7.0.39 || = 7.0.40 || = 7.0.41 || = 7.0.42 || = 7.0.47 || = 7.0.50 || = 7.0.52 || = 7.0.53 || = 7.0.54 || = 7.0.55 || = 7.0.56 || = 7.0.57 || = 7.0.59 || = 7.0.61 || = 7.0.62 || = 7.0.63 || = 7.0.64 || = 7.0.65 || = 8.0.0 || = 8.0.0 || = 8.0.0 || = 8.0.0 || = 8.0.1 || = 8.0.3 || = 8.0.11 || = 8.0.12 || = 8.0.14 || = 8.0.15 || = 8.0.17 || = 8.0.18 || = 8.0.20 || = 8.0.21 || = 8.0.22 || = 8.0.23 || = 8.0.24 || = 8.0.26 || = 8.0.27 || = 8.0.28 || = 8.0.29 || = 9.0.0 (unknown)",
+      "cpes": [
+       "cpe:2.3:a:apache:tomcat:8.0.28:*:*:*:*:*:*:*"
+      ]
+     }
+    }
+   ],
+   "artifact": {
+    "id": "c1c07c89ccdbbc49",
+    "name": "tomcat-jdbc",
+    "version": "8.0.28",
+    "type": "java-archive",
+    "locations": [
+     {
+      "path": "tomcat-jdbc/8.0.28/tomcat-jdbc-8.0.28.jar"
+     }
+    ],
+    "language": "java",
+    "licenses": [],
+    "cpes": [
+     "cpe:2.3:a:apache:tomcat-jdbc:8.0.28:*:*:*:*:*:*:*",
+     "cpe:2.3:a:apache:tomcat_jdbc:8.0.28:*:*:*:*:*:*:*",
+     "cpe:2.3:a:apache:tomcat:8.0.28:*:*:*:*:*:*:*",
+     "cpe:2.3:a:apache:jdbc:8.0.28:*:*:*:*:*:*:*"
+    ],
+    "purl": "pkg:maven/org.apache.tomcat.jdbc/tomcat-jdbc@8.0.28",
+    "upstreams": [],
+    "metadataType": "JavaMetadata",
+    "metadata": {
+     "virtualPath": "tomcat-jdbc/8.0.28/tomcat-jdbc-8.0.28.jar",
+     "pomArtifactID": "",
+     "pomGroupID": "",
+     "manifestName": "",
+     "archiveDigests": [
+      {
+       "algorithm": "sha1",
+       "value": "3b322b35a7081d3aa2051d2d8317bdbf09d4853a"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "vulnerability": {
+    "id": "CVE-2016-8745",
+    "dataSource": "https://nvd.nist.gov/vuln/detail/CVE-2016-8745",
+    "namespace": "nvd:cpe",
+    "severity": "High",
+    "urls": [
+     "http://rhn.redhat.com/errata/RHSA-2017-0457.html",
+     "http://rhn.redhat.com/errata/RHSA-2017-0527.html",
+     "http://www.debian.org/security/2017/dsa-3754",
+     "http://www.debian.org/security/2017/dsa-3755",
+     "http://www.oracle.com/technetwork/security-advisory/cpuapr2018-3678067.html",
+     "http://www.oracle.com/technetwork/security-advisory/cpuoct2017-3236626.html",
+     "http://www.securityfocus.com/bid/94828",
+     "http://www.securitytracker.com/id/1037432",
+     "https://access.redhat.com/errata/RHSA-2017:0455",
+     "https://access.redhat.com/errata/RHSA-2017:0456",
+     "https://access.redhat.com/errata/RHSA-2017:0935",
+     "https://lists.apache.org/thread.html/343558d982879bf88ec20dbf707f8c11255f8e219e81d45c4f8d0551@%3Cdev.tomcat.apache.org%3E",
+     "https://lists.apache.org/thread.html/37220405a377c0182d2afdbc36461c4783b2930fbeae3a17f1333113@%3Cdev.tomcat.apache.org%3E",
+     "https://lists.apache.org/thread.html/388a323769f1dff84c9ec905455aa73fbcb20338e3c7eb131457f708@%3Cdev.tomcat.apache.org%3E",
+     "https://lists.apache.org/thread.html/39ae1f0bd5867c15755a6f959b271ade1aea04ccdc3b2e639dcd903b@%3Cdev.tomcat.apache.org%3E",
+     "https://lists.apache.org/thread.html/3d19773b4cf0377db62d1e9328bf9160bf1819f04f988315086931d7@%3Cdev.tomcat.apache.org%3E",
+     "https://lists.apache.org/thread.html/4113c05d37f37c12b8033205684f04033c5f7a9bae117d4af23b32b4@%3Cannounce.tomcat.apache.org%3E",
+     "https://lists.apache.org/thread.html/6af47120905aa7d8fe12f42e8ff2284fb338ba141d3b77b8c7cb61b3@%3Cdev.tomcat.apache.org%3E",
+     "https://lists.apache.org/thread.html/845312a10aabbe2c499fca94003881d2c79fc993d85f34c1f5c77424@%3Cdev.tomcat.apache.org%3E",
+     "https://lists.apache.org/thread.html/88855876c33f2f9c532ffb75bfee570ccf0b17ffa77493745af9a17a@%3Cdev.tomcat.apache.org%3E",
+     "https://lists.apache.org/thread.html/b5e3f51d28cd5d9b1809f56594f2cf63dcd6a90429e16ea9f83bbedc@%3Cdev.tomcat.apache.org%3E",
+     "https://lists.apache.org/thread.html/b84ad1258a89de5c9c853c7f2d3ad77e5b8b2930be9e132d5cef6b95@%3Cdev.tomcat.apache.org%3E",
+     "https://lists.apache.org/thread.html/b8a1bf18155b552dcf9a928ba808cbadad84c236d85eab3033662cfb@%3Cdev.tomcat.apache.org%3E",
+     "https://lists.apache.org/thread.html/r03c597a64de790ba42c167efacfa23300c3d6c9fe589ab87fe02859c@%3Cdev.tomcat.apache.org%3E",
+     "https://lists.apache.org/thread.html/r3bbb800a816d0a51eccc5a228c58736960a9fffafa581a225834d97d@%3Cdev.tomcat.apache.org%3E",
+     "https://lists.apache.org/thread.html/r48c1444845fe15a823e1374674bfc297d5008a5453788099ea14caf0@%3Cdev.tomcat.apache.org%3E",
+     "https://lists.apache.org/thread.html/r587e50b86c1a96ee301f751d50294072d142fd6dc08a8987ae9f3a9b@%3Cdev.tomcat.apache.org%3E",
+     "https://lists.apache.org/thread.html/r9136ff5b13e4f1941360b5a309efee2c114a14855578c3a2cbe5d19c@%3Cdev.tomcat.apache.org%3E",
+     "https://security.gentoo.org/glsa/201705-09",
+     "https://security.netapp.com/advisory/ntap-20180607-0002/"
+    ],
+    "description": "A bug in the error handling of the send file code for the NIO HTTP connector in Apache Tomcat 9.0.0.M1 to 9.0.0.M13, 8.5.0 to 8.5.8, 8.0.0.RC1 to 8.0.39, 7.0.0 to 7.0.73 and 6.0.16 to 6.0.48 resulted in the current Processor object being added to the Processor cache multiple times. This in turn meant that the same Processor could be used for concurrent requests. Sharing a Processor can result in information leakage between requests including, not not limited to, session ID and the response body. The bug was first noticed in 8.5.x onwards where it appears the refactoring of the Connector code for 8.5.x onwards made it more likely that the bug was observed. Initially it was thought that the 8.5.x refactoring introduced the bug but further investigation has shown that the bug is present in all currently supported Tomcat versions.",
+    "cvss": [
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "version": "2.0",
+      "vector": "AV:N/AC:L/Au:N/C:P/I:N/A:N",
+      "metrics": {
+       "baseScore": 5,
+       "exploitabilityScore": 10,
+       "impactScore": 2.9
+      },
+      "vendorMetadata": {}
+     },
+     {
+      "source": "nvd@nist.gov",
+      "type": "Primary",
+      "version": "3.0",
+      "vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+      "metrics": {
+       "baseScore": 7.5,
+       "exploitabilityScore": 3.9,
+       "impactScore": 3.6
+      },
+      "vendorMetadata": {}
+     }
+    ],
+    "fix": {
+     "versions": [],
+     "state": "unknown"
+    },
+    "advisories": []
+   },
+   "relatedVulnerabilities": [],
+   "matchDetails": [
+    {
+     "type": "cpe-match",
+     "matcher": "java-matcher",
+     "searchedBy": {
+      "namespace": "nvd:cpe",
+      "cpes": [
+       "cpe:2.3:a:apache:tomcat:8.0.28:*:*:*:*:*:*:*"
+      ],
+      "Package": {
+       "name": "tomcat-jdbc",
+       "version": "8.0.28"
+      }
+     },
+     "found": {
+      "vulnerabilityID": "CVE-2016-8745",
+      "versionConstraint": "= 7.0.0 || = 7.0.1 || = 7.0.2 || = 7.0.3 || = 7.0.4 || = 7.0.5 || = 7.0.6 || = 7.0.7 || = 7.0.8 || = 7.0.9 || = 7.0.11 || = 7.0.12 || = 7.0.13 || = 7.0.14 || = 7.0.15 || = 7.0.16 || = 7.0.17 || = 7.0.18 || = 7.0.19 || = 7.0.20 || = 7.0.21 || = 7.0.22 || = 7.0.23 || = 7.0.24 || = 7.0.25 || = 7.0.26 || = 7.0.27 || = 7.0.28 || = 7.0.29 || = 7.0.30 || = 7.0.31 || = 7.0.32 || = 7.0.33 || = 7.0.34 || = 7.0.35 || = 7.0.36 || = 7.0.37 || = 7.0.38 || = 7.0.39 || = 7.0.40 || = 7.0.41 || = 7.0.42 || = 7.0.43 || = 7.0.44 || = 7.0.45 || = 7.0.46 || = 7.0.47 || = 7.0.48 || = 7.0.49 || = 7.0.50 || = 7.0.52 || = 7.0.53 || = 7.0.54 || = 7.0.55 || = 7.0.56 || = 7.0.57 || = 7.0.58 || = 7.0.59 || = 7.0.60 || = 7.0.61 || = 7.0.62 || = 7.0.63 || = 7.0.64 || = 7.0.65 || = 7.0.66 || = 7.0.67 || = 7.0.68 || = 7.0.69 || = 7.0.70 || = 7.0.71 || = 7.0.72 || = 7.0.73 || = 8.0 || = 8.0.0 || = 8.0.0 || = 8.0.0 || = 8.0.0 || = 8.0.1 || = 8.0.2 || = 8.0.3 || = 8.0.4 || = 8.0.5 || = 8.0.6 || = 8.0.7 || = 8.0.8 || = 8.0.9 || = 8.0.10 || = 8.0.11 || = 8.0.12 || = 8.0.13 || = 8.0.14 || = 8.0.15 || = 8.0.16 || = 8.0.17 || = 8.0.18 || = 8.0.19 || = 8.0.20 || = 8.0.21 || = 8.0.22 || = 8.0.23 || = 8.0.24 || = 8.0.25 || = 8.0.26 || = 8.0.27 || = 8.0.28 || = 8.0.29 || = 8.0.30 || = 8.0.31 || = 8.0.32 || = 8.0.33 || = 8.0.34 || = 8.0.35 || = 8.0.36 || = 8.0.37 || = 8.0.38 || = 8.0.39 || = 8.5.0 || = 8.5.1 || = 8.5.2 || = 8.5.3 || = 8.5.4 || = 8.5.5 || = 8.5.6 || = 8.5.7 || = 8.5.8 || = 9.0.0 || = 9.0.0 || = 9.0.0 || = 9.0.0 || = 9.0.0 || = 9.0.0 || = 9.0.0 || = 9.0.0 || = 9.0.0 || = 9.0.0 || = 9.0.0 || = 9.0.0 || = 9.0.0 (unknown)",
+      "cpes": [
+       "cpe:2.3:a:apache:tomcat:8.0.28:*:*:*:*:*:*:*"
+      ]
+     }
+    }
+   ],
+   "artifact": {
+    "id": "c1c07c89ccdbbc49",
+    "name": "tomcat-jdbc",
+    "version": "8.0.28",
+    "type": "java-archive",
+    "locations": [
+     {
+      "path": "tomcat-jdbc/8.0.28/tomcat-jdbc-8.0.28.jar"
+     }
+    ],
+    "language": "java",
+    "licenses": [],
+    "cpes": [
+     "cpe:2.3:a:apache:tomcat-jdbc:8.0.28:*:*:*:*:*:*:*",
+     "cpe:2.3:a:apache:tomcat_jdbc:8.0.28:*:*:*:*:*:*:*",
+     "cpe:2.3:a:apache:tomcat:8.0.28:*:*:*:*:*:*:*",
+     "cpe:2.3:a:apache:jdbc:8.0.28:*:*:*:*:*:*:*"
+    ],
+    "purl": "pkg:maven/org.apache.tomcat.jdbc/tomcat-jdbc@8.0.28",
+    "upstreams": [],
+    "metadataType": "JavaMetadata",
+    "metadata": {
+     "virtualPath": "tomcat-jdbc/8.0.28/tomcat-jdbc-8.0.28.jar",
+     "pomArtifactID": "",
+     "pomGroupID": "",
+     "manifestName": "",
+     "archiveDigests": [
+      {
+       "algorithm": "sha1",
+       "value": "3b322b35a7081d3aa2051d2d8317bdbf09d4853a"
+      }
+     ]
+    }
+   }
+  }
+ ],
+ "source": {
+  "type": "directory",
+  "target": "/home/dimitritenenbaum/.m2/repository/org/apache/tomcat/"
+ },
+ "distro": {
+  "name": "",
+  "version": "",
+  "idLike": null
+ },
+ "descriptor": {
+  "name": "grype",
+  "version": "0.63.1",
+  "configuration": {
+   "configPath": "",
+   "verbosity": 0,
+   "output": "json",
+   "file": "/tmp/1.json",
+   "distro": "",
+   "add-cpes-if-none": false,
+   "output-template-file": "",
+   "quiet": false,
+   "check-for-app-update": true,
+   "only-fixed": false,
+   "only-notfixed": false,
+   "platform": "",
+   "search": {
+    "scope": "Squashed",
+    "unindexed-archives": false,
+    "indexed-archives": true
+   },
+   "ignore": null,
+   "exclude": [],
+   "db": {
+    "cache-dir": "/home/dimitritenenbaum/.cache/grype/db",
+    "update-url": "https://toolbox-data.anchore.io/grype/databases/listing.json",
+    "ca-cert": "",
+    "auto-update": true,
+    "validate-by-hash-on-start": false,
+    "validate-age": true,
+    "max-allowed-built-age": 432000000000000
+   },
+   "externalSources": {
+    "enable": false,
+    "maven": {
+     "searchUpstreamBySha1": true,
+     "baseUrl": "https://search.maven.org/solrsearch/select"
+    }
+   },
+   "match": {
+    "java": {
+     "using-cpes": true
+    },
+    "dotnet": {
+     "using-cpes": true
+    },
+    "golang": {
+     "using-cpes": true
+    },
+    "javascript": {
+     "using-cpes": false
+    },
+    "python": {
+     "using-cpes": true
+    },
+    "ruby": {
+     "using-cpes": true
+    },
+    "stock": {
+     "using-cpes": true
+    }
+   },
+   "dev": {
+    "profile-cpu": false,
+    "profile-mem": false
+   },
+   "fail-on-severity": "",
+   "registry": {
+    "insecure-skip-tls-verify": false,
+    "insecure-use-http": false,
+    "auth": []
+   },
+   "log": {
+    "structured": false,
+    "level": "warn",
+    "file": ""
+   },
+   "show-suppressed": false,
+   "by-cve": false,
+   "name": "",
+   "default-image-pull-source": ""
+  },
+  "db": {
+   "built": "2023-07-01T01:32:26Z",
+   "schemaVersion": 5,
+   "location": "/home/dimitritenenbaum/.cache/grype/db/5",
+   "checksum": "sha256:a4241efff9c30ba97bb942017a90874f47790d3d0798a006f942354f29c4f97e",
+   "error": null
+  },
+  "timestamp": "2023-07-02T00:38:08.435215085+02:00"
+ }
+}
