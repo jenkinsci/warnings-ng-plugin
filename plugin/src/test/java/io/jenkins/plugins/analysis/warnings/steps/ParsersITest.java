@@ -980,7 +980,13 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldFindAllEmbeddedEngineerIssues() {
         shouldFindIssuesOfTool(8, new EmbeddedEngineer(), "ea.log");
     }
-    
+
+    /** Runs the Embedded Engineer parser on an output file that contains 6 issues. */
+    @Test
+    void shouldFindAllCrossCoreEmbeddedStudioIssues() {
+        shouldFindIssuesOfTool(6, new CrossCoreEmbeddedStudio(), "cces.log");
+    }
+
     /** Runs the Simulink Code Generator parser on an output file that contains 8 issues. */
     @Test
     void shouldFindAllCodeGeneratorIssues() {
