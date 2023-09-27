@@ -188,7 +188,8 @@ public final class AxivionSuite extends Tool {
     public Report scan(final Run<?, ?> run, final FilePath workspace, final Charset sourceCodeEncoding,
             final LogHandler logger) throws ParsingException, ParsingCanceledException {
 
-        final AxivionDashboard dashboard = new RemoteAxivionDashboard(projectUrl, withValidCredentials(), namedFilter);
+        final UsernamePasswordCredentials httpClientCredentials = withValidCredentials(run.getParent());
+        final AxivionDashboard dashboard = new RemoteAxivionDashboard(projectUrl, httpClientCredentials, namedFilter);
         final AxivionParser.Config config = new Config(projectUrl, expandBaseDir(run, basedir),
                 ignoreSuppressedOrJustified);
         final AxivionParser parser = new AxivionParser(config);
@@ -207,11 +208,11 @@ public final class AxivionSuite extends Tool {
         return report;
     }
 
-    private UsernamePasswordCredentials withValidCredentials() {
+    private UsernamePasswordCredentials withValidCredentials(final Item context) {
         final List<StandardUsernamePasswordCredentials> all =
                 CredentialsProvider.lookupCredentials(
                         StandardUsernamePasswordCredentials.class,
-                        (Item) null,
+                        context,
                         null,
                         Collections.emptyList());
 
