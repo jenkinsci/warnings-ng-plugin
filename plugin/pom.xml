@@ -11,7 +11,7 @@
   <groupId>io.jenkins.plugins</groupId>
   <artifactId>warnings-ng</artifactId>
   <packaging>hpi</packaging>
-  <name>Warnings Next Generation Plugin</name>
+  <name>Warnings Plugin</name>
   <version>${revision}${changelist}</version>
 
   <description>Collects compiler warnings or issues reported by static analysis
