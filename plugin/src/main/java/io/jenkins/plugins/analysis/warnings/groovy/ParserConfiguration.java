@@ -88,6 +88,39 @@ public class ParserConfiguration extends GlobalConfigurationItem {
     }
 
     /**
+     * Removes a GroovyParser from the list by Id.
+     *
+     * @param parserId
+     *         the ID of the Groovy parser to be deleted
+     */
+    @DataBoundSetter
+    public void deleteParser(final String parserId) {
+        if (contains(parserId)) {
+            GroovyParser parser = getParser(parserId);
+            this.parsers.remove(parser);
+        } else {
+            throw new NoSuchElementException("No parser with this ID.");
+        }
+        save();
+    }
+
+    /**
+     * Adds a GroovyParser to the list without removing other parsers.
+     *
+     * @param parser
+     *         the new Groovy parser to be added
+     */
+    @DataBoundSetter
+    public void addParser(final GroovyParser parser) {
+        if (!contains(parser.getId())) {
+            this.parsers.add(parser);
+        } else {
+            throw new IllegalArgumentException("ID already exists.");
+        }
+        save();
+    }
+
+    /**
      * Says if the admin has permitted groovy parsers to scan a build's console log.
      *
      * @return true if groovy parsers can scan the console, false if they are
