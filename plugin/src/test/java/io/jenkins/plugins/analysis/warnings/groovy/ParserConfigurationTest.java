@@ -27,7 +27,7 @@ class ParserConfigurationTest {
     }
 
     @Test
-    void shouldSaveConfigurationIfParsersAreAdded() {
+    void shouldSaveConfigurationIfParsersAreSet() {
         GlobalConfigurationFacade facade = mock(GlobalConfigurationFacade.class);
 
         ParserConfiguration configuration = new ParserConfiguration(facade);
@@ -67,5 +67,44 @@ class ParserConfigurationTest {
         assertThat(actualFalse).isOk();
         final FormValidation actualTrue = configuration.doCheckConsoleLogScanningPermitted(true);
         assertThat(actualTrue.kind).isEqualTo(FormValidation.Kind.WARNING);
+    }
+    @Test
+    void shouldSaveConfigurationIfParserIsAdded() {
+        GlobalConfigurationFacade facade = mock(GlobalConfigurationFacade.class);
+        GroovyParser test_parser = new GroovyParser("1", "", "", "", "");
+
+        ParserConfiguration configuration = new ParserConfiguration(facade);
+        configuration.addParser(test_parser);
+
+        verify(facade).save();
+        assertThat(configuration.getParsers().contains(test_parser));
+    }
+    @Test
+    void shouldThrowIfParserExists() {
+        GlobalConfigurationFacade facade = mock(GlobalConfigurationFacade.class);
+        GroovyParser test_parser = new GroovyParser("1", "", "", "", "");
+
+        ParserConfiguration configuration = new ParserConfiguration(facade);
+        configuration.addParser(test_parser);
+        verify(facade).save();
+
+        assertThatIllegalArgumentException().isThrownBy(() -> configuration.addParser(test_parser));
+    }
+    @Test
+    void deleteShouldRemoveOnlySpecifiedParser() {
+        GlobalConfigurationFacade facade = mock(GlobalConfigurationFacade.class);
+        GroovyParser first_test_parser = new GroovyParser("1", "", "", "", "");
+        GroovyParser second_test_parser = new GroovyParser("2", "", "", "", "");
+
+        ParserConfiguration configuration = new ParserConfiguration(facade);
+        configuration.addParser(first_test_parser);
+        configuration.addParser(second_test_parser);
+
+        assertThat(configuration.getParsers().contains(first_test_parser));
+        assertThat(configuration.getParsers().contains(second_test_parser));
+
+        configuration.deleteParser(first_test_parser.getId());
+        assertThat(!(configuration.getParsers().contains(first_test_parser)));
+        assertThat(configuration.getParsers().contains(first_test_parser));
     }
 }
