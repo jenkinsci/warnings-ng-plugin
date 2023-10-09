@@ -93,12 +93,12 @@ public class ParserConfiguration extends GlobalConfigurationItem {
      * @param parserId
      *         the ID of the Groovy parser to be deleted
      */
-    @DataBoundSetter
     public void deleteParser(final String parserId) {
         if (contains(parserId)) {
             GroovyParser parser = getParser(parserId);
             this.parsers.remove(parser);
-        } else {
+        }
+        else {
             throw new NoSuchElementException("No parser with this ID.");
         }
         save();
@@ -110,11 +110,11 @@ public class ParserConfiguration extends GlobalConfigurationItem {
      * @param parser
      *         the new Groovy parser to be added
      */
-    @DataBoundSetter
     public void addParser(final GroovyParser parser) {
         if (!contains(parser.getId())) {
             this.parsers.add(parser);
-        } else {
+        }
+        else {
             throw new IllegalArgumentException("ID already exists.");
         }
         save();
