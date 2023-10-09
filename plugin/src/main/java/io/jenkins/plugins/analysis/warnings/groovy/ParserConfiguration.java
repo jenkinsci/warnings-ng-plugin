@@ -111,12 +111,11 @@ public class ParserConfiguration extends GlobalConfigurationItem {
      *         the new Groovy parser to be added
      */
     public void addParser(final GroovyParser parser) {
-        if (!contains(parser.getId())) {
-            this.parsers.add(parser);
-        }
-        else {
+        if (contains(parser.getId())) {
             throw new IllegalArgumentException("ID already exists.");
         }
+        this.parsers.add(parser);
+
         save();
     }
 
