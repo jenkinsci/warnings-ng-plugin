@@ -60,15 +60,15 @@ class TaskScannerTest extends ResourceTest {
 
     @Test
     void shouldReportErrorIfPatternIsInvalid() {
-        TaskScanner scanner = new TaskScannerBuilder().setHighTasks("\\")
+        TaskScanner scanner = new TaskScannerBuilder().setHighTasks("[)")
                 .setMatcherMode(MatcherMode.REGEXP_MATCH)
                 .build();
 
         Report report = scanner.scanTasks(read(FILE_WITH_TASKS), ISSUE_BUILDER);
 
         assertThat(report).hasSize(0);
-        String errorMessage = "Specified pattern is an invalid regular expression: '\\': "
-                + "'Unexpected internal error near index 1";
+        String errorMessage = "Specified pattern is an invalid regular expression: '[)': "
+                + "'Unclosed character class near index 1";
         assertThat(report.getErrorMessages()).hasSize(1);
         assertThat(report.getErrorMessages().get(0)).startsWith(errorMessage);
 
