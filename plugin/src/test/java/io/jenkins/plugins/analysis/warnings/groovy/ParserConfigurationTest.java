@@ -72,13 +72,13 @@ class ParserConfigurationTest {
     @Test
     void shouldSaveConfigurationIfParserIsAdded() {
         GlobalConfigurationFacade facade = mock(GlobalConfigurationFacade.class);
-        GroovyParser additional_parser = new GroovyParser("1", "", "", "", "");
+        GroovyParser additionalParser = new GroovyParser("1", "", "", "", "");
 
         ParserConfiguration configuration = new ParserConfiguration(facade);
-        configuration.addParser(additional_parser);
+        configuration.addParser(additionalParser);
 
         verify(facade).save();
-        assertThat(configuration.getParsers()).containsExactly(additional_parser);
+        assertThat(configuration.getParsers()).containsExactly(additionalParser);
     }
 
     @Test
