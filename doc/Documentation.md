@@ -228,7 +228,9 @@ text into an issue instance. Here is an example of such a Groovy based parser:
 #### Creating a Groovy parser programmatically
 
 The Groovy based parser can also be created using a Groovy script from within a pipeline, a Jenkins startup script or 
-the script console, see the following example:
+the script console.
+
+See the following example:
 
 ```groovy
 def config = io.jenkins.plugins.analysis.warnings.groovy.ParserConfiguration.getInstance()
@@ -241,7 +243,7 @@ if(!config.contains('pep8-groovy')){
         'return builder.setFileName(matcher.group(1)).setCategory(matcher.group(4)).setMessage(matcher.group(5)).buildOptional()', 
         "optparse.py:69:11: E401 multiple imports on one line"
     )
-    config.setParsers(config.getParsers().plus(newParser))
+    config.addParser(newParser)
 }
 ```
 

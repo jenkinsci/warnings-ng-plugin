@@ -72,13 +72,13 @@ class ParserConfigurationTest {
     @Test
     void shouldSaveConfigurationIfParserIsAdded() {
         GlobalConfigurationFacade facade = mock(GlobalConfigurationFacade.class);
-        GroovyParser test_parser = new GroovyParser("1", "", "", "", "");
+        GroovyParser additional_parser = new GroovyParser("1", "", "", "", "");
 
         ParserConfiguration configuration = new ParserConfiguration(facade);
-        configuration.addParser(test_parser);
+        configuration.addParser(additional_parser);
 
         verify(facade).save();
-        assertThat(configuration.getParsers().contains(test_parser));
+        assertThat(configuration.getParsers()).containsExactly(additional_parser);
     }
 
     @Test
@@ -90,7 +90,7 @@ class ParserConfigurationTest {
         configuration.addParser(testParser);
         verify(facade).save();
 
-        assertThatIllegalArgumentException().isThrownBy(() -> configuration.addParser(testParser));
+        assertThatIllegalArgumentException().isThrownBy(() -> configuration.addParser(testParser)).withMessageContaining(testParser.getId());
     }
 
     @Test
@@ -103,11 +103,10 @@ class ParserConfigurationTest {
         configuration.addParser(firstTestParser);
         configuration.addParser(secondTestParser);
 
-        assertThat(configuration.getParsers().contains(firstTestParser));
-        assertThat(configuration.getParsers().contains(secondTestParser));
+        assertThat(configuration.getParsers()).containsExactly(firstTestParser, secondTestParser);
 
         configuration.deleteParser(firstTestParser.getId());
-        assertThat(!(configuration.getParsers().contains(firstTestParser)));
-        assertThat(configuration.getParsers().contains(firstTestParser));
+        assertThat(configuration.getParsers()).containsExactly(secondTestParser);
+
     }
 }

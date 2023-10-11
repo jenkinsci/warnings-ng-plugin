@@ -99,7 +99,7 @@ public class ParserConfiguration extends GlobalConfigurationItem {
             this.parsers.remove(parser);
         }
         else {
-            throw new NoSuchElementException("No parser with this ID.");
+            throw new NoSuchElementException(String.format("No Groovy parser with ID '%s' found.", parserId));
         }
         save();
     }
@@ -111,8 +111,9 @@ public class ParserConfiguration extends GlobalConfigurationItem {
      *         the new Groovy parser to be added
      */
     public void addParser(final GroovyParser parser) {
-        if (contains(parser.getId())) {
-            throw new IllegalArgumentException("ID already exists.");
+        String parserId = parser.getId();
+        if (contains(parserId)) {
+            throw new IllegalArgumentException(String.format("ID '%s' already exists.", parserId));
         }
         this.parsers.add(parser);
 
