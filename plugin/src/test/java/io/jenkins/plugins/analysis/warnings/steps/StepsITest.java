@@ -817,6 +817,33 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
 
     /**
      * Registers a new {@link GroovyParser} (a Pep8 parser) in Jenkins global configuration and runs this parser on the
+     * console that's showing an error log with 8 issues.
+     *
+     * @throws IOException
+     *         if the test fails unexpectedly
+     */
+    @Test
+    void shouldShowWarningsOfGroovyParserWhenScanningConsoleLogWhenThatIsPermittedAndUsingAddParser() throws IOException {
+        WorkflowJob job = createPipeline();
+        ArrayList<String> stages = new ArrayList<>();
+        catFileContentsByAddingEchosSteps(stages, "pep8Test.txt");
+        stages.add("def groovy = scanForIssues "
+                + "tool: groovyScript(parserId: 'another-groovy-pep8', pattern:'', reportEncoding:'UTF-8')");
+        stages.add("publishIssues issues:[groovy]");
+        job.setDefinition(asStage(stages.toArray(new String[0])));
+
+        ParserConfiguration configuration = ParserConfiguration.getInstance();
+        configuration.setConsoleLogScanningPermitted(true);
+        String id = "another-groovy-pep8";
+
+        configuration.addParser(new GroovyParser(id, "Another Groovy Pep8",
+                        "(.*):(\\d+):(\\d+): (\\D\\d*) (.*)",
+                        toString("groovy/pep8.groovy"), ""));
+        testGroovyPep8JobIsSuccessful(job, id);
+    }
+
+    /**
+     * Registers a new {@link GroovyParser} (a Pep8 parser) in Jenkins global configuration and runs this parser on the
      * console that's showing an error log with 8 issues ... but when we're configured not to allow groovy parsers to
      * scan the console at all so we expect it to fail.
      *
