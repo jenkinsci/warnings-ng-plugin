@@ -4,7 +4,7 @@ import java.util.Locale;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.jvnet.hudson.test.Issue;
+import org.junitpioneer.jupiter.Issue;
 
 import edu.hm.hafner.analysis.IssueBuilder;
 

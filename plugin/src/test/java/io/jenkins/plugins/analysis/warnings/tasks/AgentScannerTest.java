@@ -3,7 +3,7 @@ package io.jenkins.plugins.analysis.warnings.tasks;
 import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
-import org.jvnet.hudson.test.Issue;
+import org.junitpioneer.jupiter.Issue;
 
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.SerializableTest;

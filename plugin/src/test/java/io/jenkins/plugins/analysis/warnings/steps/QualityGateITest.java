@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 
 import org.eclipse.collections.impl.factory.Maps;
 import org.junit.jupiter.api.Test;
-import org.jvnet.hudson.test.Issue;
+import org.junitpioneer.jupiter.Issue;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 

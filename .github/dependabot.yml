@@ -14,12 +14,9 @@ updates:
       - dependency-name: org.eclipse.collections:eclipse-collections-api
         versions:
           - ">= 10.a"
-      - dependency-name: org.webjars:popper.js
+      - dependency-name: net.javacrumbs.json-unit:json-unit-assertj
         versions:
-          - ">= 2.0.0"
-      - dependency-name: org.webjars:bootstrap
-        versions:
-          - ">= 5.0.0"
+          - ">= 3.0.0"
 
   - package-ecosystem: "github-actions"
     directory: "/"

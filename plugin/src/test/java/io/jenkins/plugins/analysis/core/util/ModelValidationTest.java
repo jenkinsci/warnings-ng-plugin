@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.jvnet.hudson.test.Issue;
+import org.junitpioneer.jupiter.Issue;
 
 import edu.hm.hafner.analysis.Severity;
 

@@ -5,7 +5,7 @@
   <parent>
     <groupId>edu.hm.hafner</groupId>
     <artifactId>codingstyle-pom</artifactId>
-    <version>2.29.0</version>
+    <version>3.33.0</version>
     <relativePath/>
   </parent>
 
@@ -22,6 +22,7 @@
     <json-unit-assertj.version>2.38.0</json-unit-assertj.version>
     <module.name>${project.groupId}.warnings.ui.tests</module.name>
 
+    <hpi-plugin.version>3.49</hpi-plugin.version>
     <!-- Maven Surefire ArgLine -->
     <argLine>-Djava.awt.headless=true -Xmx1024m -Djenkins.test.timeout=1000 --add-opens java.base/sun.reflect.annotation=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.util.concurrent=ALL-UNNAMED</argLine>
   </properties>
@@ -32,6 +33,14 @@
         <groupId>org.jenkins-ci.main</groupId>
         <artifactId>jenkins-core</artifactId>
         <version>${jenkins.version}</version>
+      </dependency>
+      <dependency>
+        <!-- ClassNotFoundException if omitted -->
+        <groupId>io.netty</groupId>
+        <artifactId>netty-bom</artifactId>
+        <version>4.1.99.Final</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -147,6 +156,20 @@
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.pitest</groupId>
+        <artifactId>pitest-maven</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
