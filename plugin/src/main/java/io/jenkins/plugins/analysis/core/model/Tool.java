@@ -17,7 +17,7 @@ import org.kohsuke.stapler.verb.POST;
 import org.jenkinsci.Symbol;
 import hudson.FilePath;
 import hudson.model.AbstractDescribableImpl;
-import hudson.model.AbstractProject;
+import hudson.model.BuildableItem;
 import hudson.model.Descriptor;
 import hudson.model.Item;
 import hudson.model.Run;
@@ -197,7 +197,7 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckId(@AncestorInPath final AbstractProject<?, ?> project,
+        public FormValidation doCheckId(@AncestorInPath final BuildableItem project,
                 @QueryParameter final String id) {
             if (!new JenkinsFacade().hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();

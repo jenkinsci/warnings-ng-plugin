@@ -21,11 +21,13 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import groovy.lang.Script;
 
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.verb.POST;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
+import hudson.model.BuildableItem;
 import hudson.model.Descriptor;
 import hudson.model.Item;
 import hudson.util.FormValidation;
@@ -245,14 +247,17 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
         /**
          * Performs on-the-fly validation of the parser ID. The ID needs to be unique.
          *
+         * @param project
+         *         the project that is configured
          * @param id
          *         the ID of the parser
          *
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckId(@QueryParameter(required = true) final String id) {
-            if (!jenkinsFacade.hasPermission(Item.CONFIGURE)) {
+        public FormValidation doCheckId(@AncestorInPath final BuildableItem project,
+                @QueryParameter(required = true) final String id) {
+            if (!jenkinsFacade.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
             return VALIDATION_UTILITIES.validateId(id);
@@ -261,14 +266,17 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
         /**
          * Performs on-the-fly validation on the name of the parser that needs to be unique.
          *
+         * @param project
+         *         the project that is configured
          * @param name
          *         the name of the parser
          *
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckName(@QueryParameter(required = true) final String name) {
-            if (!jenkinsFacade.hasPermission(Item.CONFIGURE)) {
+        public FormValidation doCheckName(@AncestorInPath final BuildableItem project,
+                @QueryParameter(required = true) final String name) {
+            if (!jenkinsFacade.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
 
@@ -281,14 +289,17 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
         /**
          * Performs on-the-fly validation on the regular expression.
          *
+         * @param project
+         *         the project that is configured
          * @param regexp
          *         the regular expression
          *
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckRegexp(@QueryParameter(required = true) final String regexp) {
-            if (!jenkinsFacade.hasPermission(Item.CONFIGURE)) {
+        public FormValidation doCheckRegexp(@AncestorInPath final BuildableItem project,
+                @QueryParameter(required = true) final String regexp) {
+            if (!jenkinsFacade.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
 
@@ -310,14 +321,17 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
         /**
          * Performs on-the-fly validation on the Groovy script.
          *
+         * @param project
+         *         the project that is configured
          * @param script
          *         the script
          *
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckScript(@QueryParameter(required = true) final String script) {
-            if (!jenkinsFacade.hasPermission(Item.CONFIGURE)) {
+        public FormValidation doCheckScript(@AncestorInPath final BuildableItem project,
+                @QueryParameter(required = true) final String script) {
+            if (!jenkinsFacade.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
             if (!jenkinsFacade.hasPermission(Jenkins.ADMINISTER)) {
@@ -343,8 +357,10 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
         /**
          * Parses the example message with the specified regular expression and script.
          *
+         * @param project
+         *         the project that is configured
          * @param example
-         *         example that should be resolve to a warning
+         *         example that should resolve to a warning
          * @param regexp
          *         the regular expression
          * @param script
@@ -353,9 +369,10 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckExample(@QueryParameter final String example,
+        public FormValidation doCheckExample(@AncestorInPath final BuildableItem project,
+                @QueryParameter final String example,
                 @QueryParameter final String regexp, @QueryParameter final String script) {
-            if (!jenkinsFacade.hasPermission(Item.CONFIGURE)) {
+            if (!jenkinsFacade.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
             if (!jenkinsFacade.hasPermission(Jenkins.ADMINISTER)) {

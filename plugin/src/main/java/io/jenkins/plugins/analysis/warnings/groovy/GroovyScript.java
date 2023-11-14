@@ -11,7 +11,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.verb.POST;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
-import hudson.model.AbstractProject;
+import hudson.model.BuildableItem;
 import hudson.model.Item;
 import hudson.util.ListBoxModel;
 
@@ -110,7 +110,7 @@ public class GroovyScript extends ReportScanningTool {
          */
         @SuppressWarnings("unused") // Called from config.jelly
         @POST
-        public ListBoxModel doFillParserIdItems(@AncestorInPath final AbstractProject<?, ?> project) {
+        public ListBoxModel doFillParserIdItems(@AncestorInPath final BuildableItem project) {
             if (new JenkinsFacade().hasPermission(Item.CONFIGURE, project)) {
                 ListBoxModel options = ParserConfiguration.getInstance().asListBoxModel();
                 if (options.isEmpty()) {
