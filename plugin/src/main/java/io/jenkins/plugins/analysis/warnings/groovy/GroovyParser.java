@@ -280,6 +280,11 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
                 return FormValidation.ok();
             }
 
+            return doCheckName(name);
+        }
+
+        @VisibleForTesting
+        FormValidation doCheckName(final String name) {
             if (StringUtils.isBlank(name)) {
                 return FormValidation.error(Messages.GroovyParser_Error_Name_isEmpty());
             }
@@ -303,6 +308,11 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
                 return FormValidation.ok();
             }
 
+            return doCheckRegexp(regexp);
+        }
+
+        @VisibleForTesting
+        FormValidation doCheckRegexp(final String regexp) {
             try {
                 if (StringUtils.isBlank(regexp)) {
                     return FormValidation.error(Messages.GroovyParser_Error_Regexp_isEmpty());
@@ -337,6 +347,11 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
             if (!jenkinsFacade.hasPermission(Jenkins.ADMINISTER)) {
                 return NO_RUN_SCRIPT_PERMISSION_WARNING;
             }
+            return doCheckScript(script);
+        }
+
+        @VisibleForTesting
+        FormValidation doCheckScript(final String script) {
             try {
                 if (StringUtils.isBlank(script)) {
                     return FormValidation.error(Messages.GroovyParser_Error_Script_isEmpty());
@@ -378,6 +393,11 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
             if (!jenkinsFacade.hasPermission(Jenkins.ADMINISTER)) {
                 return NO_RUN_SCRIPT_PERMISSION_WARNING;
             }
+            return doCheckExample(example, regexp, script);
+        }
+
+        @VisibleForTesting
+        FormValidation doCheckExample(final String example, final String regexp, final String script) {
             if (StringUtils.isNotBlank(example) && StringUtils.isNotBlank(regexp) && StringUtils.isNotBlank(script)) {
                 FormValidation response = parseExample(script, example, regexp, containsNewline(regexp));
                 if (example.length() <= MAX_EXAMPLE_SIZE) {
@@ -420,7 +440,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
                 if (matcher.find()) {
                     GroovyExpressionMatcher checker = new GroovyExpressionMatcher(script);
                     Object result = checker.run(matcher, new IssueBuilder(), 0, "UI Example");
-                    Optional<?> optional = (Optional) result;
+                    Optional<?> optional = (Optional<?>) result;
                     if (optional.isPresent()) {
                         Object wrappedIssue = optional.get();
                         if (wrappedIssue instanceof Issue) {
@@ -433,7 +453,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
                     return FormValidation.error(Messages.GroovyParser_Error_Example_regexpDoesNotMatch());
                 }
             }
-            catch (Exception exception) { // catch all exceptions of the Groovy script
+            catch (Exception exception) { // catch all exceptions thrown by the Groovy script
                 return FormValidation.error(
                         Messages.GroovyParser_Error_Example_exception(exception.getMessage()));
             }
