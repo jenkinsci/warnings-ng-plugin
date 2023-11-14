@@ -7,7 +7,7 @@ import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 
-import hudson.model.AbstractProject;
+import hudson.model.BuildableItem;
 import hudson.model.Item;
 
 import io.jenkins.plugins.analysis.core.filter.IncludeType.DescriptorImpl;
@@ -48,7 +48,7 @@ class RegexpFilterTest {
     @Test
     void shouldValidatePattern() {
         JenkinsFacade jenkinsFacade = mock(JenkinsFacade.class);
-        when(jenkinsFacade.hasPermission(Item.CONFIGURE, (AbstractProject<?, ?>) null)).thenReturn(true);
+        when(jenkinsFacade.hasPermission(Item.CONFIGURE, (BuildableItem) null)).thenReturn(true);
 
         RegexpFilterDescriptor descriptor = new DescriptorImpl(jenkinsFacade);
         assertThat(descriptor.doCheckPattern(null, null)).isOk().hasMessage(Messages.pattern_blank());

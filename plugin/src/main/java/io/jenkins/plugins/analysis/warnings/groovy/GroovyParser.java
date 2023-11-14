@@ -97,9 +97,9 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
     public boolean isValid() {
         DescriptorImpl d = new DescriptorImpl(getJenkinsFacade());
 
-        return d.doCheckScript(script).kind == Kind.OK
-                && d.doCheckRegexp(regexp).kind == Kind.OK
-                && d.doCheckName(name).kind == Kind.OK;
+        return d.checkScript(script).kind == Kind.OK
+                && d.checkRegexp(regexp).kind == Kind.OK
+                && d.checkName(name).kind == Kind.OK;
     }
 
     public String getId() {
@@ -180,22 +180,22 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
      *
      * @return a new parser instance
      * @throws IllegalArgumentException
-     *         if this parsers configuration is not valid
+     *         if this parser configuration is not valid
      */
     public IssueParser createParser() {
         DescriptorImpl descriptor = new DescriptorImpl(getJenkinsFacade());
 
-        FormValidation nameCheck = descriptor.doCheckName(name);
+        FormValidation nameCheck = descriptor.checkName(name);
         if (nameCheck.kind == Kind.ERROR) {
             throw new IllegalArgumentException("Name is not valid: " + nameCheck.getMessage());
         }
 
-        FormValidation scriptCheck = descriptor.doCheckScript(script);
+        FormValidation scriptCheck = descriptor.checkScript(script);
         if (scriptCheck.kind == Kind.ERROR) {
             throw new IllegalArgumentException("Script is not valid: " + scriptCheck.getMessage());
         }
 
-        FormValidation regexpCheck = descriptor.doCheckRegexp(regexp);
+        FormValidation regexpCheck = descriptor.checkRegexp(regexp);
         if (regexpCheck.kind == Kind.ERROR) {
             throw new IllegalArgumentException("RegExp is not valid: " + regexpCheck.getMessage());
         }
@@ -280,11 +280,10 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
                 return FormValidation.ok();
             }
 
-            return doCheckName(name);
+            return checkName(name);
         }
 
-        @VisibleForTesting
-        FormValidation doCheckName(final String name) {
+        FormValidation checkName(final String name) {
             if (StringUtils.isBlank(name)) {
                 return FormValidation.error(Messages.GroovyParser_Error_Name_isEmpty());
             }
@@ -308,11 +307,10 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
                 return FormValidation.ok();
             }
 
-            return doCheckRegexp(regexp);
+            return checkRegexp(regexp);
         }
 
-        @VisibleForTesting
-        FormValidation doCheckRegexp(final String regexp) {
+        FormValidation checkRegexp(final String regexp) {
             try {
                 if (StringUtils.isBlank(regexp)) {
                     return FormValidation.error(Messages.GroovyParser_Error_Regexp_isEmpty());
@@ -347,11 +345,10 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
             if (!jenkinsFacade.hasPermission(Jenkins.ADMINISTER)) {
                 return NO_RUN_SCRIPT_PERMISSION_WARNING;
             }
-            return doCheckScript(script);
+            return checkScript(script);
         }
 
-        @VisibleForTesting
-        FormValidation doCheckScript(final String script) {
+        FormValidation checkScript(final String script) {
             try {
                 if (StringUtils.isBlank(script)) {
                     return FormValidation.error(Messages.GroovyParser_Error_Script_isEmpty());
@@ -393,11 +390,10 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
             if (!jenkinsFacade.hasPermission(Jenkins.ADMINISTER)) {
                 return NO_RUN_SCRIPT_PERMISSION_WARNING;
             }
-            return doCheckExample(example, regexp, script);
+            return checkExample(example, regexp, script);
         }
 
-        @VisibleForTesting
-        FormValidation doCheckExample(final String example, final String regexp, final String script) {
+        FormValidation checkExample(final String example, final String regexp, final String script) {
             if (StringUtils.isNotBlank(example) && StringUtils.isNotBlank(regexp) && StringUtils.isNotBlank(script)) {
                 FormValidation response = parseExample(script, example, regexp, containsNewline(regexp));
                 if (example.length() <= MAX_EXAMPLE_SIZE) {
