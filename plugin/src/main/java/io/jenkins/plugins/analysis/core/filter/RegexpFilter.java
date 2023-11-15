@@ -15,7 +15,7 @@ import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.verb.POST;
 import hudson.model.AbstractDescribableImpl;
-import hudson.model.AbstractProject;
+import hudson.model.BuildableItem;
 import hudson.model.Descriptor;
 import hudson.model.Item;
 import hudson.util.FormValidation;
@@ -80,7 +80,7 @@ public abstract class RegexpFilter extends AbstractDescribableImpl<RegexpFilter>
         }
 
         /**
-         * Performs on-the-fly validation on threshold for high warnings.
+         * Performs on-the-fly validation of the regexp pattern.
          *
          * @param project
          *         the project that is configured
@@ -90,7 +90,7 @@ public abstract class RegexpFilter extends AbstractDescribableImpl<RegexpFilter>
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckPattern(@AncestorInPath final AbstractProject<?, ?> project,
+        public FormValidation doCheckPattern(@AncestorInPath final BuildableItem project,
                 @QueryParameter final String pattern) {
             if (!jenkinsFacade.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();

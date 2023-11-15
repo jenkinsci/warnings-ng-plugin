@@ -7,8 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.parser.checkstyle.CheckStyleParser;
 
-import hudson.model.AbstractProject;
-import hudson.model.Item;
+import jenkins.model.Jenkins;
 
 import io.jenkins.plugins.analysis.warnings.RegisteredParser.Descriptor;
 import io.jenkins.plugins.util.JenkinsFacade;
@@ -73,15 +72,14 @@ class RegisteredParserTest {
         @Test
         void shouldPopulateListOfParsers() {
             JenkinsFacade jenkins = mock(JenkinsFacade.class);
-            AbstractProject<?, ?> job = mock(AbstractProject.class);
-            when(jenkins.hasPermission(Item.CONFIGURE, job)).thenReturn(true);
+            when(jenkins.hasPermission(Jenkins.READ)).thenReturn(true);
 
             Descriptor descriptor = new Descriptor(jenkins);
             assertThat(descriptor.getId()).isEqualTo(Descriptor.ANALYSIS_MODEL_ID);
-            assertThat(descriptor.doFillAnalysisModelIdItems(job)).extracting(o -> o.value).first().isEqualTo("acu-cobol");
+            assertThat(descriptor.doFillAnalysisModelIdItems()).extracting(o -> o.value).first().isEqualTo("acu-cobol");
 
-            when(jenkins.hasPermission(Item.CONFIGURE, job)).thenReturn(false);
-            assertThat(descriptor.doFillAnalysisModelIdItems(job)).isEmpty();
+            when(jenkins.hasPermission(Jenkins.READ)).thenReturn(false);
+            assertThat(descriptor.doFillAnalysisModelIdItems()).isEmpty();
         }
     }
 }

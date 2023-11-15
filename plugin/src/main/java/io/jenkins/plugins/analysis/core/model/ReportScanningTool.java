@@ -20,11 +20,13 @@ import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.verb.POST;
 import hudson.FilePath;
 import hudson.model.AbstractProject;
+import hudson.model.BuildableItem;
 import hudson.model.Item;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
+import jenkins.model.Jenkins;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser.AnalysisModelParserDescriptor;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogReaderFactory;
@@ -257,14 +259,11 @@ public abstract class ReportScanningTool extends Tool {
         /**
          * Returns a model with all available charsets.
          *
-         * @param project
-         *         the project that is configured
-         *
          * @return a model with all available charsets
          */
         @POST
-        public ComboBoxModel doFillReportEncodingItems(@AncestorInPath final AbstractProject<?, ?> project) {
-            if (JENKINS.hasPermission(Item.CONFIGURE, project)) {
+        public ComboBoxModel doFillReportEncodingItems() {
+            if (JENKINS.hasPermission(Jenkins.READ)) {
                 return VALIDATION_UTILITIES.getAllCharsets();
             }
             return new ComboBoxModel();
@@ -281,9 +280,9 @@ public abstract class ReportScanningTool extends Tool {
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckReportEncoding(@AncestorInPath final AbstractProject<?, ?> project,
+        public FormValidation doCheckReportEncoding(@AncestorInPath final BuildableItem project,
                 @QueryParameter final String reportEncoding) {
-            if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
+            if (!JENKINS.hasPermission(Jenkins.READ)) {
                 return FormValidation.ok();
             }
 
@@ -328,7 +327,7 @@ public abstract class ReportScanningTool extends Tool {
         }
 
         /**
-         * Returns whether this parser can scan the console log. Typically, only line based parsers can scan the console
+         * Returns whether this parser can scan the console log. Typically, only line-based parsers can scan the console
          * log. XML parsers should always parse a given file only.
          *
          * @return the parser to use
@@ -338,8 +337,8 @@ public abstract class ReportScanningTool extends Tool {
         }
 
         /**
-         * Returns the default filename pattern for this tool. Override if your typically works on a specific file.
-         * Note: if you provide a default pattern then it is not possible to scan Jenkins console log of a build.
+         * Returns the default filename pattern for this tool. Override if your parser typically works on a specific file.
+         * Note: if you provide a default pattern, then it is not possible to scan Jenkins' console log of a build.
          *
          * @return the default pattern
          */

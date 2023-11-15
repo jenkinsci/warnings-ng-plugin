@@ -22,6 +22,7 @@ import org.jenkinsci.Symbol;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.model.AbstractProject;
+import hudson.model.BuildableItem;
 import hudson.model.Item;
 import hudson.model.Run;
 import hudson.util.FormValidation;
@@ -279,7 +280,7 @@ public class OpenTasks extends Tool {
          * @param low
          *         tag identifiers indicating low priority
          * @param ignoreCase
-         *         if case should be ignored during matching
+         *         if the case should be ignored during matching
          * @param asRegexp
          *         if the identifiers should be treated as regular expression
          *
@@ -287,7 +288,7 @@ public class OpenTasks extends Tool {
          */
         @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
         @POST
-        public FormValidation doCheckExample(@AncestorInPath final AbstractProject<?, ?> project,
+        public FormValidation doCheckExample(@AncestorInPath final BuildableItem project,
                 @QueryParameter final String example,
                 @QueryParameter final String high,
                 @QueryParameter final String normal,

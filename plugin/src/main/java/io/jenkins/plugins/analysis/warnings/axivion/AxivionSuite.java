@@ -37,7 +37,7 @@ import org.kohsuke.stapler.verb.POST;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 import hudson.FilePath;
-import hudson.model.AbstractProject;
+import hudson.model.BuildableItem;
 import hudson.model.Item;
 import hudson.model.Run;
 import hudson.model.TaskListener;
@@ -291,7 +291,7 @@ public final class AxivionSuite extends Tool {
          * @return {@link FormValidation#ok()} is a valid url
          */
         @POST
-        public FormValidation doCheckProjectUrl(@AncestorInPath final AbstractProject<?, ?> project,
+        public FormValidation doCheckProjectUrl(@AncestorInPath final BuildableItem project,
                 @QueryParameter final String projectUrl) {
             if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
@@ -319,7 +319,7 @@ public final class AxivionSuite extends Tool {
          */
         @SuppressFBWarnings("PATH_TRAVERSAL_IN")
         @POST
-        public FormValidation doCheckBasedir(@AncestorInPath final AbstractProject<?, ?> project,
+        public FormValidation doCheckBasedir(@AncestorInPath final BuildableItem project,
                 @QueryParameter final String basedir) {
             if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
