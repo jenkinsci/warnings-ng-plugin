@@ -5,7 +5,7 @@ import java.nio.file.Path;
 import java.util.Collections;
 
 import org.junit.jupiter.api.Test;
-import org.jvnet.hudson.test.Issue;
+import org.junitpioneer.jupiter.Issue;
 
 import edu.hm.hafner.util.ResourceTest;
 

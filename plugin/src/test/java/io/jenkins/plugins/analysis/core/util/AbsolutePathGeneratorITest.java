@@ -7,7 +7,7 @@ import java.util.Locale;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import org.jvnet.hudson.test.Issue;
+import org.junitpioneer.jupiter.Issue;
 import org.jvnet.hudson.test.JenkinsRule;
 
 import hudson.FilePath;

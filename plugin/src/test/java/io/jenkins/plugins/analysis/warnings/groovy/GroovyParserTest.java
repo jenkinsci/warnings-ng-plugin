@@ -5,7 +5,7 @@ import java.io.StringReader;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
-import org.jvnet.hudson.test.Issue;
+import org.junitpioneer.jupiter.Issue;
 
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.Report;
