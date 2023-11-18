@@ -13,6 +13,7 @@ import hudson.model.Item;
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
+import jenkins.model.Jenkins;
 
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
 import io.jenkins.plugins.util.JenkinsFacade;
@@ -87,13 +88,11 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
     /**
      * Returns a model with all available severity filters.
      *
-     * @param project
-     *         the project that is configured
      * @return a model with all available severity filters
      */
     @POST
-    public ListBoxModel doFillMinimumSeverityItems(@AncestorInPath final BuildableItem project) {
-        if (JENKINS.hasPermission(Item.READ, project)) {
+    public ListBoxModel doFillMinimumSeverityItems() {
+        if (JENKINS.hasPermission(Jenkins.READ)) {
             return model.getAllSeverityFilters();
         }
         return new ListBoxModel();
@@ -162,13 +161,11 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
     /**
      * Returns a model with all aggregation trend chart positions.
      *
-     * @param project
-     *         the project that is configured
-     * @return a model with all  aggregation trend chart positions
+     * @return a model with all aggregation trend chart positions
      */
     @POST
-    public ListBoxModel doFillTrendChartTypeItems(@AncestorInPath final BuildableItem project) {
-        if (JENKINS.hasPermission(Item.READ, project)) {
+    public ListBoxModel doFillTrendChartTypeItems() {
+        if (JENKINS.hasPermission(Jenkins.READ)) {
             return model.getAllTrendChartTypes();
         }
         return new ListBoxModel();

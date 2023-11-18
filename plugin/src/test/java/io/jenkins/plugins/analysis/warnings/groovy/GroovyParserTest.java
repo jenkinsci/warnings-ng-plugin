@@ -5,7 +5,7 @@ import java.io.StringReader;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
-import org.jvnet.hudson.test.Issue;
+import org.junitpioneer.jupiter.Issue;
 
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.Report;
@@ -71,7 +71,7 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
         assertThat(parser.hasMultiLineSupport()).as("Wrong multi line support guess").isTrue();
 
         DescriptorImpl descriptor = createDescriptor();
-        assertThat(descriptor.doCheckExample(textToMatch, multiLineRegexp, script)).isOk();
+        assertThat(descriptor.checkExample(textToMatch, multiLineRegexp, script)).isOk();
 
         IssueParser instance = parser.createParser();
         Run<?, ?> run = mock(Run.class);
@@ -112,8 +112,6 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
         assertThat(groovyParser.isValid()).isFalse();
         assertThatIllegalArgumentException().isThrownBy(groovyParser::createParser)
                 .withMessageContaining("Name is not valid");
-
-        verifyThatValidationIsSkippedIfUserHasNoPermissions(groovyParser);
     }
 
     @Test
@@ -122,8 +120,6 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
         assertThat(groovyParser.isValid()).isFalse();
         assertThatIllegalArgumentException().isThrownBy(groovyParser::createParser)
                 .withMessageContaining("Script is not valid");
-
-        verifyThatValidationIsSkippedIfUserHasNoPermissions(groovyParser);
     }
 
     @Test
@@ -132,15 +128,6 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
         assertThat(groovyParser.isValid()).isFalse();
         assertThatIllegalArgumentException().isThrownBy(groovyParser::createParser)
                 .withMessageContaining("RegExp is not valid");
-
-        groovyParser.setJenkinsFacade(mock(JenkinsFacade.class));
-        assertThat(groovyParser.isValid()).isTrue();
-    }
-
-    private void verifyThatValidationIsSkippedIfUserHasNoPermissions(final GroovyParser groovyParser) {
-        groovyParser.setJenkinsFacade(mock(JenkinsFacade.class));
-        assertThat(groovyParser.isValid()).isTrue();
-        assertThatNoException().isThrownBy(groovyParser::createParser);
     }
 
     @Test
@@ -164,39 +151,39 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
     void shouldAcceptOnlyNonEmptyStringsAsName() {
         DescriptorImpl descriptor = createDescriptor();
 
-        assertThat(descriptor.doCheckName(null)).isError();
-        assertThat(descriptor.doCheckName(StringUtils.EMPTY)).isError();
-        assertThat(descriptor.doCheckName("Java Parser 2")).isOk();
+        assertThat(descriptor.checkName(null)).isError();
+        assertThat(descriptor.checkName(StringUtils.EMPTY)).isError();
+        assertThat(descriptor.checkName("Java Parser 2")).isOk();
     }
 
     @Test
     void shouldRejectInvalidRegularExpressions() {
         DescriptorImpl descriptor = createDescriptor();
 
-        assertThat(descriptor.doCheckRegexp(null)).isError();
-        assertThat(descriptor.doCheckRegexp(StringUtils.EMPTY)).isError();
-        assertThat(descriptor.doCheckRegexp("one brace (")).isError();
-        assertThat(descriptor.doCheckRegexp("backslash \\")).isError();
+        assertThat(descriptor.checkRegexp(null)).isError();
+        assertThat(descriptor.checkRegexp(StringUtils.EMPTY)).isError();
+        assertThat(descriptor.checkRegexp("one brace (")).isError();
+        assertThat(descriptor.checkRegexp("backslash \\")).isError();
 
-        assertThat(descriptor.doCheckRegexp("^.*[a-z]")).isOk();
+        assertThat(descriptor.checkRegexp("^.*[a-z]")).isOk();
     }
 
     @Test
     void shouldRejectInvalidScripts() {
         DescriptorImpl descriptor = createDescriptor();
 
-        assertThat(descriptor.doCheckScript(null)).isError();
-        assertThat(descriptor.doCheckScript(StringUtils.EMPTY)).isError();
-        assertThat(descriptor.doCheckScript("Hello World")).isError();
+        assertThat(descriptor.checkScript(null)).isError();
+        assertThat(descriptor.checkScript(StringUtils.EMPTY)).isError();
+        assertThat(descriptor.checkScript("Hello World")).isError();
 
-        assertThat(descriptor.doCheckScript(toString("parser.groovy"))).isOk();
+        assertThat(descriptor.checkScript(toString("parser.groovy"))).isOk();
     }
 
     @Test
     void shouldFindOneIssueWithValidScriptAndRegularExpression() {
         DescriptorImpl descriptor = createDescriptor();
 
-        assertThat(descriptor.doCheckExample(SINGLE_LINE_EXAMPLE, SINGLE_LINE_REGEXP,
+        assertThat(descriptor.checkExample(SINGLE_LINE_EXAMPLE, SINGLE_LINE_REGEXP,
                 toString("parser.groovy"))).isOk();
     }
 
@@ -204,7 +191,7 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
     void shouldReportErrorWhenNoMatchesAreFoundInExample() {
         DescriptorImpl descriptor = createDescriptor();
 
-        assertThat(descriptor.doCheckExample("this is a warning message", SINGLE_LINE_REGEXP,
+        assertThat(descriptor.checkExample("this is a warning message", SINGLE_LINE_REGEXP,
                 toString("parser.groovy"))).isError();
     }
 
@@ -212,7 +199,7 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
     void shouldReportErrorWhenRegularExpressionHasIllegalMatchAccess() {
         DescriptorImpl descriptor = createDescriptor();
 
-        assertThat(descriptor.doCheckExample(SINGLE_LINE_EXAMPLE, "^\\s*(.*):(\\d+):(.*)$",
+        assertThat(descriptor.checkExample(SINGLE_LINE_EXAMPLE, "^\\s*(.*):(\\d+):(.*)$",
                 toString("parser.groovy"))).isError();
     }
 
@@ -220,7 +207,7 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
     void shouldAcceptMultiLineRegularExpression() {
         DescriptorImpl descriptor = createDescriptor();
 
-        assertThat(descriptor.doCheckExample(MULTI_LINE_EXAMPLE, MULTI_LINE_REGEXP,
+        assertThat(descriptor.checkExample(MULTI_LINE_EXAMPLE, MULTI_LINE_REGEXP,
                 toString("multiline.groovy"))).isOk();
     }
 

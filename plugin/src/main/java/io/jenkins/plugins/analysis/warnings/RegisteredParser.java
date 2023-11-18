@@ -12,15 +12,13 @@ import edu.hm.hafner.analysis.registry.ParserRegistry;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.verb.POST;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
-import hudson.model.AbstractProject;
-import hudson.model.Item;
 import hudson.util.ListBoxModel;
 import hudson.util.ListBoxModel.Option;
+import jenkins.model.Jenkins;
 
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
@@ -118,15 +116,13 @@ public class RegisteredParser extends ReportScanningTool {
         }
 
         /**
-         * Returns a model with all available severity filters.
+         * Returns a model with all available parsers.
          *
-         * @param project
-         *         the project that is configured
-         * @return a model with all available severity filters
+         * @return a model with all available parsers
          */
         @POST
-        public ListBoxModel doFillAnalysisModelIdItems(@AncestorInPath final AbstractProject<?, ?> project) {
-            if (jenkinsFacade.hasPermission(Item.CONFIGURE, project)) {
+        public ListBoxModel doFillAnalysisModelIdItems() {
+            if (jenkinsFacade.hasPermission(Jenkins.READ)) {
                 return availableParsers;
             }
             return EMPTY_MODEL;

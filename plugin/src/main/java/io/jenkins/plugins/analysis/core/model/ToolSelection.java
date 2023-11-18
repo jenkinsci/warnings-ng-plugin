@@ -16,7 +16,7 @@ import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.verb.POST;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
-import hudson.model.AbstractProject;
+import hudson.model.BuildableItem;
 import hudson.model.Descriptor;
 import hudson.model.Item;
 import hudson.util.ComboBoxModel;
@@ -113,7 +113,7 @@ public class ToolSelection extends AbstractDescribableImpl<ToolSelection> {
          * @return a model with all static analysis tool IDs of all jobs
          */
         @POST
-        public ComboBoxModel doFillIdItems(@AncestorInPath final AbstractProject<?, ?> project) {
+        public ComboBoxModel doFillIdItems(@AncestorInPath final BuildableItem project) {
             ComboBoxModel model = new ComboBoxModel();
             if (jenkinsFacade.hasPermission(Item.CONFIGURE, project)) {
                 model.addAll(collectAvailableIds());
@@ -139,7 +139,7 @@ public class ToolSelection extends AbstractDescribableImpl<ToolSelection> {
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckId(@AncestorInPath final AbstractProject<?, ?> project,
+        public FormValidation doCheckId(@AncestorInPath final BuildableItem project,
                 @QueryParameter final String id) {
             if (!new JenkinsFacade().hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();

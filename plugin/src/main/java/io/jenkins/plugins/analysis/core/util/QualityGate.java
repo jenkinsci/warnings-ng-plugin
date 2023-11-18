@@ -12,11 +12,12 @@ import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.verb.POST;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
-import hudson.model.AbstractProject;
+import hudson.model.BuildableItem;
 import hudson.model.Descriptor;
 import hudson.model.Item;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
+import jenkins.model.Jenkins;
 
 import io.jenkins.plugins.analysis.core.util.IssuesStatistics.StatisticProperties;
 import io.jenkins.plugins.util.JenkinsFacade;
@@ -248,15 +249,13 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
         /**
          * Return the model for the select widget.
          *
-         * @param project
-         *         the project that is configured
          * @return the quality gate types
          */
         @POST
-        public ListBoxModel doFillTypeItems(@AncestorInPath final AbstractProject<?, ?> project) {
+        public ListBoxModel doFillTypeItems() {
             ListBoxModel model = new ListBoxModel();
 
-            if (jenkins.hasPermission(Item.CONFIGURE, project)) {
+            if (jenkins.hasPermission(Jenkins.READ)) {
                 for (QualityGateType qualityGateType : QualityGateType.values()) {
                     model.add(qualityGateType.getDisplayName(), qualityGateType.name());
                 }
@@ -275,9 +274,8 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
          *
          * @return the validation result
          */
-        @SuppressWarnings("WeakerAccess")
         @POST
-        public FormValidation doCheckThreshold(@AncestorInPath final AbstractProject<?, ?> project,
+        public FormValidation doCheckThreshold(@AncestorInPath final BuildableItem project,
                 @QueryParameter final int threshold) {
             if (!jenkins.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();

@@ -18,7 +18,7 @@ import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.verb.POST;
-import hudson.model.AbstractProject;
+import hudson.model.BuildableItem;
 import hudson.model.Item;
 import hudson.model.Run;
 import hudson.util.FormValidation;
@@ -178,7 +178,7 @@ public abstract class DuplicateCodeScanner extends AnalysisModelParser {
         }
 
         /**
-         * Performs on-the-fly validation on threshold for high warnings.
+         * Performs on-the-fly validation of the threshold for high warnings.
          *
          * @param project
          *         the project that is configured
@@ -190,7 +190,7 @@ public abstract class DuplicateCodeScanner extends AnalysisModelParser {
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckHighThreshold(@AncestorInPath final AbstractProject<?, ?> project,
+        public FormValidation doCheckHighThreshold(@AncestorInPath final BuildableItem project,
                 @QueryParameter("highThreshold") final int highThreshold,
                 @QueryParameter("normalThreshold") final int normalThreshold) {
             if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
@@ -200,7 +200,7 @@ public abstract class DuplicateCodeScanner extends AnalysisModelParser {
         }
 
         /**
-         * Performs on-the-fly validation on threshold for normal warnings.
+         * Performs on-the-fly validation of the threshold for normal warnings.
          *
          * @param project
          *         the project that is configured
@@ -212,7 +212,7 @@ public abstract class DuplicateCodeScanner extends AnalysisModelParser {
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckNormalThreshold(@AncestorInPath final AbstractProject<?, ?> project,
+        public FormValidation doCheckNormalThreshold(@AncestorInPath final BuildableItem project,
                 @QueryParameter("highThreshold") final int highThreshold,
                 @QueryParameter("normalThreshold") final int normalThreshold) {
             if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {

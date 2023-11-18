@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.util.SerializableTest;
 
-import hudson.model.AbstractProject;
+import hudson.model.BuildableItem;
 import hudson.model.Item;
 
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateDescriptor;
@@ -24,7 +24,7 @@ class QualityGateTest extends SerializableTest<QualityGate> {
     @Test
     void shouldValidateThreshold() {
         JenkinsFacade jenkinsFacade = mock(JenkinsFacade.class);
-        when(jenkinsFacade.hasPermission(Item.CONFIGURE, (AbstractProject<?, ?>) null)).thenReturn(true);
+        when(jenkinsFacade.hasPermission(Item.CONFIGURE, (BuildableItem) null)).thenReturn(true);
 
         QualityGateDescriptor descriptor = new QualityGateDescriptor(jenkinsFacade);
 

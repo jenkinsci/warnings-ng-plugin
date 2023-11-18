@@ -21,11 +21,13 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import groovy.lang.Script;
 
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.verb.POST;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
+import hudson.model.BuildableItem;
 import hudson.model.Descriptor;
 import hudson.model.Item;
 import hudson.util.FormValidation;
@@ -95,9 +97,9 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
     public boolean isValid() {
         DescriptorImpl d = new DescriptorImpl(getJenkinsFacade());
 
-        return d.doCheckScript(script).kind == Kind.OK
-                && d.doCheckRegexp(regexp).kind == Kind.OK
-                && d.doCheckName(name).kind == Kind.OK;
+        return d.checkScript(script).kind == Kind.OK
+                && d.checkRegexp(regexp).kind == Kind.OK
+                && d.checkName(name).kind == Kind.OK;
     }
 
     public String getId() {
@@ -178,22 +180,22 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
      *
      * @return a new parser instance
      * @throws IllegalArgumentException
-     *         if this parsers configuration is not valid
+     *         if this parser configuration is not valid
      */
     public IssueParser createParser() {
         DescriptorImpl descriptor = new DescriptorImpl(getJenkinsFacade());
 
-        FormValidation nameCheck = descriptor.doCheckName(name);
+        FormValidation nameCheck = descriptor.checkName(name);
         if (nameCheck.kind == Kind.ERROR) {
             throw new IllegalArgumentException("Name is not valid: " + nameCheck.getMessage());
         }
 
-        FormValidation scriptCheck = descriptor.doCheckScript(script);
+        FormValidation scriptCheck = descriptor.checkScript(script);
         if (scriptCheck.kind == Kind.ERROR) {
             throw new IllegalArgumentException("Script is not valid: " + scriptCheck.getMessage());
         }
 
-        FormValidation regexpCheck = descriptor.doCheckRegexp(regexp);
+        FormValidation regexpCheck = descriptor.checkRegexp(regexp);
         if (regexpCheck.kind == Kind.ERROR) {
             throw new IllegalArgumentException("RegExp is not valid: " + regexpCheck.getMessage());
         }
@@ -245,14 +247,17 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
         /**
          * Performs on-the-fly validation of the parser ID. The ID needs to be unique.
          *
+         * @param project
+         *         the project that is configured
          * @param id
          *         the ID of the parser
          *
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckId(@QueryParameter(required = true) final String id) {
-            if (!jenkinsFacade.hasPermission(Item.CONFIGURE)) {
+        public FormValidation doCheckId(@AncestorInPath final BuildableItem project,
+                @QueryParameter(required = true) final String id) {
+            if (!jenkinsFacade.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
             return VALIDATION_UTILITIES.validateId(id);
@@ -261,17 +266,24 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
         /**
          * Performs on-the-fly validation on the name of the parser that needs to be unique.
          *
+         * @param project
+         *         the project that is configured
          * @param name
          *         the name of the parser
          *
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckName(@QueryParameter(required = true) final String name) {
-            if (!jenkinsFacade.hasPermission(Item.CONFIGURE)) {
+        public FormValidation doCheckName(@AncestorInPath final BuildableItem project,
+                @QueryParameter(required = true) final String name) {
+            if (!jenkinsFacade.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
 
+            return checkName(name);
+        }
+
+        FormValidation checkName(final String name) {
             if (StringUtils.isBlank(name)) {
                 return FormValidation.error(Messages.GroovyParser_Error_Name_isEmpty());
             }
@@ -281,17 +293,24 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
         /**
          * Performs on-the-fly validation on the regular expression.
          *
+         * @param project
+         *         the project that is configured
          * @param regexp
          *         the regular expression
          *
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckRegexp(@QueryParameter(required = true) final String regexp) {
-            if (!jenkinsFacade.hasPermission(Item.CONFIGURE)) {
+        public FormValidation doCheckRegexp(@AncestorInPath final BuildableItem project,
+                @QueryParameter(required = true) final String regexp) {
+            if (!jenkinsFacade.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
 
+            return checkRegexp(regexp);
+        }
+
+        FormValidation checkRegexp(final String regexp) {
             try {
                 if (StringUtils.isBlank(regexp)) {
                     return FormValidation.error(Messages.GroovyParser_Error_Regexp_isEmpty());
@@ -310,19 +329,26 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
         /**
          * Performs on-the-fly validation on the Groovy script.
          *
+         * @param project
+         *         the project that is configured
          * @param script
          *         the script
          *
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckScript(@QueryParameter(required = true) final String script) {
-            if (!jenkinsFacade.hasPermission(Item.CONFIGURE)) {
+        public FormValidation doCheckScript(@AncestorInPath final BuildableItem project,
+                @QueryParameter(required = true) final String script) {
+            if (!jenkinsFacade.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
             if (!jenkinsFacade.hasPermission(Jenkins.ADMINISTER)) {
                 return NO_RUN_SCRIPT_PERMISSION_WARNING;
             }
+            return checkScript(script);
+        }
+
+        FormValidation checkScript(final String script) {
             try {
                 if (StringUtils.isBlank(script)) {
                     return FormValidation.error(Messages.GroovyParser_Error_Script_isEmpty());
@@ -343,8 +369,10 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
         /**
          * Parses the example message with the specified regular expression and script.
          *
+         * @param project
+         *         the project that is configured
          * @param example
-         *         example that should be resolve to a warning
+         *         example that should resolve to a warning
          * @param regexp
          *         the regular expression
          * @param script
@@ -353,14 +381,19 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckExample(@QueryParameter final String example,
+        public FormValidation doCheckExample(@AncestorInPath final BuildableItem project,
+                @QueryParameter final String example,
                 @QueryParameter final String regexp, @QueryParameter final String script) {
-            if (!jenkinsFacade.hasPermission(Item.CONFIGURE)) {
+            if (!jenkinsFacade.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
             if (!jenkinsFacade.hasPermission(Jenkins.ADMINISTER)) {
                 return NO_RUN_SCRIPT_PERMISSION_WARNING;
             }
+            return checkExample(example, regexp, script);
+        }
+
+        FormValidation checkExample(final String example, final String regexp, final String script) {
             if (StringUtils.isNotBlank(example) && StringUtils.isNotBlank(regexp) && StringUtils.isNotBlank(script)) {
                 FormValidation response = parseExample(script, example, regexp, containsNewline(regexp));
                 if (example.length() <= MAX_EXAMPLE_SIZE) {
@@ -403,7 +436,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
                 if (matcher.find()) {
                     GroovyExpressionMatcher checker = new GroovyExpressionMatcher(script);
                     Object result = checker.run(matcher, new IssueBuilder(), 0, "UI Example");
-                    Optional<?> optional = (Optional) result;
+                    Optional<?> optional = (Optional<?>) result;
                     if (optional.isPresent()) {
                         Object wrappedIssue = optional.get();
                         if (wrappedIssue instanceof Issue) {
@@ -416,7 +449,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
                     return FormValidation.error(Messages.GroovyParser_Error_Example_regexpDoesNotMatch());
                 }
             }
-            catch (Exception exception) { // catch all exceptions of the Groovy script
+            catch (Exception exception) { // catch all exceptions thrown by the Groovy script
                 return FormValidation.error(
                         Messages.GroovyParser_Error_Example_exception(exception.getMessage()));
             }

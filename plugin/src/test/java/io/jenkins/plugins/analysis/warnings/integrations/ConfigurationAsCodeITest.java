@@ -3,7 +3,7 @@ package io.jenkins.plugins.analysis.warnings.integrations;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.jvnet.hudson.test.Issue;
+import org.junitpioneer.jupiter.Issue;
 
 import hudson.model.FreeStyleProject;
 import hudson.model.TopLevelItem;
