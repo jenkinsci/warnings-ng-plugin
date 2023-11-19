@@ -698,14 +698,14 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      *
      * @deprecated Replaced by {@link AnalysisResult#totals}.
      */
-    @Deprecated
+    @Deprecated @SuppressFBWarnings("SS_SHOULD_BE_STATIC")
     private final transient int size = 0;
     /**
      * Old serialization item.
      *
      * @deprecated Replaced by {@link AnalysisResult#totals}.
      */
-    @Deprecated
+    @Deprecated @SuppressFBWarnings("SS_SHOULD_BE_STATIC")
     private final transient int newSize = 0;
     /**
      * Old serialization item.
