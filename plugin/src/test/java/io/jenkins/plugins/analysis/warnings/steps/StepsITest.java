@@ -420,13 +420,21 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
 
         AnalysisResult result = scheduleSuccessfulBuild(job);
 
-        assertThat(result).hasTotalSize(2);
+        assertThat(result).hasTotalSize(4).hasTotalErrorsSize(2).hasTotalNormalPrioritySize(2);
         assertThat(result.getIssues().get(0))
                 .hasSeverity(Severity.WARNING_NORMAL);
         assertThat(result.getIssues().get(1))
                 .hasDescription(
                         "<pre><code>Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!</code></pre>")
                 .hasSeverity(Severity.WARNING_NORMAL);
+        assertThat(result.getIssues().get(2))
+                .hasSeverity(Severity.ERROR);
+        assertThat(result.getIssues().get(2).getDescription())
+                .contains("Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:2.3.2:compile");
+        assertThat(result.getIssues().get(3))
+                .hasSeverity(Severity.ERROR);
+        assertThat(result.getIssues().get(3).getDescription())
+                .contains("Re-run Maven using the -X switch to enable full debug logging.");
     }
 
     /** Runs the Clang parser on an output file that contains 1 issue. */
@@ -823,7 +831,8 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      *         if the test fails unexpectedly
      */
     @Test
-    void shouldShowWarningsOfGroovyParserWhenScanningConsoleLogWhenThatIsPermittedAndUsingAddParser() throws IOException {
+    void shouldShowWarningsOfGroovyParserWhenScanningConsoleLogWhenThatIsPermittedAndUsingAddParser()
+            throws IOException {
         WorkflowJob job = createPipeline();
         ArrayList<String> stages = new ArrayList<>();
         catFileContentsByAddingEchosSteps(stages, "pep8Test.txt");
@@ -837,8 +846,8 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         String id = "another-groovy-pep8";
 
         configuration.addParser(new GroovyParser(id, "Another Groovy Pep8",
-                        "(.*):(\\d+):(\\d+): (\\D\\d*) (.*)",
-                        toString("groovy/pep8.groovy"), ""));
+                "(.*):(\\d+):(\\d+): (\\D\\d*) (.*)",
+                toString("groovy/pep8.groovy"), ""));
         testGroovyPep8JobIsSuccessful(job, id);
     }
 
