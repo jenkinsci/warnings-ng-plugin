@@ -123,7 +123,7 @@ class ToolsLister extends IntegrationTestWithJenkinsPerSuite {
             }
             if (url.endsWith("plugin-warnings-ng")) {
                 String warningsIcon = StringUtils.substringBefore(StringUtils.substringAfter(url, "symbol-"), " ");
-                return asImg(descriptor, "https://raw.githubusercontent.com/jenkinsci/warnings-ng-plugin/master/plugin/src/main/resources/images/symbols/" + warningsIcon + ".svg");
+                return asImg(descriptor, "https://raw.githubusercontent.com/jenkinsci/warnings-ng-plugin/main/plugin/src/main/resources/images/symbols/" + warningsIcon + ".svg");
             }
             return text(EMPTY);
         }
