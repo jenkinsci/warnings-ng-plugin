@@ -11,7 +11,6 @@ import edu.hm.hafner.analysis.registry.ParserDescriptor;
 import edu.hm.hafner.analysis.registry.ParserRegistry;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.verb.POST;
@@ -45,7 +44,6 @@ public class RegisteredParser extends ReportScanningTool {
      *         the unique ID of the tool in the analysis-model module
      */
     @DataBoundConstructor
-    @SuppressFBWarnings(value = "CT_CONSTRUCTOR_THROW", justification = "Fail fast if parser is not found")
     public RegisteredParser(final String analysisModelId) {
         super();
 

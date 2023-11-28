@@ -854,7 +854,6 @@ public class PublishIssuesStep extends Step implements Serializable {
          *         the actual step to execute
          */
         @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
-        @SuppressFBWarnings(value = "CT_CONSTRUCTOR_THROW", justification = "Fail fast if no reports are provided")
         Execution(@NonNull final StepContext context, final PublishIssuesStep step) {
             super(context);
 
