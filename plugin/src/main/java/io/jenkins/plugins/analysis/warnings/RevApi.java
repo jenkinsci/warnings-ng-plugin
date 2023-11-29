@@ -8,7 +8,6 @@ import java.util.Map;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.RevApiInfoExtension;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
@@ -151,7 +150,6 @@ public class RevApi extends AnalysisModelParser {
             private final String severity;
             private String category;
 
-            @SuppressFBWarnings(value = "CT_CONSTRUCTOR_THROW", justification = "Fail fast if wrong type has been passed")
             RevApiRow(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
                     final DescriptionProvider descriptionProvider, final Issue issue,
                     final JenkinsFacade jenkinsFacade, final Serializable additionalData) {
