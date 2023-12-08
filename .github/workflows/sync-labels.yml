@@ -9,7 +9,8 @@ on:
       - .github/workflows/sync-labels.yml
 
 jobs:
-  build:
+  snyc-labels:
+    name: Sync labels
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
