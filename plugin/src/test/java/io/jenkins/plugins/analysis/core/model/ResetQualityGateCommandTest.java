@@ -5,8 +5,12 @@ import java.util.Optional;
 
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import hudson.model.FreeStyleBuild;
+import hudson.model.FreeStyleProject;
 import hudson.model.Item;
 
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
@@ -23,51 +27,38 @@ import static org.mockito.Mockito.*;
 class ResetQualityGateCommandTest {
     private static final String ID = "id";
 
-    @Test
-    void shouldBeEnabledIfAllConditionsAreSatisfied() {
-        verifyEnabledWithQualityGateStatus(QualityGateStatus.WARNING);
-        verifyEnabledWithQualityGateStatus(QualityGateStatus.FAILED);
-    }
-
-    private void verifyEnabledWithQualityGateStatus(final QualityGateStatus status) {
+    @ParameterizedTest @EnumSource(value = QualityGateStatus.class, names = {"WARNING", "FAILED"})
+    void shouldBeEnabledIfAllConditionsAreSatisfied(final QualityGateStatus qualityGateStatus) {
         ResetQualityGateCommand command = new ResetQualityGateCommand();
 
-        command.setJenkinsFacade(configureCorrectUserRights(true));
-        ResultAction resultAction = createResultAction(status, ID);
-        FreeStyleBuild selectedBuild = attachReferenceBuild(true, false, resultAction);
+        FreeStyleProject parent = mock(FreeStyleProject.class);
+        command.setJenkinsFacade(configureCorrectUserRights(true, parent));
+        ResultAction resultAction = createResultAction(qualityGateStatus, ID);
+        FreeStyleBuild selectedBuild = attachReferenceBuild(true, false, resultAction, parent);
 
         assertThat(command.isEnabled(selectedBuild, ID)).isTrue();
     }
 
-    @Test
-    void shouldBeEnabledIfUserHasLocalConfigureRights() {
+    @ParameterizedTest @ValueSource(booleans = {true, false})
+    void shouldBeEnabledIfUserHasLocalConfigureRights(final boolean hasConfigureRightOnBuild) {
         ResetQualityGateCommand command = new ResetQualityGateCommand();
 
-        command.setJenkinsFacade(configureCorrectUserRights(false));
+        FreeStyleProject parent = mock(FreeStyleProject.class);
+        command.setJenkinsFacade(configureCorrectUserRights(false, parent));
         ResultAction resultAction = createResultAction(QualityGateStatus.WARNING, ID);
-        FreeStyleBuild selectedBuild = attachReferenceBuild(true, true, resultAction);
+        FreeStyleBuild selectedBuild = attachReferenceBuild(true, hasConfigureRightOnBuild, resultAction, parent);
 
-        assertThat(command.isEnabled(selectedBuild, ID)).isTrue();
-    }
-
-    @Test
-    void shouldBeDisabledIfUserHasNoConfigureRightsAtAll() {
-        ResetQualityGateCommand command = new ResetQualityGateCommand();
-
-        command.setJenkinsFacade(configureCorrectUserRights(false));
-        ResultAction resultAction = createResultAction(QualityGateStatus.WARNING, ID);
-        FreeStyleBuild selectedBuild = attachReferenceBuild(true, false, resultAction);
-
-        assertThat(command.isEnabled(selectedBuild, ID)).isFalse();
+        assertThat(command.isEnabled(selectedBuild, ID)).isEqualTo(hasConfigureRightOnBuild);
     }
 
     @Test
     void shouldBeDisabledIfActionAlreadyExists() {
         ResetQualityGateCommand command = new ResetQualityGateCommand();
 
-        command.setJenkinsFacade(configureCorrectUserRights(true));
+        FreeStyleProject parent = mock(FreeStyleProject.class);
+        command.setJenkinsFacade(configureCorrectUserRights(true, parent));
         ResultAction resultAction = createResultAction(QualityGateStatus.WARNING, ID);
-        FreeStyleBuild selectedBuild = attachReferenceBuild(false, false, resultAction);
+        FreeStyleBuild selectedBuild = attachReferenceBuild(false, false, resultAction, parent);
         when(selectedBuild.getActions(ResultAction.class)).thenReturn(Lists.list(resultAction));
 
         assertThat(command.isEnabled(selectedBuild, ID)).isFalse();
@@ -77,9 +68,10 @@ class ResetQualityGateCommandTest {
     void shouldBeDisabledIfQualityGateIsSuccessful() {
         ResetQualityGateCommand command = new ResetQualityGateCommand();
 
-        command.setJenkinsFacade(configureCorrectUserRights(true));
+        FreeStyleProject parent = mock(FreeStyleProject.class);
+        command.setJenkinsFacade(configureCorrectUserRights(true, parent));
         ResultAction resultAction = createResultAction(QualityGateStatus.PASSED, ID);
-        FreeStyleBuild selectedBuild = attachReferenceBuild(true, false, resultAction);
+        FreeStyleBuild selectedBuild = attachReferenceBuild(true, false, resultAction, parent);
         when(selectedBuild.getActions(ResultAction.class)).thenReturn(Lists.list(resultAction));
 
         assertThat(command.isEnabled(selectedBuild, ID)).isFalse();
@@ -89,7 +81,8 @@ class ResetQualityGateCommandTest {
     void shouldBeDisabledIfNoResultAction() {
         ResetQualityGateCommand command = new ResetQualityGateCommand();
 
-        command.setJenkinsFacade(configureCorrectUserRights(true));
+        FreeStyleProject parent = mock(FreeStyleProject.class);
+        command.setJenkinsFacade(configureCorrectUserRights(true, parent));
         FreeStyleBuild selectedBuild = mock(FreeStyleBuild.class);
         when(selectedBuild.getActions(ResetReferenceAction.class)).thenReturn(
                 Lists.list(new ResetReferenceAction("other")));
@@ -102,9 +95,10 @@ class ResetQualityGateCommandTest {
     void shouldBeDisabledIfOtherResultAction() {
         ResetQualityGateCommand command = new ResetQualityGateCommand();
 
-        command.setJenkinsFacade(configureCorrectUserRights(true));
+        FreeStyleProject parent = mock(FreeStyleProject.class);
+        command.setJenkinsFacade(configureCorrectUserRights(true, parent));
         ResultAction resultAction = createResultAction(QualityGateStatus.WARNING, "other");
-        FreeStyleBuild selectedBuild = attachReferenceBuild(true, false, resultAction);
+        FreeStyleBuild selectedBuild = attachReferenceBuild(true, false, resultAction, parent);
         when(selectedBuild.getActions(ResultAction.class)).thenReturn(Lists.list(resultAction));
 
         assertThat(command.isEnabled(selectedBuild, ID)).isFalse();
@@ -114,18 +108,19 @@ class ResetQualityGateCommandTest {
     void shouldBeDisabledIfNotLastResultAction() {
         ResetQualityGateCommand command = new ResetQualityGateCommand();
 
-        command.setJenkinsFacade(configureCorrectUserRights(true));
+        FreeStyleProject parent = mock(FreeStyleProject.class);
+        command.setJenkinsFacade(configureCorrectUserRights(true, parent));
         ResultAction resultAction = createResultAction(QualityGateStatus.WARNING, ID);
-        FreeStyleBuild selectedBuild = attachReferenceBuild(true, false, resultAction);
+        FreeStyleBuild selectedBuild = attachReferenceBuild(true, false, resultAction, parent);
         FreeStyleBuild next = mock(FreeStyleBuild.class);
         when(selectedBuild.getNextBuild()).thenReturn(next);
 
         assertThat(command.isEnabled(selectedBuild, ID)).isFalse();
     }
 
-    private JenkinsFacade configureCorrectUserRights(final boolean hasRight) {
+    private JenkinsFacade configureCorrectUserRights(final boolean hasRight, final FreeStyleProject parent) {
         JenkinsFacade jenkins = mock(JenkinsFacade.class);
-        when(jenkins.hasPermission(Item.CONFIGURE)).thenReturn(hasRight);
+        when(jenkins.hasPermission(Item.CONFIGURE, parent)).thenReturn(hasRight);
         return jenkins;
     }
 
@@ -145,13 +140,15 @@ class ResetQualityGateCommandTest {
     }
 
     private FreeStyleBuild attachReferenceBuild(final boolean hasNoReferenceBuild,
-            final boolean hasConfigurePermission, final ResultAction resultAction) {
+            final boolean hasConfigurePermission, final ResultAction resultAction, final FreeStyleProject parent) {
         FreeStyleBuild selectedBuild = mock(FreeStyleBuild.class);
         when(selectedBuild.getActions(ResetReferenceAction.class)).thenReturn(
                 Lists.list(new ResetReferenceAction(hasNoReferenceBuild ? "other" : ID)));
         when(selectedBuild.getActions(ResultAction.class)).thenReturn(Lists.list(resultAction));
         when(selectedBuild.getAction(ResultAction.class)).thenReturn(resultAction);
         when(selectedBuild.hasPermission(Item.CONFIGURE)).thenReturn(hasConfigurePermission);
+        when(selectedBuild.getParent()).thenReturn(parent);
+
         return selectedBuild;
     }
 }
