@@ -1,10 +1,10 @@
-name: 'Check Markdown links'
+name: 'Link Checker'
 
 on: push
 
 jobs:
   check-markdown-links:
-    name: 'Check Markdown links'
+    name: 'Link Checker'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
