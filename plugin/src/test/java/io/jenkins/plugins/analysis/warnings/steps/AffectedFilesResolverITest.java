@@ -176,7 +176,7 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
 
         String consoleLog = getConsoleLog(result);
         assertThat(consoleLog).contains("0 copied");
-        if (isWindows()) { // In Windows a file does not exist if it is unreadable
+        if (isWindows() && Runtime.version().feature() < 21) { // In Windows a file does not exist if it is unreadable
             assertThat(consoleLog).contains("4 not-found", "0 with I/O error");
         }
         else {
@@ -267,7 +267,7 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private IssuesRow getIssuesModel(final AnalysisResult result, final int rowNumber) {
-        IssuesDetail issuesDetail = (IssuesDetail) result.getOwner().getAction(ResultAction.class).getTarget();
+        IssuesDetail issuesDetail = result.getOwner().getAction(ResultAction.class).getTarget();
         return (IssuesRow) issuesDetail.getTableModel("issues").getRows().get(rowNumber);
     }
 

@@ -189,7 +189,6 @@ abstract class UiTest extends AbstractJUnitTest {
                         "-> found 20 issues (skipped 0 duplicates)",
                         "-> 1 copied, 0 not in workspace, 0 not-found, 0 with I/O error",
                         "Issues delta (vs. reference build): outstanding: 0, new: 20, fixed: 0");
-
     }
 
     protected void verifyFindBugs(final Build build) {
@@ -202,7 +201,7 @@ abstract class UiTest extends AbstractJUnitTest {
                 .hasFixedSize(0)
                 .hasReferenceBuild(1)
                 .hasInfoType(InfoType.INFO)
-                .hasDetails("No issues for 2 builds, i.e. since build: #1");
+                .hasDetails("No issues for 2 builds, i.e. since build: Success #1");
 
         assertThat(openInfoView(build, FINDBUGS_ID))
                 .hasNoErrorMessages()
