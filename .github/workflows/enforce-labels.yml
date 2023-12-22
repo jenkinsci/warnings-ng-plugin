@@ -1,10 +1,10 @@
-name: Enforce PR labels
+name: Label Checker
 on:
   pull_request:
     types: [opened, labeled, unlabeled, synchronize]
 jobs:
   enforce-labels:
-    name: Enforce PR labels
+    name: 'Enforce PR labels'
     runs-on: ubuntu-latest
     permissions:
       issues: write
