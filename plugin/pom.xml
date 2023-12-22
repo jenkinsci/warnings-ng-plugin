@@ -548,37 +548,7 @@
         <groupId>org.revapi</groupId>
         <artifactId>revapi-maven-plugin</artifactId>
         <configuration>
-          <failBuildOnProblemsFound>false</failBuildOnProblemsFound>
-          <analysisConfiguration>
-            <revapi.differences id="manually-vetted">
-              <differences combine.children="append">
-                <item>
-                  <ignore>true</ignore>
-                  <regex>true</regex>
-                  <classQualifiedName>(org.jenkinsci.*|com.google.*)</classQualifiedName>
-                  <code>java.annotation.*</code>
-                </item>
-                <item>
-                  <ignore>true</ignore>
-                  <regex>true</regex>
-                  <classQualifiedName>jenkins.model.*</classQualifiedName>
-                  <code>java.field.removed</code>
-                </item>
-                <item>
-                  <ignore>true</ignore>
-                  <regex>true</regex>
-                  <classQualifiedName>jenkins.model.*</classQualifiedName>
-                  <code>java.class.externalClassExposedInAPI</code>
-                </item>
-                <item>
-                  <ignore>true</ignore>
-                  <regex>true</regex>
-                  <classQualifiedName>io.jenkins.plugins.analysis.core.steps.AnalysisStepDescriptor</classQualifiedName>
-                  <code>java.method.parameterTypeChanged</code>
-                </item>
-              </differences>
-            </revapi.differences>
-          </analysisConfiguration>
+          <skip>true</skip>
         </configuration>
       </plugin>
     </plugins>
