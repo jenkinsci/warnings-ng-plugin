@@ -22,7 +22,6 @@ import jenkins.model.RunAction2;
 import jenkins.tasks.SimpleBuildStep.LastBuildAction;
 
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
-import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
 import io.jenkins.plugins.util.JenkinsFacade;
 
@@ -288,12 +287,10 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
     }
 
     /**
-     * Returns whether the static analysis result is considered successfully with respect to the used {@link
-     * QualityGateEvaluator}.
+     * Returns whether the static analysis result is considered successfully with respect to the evaluated quality gates.
      *
      * @return {@code true} if the result is successful, {@code false} if the result has been set to {@link
      *         Result#UNSTABLE} or {@link Result#FAILURE}.
-     * @see QualityGateEvaluator
      */
     @Whitelisted
     public boolean isSuccessful() {

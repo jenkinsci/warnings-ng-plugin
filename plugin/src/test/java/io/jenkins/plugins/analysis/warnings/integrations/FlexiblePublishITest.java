@@ -20,11 +20,12 @@ import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
-import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
-import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
-import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
+import io.jenkins.plugins.analysis.core.util.WarningsQualityGate;
+import io.jenkins.plugins.analysis.core.util.WarningsQualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Java;
+import io.jenkins.plugins.util.QualityGate.QualityGateCriticality;
+import io.jenkins.plugins.util.QualityGateStatus;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
@@ -48,14 +49,16 @@ class FlexiblePublishITest extends IntegrationTestWithJenkinsPerSuite {
         checkStyle.setPattern("**/checkstyle*");
         IssuesRecorder checkStyleRecorder = new IssuesRecorder();
         checkStyleRecorder.setTools(checkStyle);
-        checkStyleRecorder.addQualityGate(6, QualityGateType.TOTAL, QualityGateResult.FAILURE);
+        checkStyleRecorder.setQualityGates(List.of(
+                new WarningsQualityGate(6, QualityGateType.TOTAL, QualityGateCriticality.FAILURE)));
 
         Java java = new Java();
         java.setPattern("**/java*");
         IssuesRecorder javaRecorder = new IssuesRecorder();
         javaRecorder.setTools(java);
         javaRecorder.setEnabledForFailure(true);
-        javaRecorder.addQualityGate(2, QualityGateType.TOTAL, QualityGateResult.UNSTABLE);
+        javaRecorder.setQualityGates(List.of(
+                new WarningsQualityGate(2, QualityGateType.TOTAL, QualityGateCriticality.UNSTABLE)));
 
         project.getPublishersList().add(new FlexiblePublisher(Arrays.asList(
                 constructConditionalPublisher(checkStyleRecorder),

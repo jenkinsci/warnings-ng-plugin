@@ -21,7 +21,7 @@
   <url>https://github.com/jenkinsci/warnings-ng-plugin</url>
 
   <properties>
-    <revision>10.6.0</revision>
+    <revision>11.0.0</revision>
     <changelist>-SNAPSHOT</changelist>
     <module.name>${project.groupId}.warnings.ng</module.name>
 
@@ -51,6 +51,7 @@
     <argLine>-Djava.awt.headless=true -Xmx1024m -Djenkins.test.timeout=1000 --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.util.concurrent=ALL-UNNAMED</argLine>
 
     <prism-api.version>1.29.0-8</prism-api.version>
+    <plugin-util-api.version>3.9.0-rc847.81820ecdfde2</plugin-util-api.version>
 
   </properties>
 
@@ -102,6 +103,7 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>plugin-util-api</artifactId>
+      <version>${plugin-util-api.version}</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
@@ -314,6 +316,7 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>plugin-util-api</artifactId>
+      <version>${plugin-util-api.version}</version>
       <scope>test</scope>
       <classifier>tests</classifier>
       <exclusions>

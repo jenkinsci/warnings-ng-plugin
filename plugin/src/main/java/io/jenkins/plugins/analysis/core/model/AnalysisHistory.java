@@ -14,8 +14,6 @@ import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.charts.JenkinsBuild;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
-import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
-import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 
 import static io.jenkins.plugins.analysis.core.model.AnalysisHistory.JobResultEvaluationMode.*;
 import static io.jenkins.plugins.analysis.core.model.AnalysisHistory.QualityGateEvaluationMode.*;
@@ -44,7 +42,7 @@ public class AnalysisHistory implements History {
     private final JobResultEvaluationMode jobResultEvaluationMode;
 
     /**
-     * Determines how the evaluation of the {@link QualityGateEvaluator} is taken into account when the previous result is
+     * Determines how the evaluation of the quality gates is taken into account when the previous result is
      * searched for.
      */
     public enum QualityGateEvaluationMode {
@@ -53,7 +51,7 @@ public class AnalysisHistory implements History {
          */
         IGNORE_QUALITY_GATE,
         /**
-         * The quality gate result must be {@link QualityGateStatus#isSuccessful()}. I.e. the history is searched for a
+         * The quality gate result must be successful. I.e., the history is searched for a
          * build that either passed the quality gate or has deactivated the quality gate.
          */
         SUCCESSFUL_QUALITY_GATE
@@ -78,7 +76,7 @@ public class AnalysisHistory implements History {
     }
 
     /**
-     * Creates a new instance of {@link AnalysisHistory}. This history ignores the {@link QualityGateStatus} of the
+     * Creates a new instance of {@link AnalysisHistory}. This history ignores the results of the
      * quality gate and the {@link Result} of the associated {@link Run}.
      *
      * @param baseline

@@ -54,15 +54,13 @@ import io.jenkins.plugins.analysis.core.steps.IssuesScanner.BlameMode;
 import io.jenkins.plugins.analysis.core.steps.WarningChecksPublisher.AnnotationScope;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
-import io.jenkins.plugins.analysis.core.util.QualityGate;
-import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
-import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
-import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
+import io.jenkins.plugins.analysis.core.util.WarningsQualityGate;
 import io.jenkins.plugins.checks.steps.ChecksInfo;
 import io.jenkins.plugins.prism.SourceCodeDirectory;
 import io.jenkins.plugins.util.JenkinsFacade;
 import io.jenkins.plugins.util.LogHandler;
+import io.jenkins.plugins.util.ResultHandler;
 import io.jenkins.plugins.util.RunResultHandler;
 import io.jenkins.plugins.util.StageResultHandler;
 import io.jenkins.plugins.util.ValidationUtilities;
@@ -75,7 +73,7 @@ import io.jenkins.plugins.util.ValidationUtilities;
  * Additional features:
  * </p>
  * <ul>
- * <li>It provides a {@link QualityGateEvaluator} that is checked after each run. If the quality gate is not passed,
+ * <li>It evaluates the quality gates after each run. If the quality gate is not passed,
  * then the build will be set to {@link Result#UNSTABLE} or {@link Result#FAILURE}, depending on the configuration
  * properties.</li>
  * <li>It provides thresholds for the build health that could be adjusted in the configuration screen.
@@ -133,7 +131,7 @@ public class IssuesRecorder extends Recorder {
     private String id;
     private String name;
 
-    private List<QualityGate> qualityGates = new ArrayList<>();
+    private List<WarningsQualityGate> qualityGates = new ArrayList<>();
 
     private TrendChartType trendChartType = TrendChartType.AGGREGATION_TOOLS;
 
@@ -204,26 +202,12 @@ public class IssuesRecorder extends Recorder {
      */
     @SuppressWarnings("unused") // used by Stapler view data binding
     @DataBoundSetter
-    public void setQualityGates(final List<QualityGate> qualityGates) {
+    public void setQualityGates(final List<WarningsQualityGate> qualityGates) {
         this.qualityGates = qualityGates;
     }
 
-    /**
-     * Appends the specified quality gates to the end of the list of quality gates.
-     *
-     * @param size
-     *         the minimum number of issues that fails the quality gate
-     * @param type
-     *         the type of the quality gate
-     * @param result
-     *         determines whether the quality gate is a warning or failure
-     */
-    public void addQualityGate(final int size, final QualityGateType type, final QualityGateResult result) {
-        qualityGates.add(new QualityGate(size, type, result));
-    }
-
     @SuppressWarnings("unused") // used by Stapler view data binding
-    public List<QualityGate> getQualityGates() {
+    public List<WarningsQualityGate> getQualityGates() {
         return qualityGates;
     }
 
@@ -354,7 +338,7 @@ public class IssuesRecorder extends Recorder {
     }
 
     /**
-     * Sets the path to the directory that contains the source code. If not relative and thus not part of the workspace
+     * Sets the path to the directory that contains the source code. If not relative and thus not part of the workspace,
      * then this directory needs to be added in Jenkins global configuration to prevent accessing of forbidden resources.
      *
      * @param sourceDirectory
@@ -366,7 +350,7 @@ public class IssuesRecorder extends Recorder {
     }
 
     /**
-     * Sets the paths to the directories that contain the source code. If not relative and thus not part of the workspace
+     * Sets the paths to the directories that contain the source code. If not relative and thus not part of the workspace,
      * then these directories need to be added in Jenkins global configuration to prevent accessing of forbidden resources.
      *
      * @param sourceDirectories
@@ -731,16 +715,16 @@ public class IssuesRecorder extends Recorder {
      *         workspace of the build
      * @param listener
      *         the logger
-     * @param statusHandler
+     * @param resultHandler
      *         reports the status for the build or for the stage
      *
      * @return the created results
      */
     List<AnalysisResult> perform(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
-            final StageResultHandler statusHandler) throws InterruptedException, IOException {
+            final ResultHandler resultHandler) throws InterruptedException, IOException {
         Result overallResult = run.getResult();
         if (isEnabledForFailure || overallResult == null || overallResult.isBetterOrEqualTo(Result.UNSTABLE)) {
-            return record(run, workspace, listener, statusHandler);
+            return record(run, workspace, listener, resultHandler);
         }
         else {
             LogHandler logHandler = new LogHandler(listener, createLoggerPrefix());
@@ -755,7 +739,7 @@ public class IssuesRecorder extends Recorder {
     }
 
     private List<AnalysisResult> record(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
-            final StageResultHandler statusHandler) throws IOException, InterruptedException {
+            final ResultHandler resultHandler) throws IOException, InterruptedException {
         List<AnalysisResult> results = new ArrayList<>();
         if (isAggregatingResults && analysisTools.size() > 1) {
             AnnotatedReport totalIssues = new AnnotatedReport(StringUtils.defaultIfEmpty(id, DEFAULT_ID));
@@ -763,7 +747,7 @@ public class IssuesRecorder extends Recorder {
                 totalIssues.add(scanWithTool(run, workspace, listener, tool), tool.getActualId());
             }
             String toolName = StringUtils.defaultIfEmpty(getName(), Messages.Tool_Default_Name());
-            results.add(publishResult(run, listener, toolName, totalIssues, toolName, statusHandler));
+            results.add(publishResult(run, listener, toolName, totalIssues, toolName, resultHandler));
         }
         else {
             for (Tool tool : analysisTools) {
@@ -778,7 +762,7 @@ public class IssuesRecorder extends Recorder {
                             name, id);
                 }
                 results.add(
-                        publishResult(run, listener, tool.getActualName(), report, getReportName(tool), statusHandler));
+                        publishResult(run, listener, tool.getActualName(), report, getReportName(tool), resultHandler));
             }
         }
         return results;
@@ -824,7 +808,7 @@ public class IssuesRecorder extends Recorder {
     }
 
     /**
-     * Publishes the results as {@link Action} in the job using an {@link IssuesPublisher}. Afterwards, all affected
+     * Publishes the results as {@link Action} in the job using an {@link IssuesPublisher}. Afterward, all affected
      * files are copied to Jenkins' build folder so that they are available to show warnings in the UI.
      *
      * @param run
@@ -837,15 +821,13 @@ public class IssuesRecorder extends Recorder {
      *         the analysis report to publish
      * @param reportName
      *         the name of the report (might be empty)
-     * @param statusHandler
+     * @param resultHandler
      *         the status handler to use
      *
      * @return the created results
      */
     AnalysisResult publishResult(final Run<?, ?> run, final TaskListener listener, final String loggerName,
-            final AnnotatedReport annotatedReport, final String reportName, final StageResultHandler statusHandler) {
-        QualityGateEvaluator qualityGate = new QualityGateEvaluator();
-        qualityGate.addAll(qualityGates);
+            final AnnotatedReport annotatedReport, final String reportName, final ResultHandler resultHandler) {
         LogHandler logHandler = new LogHandler(listener, loggerName);
 
         logHandler.setQuiet(quiet);
@@ -855,9 +837,9 @@ public class IssuesRecorder extends Recorder {
         logHandler.logErrorMessages(report.getErrorMessages());
 
         IssuesPublisher publisher = new IssuesPublisher(run, annotatedReport,
-                new HealthDescriptor(healthy, unhealthy, minimumSeverity), qualityGate,
+                new HealthDescriptor(healthy, unhealthy, minimumSeverity), qualityGates,
                 reportName, getReferenceJobName(), getReferenceBuildId(), ignoreQualityGate, ignoreFailedBuilds,
-                getSourceCodeCharset(), logHandler, statusHandler, failOnError);
+                getSourceCodeCharset(), logHandler, resultHandler, failOnError);
         ResultAction action = publisher.attachAction(trendChartType);
 
         if (!skipPublishingChecks) {

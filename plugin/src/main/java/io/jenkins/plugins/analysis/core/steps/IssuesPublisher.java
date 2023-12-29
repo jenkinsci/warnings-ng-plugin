@@ -24,13 +24,14 @@ import io.jenkins.plugins.analysis.core.model.ResetReferenceAction;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.ResultSelector;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
-import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
-import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
+import io.jenkins.plugins.analysis.core.util.WarningsQualityGate;
+import io.jenkins.plugins.analysis.core.util.WarningsQualityGateEvaluator;
 import io.jenkins.plugins.forensics.reference.ReferenceFinder;
 import io.jenkins.plugins.util.JenkinsFacade;
 import io.jenkins.plugins.util.LogHandler;
-import io.jenkins.plugins.util.StageResultHandler;
+import io.jenkins.plugins.util.QualityGateResult;
+import io.jenkins.plugins.util.ResultHandler;
 
 import static io.jenkins.plugins.analysis.core.model.AnalysisHistory.JobResultEvaluationMode.*;
 import static io.jenkins.plugins.analysis.core.model.AnalysisHistory.QualityGateEvaluationMode.*;
@@ -48,35 +49,34 @@ class IssuesPublisher {
     private final HealthDescriptor healthDescriptor;
     private final String name;
     private final Charset sourceCodeEncoding;
-    private final QualityGateEvaluator qualityGate;
+    private final List<WarningsQualityGate> qualityGates;
     private final String referenceJobName;
     private final String referenceBuildId;
     private final QualityGateEvaluationMode qualityGateEvaluationMode;
     private final JobResultEvaluationMode jobResultEvaluationMode;
     private final LogHandler logger;
-    private final StageResultHandler stageResultHandler;
+    private final ResultHandler notifier;
     private final boolean failOnErrors;
 
     @SuppressWarnings("ParameterNumber")
     IssuesPublisher(final Run<?, ?> run, final AnnotatedReport report,
-            final HealthDescriptor healthDescriptor, final QualityGateEvaluator qualityGate,
+            final HealthDescriptor healthDescriptor, final List<WarningsQualityGate> qualityGates,
             final String name, final String referenceJobName, final String referenceBuildId,
             final boolean ignoreQualityGate,
             final boolean ignoreFailedBuilds, final Charset sourceCodeEncoding, final LogHandler logger,
-            final StageResultHandler stageResultHandler, final boolean failOnErrors) {
-
+            final ResultHandler notifier, final boolean failOnErrors) {
         this.report = report;
         this.run = run;
         this.healthDescriptor = healthDescriptor;
         this.name = name;
         this.sourceCodeEncoding = sourceCodeEncoding;
-        this.qualityGate = qualityGate;
+        this.qualityGates = qualityGates;
         this.referenceJobName = referenceJobName;
         this.referenceBuildId = referenceBuildId;
         qualityGateEvaluationMode = ignoreQualityGate ? IGNORE_QUALITY_GATE : SUCCESSFUL_QUALITY_GATE;
         jobResultEvaluationMode = ignoreFailedBuilds ? NO_JOB_FAILURE : IGNORE_JOB_RESULT;
         this.logger = logger;
-        this.stageResultHandler = stageResultHandler;
+        this.notifier = notifier;
         this.failOnErrors = failOnErrors;
     }
 
@@ -98,7 +98,7 @@ class IssuesPublisher {
 
         Report issues = report.getReport();
         DeltaReport deltaReport = new DeltaReport(issues, createAnalysisHistory(selector, issues), run.getNumber());
-        QualityGateStatus qualityGateStatus = evaluateQualityGate(issues, deltaReport);
+        QualityGateResult qualityGateResult = evaluateQualityGate(issues, deltaReport);
         reportHealth(issues);
 
         issues.logInfo("Created analysis result for %d issues (found %d new issues, fixed %d issues)",
@@ -107,8 +107,7 @@ class IssuesPublisher {
 
         if (failOnErrors && issues.hasErrors()) {
             issues.logInfo("Failing build because analysis result contains errors");
-            stageResultHandler.setResult(Result.FAILURE,
-                    "Some errors have been logged during recording of issues");
+            run.setResult(Result.FAILURE);
         }
 
         if (trendChartType == TrendChartType.AGGREGATION_TOOLS) {
@@ -124,10 +123,10 @@ class IssuesPublisher {
 
         AnalysisResult result = new AnalysisHistory(run, selector).getResult()
                 .map(previous -> new AnalysisResult(run, getId(), deltaReport, report.getBlames(),
-                        report.getStatistics(), qualityGateStatus, report.getSizeOfOrigin(),
+                        report.getStatistics(), qualityGateResult, report.getSizeOfOrigin(),
                         previous))
                 .orElseGet(() -> new AnalysisResult(run, getId(), deltaReport, report.getBlames(),
-                        report.getStatistics(), qualityGateStatus, report.getSizeOfOrigin()));
+                        report.getStatistics(), qualityGateResult, report.getSizeOfOrigin()));
         ResultAction action
                 = new ResultAction(run, result, healthDescriptor, getId(), name, sourceCodeEncoding, trendChartType);
         run.addAction(action);
@@ -163,26 +162,11 @@ class IssuesPublisher {
         }
     }
 
-    private QualityGateStatus evaluateQualityGate(final Report issues, final DeltaReport deltaReport) {
-        QualityGateStatus qualityGateStatus;
-        if (qualityGate.isEnabled()) {
-            issues.logInfo("Evaluating quality gates");
-            qualityGateStatus = qualityGate.evaluate(deltaReport.getStatistics(), issues::logInfo);
-            if (qualityGateStatus.isSuccessful()) {
-                issues.logInfo("-> All quality gates have been passed");
-            }
-            else {
-                issues.logInfo("-> Some quality gates have been missed: overall result is %s", qualityGateStatus);
-            }
-            if (!qualityGateStatus.isSuccessful()) {
-                stageResultHandler.setResult(qualityGateStatus.getResult(),
-                        "Some quality gates have been missed: overall result is " + qualityGateStatus.getResult());
-            }
-        }
-        else {
-            issues.logInfo("No quality gates have been set - skipping");
-            qualityGateStatus = QualityGateStatus.INACTIVE;
-        }
+    private QualityGateResult evaluateQualityGate(final Report issues, final DeltaReport deltaReport) {
+        var evaluator = new WarningsQualityGateEvaluator(qualityGates, deltaReport.getStatistics());
+        var log = new FilteredLog("Errors while evaluating quality gates:");
+        var qualityGateStatus = evaluator.evaluate(notifier, log);
+        issues.mergeLogMessages(log);
         return qualityGateStatus;
     }
 

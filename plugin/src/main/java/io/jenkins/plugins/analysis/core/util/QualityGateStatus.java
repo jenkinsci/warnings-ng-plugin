@@ -4,13 +4,13 @@ import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
 import hudson.model.BallColor;
 import hudson.model.Result;
 
-import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator.FormattedLogger;
-
 /**
- * Result of a {@link QualityGateEvaluator#evaluate(IssuesStatistics, FormattedLogger)} call.
+ * Result of a quality gate evaluation (warnings plug-in older than 11.0.0).
  *
  * @author Ullrich Hafner
+ * @deprecated replaced by {@link io.jenkins.plugins.util.QualityGateStatus}
  */
+@Deprecated
 public enum QualityGateStatus {
     /** Quality gate is inactive, so result evaluation is not available. */
     INACTIVE(Result.NOT_BUILT),

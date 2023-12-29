@@ -30,7 +30,6 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.portlets.PullRequestMonitoringPortlet;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
-import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.FindBugs;
@@ -38,6 +37,7 @@ import io.jenkins.plugins.analysis.warnings.Java;
 import io.jenkins.plugins.analysis.warnings.Pmd;
 import io.jenkins.plugins.analysis.warnings.RegisteredParser;
 import io.jenkins.plugins.analysis.warnings.tasks.OpenTasks;
+import io.jenkins.plugins.util.QualityGateStatus;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
@@ -206,9 +206,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
         assertThat(result.getIssues().getOriginReportFiles()).satisfiesExactlyInAnyOrder(
                 first -> assertThat(first).endsWith("checkstyle-issues.txt"),
-                second -> assertThat(second).endsWith("pmd-warnings-issues.txt")
-        );
-
+                second -> assertThat(second).endsWith("pmd-warnings-issues.txt"));
     }
 
     private List<AnalysisResult> runJobWithAggregation(final boolean isAggregationEnabled) {

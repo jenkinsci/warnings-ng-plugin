@@ -27,7 +27,6 @@ import io.jenkins.plugins.analysis.core.model.Messages;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.util.IssuesStatistics;
-import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.checks.api.ChecksAnnotation;
 import io.jenkins.plugins.checks.api.ChecksAnnotation.ChecksAnnotationBuilder;
 import io.jenkins.plugins.checks.api.ChecksAnnotation.ChecksAnnotationLevel;
@@ -40,6 +39,7 @@ import io.jenkins.plugins.checks.api.ChecksPublisherFactory;
 import io.jenkins.plugins.checks.api.ChecksStatus;
 import io.jenkins.plugins.checks.steps.ChecksInfo;
 import io.jenkins.plugins.util.JenkinsFacade;
+import io.jenkins.plugins.util.QualityGateStatus;
 
 import static j2html.TagCreator.*;
 
@@ -98,7 +98,7 @@ class WarningChecksPublisher {
         return new ChecksDetailsBuilder()
                 .withName(checksName)
                 .withStatus(ChecksStatus.COMPLETED)
-                .withConclusion(extractChecksConclusion(result.getQualityGateStatus()))
+                .withConclusion(extractChecksConclusion(result.getQualityGateResult().getOverallStatus()))
                 .withOutput(new ChecksOutputBuilder()
                         .withTitle(extractChecksTitle(totals))
                         .withSummary(summary)
@@ -205,7 +205,9 @@ class WarningChecksPublisher {
             case PASSED:
                 return ChecksConclusion.SUCCESS;
             case FAILED:
+            case ERROR:
             case WARNING:
+            case NOTE:
                 return ChecksConclusion.FAILURE;
             default:
                 throw new IllegalArgumentException("Unsupported quality gate status: " + status);

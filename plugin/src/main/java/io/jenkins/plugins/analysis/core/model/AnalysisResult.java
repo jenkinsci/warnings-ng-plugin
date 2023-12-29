@@ -32,14 +32,17 @@ import hudson.model.Run;
 import io.jenkins.plugins.analysis.core.charts.JenkinsBuild;
 import io.jenkins.plugins.analysis.core.util.IssuesStatistics;
 import io.jenkins.plugins.analysis.core.util.IssuesStatisticsBuilder;
-import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
-import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
+import io.jenkins.plugins.analysis.core.util.WarningsQualityGate;
+import io.jenkins.plugins.analysis.core.util.WarningsQualityGate.QualityGateType;
 import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.forensics.blame.BlamesXmlStream;
 import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
 import io.jenkins.plugins.forensics.miner.RepositoryStatisticsXmlStream;
 import io.jenkins.plugins.util.JenkinsFacade;
+import io.jenkins.plugins.util.QualityGateEvaluator;
+import io.jenkins.plugins.util.QualityGateResult;
+import io.jenkins.plugins.util.QualityGateStatus;
 import io.jenkins.plugins.util.ValidationUtilities;
 
 /**
@@ -74,18 +77,18 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     private transient Run<?, ?> owner;
 
     /**
-     * All outstanding issues: i.e. all issues, that are part of the current and reference report.
+     * All outstanding issues: i.e., all issues, that are part of the current and reference report.
      */
     @CheckForNull
     private transient WeakReference<Report> outstandingIssuesReference;
     /**
-     * All new issues: i.e. all issues, that are part of the current report but have not been shown up in the reference
+     * All new issues: i.e., all issues, that are part of the current report but have not been shown up in the reference
      * report.
      */
     @CheckForNull
     private transient WeakReference<Report> newIssuesReference;
     /**
-     * All fixed issues: i.e. all issues, that are part of the reference report but are not present in the current
+     * All fixed issues: i.e., all issues, that are part of the reference report but are not present in the current
      * report anymore.
      */
     @CheckForNull
@@ -104,13 +107,15 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     /** Determines since which build the result is successful. */
     private int successfulSinceBuild;
     /** The result of the quality gate evaluation. */
-    private final QualityGateStatus qualityGateStatus;
+    private transient QualityGateStatus qualityGateStatus;
+    /** The result of the quality gate evaluation. */
+    private QualityGateResult qualityGateResult;
 
     /**
      * Creates a new instance of {@link AnalysisResult}.
      *
      * @param owner
-     *         the current build as owner of this action
+     *         the current build as the owner of this action
      * @param id
      *         ID of the results
      * @param report
@@ -119,7 +124,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      *         author and commit information for all issues
      * @param totals
      *         repository statistics for all issues
-     * @param qualityGateStatus
+     * @param qualityGateResult
      *         the quality gate status
      * @param sizePerOrigin
      *         the number of issues per origin
@@ -128,10 +133,9 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      */
     @SuppressWarnings("checkstyle:ParameterNumber")
     public AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report, final Blames blames,
-            final RepositoryStatistics totals, final QualityGateStatus qualityGateStatus,
-            final Map<String, Integer> sizePerOrigin,
-            final AnalysisResult previousResult) {
-        this(owner, id, report, blames, totals, qualityGateStatus, sizePerOrigin, true);
+            final RepositoryStatistics totals, final QualityGateResult qualityGateResult,
+            final Map<String, Integer> sizePerOrigin, final AnalysisResult previousResult) {
+        this(owner, id, report, blames, totals, qualityGateResult, sizePerOrigin, true);
 
         if (report.isEmpty()) {
             if (previousResult.noIssuesSinceBuild == NO_BUILD) {
@@ -145,8 +149,9 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
             noIssuesSinceBuild = NO_BUILD;
         }
 
-        if (this.qualityGateStatus == QualityGateStatus.PASSED) {
-            if (previousResult.qualityGateStatus == QualityGateStatus.PASSED) {
+        var overallStatus = qualityGateResult.getOverallStatus();
+        if (overallStatus == QualityGateStatus.PASSED) {
+            if (previousResult.getQualityGateResult().getOverallStatus() == QualityGateStatus.PASSED) {
                 successfulSinceBuild = previousResult.successfulSinceBuild;
             }
             else {
@@ -162,7 +167,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      * Creates a new instance of {@link AnalysisResult}.
      *
      * @param owner
-     *         the current build as owner of this action
+     *         the current build as the owner of this action
      * @param id
      *         ID of the results
      * @param report
@@ -171,15 +176,15 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      *         author and commit information for all issues
      * @param totals
      *         repository statistics for all issues
-     * @param qualityGateStatus
+     * @param qualityGateResult
      *         the quality gate status
      * @param sizePerOrigin
      *         the number of issues per origin
      */
     public AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report, final Blames blames,
-            final RepositoryStatistics totals, final QualityGateStatus qualityGateStatus,
+            final RepositoryStatistics totals, final QualityGateResult qualityGateResult,
             final Map<String, Integer> sizePerOrigin) {
-        this(owner, id, report, blames, totals, qualityGateStatus, sizePerOrigin, true);
+        this(owner, id, report, blames, totals, qualityGateResult, sizePerOrigin, true);
 
         if (report.isEmpty()) {
             noIssuesSinceBuild = owner.getNumber();
@@ -187,7 +192,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
         else {
             noIssuesSinceBuild = NO_BUILD;
         }
-        if (this.qualityGateStatus == QualityGateStatus.PASSED) {
+        if (qualityGateResult.getOverallStatus() == QualityGateStatus.PASSED) {
             successfulSinceBuild = owner.getNumber();
         }
         else {
@@ -199,7 +204,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      * Creates a new instance of {@link AnalysisResult}.
      *
      * @param owner
-     *         the current run as owner of this action
+     *         the current run as the owner of this action
      * @param id
      *         ID of the results
      * @param report
@@ -208,7 +213,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      *         author and commit information for all issues
      * @param repositoryStatistics
      *         source code repository statistics for all issues
-     * @param qualityGateStatus
+     * @param qualityGateResult
      *         the quality gate status
      * @param sizePerOrigin
      *         the number of issues per origin
@@ -219,7 +224,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     @SuppressWarnings("checkstyle:ParameterNumber")
     protected AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report,
             final Blames blames, final RepositoryStatistics repositoryStatistics,
-            final QualityGateStatus qualityGateStatus, final Map<String, Integer> sizePerOrigin,
+            final QualityGateResult qualityGateResult, final Map<String, Integer> sizePerOrigin,
             final boolean canSerialize) {
         this.owner = owner;
 
@@ -245,7 +250,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
         messages = new ArrayList<>(aggregatedMessages);
         errors = new ArrayList<>(allIssues.getErrorMessages());
 
-        this.qualityGateStatus = qualityGateStatus;
+        this.qualityGateResult = qualityGateResult;
 
         blamesReference = new WeakReference<>(blames);
         this.repositoryStatistics = new WeakReference<>(repositoryStatistics);
@@ -278,6 +283,10 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
 
             builder.setFixedSize(fixedSize);
             totals = builder.build();
+        }
+        if (qualityGateResult == null && qualityGateStatus != null) {
+            qualityGateResult = new QualityGateResult();
+            qualityGateResult.add(new WarningsQualityGate(0, QualityGateType.TOTAL), qualityGateStatus, "n/a");
         }
         return this;
     }
@@ -545,10 +554,15 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
         return qualityGateStatus.isSuccessful();
     }
 
-    @Whitelisted
     @Override
     public QualityGateStatus getQualityGateStatus() {
         return qualityGateStatus;
+    }
+
+    @Whitelisted
+    @Override
+    public QualityGateResult getQualityGateResult() {
+        return qualityGateResult;
     }
 
     @Override

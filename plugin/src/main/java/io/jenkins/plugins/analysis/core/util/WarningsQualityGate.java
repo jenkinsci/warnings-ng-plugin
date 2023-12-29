@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.core.util;
 
-import java.io.Serializable;
-import java.util.Objects;
 import java.util.function.Function;
 
 import edu.hm.hafner.util.VisibleForTesting;
@@ -11,9 +9,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.verb.POST;
 import hudson.Extension;
-import hudson.model.AbstractDescribableImpl;
 import hudson.model.BuildableItem;
-import hudson.model.Descriptor;
 import hudson.model.Item;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
@@ -21,81 +17,49 @@ import jenkins.model.Jenkins;
 
 import io.jenkins.plugins.analysis.core.util.IssuesStatistics.StatisticProperties;
 import io.jenkins.plugins.util.JenkinsFacade;
-
-import static io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult.*;
+import io.jenkins.plugins.util.QualityGate;
 
 /**
  * Defines a quality gate based on a specific threshold of issues (total, new, delta) in the current build. After a
- * build has been finished, a set of {@link QualityGate quality gates} will be evaluated and the overall quality gate
- * status will be reported in Jenkins UI.
+ * build has been finished, a set of {@link WarningsQualityGate quality gates} will be evaluated and the overall quality
+ * gate status will be reported in Jenkins UI.
  *
  * @author Ullrich Hafner
  */
-public class QualityGate extends AbstractDescribableImpl<QualityGate> implements Serializable {
-    private static final long serialVersionUID = -397278599489416668L;
+public class WarningsQualityGate extends QualityGate {
+    private static final long serialVersionUID = -3560049414586166711L;
 
-    private final int threshold;
     private final QualityGateType type;
-    private final QualityGateStatus status;
 
     /**
-     * Creates a new instance of {@link QualityGate}.
+     * Creates a new instance of {@link WarningsQualityGate}.
      *
      * @param threshold
      *         the minimum number of issues that fails the quality gate
      * @param type
      *         the type of the quality gate
-     * @param unstable
-     *         determines whether the build result will be set to unstable or failed if the quality gate is failed
      */
     @DataBoundConstructor
-    public QualityGate(final int threshold, final QualityGateType type, final boolean unstable) {
-        super();
+    public WarningsQualityGate(final int threshold, final QualityGateType type) {
+        super(threshold);
 
-        this.threshold = threshold;
         this.type = type;
-        status = unstable ? QualityGateStatus.WARNING : QualityGateStatus.FAILED;
-    }
-
-    @SuppressWarnings("PMD.BooleanGetMethodName")
-    public boolean getUnstable() {
-        return status == QualityGateStatus.WARNING;
-    }
-
-    public QualityGateType getType() {
-        return type;
-    }
-
-    @SuppressWarnings("PMD.BooleanGetMethodName")
-    public boolean getWarning() {
-        return status == QualityGateStatus.WARNING;
     }
 
     /**
-     * Creates a new instance of {@link QualityGate}.
+     * Creates a new instance of {@link WarningsQualityGate}.
      *
      * @param threshold
      *         the minimum number of issues that fails the quality gate
      * @param type
      *         the type of the quality gate
-     * @param result
-     *         determines whether the quality gate is a warning or failure
+     * @param criticality the criticality of the quality gate
      */
-    public QualityGate(final int threshold, final QualityGateType type, final QualityGateResult result) {
-        super();
+    public WarningsQualityGate(final int threshold, final QualityGateType type, final QualityGateCriticality criticality) {
+        super(threshold);
 
-        this.threshold = threshold;
         this.type = type;
-        status = result.status;
-    }
-
-    /**
-     * Returns the minimum number of issues that will fail the quality gate.
-     *
-     * @return minimum number of issues
-     */
-    public int getThreshold() {
-        return threshold;
+        setCriticality(criticality);
     }
 
     /**
@@ -107,31 +71,13 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
         return type.getSizeGetter();
     }
 
-    /**
-     * Returns the human-readable name of the quality gate.
-     *
-     * @return the human-readable name
-     */
+    @Override
     public String getName() {
         return type.getDisplayName();
     }
 
-    /**
-     * Returns the quality gate status to set if the quality gate is failed.
-     *
-     * @return the status
-     */
-    public QualityGateStatus getStatus() {
-        return status;
-    }
-
-    /**
-     * Returns the quality gate status to set if the quality gate is failed.
-     *
-     * @return the status
-     */
-    public QualityGateResult getResult() {
-        return status == QualityGateStatus.WARNING ? UNSTABLE : FAILURE;
+    public QualityGateType getType() {
+        return type;
     }
 
     @Override
@@ -142,39 +88,15 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        QualityGate that = (QualityGate) o;
-        return threshold == that.threshold && type == that.type && status == that.status;
+
+        WarningsQualityGate that = (WarningsQualityGate) o;
+
+        return type == that.type;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(threshold, type, status);
-    }
-
-    /**
-     * Determines the Jenkins build result if the quality gate is failed.
-     */
-    public enum QualityGateResult {
-        /** The build will be marked as unstable. */
-        UNSTABLE(QualityGateStatus.WARNING),
-
-        /** The build will be marked as failed. */
-        FAILURE(QualityGateStatus.FAILED);
-
-        private final QualityGateStatus status;
-
-        QualityGateResult(final QualityGateStatus status) {
-            this.status = status;
-        }
-
-        /**
-         * Returns the status.
-         *
-         * @return the status
-         */
-        public QualityGateStatus getStatus() {
-            return status;
-        }
+        return type != null ? type.hashCode() : 0;
     }
 
     /**
@@ -225,15 +147,15 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
     }
 
     /**
-     * Descriptor of the {@link QualityGate}.
+     * Descriptor of the {@link WarningsQualityGate}.
      */
     @Extension
-    public static class QualityGateDescriptor extends Descriptor<QualityGate> {
+    public static class WarningsQualityGateDescriptor extends QualityGateDescriptor {
         private final ModelValidation modelValidation = new ModelValidation();
         private final JenkinsFacade jenkins;
 
         @VisibleForTesting
-        QualityGateDescriptor(final JenkinsFacade jenkinsFacade) {
+        WarningsQualityGateDescriptor(final JenkinsFacade jenkinsFacade) {
             super();
 
             jenkins = jenkinsFacade;
@@ -242,7 +164,7 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
         /**
          * Creates a new descriptor.
          */
-        public QualityGateDescriptor() {
+        public WarningsQualityGateDescriptor() {
             this(new JenkinsFacade());
         }
 

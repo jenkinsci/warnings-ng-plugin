@@ -13,8 +13,9 @@ import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Item;
 
-import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.util.JenkinsFacade;
+import io.jenkins.plugins.util.QualityGateResult;
+import io.jenkins.plugins.util.QualityGateStatus;
 
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -128,7 +129,10 @@ class ResetQualityGateCommandTest {
         ResultAction resultAction = mock(ResultAction.class);
 
         AnalysisResult result = mock(AnalysisResult.class);
-        when(result.getQualityGateStatus()).thenReturn(status);
+        var qualityGateResult = mock(QualityGateResult.class);
+        when(qualityGateResult.getOverallStatus()).thenReturn(status);
+        when(qualityGateResult.isSuccessful()).thenReturn(status.isSuccessful());
+        when(result.getQualityGateResult()).thenReturn(qualityGateResult);
 
         // Reference build is set
         FreeStyleBuild referenceBuild = mock(FreeStyleBuild.class);

@@ -13,9 +13,9 @@ import hudson.XmlFile;
 import hudson.model.Run;
 import hudson.util.XStream2;
 
-import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
+import io.jenkins.plugins.util.QualityGateResult;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -45,6 +45,6 @@ class AnalysisResultTest extends ResourceTest {
                 .isThrownBy(
                         () -> new AnalysisResult(mock(Run.class), "../../invalid-id", mock(DeltaReport.class),
                                 new Blames(), new RepositoryStatistics(),
-                                QualityGateStatus.PASSED, Collections.emptyMap()));
+                                new QualityGateResult(), Collections.emptyMap()));
     }
 }

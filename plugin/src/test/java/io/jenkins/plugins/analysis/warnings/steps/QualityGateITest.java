@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -19,17 +20,18 @@ import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.portlets.PullRequestMonitoringPortlet;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
-import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
-import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
-import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
-import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
+import io.jenkins.plugins.analysis.core.util.WarningsQualityGate;
+import io.jenkins.plugins.analysis.core.util.WarningsQualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
+import io.jenkins.plugins.util.QualityGate.QualityGateCriticality;
+import io.jenkins.plugins.util.QualityGateEvaluator;
+import io.jenkins.plugins.util.QualityGateStatus;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
 /**
  * Tests the {@link QualityGateEvaluator}. The file 'checkstyle-quality-gate.xml' is being used for the tests. It
- * contains 11 issues overall, from which 6 have high, 2 have normal and 3 have low severity.
+ * contains 11 issues overall, from which 6 have high, 2 have normal, and 3 have low severity.
  *
  * @author Michaela Reitschuster
  */
@@ -48,7 +50,8 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldBePassedForFirstBuildWithDelta() {
         FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project,
-                recorder -> recorder.addQualityGate(11, QualityGateType.DELTA, QualityGateResult.UNSTABLE));
+                recorder -> recorder.setQualityGates(List.of(
+                        new WarningsQualityGate(11, QualityGateType.DELTA, QualityGateCriticality.UNSTABLE))));
         copyMultipleFilesToWorkspaceWithSuffix(project, REPORT_FILE);
 
         scheduleBuildAndAssertStatus(project, Result.SUCCESS, QualityGateStatus.PASSED);
@@ -62,7 +65,8 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldBePassedForFirstBuildWithNew() {
         FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project,
-                recorder -> recorder.addQualityGate(11, QualityGateType.NEW, QualityGateResult.UNSTABLE));
+                recorder -> recorder.setQualityGates(List.of(
+                        new WarningsQualityGate(11, QualityGateType.NEW, QualityGateCriticality.UNSTABLE))));
         copyMultipleFilesToWorkspaceWithSuffix(project, REPORT_FILE);
 
         scheduleBuildAndAssertStatus(project, Result.SUCCESS, QualityGateStatus.PASSED);
@@ -76,7 +80,8 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldCreateUnstableResult() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("eclipse.txt");
         enableEclipseWarnings(project,
-                publisher -> publisher.addQualityGate(7, QualityGateType.TOTAL, QualityGateResult.UNSTABLE));
+                recorder -> recorder.setQualityGates(List.of(
+                        new WarningsQualityGate(7, QualityGateType.TOTAL, QualityGateCriticality.UNSTABLE))));
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
 
@@ -91,7 +96,8 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldBeUnstableWhenUnstableDeltaAllIsReachedNew() {
         FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project,
-                recorder -> recorder.addQualityGate(11, QualityGateType.DELTA, QualityGateResult.UNSTABLE));
+                recorder -> recorder.setQualityGates(List.of(
+                        new WarningsQualityGate(11, QualityGateType.DELTA, QualityGateCriticality.UNSTABLE))));
         runJobTwice(project, Result.UNSTABLE);
     }
 
@@ -102,7 +108,8 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldBeUnstableWhenUnstableNewAllIsReachedNew() {
         FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project,
-                recorder -> recorder.addQualityGate(11, QualityGateType.NEW, QualityGateResult.UNSTABLE));
+                recorder -> recorder.setQualityGates(List.of(
+                        new WarningsQualityGate(11, QualityGateType.NEW, QualityGateCriticality.UNSTABLE))));
         runJobTwice(project, Result.UNSTABLE);
     }
 
@@ -113,7 +120,8 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldBeUnstableWhenUnstableDeltaErrorIsReachedNew() {
         FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project,
-                recorder -> recorder.addQualityGate(6, QualityGateType.DELTA_ERROR, QualityGateResult.UNSTABLE));
+                recorder -> recorder.setQualityGates(List.of(
+                        new WarningsQualityGate(6, QualityGateType.DELTA_ERROR, QualityGateCriticality.UNSTABLE))));
         runJobTwice(project, Result.UNSTABLE);
     }
 
@@ -125,7 +133,8 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldBeUnstableWhenUnstableNewErrorIsReachedNew() {
         FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project,
-                recorder -> recorder.addQualityGate(6, QualityGateType.NEW_ERROR, QualityGateResult.UNSTABLE));
+                recorder -> recorder.setQualityGates(List.of(
+                        new WarningsQualityGate(6, QualityGateType.NEW_ERROR, QualityGateCriticality.UNSTABLE))));
         runJobTwice(project, Result.UNSTABLE);
     }
 
@@ -136,7 +145,8 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldBeUnstableWhenUnstableDeltaNormalIsReachedNew() {
         FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project,
-                recorder -> recorder.addQualityGate(2, QualityGateType.DELTA_NORMAL, QualityGateResult.UNSTABLE));
+                recorder -> recorder.setQualityGates(List.of(
+                        new WarningsQualityGate(2, QualityGateType.DELTA_NORMAL, QualityGateCriticality.UNSTABLE))));
         runJobTwice(project, Result.UNSTABLE);
     }
 
@@ -148,7 +158,8 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldBeUnstableWhenUnstableNewNormalIsReachedNew() {
         FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project,
-                recorder -> recorder.addQualityGate(2, QualityGateType.NEW_NORMAL, QualityGateResult.UNSTABLE));
+                recorder -> recorder.setQualityGates(List.of(
+                        new WarningsQualityGate(2, QualityGateType.NEW_NORMAL, QualityGateCriticality.UNSTABLE))));
         runJobTwice(project, Result.UNSTABLE);
     }
 
@@ -160,7 +171,8 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldBeUnstableWhenUnstableDeltaLowIsReachedNew() {
         FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project,
-                recorder -> recorder.addQualityGate(3, QualityGateType.DELTA_LOW, QualityGateResult.UNSTABLE));
+                recorder -> recorder.setQualityGates(List.of(
+                        new WarningsQualityGate(3, QualityGateType.DELTA_LOW, QualityGateCriticality.UNSTABLE))));
         runJobTwice(project, Result.UNSTABLE);
     }
 
@@ -172,7 +184,8 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldBeUnstableWhenUnstableNewLowIsReachedNew() {
         FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project,
-                recorder -> recorder.addQualityGate(3, QualityGateType.NEW_LOW, QualityGateResult.UNSTABLE));
+                recorder -> recorder.setQualityGates(List.of(
+                        new WarningsQualityGate(3, QualityGateType.NEW_LOW, QualityGateCriticality.UNSTABLE))));
         runJobTwice(project, Result.UNSTABLE);
     }
 
@@ -183,7 +196,8 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldBeUnstableWhenUnstableTotalAllIsReachedNew() {
         FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project,
-                recorder -> recorder.addQualityGate(11, QualityGateType.TOTAL, QualityGateResult.UNSTABLE));
+                recorder -> recorder.setQualityGates(List.of(
+                        new WarningsQualityGate(11, QualityGateType.TOTAL, QualityGateCriticality.UNSTABLE))));
         runJobTwice(project, Result.UNSTABLE);
     }
 
@@ -195,7 +209,8 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldBeUnstableWhenUnstableTotalErrorIsReachedNew() {
         FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project,
-                recorder -> recorder.addQualityGate(6, QualityGateType.TOTAL_ERROR, QualityGateResult.UNSTABLE));
+                recorder -> recorder.setQualityGates(List.of(
+                        new WarningsQualityGate(6, QualityGateType.TOTAL_ERROR, QualityGateCriticality.UNSTABLE))));
         runJobTwice(project, Result.UNSTABLE);
     }
 
@@ -207,7 +222,8 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldBeUnstableWhenUnstableTotalNormalIsReachedNew() {
         FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project,
-                recorder -> recorder.addQualityGate(2, QualityGateType.TOTAL_NORMAL, QualityGateResult.UNSTABLE));
+                recorder -> recorder.setQualityGates(List.of(
+                        new WarningsQualityGate(2, QualityGateType.TOTAL_NORMAL, QualityGateCriticality.UNSTABLE))));
         runJobTwice(project, Result.UNSTABLE);
     }
 
@@ -219,7 +235,8 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldBeUnstableWhenUnstableTotalLowIsReachedNew() {
         FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project,
-                recorder -> recorder.addQualityGate(3, QualityGateType.TOTAL_LOW, QualityGateResult.UNSTABLE));
+                recorder -> recorder.setQualityGates(List.of(
+                        new WarningsQualityGate(3, QualityGateType.TOTAL_LOW, QualityGateCriticality.UNSTABLE))));
         runJobTwice(project, Result.UNSTABLE);
     }
 
@@ -230,7 +247,8 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldBeFailureWhenFailedNewAllIsReachedNew() {
         FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project,
-                recorder -> recorder.addQualityGate(9, QualityGateType.NEW, QualityGateResult.FAILURE));
+                recorder -> recorder.setQualityGates(List.of(
+                        new WarningsQualityGate(9, QualityGateType.NEW, QualityGateCriticality.FAILURE))));
         runJobTwice(project, Result.FAILURE);
     }
 
@@ -242,7 +260,8 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldBeFailureWhenFailedNewErrorIsReachedNew() {
         FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project,
-                recorder -> recorder.addQualityGate(6, QualityGateType.NEW_ERROR, QualityGateResult.FAILURE));
+                recorder -> recorder.setQualityGates(List.of(
+                        new WarningsQualityGate(6, QualityGateType.NEW_ERROR, QualityGateCriticality.FAILURE))));
         runJobTwice(project, Result.FAILURE);
     }
 
@@ -254,7 +273,8 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldBeFailureWhenFailedNewNormalIsReachedNew() {
         FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project,
-                recorder -> recorder.addQualityGate(2, QualityGateType.NEW_NORMAL, QualityGateResult.FAILURE));
+                recorder -> recorder.setQualityGates(List.of(
+                        new WarningsQualityGate(2, QualityGateType.NEW_NORMAL, QualityGateCriticality.FAILURE))));
         runJobTwice(project, Result.FAILURE);
     }
 
@@ -266,7 +286,8 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldBeFailureWhenFailedNewLowIsReachedNew() {
         FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project,
-                recorder -> recorder.addQualityGate(3, QualityGateType.NEW_LOW, QualityGateResult.FAILURE));
+                recorder -> recorder.setQualityGates(List.of(
+                        new WarningsQualityGate(3, QualityGateType.NEW_LOW, QualityGateCriticality.FAILURE))));
         runJobTwice(project, Result.FAILURE);
     }
 
@@ -277,7 +298,8 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldBeFailureWhenFailureTotalAllIsReachedNew() {
         FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project,
-                recorder -> recorder.addQualityGate(11, QualityGateType.TOTAL, QualityGateResult.FAILURE));
+                recorder -> recorder.setQualityGates(List.of(
+                        new WarningsQualityGate(11, QualityGateType.TOTAL, QualityGateCriticality.FAILURE))));
         runJobTwice(project, Result.FAILURE);
     }
 
@@ -288,7 +310,8 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldBeFailureWhenFailureTotalErrorIsReachedNew() {
         FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project,
-                recorder -> recorder.addQualityGate(6, QualityGateType.TOTAL_ERROR, QualityGateResult.FAILURE));
+                recorder -> recorder.setQualityGates(List.of(
+                        new WarningsQualityGate(6, QualityGateType.TOTAL_ERROR, QualityGateCriticality.FAILURE))));
         runJobTwice(project, Result.FAILURE);
     }
 
@@ -300,7 +323,8 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldBeFailureWhenFailureTotalNormalIsReachedNew() {
         FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project,
-                recorder -> recorder.addQualityGate(2, QualityGateType.TOTAL_NORMAL, QualityGateResult.FAILURE));
+                recorder -> recorder.setQualityGates(List.of(
+                        new WarningsQualityGate(2, QualityGateType.TOTAL_NORMAL, QualityGateCriticality.FAILURE))));
         runJobTwice(project, Result.FAILURE);
     }
 
@@ -311,7 +335,8 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldBeFailureWhenFailureTotalLowIsReachedLow() {
         FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project,
-                recorder -> recorder.addQualityGate(3, QualityGateType.TOTAL_LOW, QualityGateResult.FAILURE));
+                recorder -> recorder.setQualityGates(List.of(
+                        new WarningsQualityGate(3, QualityGateType.TOTAL_LOW, QualityGateCriticality.FAILURE))));
         runJobTwice(project, Result.FAILURE);
     }
 
@@ -321,10 +346,9 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     void shouldOverrideUnstableWhenFailureAndUnstableThresholdIsReachedNew() {
         FreeStyleProject project = createFreeStyleProject();
-        enableAndConfigureCheckstyle(project, recorder -> {
-            recorder.addQualityGate(1, QualityGateType.TOTAL, QualityGateResult.UNSTABLE);
-            recorder.addQualityGate(3, QualityGateType.TOTAL_LOW, QualityGateResult.FAILURE);
-        });
+        enableAndConfigureCheckstyle(project, recorder -> recorder.setQualityGates(List.of(
+                    new WarningsQualityGate(1, QualityGateType.TOTAL, QualityGateCriticality.UNSTABLE),
+                    new WarningsQualityGate(3, QualityGateType.TOTAL_LOW, QualityGateCriticality.FAILURE))));
         runJobTwice(project, Result.FAILURE);
     }
 

@@ -13,12 +13,12 @@ import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.IssuesDetail;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
-import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.warnings.Cpd;
 import io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner;
 import io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner.DryModel.DuplicationRow;
 import io.jenkins.plugins.datatables.TableColumn;
 import io.jenkins.plugins.datatables.TableModel;
+import io.jenkins.plugins.util.QualityGateStatus;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
@@ -179,7 +179,7 @@ class DryITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private TableModel getDryTableModel(final Run<?, ?> build) {
-        IssuesDetail issuesDetail = (IssuesDetail) build.getAction(ResultAction.class).getTarget();
+        IssuesDetail issuesDetail = build.getAction(ResultAction.class).getTarget();
         return issuesDetail.getTableModel("issues");
     }
 

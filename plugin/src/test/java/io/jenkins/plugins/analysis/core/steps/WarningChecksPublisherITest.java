@@ -20,8 +20,8 @@ import hudson.model.TaskListener;
 
 import io.jenkins.plugins.analysis.core.steps.WarningChecksPublisher.AnnotationScope;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
-import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
-import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
+import io.jenkins.plugins.analysis.core.util.WarningsQualityGate;
+import io.jenkins.plugins.analysis.core.util.WarningsQualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.MsBuild;
 import io.jenkins.plugins.analysis.warnings.PVSStudio;
@@ -37,6 +37,7 @@ import io.jenkins.plugins.checks.api.ChecksPublisherFactory;
 import io.jenkins.plugins.checks.api.ChecksStatus;
 import io.jenkins.plugins.checks.util.CapturingChecksPublisher;
 import io.jenkins.plugins.checks.util.CapturingChecksPublisher.Factory;
+import io.jenkins.plugins.util.QualityGate.QualityGateCriticality;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
@@ -111,7 +112,8 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldConcludeChecksAsSuccessWhenQualityGateIsPassed() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
         enableAndConfigureCheckstyle(project,
-                recorder -> recorder.addQualityGate(10, QualityGateType.TOTAL, QualityGateResult.UNSTABLE));
+                recorder -> recorder.setQualityGates(List.of(
+                        new WarningsQualityGate(10, QualityGateType.TOTAL, QualityGateCriticality.UNSTABLE))));
 
         Run<?, ?> build = buildSuccessfully(project);
         WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(build), TaskListener.NULL, null);
@@ -125,7 +127,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldConcludeChecksAsFailureWhenQualityGateIsFailed() {
-        assertChecksConclusionIsFailureWithQualityGateResult(QualityGateResult.FAILURE);
+        assertChecksConclusionIsFailureWithQualityGateResult(QualityGateCriticality.FAILURE);
     }
 
     /**
@@ -133,7 +135,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldConcludeChecksAsFailureWhenQualityGateResultIsUnstable() {
-        assertChecksConclusionIsFailureWithQualityGateResult(QualityGateResult.UNSTABLE);
+        assertChecksConclusionIsFailureWithQualityGateResult(QualityGateCriticality.UNSTABLE);
     }
 
     /**
@@ -264,10 +266,10 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
 
         assertThat(publishedChecks).hasSize(1);
 
-        assertThat(publishedChecks.get(0).getName()).isPresent().get().isEqualTo("CheckStyle");
+        assertThat(publishedChecks.get(0).getName()).contains("CheckStyle");
 
         assertThat(publishedChecks.get(0).getOutput()).isPresent().hasValueSatisfying(
-                output -> assertThat(output.getTitle()).isPresent().get().isEqualTo("No new issues, 6 total"));
+                output -> assertThat(output.getTitle()).contains("No new issues, 6 total"));
     }
 
     /**
@@ -295,10 +297,10 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(publishedChecks).hasSize(1);
 
         ChecksDetails details = publishedChecks.get(0);
-        assertThat(details.getName()).isPresent().get().isEqualTo("CheckStyle");
+        assertThat(details.getName()).contains("CheckStyle");
         assertThat(details.getOutput()).isPresent().hasValueSatisfying(
                 output -> {
-                    assertThat(output.getTitle()).isPresent().get().isEqualTo("2 new issues, 6 total");
+                    assertThat(output.getTitle()).contains("2 new issues, 6 total");
                     assertThat(output.getChecksAnnotations()).hasSize(expectedSize);
                 });
     }
@@ -317,9 +319,9 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(publishedChecks).hasSize(1);
 
         ChecksDetails details = publishedChecks.get(0);
-        assertThat(details.getName()).isPresent().get().isEqualTo("CheckStyle");
+        assertThat(details.getName()).contains("CheckStyle");
         assertThat(details.getOutput()).isPresent().hasValueSatisfying(
-                output -> assertThat(output.getTitle()).isPresent().get().isEqualTo("No new issues, 6 total"));
+                output -> assertThat(output.getTitle()).contains("No new issues, 6 total"));
     }
 
     /**
@@ -337,10 +339,10 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(publishedChecks).hasSize(
                 2);  // First from 'In progress' check provided by withChecks, second from publishIssues
 
-        publishedChecks.forEach(check -> assertThat(check.getName()).isPresent().get().isEqualTo("Custom Checks Name"));
+        publishedChecks.forEach(check -> assertThat(check.getName()).contains("Custom Checks Name"));
 
         assertThat(publishedChecks.get(1).getOutput()).isPresent().hasValueSatisfying(
-                output -> assertThat(output.getTitle()).isPresent().get().isEqualTo("No new issues, 6 total"));
+                output -> assertThat(output.getTitle()).contains("No new issues, 6 total"));
     }
 
     /**
@@ -358,10 +360,10 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(publishedChecks).hasSize(
                 2);  // First from 'In progress' check provided by withChecks, second from recordIssues
 
-        publishedChecks.forEach(check -> assertThat(check.getName()).isPresent().get().isEqualTo("Custom Checks Name"));
+        publishedChecks.forEach(check -> assertThat(check.getName()).contains("Custom Checks Name"));
 
         assertThat(publishedChecks.get(1).getOutput()).isPresent().hasValueSatisfying(
-                output -> assertThat(output.getTitle()).isPresent().get().isEqualTo("No new issues, 6 total"));
+                output -> assertThat(output.getTitle()).contains("No new issues, 6 total"));
     }
 
     /**
@@ -452,15 +454,15 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
         return item;
     }
 
-    private void assertChecksConclusionIsFailureWithQualityGateResult(final QualityGateResult qualityGateResult) {
+    private void assertChecksConclusionIsFailureWithQualityGateResult(final QualityGateCriticality criticality) {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
-        enableAndConfigureCheckstyle(project,
-                recorder -> recorder.addQualityGate(1, QualityGateType.TOTAL, qualityGateResult));
+        enableAndConfigureCheckstyle(project, recorder -> recorder.setQualityGates(List.of(
+                        new WarningsQualityGate(1, QualityGateType.TOTAL, criticality))));
 
-        Run<?, ?> build = buildWithResult(project, qualityGateResult.getStatus().getResult());
+        Run<?, ?> build = buildWithResult(project, criticality.getStatus().getResult());
         assertThat(getAnalysisResult(build))
                 .hasTotalSize(6)
-                .hasQualityGateStatus(qualityGateResult.getStatus());
+                .hasQualityGateStatus(criticality.getStatus());
 
         WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(build), TaskListener.NULL, null);
         assertThat(publisher.extractChecksDetails(AnnotationScope.PUBLISH_NEW_ISSUES).getConclusion())
