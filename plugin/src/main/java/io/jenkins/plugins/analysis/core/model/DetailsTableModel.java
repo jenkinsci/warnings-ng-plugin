@@ -260,7 +260,7 @@ public abstract class DetailsTableModel extends TableModel {
         protected String formatProperty(final String property, final String value) {
             String renderedValue = render(value);
             if (StringUtils.isBlank(value)) {
-                renderedValue="-";
+                renderedValue = "-";
             }
             return String.format("<a href=\"%s.%d/\">%s</a>", property, value.hashCode(), renderedValue);
         }
