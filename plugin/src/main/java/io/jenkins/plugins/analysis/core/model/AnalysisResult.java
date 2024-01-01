@@ -52,7 +52,7 @@ import io.jenkins.plugins.util.ValidationUtilities;
  * @author Ullrich Hafner
  */
 @SuppressFBWarnings(value = "SE, DESERIALIZATION_GADGET", justification = "transient fields are restored using a Jenkins callback (or are checked for null)")
-@SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveClassLength", "PMD.GodClass", "checkstyle:ClassFanOutComplexity"})
+@SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveClassLength", "PMD.GodClass", "checkstyle:ClassFanOutComplexity", "checkstyle:ClassDataAbstractionCoupling"})
 public class AnalysisResult implements Serializable, StaticAnalysisRun {
     private static final long serialVersionUID = 1110545450292087475L;
 
@@ -551,12 +551,12 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      * @see QualityGateEvaluator
      */
     public boolean isSuccessful() {
-        return qualityGateStatus.isSuccessful();
+        return qualityGateResult.isSuccessful();
     }
 
     @Override
     public QualityGateStatus getQualityGateStatus() {
-        return qualityGateStatus;
+        return qualityGateResult.getOverallStatus();
     }
 
     @Whitelisted

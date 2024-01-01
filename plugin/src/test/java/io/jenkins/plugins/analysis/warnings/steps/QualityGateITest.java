@@ -385,7 +385,7 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
         try {
             Run<?, ?> build = getJenkins().assertBuildStatus(result, job.scheduleBuild2(0));
             ResultAction action = build.getAction(ResultAction.class);
-            assertThat(action.getResult()).hasQualityGateStatus(expectedQualityGateStatus);
+            assertThat(action.getResult().getQualityGateResult().getOverallStatus()).isEqualTo(expectedQualityGateStatus);
 
             PullRequestMonitoringPortlet portlet = new PullRequestMonitoringPortlet(action);
             assertThat(portlet.hasQualityGate()).isTrue();
