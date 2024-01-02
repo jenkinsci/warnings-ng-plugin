@@ -20,9 +20,9 @@ import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
-import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.monitoring.MonitorPortlet;
 import io.jenkins.plugins.monitoring.MonitorPortletFactory;
+import io.jenkins.plugins.util.QualityGateStatus;
 
 /**
  * A portlet that can be used for the

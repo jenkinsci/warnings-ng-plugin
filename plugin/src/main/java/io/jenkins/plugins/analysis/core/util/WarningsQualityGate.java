@@ -82,7 +82,7 @@ public class WarningsQualityGate extends QualityGate {
             setCriticality(QualityGateCriticality.FAILURE);
         }
     }
-    
+
     /**
      * Returns the method that should be used to determine the actual number of issues in the build.
      *
