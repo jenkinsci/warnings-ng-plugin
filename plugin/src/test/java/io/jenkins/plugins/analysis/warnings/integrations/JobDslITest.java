@@ -15,9 +15,11 @@ import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
+import io.jenkins.plugins.analysis.core.util.WarningsQualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.warnings.Java;
 import io.jenkins.plugins.casc.ConfigurationAsCode;
 import io.jenkins.plugins.casc.ConfiguratorException;
+import io.jenkins.plugins.util.QualityGate.QualityGateCriticality;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -107,12 +109,15 @@ class JobDslITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(recorder.getSourceCodeEncoding()).isEqualTo("UTF-8");
         assertThat(recorder.getUnhealthy()).isEqualTo(50);
         assertThat(recorder.getReferenceJobName()).isEqualTo("test-job");
-        assertThat(recorder.getQualityGates()).hasSize(1);
+        assertThat(recorder.getQualityGates()).hasSize(1)
+                .first().satisfies(gate -> {
+                    assertThat(gate.getThreshold()).isEqualTo(10.0);
+                    assertThat(gate.getType()).isEqualTo(QualityGateType.TOTAL);
+                    assertThat(gate.getCriticality()).isEqualTo(QualityGateCriticality.FAILURE);
+                });
 
         List<Tool> tools = recorder.getTools();
-        assertThat(tools).hasSize(2);
-        assertThat(tools.get(0)).isInstanceOf(Java.class);
-
+        assertThat(tools).hasSize(2).first().isInstanceOf(Java.class);
     }
 
     /**
