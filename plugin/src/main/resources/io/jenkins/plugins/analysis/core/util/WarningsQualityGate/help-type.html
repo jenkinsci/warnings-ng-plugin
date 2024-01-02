@@ -6,12 +6,12 @@
         <dd>Selects the total number of issues in the current build.</dd>
         <dt>New</dt>
         <dd>Selects the total number of new issues in the current build with respect to the reference build.
-            New issues will be calculated by a sophisticated algorithm,
+            New issues will be calculated by a sophisticated algorithm
             that tries to track issues from build to build, even if the source code has been modified. Note that this
             algorithm sometimes detects outstanding warnings as new, e.g., if a source file has been refactored heavily.
         </dd>
         <dt>Delta</dt>
-        <dd>Selects the difference of the total number of issues of the current build subtracted by the total
+        <dd>Selects the difference between the total number of issues in the current build subtracted by the total
             number of issues in the reference build. This is a simple subtraction, so if you have a build that
             adds a new warning and removes a completely different warning, then the result will be zero.
         </dd>

@@ -462,12 +462,11 @@ the number of issues that will fail a given quality gate.
 An example pipeline with these options is shown in the following snippet:
 
 ```groovy
-recordIssues tool: java(pattern: '*.log'), qualityGates: [[threshold: 1, type: 'TOTAL', unstable: true]]
+recordIssues tool: java(pattern: '*.log'), qualityGates: [[threshold: 1, type: 'TOTAL', criticality: 'FAILURE']]
 ```
 
 The type determines the property that will be picked to evaluate the quality gate. Refer to the enum 
-[QualityGateType](../plugin/src/main/java/io/jenkins/plugins/analysis/core/util/QualityGate.java) to see which different
-types are supported.
+[QualityGateType](../plugin/src/main/java/io/jenkins/plugins/analysis/core/util/WarningsQualityGate.java) to see which different types are supported.
  
 ### Health report configuration
 

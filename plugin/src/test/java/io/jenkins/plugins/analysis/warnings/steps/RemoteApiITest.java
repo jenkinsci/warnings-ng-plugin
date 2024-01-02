@@ -48,7 +48,7 @@ class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldReturnSummaryForTopLevelApiCall() {
-        // Skip elements with absolute paths or other platform specific information
+        // Skip elements with absolute paths or other platform-specific information
         verifyRemoteApi("/checkstyle/api/xml"
                 + "?exclude=/*/errorMessage"
                 + "&exclude=/*/infoMessage"
@@ -85,10 +85,14 @@ class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
     void assertXmlApiWithXPathNavigationMatchesExpected() {
         Run<?, ?> build = buildCheckStyleJob();
 
-        Document actualDocument = callXmlRemoteApi(build.getUrl() + "/checkstyle/api/xml?xpath=/*/qualityGateStatus");
+        Document actualDocument = callXmlRemoteApi(build.getUrl() + "/checkstyle/api/xml?xpath=/*/qualityGates");
 
-        assertThat(actualDocument.getDocumentElement().getTagName()).isEqualTo("qualityGateStatus");
-        assertThat(actualDocument.getDocumentElement().getFirstChild().getNodeValue()).isEqualTo("INACTIVE");
+        var documentElement = actualDocument.getDocumentElement();
+        assertThat(documentElement.getTagName()).isEqualTo("qualityGates");
+
+        var result = documentElement.getFirstChild();
+        assertThat(result.getNodeName()).isEqualTo("overallResult");
+        assertThat(result.getTextContent()).isEqualTo("INACTIVE");
     }
 
     /**
