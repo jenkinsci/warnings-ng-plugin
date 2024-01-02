@@ -5,7 +5,6 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.events.EventFiringWebDriver;
 
 import org.jenkinsci.test.acceptance.po.AbstractStep;
 import org.jenkinsci.test.acceptance.po.Control;
@@ -30,6 +29,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     private final Control qualityGatesRepeatable = findRepeatableAddButtonFor("qualityGates");
     private final Control qualityGateThreshold = control("/qualityGates/threshold");
     private final Control qualityGateType = control("/qualityGates/type");
+    private final Control qualityGateCriticality = control("/qualityGates/criticality");
     private final Control advancedButton = control("advanced-button");
     private final Control enabledForFailureCheckBox = control("enabledForFailure");
     private final Control ignoreQualityGate = control("ignoreQualityGate");
@@ -48,14 +48,6 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     private final Control healthSeverity = control("minimumSeverity");
     private final Control scm = control("scm");
     private final Control quiet = control("quiet");
-
-    /**
-     * Determines the result of the quality gate.
-     */
-    public enum QualityGateBuildResult {
-        UNSTABLE,
-        FAILED
-    }
 
     /**
      * Creates a new page object.
@@ -188,7 +180,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     }
 
     /**
-     * Returns whether the report results is in logger output.  
+     * Returns whether the report results is in logger output.
      *
      * @return {@code true} then the report logging of each static analysis tool is muted
      *         {@code false} then reports logging goes to loghandler output
@@ -272,14 +264,8 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
         return qualityGateType.get();
     }
 
-    /**
-     * Gets the quality gate result.
-     *
-     * @return the quality gate result
-     **/
-    public QualityGateBuildResult getQualityGateResult() {
-        return findUnstableRadioButton(self(), true).isSelected()
-                ? QualityGateBuildResult.UNSTABLE : QualityGateBuildResult.FAILED;
+    public String getQualityGateCriticality() {
+        return qualityGateCriticality.get();
     }
 
     /**
@@ -375,7 +361,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     }
 
     /**
-     * Determines whether the report results will go to logger output. 
+     * Determines whether the report results will go to logger output.
      *
      * @param quiet
      *         if {@code true} then the report logging of each static analysis tool is muted
@@ -568,18 +554,18 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      *         the minimum number of issues that fails the quality gate
      * @param type
      *         the type of the quality gate
-     * @param result
+     * @param criticality
      *         determines whether the quality gate sets the build result to Unstable or Failed
      *
      * @return this recorder
      */
     public IssuesRecorder addQualityGateConfiguration(final int threshold, final QualityGateType type,
-            final QualityGateBuildResult result) {
+            final QualityGateCriticality criticality) {
         String path = createPageArea("qualityGates", qualityGatesRepeatable::click);
         QualityGatePanel qualityGate = new QualityGatePanel(this, path);
         qualityGate.setThreshold(threshold);
         qualityGate.setType(type);
-        qualityGate.setUnstable(result == QualityGateBuildResult.UNSTABLE);
+        qualityGate.setCriticality(criticality);
 
         return this;
     }
@@ -637,6 +623,29 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
 
         /**
          * Returns the localized human-readable name of this type.
+         *
+         * @return human-readable name
+         */
+        public String getDisplayName() {
+            return displayName;
+        }
+    }
+
+    /**
+     * Available quality gate types.
+     */
+    public enum QualityGateCriticality {
+        UNSTABLE("Fail the build"),
+        FAILURE("Mark the build as unstable");
+
+        private final String displayName;
+
+        QualityGateCriticality(final String displayName) {
+            this.displayName = displayName;
+        }
+
+        /**
+         * Returns the localized human-readable name of this criticality.
          *
          * @return human-readable name
          */
@@ -778,8 +787,9 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      * Page area of a quality gate configuration.
      */
     private static class QualityGatePanel extends PageAreaImpl {
-        private final Control threshold = control("threshold");
+        private final Control threshold = control("integerThreshold");
         private final Control type = control("type");
+        private final Control criticality = control("criticality");
 
         QualityGatePanel(final PageArea area, final String path) {
             super(area, path);
@@ -793,9 +803,8 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
             this.type.select(type.getDisplayName());
         }
 
-        public void setUnstable(final boolean isUnstable) {
-            WebElement radioButton = IssuesRecorder.findUnstableRadioButton(self(), isUnstable);
-            ((EventFiringWebDriver) driver).executeScript("arguments[0].click();", radioButton);
+        public void setCriticality(final QualityGateCriticality criticality) {
+            this.criticality.select(criticality.getDisplayName());
         }
     }
 

@@ -22,7 +22,7 @@ import org.jenkinsci.test.acceptance.po.Slave;
 
 import io.jenkins.plugins.analysis.warnings.AnalysisResult.Tab;
 import io.jenkins.plugins.analysis.warnings.AnalysisSummary.QualityGateResult;
-import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateBuildResult;
+import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateCriticality;
 import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateType;
 
 import static io.jenkins.plugins.analysis.warnings.Assertions.*;
@@ -102,8 +102,8 @@ public class WarningsPluginUiTest extends UiTest {
         FreeStyleJob job = createFreeStyleJob("build_status_test/build_01");
         IssuesRecorder recorder = addAllRecorders(job);
         recorder.setEnabledForAggregation(true);
-        recorder.addQualityGateConfiguration(4, QualityGateType.TOTAL, QualityGateBuildResult.UNSTABLE);
-        recorder.addQualityGateConfiguration(3, QualityGateType.NEW, QualityGateBuildResult.FAILED);
+        recorder.addQualityGateConfiguration(4, QualityGateType.TOTAL, QualityGateCriticality.UNSTABLE);
+        recorder.addQualityGateConfiguration(3, QualityGateType.NEW, QualityGateCriticality.FAILURE);
         recorder.setIgnoreQualityGate(true);
 
         job.save();

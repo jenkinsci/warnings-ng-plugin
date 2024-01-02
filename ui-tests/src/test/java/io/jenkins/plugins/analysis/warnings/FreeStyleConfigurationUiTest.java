@@ -6,7 +6,7 @@ import org.jenkinsci.test.acceptance.junit.AbstractJUnitTest;
 import org.jenkinsci.test.acceptance.junit.WithPlugins;
 import org.jenkinsci.test.acceptance.po.FreeStyleJob;
 
-import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateBuildResult;
+import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateCriticality;
 import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateType;
 import io.jenkins.plugins.analysis.warnings.IssuesRecorder.TrendChartType;
 
@@ -51,7 +51,7 @@ public class FreeStyleConfigurationUiTest extends AbstractJUnitTest {
         issuesRecorder.setHealthReport(1, 9, SEVERITY);
         issuesRecorder.setReportFilePattern(PATTERN);
         issuesRecorder.addIssueFilter("Exclude categories", REGEX);
-        issuesRecorder.addQualityGateConfiguration(1, QualityGateType.TOTAL_ERROR, QualityGateBuildResult.UNSTABLE);
+        issuesRecorder.addQualityGateConfiguration(1, QualityGateType.TOTAL_ERROR, QualityGateCriticality.UNSTABLE);
 
         job.save();
         job.configure();
@@ -77,7 +77,7 @@ public class FreeStyleConfigurationUiTest extends AbstractJUnitTest {
         assertThat(issuesRecorder).hasFilterRegex(REGEX);
         assertThat(issuesRecorder).hasQualityGateThreshold("1");
         assertThat(issuesRecorder).hasQualityGateType(QualityGateType.TOTAL_ERROR.toString());
-        assertThat(issuesRecorder).hasQualityGateResult(QualityGateBuildResult.UNSTABLE);
+        assertThat(issuesRecorder).hasQualityGateCriticality(QualityGateCriticality.UNSTABLE.getDisplayName());
 
         // Now invert all booleans:
         issuesRecorder.setAggregatingResults(false);

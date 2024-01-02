@@ -65,6 +65,21 @@ public class WarningsQualityGate extends QualityGate {
         setCriticality(criticality);
     }
 
+    public int getIntegerThreshold() {
+        return Double.valueOf(getThreshold()).intValue();
+    }
+
+    /**
+     * Sets the threshold of the quality gate.
+     *
+     * @param threshold
+     *         the threshold of the quality gate
+     */
+    @DataBoundSetter
+    public void setIntegerThreshold(final int threshold) {
+        setThreshold(threshold);
+    }
+
     /**
      * Sets the criticality of the quality gate.
      *

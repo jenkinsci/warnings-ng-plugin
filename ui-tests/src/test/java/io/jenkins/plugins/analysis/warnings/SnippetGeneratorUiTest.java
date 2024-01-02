@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.jenkinsci.test.acceptance.junit.WithPlugins;
 import org.jenkinsci.test.acceptance.po.WorkflowJob;
 
-import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateBuildResult;
+import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateCriticality;
 import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateType;
 
 import static io.jenkins.plugins.analysis.warnings.Assertions.*;
@@ -118,7 +118,7 @@ public class SnippetGeneratorUiTest extends UiTest {
                 .setIgnoreQualityGate(true)
                 .setSourceCodeEncoding("otherText")
                 .addIssueFilter("Exclude types", "*toExclude*")
-                .addQualityGateConfiguration(1, QualityGateType.NEW, QualityGateBuildResult.FAILED)
+                .addQualityGateConfiguration(1, QualityGateType.NEW, QualityGateCriticality.FAILURE)
                 .setToolWithPattern(JAVA_COMPILER, "firstText");
 
         String script = snippetGenerator.generateScript();

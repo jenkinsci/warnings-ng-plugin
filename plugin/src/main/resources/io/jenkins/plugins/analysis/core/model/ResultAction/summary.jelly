@@ -1,6 +1,6 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:t="/lib/hudson" xmlns:l="/lib/layout" xmlns:st="jelly:stapler"
-         xmlns:fa="/font-awesome">
+<j:jelly xmlns:j="jelly:core" xmlns:t="/lib/hudson" xmlns:st="jelly:stapler"
+         xmlns:fa="/font-awesome" xmlns:c="/controls">
 
   <st:once>
     <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
@@ -81,10 +81,10 @@
             <t:buildLink jobName="${r.parent.displayName}" job="${r.parent}" number="${r.number}"/>
           </li>
         </j:if>
+        <c:qualityGate result="${it.qualityGateResult}" />
         <j:if test="${s.qualityGateStatus.name() != 'INACTIVE'}">
           <li>
             ${%Quality gate}: ${s.qualityGateStatus.description}
-            <l:icon style="width: 16px; height: 16px; margin-left: 0; position: relative; top: -0.1rem;" alt="${s.qualityGateStatus.description}" class="${s.qualityGateStatus.iconClass} icon-sm"/>
             <j:if test="${s.resetQualityGateVisible}">
               <span class="yui-button">
                 <button id="${it.id}-reset-reference"
