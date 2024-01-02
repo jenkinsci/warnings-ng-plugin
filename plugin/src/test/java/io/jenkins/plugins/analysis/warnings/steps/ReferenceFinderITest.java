@@ -328,8 +328,7 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
         // #3 UNSTABLE (Reference #2)
         cleanAndCopy(project, "eclipse8Warnings.txt");
         issuesRecorder.setQualityGates(List.of(
-                new WarningsQualityGate(3, QualityGateType.NEW, QualityGateCriticality.UNSTABLE)));
-        issuesRecorder.setQualityGates(List.of(
+                new WarningsQualityGate(3, QualityGateType.NEW, QualityGateCriticality.UNSTABLE),
                 new WarningsQualityGate(9, QualityGateType.TOTAL, QualityGateCriticality.UNSTABLE)));
 
         scheduleBuildAndAssertStatus(project, Result.UNSTABLE, analysisResult -> assertThat(analysisResult)
@@ -636,11 +635,10 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
         FreeStyleProject project = createJob(JOB_NAME, "eclipse8Warnings.txt");
         enableWarnings(project, recorder -> {
             recorder.setQualityGates(List.of(
-                    new WarningsQualityGate(3, QualityGateType.NEW, QualityGateCriticality.UNSTABLE)));
+                    new WarningsQualityGate(3, QualityGateType.NEW, QualityGateCriticality.UNSTABLE),
+                    new WarningsQualityGate(9, QualityGateType.TOTAL, QualityGateCriticality.UNSTABLE)));
             recorder.setReferenceJobName(REFERENCE_JOB_NAME);
             recorder.setIgnoreQualityGate(true);
-            recorder.setQualityGates(List.of(
-                    new WarningsQualityGate(9, QualityGateType.TOTAL, QualityGateCriticality.UNSTABLE)));
         });
         scheduleBuildAndAssertStatus(project, Result.UNSTABLE, analysisResult -> assertThat(analysisResult)
                 .hasTotalSize(8)

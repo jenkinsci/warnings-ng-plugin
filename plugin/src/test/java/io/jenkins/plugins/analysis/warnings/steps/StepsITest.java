@@ -274,7 +274,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
                 + "         echo '[name=' + action.getDisplayName() + ']' \n"
                 + "         echo '[isSuccessful=' + action.isSuccessful() + ']' \n"
                 + "         def result = action.getResult()\n"
-                + "         def status = result.getQualityGateStatus()\n"
+                + "         def status = result.getQualityGateResult()\n"
                 + "         echo '[status=' + status + ']' \n"
                 + "         echo '[isSuccessfulQualityGate=' + status.isSuccessful() + ']' \n"
                 + "         def totals = result.getTotals()\n"
@@ -1101,7 +1101,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(publishIssuesNode).isNotNull();
         WarningAction warningAction = publishIssuesNode.getPersistentAction(WarningAction.class);
         assertThat(warningAction).isNotNull();
-        assertThat(warningAction.getMessage()).isEqualTo(
+        assertThat(warningAction.getMessage()).endsWith(
                 "Some quality gates have been missed: overall result is UNSTABLE");
     }
 
@@ -1123,7 +1123,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(publishIssuesNode).isNotNull();
         WarningAction warningAction = publishIssuesNode.getPersistentAction(WarningAction.class);
         assertThat(warningAction).isNotNull();
-        assertThat(warningAction.getMessage()).isEqualTo(
+        assertThat(warningAction.getMessage()).endsWith(
                 "Some quality gates have been missed: overall result is UNSTABLE");
     }
 

@@ -6,6 +6,7 @@ import edu.hm.hafner.util.VisibleForTesting;
 
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.verb.POST;
 import hudson.Extension;
@@ -53,15 +54,35 @@ public class WarningsQualityGate extends QualityGate {
      *         the minimum number of issues that fails the quality gate
      * @param type
      *         the type of the quality gate
-     * @param criticality the criticality of the quality gate
+     * @param criticality
+     *         the criticality of the quality gate
      */
-    public WarningsQualityGate(final int threshold, final QualityGateType type, final QualityGateCriticality criticality) {
+    public WarningsQualityGate(final int threshold, final QualityGateType type,
+            final QualityGateCriticality criticality) {
         super(threshold);
 
         this.type = type;
         setCriticality(criticality);
     }
 
+    /**
+     * Sets the criticality of the quality gate.
+     *
+     * @param unstable
+     *         the criticality of the quality gate
+     * @deprecated use {@link #setCriticality(QualityGateCriticality)} instead
+     */
+    @DataBoundSetter
+    @Deprecated
+    public void setUnstable(final boolean unstable) {
+        if (unstable) {
+            setCriticality(QualityGateCriticality.UNSTABLE);
+        }
+        else {
+            setCriticality(QualityGateCriticality.FAILURE);
+        }
+    }
+    
     /**
      * Returns the method that should be used to determine the actual number of issues in the build.
      *
