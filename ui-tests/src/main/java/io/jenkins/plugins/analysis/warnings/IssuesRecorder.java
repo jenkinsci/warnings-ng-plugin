@@ -27,7 +27,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     private final Control filtersRepeatable = findRepeatableAddButtonFor("filters");
     private final Control filterRegex = control("/filters/pattern");
     private final Control qualityGatesRepeatable = findRepeatableAddButtonFor("qualityGates");
-    private final Control qualityGateThreshold = control("/qualityGates/threshold");
+    private final Control qualityGateThreshold = control("/qualityGates/integerThreshold");
     private final Control qualityGateType = control("/qualityGates/type");
     private final Control qualityGateCriticality = control("/qualityGates/criticality");
     private final Control advancedButton = control("advanced-button");
