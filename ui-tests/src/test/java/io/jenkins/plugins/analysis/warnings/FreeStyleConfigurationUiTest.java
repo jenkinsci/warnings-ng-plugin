@@ -77,7 +77,7 @@ public class FreeStyleConfigurationUiTest extends AbstractJUnitTest {
         assertThat(issuesRecorder).hasFilterRegex(REGEX);
         assertThat(issuesRecorder).hasQualityGateThreshold("1");
         assertThat(issuesRecorder).hasQualityGateType(QualityGateType.TOTAL_ERROR.toString());
-        assertThat(issuesRecorder).hasQualityGateCriticality(QualityGateCriticality.UNSTABLE.getDisplayName());
+        assertThat(issuesRecorder).hasQualityGateCriticality(QualityGateCriticality.UNSTABLE.toString());
 
         // Now invert all booleans:
         issuesRecorder.setAggregatingResults(false);
