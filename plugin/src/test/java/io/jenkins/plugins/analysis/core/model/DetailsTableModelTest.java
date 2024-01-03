@@ -42,7 +42,7 @@ class DetailsTableModelTest extends AbstractDetailsModelTest {
             builder.setCategory("");
             Issue issue = builder.build();
             TableRow model = createRow(issue);
-            assertThat(model.formatProperty("category",issue.getCategory()))
+            assertThat(model.formatProperty("category", issue.getCategory()))
                     .isEqualTo("<a href=\"category.0/\">-</a>");
         }
     }
