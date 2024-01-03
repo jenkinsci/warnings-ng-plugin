@@ -636,7 +636,9 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      */
     public enum QualityGateCriticality {
         FAILURE("Fail the build"),
-        UNSTABLE("Mark the build as unstable");
+        UNSTABLE("Mark the build as unstable"),
+        PIPELINE_FAILURE("Fail the step and the build"),
+        PIPELINE_UNSTABLE("Mark the step and the build as unstable");
 
         private final String displayName;
 

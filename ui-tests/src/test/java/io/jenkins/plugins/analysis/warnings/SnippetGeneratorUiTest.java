@@ -118,7 +118,7 @@ public class SnippetGeneratorUiTest extends UiTest {
                 .setIgnoreQualityGate(true)
                 .setSourceCodeEncoding("otherText")
                 .addIssueFilter("Exclude types", "*toExclude*")
-                .addQualityGateConfiguration(1, QualityGateType.NEW, QualityGateCriticality.FAILURE)
+                .addQualityGateConfiguration(1, QualityGateType.NEW, QualityGateCriticality.PIPELINE_FAILURE)
                 .setToolWithPattern(JAVA_COMPILER, "firstText");
 
         String script = snippetGenerator.generateScript();
