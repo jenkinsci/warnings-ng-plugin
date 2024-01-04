@@ -24,6 +24,7 @@ import jenkins.tasks.SimpleBuildStep.LastBuildAction;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
 import io.jenkins.plugins.util.JenkinsFacade;
+import io.jenkins.plugins.util.QualityGateResult;
 
 /**
  * Controls the life cycle of the analysis results in a job. This action persists the results of a build and displays a
@@ -117,6 +118,11 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
     @Whitelisted
     public String getId() {
         return id;
+    }
+
+    @Whitelisted
+    public QualityGateResult getQualityGateResult() {
+        return getResult().getQualityGateResult();
     }
 
     /**

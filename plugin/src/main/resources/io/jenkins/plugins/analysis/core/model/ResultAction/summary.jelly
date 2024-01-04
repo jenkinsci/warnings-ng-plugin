@@ -28,10 +28,12 @@
 
       <j:choose>
         <j:when test="${size(s.errors) > 0}">
-          <fa:image-button label="${%Open log messages}" name="triangle-exclamation" tooltip="${%icon.error.tooltip}" url="${it.id}/info" class="fa-image-button-warning"/>
+          <fa:image-button label="${%Open log messages}" name="triangle-exclamation" tooltip="${%icon.error.tooltip}"
+                           url="${it.id}/info" class="fa-image-button-warning"/>
         </j:when>
         <j:otherwise>
-          <fa:image-button label="${%Open error messages}" name="circle-info" tooltip="${%icon.info.tooltip}" url="${it.id}/info"/>
+          <fa:image-button label="${%Open error messages}" name="circle-info" tooltip="${%icon.info.tooltip}"
+                           url="${it.id}/info"/>
         </j:otherwise>
       </j:choose>
 
@@ -81,19 +83,16 @@
             <t:buildLink jobName="${r.parent.displayName}" job="${r.parent}" number="${r.number}"/>
           </li>
         </j:if>
-        <c:qualityGate result="${it.qualityGateResult}" />
         <j:if test="${s.qualityGateStatus.name() != 'INACTIVE'}">
-          <li>
-            ${%Quality gate}: ${s.qualityGateStatus.description}
-            <j:if test="${s.resetQualityGateVisible}">
-              <span class="yui-button">
-                <button id="${it.id}-reset-reference"
-                        style="padding: 0.3em 0.5em; min-width: 0.20em; min-height: 0.20em" type="button"
-                        title="Reset quality gate so that next build will use this build as a reference.">Reset
-                </button>
-              </span>
-            </j:if>
-          </li>
+          <c:qualityGate result="${it.qualityGateResult}"/>
+          <j:if test="${s.resetQualityGateVisible}">
+            <span class="yui-button">
+              <button id="${it.id}-reset-reference"
+                      style="padding: 0.3em 0.5em; min-width: 0.20em; min-height: 0.20em" type="button"
+                      title="Reset quality gate so that next build will use this build as a reference.">Reset
+              </button>
+            </span>
+          </j:if>
         </j:if>
       </ul>
     </span>

@@ -53,11 +53,11 @@
 
   <f:block><l:icon alt="Healthy" class="icon-health-80plus icon-md"/></f:block>
   <f:entry title="${%Healthy Threshold}" description="${%description.healthy}" field="healthy">
-    <i:number/>
+    <f:number/>
   </f:entry>
   <f:block><l:icon alt="Healthy" class="icon-health-00to19 icon-md"/></f:block>
   <f:entry title="${%Unhealthy Threshold}" description="${%description.unhealthy}" field="unhealthy">
-    <i:number/>
+    <f:number/>
   </f:entry>
   <f:entry title="${%Health Severities}" description="${%description.health.severities}" field="minimumSeverity">
     <f:select default="LOW"/>
