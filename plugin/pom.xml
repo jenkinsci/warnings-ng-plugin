@@ -51,7 +51,7 @@
     <argLine>-Djava.awt.headless=true -Xmx1024m -Djenkins.test.timeout=1000 --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.util.concurrent=ALL-UNNAMED</argLine>
 
     <prism-api.version>1.29.0-8</prism-api.version>
-    <plugin-util-api.version>3.9.0-rc852.80b_65e3a_1549</plugin-util-api.version>
+    <plugin-util-api.version>3.9.0-rc853.384b_719b_9ff9</plugin-util-api.version>
 
   </properties>
 
