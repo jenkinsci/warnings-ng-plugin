@@ -36,6 +36,17 @@ class DetailsTableModelTest extends AbstractDetailsModelTest {
                 createExpectedFileName(issue), "/path/to/file-1:0000015");
     }
 
+    @Test
+    void shouldReturnClickableProperties() {
+        try (IssueBuilder builder = new IssueBuilder()) {
+            builder.setCategory("");
+            Issue issue = builder.build();
+            TableRow model = createRow(issue);
+            assertThat(model.formatProperty("category", issue.getCategory()))
+                    .isEqualTo("<a href=\"category.0/\">-</a>");
+        }
+    }
+
     private TableRow createRow(final Issue issue) {
         return new TableRow(createAgeBuilder(), createFileNameRenderer(), i -> DESCRIPTION, issue,
                 createJenkinsFacade());
