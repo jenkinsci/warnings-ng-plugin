@@ -65,6 +65,11 @@ public class WarningsQualityGate extends QualityGate {
         setCriticality(criticality);
     }
 
+    public boolean isUnstable() {
+        return getCriticality() == QualityGateCriticality.UNSTABLE
+                || getCriticality() == QualityGateCriticality.NOTE;
+    }
+
     /**
      * Sets the criticality of the quality gate.
      *
