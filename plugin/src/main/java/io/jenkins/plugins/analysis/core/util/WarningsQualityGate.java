@@ -41,7 +41,7 @@ public class WarningsQualityGate extends QualityGate {
      *         the type of the quality gate
      */
     @DataBoundConstructor
-    public WarningsQualityGate(final int threshold, final QualityGateType type) {
+    public WarningsQualityGate(final double threshold, final QualityGateType type) {
         super(threshold);
 
         this.type = type;
@@ -63,21 +63,6 @@ public class WarningsQualityGate extends QualityGate {
 
         this.type = type;
         setCriticality(criticality);
-    }
-
-    public int getIntegerThreshold() {
-        return Double.valueOf(getThreshold()).intValue();
-    }
-
-    /**
-     * Sets the threshold of the quality gate.
-     *
-     * @param threshold
-     *         the threshold of the quality gate
-     */
-    @DataBoundSetter
-    public void setIntegerThreshold(final int threshold) {
-        setThreshold(threshold);
     }
 
     /**
