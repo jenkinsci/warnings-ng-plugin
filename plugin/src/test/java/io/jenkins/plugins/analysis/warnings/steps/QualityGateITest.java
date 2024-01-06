@@ -10,6 +10,8 @@ import org.junitpioneer.jupiter.Issue;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
+import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
+import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.model.AbstractProject;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
@@ -25,6 +27,7 @@ import io.jenkins.plugins.analysis.core.util.WarningsQualityGate.QualityGateType
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.util.QualityGate.QualityGateCriticality;
 import io.jenkins.plugins.util.QualityGateEvaluator;
+import io.jenkins.plugins.util.QualityGateResult.QualityGateResultItem;
 import io.jenkins.plugins.util.QualityGateStatus;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
@@ -35,11 +38,32 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  *
  * @author Michaela Reitschuster
  */
-// TODO: add some tests for severity HIGH
 class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     private static final Map<Result, QualityGateStatus> RESULT_TO_STATUS_MAPPING
             = Maps.fixedSize.of(Result.UNSTABLE, QualityGateStatus.WARNING, Result.FAILURE, QualityGateStatus.FAILED);
     private static final String REPORT_FILE = "checkstyle-quality-gate.xml";
+
+    @Test
+    void shouldUseTwoQualityGates() {
+        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("checkstyle1.xml", "checkstyle2.xml");
+
+        job.setDefinition(new CpsFlowDefinition("node {\n"
+                + "  stage ('Integration Test') {\n"
+                + "         recordIssues tools: [checkStyle(pattern: '**/*issues.txt')],\n"
+                + "                qualityGates: [\n"
+                + "                    [threshold: 3, type: 'TOTAL', criticality: 'NOTE'],\n"
+                + "                    [threshold: 7, type: 'TOTAL', criticality: 'ERROR']]\n"
+                + "  }\n"
+                + "}", true));
+
+        AnalysisResult result = scheduleSuccessfulBuild(job);
+        assertThat(result).hasTotalSize(6);
+        assertThat(result).hasQualityGateStatus(QualityGateStatus.NOTE);
+
+        assertThat(result.getQualityGateResult().getResultItems()).hasSize(2)
+                .extracting(QualityGateResultItem::getStatus)
+                .containsExactly(QualityGateStatus.NOTE, QualityGateStatus.PASSED);
+    }
 
     /**
      * Verifies that the first build is always considered stable if the quality gate is set up for delta warnings - even

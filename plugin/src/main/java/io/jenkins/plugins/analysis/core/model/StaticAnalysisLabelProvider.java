@@ -17,8 +17,6 @@ import j2html.tags.DomContent;
 import org.jvnet.localizer.Localizable;
 import hudson.model.Run;
 
-import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
-
 import static j2html.TagCreator.*;
 
 /**
@@ -287,50 +285,6 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
 
     private ContainerTag emptyElementForDeprecatedMethod() {
         return div();
-    }
-
-    /**
-     * Returns the HTML text showing the result of the quality gate.
-     *
-     * @param qualityGateStatus
-     *         the status of the quality gate
-     *
-     * @return the legend of the trend chart
-     * @deprecated rendering of the summary is now done on the client side with the new model {@link SummaryModel}
-     */
-    @Deprecated
-    public DomContent getQualityGateResult(final QualityGateStatus qualityGateStatus) {
-        return emptyElementForDeprecatedMethod();
-    }
-
-    /**
-     * Returns the HTML text showing the result of the quality gate.
-     *
-     * @param qualityGateStatus
-     *         the status of the quality gate
-     * @param hasResetLink
-     *         determines whether the reset reference link is shown
-     *
-     * @return the legend of the trend chart
-     * @deprecated rendering of the summary is now done on the client side with the new model {@link SummaryModel}
-     */
-    @Deprecated
-    public DomContent getQualityGateResult(final QualityGateStatus qualityGateStatus, final boolean hasResetLink) {
-        return emptyElementForDeprecatedMethod();
-    }
-
-    /**
-     * Returns the HTML text showing a link to the reference build.
-     *
-     * @param referenceBuild
-     *         the reference build
-     *
-     * @return the legend of the trend chart
-     * @deprecated rendering of the summary is now done on the client side with the new model {@link SummaryModel}
-     */
-    @Deprecated
-    public DomContent getReferenceBuild(final Run<?, ?> referenceBuild) {
-        return emptyElementForDeprecatedMethod();
     }
 
     /**

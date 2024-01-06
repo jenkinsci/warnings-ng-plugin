@@ -42,8 +42,9 @@ class QualityGateTest extends SerializableTest<WarningsQualityGate> {
 
     @Override
     protected WarningsQualityGate createSerializable() {
-        var qualityGate = new WarningsQualityGate(1, QualityGateType.TOTAL);
+        var qualityGate = new WarningsQualityGate(QualityGateType.TOTAL);
         qualityGate.setCriticality(QualityGateCriticality.UNSTABLE);
+        qualityGate.setIntegerThreshold(1);
         return qualityGate;
     }
 }

@@ -35,15 +35,11 @@ public class WarningsQualityGate extends QualityGate {
     /**
      * Creates a new instance of {@link WarningsQualityGate}.
      *
-     * @param integerThreshold
-     *         the minimum number of issues that fails the quality gate
      * @param type
      *         the type of the quality gate
      */
     @DataBoundConstructor
-    public WarningsQualityGate(final int integerThreshold, final QualityGateType type) {
-        super(integerThreshold);
-
+    public WarningsQualityGate(final QualityGateType type) {
         this.type = type;
     }
 
@@ -59,9 +55,9 @@ public class WarningsQualityGate extends QualityGate {
      */
     public WarningsQualityGate(final int threshold, final QualityGateType type,
             final QualityGateCriticality criticality) {
-        super(threshold);
-
         this.type = type;
+
+        setIntegerThreshold(threshold);
         setCriticality(criticality);
     }
 

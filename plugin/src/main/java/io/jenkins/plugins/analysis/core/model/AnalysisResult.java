@@ -33,8 +33,6 @@ import io.jenkins.plugins.analysis.core.charts.JenkinsBuild;
 import io.jenkins.plugins.analysis.core.util.IssuesStatistics;
 import io.jenkins.plugins.analysis.core.util.IssuesStatisticsBuilder;
 import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
-import io.jenkins.plugins.analysis.core.util.WarningsQualityGate;
-import io.jenkins.plugins.analysis.core.util.WarningsQualityGate.QualityGateType;
 import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.forensics.blame.BlamesXmlStream;
 import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
@@ -285,8 +283,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
             totals = builder.build();
         }
         if (qualityGateResult == null && qualityGateStatus != null) {
-            qualityGateResult = new QualityGateResult();
-            qualityGateResult.add(new WarningsQualityGate(0, QualityGateType.TOTAL), qualityGateStatus, "n/a");
+            qualityGateResult = new QualityGateResult(qualityGateStatus);
         }
         return this;
     }
