@@ -1,0 +1,197 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ResultsSession buildId="2017-11-20" climode="true" execEnv="win32_x86_64" hasViols="true" id="1512632716666" lang="en_US" machine="leto" prjModule="ATM" project="" tag="${scontrol_branch}-win32_x86_64" time="2017-11-20T14:03:09+01:00" toolId="c++test" toolName="DTP Engine for C/C++" toolVer="10.3.4" user="mlyko">
+   <TestConfig machine="leto" name="CRules" pseudoUrl="builtin://CRules" user="mlyko" />
+   <Authors>
+      <Author id="dev1" name="mlyko" />
+   </Authors>
+   <Analyzers>
+      <Analyzer id="com.parasoft.xtest.cpp.analyzer.static.code" name="Parasoft C/C++ Code Analyzer" ver="10.3.4" />
+      <Analyzer id="xtest" name="Scope Analyzer" ver="1" />
+      <Analyzer id="com.parasoft.xtest.cpp.analyzer.static.pattern" name="Parasoft C/C++ Static Analyzer" ver="10.3.4" />
+      <Analyzer id="com.parasoft.xtest.cpp.analyzer.static.flow" name="Parasoft C/C++ Flow Analyzer" ver="10.3.4" />
+      <Analyzer id="com.parasoft.xtest.cpp.analyzer.static.global" name="Parasoft C/C++ Global Static Analyzer" ver="10.3.4" />
+   </Analyzers>
+   <VersionInfos>
+      <StorageInfo ownerId="" resultId="ISetupResult" ver="1" ver10x="1" />
+      <StorageInfo ownerId="com.parasoft.xtest.checkers.api.standards" resultId="IMetricsViolation" ver="2" ver10x="1" />
+      <StorageInfo ownerId="" resultId="IExecutionViolation" ver="1" ver10x="1" />
+      <StorageInfo ownerId="com.parasoft.xtest.checkers.api.standards" resultId="IDupCodeViolation" ver="2" ver10x="1" />
+      <StorageInfo ownerId="com.parasoft.xtest.checkers.api.standards" resultId="IFlowAnalysisViolation" ver="2" ver10x="1" />
+      <StorageInfo ownerId="com.parasoft.xtest.checkers.api.standards" resultId="ICodingStandardsViolation" ver="2" ver10x="1" />
+      <StorageInfo ownerId="" resultId="IUnitTestViolation" ver="1" ver10x="1" />
+   </VersionInfos>
+   <Goals tsks="5">
+      
+   </Goals>
+   <Scope>
+      <Repositories />
+      <Locations>
+         <Loc auth="mlyko" hash="-318977119" locRef="1" projId="ATM" projPath="/ATM" project="ATM" resProjPath="ATM.cxx" totLns="52" uri="file://leto/D:/apps/dtp/latest/x64/cpptest/examples/ATM/ATM.cxx" />
+         <Loc auth="mlyko" hash="-1422048276" locRef="2" projId="ATM" projPath="/ATM" project="ATM" resProjPath="Bank.cxx" totLns="40" uri="file://leto/D:/apps/dtp/latest/x64/cpptest/examples/ATM/Bank.cxx" />
+         <Loc auth="mlyko" hash="-1798372520" locRef="3" projId="ATM" projPath="/ATM" project="ATM" resProjPath="BaseDisplay.cxx" totLns="18" uri="file://leto/D:/apps/dtp/latest/x64/cpptest/examples/ATM/BaseDisplay.cxx" />
+         <Loc auth="mlyko" hash="-1636172050" locRef="4" projId="ATM" projPath="/ATM" project="ATM" resProjPath="Account.cxx" totLns="14" uri="file://leto/D:/apps/dtp/latest/x64/cpptest/examples/ATM/Account.cxx" />
+         <Loc auth="mlyko" hash="785146300" locRef="5" projId="ATM" projPath="/ATM" project="ATM" resProjPath="include/ATM.hxx" totLns="39" uri="file://leto/D:/apps/dtp/latest/x64/cpptest/examples/ATM/include/ATM.hxx" />
+         <Loc auth="mlyko" hash="2036829073" locRef="6" projId="ATM" projPath="/ATM" project="ATM" resProjPath="include/Account.hxx" totLns="55" uri="file://leto/D:/apps/dtp/latest/x64/cpptest/examples/ATM/include/Account.hxx" />
+         <Loc auth="mlyko" hash="-2070703729" locRef="7" projId="ATM" projPath="/ATM" project="ATM" resProjPath="include/BaseDisplay.hxx" totLns="16" uri="file://leto/D:/apps/dtp/latest/x64/cpptest/examples/ATM/include/BaseDisplay.hxx" />
+         <Loc auth="mlyko" hash="-118678391" locRef="8" projId="ATM" projPath="/ATM" project="ATM" resProjPath="include/Bank.hxx" totLns="25" uri="file://leto/D:/apps/dtp/latest/x64/cpptest/examples/ATM/include/Bank.hxx" />
+      </Locations>
+   </Scope>
+   
+  <SetupProblems />
+
+   <CodingStandards ownerId="com.parasoft.xtest.checkers.api.standards" time="0:00:55">
+      <Projects>
+         <Project bdCheckedFiles="0" bdTotalFiles="0" checkedFiles="8" checkedLns="259" name="ATM" qfixErrs="0" suppErrs="0" totErrs="5" totFiles="8" totLns="259" />
+      </Projects>
+      
+      
+      
+      <Rules>
+         <CategoriesList>
+            <Category authTot="0;" authUrg="0;" desc="Flow Analysis" name="BD" rules="82" total="0">
+               <Category authTot="0;" authUrg="0;" desc="Incorrect API usage" name="BD-API" rules="6" total="0" />
+               <Category authTot="0;" authUrg="0;" desc="Miscellaneous" name="BD-MISC" rules="2" total="0" />
+               <Category authTot="0;" authUrg="0;" desc="Possible Bugs" name="BD-PB" rules="41" total="0" />
+               <Category authTot="0;" authUrg="0;" desc="Resources" name="BD-RES" rules="5" total="0" />
+               <Category authTot="0;" authUrg="0;" desc="Security" name="BD-SECURITY" rules="12" total="0" />
+               <Category authTot="0;" authUrg="0;" desc="Containers" name="BD-CO" rules="3" total="0" />
+               <Category authTot="0;" authUrg="0;" desc="Threads &amp; Synchronization" name="BD-TRS" rules="13" total="0" />
+            </Category>
+            <Category authTot="0;" authUrg="0;" desc="Code Duplication Detection" name="CDD" rules="4" total="0" />
+            <Category authTot="1;" authUrg="1;" desc="Coding Conventions" name="CODSTA" rules="343" total="1">
+               <Category authTot="0;" authUrg="0;" desc="Coding Conventions for C++" name="CODSTA-CPP" rules="94" total="0" />
+               <Category authTot="0;" authUrg="0;" desc="Coding Conventions for Modern C++" name="CODSTA-MCPP" rules="26" total="0" />
+            </Category>
+            <Category authTot="0;" authUrg="0;" desc="Comments" name="COMMENT" rules="13" total="0" />
+            <Category authTot="0;" authUrg="0;" desc="Exceptions" name="EXCEPT" rules="18" total="0" />
+            <Category authTot="0;" authUrg="0;" desc="Formatting" name="FORMAT" rules="47" total="0" />
+            <Category authTot="0;" authUrg="0;" desc="Global Static Analysis" name="GLOBAL" rules="15" total="0" />
+            <Category authTot="0;" authUrg="0;" desc="Initialization" name="INIT" rules="18" total="0" />
+            <Category authTot="0;" authUrg="0;" desc="Joint Strike Fighter" name="JSF" rules="270" total="0" />
+            <Category authTot="0;" authUrg="0;" desc="Metric" name="METRIC" rules="49" total="0" />
+            <Category authTot="0;" authUrg="0;" desc="Metrics" name="METRICS" rules="43" total="0" />
+            <Category authTot="0;" authUrg="0;" desc="MISRA C" name="MISRA" rules="60" total="0" />
+            <Category authTot="3;" authUrg="3;" desc="MISRA C 2004" name="MISRA2004" rules="216" total="3" />
+            <Category authTot="0;" authUrg="0;" desc="MISRA C++ 2008" name="MISRA2008" rules="313" total="0" />
+            <Category authTot="0;" authUrg="0;" desc="MISRA C 2012" name="MISRA2012" rules="327" total="0">
+               <Category authTot="0;" authUrg="0;" desc="MISRA C 2012 Rules" name="MISRA2012-RULE" rules="287" total="0" />
+               <Category authTot="0;" authUrg="0;" desc="MISRA C 2012 Directives" name="MISRA2012-DIR" rules="40" total="0" />
+            </Category>
+            <Category authTot="0;" authUrg="0;" desc="Memory and Resource Management" name="MRM" rules="53" total="0" />
+            <Category authTot="0;" authUrg="0;" desc="Naming Conventions" name="NAMING" rules="94" total="0">
+               <Category authTot="0;" authUrg="0;" desc="Hungarian Notation" name="NAMING-HN" rules="44" total="0" />
+            </Category>
+            <Category authTot="0;" authUrg="0;" desc="Object Oriented" name="OOP" rules="56" total="0" />
+            <Category authTot="1;" authUrg="1;" desc="Optimization" name="OPT" rules="41" total="1" />
+            <Category authTot="0;" authUrg="0;" desc="Parser diagnostics" name="PARSER" rules="2" total="0" />
+            <Category authTot="0;" authUrg="0;" desc="Possible Bugs" name="PB" rules="73" total="0" />
+            <Category authTot="0;" authUrg="0;" desc="Physical File Organization" name="PFO" rules="9" total="0" />
+            <Category authTot="0;" authUrg="0;" desc="Portability" name="PORT" rules="26" total="0" />
+            <Category authTot="0;" authUrg="0;" desc="Preprocessor" name="PREPROC" rules="19" total="0" />
+            <Category authTot="0;" authUrg="0;" desc="Qt Best Practices" name="QT" rules="18" total="0" />
+            <Category authTot="0;" authUrg="0;" desc="Security" name="SECURITY" rules="49" total="0" />
+            <Category authTot="0;" authUrg="0;" desc="STL Best Practices" name="STL" rules="42" total="0" />
+            <Category authTot="0;" authUrg="0;" desc="Template" name="TEMPL" rules="14" total="0" />
+         </CategoriesList>
+         <RulesList>
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="CODSTA" desc="Avoid internal or external name conflict with a C++ reserved word" id="CODSTA-39" sev="1" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="CODSTA" desc="Do not use break in for loops" id="CODSTA-08" sev="2" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="CODSTA" desc="Do not declare the size of an array when the array is passed into a function as a parameter" id="CODSTA-15" sev="2" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="CODSTA" desc="Array elements shall be accessed by the array operator [ ]" id="CODSTA-01" sev="3" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="CODSTA" desc="Do not cast pointers to functions to pointers to primitive types" id="CODSTA-09" sev="3" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="CODSTA" desc="Storage type modifiers shall be associated with the type, not the variable or the function" id="CODSTA-10" sev="3" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="CODSTA" desc="Never convert consts to non-consts" id="CODSTA-14" sev="3" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="1;" authUrg="1;" cat="CODSTA" desc="Always provide a default branch for switch statements" id="CODSTA-35" sev="3" total="1" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="INIT" desc="Initialize all pointer variables" id="INIT-04" sev="2" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="INIT" desc="Objects with external linkage should not be initialized in a header file" id="INIT-01" sev="3" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="INIT" desc="Avoid initialization order problems across translation units by replacing non-local static objects with local static objects" id="INIT-12" sev="3" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="METRICS" desc="Follow the Cyclomatic Complexity limit of 10" id="METRICS-18" sev="3" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="MISRA2004" desc="Don't write code that depends on the order of evaluation of function arguments" id="MISRA2004-12_2_b" sev="1" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="1;" authUrg="1;" cat="MISRA2004" desc="Avoid implicit conversions between signed and unsigned integer types" id="MISRA2004-10_1_a" sev="3" total="1" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="MISRA2004" desc="Avoid implicit conversions between signed and unsigned integer types" id="MISRA2004-10_1_h" sev="3" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="MISRA2004" desc="A cast should not convert a pointer type to an integral type" id="MISRA2004-11_3_a" sev="3" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="MISRA2004" desc="The value of an expression shall be the same under any order of evaluation that the standard permits" id="MISRA2004-12_2_a" sev="3" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="MISRA2004" desc="Don't write code that depends on the order of evaluation of function designator and function arguments" id="MISRA2004-12_2_c" sev="3" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="MISRA2004" desc="Don't write code that depends on the order of evaluation of expression that involves a function call" id="MISRA2004-12_2_d" sev="3" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="MISRA2004" desc="Between sequence points an object shall have its stored value modified at most once by the evaluation of an expression" id="MISRA2004-12_2_e" sev="3" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="MISRA2004" desc="Do not use more than one volatile in one expression" id="MISRA2004-12_2_f" sev="3" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="MISRA2004" desc="Don't write code that depends on the order of evaluation of function calls" id="MISRA2004-12_2_g" sev="3" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="MISRA2004" desc="The operand of the sizeof operator shall not contain any expression which has side effects" id="MISRA2004-12_3" sev="3" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="1;" authUrg="1;" cat="MISRA2004" desc="Assignment operators shall not be used in expressions that yield a Boolean value" id="MISRA2004-13_1" sev="3" total="1" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="MISRA2004" desc="Floating-point expressions shall not be tested for equality or inequality" id="MISRA2004-13_3" sev="3" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="MISRA2004" desc="The controlling expression of a for statement shall not contain any objects of floating type" id="MISRA2004-13_4" sev="3" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="MISRA2004" desc="The three expressions of a for statement shall be concerned only with loop control" id="MISRA2004-13_5" sev="3" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="MISRA2004" desc="Do not modify for loop counter within a body of the loop" id="MISRA2004-13_6" sev="3" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="MISRA2004" desc="The goto statement shall not be used" id="MISRA2004-14_4" sev="3" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="MISRA2004" desc="A function shall have a single point of exit at the end of the function" id="MISRA2004-14_7" sev="3" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="1;" authUrg="1;" cat="MISRA2004" desc="'if' and 'else' should be followed by a compound statement" id="MISRA2004-14_9" sev="3" total="1" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="MISRA2004" desc="An unconditional break statement shall terminate every non-empty case clause" id="MISRA2004-15_2" sev="3" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="MISRA2004" desc="A pointer parameter in a function prototype should be declared as pointer to const if the pointer is not used to modify the addressed object" id="MISRA2004-16_7" sev="3" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="MISRA2004" desc="Do not redefine reserved words" id="MISRA2004-20_1_b" sev="3" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="MISRA2004" desc="Identifier declared in a local or function prototype scope shall not hide an identifier declared in a global or namespace scope" id="MISRA2004-5_2_a" sev="3" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="MISRA2004" desc="Identifiers declared in an inner local scope should not hide identifiers declared in an outer local scope" id="MISRA2004-5_2_b" sev="3" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="MISRA2004" desc="Do not reuse typedef names" id="MISRA2004-5_3_a" sev="3" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="MISRA2004" desc="Do not reuse typedef names as a typedef name" id="MISRA2004-5_3_b" sev="3" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="MISRA2004" desc="There shall be no definitions of objects or functions in a header file" id="MISRA2004-8_5" sev="3" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="MRM" desc="Provide error handling for file opening errors right next to the call to fopen" id="MRM-39" sev="2" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="MRM" desc="Use allocation by declaration rather than by new or malloc" id="MRM-30" sev="3" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="NAMING" desc="Functions that begin with 'is' should return boolean values" id="NAMING-20" sev="3" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="NAMING" desc="Names of parameters in declaration and definition should be identical" id="NAMING-36" sev="3" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="OPT" desc="Eliminate unused parameters" id="OPT-03" sev="2" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="OPT" desc="If a file-level static variable is used/referenced in one function only then include that variable in the function itself" id="OPT-11" sev="3" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="1;" authUrg="1;" cat="OPT" desc="Declare member variables in the descending size order" id="OPT-13" sev="3" total="1" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="OPT" desc="Avoid unused local variables" id="OPT-02" sev="4" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="OPT" desc="Avoid unnecessary local variables" id="OPT-06" sev="4" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="PB" desc="Properly terminate character strings" id="PB-21" sev="1" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="PB" desc="Do not cast a signed char to an unsigned int" id="PB-12" sev="3" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="PB" desc="Don't assign the dividend of two integers to a floating-point type" id="PB-15" sev="3" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="PB" desc="Avoid assigning out-of-range value to char type" id="PB-16" sev="3" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="PB" desc="Avoid assigning out-of-range value to unsigned char type" id="PB-17" sev="3" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="PFO" desc="Use multiple include guards" id="PFO-02" sev="3" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="PORT" desc="Don't use hard coded value of offset in structures" id="PORT-03" sev="2" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="PORT" desc="Do not cast an int pointer to a long pointer" id="PORT-11" sev="2" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="PORT" desc="Do not pass long casted to an int in function call" id="PORT-07" sev="3" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="PREPROC" desc="Don't use macros in include statement" id="PREPROC-02" sev="2" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="PREPROC" desc="In a macro function, use parentheses before and after multiplication or division" id="PREPROC-05" sev="2" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="PREPROC" desc="Do not allow relative path names in #include statements" id="PREPROC-06" sev="2" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="PREPROC" desc="Don't define part of statement" id="PREPROC-04" sev="4" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="SECURITY" desc="Never use gets()" id="SECURITY-16" sev="1" total="0" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="0;" authUrg="0;" cat="SECURITY" desc="Do not use scanf and fscanf functions without specifying variable size in format string" id="SECURITY-14" sev="2" total="0" />
+         </RulesList>
+         <SeverityList>
+            <Severity authTot="5;" authUrg="5;" id="3" total="5" />
+         </SeverityList>
+      </Rules>
+      
+  <Supps />
+
+      
+  <StdViols>
+    <StdViol msg="Assignment to 'myCurrentAccount' used in expression that yield a Boolean value" ln="12" locFile="/ATM/ATM.cxx" locStartln="12" sev="3" auth="mlyko" locRef="1" rule="MISRA2004-13_1" lnHash="1719088503" tool="c++test" lineHash="1719088503" locStartPos="11" analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" risk="Undefined" lang="cpp" locEndPos="12" locType="sr" urgent="true" prio="Not Defined" hash="-318977119" locEndLn="12" goals="1," />
+    <StdViol msg="Conditional statement 'if' in a function 'fillUserRequest' should be followed by a block" ln="20" locFile="/ATM/ATM.cxx" locStartln="20" sev="3" auth="mlyko" locRef="1" rule="MISRA2004-14_9" lnHash="-1069739612" tool="c++test" lineHash="-1069739612" locStartPos="4" analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" risk="Undefined" lang="cpp" locEndPos="5" locType="sr" urgent="true" prio="Not Defined" hash="-318977119" locEndLn="20" goals="1," />
+    <StdViol msg="Missing default branch in switch statement" ln="21" locFile="/ATM/ATM.cxx" locStartln="21" sev="3" auth="mlyko" locRef="1" rule="CODSTA-35" lnHash="1595945398" tool="c++test" lineHash="1595945398" locStartPos="8" analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" risk="Undefined" lang="cpp" locEndPos="9" locType="sr" urgent="true" prio="Not Defined" hash="-318977119" locEndLn="21" goals="1," />
+    <StdViol msg="Implicit conversion between signed and unsigned type shall not be used" ln="18" locFile="/ATM/Bank.cxx" locStartln="18" sev="3" auth="mlyko" locRef="2" rule="MISRA2004-10_1_a" lnHash="-1454903092" tool="c++test" lineHash="-1454903092" locStartPos="8" analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" risk="Undefined" lang="cpp" locEndPos="9" locType="sr" urgent="true" prio="Not Defined" hash="-1422048276" locEndLn="18" goals="1," />
+    <StdViol msg="Members 'myPassword' of class 'Account' are declared in suboptimal order for memory layout" ln="7" locFile="/ATM/include/Account.hxx" locStartln="7" sev="3" auth="mlyko" locRef="6" rule="OPT-13" lnHash="1462923109" tool="c++test" lineHash="1462923109" locStartPos="6" analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" risk="Undefined" lang="cpp" locEndPos="7" locType="sr" urgent="true" prio="Not Defined" hash="2036829073" locEndLn="7" goals="1," />
+  </StdViols>
+
+      <TestedFilesDetails>
+         <Total name="Total (Suppressed)" supp="0" total="5">
+            <Project name="ATM" supp="0" total="5">
+               <Res loc="/ATM/ATM.cxx" locRef="1" locType="sr" name="ATM.cxx" supp="0" total="3" />
+               <Res loc="/ATM/Bank.cxx" locRef="2" locType="sr" name="Bank.cxx" supp="0" total="1" />
+               <Res loc="/ATM/BaseDisplay.cxx" locRef="3" locType="sr" name="BaseDisplay.cxx" supp="0" total="0" />
+               <Res loc="/ATM/Account.cxx" locRef="4" locType="sr" name="Account.cxx" supp="0" total="0" />
+               <Res name="include" supp="0" total="1">
+                  <Res loc="/ATM/include/ATM.hxx" locRef="5" locType="sr" name="ATM.hxx" supp="0" total="0" />
+                  <Res loc="/ATM/include/Account.hxx" locRef="6" locType="sr" name="Account.hxx" supp="0" total="1" />
+                  <Res loc="/ATM/include/BaseDisplay.hxx" locRef="7" locType="sr" name="BaseDisplay.hxx" supp="0" total="0" />
+                  <Res loc="/ATM/include/Bank.hxx" locRef="8" locType="sr" name="Bank.hxx" supp="0" total="0" />
+               </Res>
+            </Project>
+         </Total>
+      </TestedFilesDetails>
+   </CodingStandards>
+   <Statistics>
+      
+   </Statistics>
+</ResultsSession>
