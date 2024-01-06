@@ -367,7 +367,7 @@
     <dependency>
       <groupId>com.parasoft</groupId>
       <artifactId>parasoft-findings</artifactId>
-      <version>10.5.0</version>
+      <version>10.7.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -625,10 +625,6 @@
     <repository>
       <id>repo.jenkins-ci.org</id>
       <url>https://repo.jenkins-ci.org/public/</url>
-    </repository>
-    <repository>
-      <id>repo.parasoft.com</id>
-      <url>https://github.com/jenkinsci/parasoft-findings-plugin/tree/master/repository</url>
     </repository>
     <repository>
       <id>incrementals.jenkins-ci.org</id>
