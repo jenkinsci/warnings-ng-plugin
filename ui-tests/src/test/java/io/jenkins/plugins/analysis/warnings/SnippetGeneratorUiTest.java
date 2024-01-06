@@ -130,7 +130,7 @@ public class SnippetGeneratorUiTest extends UiTest {
         assertThat(script).contains("filters: [excludeType('*toExclude*')]");
         assertThat(script).contains("ignoreFailedBuilds: false");
         assertThat(script).contains("ignoreQualityGate: true");
-        assertThat(script).contains("qualityGates: [[criticality: 'FAILURE', integerThreshold: 1, type: 'NEW']]");
+        assertThat(script).contains("qualityGates: [[criticality: 'FAILURE', integerThreshold: 1, threshold: 1.0, type: 'NEW']]");
 
         assertThat(script).contains("pattern: 'firstText'");
         assertThat(script).contains("sourceCodeEncoding: 'otherText'");

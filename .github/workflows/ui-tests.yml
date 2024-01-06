@@ -13,13 +13,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Set up JDK 11
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '21'
           check-latest: true
           cache: 'maven'
+      - name: Set up Maven
+        uses: stCarolas/setup-maven@v4.5
+        with:
+          maven-version: 3.9.6
       - name: Build warnings plugin and download dependencies
         run: mvn -V --color always -ntp verify -Pskip --file plugin/pom.xml -Dgpg.skip
       - name: Run UI tests for the details tabs
@@ -33,13 +37,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Set up JDK 11
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '21'
           check-latest: true
           cache: 'maven'
+      - name: Set up Maven
+        uses: stCarolas/setup-maven@v4.5
+        with:
+          maven-version: 3.9.6
       - name: Build warnings plugin and download dependencies
         run: mvn -V --color always -ntp verify -Pskip --file plugin/pom.xml -Dgpg.skip
       - name: Run UI tests for the dashboard view
@@ -53,13 +61,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Set up JDK 11
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '21'
           check-latest: true
           cache: 'maven'
+      - name: Set up Maven
+        uses: stCarolas/setup-maven@v4.5
+        with:
+          maven-version: 3.9.6
       - name: Build warnings plugin and download dependencies
         run: mvn -V --color always -ntp verify -Pskip --file plugin/pom.xml -Dgpg.skip
       - name: Run UI tests for the freestyle configuration
@@ -73,13 +85,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Set up JDK 11
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '21'
           check-latest: true
           cache: 'maven'
+      - name: Set up Maven
+        uses: stCarolas/setup-maven@v4.5
+        with:
+          maven-version: 3.9.6
       - name: Build warnings plugin and download dependencies
         run: mvn -V --color always -ntp verify -Pskip --file plugin/pom.xml -Dgpg.skip
       - name: Run UI tests for the pipeline snippet configurator
@@ -93,13 +109,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Set up JDK 11
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '21'
           check-latest: true
           cache: 'maven'
+      - name: Set up Maven
+        uses: stCarolas/setup-maven@v4.5
+        with:
+          maven-version: 3.9.6
       - name: Build warnings plugin and download dependencies
         run: mvn -V --color always -ntp verify -Pskip --file plugin/pom.xml -Dgpg.skip
       - name: Run UI tests for Jenkins' global configuration
@@ -113,13 +133,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Set up JDK 11
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '21'
           check-latest: true
           cache: 'maven'
+      - name: Set up Maven
+        uses: stCarolas/setup-maven@v4.5
+        with:
+          maven-version: 3.9.6
       - name: Build warnings plugin and download dependencies
         run: mvn -V --color always -ntp verify -Pskip --file plugin/pom.xml -Dgpg.skip
       - name: Run UI tests for the issues column
@@ -133,13 +157,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Set up JDK 11
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '21'
           check-latest: true
           cache: 'maven'
+      - name: Set up Maven
+        uses: stCarolas/setup-maven@v4.5
+        with:
+          maven-version: 3.9.6
       - name: Build warnings plugin and download dependencies
         run: mvn -V --color always -ntp verify -Pskip --file plugin/pom.xml -Dgpg.skip
       - name: Run UI tests for the trend charts
@@ -153,13 +181,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Set up JDK 11
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '21'
           check-latest: true
           cache: 'maven'
+      - name: Set up Maven
+        uses: stCarolas/setup-maven@v4.5
+        with:
+          maven-version: 3.9.6
       - name: Build warnings plugin and download dependencies
         run: mvn -V --color always -ntp verify -Pskip --file plugin/pom.xml -Dgpg.skip
       - name: Run miscellaneous UI tests of the warnings plugin
