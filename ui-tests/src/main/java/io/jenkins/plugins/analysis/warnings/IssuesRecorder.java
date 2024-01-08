@@ -37,6 +37,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     private final Control sourceCodeEncoding = control("sourceCodeEncoding");
     private final Control sourceDirectories = findRepeatableAddButtonFor("sourceDirectories");
     private final Control skipBlames = control("skipBlames");
+    private final Control skipPostProcessing = control("skipPostProcessing");
     private final Control ignoreFailedBuilds = control("ignoreFailedBuilds");
     private final Control failOnError = control("failOnError");
     private final Control skipPublishingChecks = control("skipPublishingChecks");
@@ -188,7 +189,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     }
 
     /**
-     * Returns whether the report results is in logger output.  
+     * Returns whether the report results is in logger output.
      *
      * @return {@code true} then the report logging of each static analysis tool is muted
      *         {@code false} then reports logging goes to loghandler output
@@ -215,13 +216,12 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
         return scm.get();
     }
 
-    /**
-     * Returns whether SCM blaming should be disabled.
-     *
-     * @return {@code true} if SCM blaming should be disabled
-     */
     public boolean isSkipBlames() {
         return isChecked(skipBlames);
+    }
+
+    public boolean isSkipPostProcessing() {
+        return isChecked(skipPostProcessing);
     }
 
     public boolean isIgnoringFailedBuilds() {
@@ -375,7 +375,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     }
 
     /**
-     * Determines whether the report results will go to logger output. 
+     * Determines whether the report results will go to logger output.
      *
      * @param quiet
      *         if {@code true} then the report logging of each static analysis tool is muted
@@ -414,6 +414,20 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      */
     public IssuesRecorder setSkipBlames(final boolean blameDisabled) {
         skipBlames.check(blameDisabled);
+
+        return this;
+    }
+
+    /**
+     * Determines whether post-processing should be disabled or not.
+     *
+     * @param skipPostProcessing
+     *         {@code true} if post-processing should be disabled, {@code false} otherwise
+     *
+     * @return this recorder
+     */
+    public IssuesRecorder setSkipPostProcessing(final boolean skipPostProcessing) {
+        this.skipPostProcessing.check(skipPostProcessing);
 
         return this;
     }

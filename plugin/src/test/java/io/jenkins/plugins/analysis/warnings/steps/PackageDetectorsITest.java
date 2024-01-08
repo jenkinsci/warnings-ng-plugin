@@ -42,7 +42,7 @@ class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      * in the expected HTML output.
      */
     @Test
-    @org.jvnet.hudson.test.Issue("JENKINS-58538")
+    @org.junitpioneer.jupiter.Issue("JENKINS-58538")
     void shouldShowFolderDistributionRatherThanPackageDistribution() {
         FreeStyleProject project = createFreeStyleProject();
 
@@ -311,9 +311,6 @@ class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(logOutput).contains(returnExpectedNumberOfResolvedPackageNames(6));
     }
 
-    /**
-     * Verifies that various packages (Java) are handled correctly.
-     */
     @Test
     void shouldDetectVariousPackagesForJavaFiles() {
         ResultAction action = buildProject(
@@ -330,14 +327,37 @@ class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(result.getIssues().getPackages()).containsExactly(
                 "edu.hm.hafner.analysis._123.int.naming.structure", "-");
 
-        Map<String, Long> totalByPacakgeName = collectPackageNames(result);
-        assertThat(totalByPacakgeName).hasSize(2);
-        assertThat(totalByPacakgeName.get("edu.hm.hafner.analysis._123.int.naming.structure")).isEqualTo(1L);
-        assertThat(totalByPacakgeName.get("-")).isEqualTo(5L);
+        Map<String, Long> totalByPackageName = collectPackageNames(result);
+        assertThat(totalByPackageName).hasSize(2);
+        assertThat(totalByPackageName.get("edu.hm.hafner.analysis._123.int.naming.structure")).isEqualTo(1L);
+        assertThat(totalByPackageName.get("-")).isEqualTo(5L);
 
         String consoleLog = getConsoleLog(result);
         assertThat(consoleLog).contains(DEFAULT_DEBUG_LOG_LINE);
         assertThat(consoleLog).contains(returnExpectedNumberOfResolvedPackageNames(6));
+    }
+
+    @Test
+    void shouldSkipPackageDetection() {
+        FreeStyleProject project = createJobWithWorkspaceFiles(
+                PACKAGE_WITH_FILES_JAVA + "eclipseForJavaVariousClasses.txt",
+                PACKAGE_WITH_FILES_JAVA + "SampleClassWithPackage.java",
+                PACKAGE_WITH_FILES_JAVA + "SampleClassWithoutPackage.java",
+                PACKAGE_WITH_FILES_JAVA + "SampleClassWithUnconventionalPackageNaming.java",
+                PACKAGE_WITH_FILES_JAVA + "SampleClassWithBrokenPackageNaming.java");
+        var recorder = enableGenericWarnings(project, new Eclipse());
+        recorder.setSkipPostProcessing(true);
+
+        Run<?, ?> build = buildSuccessfully(project);
+        ResultAction action = getResultAction(build);
+
+        AnalysisResult result = action.getResult();
+        assertThat(result.getIssues()).hasSize(6);
+        assertThat(result.getIssues().getPackages()).containsExactly("-");
+
+        String consoleLog = getConsoleLog(result);
+        assertThat(consoleLog).doesNotContain(DEFAULT_DEBUG_LOG_LINE);
+        assertThat(consoleLog).contains("Skipping post processing");
     }
 
     private String returnExpectedNumberOfResolvedPackageNames(final int expectedNumberOfResolvedPackageNames) {

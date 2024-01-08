@@ -118,7 +118,7 @@ class TaskScannerTest extends ResourceTest {
      *
      * @see <a href="https://issues.jenkins-ci.org/browse/JENKINS-64622">Issue 64622</a>
      */
-    @Test @org.jvnet.hudson.test.Issue("JENKINS-64622")
+    @Test @org.junitpioneer.jupiter.Issue("JENKINS-64622")
     void shouldHandleEmptyMatchWithRegExp() {
         Report tasks = new TaskScannerBuilder()
                 .setHighTasks("(a)?(b)?.*")
@@ -134,7 +134,7 @@ class TaskScannerTest extends ResourceTest {
      *
      * @see <a href="https://issues.jenkins-ci.org/browse/JENKINS-22744">Issue 22744</a>
      */
-    @Test @org.jvnet.hudson.test.Issue("JENKINS-22744")
+    @Test @org.junitpioneer.jupiter.Issue("JENKINS-22744")
     void issue22744() {
         Report tasks = new TaskScannerBuilder()
                 .setHighTasks("FIXME")

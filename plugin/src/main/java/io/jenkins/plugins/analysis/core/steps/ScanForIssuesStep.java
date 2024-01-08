@@ -28,6 +28,7 @@ import hudson.model.TaskListener;
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.IssuesScanner.BlameMode;
+import io.jenkins.plugins.analysis.core.steps.IssuesScanner.PostProcessingMode;
 import io.jenkins.plugins.prism.SourceCodeDirectory;
 
 /**
@@ -41,6 +42,7 @@ public class ScanForIssuesStep extends Step {
     private String sourceDirectory = StringUtils.EMPTY;
     private Set<SourceCodeDirectory> sourceDirectories = new HashSet<>(); // @since 9.11.0
     private boolean isBlameDisabled;
+    private boolean skipPostProcessing; // @since 10.6.0: by default, post-processing will be enabled
     private boolean quiet;
 
     private List<RegexpFilter> filters = new ArrayList<>();
@@ -153,6 +155,20 @@ public class ScanForIssuesStep extends Step {
         // do nothing
     }
 
+    /**
+     * Returns whether post-processing of the issues should be disabled.
+     *
+     * @return {@code true} if post-processing of the issues should be disabled.
+     */
+    public boolean isSkipPostProcessing() {
+        return skipPostProcessing;
+    }
+
+    @DataBoundSetter
+    public void setSkipPostProcessing(final boolean skipPostProcessing) {
+        this.skipPostProcessing = skipPostProcessing;
+    }
+
     @CheckForNull
     public String getSourceCodeEncoding() {
         return sourceCodeEncoding;
@@ -228,6 +244,7 @@ public class ScanForIssuesStep extends Step {
         private final Tool tool;
         private final String sourceCodeEncoding;
         private final boolean isBlameDisabled;
+        private final boolean skipPostProcessing;
         private final List<RegexpFilter> filters;
         private final Set<String> sourceDirectories;
         private final String scm;
@@ -250,6 +267,7 @@ public class ScanForIssuesStep extends Step {
             filters = step.getFilters();
             sourceDirectories = step.getAllSourceDirectories();
             scm = step.getScm();
+            skipPostProcessing = step.isSkipPostProcessing();
             quiet = step.isQuiet();
         }
 
@@ -261,7 +279,9 @@ public class ScanForIssuesStep extends Step {
             IssuesScanner issuesScanner = new IssuesScanner(tool, filters,
                     getCharset(sourceCodeEncoding), workspace, sourceDirectories,
                     getRun(), new FilePath(getRun().getRootDir()), listener,
-                    scm, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED, quiet);
+                    scm, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED,
+                    skipPostProcessing ? PostProcessingMode.DISABLED : PostProcessingMode.ENABLED,
+                    quiet);
 
             return issuesScanner.scan();
         }

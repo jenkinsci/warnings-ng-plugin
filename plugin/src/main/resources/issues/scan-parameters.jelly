@@ -12,6 +12,11 @@
   </f:entry>
   <s:scm/>
 
+  <f:entry field="skipPostProcessing">
+    <f:checkbox title="${%title.skipPostProcessing}" />
+  </f:entry>
+  <s:scm/>
+
   <i:hr title="${%Reading Affected Files}"/>
 
   <p:sourceConfig/>

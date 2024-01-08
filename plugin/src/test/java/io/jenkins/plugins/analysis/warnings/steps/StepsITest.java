@@ -112,7 +112,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      * Runs a pipeline and verifies the {@code recordIssues} step has some allowlisted methods.
      */
     @Test
-    @org.jvnet.hudson.test.Issue("JENKINS-63109")
+    @org.junitpioneer.jupiter.Issue("JENKINS-63109")
     void shouldWhitelistRecorderApi() {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("checkstyle1.xml", "checkstyle2.xml");
 
@@ -558,7 +558,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
 
     /** Runs the JavaDoc parser and enforces quality gates. */
     @Test
-    @org.jvnet.hudson.test.Issue("JENKINS-58253")
+    @org.junitpioneer.jupiter.Issue("JENKINS-58253")
     void shouldFailBuildWhenFailBuildOnErrorsIsSet() {
         WorkflowJob job = createPipeline();
 
@@ -575,7 +575,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
 
     /** Runs the JavaDoc parser and enforces quality gates. */
     @Test
-    @org.jvnet.hudson.test.Issue("JENKINS-58253")
+    @org.junitpioneer.jupiter.Issue("JENKINS-58253")
     void shouldSupportDeprecatedAttributesInRecord() {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("javadoc.txt");
 
@@ -602,7 +602,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
 
     /** Runs the JavaDoc parser and enforces quality gates. */
     @Test
-    @org.jvnet.hudson.test.Issue("JENKINS-58253")
+    @org.junitpioneer.jupiter.Issue("JENKINS-58253")
     void shouldSupportDeprecatedAttributesInPublish() {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("javadoc.txt");
 
@@ -677,7 +677,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      * for the origin field as well.
      */
     @Test
-    @org.jvnet.hudson.test.Issue("JENKINS-57638")
+    @org.junitpioneer.jupiter.Issue("JENKINS-57638")
     void shouldUseCustomIdsForOrigin() {
         verifyCustomIdsForOrigin(asStage(
                 "def java = scanForIssues tool: java(pattern:'**/*issues.txt', reportEncoding:'UTF-8', id:'id1', name:'name1')",
@@ -690,7 +690,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      * for the origin field as well.
      */
     @Test
-    @org.jvnet.hudson.test.Issue("JENKINS-57638")
+    @org.junitpioneer.jupiter.Issue("JENKINS-57638")
     void shouldUseCustomIdsForOriginSimpleStep() {
         verifyCustomIdsForOrigin(asStage(
                 "recordIssues(\n"
@@ -1090,7 +1090,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-39203">Issue 39203</a>
      */
     @Test
-    @org.jvnet.hudson.test.Issue("JENKINS-39203")
+    @org.junitpioneer.jupiter.Issue("JENKINS-39203")
     void publishIssuesShouldMarkStepWithWarningAction() {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("javac.txt");
         job.setDefinition(asStage(createScanForIssuesStep(new Java(), "java"),
@@ -1112,7 +1112,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-39203">Issue 39203</a>
      */
     @Test
-    @org.jvnet.hudson.test.Issue("JENKINS-39203")
+    @org.junitpioneer.jupiter.Issue("JENKINS-39203")
     void recordIssuesShouldMarkStepWithWarningAction() {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("javac.txt");
         job.setDefinition(asStage("recordIssues(tool: java(pattern:'**/*issues.txt', reportEncoding:'UTF-8'),"

@@ -57,7 +57,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     /**
      * Verifies that {@link FindBugs} handles the different severity mapping modes ({@link PriorityProperty}).
      */
-    @Test @org.jvnet.hudson.test.Issue("JENKINS-55514")
+    @Test @org.junitpioneer.jupiter.Issue("JENKINS-55514")
     void shouldMapSeverityFilterForFindBugs() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("findbugs-severities.xml");
 
@@ -208,7 +208,6 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
                 first -> assertThat(first).endsWith("checkstyle-issues.txt"),
                 second -> assertThat(second).endsWith("pmd-warnings-issues.txt")
         );
-
     }
 
     private List<AnalysisResult> runJobWithAggregation(final boolean isAggregationEnabled) {
@@ -223,7 +222,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
 
     /**
      * Runs the CheckStyle and PMD tools for two corresponding files which contain 10 issues in total. Since a filter
-     * afterwords removes all issues, the actual result contains no warnings. However, the two origins are still
+     * afterword removes all issues, the actual result contains no warnings. However, the two origins are still
      * reported with a total of 0 warnings per origin.
      */
     @Test
@@ -258,7 +257,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that a report that contains errors (since the report pattern does not find some files),
      * will fail the step if the property {@link IssuesRecorder#setFailOnError(boolean)} is enabled.
      */
-    @Test @org.jvnet.hudson.test.Issue("JENKINS-58056")
+    @Test @org.junitpioneer.jupiter.Issue("JENKINS-58056")
     void shouldFailBuildWhenFailBuildOnErrorsIsSet() {
         FreeStyleProject job = createFreeStyleProject();
         IssuesRecorder recorder = enableEclipseWarnings(job);
