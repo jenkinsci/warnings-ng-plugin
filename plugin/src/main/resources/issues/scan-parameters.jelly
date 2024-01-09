@@ -14,6 +14,10 @@
 
   <i:hr title="${%Reading Affected Files}"/>
 
+  <f:entry field="skipPostProcessing">
+    <f:checkbox title="${%title.skipPostProcessing}" />
+  </f:entry>
+
   <p:sourceConfig/>
 
   <i:hr title="${%Issue filters}"/>

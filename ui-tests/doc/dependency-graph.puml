@@ -1,0 +1,520 @@
+@startuml
+skinparam defaultTextAlignment center
+skinparam rectangle {
+  BackgroundColor<<optional>> beige
+  BackgroundColor<<test>> lightGreen
+  BackgroundColor<<runtime>> lightBlue
+  BackgroundColor<<provided>> lightGray
+}
+rectangle "gitlab4j-api\n\n5.2.0" as org_gitlab4j_gitlab4j_api_jar
+rectangle "jakarta.activation-api\n\n1.2.2" as jakarta_activation_jakarta_activation_api_jar
+rectangle "jersey-common\n\n2.35" as org_glassfish_jersey_core_jersey_common_jar
+rectangle "jakarta.ws.rs-api\n\n2.1.6" as jakarta_ws_rs_jakarta_ws_rs_api_jar
+rectangle "jakarta.annotation-api\n\n1.3.5" as jakarta_annotation_jakarta_annotation_api_jar
+rectangle "jakarta.inject\n\n2.6.1" as org_glassfish_hk2_external_jakarta_inject_jar
+rectangle "osgi-resource-locator\n\n1.0.3" as org_glassfish_hk2_osgi_resource_locator_jar
+rectangle "jersey-hk2\n\n2.35" as org_glassfish_jersey_inject_jersey_hk2_jar
+rectangle "hk2-locator\n\n2.6.1" as org_glassfish_hk2_hk2_locator_jar
+rectangle "aopalliance-repackaged\n\n2.6.1" as org_glassfish_hk2_external_aopalliance_repackaged_jar
+rectangle "hk2-api\n\n2.6.1" as org_glassfish_hk2_hk2_api_jar
+rectangle "hk2-utils\n\n2.6.1" as org_glassfish_hk2_hk2_utils_jar
+rectangle "javassist\n\n3.27.0-GA" as org_javassist_javassist_jar
+rectangle "jersey-client\n\n2.35" as org_glassfish_jersey_core_jersey_client_jar
+rectangle "jersey-apache-connector\n\n2.35" as org_glassfish_jersey_connectors_jersey_apache_connector_jar
+rectangle "httpclient\n\n4.5.14" as org_apache_httpcomponents_httpclient_jar
+rectangle "jersey-media-multipart\n\n2.35" as org_glassfish_jersey_media_jersey_media_multipart_jar
+rectangle "mimepull\n\n1.9.13" as org_jvnet_mimepull_mimepull_jar
+rectangle "jersey-media-json-jackson\n\n2.35" as org_glassfish_jersey_media_jersey_media_json_jackson_jar
+rectangle "jersey-entity-filtering\n\n2.35" as org_glassfish_jersey_ext_jersey_entity_filtering_jar
+rectangle "jackson-annotations\n\n2.16.1" as com_fasterxml_jackson_core_jackson_annotations_jar
+rectangle "jackson-databind\n\n2.16.1" as com_fasterxml_jackson_core_jackson_databind_jar
+rectangle "jackson-module-jaxb-annotations\n\n2.12.2" as com_fasterxml_jackson_module_jackson_module_jaxb_annotations_jar
+rectangle "jackson-core\n\n2.16.1" as com_fasterxml_jackson_core_jackson_core_jar
+rectangle "jakarta.xml.bind-api\n\n2.3.2" as jakarta_xml_bind_jakarta_xml_bind_api_jar
+rectangle "jakarta.servlet-api\n\n4.0.4" as jakarta_servlet_jakarta_servlet_api_jar
+rectangle "acceptance-test-harness\n\n5770.v81b_784f28b_d7" as org_jenkins_ci_acceptance_test_harness_jar
+rectangle "args4j\n\n2.33" as args4j_args4j_jar
+rectangle "netty-codec\n\n4.1.104.Final" as io_netty_netty_codec_jar
+rectangle "netty-common\n\n4.1.104.Final" as io_netty_netty_common_jar
+rectangle "netty-buffer\n\n4.1.104.Final" as io_netty_netty_buffer_jar
+rectangle "netty-transport\n\n4.1.104.Final" as io_netty_netty_transport_jar
+rectangle "netty-resolver\n\n4.1.104.Final" as io_netty_netty_resolver_jar
+rectangle "browserup-proxy-core\n\n2.1.2" as com_browserup_browserup_proxy_core_jar
+rectangle "littleproxy\n\n2.0.0-beta-5" as xyz_rogfam_littleproxy_jar
+rectangle "guava\n\n32.1.3-jre" as com_google_guava_guava_jar
+rectangle "commons-lang3\n\n3.13.0" as org_apache_commons_commons_lang3_jar
+rectangle "barchart-udt-bundle\n\n2.3.0" as com_barchart_udt_barchart_udt_bundle_jar
+rectangle "slf4j-api\n\n2.0.9" as org_slf4j_slf4j_api_jar
+rectangle "extensibility\n\n1.7" as com_cloudbees_extensibility_jar
+rectangle "guice\n\n6.0.0" as com_google_inject_guice_jar
+rectangle "annotation-indexer\n\n1.17" as org_jenkins_ci_annotation_indexer_jar
+rectangle "metainf-services\n\n1.9" as org_kohsuke_metainf_services_metainf_services_jar
+rectangle "jffi\n\n1.3.12" as com_github_jnr_jffi_jar
+rectangle "jffi\nnative\n1.3.12" as com_github_jnr_jffi_jar_native
+rectangle "jnr-ffi\n\n2.2.15" as com_github_jnr_jnr_ffi_jar
+rectangle "asm\n\n9.2" as org_ow2_asm_asm_jar
+rectangle "asm-commons\n\n9.2" as org_ow2_asm_asm_commons_jar
+rectangle "asm-tree\n\n9.2" as org_ow2_asm_asm_tree_jar
+rectangle "asm-analysis\n\n9.2" as org_ow2_asm_asm_analysis_jar
+rectangle "asm-util\n\n9.2" as org_ow2_asm_asm_util_jar
+rectangle "jnr-a64asm\n\n1.0.0" as com_github_jnr_jnr_a64asm_jar
+rectangle "jnr-x86asm\n\n1.0.2" as com_github_jnr_jnr_x86asm_jar
+rectangle "jnr-unixsocket\n\n0.38.21" as com_github_jnr_jnr_unixsocket_jar
+rectangle "jnr-constants\n\n0.10.4" as com_github_jnr_jnr_constants_jar
+rectangle "jnr-enxio\n\n0.32.16" as com_github_jnr_jnr_enxio_jar
+rectangle "jnr-posix\n\n3.1.18" as com_github_jnr_jnr_posix_jar
+rectangle "monte-screen-recorder\n\n0.7.7.0" as com_github_stephenc_monte_monte_screen_recorder_jar
+rectangle "failureaccess\n\n1.0.1" as com_google_guava_failureaccess_jar
+rectangle "listenablefuture\n\n9999.0-empty-to-avoid-conflict-with-guava" as com_google_guava_listenablefuture_jar
+rectangle "jsr305\n\n3.0.2" as com_google_code_findbugs_jsr305_jar
+rectangle "checker-qual\n\n3.37.0" as org_checkerframework_checker_qual_jar
+rectangle "error_prone_annotations\n\n2.22.0" as com_google_errorprone_error_prone_annotations_jar
+rectangle "j2objc-annotations\n\n2.8" as com_google_j2objc_j2objc_annotations_jar
+rectangle "javax.inject\n\n1" as javax_inject_javax_inject_jar
+rectangle "jakarta.inject-api\n\n2.0.1" as jakarta_inject_jakarta_inject_api_jar
+rectangle "aopalliance\n\n1.0" as aopalliance_aopalliance_jar
+rectangle "jsch\n\n0.1.55" as com_jcraft_jsch_jar
+rectangle "commons-logging\n\n1.2" as commons_logging_commons_logging_jar
+rectangle "commons-net\n\n3.10.0" as commons_net_commons_net_jar
+rectangle "junit\n\n4.13.2" as junit_junit_jar
+rectangle "hamcrest-core\n\n1.3" as org_hamcrest_hamcrest_core_jar
+rectangle "commons-configuration2\n\n2.9.0" as org_apache_commons_commons_configuration2_jar
+rectangle "commons-text\n\n1.10.0" as org_apache_commons_commons_text_jar
+rectangle "maven-model\n\n3.8.1" as org_apache_maven_maven_model_jar
+rectangle "plexus-utils\n\n3.2.1" as org_codehaus_plexus_plexus_utils_jar
+rectangle "maven-resolver-provider\n\n3.8.1" as org_apache_maven_maven_resolver_provider_jar
+rectangle "maven-model-builder\n\n3.8.1" as org_apache_maven_maven_model_builder_jar
+rectangle "plexus-interpolation\n\n1.25" as org_codehaus_plexus_plexus_interpolation_jar
+rectangle "maven-artifact\n\n3.8.1" as org_apache_maven_maven_artifact_jar
+rectangle "maven-builder-support\n\n3.8.1" as org_apache_maven_maven_builder_support_jar
+rectangle "org.eclipse.sisu.inject\n\n0.3.4" as org_eclipse_sisu_org_eclipse_sisu_inject_jar
+rectangle "maven-repository-metadata\n\n3.8.1" as org_apache_maven_maven_repository_metadata_jar
+rectangle "maven-resolver-api\n\n1.6.2" as org_apache_maven_resolver_maven_resolver_api_jar
+rectangle "maven-resolver-spi\n\n1.6.2" as org_apache_maven_resolver_maven_resolver_spi_jar
+rectangle "maven-resolver-util\n\n1.6.2" as org_apache_maven_resolver_maven_resolver_util_jar
+rectangle "maven-resolver-impl\n\n1.6.2" as org_apache_maven_resolver_maven_resolver_impl_jar
+rectangle "maven-settings-builder\n\n3.8.1" as org_apache_maven_maven_settings_builder_jar
+rectangle "maven-settings\n\n3.8.1" as org_apache_maven_maven_settings_jar
+rectangle "plexus-sec-dispatcher\n\n1.4" as org_sonatype_plexus_plexus_sec_dispatcher_jar
+rectangle "plexus-cipher\n\n1.4" as org_sonatype_plexus_plexus_cipher_jar
+rectangle "maven-resolver-connector-basic\n\n1.6.2" as org_apache_maven_resolver_maven_resolver_connector_basic_jar
+rectangle "maven-resolver-transport-file\n\n1.6.2" as org_apache_maven_resolver_maven_resolver_transport_file_jar
+rectangle "maven-resolver-transport-http\n\n1.6.2" as org_apache_maven_resolver_maven_resolver_transport_http_jar
+rectangle "httpcore\n\n4.4.16" as org_apache_httpcomponents_httpcore_jar
+rectangle "bcpkix-jdk18on\n\n1.77" as org_bouncycastle_bcpkix_jdk18on_jar
+rectangle "bcprov-jdk18on\n\n1.77" as org_bouncycastle_bcprov_jdk18on_jar
+rectangle "bcutil-jdk18on\n\n1.77" as org_bouncycastle_bcutil_jdk18on_jar
+rectangle "groovy\n\n3.0.19" as org_codehaus_groovy_groovy_jar
+rectangle "groovy-console\n\n3.0.19" as org_codehaus_groovy_groovy_console_jar
+rectangle "hamcrest\n\n2.2" as org_hamcrest_hamcrest_jar
+rectangle "crypto-util\n\n1.9" as org_jenkins_ci_crypto_util_jar
+rectangle "commons-codec\n\n1.11" as commons_codec_commons_codec_jar
+rectangle "groovy-guice-binder\n\n1.2" as org_jenkins_ci_groovy_guice_binder_jar
+rectangle "commons-io\n\n2.11.0" as commons_io_commons_io_jar
+rectangle "commons-discovery\n\n0.4" as commons_discovery_commons_discovery_jar
+rectangle "jira-api\n\n1.3" as org_jenkins_ci_jira_api_jar
+rectangle "activation\n\n1.1" as javax_activation_activation_jar
+rectangle "jaxrpc-api\n\n1.1" as javax_xml_jaxrpc_api_jar
+rectangle "saaj-api\n\n1.3" as javax_xml_soap_saaj_api_jar
+rectangle "axis\n\n1.4" as org_apache_axis_axis_jar
+rectangle "wsdl4j\n\n1.6.1" as wsdl4j_wsdl4j_jar
+rectangle "test-annotations\n\n1.4" as org_jenkins_ci_test_annotations_jar
+rectangle "version-number\n\n1.11" as org_jenkins_ci_version_number_jar
+rectangle "remoting\n\n3192.v713e3b_039fb_e" as org_jenkins_ci_main_remoting_jar
+rectangle "docker-fixtures\n\n178.v2c7d2343886b_" as org_jenkins_ci_test_docker_fixtures_jar
+rectangle "process-utils\n\n1.3" as org_jenkins_ci_process_utils_jar
+rectangle "json\n\n20231013" as org_json_json_jar
+rectangle "wordnet-random-name\n\n1.5" as org_kohsuke_wordnet_random_name_jar
+rectangle "lift\n\n4.14.0" as org_seleniumhq_selenium_lift_jar
+rectangle "selenium-api\n\n4.14.0" as org_seleniumhq_selenium_selenium_api_jar
+rectangle "selenium-support\n\n4.14.0" as org_seleniumhq_selenium_selenium_support_jar
+rectangle "selenium-chrome-driver\n\n4.14.0" as org_seleniumhq_selenium_selenium_chrome_driver_jar
+rectangle "auto-service-annotations\n\n1.1.1" as com_google_auto_service_auto_service_annotations_jar
+rectangle "selenium-chromium-driver\n\n4.14.0" as org_seleniumhq_selenium_selenium_chromium_driver_jar
+rectangle "selenium-json\n\n4.14.0" as org_seleniumhq_selenium_selenium_json_jar
+rectangle "selenium-remote-driver\n\n4.14.0" as org_seleniumhq_selenium_selenium_remote_driver_jar
+rectangle "selenium-manager\n\n4.14.0" as org_seleniumhq_selenium_selenium_manager_jar
+rectangle "selenium-os\n\n4.14.0" as org_seleniumhq_selenium_selenium_os_jar
+rectangle "commons-exec\n\n1.3" as org_apache_commons_commons_exec_jar
+rectangle "opentelemetry-api\n\n1.28.0" as io_opentelemetry_opentelemetry_api_jar
+rectangle "opentelemetry-context\n\n1.28.0" as io_opentelemetry_opentelemetry_context_jar
+rectangle "opentelemetry-exporter-logging\n\n1.28.0" as io_opentelemetry_opentelemetry_exporter_logging_jar
+rectangle "opentelemetry-sdk\n\n1.28.0" as io_opentelemetry_opentelemetry_sdk_jar
+rectangle "opentelemetry-sdk-metrics\n\n1.28.0" as io_opentelemetry_opentelemetry_sdk_metrics_jar
+rectangle "opentelemetry-sdk-common\n\n1.28.0" as io_opentelemetry_opentelemetry_sdk_common_jar
+rectangle "opentelemetry-sdk-logs\n\n1.28.0" as io_opentelemetry_opentelemetry_sdk_logs_jar
+rectangle "opentelemetry-sdk-extension-autoconfigure-spi\n\n1.28.0" as io_opentelemetry_opentelemetry_sdk_extension_autoconfigure_spi_jar
+rectangle "opentelemetry-sdk-extension-autoconfigure\n\n1.28.0" as io_opentelemetry_opentelemetry_sdk_extension_autoconfigure_jar
+rectangle "opentelemetry-sdk-trace\n\n1.28.0" as io_opentelemetry_opentelemetry_sdk_trace_jar
+rectangle "opentelemetry-semconv\n\n1.28.0-alpha" as io_opentelemetry_opentelemetry_semconv_jar
+rectangle "byte-buddy\n\n1.14.9" as net_bytebuddy_byte_buddy_jar
+rectangle "selenium-http\n\n4.14.0" as org_seleniumhq_selenium_selenium_http_jar
+rectangle "selenium-firefox-driver\n\n4.14.0" as org_seleniumhq_selenium_selenium_firefox_driver_jar
+rectangle "selenium-devtools-v85\n\n4.14.0" as org_seleniumhq_selenium_selenium_devtools_v85_jar
+rectangle "failsafe\n\n3.3.2" as dev_failsafe_failsafe_jar
+rectangle "selenium-java\n\n4.14.0" as org_seleniumhq_selenium_selenium_java_jar
+rectangle "selenium-devtools-v116\n\n4.14.0" as org_seleniumhq_selenium_selenium_devtools_v116_jar
+rectangle "selenium-devtools-v117\n\n4.14.0" as org_seleniumhq_selenium_selenium_devtools_v117_jar
+rectangle "selenium-devtools-v118\n\n4.14.0" as org_seleniumhq_selenium_selenium_devtools_v118_jar
+rectangle "selenium-edge-driver\n\n4.14.0" as org_seleniumhq_selenium_selenium_edge_driver_jar
+rectangle "selenium-safari-driver\n\n4.14.0" as org_seleniumhq_selenium_selenium_safari_driver_jar
+rectangle "slf4j-jdk14\n\n2.0.9" as org_slf4j_slf4j_jdk14_jar
+rectangle "zt-zip\n\n1.16" as org_zeroturnaround_zt_zip_jar
+rectangle "warnings-ng-ui-tests\n\nUNVERSIONED" as io_jenkins_plugins_warnings_ng_ui_tests_jar
+rectangle "spotbugs-annotations\n\n4.7.3" as com_github_spotbugs_spotbugs_annotations_jar
+rectangle "streamex\n\n0.8.2" as one_util_streamex_jar
+rectangle "codingstyle\n\n3.24.0" as edu_hm_hafner_codingstyle_jar
+org_gitlab4j_gitlab4j_api_jar -[#000000]-> jakarta_activation_jakarta_activation_api_jar
+org_glassfish_jersey_core_jersey_common_jar .[#D3D3D3].> jakarta_ws_rs_jakarta_ws_rs_api_jar
+org_glassfish_jersey_core_jersey_common_jar -[#000000]-> jakarta_annotation_jakarta_annotation_api_jar
+org_glassfish_jersey_core_jersey_common_jar .[#D3D3D3].> org_glassfish_hk2_external_jakarta_inject_jar
+org_glassfish_jersey_core_jersey_common_jar -[#000000]-> org_glassfish_hk2_osgi_resource_locator_jar
+org_glassfish_jersey_inject_jersey_hk2_jar -[#000000]-> org_glassfish_jersey_core_jersey_common_jar
+org_glassfish_hk2_hk2_locator_jar .[#D3D3D3].> org_glassfish_hk2_external_jakarta_inject_jar
+org_glassfish_hk2_hk2_locator_jar -[#000000]-> org_glassfish_hk2_external_aopalliance_repackaged_jar
+org_glassfish_hk2_hk2_api_jar .[#D3D3D3].> org_glassfish_hk2_external_jakarta_inject_jar
+org_glassfish_hk2_hk2_api_jar .[#D3D3D3].> org_glassfish_hk2_hk2_utils_jar
+org_glassfish_hk2_hk2_api_jar .[#D3D3D3].> org_glassfish_hk2_external_aopalliance_repackaged_jar
+org_glassfish_hk2_hk2_locator_jar -[#000000]-> org_glassfish_hk2_hk2_api_jar
+org_glassfish_hk2_hk2_utils_jar .[#D3D3D3].> org_glassfish_hk2_external_jakarta_inject_jar
+org_glassfish_hk2_hk2_locator_jar -[#000000]-> org_glassfish_hk2_hk2_utils_jar
+org_glassfish_jersey_inject_jersey_hk2_jar -[#000000]-> org_glassfish_hk2_hk2_locator_jar
+org_glassfish_jersey_inject_jersey_hk2_jar .[#FF0000].> org_javassist_javassist_jar: 3.25.0-GA
+org_gitlab4j_gitlab4j_api_jar -[#000000]-> org_glassfish_jersey_inject_jersey_hk2_jar
+org_glassfish_jersey_core_jersey_client_jar -[#000000]-> jakarta_ws_rs_jakarta_ws_rs_api_jar
+org_glassfish_jersey_core_jersey_client_jar .[#D3D3D3].> org_glassfish_jersey_core_jersey_common_jar
+org_glassfish_jersey_core_jersey_client_jar -[#000000]-> org_glassfish_hk2_external_jakarta_inject_jar
+org_gitlab4j_gitlab4j_api_jar -[#000000]-> org_glassfish_jersey_core_jersey_client_jar
+org_glassfish_jersey_connectors_jersey_apache_connector_jar .[#FF0000].> org_apache_httpcomponents_httpclient_jar: 4.5.13
+org_glassfish_jersey_connectors_jersey_apache_connector_jar .[#D3D3D3].> org_glassfish_jersey_core_jersey_common_jar
+org_glassfish_jersey_connectors_jersey_apache_connector_jar .[#D3D3D3].> org_glassfish_jersey_core_jersey_client_jar
+org_glassfish_jersey_connectors_jersey_apache_connector_jar .[#D3D3D3].> jakarta_ws_rs_jakarta_ws_rs_api_jar
+org_gitlab4j_gitlab4j_api_jar -[#000000]-> org_glassfish_jersey_connectors_jersey_apache_connector_jar
+org_glassfish_jersey_media_jersey_media_multipart_jar .[#D3D3D3].> org_glassfish_jersey_core_jersey_common_jar
+org_glassfish_jersey_media_jersey_media_multipart_jar -[#000000]-> org_jvnet_mimepull_mimepull_jar
+org_gitlab4j_gitlab4j_api_jar -[#000000]-> org_glassfish_jersey_media_jersey_media_multipart_jar
+org_glassfish_jersey_media_jersey_media_json_jackson_jar .[#D3D3D3].> org_glassfish_jersey_core_jersey_common_jar
+org_glassfish_jersey_ext_jersey_entity_filtering_jar .[#D3D3D3].> jakarta_ws_rs_jakarta_ws_rs_api_jar
+org_glassfish_jersey_media_jersey_media_json_jackson_jar -[#000000]-> org_glassfish_jersey_ext_jersey_entity_filtering_jar
+org_glassfish_jersey_media_jersey_media_json_jackson_jar .[#FF0000].> com_fasterxml_jackson_core_jackson_annotations_jar: 2.12.2
+org_glassfish_jersey_media_jersey_media_json_jackson_jar .[#FF0000].> com_fasterxml_jackson_core_jackson_databind_jar: 2.12.2
+com_fasterxml_jackson_module_jackson_module_jaxb_annotations_jar .[#FF0000].> com_fasterxml_jackson_core_jackson_annotations_jar: 2.12.2
+com_fasterxml_jackson_module_jackson_module_jaxb_annotations_jar .[#FF0000].> com_fasterxml_jackson_core_jackson_core_jar: 2.12.2
+com_fasterxml_jackson_module_jackson_module_jaxb_annotations_jar .[#FF0000].> com_fasterxml_jackson_core_jackson_databind_jar: 2.12.2
+jakarta_xml_bind_jakarta_xml_bind_api_jar .[#FF0000].> jakarta_activation_jakarta_activation_api_jar: 1.2.1
+com_fasterxml_jackson_module_jackson_module_jaxb_annotations_jar -[#000000]-> jakarta_xml_bind_jakarta_xml_bind_api_jar
+com_fasterxml_jackson_module_jackson_module_jaxb_annotations_jar .[#FF0000].> jakarta_activation_jakarta_activation_api_jar: 1.2.1
+org_glassfish_jersey_media_jersey_media_json_jackson_jar -[#000000]-> com_fasterxml_jackson_module_jackson_module_jaxb_annotations_jar
+org_gitlab4j_gitlab4j_api_jar -[#000000]-> org_glassfish_jersey_media_jersey_media_json_jackson_jar
+org_gitlab4j_gitlab4j_api_jar -[#000000]-> jakarta_servlet_jakarta_servlet_api_jar
+org_jenkins_ci_acceptance_test_harness_jar -[#000000]-> org_gitlab4j_gitlab4j_api_jar
+org_jenkins_ci_acceptance_test_harness_jar -[#000000]-> args4j_args4j_jar
+io_netty_netty_codec_jar -[#000000]-> io_netty_netty_common_jar
+io_netty_netty_buffer_jar .[#D3D3D3].> io_netty_netty_common_jar
+io_netty_netty_codec_jar -[#000000]-> io_netty_netty_buffer_jar
+io_netty_netty_transport_jar .[#D3D3D3].> io_netty_netty_common_jar
+io_netty_netty_transport_jar .[#D3D3D3].> io_netty_netty_buffer_jar
+io_netty_netty_transport_jar .[#D3D3D3].> io_netty_netty_resolver_jar
+io_netty_netty_codec_jar -[#000000]-> io_netty_netty_transport_jar
+com_browserup_browserup_proxy_core_jar -[#000000]-> io_netty_netty_codec_jar
+xyz_rogfam_littleproxy_jar .[#FF0000].> com_google_guava_guava_jar: 27.1-jre
+xyz_rogfam_littleproxy_jar .[#FF0000].> org_apache_commons_commons_lang3_jar: 3.8.1
+xyz_rogfam_littleproxy_jar -[#000000]-> com_barchart_udt_barchart_udt_bundle_jar
+xyz_rogfam_littleproxy_jar .[#FF0000].> org_slf4j_slf4j_api_jar: 1.7.26
+com_browserup_browserup_proxy_core_jar -[#000000]-> xyz_rogfam_littleproxy_jar
+com_browserup_browserup_proxy_core_jar -[#000000]-> io_netty_netty_resolver_jar
+com_browserup_browserup_proxy_core_jar -[#000000]-> org_javassist_javassist_jar
+org_jenkins_ci_acceptance_test_harness_jar -[#000000]-> com_browserup_browserup_proxy_core_jar
+com_cloudbees_extensibility_jar .[#D3D3D3].> com_google_inject_guice_jar
+com_cloudbees_extensibility_jar .[#FF0000].> org_apache_commons_commons_lang3_jar: 3.12.0
+com_cloudbees_extensibility_jar -[#000000]-> org_jenkins_ci_annotation_indexer_jar
+com_cloudbees_extensibility_jar -[#000000]-> org_kohsuke_metainf_services_metainf_services_jar
+org_jenkins_ci_acceptance_test_harness_jar -[#000000]-> com_cloudbees_extensibility_jar
+org_jenkins_ci_acceptance_test_harness_jar .[#FF0000].> com_fasterxml_jackson_core_jackson_databind_jar: 2.16.0
+org_jenkins_ci_acceptance_test_harness_jar -[#000000]-> com_github_jnr_jffi_jar
+org_jenkins_ci_acceptance_test_harness_jar -[#000000]-> com_github_jnr_jffi_jar_native
+com_github_jnr_jnr_ffi_jar .[#D3D3D3].> com_github_jnr_jffi_jar
+com_github_jnr_jnr_ffi_jar -[#000000]-> org_ow2_asm_asm_jar
+org_ow2_asm_asm_commons_jar .[#D3D3D3].> org_ow2_asm_asm_jar
+org_ow2_asm_asm_commons_jar .[#D3D3D3].> org_ow2_asm_asm_tree_jar
+org_ow2_asm_asm_commons_jar .[#D3D3D3].> org_ow2_asm_asm_analysis_jar
+com_github_jnr_jnr_ffi_jar -[#000000]-> org_ow2_asm_asm_commons_jar
+org_ow2_asm_asm_analysis_jar .[#D3D3D3].> org_ow2_asm_asm_tree_jar
+com_github_jnr_jnr_ffi_jar -[#000000]-> org_ow2_asm_asm_analysis_jar
+org_ow2_asm_asm_tree_jar .[#D3D3D3].> org_ow2_asm_asm_jar
+com_github_jnr_jnr_ffi_jar -[#000000]-> org_ow2_asm_asm_tree_jar
+org_ow2_asm_asm_util_jar .[#D3D3D3].> org_ow2_asm_asm_jar
+org_ow2_asm_asm_util_jar .[#D3D3D3].> org_ow2_asm_asm_tree_jar
+org_ow2_asm_asm_util_jar .[#D3D3D3].> org_ow2_asm_asm_analysis_jar
+com_github_jnr_jnr_ffi_jar -[#000000]-> org_ow2_asm_asm_util_jar
+com_github_jnr_jnr_ffi_jar -[#000000]-> com_github_jnr_jnr_a64asm_jar
+com_github_jnr_jnr_ffi_jar -[#000000]-> com_github_jnr_jnr_x86asm_jar
+com_github_jnr_jnr_unixsocket_jar -[#000000]-> com_github_jnr_jnr_ffi_jar
+com_github_jnr_jnr_unixsocket_jar -[#000000]-> com_github_jnr_jnr_constants_jar
+com_github_jnr_jnr_enxio_jar .[#D3D3D3].> com_github_jnr_jnr_constants_jar
+com_github_jnr_jnr_enxio_jar .[#D3D3D3].> com_github_jnr_jnr_ffi_jar
+com_github_jnr_jnr_unixsocket_jar -[#000000]-> com_github_jnr_jnr_enxio_jar
+com_github_jnr_jnr_posix_jar .[#D3D3D3].> com_github_jnr_jnr_ffi_jar
+com_github_jnr_jnr_posix_jar .[#D3D3D3].> com_github_jnr_jnr_constants_jar
+com_github_jnr_jnr_unixsocket_jar -[#000000]-> com_github_jnr_jnr_posix_jar
+org_jenkins_ci_acceptance_test_harness_jar -[#000000]-> com_github_jnr_jnr_unixsocket_jar
+org_jenkins_ci_acceptance_test_harness_jar -[#000000]-> com_github_stephenc_monte_monte_screen_recorder_jar
+com_google_guava_guava_jar -[#000000]-> com_google_guava_failureaccess_jar
+com_google_guava_guava_jar -[#000000]-> com_google_guava_listenablefuture_jar
+com_google_guava_guava_jar -[#000000]-> com_google_code_findbugs_jsr305_jar
+com_google_guava_guava_jar -[#000000]-> org_checkerframework_checker_qual_jar
+com_google_guava_guava_jar .[#FF0000].> com_google_errorprone_error_prone_annotations_jar: 2.21.1
+com_google_guava_guava_jar -[#000000]-> com_google_j2objc_j2objc_annotations_jar
+org_jenkins_ci_acceptance_test_harness_jar -[#000000]-> com_google_guava_guava_jar
+com_google_inject_guice_jar -[#000000]-> javax_inject_javax_inject_jar
+com_google_inject_guice_jar -[#000000]-> jakarta_inject_jakarta_inject_api_jar
+com_google_inject_guice_jar -[#000000]-> aopalliance_aopalliance_jar
+org_jenkins_ci_acceptance_test_harness_jar -[#000000]-> com_google_inject_guice_jar
+org_jenkins_ci_acceptance_test_harness_jar -[#000000]-> com_jcraft_jsch_jar
+org_jenkins_ci_acceptance_test_harness_jar -[#000000]-> commons_logging_commons_logging_jar
+org_jenkins_ci_acceptance_test_harness_jar -[#000000]-> commons_net_commons_net_jar
+junit_junit_jar -[#000000]-> org_hamcrest_hamcrest_core_jar
+org_jenkins_ci_acceptance_test_harness_jar -[#000000]-> junit_junit_jar
+org_apache_commons_commons_configuration2_jar .[#FF0000].> org_apache_commons_commons_lang3_jar: 3.12.0
+org_apache_commons_commons_text_jar .[#FF0000].> org_apache_commons_commons_lang3_jar: 3.12.0
+org_apache_commons_commons_configuration2_jar -[#000000]-> org_apache_commons_commons_text_jar
+org_apache_commons_commons_configuration2_jar .[#D3D3D3].> commons_logging_commons_logging_jar
+org_jenkins_ci_acceptance_test_harness_jar -[#000000]-> org_apache_commons_commons_configuration2_jar
+org_jenkins_ci_acceptance_test_harness_jar .[#FF0000].> org_apache_commons_commons_lang3_jar: 3.14.0
+org_apache_maven_maven_model_jar .[#D3D3D3].> org_codehaus_plexus_plexus_utils_jar
+org_apache_maven_maven_resolver_provider_jar -[#000000]-> org_apache_maven_maven_model_jar
+org_apache_maven_maven_model_builder_jar .[#D3D3D3].> org_codehaus_plexus_plexus_utils_jar
+org_apache_maven_maven_model_builder_jar .[#D3D3D3].> org_codehaus_plexus_plexus_interpolation_jar
+org_apache_maven_maven_model_builder_jar .[#D3D3D3].> javax_inject_javax_inject_jar
+org_apache_maven_maven_model_builder_jar .[#D3D3D3].> org_apache_maven_maven_model_jar
+org_apache_maven_maven_artifact_jar .[#D3D3D3].> org_codehaus_plexus_plexus_utils_jar
+org_apache_maven_maven_artifact_jar .[#FF0000].> org_apache_commons_commons_lang3_jar: 3.8.1
+org_apache_maven_maven_model_builder_jar -[#000000]-> org_apache_maven_maven_artifact_jar
+org_apache_maven_maven_model_builder_jar .[#D3D3D3].> org_apache_maven_maven_builder_support_jar
+org_apache_maven_maven_model_builder_jar -[#000000]-> org_eclipse_sisu_org_eclipse_sisu_inject_jar
+org_apache_maven_maven_resolver_provider_jar -[#000000]-> org_apache_maven_maven_model_builder_jar
+org_apache_maven_maven_repository_metadata_jar .[#D3D3D3].> org_codehaus_plexus_plexus_utils_jar
+org_apache_maven_maven_resolver_provider_jar -[#000000]-> org_apache_maven_maven_repository_metadata_jar
+org_apache_maven_maven_resolver_provider_jar -[#000000]-> org_apache_maven_resolver_maven_resolver_api_jar
+org_apache_maven_resolver_maven_resolver_spi_jar .[#D3D3D3].> org_apache_maven_resolver_maven_resolver_api_jar
+org_apache_maven_maven_resolver_provider_jar -[#000000]-> org_apache_maven_resolver_maven_resolver_spi_jar
+org_apache_maven_resolver_maven_resolver_util_jar .[#D3D3D3].> org_apache_maven_resolver_maven_resolver_api_jar
+org_apache_maven_maven_resolver_provider_jar -[#000000]-> org_apache_maven_resolver_maven_resolver_util_jar
+org_apache_maven_resolver_maven_resolver_impl_jar .[#D3D3D3].> org_apache_maven_resolver_maven_resolver_api_jar
+org_apache_maven_resolver_maven_resolver_impl_jar .[#D3D3D3].> org_apache_maven_resolver_maven_resolver_spi_jar
+org_apache_maven_resolver_maven_resolver_impl_jar .[#D3D3D3].> org_apache_maven_resolver_maven_resolver_util_jar
+org_apache_maven_resolver_maven_resolver_impl_jar .[#FF0000].> org_apache_commons_commons_lang3_jar: 3.8.1
+org_apache_maven_resolver_maven_resolver_impl_jar .[#FF0000].> org_slf4j_slf4j_api_jar: 1.7.30
+org_apache_maven_maven_resolver_provider_jar -[#000000]-> org_apache_maven_resolver_maven_resolver_impl_jar
+org_apache_maven_maven_resolver_provider_jar -[#000000]-> org_codehaus_plexus_plexus_utils_jar
+org_apache_maven_maven_resolver_provider_jar .[#D3D3D3].> javax_inject_javax_inject_jar
+org_apache_maven_maven_resolver_provider_jar .[#FF0000].> org_slf4j_slf4j_api_jar: 1.7.29
+org_jenkins_ci_acceptance_test_harness_jar -[#000000]-> org_apache_maven_maven_resolver_provider_jar
+org_apache_maven_maven_settings_builder_jar -[#000000]-> org_apache_maven_maven_builder_support_jar
+org_apache_maven_maven_settings_builder_jar .[#D3D3D3].> javax_inject_javax_inject_jar
+org_apache_maven_maven_settings_builder_jar -[#000000]-> org_codehaus_plexus_plexus_interpolation_jar
+org_apache_maven_maven_settings_builder_jar .[#D3D3D3].> org_codehaus_plexus_plexus_utils_jar
+org_apache_maven_maven_settings_jar .[#D3D3D3].> org_codehaus_plexus_plexus_utils_jar
+org_apache_maven_maven_settings_builder_jar -[#000000]-> org_apache_maven_maven_settings_jar
+org_sonatype_plexus_plexus_sec_dispatcher_jar .[#FF0000].> org_codehaus_plexus_plexus_utils_jar: 1.5.5
+org_sonatype_plexus_plexus_sec_dispatcher_jar -[#000000]-> org_sonatype_plexus_plexus_cipher_jar
+org_apache_maven_maven_settings_builder_jar -[#000000]-> org_sonatype_plexus_plexus_sec_dispatcher_jar
+org_jenkins_ci_acceptance_test_harness_jar -[#000000]-> org_apache_maven_maven_settings_builder_jar
+org_apache_maven_resolver_maven_resolver_connector_basic_jar .[#D3D3D3].> org_apache_maven_resolver_maven_resolver_api_jar
+org_apache_maven_resolver_maven_resolver_connector_basic_jar .[#D3D3D3].> org_apache_maven_resolver_maven_resolver_spi_jar
+org_apache_maven_resolver_maven_resolver_connector_basic_jar .[#D3D3D3].> org_apache_maven_resolver_maven_resolver_util_jar
+org_apache_maven_resolver_maven_resolver_connector_basic_jar .[#FF0000].> org_slf4j_slf4j_api_jar: 1.7.30
+org_jenkins_ci_acceptance_test_harness_jar -[#000000]-> org_apache_maven_resolver_maven_resolver_connector_basic_jar
+org_apache_maven_resolver_maven_resolver_transport_file_jar .[#D3D3D3].> org_apache_maven_resolver_maven_resolver_api_jar
+org_apache_maven_resolver_maven_resolver_transport_file_jar .[#D3D3D3].> org_apache_maven_resolver_maven_resolver_spi_jar
+org_apache_maven_resolver_maven_resolver_transport_file_jar .[#FF0000].> org_slf4j_slf4j_api_jar: 1.7.30
+org_jenkins_ci_acceptance_test_harness_jar -[#000000]-> org_apache_maven_resolver_maven_resolver_transport_file_jar
+org_apache_maven_resolver_maven_resolver_transport_http_jar .[#D3D3D3].> org_apache_maven_resolver_maven_resolver_api_jar
+org_apache_maven_resolver_maven_resolver_transport_http_jar .[#D3D3D3].> org_apache_maven_resolver_maven_resolver_spi_jar
+org_apache_maven_resolver_maven_resolver_transport_http_jar .[#D3D3D3].> org_apache_maven_resolver_maven_resolver_util_jar
+org_apache_maven_resolver_maven_resolver_transport_http_jar .[#FF0000].> org_apache_httpcomponents_httpclient_jar: 4.5.12
+org_apache_maven_resolver_maven_resolver_transport_http_jar .[#FF0000].> org_apache_httpcomponents_httpcore_jar: 4.4.13
+org_apache_maven_resolver_maven_resolver_transport_http_jar .[#FF0000].> org_slf4j_slf4j_api_jar: 1.7.30
+org_jenkins_ci_acceptance_test_harness_jar -[#000000]-> org_apache_maven_resolver_maven_resolver_transport_http_jar
+org_bouncycastle_bcpkix_jdk18on_jar -[#000000]-> org_bouncycastle_bcprov_jdk18on_jar
+org_bouncycastle_bcutil_jdk18on_jar .[#D3D3D3].> org_bouncycastle_bcprov_jdk18on_jar
+org_bouncycastle_bcpkix_jdk18on_jar -[#000000]-> org_bouncycastle_bcutil_jdk18on_jar
+org_jenkins_ci_acceptance_test_harness_jar -[#000000]-> org_bouncycastle_bcpkix_jdk18on_jar
+org_jenkins_ci_acceptance_test_harness_jar -[#000000]-> org_codehaus_groovy_groovy_jar
+org_codehaus_groovy_groovy_console_jar .[#D3D3D3].> org_codehaus_groovy_groovy_jar
+org_jenkins_ci_acceptance_test_harness_jar -[#000000]-> org_codehaus_groovy_groovy_console_jar
+org_jenkins_ci_acceptance_test_harness_jar -[#000000]-> org_hamcrest_hamcrest_jar
+org_jenkins_ci_crypto_util_jar .[#FF0000].> commons_codec_commons_codec_jar: 1.15
+org_jenkins_ci_acceptance_test_harness_jar -[#000000]-> org_jenkins_ci_crypto_util_jar
+org_jenkins_ci_groovy_guice_binder_jar .[#FF0000].> commons_io_commons_io_jar: 2.4
+org_jenkins_ci_acceptance_test_harness_jar -[#000000]-> org_jenkins_ci_groovy_guice_binder_jar
+commons_discovery_commons_discovery_jar .[#FF0000].> commons_logging_commons_logging_jar: 1.0.4
+org_jenkins_ci_jira_api_jar -[#000000]-> commons_discovery_commons_discovery_jar
+org_jenkins_ci_jira_api_jar .[#FF0000].> commons_logging_commons_logging_jar: 1.1
+org_jenkins_ci_jira_api_jar -[#000000]-> javax_activation_activation_jar
+org_jenkins_ci_jira_api_jar -[#000000]-> javax_xml_jaxrpc_api_jar
+javax_xml_soap_saaj_api_jar .[#FF0000].> javax_activation_activation_jar: 1.0.2
+org_jenkins_ci_jira_api_jar -[#000000]-> javax_xml_soap_saaj_api_jar
+org_jenkins_ci_jira_api_jar -[#000000]-> org_apache_axis_axis_jar
+org_jenkins_ci_jira_api_jar -[#000000]-> wsdl4j_wsdl4j_jar
+org_jenkins_ci_acceptance_test_harness_jar -[#000000]-> org_jenkins_ci_jira_api_jar
+org_jenkins_ci_acceptance_test_harness_jar -[#000000]-> org_jenkins_ci_test_annotations_jar
+org_jenkins_ci_acceptance_test_harness_jar -[#000000]-> org_jenkins_ci_version_number_jar
+org_jenkins_ci_acceptance_test_harness_jar -[#000000]-> org_jenkins_ci_main_remoting_jar
+org_jenkins_ci_test_docker_fixtures_jar .[#FF0000].> commons_io_commons_io_jar: 2.13.0
+org_jenkins_ci_process_utils_jar .[#FF0000].> commons_io_commons_io_jar: 2.4
+org_jenkins_ci_test_docker_fixtures_jar -[#000000]-> org_jenkins_ci_process_utils_jar
+org_jenkins_ci_test_docker_fixtures_jar .[#FF0000].> com_fasterxml_jackson_core_jackson_databind_jar: 2.15.2
+org_jenkins_ci_test_docker_fixtures_jar .[#FF0000].> org_apache_commons_commons_lang3_jar: 3.12.0
+org_jenkins_ci_test_docker_fixtures_jar .[#D3D3D3].> junit_junit_jar
+org_jenkins_ci_acceptance_test_harness_jar -[#000000]-> org_jenkins_ci_test_docker_fixtures_jar
+org_jenkins_ci_acceptance_test_harness_jar -[#000000]-> org_json_json_jar
+org_jenkins_ci_acceptance_test_harness_jar -[#000000]-> org_kohsuke_wordnet_random_name_jar
+org_seleniumhq_selenium_lift_jar .[#D3D3D3].> junit_junit_jar
+org_seleniumhq_selenium_lift_jar .[#D3D3D3].> org_hamcrest_hamcrest_jar
+org_seleniumhq_selenium_lift_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_api_jar
+org_seleniumhq_selenium_lift_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_support_jar
+org_jenkins_ci_acceptance_test_harness_jar -[#000000]-> org_seleniumhq_selenium_lift_jar
+org_jenkins_ci_acceptance_test_harness_jar -[#000000]-> org_seleniumhq_selenium_selenium_api_jar
+org_seleniumhq_selenium_selenium_chrome_driver_jar -[#000000]-> com_google_auto_service_auto_service_annotations_jar
+org_seleniumhq_selenium_selenium_chrome_driver_jar .[#FF0000].> com_google_guava_guava_jar: 32.1.2-jre
+org_seleniumhq_selenium_selenium_chrome_driver_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_api_jar
+org_seleniumhq_selenium_selenium_chromium_driver_jar .[#D3D3D3].> com_google_auto_service_auto_service_annotations_jar
+org_seleniumhq_selenium_selenium_chromium_driver_jar .[#FF0000].> com_google_guava_guava_jar: 32.1.2-jre
+org_seleniumhq_selenium_selenium_chromium_driver_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_json_jar
+org_seleniumhq_selenium_selenium_chromium_driver_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_remote_driver_jar
+org_seleniumhq_selenium_selenium_chrome_driver_jar -[#000000]-> org_seleniumhq_selenium_selenium_chromium_driver_jar
+org_seleniumhq_selenium_selenium_json_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_api_jar
+org_seleniumhq_selenium_selenium_chrome_driver_jar -[#000000]-> org_seleniumhq_selenium_selenium_json_jar
+org_seleniumhq_selenium_selenium_manager_jar .[#FF0000].> com_google_guava_guava_jar: 32.1.2-jre
+org_seleniumhq_selenium_selenium_manager_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_api_jar
+org_seleniumhq_selenium_selenium_manager_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_json_jar
+org_seleniumhq_selenium_selenium_os_jar .[#FF0000].> com_google_guava_guava_jar: 32.1.2-jre
+org_seleniumhq_selenium_selenium_os_jar -[#000000]-> org_apache_commons_commons_exec_jar
+org_seleniumhq_selenium_selenium_os_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_api_jar
+org_seleniumhq_selenium_selenium_manager_jar -[#000000]-> org_seleniumhq_selenium_selenium_os_jar
+org_seleniumhq_selenium_selenium_chrome_driver_jar -[#000000]-> org_seleniumhq_selenium_selenium_manager_jar
+org_seleniumhq_selenium_selenium_remote_driver_jar .[#D3D3D3].> com_google_auto_service_auto_service_annotations_jar
+org_seleniumhq_selenium_selenium_remote_driver_jar .[#FF0000].> com_google_guava_guava_jar: 32.1.2-jre
+io_opentelemetry_opentelemetry_api_jar .[#D3D3D3].> io_opentelemetry_opentelemetry_context_jar
+org_seleniumhq_selenium_selenium_remote_driver_jar -[#000000]-> io_opentelemetry_opentelemetry_api_jar
+org_seleniumhq_selenium_selenium_remote_driver_jar -[#000000]-> io_opentelemetry_opentelemetry_context_jar
+io_opentelemetry_opentelemetry_exporter_logging_jar .[#D3D3D3].> io_opentelemetry_opentelemetry_sdk_jar
+io_opentelemetry_opentelemetry_sdk_metrics_jar .[#D3D3D3].> io_opentelemetry_opentelemetry_api_jar
+io_opentelemetry_opentelemetry_sdk_metrics_jar .[#D3D3D3].> io_opentelemetry_opentelemetry_sdk_common_jar
+io_opentelemetry_opentelemetry_exporter_logging_jar -[#000000]-> io_opentelemetry_opentelemetry_sdk_metrics_jar
+io_opentelemetry_opentelemetry_sdk_logs_jar .[#D3D3D3].> io_opentelemetry_opentelemetry_api_jar
+io_opentelemetry_opentelemetry_sdk_logs_jar .[#D3D3D3].> io_opentelemetry_opentelemetry_sdk_common_jar
+io_opentelemetry_opentelemetry_exporter_logging_jar -[#000000]-> io_opentelemetry_opentelemetry_sdk_logs_jar
+org_seleniumhq_selenium_selenium_remote_driver_jar -[#000000]-> io_opentelemetry_opentelemetry_exporter_logging_jar
+io_opentelemetry_opentelemetry_sdk_common_jar .[#D3D3D3].> io_opentelemetry_opentelemetry_api_jar
+org_seleniumhq_selenium_selenium_remote_driver_jar -[#000000]-> io_opentelemetry_opentelemetry_sdk_common_jar
+io_opentelemetry_opentelemetry_sdk_extension_autoconfigure_spi_jar .[#D3D3D3].> io_opentelemetry_opentelemetry_sdk_jar
+org_seleniumhq_selenium_selenium_remote_driver_jar -[#000000]-> io_opentelemetry_opentelemetry_sdk_extension_autoconfigure_spi_jar
+io_opentelemetry_opentelemetry_sdk_extension_autoconfigure_jar .[#D3D3D3].> io_opentelemetry_opentelemetry_sdk_jar
+io_opentelemetry_opentelemetry_sdk_extension_autoconfigure_jar .[#D3D3D3].> io_opentelemetry_opentelemetry_sdk_extension_autoconfigure_spi_jar
+org_seleniumhq_selenium_selenium_remote_driver_jar -[#000000]-> io_opentelemetry_opentelemetry_sdk_extension_autoconfigure_jar
+io_opentelemetry_opentelemetry_sdk_trace_jar .[#D3D3D3].> io_opentelemetry_opentelemetry_api_jar
+io_opentelemetry_opentelemetry_sdk_trace_jar .[#D3D3D3].> io_opentelemetry_opentelemetry_sdk_common_jar
+org_seleniumhq_selenium_selenium_remote_driver_jar -[#000000]-> io_opentelemetry_opentelemetry_sdk_trace_jar
+io_opentelemetry_opentelemetry_sdk_jar .[#D3D3D3].> io_opentelemetry_opentelemetry_api_jar
+io_opentelemetry_opentelemetry_sdk_jar .[#D3D3D3].> io_opentelemetry_opentelemetry_sdk_common_jar
+io_opentelemetry_opentelemetry_sdk_jar .[#D3D3D3].> io_opentelemetry_opentelemetry_sdk_trace_jar
+io_opentelemetry_opentelemetry_sdk_jar .[#D3D3D3].> io_opentelemetry_opentelemetry_sdk_metrics_jar
+io_opentelemetry_opentelemetry_sdk_jar .[#D3D3D3].> io_opentelemetry_opentelemetry_sdk_logs_jar
+org_seleniumhq_selenium_selenium_remote_driver_jar -[#000000]-> io_opentelemetry_opentelemetry_sdk_jar
+io_opentelemetry_opentelemetry_semconv_jar .[#D3D3D3].> io_opentelemetry_opentelemetry_api_jar
+org_seleniumhq_selenium_selenium_remote_driver_jar -[#000000]-> io_opentelemetry_opentelemetry_semconv_jar
+org_seleniumhq_selenium_selenium_remote_driver_jar .[#D3D3D3].> net_bytebuddy_byte_buddy_jar
+org_seleniumhq_selenium_selenium_remote_driver_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_api_jar
+org_seleniumhq_selenium_selenium_remote_driver_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_http_jar
+org_seleniumhq_selenium_selenium_remote_driver_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_json_jar
+org_seleniumhq_selenium_selenium_remote_driver_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_manager_jar
+org_seleniumhq_selenium_selenium_remote_driver_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_os_jar
+org_seleniumhq_selenium_selenium_chrome_driver_jar -[#000000]-> org_seleniumhq_selenium_selenium_remote_driver_jar
+org_jenkins_ci_acceptance_test_harness_jar -[#000000]-> org_seleniumhq_selenium_selenium_chrome_driver_jar
+org_seleniumhq_selenium_selenium_firefox_driver_jar .[#D3D3D3].> com_google_auto_service_auto_service_annotations_jar
+org_seleniumhq_selenium_selenium_firefox_driver_jar .[#FF0000].> com_google_guava_guava_jar: 32.1.2-jre
+org_seleniumhq_selenium_selenium_firefox_driver_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_api_jar
+org_seleniumhq_selenium_selenium_devtools_v85_jar .[#D3D3D3].> com_google_auto_service_auto_service_annotations_jar
+org_seleniumhq_selenium_selenium_devtools_v85_jar .[#FF0000].> com_google_guava_guava_jar: 32.1.2-jre
+org_seleniumhq_selenium_selenium_devtools_v85_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_api_jar
+org_seleniumhq_selenium_selenium_devtools_v85_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_json_jar
+org_seleniumhq_selenium_selenium_devtools_v85_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_remote_driver_jar
+org_seleniumhq_selenium_selenium_firefox_driver_jar -[#000000]-> org_seleniumhq_selenium_selenium_devtools_v85_jar
+org_seleniumhq_selenium_selenium_http_jar .[#FF0000].> com_google_guava_guava_jar: 32.1.2-jre
+org_seleniumhq_selenium_selenium_http_jar -[#000000]-> dev_failsafe_failsafe_jar
+org_seleniumhq_selenium_selenium_http_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_api_jar
+org_seleniumhq_selenium_selenium_http_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_json_jar
+org_seleniumhq_selenium_selenium_firefox_driver_jar -[#000000]-> org_seleniumhq_selenium_selenium_http_jar
+org_seleniumhq_selenium_selenium_firefox_driver_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_json_jar
+org_seleniumhq_selenium_selenium_firefox_driver_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_manager_jar
+org_seleniumhq_selenium_selenium_firefox_driver_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_remote_driver_jar
+org_jenkins_ci_acceptance_test_harness_jar -[#000000]-> org_seleniumhq_selenium_selenium_firefox_driver_jar
+org_seleniumhq_selenium_selenium_java_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_api_jar
+org_seleniumhq_selenium_selenium_java_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_chrome_driver_jar
+org_seleniumhq_selenium_selenium_devtools_v116_jar .[#D3D3D3].> com_google_auto_service_auto_service_annotations_jar
+org_seleniumhq_selenium_selenium_devtools_v116_jar .[#FF0000].> com_google_guava_guava_jar: 32.1.2-jre
+org_seleniumhq_selenium_selenium_devtools_v116_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_api_jar
+org_seleniumhq_selenium_selenium_devtools_v116_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_json_jar
+org_seleniumhq_selenium_selenium_devtools_v116_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_remote_driver_jar
+org_seleniumhq_selenium_selenium_java_jar -[#000000]-> org_seleniumhq_selenium_selenium_devtools_v116_jar
+org_seleniumhq_selenium_selenium_devtools_v117_jar .[#D3D3D3].> com_google_auto_service_auto_service_annotations_jar
+org_seleniumhq_selenium_selenium_devtools_v117_jar .[#FF0000].> com_google_guava_guava_jar: 32.1.2-jre
+org_seleniumhq_selenium_selenium_devtools_v117_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_api_jar
+org_seleniumhq_selenium_selenium_devtools_v117_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_json_jar
+org_seleniumhq_selenium_selenium_devtools_v117_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_remote_driver_jar
+org_seleniumhq_selenium_selenium_java_jar -[#000000]-> org_seleniumhq_selenium_selenium_devtools_v117_jar
+org_seleniumhq_selenium_selenium_devtools_v118_jar .[#D3D3D3].> com_google_auto_service_auto_service_annotations_jar
+org_seleniumhq_selenium_selenium_devtools_v118_jar .[#FF0000].> com_google_guava_guava_jar: 32.1.2-jre
+org_seleniumhq_selenium_selenium_devtools_v118_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_api_jar
+org_seleniumhq_selenium_selenium_devtools_v118_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_json_jar
+org_seleniumhq_selenium_selenium_devtools_v118_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_remote_driver_jar
+org_seleniumhq_selenium_selenium_java_jar -[#000000]-> org_seleniumhq_selenium_selenium_devtools_v118_jar
+org_seleniumhq_selenium_selenium_java_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_devtools_v85_jar
+org_seleniumhq_selenium_selenium_edge_driver_jar .[#D3D3D3].> com_google_auto_service_auto_service_annotations_jar
+org_seleniumhq_selenium_selenium_edge_driver_jar .[#FF0000].> com_google_guava_guava_jar: 32.1.2-jre
+org_seleniumhq_selenium_selenium_edge_driver_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_api_jar
+org_seleniumhq_selenium_selenium_edge_driver_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_chromium_driver_jar
+org_seleniumhq_selenium_selenium_edge_driver_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_manager_jar
+org_seleniumhq_selenium_selenium_edge_driver_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_remote_driver_jar
+org_seleniumhq_selenium_selenium_java_jar -[#000000]-> org_seleniumhq_selenium_selenium_edge_driver_jar
+org_seleniumhq_selenium_selenium_java_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_firefox_driver_jar
+org_seleniumhq_selenium_selenium_java_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_remote_driver_jar
+org_seleniumhq_selenium_selenium_java_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_safari_driver_jar
+org_seleniumhq_selenium_selenium_java_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_support_jar
+org_jenkins_ci_acceptance_test_harness_jar -[#000000]-> org_seleniumhq_selenium_selenium_java_jar
+org_seleniumhq_selenium_selenium_safari_driver_jar .[#D3D3D3].> com_google_auto_service_auto_service_annotations_jar
+org_seleniumhq_selenium_selenium_safari_driver_jar .[#FF0000].> com_google_guava_guava_jar: 32.1.2-jre
+org_seleniumhq_selenium_selenium_safari_driver_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_api_jar
+org_seleniumhq_selenium_selenium_safari_driver_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_remote_driver_jar
+org_jenkins_ci_acceptance_test_harness_jar -[#000000]-> org_seleniumhq_selenium_selenium_safari_driver_jar
+org_seleniumhq_selenium_selenium_support_jar .[#D3D3D3].> com_google_auto_service_auto_service_annotations_jar
+org_seleniumhq_selenium_selenium_support_jar .[#FF0000].> com_google_guava_guava_jar: 32.1.2-jre
+org_seleniumhq_selenium_selenium_support_jar .[#D3D3D3].> net_bytebuddy_byte_buddy_jar
+org_seleniumhq_selenium_selenium_support_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_api_jar
+org_seleniumhq_selenium_selenium_support_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_json_jar
+org_seleniumhq_selenium_selenium_support_jar .[#D3D3D3].> org_seleniumhq_selenium_selenium_remote_driver_jar
+org_jenkins_ci_acceptance_test_harness_jar -[#000000]-> org_seleniumhq_selenium_selenium_support_jar
+org_slf4j_slf4j_jdk14_jar .[#D3D3D3].> org_slf4j_slf4j_api_jar
+org_jenkins_ci_acceptance_test_harness_jar -[#000000]-> org_slf4j_slf4j_jdk14_jar
+org_zeroturnaround_zt_zip_jar .[#FF0000].> org_slf4j_slf4j_api_jar: 1.6.6
+org_jenkins_ci_acceptance_test_harness_jar -[#000000]-> org_zeroturnaround_zt_zip_jar
+io_jenkins_plugins_warnings_ng_ui_tests_jar -[#000000]-> org_jenkins_ci_acceptance_test_harness_jar
+io_jenkins_plugins_warnings_ng_ui_tests_jar -[#000000]-> com_fasterxml_jackson_core_jackson_annotations_jar
+io_jenkins_plugins_warnings_ng_ui_tests_jar -[#000000]-> com_fasterxml_jackson_core_jackson_core_jar
+io_jenkins_plugins_warnings_ng_ui_tests_jar -[#000000]-> org_apache_httpcomponents_httpcore_jar
+io_jenkins_plugins_warnings_ng_ui_tests_jar -[#000000]-> commons_codec_commons_codec_jar
+io_jenkins_plugins_warnings_ng_ui_tests_jar -[#000000]-> com_github_spotbugs_spotbugs_annotations_jar
+io_jenkins_plugins_warnings_ng_ui_tests_jar -[#000000]-> com_google_errorprone_error_prone_annotations_jar
+io_jenkins_plugins_warnings_ng_ui_tests_jar -[#000000]-> one_util_streamex_jar
+edu_hm_hafner_codingstyle_jar .[#D3D3D3].> com_github_spotbugs_spotbugs_annotations_jar
+edu_hm_hafner_codingstyle_jar .[#D3D3D3].> com_google_errorprone_error_prone_annotations_jar
+edu_hm_hafner_codingstyle_jar .[#D3D3D3].> org_apache_commons_commons_lang3_jar
+edu_hm_hafner_codingstyle_jar .[#D3D3D3].> commons_io_commons_io_jar
+io_jenkins_plugins_warnings_ng_ui_tests_jar -[#000000]-> edu_hm_hafner_codingstyle_jar
+io_jenkins_plugins_warnings_ng_ui_tests_jar -[#000000]-> org_apache_commons_commons_lang3_jar
+io_jenkins_plugins_warnings_ng_ui_tests_jar -[#000000]-> commons_io_commons_io_jar
+io_jenkins_plugins_warnings_ng_ui_tests_jar -[#000000]-> net_bytebuddy_byte_buddy_jar
+io_jenkins_plugins_warnings_ng_ui_tests_jar -[#000000]-> org_slf4j_slf4j_api_jar
+@enduml

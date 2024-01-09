@@ -210,7 +210,7 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that a source code file will be copied from outside the workspace if configured correspondingly.
      */
     @Test
-    @org.jvnet.hudson.test.Issue("JENKINS-55998")
+    @org.junitpioneer.jupiter.Issue("JENKINS-55998")
     void shouldShowFileOutsideWorkspaceIfConfigured() {
         FreeStyleProject job = createFreeStyleProject();
         prepareGccLog(job);

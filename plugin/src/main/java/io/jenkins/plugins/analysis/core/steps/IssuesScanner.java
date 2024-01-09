@@ -74,9 +74,14 @@ class IssuesScanner {
     private final TaskListener listener;
     private final String scm;
     private final BlameMode blameMode;
+    private final PostProcessingMode postProcessingMode;
     private final boolean quiet;
 
     enum BlameMode {
+        ENABLED, DISABLED
+    }
+
+    enum PostProcessingMode {
         ENABLED, DISABLED
     }
 
@@ -84,7 +89,7 @@ class IssuesScanner {
     IssuesScanner(final Tool tool, final List<RegexpFilter> filters, final Charset sourceCodeEncoding,
             final FilePath workspace, final Set<String> sourceDirectories, final Run<?, ?> run,
             final FilePath jenkinsRootDir, final TaskListener listener,
-            final String scm, final BlameMode blameMode, final boolean quiet) {
+            final String scm, final BlameMode blameMode, final PostProcessingMode postProcessingMode, final boolean quiet) {
         this.filters = new ArrayList<>(filters);
         this.sourceCodeEncoding = sourceCodeEncoding;
         this.tool = tool;
@@ -95,6 +100,7 @@ class IssuesScanner {
         this.listener = listener;
         this.scm = scm;
         this.blameMode = blameMode;
+        this.postProcessingMode = postProcessingMode;
         this.quiet = quiet;
     }
 
@@ -123,7 +129,9 @@ class IssuesScanner {
     }
 
     private AnnotatedReport postProcessReport(final Report report) throws IOException, InterruptedException {
-        if (tool.getDescriptor().isPostProcessingEnabled() && report.isNotEmpty()) {
+        if (tool.getDescriptor().isPostProcessingEnabled()
+                && report.isNotEmpty()
+                && postProcessingMode == PostProcessingMode.ENABLED) {
             report.logInfo("Post processing issues on '%s' with source code encoding '%s'",
                     getAgentName(), sourceCodeEncoding);
             AnnotatedReport result = workspace.act(createPostProcessor(report));
@@ -170,7 +178,6 @@ class IssuesScanner {
                 report.logInfo("-> Filtering SCMs by key '%s'", scm);
             }
             Blamer blamer = BlamerFactory.findBlamer(scm, run, workspace, listener, log);
-            log.logSummary();
             report.mergeLogMessages(log);
 
             return blamer;
@@ -283,7 +290,6 @@ class IssuesScanner {
             }
             FilteredLog log = new FilteredLog("Errors while extracting author and commit information from Git:");
             Blames blames = blamer.blame(fileLocations, log);
-            log.logSummary();
             filtered.mergeLogMessages(log);
             return blames;
         }

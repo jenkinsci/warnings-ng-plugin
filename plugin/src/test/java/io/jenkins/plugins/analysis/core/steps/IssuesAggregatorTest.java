@@ -74,7 +74,7 @@ class IssuesAggregatorTest {
         verify(recorder).publishResult(any(), any(), anyString(), any(), anyString(), any());
     }
 
-    @Test @org.jvnet.hudson.test.Issue("JENKINS-59178")
+    @Test @org.junitpioneer.jupiter.Issue("JENKINS-59178")
     void shouldCollectDifferentResultsForTwoAxes() {
         IssuesRecorder recorder = mock(IssuesRecorder.class);
         IssuesAggregator aggregator = createIssueAggregator(recorder);

@@ -45,6 +45,7 @@ public class FreeStyleConfigurationUiTest extends AbstractJUnitTest {
         issuesRecorder.setIgnoreQualityGate(true);
         issuesRecorder.setIgnoreFailedBuilds(true);
         issuesRecorder.setSkipPublishingChecks(true);
+        issuesRecorder.setSkipPostProcessing(true);
         issuesRecorder.setPublishAllIssues(true);
         issuesRecorder.setFailOnError(true);
         issuesRecorder.setQuiet(true);
@@ -67,6 +68,7 @@ public class FreeStyleConfigurationUiTest extends AbstractJUnitTest {
         assertThat(issuesRecorder).isIgnoringQualityGate();
         assertThat(issuesRecorder).isIgnoringFailedBuilds();
         assertThat(issuesRecorder).isSkipPublishingChecks();
+        assertThat(issuesRecorder).isSkipPostProcessing();
         assertThat(issuesRecorder).isPublishAllIssues();
         assertThat(issuesRecorder).isFailingOnError();
         assertThat(issuesRecorder).isQuiet();
