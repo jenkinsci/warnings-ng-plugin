@@ -417,7 +417,7 @@ public class IssuesRecorder extends Recorder {
     }
 
     /**
-     * Returns whether SCM blaming should be disabled.
+     * Returns whether the SCM blaming should be disabled.
      *
      * @return {@code true} if SCM blaming should be disabled
      */
@@ -432,7 +432,7 @@ public class IssuesRecorder extends Recorder {
     }
 
     /**
-     * Returns whether SCM blaming should be disabled.
+     * Returns whether the SCM blaming should be disabled.
      *
      * @return {@code true} if SCM blaming should be disabled
      */
