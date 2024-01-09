@@ -6,8 +6,7 @@
 [![GitHub Actions](https://github.com/jenkinsci/warnings-ng-plugin/workflows/GitHub%20CI/badge.svg)](https://github.com/jenkinsci/warnings-ng-plugin/actions)
 [![Codecov](https://codecov.io/gh/jenkinsci/warnings-ng-plugin/branch/main/graph/badge.svg)](https://app.codecov.io/gh/jenkinsci/warnings-ng-plugin)
 
-The Jenkins Next Generation Warnings plugin collects compiler warnings or issues reported by static analysis tools and 
-visualizes the results. It has built-in support for more than a hundred [report formats](SUPPORTED-FORMATS.md). 
+The Jenkins Next Generation Warnings plugin collects compiler warnings or issues reported by static analysis tools and visualizes the results. It has built-in support for more than a hundred [report formats](SUPPORTED-FORMATS.md). 
 Among the problems it can detect:
 - errors from your compiler (C, C#, Java, etc.)
 - warnings from a static analysis tool (CheckStyle, StyleCop, SpotBugs, etc.)
@@ -15,19 +14,23 @@ Among the problems it can detect:
 - vulnerabilities
 - open tasks in comments of your source files
 
-The Jenkins **Next Generation** Warnings plug-in replaces the whole Jenkins Static Analysis Suite. 
-I.e. it makes the following Jenkins plugins obsolete:
-Android Lint, CheckStyle, Dry, FindBugs, PMD, Warnings, Static Analysis Utilities, Static Analysis Collector.
-
-The plugin publishes a report of the issues found in your build, so you can navigate to a summary report from the 
-main build page. From there you can also dive into the details: 
+The plugin publishes a report of the issues found in your build, so you can navigate to a summary report from the main build page. From there you can also dive into the details: 
 - distribution of new, fixed and outstanding issues
 - distribution of the issues by severity, category, type, module, or package
 - list of all issues including helpful comments from the reporting tool
 - annotated source code of the affected files
 - trend charts of the issues over time
 
-If you are using Git as source code management system then the warnings plugin will optionally mine 
+![Jenkins Warnings Plug-in](doc/images/jenkins.png)
+
+This code of this plugin is also available as a standalone GitHub or GitLab action that runs without Jenkins now:
+- [Quality Monitor GitHub Action](https://github.com/uhafner/quality-monitor): action that monitors the quality of projects based on a configurable set of metrics and gives feedback on pull requests (or single commits) in GitHub.
+- [GitHub Autograding action](https://github.com/uhafner/autograding-github-action): action that automatically grades student software projects based on a configurable set of metrics and gives feedback on pull requests (or single commits) in GitHub.
+- [GitLab Autograding action](https://github.com/uhafner/autograding-gitlab-action): action that automatically grades student software projects based on a configurable set of metrics and gives feedback on merge requests (or single commits) in GitLab.
+
+![Quality Monitor GitHub Action](doc/images/quality-monitor.png)
+
+If you are using Git as a source code management system then the warnings plugin will optionally mine 
 the repository in the style of 
 [Code as a Crime Scene](https://www.adamtornhill.com/articles/crimescene/codeascrimescene.htm) 
 (Adam Tornhill, November 2013) to determine statistics of the affected files (i.e. the files with issues):
