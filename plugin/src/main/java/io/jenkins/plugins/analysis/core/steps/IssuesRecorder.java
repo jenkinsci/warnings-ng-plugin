@@ -62,7 +62,6 @@ import io.jenkins.plugins.util.JenkinsFacade;
 import io.jenkins.plugins.util.LogHandler;
 import io.jenkins.plugins.util.ResultHandler;
 import io.jenkins.plugins.util.RunResultHandler;
-import io.jenkins.plugins.util.StageResultHandler;
 import io.jenkins.plugins.util.ValidationUtilities;
 
 /**
@@ -427,32 +426,6 @@ public class IssuesRecorder extends Recorder {
     }
 
     /**
-     * Not used anymore.
-     *
-     * @return {@code true} if SCM forensics should be disabled
-     * @deprecated Forensics will be automatically skipped if the Forensics recorder is not activated.
-     */
-    @SuppressWarnings("PMD.BooleanGetMethodName")
-    @Deprecated
-    public boolean getForensicsDisabled() {
-        return isForensicsDisabled;
-    }
-
-    /**
-     * Not used anymore.
-     *
-     * @param forensicsDisabled
-     *         not used
-     *
-     * @deprecated Forensics will be automatically skipped if the Forensics recorder is not activated.
-     */
-    @DataBoundSetter
-    @Deprecated
-    public void setForensicsDisabled(final boolean forensicsDisabled) {
-        isForensicsDisabled = forensicsDisabled;
-    }
-
-    /**
      * Returns whether publishing checks should be skipped.
      *
      * @return {@code true} if publishing checks should be skipped, {@code false} otherwise
@@ -705,21 +678,6 @@ public class IssuesRecorder extends Recorder {
         return true;
     }
 
-    /**
-     * Executes the build step. Used from {@link RecordIssuesStep} to provide a {@link StageResultHandler} that has
-     * Pipeline-specific behavior.
-     *
-     * @param run
-     *         the run of the pipeline or freestyle job
-     * @param workspace
-     *         workspace of the build
-     * @param listener
-     *         the logger
-     * @param resultHandler
-     *         reports the status for the build or for the stage
-     *
-     * @return the created results
-     */
     List<AnalysisResult> perform(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
             final ResultHandler resultHandler) throws InterruptedException, IOException {
         Result overallResult = run.getResult();

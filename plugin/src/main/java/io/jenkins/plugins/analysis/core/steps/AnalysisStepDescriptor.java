@@ -96,24 +96,6 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
             return model.getAllSeverityFilters();
         }
         return new ListBoxModel();
-
-    }
-
-    /**
-     * Returns the model with the possible reference jobs.
-     *
-     * @param project
-     *         the project that is configured
-     * @return the model with the possible reference jobs
-     * @deprecated not used anymore, part of forensics plugin
-     */
-    @Deprecated
-    @POST
-    public ComboBoxModel doFillReferenceJobNameItems(@AncestorInPath final BuildableItem project) {
-        if (JENKINS.hasPermission(Item.CONFIGURE, project)) {
-            return model.getAllJobs();
-        }
-        return new ComboBoxModel();
     }
 
     /**

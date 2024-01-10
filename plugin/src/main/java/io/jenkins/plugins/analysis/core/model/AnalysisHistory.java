@@ -63,7 +63,7 @@ public class AnalysisHistory implements History {
      */
     public enum JobResultEvaluationMode {
         /**
-         * Only those jobs are considered that did not fail. I.e. jobs with result {@link Result#UNSTABLE} or {@link
+         * Only those jobs are considered that did not fail. I.e., jobs with result {@link Result#UNSTABLE} or {@link
          * Result#SUCCESS}.
          */
         NO_JOB_FAILURE,

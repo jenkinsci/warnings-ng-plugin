@@ -322,21 +322,6 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
     /**
      * Returns the UI model for an ECharts line chart that shows the issues stacked by severity.
      *
-     * @param isBuildOnXAxis
-     *         determines whether the Jenkins build number should be used on the X-axis or the date
-     *
-     * @return the UI model as JSON
-     * @deprecated replaced by {@link #getBuildTrend(String)}
-     */
-    @Deprecated
-    @SuppressWarnings("unused")
-    public String getBuildTrend(final boolean isBuildOnXAxis) {
-        return createTrendAsJson(new SeverityTrendChart(), DEFAULT_CONFIGURATION);
-    }
-
-    /**
-     * Returns the UI model for an ECharts line chart that shows the issues stacked by severity.
-     *
      * @param configuration
      *         determines whether the Jenkins build number should be used on the X-axis or the date
      *
@@ -346,21 +331,6 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
     @SuppressWarnings("unused") // Called by jelly view
     public String getBuildTrend(final String configuration) {
         return createTrendAsJson(new SeverityTrendChart(), configuration);
-    }
-
-    /**
-     * Returns the UI model for an ECharts line chart that shows the issues by tool.
-     *
-     * @param isBuildOnXAxis
-     *         determines whether the Jenkins build number should be used on the X-axis or the date
-     *
-     * @return the UI model as JSON
-     * @deprecated replaced by {@link #getToolsTrend(String)}
-     */
-    @Deprecated
-    @SuppressWarnings("unused")
-    public String getToolsTrend(final boolean isBuildOnXAxis) {
-        return createTrendAsJson(new ToolsTrendChart(), DEFAULT_CONFIGURATION);
     }
 
     /**
@@ -380,21 +350,6 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
     /**
      * Returns the UI model for an ECharts line chart that shows the new and fixed issues.
      *
-     * @param isBuildOnXAxis
-     *         determines whether the Jenkins build number should be used on the X-axis or the date
-     *
-     * @return the UI model as JSON
-     * @deprecated replaced by {@link #getNewVersusFixedTrend(String)}
-     */
-    @Deprecated
-    @SuppressWarnings("unused")
-    public String getNewVersusFixedTrend(final boolean isBuildOnXAxis) {
-        return createTrendAsJson(new NewVersusFixedTrendChart(), DEFAULT_CONFIGURATION);
-    }
-
-    /**
-     * Returns the UI model for an ECharts line chart that shows the new and fixed issues.
-     *
      * @param configuration
      *         determines whether the Jenkins build number should be used on the X-axis or the date
      *
@@ -404,21 +359,6 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
     @SuppressWarnings("unused") // Called by jelly view
     public String getNewVersusFixedTrend(final String configuration) {
         return createTrendAsJson(new NewVersusFixedTrendChart(), configuration);
-    }
-
-    /**
-     * Returns the UI model for an ECharts line chart that shows the issues by tool.
-     *
-     * @param isBuildOnXAxis
-     *         determines whether the Jenkins build number should be used on the X-axis or the date
-     *
-     * @return the UI model as JSON
-     * @deprecated replaced by {@link #getHealthTrend(String)}
-     */
-    @Deprecated
-    @SuppressWarnings("unused")
-    public String getHealthTrend(final boolean isBuildOnXAxis) {
-        return createTrendAsJson(new HealthTrendChart(healthDescriptor), DEFAULT_CONFIGURATION);
     }
 
     /**
@@ -466,7 +406,7 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
     }
 
     /**
-     * Returns all new issues of the associated static analysis run. I.e. all issues, that are part of the current
+     * Returns all new issues of the associated static analysis run. I.e., all issues that are part of the current
      * report but have not been shown up in the previous report.
      *
      * @return all new issues
@@ -477,7 +417,7 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
     }
 
     /**
-     * Returns all fixed issues of the associated static analysis run. I.e. all issues, that are part of the previous
+     * Returns all fixed issues of the associated static analysis run. I.e., all issues that are part of the previous
      * report but are not present in the current report anymore.
      *
      * @return all fixed issues
@@ -488,7 +428,7 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
     }
 
     /**
-     * Returns all outstanding issues of the associated static analysis run. I.e. all issues, that are part of the
+     * Returns all outstanding issues of the associated static analysis run. I.e., all issues that are part of the
      * current and previous report.
      *
      * @return all outstanding issues

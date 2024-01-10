@@ -35,7 +35,7 @@ class StepsOnAgentITest extends IntegrationTestWithJenkinsPerTest {
      * active, see JENKINS-56007 for details.
      */
     @Test
-    @org.jvnet.hudson.test.Issue("JENKINS-56007")
+    @org.junitpioneer.jupiter.Issue("JENKINS-56007")
     void shouldCopySourcesIfMasterAgentSecurityIsActive() {
         Slave agent = createAgentWithEnabledSecurity("agent");
 
@@ -58,7 +58,7 @@ class StepsOnAgentITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     private String getSourceCode(final AnalysisResult result, final int rowIndex) {
-        IssuesDetail target = (IssuesDetail) result.getOwner().getAction(ResultAction.class).getTarget();
+        IssuesDetail target = result.getOwner().getAction(ResultAction.class).getTarget();
         String sourceCodeUrl = new FileNameRenderer(result.getOwner()).getSourceCodeUrl(
                 result.getIssues().get(rowIndex));
         SourceCodeViewModel dynamic = (SourceCodeViewModel) target.getDynamic(

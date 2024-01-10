@@ -127,32 +127,6 @@ public class ScanForIssuesStep extends Step {
         isBlameDisabled = blameDisabled;
     }
 
-    /**
-     * Not used anymore.
-     *
-     * @return {@code true} if SCM forensics should be disabled
-     * @deprecated Forensics will be automatically skipped if the Forensics recorder is not activated.
-     */
-    @SuppressWarnings("PMD.BooleanGetMethodName")
-    @Deprecated
-    public boolean getForensicsDisabled() {
-        return false;
-    }
-
-    /**
-     * Not used anymore.
-     *
-     * @param forensicsDisabled
-     *         not used
-     *
-     * @deprecated Forensics will be automatically skipped if the Forensics recorder is not activated.
-     */
-    @DataBoundSetter
-    @Deprecated
-    public void setForensicsDisabled(final boolean forensicsDisabled) {
-        // do nothing
-    }
-
     @CheckForNull
     public String getSourceCodeEncoding() {
         return sourceCodeEncoding;

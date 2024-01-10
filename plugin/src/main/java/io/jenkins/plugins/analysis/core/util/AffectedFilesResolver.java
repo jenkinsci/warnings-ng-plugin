@@ -15,7 +15,6 @@ import edu.hm.hafner.util.VisibleForTesting;
 
 import hudson.FilePath;
 import hudson.model.Run;
-import hudson.remoting.VirtualChannel;
 
 import io.jenkins.plugins.prism.FilePermissionEnforcer;
 
@@ -111,28 +110,6 @@ public class AffectedFilesResolver {
         copyAffectedFilesToBuildFolder(report, new RemoteFacade(workspace, permittedSourceDirectories, buildFolder));
     }
 
-    /**
-     * Copies all files with issues from the workspace to the build folder.
-     *
-     * @param report
-     *         the issues
-     * @param channel
-     *         virtual channel to access the files on the agent
-     * @param buildFolder
-     *         directory to store the copied files in
-     * @param permittedSourceDirectories
-     *         paths to the affected files on the agent
-     *
-     * @throws InterruptedException
-     *         if the user cancels the processing
-     * @deprecated use {@link #copyAffectedFilesToBuildFolder(Report, FilePath, Set, FilePath)}
-     */
-    @Deprecated
-    public void copyAffectedFilesToBuildFolder(final Report report, final VirtualChannel channel,
-            final FilePath buildFolder, final Set<String> permittedSourceDirectories) throws InterruptedException {
-        // do nothing
-    }
-
     @VisibleForTesting
     @SuppressWarnings("PMD.CognitiveComplexity")
     void copyAffectedFilesToBuildFolder(final Report report, final RemoteFacade remoteFacade)
@@ -170,7 +147,6 @@ public class AffectedFilesResolver {
         log.getErrorMessages().forEach(report::logError);
         report.logInfo("-> %d copied, %d not in workspace, %d not-found, %d with I/O error",
                 copied, notInWorkspace, notFound, log.size());
-        log.logSummary();
     }
 
     static class RemoteFacade {

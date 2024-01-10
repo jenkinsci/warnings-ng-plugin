@@ -42,7 +42,7 @@ class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      * in the expected HTML output.
      */
     @Test
-    @org.jvnet.hudson.test.Issue("JENKINS-58538")
+    @org.junitpioneer.jupiter.Issue("JENKINS-58538")
     void shouldShowFolderDistributionRatherThanPackageDistribution() {
         FreeStyleProject project = createFreeStyleProject();
 

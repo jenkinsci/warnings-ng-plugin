@@ -113,46 +113,4 @@ public class IssuesStatisticsBuilder {
 
         fixedSize = 0;
     }
-
-    /**
-     * Computed automatically since 6.1.0.
-     *
-     * @param unused
-     *         not used
-     *
-     * @return this
-     * @deprecated Computed automatically.
-     */
-    @Deprecated
-    public IssuesStatisticsBuilder setTotalSize(final int unused) {
-        return this;
-    }
-
-    /**
-     * Computed automatically since 6.1.0.
-     *
-     * @param unused
-     *         not used
-     *
-     * @return this
-     * @deprecated Computed automatically.
-     */
-    @Deprecated
-    public IssuesStatisticsBuilder setNewSize(final int unused) {
-        return this;
-    }
-
-    /**
-     * Computed automatically since 6.1.0.
-     *
-     * @param unused
-     *         not used
-     *
-     * @return this
-     * @deprecated Computed automatically.
-     */
-    @Deprecated
-    public IssuesStatisticsBuilder setDeltaSize(final int unused) {
-        return this;
-    }
 }

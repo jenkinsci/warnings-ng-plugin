@@ -65,7 +65,7 @@ class TimeStamperPluginITest extends IntegrationTestWithJenkinsPerSuite {
     /**
      * Tests JENKINS-56484: Error while parsing clang errors with active timestamper plugin.
      */
-    @Test @org.jvnet.hudson.test.Issue("JENKINS-56484")
+    @Test @org.junitpioneer.jupiter.Issue("JENKINS-56484")
     void shouldCorrectlyParseClangErrors() {
         WorkflowJob project = createPipeline();
 

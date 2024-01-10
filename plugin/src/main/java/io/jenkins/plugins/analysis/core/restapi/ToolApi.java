@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.core.restapi;
 
-import java.util.Collections;
 import java.util.Map;
 
 import edu.hm.hafner.analysis.Severity;
@@ -22,25 +21,6 @@ public class ToolApi {
     private final String latestUrl;
     private final int size;
     private final Map<Severity, Integer> sizePerSeverity;
-
-    /**
-     * Creates a new instance of {@link ToolApi}.
-     *
-     * @param id
-     *         unique ID of the tool
-     * @param name
-     *         human-readable name of the tool
-     * @param latestUrl
-     *         the URL to the latest results
-     * @param size
-     *         the number of warnings
-     * @deprecated
-     *         use {@link #ToolApi(String, String, String, int, Map)} instead.
-     */
-    @Deprecated
-    public ToolApi(final String id, final String name, final String latestUrl, final int size) {
-        this(name, id, latestUrl, size, Collections.emptyMap());
-    }
 
     /**
      * Creates a new instance of {@link ToolApi}.
@@ -103,5 +83,4 @@ public class ToolApi {
     public int getLowSize() {
         return sizePerSeverity.getOrDefault(Severity.WARNING_LOW, 0);
     }
-
 }

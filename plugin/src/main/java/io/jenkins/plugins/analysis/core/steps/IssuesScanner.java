@@ -170,7 +170,6 @@ class IssuesScanner {
                 report.logInfo("-> Filtering SCMs by key '%s'", scm);
             }
             Blamer blamer = BlamerFactory.findBlamer(scm, run, workspace, listener, log);
-            log.logSummary();
             report.mergeLogMessages(log);
 
             return blamer;
@@ -283,7 +282,6 @@ class IssuesScanner {
             }
             FilteredLog log = new FilteredLog("Errors while extracting author and commit information from Git:");
             Blames blames = blamer.blame(fileLocations, log);
-            log.logSummary();
             filtered.mergeLogMessages(log);
             return blames;
         }
