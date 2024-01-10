@@ -157,7 +157,7 @@ class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(result.getResult().getIssues().getModules()).containsExactly("-");
 
         assertThat(getConsoleLog(build)).doesNotContain("Resolving module names from module definitions (build.xml, pom.xml, or Manifest.mf files)");
-        assertThat(getConsoleLog(build)).contains("Skipping post processing");
+        assertThat(getConsoleLog(build)).contains("Skipping detection of missing package and module names");
     }
 
     /**
