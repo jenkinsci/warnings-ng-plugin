@@ -51,6 +51,7 @@
     <argLine>-Djava.awt.headless=true -Xmx1024m -Djenkins.test.timeout=1000 --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.util.concurrent=ALL-UNNAMED</argLine>
 
     <prism-api.version>1.29.0-8</prism-api.version>
+    <jenkins.version>2.401.3</jenkins.version>
 
   </properties>
 
@@ -181,8 +182,8 @@
       <artifactId>apache-httpcomponents-client-4-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.google.code.gson</groupId>
-      <artifactId>gson</artifactId>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>gson-api</artifactId>
       <version>2.10.1</version>
     </dependency>
 
@@ -504,6 +505,18 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>io.jenkins.tools.bom</groupId>
+        <artifactId>bom-2.426.x</artifactId>
+        <version>2555.v3190a_8a_c60c6</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <build>
     <plugins>
