@@ -357,7 +357,7 @@ class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
 
         String consoleLog = getConsoleLog(result);
         assertThat(consoleLog).doesNotContain(DEFAULT_DEBUG_LOG_LINE);
-        assertThat(consoleLog).contains("Skipping post processing");
+        assertThat(consoleLog).contains("Skipping detection of missing package and module names");
     }
 
     private String returnExpectedNumberOfResolvedPackageNames(final int expectedNumberOfResolvedPackageNames) {
