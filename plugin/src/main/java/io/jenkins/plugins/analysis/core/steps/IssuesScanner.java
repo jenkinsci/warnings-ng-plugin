@@ -37,9 +37,7 @@ import jenkins.MasterToSlaveFileCallable;
 
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.ReportLocations;
-import io.jenkins.plugins.analysis.core.model.SourceDirectory;
 import io.jenkins.plugins.analysis.core.model.Tool;
-import io.jenkins.plugins.analysis.core.model.WarningsPluginConfiguration;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 import io.jenkins.plugins.analysis.core.util.FileFinder;
@@ -151,19 +149,11 @@ class IssuesScanner {
     }
 
     private Set<String> getPermittedSourceDirectories() {
-        Set<String> permittedSourceDirectories = PrismConfiguration.getInstance()
+        return PrismConfiguration.getInstance()
                 .getSourceDirectories()
                 .stream()
                 .map(PermittedSourceCodeDirectory::getPath)
                 .collect(Collectors.toSet());
-        List<String> permittedSourceCodeDirectoriesOfWarningsPlugin
-                = WarningsPluginConfiguration.getInstance()
-                .getSourceDirectories()
-                .stream()
-                .map(SourceDirectory::getPath)
-                .collect(Collectors.toList());
-        permittedSourceDirectories.addAll(permittedSourceCodeDirectoriesOfWarningsPlugin);
-        return permittedSourceDirectories;
     }
 
     private Blamer createBlamer(final Report report) {

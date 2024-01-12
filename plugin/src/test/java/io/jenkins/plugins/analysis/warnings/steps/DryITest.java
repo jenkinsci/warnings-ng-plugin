@@ -40,7 +40,7 @@ class DryITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String CPD_REPORT = FOLDER + "cpd.xml";
 
     /**
-     * Verifies that the right amount of duplicate code warnings are detected.
+     * Verifies that the right number of duplicate code warnings is detected.
      */
     @Test
     void shouldHaveDuplicateCodeWarnings() {
@@ -61,7 +61,7 @@ class DryITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Verifies that the priority of the duplicate code warnings are changed corresponding to the defined thresholds for
+     * Verifies that the priority of the duplicate code warnings is changed corresponding to the defined thresholds for
      * cpd warnings.
      */
     @Test
@@ -115,7 +115,7 @@ class DryITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Verifies that the priority of the duplicate code warnings are changed corresponding to the defined thresholds for
+     * Verifies that the priority of the duplicate code warnings is changed corresponding to the defined thresholds for
      * cpd warnings.
      */
     @Test
