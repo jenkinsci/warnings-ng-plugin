@@ -25,8 +25,6 @@ import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.IssuesDetail;
 import io.jenkins.plugins.analysis.core.model.IssuesModel.IssuesRow;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
-import io.jenkins.plugins.analysis.core.model.SourceDirectory;
-import io.jenkins.plugins.analysis.core.model.WarningsPluginConfiguration;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
@@ -222,15 +220,13 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
         // First build: copying the affected file is forbidden
         buildAndVerifyFilesResolving(job, ColumnLink.SHOULD_NOT_HAVE_LINK, "0 copied", "1 not in workspace", "0 not-found", "0 with I/O error");
 
-        // Use source directories of old Warnings plugin configuration
-        WarningsPluginConfiguration.getInstance().setSourceDirectories(
-                Collections.singletonList(new SourceDirectory(buildsFolder)));
+        PrismConfiguration.getInstance().setSourceDirectories(
+                Collections.singletonList(new PermittedSourceCodeDirectory(buildsFolder)));
 
         // Second build: copying the affected file is permitted
         buildAndVerifyFilesResolving(job, ColumnLink.SHOULD_HAVE_LINK, "1 copied", "0 not in workspace", "0 not-found", "0 with I/O error");
 
-        // Use source directories of new Prism plugin configuration
-        WarningsPluginConfiguration.getInstance().setSourceDirectories(new ArrayList<>());
+        PrismConfiguration.getInstance().setSourceDirectories(new ArrayList<>());
 
         // Third build: copying the affected file is forbidden again
         buildAndVerifyFilesResolving(job, ColumnLink.SHOULD_NOT_HAVE_LINK, "0 copied", "1 not in workspace", "0 not-found", "0 with I/O error");
