@@ -57,7 +57,7 @@ public abstract class DetailsTableModel extends TableModel {
      * @param descriptionProvider
      *         renders the description text
      * @param jenkinsFacade
-     *         Jenkins facade to replaced with a stub during unit tests
+     *         Jenkins facade to be replaced with a stub during unit tests
      */
     protected DetailsTableModel(final Report report, final FileNameRenderer fileNameRenderer,
             final AgeBuilder ageBuilder, final DescriptionProvider descriptionProvider,
