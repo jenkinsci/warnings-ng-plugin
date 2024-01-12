@@ -15,6 +15,7 @@ import j2html.tags.ContainerTag;
 import j2html.tags.DomContent;
 
 import org.jvnet.localizer.Localizable;
+import hudson.model.Job;
 import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
@@ -115,7 +116,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      * @return the age builder
      */
     protected DefaultAgeBuilder getAgeBuilder(final Run<?, ?> owner, final String url) {
-        return new DefaultAgeBuilder(owner.getNumber(), url);
+        return new DefaultAgeBuilder(owner.getNumber(), url, owner.getParent());
     }
 
     /**
@@ -170,7 +171,8 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
         return this;
     }
 
-    @Override @Generated
+    @Override
+    @Generated
     public String toString() {
         return String.format("%s: %s", getId(), getName());
     }
@@ -190,7 +192,8 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      * @return the name of the side panel link
      * @deprecated use {@link #getLinkName()}
      */
-    @Deprecated @Generated
+    @Deprecated
+    @Generated
     public String getRawLinkName() {
         if (StringUtils.isNotBlank(name)) {
             return Messages.Tool_Link_Name(name);
@@ -398,26 +401,34 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      * Computes the age of a build as a hyperlink.
      */
     public static class DefaultAgeBuilder implements AgeBuilder {
-        private final int currentBuild;
+        private final int currentBuildNumber;
         private final String resultUrl;
+        private final Job<?, ?> currentBuild;
 
         /**
          * Creates a new instance of {@link DefaultAgeBuilder}.
          *
-         * @param currentBuild
+         * @param currentBuildNumber
          *         number of the current build
          * @param resultUrl
          *         URL to the results
+         * @param job
+         *         the job
          */
-        public DefaultAgeBuilder(final int currentBuild, final String resultUrl) {
-            this.currentBuild = currentBuild;
+        public DefaultAgeBuilder(final int currentBuildNumber, final String resultUrl, final Job<?, ?> job) {
+            this.currentBuildNumber = currentBuildNumber;
             this.resultUrl = resultUrl;
+            this.currentBuild = job;
         }
 
         @Override
         public String apply(final Integer referenceBuild) {
-            if (referenceBuild >= currentBuild) {
+            if (referenceBuild >= currentBuildNumber) {
                 return "1"; // fallback
+            }
+            var referenceBuildId = String.valueOf(referenceBuild);
+            if (currentBuild.getBuild(referenceBuildId) == null) {
+                return computeAge(referenceBuild); // plain link
             }
             else {
                 String cleanUrl = StringUtils.stripEnd(resultUrl, "/");
@@ -432,7 +443,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
         }
 
         private String computeAge(final int buildNumber) {
-            return String.valueOf(currentBuild - buildNumber + 1);
+            return String.valueOf(currentBuildNumber - buildNumber + 1);
         }
     }
 
