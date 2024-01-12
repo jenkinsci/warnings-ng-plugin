@@ -33,6 +33,7 @@ import io.jenkins.plugins.analysis.warnings.Gcc4;
 import io.jenkins.plugins.prism.PermittedSourceCodeDirectory;
 import io.jenkins.plugins.prism.PrismConfiguration;
 import io.jenkins.plugins.prism.SourceCodeDirectory;
+import io.jenkins.plugins.prism.SourceCodeRetention;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -51,6 +52,7 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String ECLIPSE_REPORT = FOLDER + "/eclipseOneAffectedAndThreeNotExistingFiles.txt";
     private static final String ECLIPSE_REPORT_ONE_AFFECTED_AFFECTED_FILE = FOLDER + "/eclipseOneAffectedFile.txt";
     private static final int ROW_NUMBER_ACTUAL_AFFECTED_FILE = 0;
+    private static final String COPY_FILES = "Copying affected files to Jenkins' build folder";
 
     /**
      * Verifies that the affected source code is copied and shown in the source code view. If the file is deleted in the
@@ -76,8 +78,8 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
         return project;
     }
 
-    private void enableEclipseWarnings(final FreeStyleProject project) {
-        enableWarnings(project, createTool(new Eclipse(), "**/*.txt"));
+    private IssuesRecorder enableEclipseWarnings(final FreeStyleProject project) {
+        return enableWarnings(project, createTool(new Eclipse(), "**/*.txt"));
     }
 
     private FreeStyleProject getJobWithWorkspaceFiles() {
@@ -220,6 +222,7 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
         // First build: copying the affected file is forbidden
         buildAndVerifyFilesResolving(job, ColumnLink.SHOULD_NOT_HAVE_LINK, "0 copied", "1 not in workspace", "0 not-found", "0 with I/O error");
 
+        // Use source directories of old Warnings plugin configuration
         PrismConfiguration.getInstance().setSourceDirectories(
                 Collections.singletonList(new PermittedSourceCodeDirectory(buildsFolder)));
 
@@ -238,12 +241,39 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
         buildAndVerifyFilesResolving(job, ColumnLink.SHOULD_HAVE_LINK, "1 copied", "0 not in workspace", "0 not-found", "0 with I/O error");
     }
 
-    private void buildAndVerifyFilesResolving(final FreeStyleProject job, final ColumnLink columnLink,
+    @Test
+    void shouldDeleteSourceCodeFilesOfPreviousBuilds() {
+        FreeStyleProject job = createFreeStyleProject();
+        prepareGccLog(job);
+
+        IssuesRecorder recorder = enableWarnings(job, createTool(new Gcc4(), "**/gcc.log"));
+        recorder.setSourceCodeRetention(SourceCodeRetention.LAST_BUILD);
+
+        String buildsFolder = job.getRootDir().getAbsolutePath();
+
+        PrismConfiguration.getInstance().setSourceDirectories(
+                Collections.singletonList(new PermittedSourceCodeDirectory(buildsFolder)));
+
+        Run<?, ?> first = buildAndVerifyFilesResolving(job, ColumnLink.SHOULD_HAVE_LINK,
+                "1 copied", "0 not in workspace", "0 not-found", "0 with I/O error");
+        Run<?, ?> second = buildAndVerifyFilesResolving(job, ColumnLink.SHOULD_HAVE_LINK,
+                "1 copied", "0 not in workspace", "0 not-found", "0 with I/O error");
+
+        verifyResolving(ColumnLink.SHOULD_NOT_HAVE_LINK, getAnalysisResult(first));
+        assertThat(getConsoleLog(second)).contains("Deleting source code files of build #1");
+    }
+
+    private Run<?, ?> buildAndVerifyFilesResolving(final FreeStyleProject job, final ColumnLink columnLink,
             final String... expectedResolveMessages) {
         AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.SUCCESS);
-
         assertThat(getConsoleLog(result)).contains(expectedResolveMessages);
 
+        verifyResolving(columnLink, result);
+
+        return result.getOwner();
+    }
+
+    private void verifyResolving(final ColumnLink columnLink, final AnalysisResult result) {
         assertThat(result.getIssues()).hasSize(1);
 
         IssuesRow firstRow = getIssuesModel(result, 0);
@@ -280,14 +310,25 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
         }
     }
 
-    /**
-     * Verifies that the {@link AffectedFilesResolver} can find one existing file.
-     */
     @Test
     void shouldFindOneAffectedFile() {
         AnalysisResult result = buildEclipseProject(ECLIPSE_REPORT_ONE_AFFECTED_AFFECTED_FILE, SOURCE_AFFECTED_FILE);
 
-        assertThat(getConsoleLog(result)).contains("1 copied", "0 not-found", "0 with I/O error");
+        assertThat(getConsoleLog(result))
+                .contains(COPY_FILES, "1 copied", "0 not-found", "0 with I/O error");
+    }
+
+    @Test
+    void shouldSkipStoringOfAffectedFiles() {
+        FreeStyleProject project = createFreeStyleProject();
+        copyMultipleFilesToWorkspace(project, ECLIPSE_REPORT_ONE_AFFECTED_AFFECTED_FILE, SOURCE_AFFECTED_FILE);
+        var recorder = enableEclipseWarnings(project);
+        recorder.setSourceCodeRetention(SourceCodeRetention.NEVER);
+
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+
+        assertThat(getConsoleLog(result))
+                .doesNotContain(COPY_FILES, " copied", " not-found", " with I/O error");
     }
 
     private AnalysisResult buildEclipseProject(final String... files) {

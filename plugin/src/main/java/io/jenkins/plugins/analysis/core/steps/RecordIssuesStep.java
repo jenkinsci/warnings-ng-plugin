@@ -39,6 +39,7 @@ import io.jenkins.plugins.analysis.core.util.TrendChartType;
 import io.jenkins.plugins.analysis.core.util.WarningsQualityGate;
 import io.jenkins.plugins.checks.steps.ChecksInfo;
 import io.jenkins.plugins.prism.SourceCodeDirectory;
+import io.jenkins.plugins.prism.SourceCodeRetention;
 import io.jenkins.plugins.util.PipelineResultHandler;
 import io.jenkins.plugins.util.QualityGateEvaluator;
 import io.jenkins.plugins.util.ResultHandler;
@@ -69,8 +70,8 @@ public class RecordIssuesStep extends Step implements Serializable {
     private List<Tool> analysisTools = new ArrayList<>();
 
     private String sourceCodeEncoding = StringUtils.EMPTY;
-    private String sourceDirectory = StringUtils.EMPTY;
     private Set<SourceCodeDirectory> sourceDirectories = new HashSet<>(); // @since 9.11.0
+    private SourceCodeRetention sourceCodeRetention = SourceCodeRetention.EVERY_BUILD;
 
     private boolean ignoreQualityGate = false; // by default, a successful quality gate is mandatory;
     private boolean ignoreFailedBuilds = true; // by default, failed builds are ignored;
@@ -310,22 +311,6 @@ public class RecordIssuesStep extends Step implements Serializable {
         this.sourceCodeEncoding = sourceCodeEncoding;
     }
 
-    public String getSourceDirectory() {
-        return sourceDirectory;
-    }
-
-    /**
-     * Sets the path to the folder that contains the source code. If not relative and thus not part of the workspace
-     * then this folder needs to be added in Jenkins global configuration.
-     *
-     * @param sourceDirectory
-     *         a folder containing the source code
-     */
-    @DataBoundSetter
-    public void setSourceDirectory(final String sourceDirectory) {
-        this.sourceDirectory = sourceDirectory;
-    }
-
     /**
      * Sets the paths to the directories that contain the source code. If not relative and thus not part of the
      *  workspace, then these directories need to be added in Jenkins global configuration to prevent accessing of
@@ -344,11 +329,22 @@ public class RecordIssuesStep extends Step implements Serializable {
     }
 
     private List<SourceCodeDirectory> getAllSourceDirectories() {
-        Set<SourceCodeDirectory> directories = new HashSet<>(getSourceDirectories());
-        if (StringUtils.isNotBlank(getSourceDirectory())) {
-            directories.add(new SourceCodeDirectory(getSourceDirectory()));
-        }
-        return new ArrayList<>(directories);
+        return new ArrayList<>(new HashSet<>(getSourceDirectories()));
+    }
+
+    /**
+     * Defines the retention strategy for source code files.
+     *
+     * @param sourceCodeRetention
+     *         the retention strategy for source code files
+     */
+    @DataBoundSetter
+    public void setSourceCodeRetention(final SourceCodeRetention sourceCodeRetention) {
+        this.sourceCodeRetention = sourceCodeRetention;
+    }
+
+    public SourceCodeRetention getSourceCodeRetention() {
+        return sourceCodeRetention;
     }
 
     /**

@@ -59,6 +59,7 @@ import io.jenkins.plugins.analysis.core.util.TrendChartType;
 import io.jenkins.plugins.analysis.core.util.WarningsQualityGate;
 import io.jenkins.plugins.checks.steps.ChecksInfo;
 import io.jenkins.plugins.prism.SourceCodeDirectory;
+import io.jenkins.plugins.prism.SourceCodeRetention;
 import io.jenkins.plugins.util.JenkinsFacade;
 import io.jenkins.plugins.util.LogHandler;
 import io.jenkins.plugins.util.ResultHandler;
@@ -92,8 +93,8 @@ public class IssuesRecorder extends Recorder {
     private List<Tool> analysisTools = new ArrayList<>();
 
     private String sourceCodeEncoding = StringUtils.EMPTY;
-    private String sourceDirectory = StringUtils.EMPTY;
     private Set<SourceCodeDirectory> sourceDirectories = new HashSet<>(); // @since 9.11.0
+    private SourceCodeRetention sourceCodeRetention = SourceCodeRetention.EVERY_BUILD;
 
     private boolean ignoreQualityGate = false; // by default, a successful quality gate is mandatory;
     private boolean ignoreFailedBuilds = true; // by default, failed builds are ignored;
@@ -114,14 +115,6 @@ public class IssuesRecorder extends Recorder {
     private boolean quiet = false;
 
     private boolean isBlameDisabled;
-    /**
-     * Not used anymore.
-     *
-     * @deprecated since 8.5.0
-     */
-    @Deprecated
-    private transient boolean isForensicsDisabled;
-
     private boolean skipPublishingChecks; // by default, checks will be published
     private boolean publishAllIssues; // by default, only new issues will be published
 
@@ -156,14 +149,8 @@ public class IssuesRecorder extends Recorder {
      * @return this
      */
     protected Object readResolve() {
-        if (sourceDirectory == null) {
-            sourceDirectory = StringUtils.EMPTY;
-        }
         if (sourceDirectories == null) {
             sourceDirectories = new HashSet<>();
-            if (StringUtils.isNotBlank(sourceDirectory)) {
-                sourceDirectories.add(new SourceCodeDirectory(sourceDirectory));
-            }
         }
         if (trendChartType == null) {
             trendChartType = TrendChartType.AGGREGATION_TOOLS;
@@ -176,6 +163,9 @@ public class IssuesRecorder extends Recorder {
         }
         if (scm == null) {
             scm = StringUtils.EMPTY;
+        }
+        if (sourceCodeRetention == null) {
+            sourceCodeRetention = SourceCodeRetention.EVERY_BUILD;
         }
         return this;
     }
@@ -335,22 +325,6 @@ public class IssuesRecorder extends Recorder {
         this.sourceCodeEncoding = sourceCodeEncoding;
     }
 
-    public String getSourceDirectory() {
-        return sourceDirectory;
-    }
-
-    /**
-     * Sets the path to the directory that contains the source code. If not relative and thus not part of the workspace,
-     * then this directory needs to be added in Jenkins global configuration to prevent accessing of forbidden resources.
-     *
-     * @param sourceDirectory
-     *         directory containing the source code
-     */
-    @DataBoundSetter
-    public void setSourceDirectory(final String sourceDirectory) {
-        this.sourceDirectory = sourceDirectory;
-    }
-
     /**
      * Sets the paths to the directories that contain the source code. If not relative and thus not part of the workspace,
      * then these directories need to be added in Jenkins global configuration to prevent accessing of forbidden resources.
@@ -365,6 +339,21 @@ public class IssuesRecorder extends Recorder {
 
     public List<SourceCodeDirectory> getSourceDirectories() {
         return new ArrayList<>(sourceDirectories);
+    }
+
+    /**
+     * Defines the retention strategy for source code files.
+     *
+     * @param sourceCodeRetention
+     *         the retention strategy for source code files
+     */
+    @DataBoundSetter
+    public void setSourceCodeRetention(final SourceCodeRetention sourceCodeRetention) {
+        this.sourceCodeRetention = sourceCodeRetention;
+    }
+
+    public SourceCodeRetention getSourceCodeRetention() {
+        return sourceCodeRetention;
     }
 
     /**
@@ -764,7 +753,8 @@ public class IssuesRecorder extends Recorder {
     private AnnotatedReport scanWithTool(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
             final Tool tool) throws IOException, InterruptedException {
         IssuesScanner issuesScanner = new IssuesScanner(tool, getFilters(), getSourceCodeCharset(),
-                workspace, getSourceCodePaths(), run, new FilePath(run.getRootDir()), listener,
+                workspace, getSourceCodePaths(), getSourceCodeRetention(),
+                run, new FilePath(run.getRootDir()), listener,
                 scm, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED,
                 skipPostProcessing ? PostProcessingMode.DISABLED : PostProcessingMode.ENABLED, quiet);
 
@@ -889,6 +879,20 @@ public class IssuesRecorder extends Recorder {
                 return VALIDATION_UTILITIES.getAllCharsets();
             }
             return new ComboBoxModel();
+        }
+
+        /**
+         * Returns a model with all {@link SourceCodeRetention} strategies.
+         *
+         * @return a model with all {@link SourceCodeRetention} strategies.
+         */
+        @POST
+        @SuppressWarnings("unused") // used by Stapler view data binding
+        public ListBoxModel doFillSourceCodeRetentionItems() {
+            if (JENKINS.hasPermission(Jenkins.READ)) {
+                return SourceCodeRetention.fillItems();
+            }
+            return new ListBoxModel();
         }
 
         /**

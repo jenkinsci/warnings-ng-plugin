@@ -16,6 +16,7 @@ import hudson.util.ListBoxModel;
 import jenkins.model.Jenkins;
 
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
+import io.jenkins.plugins.prism.SourceCodeRetention;
 import io.jenkins.plugins.util.JenkinsFacade;
 import io.jenkins.plugins.util.ValidationUtilities;
 
@@ -83,6 +84,20 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
         }
 
         return VALIDATION_UTILITIES.validateCharset(sourceCodeEncoding);
+    }
+
+    /**
+     * Returns a model with all {@link SourceCodeRetention} strategies.
+     *
+     * @return a model with all {@link SourceCodeRetention} strategies.
+     */
+    @POST
+    @SuppressWarnings("unused") // used by Stapler view data binding
+    public ListBoxModel doFillSourceCodeRetentionItems() {
+        if (JENKINS.hasPermission(Jenkins.READ)) {
+            return SourceCodeRetention.fillItems();
+        }
+        return new ListBoxModel();
     }
 
     /**

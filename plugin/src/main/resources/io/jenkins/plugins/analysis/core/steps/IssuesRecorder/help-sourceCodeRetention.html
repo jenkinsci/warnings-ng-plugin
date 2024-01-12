@@ -1,0 +1,21 @@
+<div>
+    Select the strategy that should be used to store the affected source code files.
+    Storing the affected source code files along with the issues consumes a lot of space on your hard disk for large
+    projects. So if your server has not enough free space available to store the sources for all builds,
+    it might make more sense to store only the sources of the last build.
+    In this case, the plugin will automatically discard old results before the new sources are stored.
+    If you do not need the source files at all, you can deactivate the storing of source code files.
+
+    The following options are supported:
+
+    <dl>
+        <dt>NEVER</dt>
+        <dd>Never store source code files.</dd>
+        <dt>LAST_BUILD</dt>
+        <dd>Store source code files of the last build, delete older artifacts.</dd>
+        <dt>EVERY_BUILD</dt>
+        <dd>Store source code files for all builds, never delete those files automatically.</dd>
+        <dt>MODIFIED</dt>
+        <dd>Store only changed source code files for all builds, never delete those files automatically.</dd>
+    </dl>
+</div>
