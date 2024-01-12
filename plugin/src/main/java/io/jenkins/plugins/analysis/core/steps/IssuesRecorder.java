@@ -51,6 +51,7 @@ import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.IssuesScanner.BlameMode;
+import io.jenkins.plugins.analysis.core.steps.IssuesScanner.PostProcessingMode;
 import io.jenkins.plugins.analysis.core.steps.WarningChecksPublisher.AnnotationScope;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
@@ -123,6 +124,8 @@ public class IssuesRecorder extends Recorder {
 
     private boolean skipPublishingChecks; // by default, checks will be published
     private boolean publishAllIssues; // by default, only new issues will be published
+
+    private boolean skipPostProcessing; // @since 10.6.0: by default, post-processing will be enabled
 
     @CheckForNull
     private ChecksInfo checksInfo;
@@ -397,7 +400,7 @@ public class IssuesRecorder extends Recorder {
     }
 
     /**
-     * Returns whether SCM blaming should be disabled.
+     * Returns whether the SCM blaming should be disabled.
      *
      * @return {@code true} if SCM blaming should be disabled
      */
@@ -412,7 +415,7 @@ public class IssuesRecorder extends Recorder {
     }
 
     /**
-     * Returns whether SCM blaming should be disabled.
+     * Returns whether the SCM blaming should be disabled.
      *
      * @return {@code true} if SCM blaming should be disabled
      */
@@ -437,6 +440,20 @@ public class IssuesRecorder extends Recorder {
     @DataBoundSetter
     public void setSkipPublishingChecks(final boolean skipPublishingChecks) {
         this.skipPublishingChecks = skipPublishingChecks;
+    }
+
+    /**
+     * Returns whether post-processing of the issues should be disabled.
+     *
+     * @return {@code true} if post-processing of the issues should be disabled.
+     */
+    public boolean isSkipPostProcessing() {
+        return skipPostProcessing;
+    }
+
+    @DataBoundSetter
+    public void setSkipPostProcessing(final boolean skipPostProcessing) {
+        this.skipPostProcessing = skipPostProcessing;
     }
 
     /**
@@ -600,7 +617,7 @@ public class IssuesRecorder extends Recorder {
     }
 
     /**
-     * Sets the healthy threshold, i.e. the number of issues when health is reported as 0%.
+     * Sets the healthy threshold, i.e., the number of issues when health is reported as 0%.
      *
      * @param unhealthy
      *         the number of issues when health is reported as 0%
@@ -748,7 +765,8 @@ public class IssuesRecorder extends Recorder {
             final Tool tool) throws IOException, InterruptedException {
         IssuesScanner issuesScanner = new IssuesScanner(tool, getFilters(), getSourceCodeCharset(),
                 workspace, getSourceCodePaths(), run, new FilePath(run.getRootDir()), listener,
-                scm, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED, quiet);
+                scm, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED,
+                skipPostProcessing ? PostProcessingMode.DISABLED : PostProcessingMode.ENABLED, quiet);
 
         return issuesScanner.scan();
     }

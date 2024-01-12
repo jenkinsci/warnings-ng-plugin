@@ -206,7 +206,8 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
         assertThat(result.getIssues().getOriginReportFiles()).satisfiesExactlyInAnyOrder(
                 first -> assertThat(first).endsWith("checkstyle-issues.txt"),
-                second -> assertThat(second).endsWith("pmd-warnings-issues.txt"));
+                second -> assertThat(second).endsWith("pmd-warnings-issues.txt")
+        );
     }
 
     private List<AnalysisResult> runJobWithAggregation(final boolean isAggregationEnabled) {
@@ -221,7 +222,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
 
     /**
      * Runs the CheckStyle and PMD tools for two corresponding files which contain 10 issues in total. Since a filter
-     * afterwords removes all issues, the actual result contains no warnings. However, the two origins are still
+     * afterword removes all issues, the actual result contains no warnings. However, the two origins are still
      * reported with a total of 0 warnings per origin.
      */
     @Test

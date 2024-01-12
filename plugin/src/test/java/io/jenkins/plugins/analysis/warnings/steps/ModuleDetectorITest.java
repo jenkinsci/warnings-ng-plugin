@@ -14,6 +14,7 @@ import edu.hm.hafner.analysis.ModuleDetector;
 
 import hudson.FilePath;
 import hudson.model.FreeStyleProject;
+import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
@@ -127,6 +128,36 @@ class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
                 new PropertyRow("edu.hm.hafner.osgi.symbolicname", 1),
                 new PropertyRow("edu.hm.hafner.osgi.symbolicname (TestVendor)", 7),
                 new PropertyRow("Test-Bundle-Name", 1));
+    }
+
+    @Test
+    void shouldSkipPostProcessing() {
+        String[] workspaceFiles = {
+                BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml",
+                BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m1/build.xml",
+                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "pom.xml",
+                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m1/pom.xml",
+                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m2/pom.xml",
+                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "META-INF/MANIFEST.MF",
+                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m1/META-INF/MANIFEST.MF",
+                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m2/META-INF/MANIFEST.MF",
+                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m3/META-INF/MANIFEST.MF",
+                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties"};
+
+        FreeStyleProject project = createFreeStyleProject();
+        copyWorkspaceFiles(project, workspaceFiles, file -> file.replaceFirst("detectors/buildfiles/\\w*/", ""));
+        var recorder = enableGenericWarnings(project, new Eclipse());
+        recorder.setSkipPostProcessing(true);
+
+        createEclipseWarningsReport(workspaceFiles.length - 1, true,
+                getJenkins().jenkins.getWorkspaceFor(project));
+
+        Run<?, ?> build = buildSuccessfully(project);
+        ResultAction result = getResultAction(build);
+        assertThat(result.getResult().getIssues().getModules()).containsExactly("-");
+
+        assertThat(getConsoleLog(build)).doesNotContain("Resolving module names from module definitions (build.xml, pom.xml, or Manifest.mf files)");
+        assertThat(getConsoleLog(build)).contains("Skipping detection of missing package and module names");
     }
 
     /**

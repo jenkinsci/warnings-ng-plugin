@@ -42,6 +42,7 @@ public class SnippetGeneratorUiTest extends UiTest {
         snippetGenerator.selectRecordIssues()
                 .setAggregatingResults(false)
                 .setSkipBlames(false)
+                .setSkipPostProcessing(false)
                 .setEnabledForFailure(false)
                 .setIgnoreFailedBuilds(true)
                 .setIgnoreQualityGate(false)
@@ -64,6 +65,7 @@ public class SnippetGeneratorUiTest extends UiTest {
                 .setAggregatingResults(true)
                 .setQuiet(true)
                 .setSkipBlames(true)
+                .setSkipPostProcessing(true)
                 .setEnabledForFailure(true)
                 .setIgnoreFailedBuilds(false)
                 .setIgnoreQualityGate(true)
@@ -75,6 +77,7 @@ public class SnippetGeneratorUiTest extends UiTest {
         assertThat(script).contains("recordIssues");
         assertThat(script).contains("aggregatingResults: true");
         assertThat(script).contains("skipBlames: true");
+        assertThat(script).contains("skipPostProcessing: true");
         assertThat(script).contains("enabledForFailure: true");
         assertThat(script).contains("ignoreFailedBuilds: false");
         assertThat(script).contains("ignoreQualityGate: true");
@@ -112,6 +115,7 @@ public class SnippetGeneratorUiTest extends UiTest {
         snippetGenerator.selectRecordIssues()
                 .setAggregatingResults(true)
                 .setSkipBlames(true)
+                .setSkipPostProcessing(true)
                 .setEnabledForFailure(true)
                 .setHealthReport(1, 9, "HIGH")
                 .setIgnoreFailedBuilds(false)
@@ -126,6 +130,7 @@ public class SnippetGeneratorUiTest extends UiTest {
         assertThat(script).contains("recordIssues");
         assertThat(script).contains("aggregatingResults: true");
         assertThat(script).contains("skipBlames: true");
+        assertThat(script).contains("skipPostProcessing: true");
         assertThat(script).contains("enabledForFailure: true");
         assertThat(script).contains("filters: [excludeType('*toExclude*')]");
         assertThat(script).contains("ignoreFailedBuilds: false");

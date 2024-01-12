@@ -32,8 +32,7 @@ public class FindBugs extends AnalysisModelParser {
     @Override
     protected Option[] configureOptions() {
         return new Option[] {
-                new Option(edu.hm.hafner.analysis.registry.FindBugsDescriptor.PRIORITY_OPTION_KEY,
-                        getUseRankAsPriority() ? "RANK" : "CONFIDENCE")};
+                new Option("SPOT_BUGS_CONFIDENCE", getUseRankAsPriority() ? "RANK" : "CONFIDENCE")};
     }
 
     @SuppressWarnings("PMD.BooleanGetMethodName")

@@ -88,6 +88,7 @@ public class RecordIssuesStep extends Step implements Serializable {
 
     private boolean isBlameDisabled;
 
+    private boolean skipPostProcessing; // @since 10.6.0: by default, post-processing will be enabled
     private boolean skipPublishingChecks; // by default, checks will be published
     private boolean publishAllIssues; // by default, only new issues will be published
 
@@ -397,6 +398,20 @@ public class RecordIssuesStep extends Step implements Serializable {
     }
 
     /**
+     * Returns whether post-processing of the issues should be disabled.
+     *
+     * @return {@code true} if post-processing of the issues should be disabled.
+     */
+    public boolean isSkipPostProcessing() {
+        return skipPostProcessing;
+    }
+
+    @DataBoundSetter
+    public void setSkipPostProcessing(final boolean skipPostProcessing) {
+        this.skipPostProcessing = skipPostProcessing;
+    }
+
+    /**
      * Returns whether publishing checks should be skipped.
      *
      * @return {@code true} if publishing checks should be skipped, {@code false} otherwise
@@ -658,6 +673,7 @@ public class RecordIssuesStep extends Step implements Serializable {
             recorder.setEnabledForFailure(step.getEnabledForFailure());
             recorder.setAggregatingResults(step.getAggregatingResults());
             recorder.setBlameDisabled(step.isSkipBlames());
+            recorder.setSkipPostProcessing(step.isSkipPostProcessing());
             recorder.setScm(step.getScm());
             recorder.setSkipPublishingChecks(step.isSkipPublishingChecks());
             recorder.setPublishAllIssues(step.isPublishAllIssues());

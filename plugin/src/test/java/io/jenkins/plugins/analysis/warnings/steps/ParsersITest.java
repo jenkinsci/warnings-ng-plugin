@@ -5,6 +5,8 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
+import com.parasoft.findings.jenkins.tool.ParasoftTool;
+
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 
@@ -12,6 +14,7 @@ import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
@@ -69,6 +72,13 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
             + "files&#61;&#34;$files $directory/$i&#34;\n"
             + "done</code></pre>";
 
+    /** Runs the Parasoft parser (part of the parasoft-findings plugin) on a file that contains 5 issues. */
+    @Test
+    void shouldReadParasoftWarnings() {
+        shouldFindIssuesOfTool(5, new ParasoftTool(), "parasoft.xml");
+    }
+
+    /** Runs the native parser on a file that contains 9 issues. */
     @Test
     void shouldFindAllRevapiIssues() {
         shouldFindIssuesOfTool(7, new RevApi(), "revapi-result.json");
@@ -992,7 +1002,7 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldFindAllCodeGeneratorIssues() {
         shouldFindIssuesOfTool(8, new CodeGenerator(), "CodeGenerator.log");
     }
-    
+
     /** Runs the trivy parser on an output file that contains 4 issues. */
     @Test
     void shouldFindAllTrivyIssues() {
@@ -1029,7 +1039,7 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         shouldFindIssuesOfTool(3, new Grype(), "grype-report.json");
     }
 
-    private void shouldFindIssuesOfTool(final int expectedSizeOfIssues, final AnalysisModelParser tool,
+    private void shouldFindIssuesOfTool(final int expectedSizeOfIssues, final ReportScanningTool tool,
             final String... fileNames) {
         String defaultPipelineDefinition = "recordIssues tool: %s(pattern:'**/%s', reportEncoding:'UTF-8')";
 
@@ -1044,7 +1054,7 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
                 expectedSizeOfIssues, tool, fileNames);
     }
 
-    private Report findIssuesWithoutAnsiColorPlugin(final int expectedSizeOfIssues, final AnalysisModelParser tool,
+    private Report findIssuesWithoutAnsiColorPlugin(final int expectedSizeOfIssues, final ReportScanningTool tool,
             final String... fileNames) {
         return findIssuesInPipeline(
                 "recordIssues tool: %s(pattern:'**/%s', reportEncoding:'UTF-8')", expectedSizeOfIssues, tool,
@@ -1052,7 +1062,7 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private Report findIssuesWithAnsiColorPlugin(final int expectedSizeOfIssues,
-            final AnalysisModelParser tool, final String... fileNames) {
+            final ReportScanningTool tool, final String... fileNames) {
         String pipelineDefinition = "wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {\n"
                 + "  recordIssues tool: %s(pattern:'**/%s', reportEncoding:'UTF-8')\n"
                 + "}";
@@ -1061,7 +1071,7 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
 
     @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock", "PMD.LinguisticNaming"})
     private Report findIssuesInPipeline(final String pipelineDefinition,
-            final int expectedSizeOfIssues, final AnalysisModelParser tool, final String... fileNames) {
+            final int expectedSizeOfIssues, final ReportScanningTool tool, final String... fileNames) {
         try {
             WorkflowJob job = createPipeline();
             copyMultipleFilesToWorkspace(job, fileNames);

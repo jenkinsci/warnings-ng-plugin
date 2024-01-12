@@ -247,7 +247,7 @@ public abstract class DetailsTableModel extends TableModel {
         }
 
         /**
-         * Formats the text of the specified property column. T he text actually is a link to the UI representation of
+         * Formats the text of the specified property column. The text actually is a link to the UI representation of
          * the property.
          *
          * @param property
@@ -258,7 +258,11 @@ public abstract class DetailsTableModel extends TableModel {
          * @return the formatted column
          */
         protected String formatProperty(final String property, final String value) {
-            return String.format("<a href=\"%s.%d/\">%s</a>", property, value.hashCode(), render(value));
+            String renderedValue = render(value);
+            if (StringUtils.isBlank(value)) {
+                renderedValue = "-";
+            }
+            return String.format("<a href=\"%s.%d/\">%s</a>", property, value.hashCode(), renderedValue);
         }
 
         /**

@@ -37,6 +37,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     private final Control sourceCodeEncoding = control("sourceCodeEncoding");
     private final Control sourceDirectories = findRepeatableAddButtonFor("sourceDirectories");
     private final Control skipBlames = control("skipBlames");
+    private final Control skipPostProcessing = control("skipPostProcessing");
     private final Control ignoreFailedBuilds = control("ignoreFailedBuilds");
     private final Control failOnError = control("failOnError");
     private final Control skipPublishingChecks = control("skipPublishingChecks");
@@ -207,13 +208,12 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
         return scm.get();
     }
 
-    /**
-     * Returns whether SCM blaming should be disabled.
-     *
-     * @return {@code true} if SCM blaming should be disabled
-     */
     public boolean isSkipBlames() {
         return isChecked(skipBlames);
+    }
+
+    public boolean isSkipPostProcessing() {
+        return isChecked(skipPostProcessing);
     }
 
     public boolean isIgnoringFailedBuilds() {
@@ -400,6 +400,20 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      */
     public IssuesRecorder setSkipBlames(final boolean blameDisabled) {
         skipBlames.check(blameDisabled);
+
+        return this;
+    }
+
+    /**
+     * Determines whether post-processing should be disabled or not.
+     *
+     * @param skipPostProcessing
+     *         {@code true} if post-processing should be disabled, {@code false} otherwise
+     *
+     * @return this recorder
+     */
+    public IssuesRecorder setSkipPostProcessing(final boolean skipPostProcessing) {
+        this.skipPostProcessing.check(skipPostProcessing);
 
         return this;
     }
