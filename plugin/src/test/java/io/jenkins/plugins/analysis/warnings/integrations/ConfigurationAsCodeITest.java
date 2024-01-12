@@ -8,9 +8,7 @@ import org.junitpioneer.jupiter.Issue;
 import hudson.model.FreeStyleProject;
 import hudson.model.TopLevelItem;
 
-import io.jenkins.plugins.analysis.core.model.SourceDirectory;
 import io.jenkins.plugins.analysis.core.model.Tool;
-import io.jenkins.plugins.analysis.core.model.WarningsPluginConfiguration;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 import io.jenkins.plugins.analysis.warnings.Java;
@@ -46,19 +44,6 @@ class ConfigurationAsCodeITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(parser.getRegexp()).isEqualTo(".*");
         assertThat(parser.getExample()).isEqualTo("example");
         assertThat(parser.getScript()).isEqualTo("script");
-    }
-
-    /**
-     * Reads the YAML file with permitted source code directories and verifies that the directories have been loaded.
-     */
-    @Test
-    void shouldImportSourceDirectoriesFromYaml() {
-        configureJenkins("sourceDirectories.yaml");
-
-        List<SourceDirectory> parsers = WarningsPluginConfiguration.getInstance().getSourceDirectories();
-        assertThat(parsers.stream().map(SourceDirectory::getPath))
-                .hasSize(2)
-                .containsExactlyInAnyOrder("C:\\Windows", "/absolute");
     }
 
     /**

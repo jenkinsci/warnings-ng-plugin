@@ -14,7 +14,6 @@ import static org.mockito.Mockito.*;
  * @author Tobias Redl
  */
 class TabLabelProviderTest {
-
     private TabLabelProvider createTabLabelProvider(final String fileName) {
         Issue issue = mock(Issue.class);
         when(issue.getFileName()).thenReturn(fileName);
