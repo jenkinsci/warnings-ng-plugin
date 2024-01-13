@@ -31,6 +31,7 @@ import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.charts.JenkinsBuild;
 import io.jenkins.plugins.analysis.core.util.IssuesStatistics;
+import io.jenkins.plugins.analysis.core.util.IssuesStatisticsBuilder;
 import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
 import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.forensics.blame.BlamesXmlStream;
@@ -59,7 +60,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
 
     private final String id;
 
-    private final IssuesStatistics totals;
+    private IssuesStatistics totals;
 
     private final Map<String, Integer> sizePerOrigin;
     private final List<String> errors;
@@ -267,6 +268,9 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     protected Object readResolve() {
         if (qualityGateResult == null && qualityGateStatus != null) {
             qualityGateResult = new QualityGateResult(qualityGateStatus);
+        }
+        if (totals == null) {
+            totals = new IssuesStatisticsBuilder().build();
         }
         return this;
     }
