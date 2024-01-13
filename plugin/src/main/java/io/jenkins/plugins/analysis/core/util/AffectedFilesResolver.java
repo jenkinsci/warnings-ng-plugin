@@ -7,6 +7,9 @@ import java.nio.file.Path;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.FilteredLog;
@@ -25,8 +28,10 @@ import io.jenkins.plugins.prism.FilePermissionEnforcer;
  * @author Ullrich Hafner
  */
 public class AffectedFilesResolver {
-    /** Sub folder with the affected files. */
+    /** Folder with the affected files within Jenkins' build results. */
     public static final String AFFECTED_FILES_FOLDER_NAME = "files-with-issues";
+    private static final String ZIP_EXTENSION = ".zip";
+    private static final String TEXT_EXTENSION = ".tmp";
 
     /**
      * Returns whether the affected file in Jenkins' build folder does exist and is readable.
@@ -39,7 +44,8 @@ public class AffectedFilesResolver {
      * @return the file
      */
     public static boolean hasAffectedFile(final Run<?, ?> run, final Issue issue) {
-        return canAccess(getFile(run, issue.getFileName()));
+        return canAccess(getFile(run, issue.getFileName()))
+                || canAccess(getZipFile(run, issue.getFileName()));
     }
 
     private static boolean canAccess(final Path file) {
@@ -59,7 +65,35 @@ public class AffectedFilesResolver {
      *         if the file could not be found
      */
     static InputStream asStream(final Run<?, ?> build, final String fileName) throws IOException {
-        return Files.newInputStream(getFile(build, fileName));
+        try {
+            var file = getFile(build, fileName);
+            if (canAccess(file)) {
+                return Files.newInputStream(file);
+            }
+
+            return extractFromZip(build, fileName);
+        }
+        catch (InterruptedException e) {
+            throw new IOException(e);
+        }
+    }
+
+    private static InputStream extractFromZip(final Run<?, ?> build, final String fileName)
+            throws IOException, InterruptedException {
+        Path tempDir = Files.createTempDirectory(AFFECTED_FILES_FOLDER_NAME);
+        FilePath unzippedSourcesDir = new FilePath(tempDir.toFile());
+        try {
+            var zipFile = getZipFile(build, fileName);
+            FilePath inputZipFile = new FilePath(zipFile.toFile());
+            inputZipFile.unzip(unzippedSourcesDir);
+            StringUtils.removeEnd(zipFile.toString(), ZIP_EXTENSION);
+            var sourceFile = tempDir.resolve(FilenameUtils.getName(fileName));
+
+            return Files.newInputStream(sourceFile);
+        }
+        finally {
+            unzippedSourcesDir.deleteRecursive();
+        }
     }
 
     /**
@@ -73,9 +107,27 @@ public class AffectedFilesResolver {
      * @return the file
      */
     public static Path getFile(final Run<?, ?> run, final String fileName) {
+        return getPath(run, getTempName(fileName)); // Warnings plugin < 11.0.0
+    }
+
+    /**
+     * Returns the affected file in Jenkins' build folder.
+     *
+     * @param run
+     *         the run referencing the build folder
+     * @param fileName
+     *         the file name in the folder of affected files
+     *
+     * @return the file
+     */
+    public static Path getZipFile(final Run<?, ?> run, final String fileName) {
+        return getPath(run, getZipName(fileName));
+    }
+
+    private static Path getPath(final Run<?, ?> run, final String zipName) {
         return run.getRootDir().toPath()
                 .resolve(AFFECTED_FILES_FOLDER_NAME)
-                .resolve(getTempName(fileName));
+                .resolve(zipName);
     }
 
     /**
@@ -87,7 +139,11 @@ public class AffectedFilesResolver {
      * @return the temporary name
      */
     private static String getTempName(final String fileName) {
-        return Integer.toHexString(fileName.hashCode()) + ".tmp";
+        return Integer.toHexString(fileName.hashCode()) + TEXT_EXTENSION;
+    }
+
+    private static String getZipName(final String fileName) {
+        return getTempName(fileName) + ZIP_EXTENSION;
     }
 
     /**
@@ -194,7 +250,7 @@ public class AffectedFilesResolver {
         }
 
         public void copy(final String from, final String to) throws IOException, InterruptedException {
-            createFile(from).copyTo(computeBuildFolderFileName(to));
+            createFile(from).zip(computeBuildFolderFileName(to));
         }
 
         public boolean existsInBuildFolder(final String fileName) {
@@ -207,7 +263,7 @@ public class AffectedFilesResolver {
         }
 
         private FilePath computeBuildFolderFileName(final String fileName) {
-            return buildFolder.child(getTempName(fileName));
+            return buildFolder.child(getZipName(fileName));
         }
     }
 }
