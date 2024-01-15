@@ -400,10 +400,27 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
     /**
      * Computes the age of a build as a hyperlink.
      */
+    @SuppressWarnings("DeprecatedIsStillUsed")
     public static class DefaultAgeBuilder implements AgeBuilder {
         private final int currentBuildNumber;
         private final String resultUrl;
-        private final Job<?, ?> currentBuild;
+        @CheckForNull
+        private Job<?, ?> owner;
+
+        /**
+         * Creates a new instance of {@link DefaultAgeBuilder}.
+         *
+         * @param currentBuildNumber
+         *         number of the current build
+         * @param resultUrl
+         *         URL to the results
+         * @deprecated use {@link #DefaultAgeBuilder(int, String, Job)}
+         */
+        @Deprecated
+        public DefaultAgeBuilder(final int currentBuildNumber, final String resultUrl) {
+            this.currentBuildNumber = currentBuildNumber;
+            this.resultUrl = resultUrl;
+        }
 
         /**
          * Creates a new instance of {@link DefaultAgeBuilder}.
@@ -416,9 +433,9 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
          *         the job
          */
         public DefaultAgeBuilder(final int currentBuildNumber, final String resultUrl, final Job<?, ?> job) {
-            this.currentBuildNumber = currentBuildNumber;
-            this.resultUrl = resultUrl;
-            this.currentBuild = job;
+            this(currentBuildNumber, resultUrl);
+
+            this.owner = job;
         }
 
         @Override
@@ -427,7 +444,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
                 return "1"; // fallback
             }
             var referenceBuildId = String.valueOf(referenceBuild);
-            if (currentBuild.getBuild(referenceBuildId) == null) {
+            if (owner != null && owner.getBuild(referenceBuildId) == null) {
                 return computeAge(referenceBuild); // plain link
             }
             else {
