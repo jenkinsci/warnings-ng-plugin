@@ -12,6 +12,7 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Severity;
 
+import hudson.model.Job;
 import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.DefaultAgeBuilder;
@@ -96,7 +97,14 @@ public abstract class AbstractDetailsModelTest {
      * @return a {@link DefaultAgeBuilder} stub
      */
     protected DefaultAgeBuilder createAgeBuilder() {
-        return new DefaultAgeBuilder(1, "url");
+        return new DefaultAgeBuilder(1, "url", createProject());
+    }
+
+    private Job<?, ?> createProject() {
+        var job = mock(Job.class);
+        var run = mock(Run.class);
+        when(job.getBuild(anyString())).thenReturn(run);
+        return job;
     }
 
     protected void assertThatDetailedColumnContains(final DetailedCell<String> actualColumn,
