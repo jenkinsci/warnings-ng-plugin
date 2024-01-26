@@ -24,8 +24,9 @@ public class ModifiedCodePieChart {
         PieChartModel model = new PieChartModel(Messages.NewVersusFixed_Name());
 
         var totals = issues.size();
-        model.add(new PieData(Messages.Modified_Code_Warnings_Short(), totals), JenkinsPalette.RED.normal());
-        model.add(new PieData(Messages.Unchanged_Code_Warnings_Short(), totals), JenkinsPalette.YELLOW.normal());
+        var modified = issues.getInModifiedCode().size();
+        model.add(new PieData(Messages.Modified_Code_Warnings_Short(), modified), JenkinsPalette.RED.normal());
+        model.add(new PieData(Messages.Unchanged_Code_Warnings_Short(), totals - modified), JenkinsPalette.YELLOW.normal());
 
         return model;
     }

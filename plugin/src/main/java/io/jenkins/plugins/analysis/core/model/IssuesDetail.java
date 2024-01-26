@@ -408,6 +408,15 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
     }
 
     /**
+     * Returns whether there are any issues in the associated static analysis run that are part of modified code.
+     *
+     * @return {@code true} if there are issues in modified code, {@code false} otherwise
+     */
+    public boolean hasIssuesInModifiedCode() {
+        return result.getTotals().getTotalModifiedSize() > 0;
+    }
+
+    /**
      * Returns all issues of the associated static analysis run.
      *
      * @return all issues

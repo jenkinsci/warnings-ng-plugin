@@ -151,7 +151,7 @@ public class DetailFactory {
                 .withColumnEnd(issue.getColumnEnd()).build();
     }
 
-    @SuppressWarnings({"checkstyle:ParameterNumber", "PMD.CyclomaticComplexity"})
+    @SuppressWarnings({"checkstyle:ParameterNumber", "PMD.CyclomaticComplexity", "PMD.NPathComplexity"})
     @SuppressFBWarnings("IMPROPER_UNICODE")
     private Object createNewDetailView(final String link, final Run<?, ?> owner, final AnalysisResult result,
             final Report allIssues, final Report newIssues, final Report outstandingIssues, final Report fixedIssues,
@@ -165,6 +165,11 @@ public class DetailFactory {
         if ("modified".equalsIgnoreCase(link)) {
             return new IssuesDetail(owner, result, filterModified(allIssues), filterModified(newIssues),
                     filterModified(outstandingIssues), EMPTY,
+                    Messages.Modified_Warnings_Header(), url, labelProvider, sourceEncoding);
+        }
+        if ("unchanged".equalsIgnoreCase(link)) {
+            return new IssuesDetail(owner, result, filterUnchanged(allIssues), filterUnchanged(newIssues),
+                    filterUnchanged(outstandingIssues), EMPTY,
                     Messages.Modified_Warnings_Header(), url, labelProvider, sourceEncoding);
         }
         if ("fixed".equalsIgnoreCase(link)) {
@@ -198,6 +203,10 @@ public class DetailFactory {
 
     private Report filterModified(final Report report) {
         return report.filter(Issue::isPartOfModifiedCode);
+    }
+
+    private Report filterUnchanged(final Report report) {
+        return report.filter(Predicate.not(Issue::isPartOfModifiedCode));
     }
 
     private Predicate<Issue> createPropertyFilter(final String plainLink, final String property) {
