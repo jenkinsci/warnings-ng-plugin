@@ -145,7 +145,7 @@ public class AggregatedTrendAction implements Action, AsyncConfigurableTrendChar
 
         @Override
         public BuildResult<AnalysisBuildResult> next() {
-            if (!latestAction.isPresent()) {
+            if (latestAction.isEmpty()) {
                 throw new NoSuchElementException("No more build results available");
             }
             Run<?, ?> run = latestAction.get();
@@ -155,11 +155,7 @@ public class AggregatedTrendAction implements Action, AsyncConfigurableTrendChar
                     .stream()
                     .map(ResultAction::getResult)
                     .collect(Collectors.toSet());
-            CompositeBuildResult compositeBuildResult = new CompositeBuildResult();
-            for (AnalysisResult result : results) {
-                compositeBuildResult.add(result);
-            }
-            return new BuildResult<>(new JenkinsBuild(run), compositeBuildResult);
+            return new BuildResult<>(new JenkinsBuild(run), new CompositeBuildResult(results));
         }
     }
 }

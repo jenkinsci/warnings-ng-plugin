@@ -113,10 +113,14 @@ class DeltaReportTest {
     }
 
     private Issue getIssue(final String name) {
-        return new IssueBuilder().setFileName(name).setFingerprint(name).build();
+        try (var builder = new IssueBuilder()) {
+            return builder.setFileName(name).setFingerprint(name).build();
+        }
     }
 
     private Issue getIssueWithSeverity(final String name, final Severity severity) {
-        return new IssueBuilder().setFileName(name).setFingerprint(name).setSeverity(severity).build();
+        try (var builder = new IssueBuilder()) {
+            return builder.setFileName(name).setFingerprint(name).setSeverity(severity).build();
+        }
     }
 }

@@ -1,11 +1,12 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>6.17.0</version>
-    <relativePath />
+    <version>7.0.0</version>
+    <relativePath/>
   </parent>
 
   <groupId>io.jenkins.plugins</groupId>
@@ -25,13 +26,11 @@
     <changelist>-SNAPSHOT</changelist>
     <module.name>${project.groupId}.warnings.ng</module.name>
 
-    <analysis-model-api.version>11.14.0</analysis-model-api.version>
-    <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
+    <analysis-model-api.version>11.20.0-rc789.31c8340705ef</analysis-model-api.version>
+    <analysis-model-tests.version>11.6.0</analysis-model-tests.version>
     <pull-request-monitoring.version>1.7.8</pull-request-monitoring.version>
 
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
-
-    <json.version>20231013</json.version>
 
     <!-- Test Library Dependencies Versions -->
     <xmlunit.version>2.9.1</xmlunit.version>
@@ -47,12 +46,15 @@
     <flexible-publish.version>0.15.2</flexible-publish.version>
     <form-element-path.version>1.11</form-element-path.version>
 
-    <!-- Maven Surefire ArgLine -->
-    <argLine>-Djava.awt.headless=true -Xmx1024m -Djenkins.test.timeout=1000 --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.util.concurrent=ALL-UNNAMED</argLine>
-
     <prism-api.version>1.29.0-8</prism-api.version>
-    <plugin-util-api.version>3.9.0-rc855.756b_f8df78a_1</plugin-util-api.version>
+    <plugin-util-api.version>3.9.0-rc856.7a_4b_8d226cb_2</plugin-util-api.version>
+    <forensics-api.version>2.4.0-rc1530.ccd6a_b_012b_c7</forensics-api.version>
 
+    <!-- Maven Surefire ArgLine -->
+    <argLine>-Djava.awt.headless=true -Xmx1024m -Djenkins.test.timeout=1000 --add-opens java.base/java.lang=ALL-UNNAMED
+      --add-opens java.base/java.io=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens
+      java.base/java.util.concurrent=ALL-UNNAMED
+    </argLine>
   </properties>
 
   <licenses>
@@ -87,6 +89,12 @@
       <groupId>net.minidev</groupId>
       <artifactId>json-smart</artifactId>
       <version>${json-smart.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.json</groupId>
+          <artifactId>json</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.jsoup</groupId>
@@ -171,6 +179,11 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>forensics-api</artifactId>
+      <version>${forensics-api.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>json-api</artifactId>
     </dependency>
 
     <!-- AxivionSuite Dependencies -->
@@ -183,9 +196,8 @@
       <artifactId>apache-httpcomponents-client-4-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.google.code.gson</groupId>
-      <artifactId>gson</artifactId>
-      <version>2.10.1</version>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>gson-api</artifactId>
     </dependency>
 
     <!-- Optional Jenkins Plug-in Dependencies -->
@@ -283,12 +295,6 @@
           <artifactId>error_prone_annotations</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.json</groupId>
-      <artifactId>json</artifactId>
-      <version>${json.version}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.main</groupId>
@@ -614,13 +620,13 @@
         </plugins>
       </build>
     </profile>
-      <profile>
-        <id>fast</id>
-        <properties>
-          <skipTests>true</skipTests>
-          <skipITs>true</skipITs>
-        </properties>
-      </profile>
+    <profile>
+      <id>fast</id>
+      <properties>
+        <skipTests>true</skipTests>
+        <skipITs>true</skipITs>
+      </properties>
+    </profile>
   </profiles>
 
   <scm>

@@ -29,11 +29,13 @@ public class IssuesStatistics implements Serializable {
     private final int totalHighSize;
     private final int totalNormalSize;
     private final int totalLowSize;
+    private final int totalModifiedSize; // @since 11.0.0
 
     private final int newErrorSize;
     private final int newHighSize;
     private final int newNormalSize;
     private final int newLowSize;
+    private final int newModifiedSize; // @since 11.0.0
 
     private final int deltaErrorSize;
     private final int deltaHighSize;
@@ -48,25 +50,31 @@ public class IssuesStatistics implements Serializable {
     @SuppressWarnings("checkstyle:ParameterNumber")
     IssuesStatistics(
             final int totalErrorSize, final int totalHighSize, final int totalNormalSize, final int totalLowSize,
+            final int totalModifiedSize,
             final int newErrorSize, final int newHighSize, final int newNormalSize, final int newLowSize,
+            final int newModifiedSize,
             final int deltaErrorSize, final int deltaHighSize, final int deltaNormalSize, final int deltaLowSize,
             final int fixedSize) {
         this.totalErrorSize = totalErrorSize;
-        totalSizeBySeverity.put(Severity.ERROR, totalErrorSize);
         this.totalHighSize = totalHighSize;
-        totalSizeBySeverity.put(Severity.WARNING_HIGH, totalHighSize);
         this.totalNormalSize = totalNormalSize;
-        totalSizeBySeverity.put(Severity.WARNING_NORMAL, totalNormalSize);
         this.totalLowSize = totalLowSize;
+        this.totalModifiedSize = totalModifiedSize;
+
+        totalSizeBySeverity.put(Severity.ERROR, totalErrorSize);
+        totalSizeBySeverity.put(Severity.WARNING_HIGH, totalHighSize);
+        totalSizeBySeverity.put(Severity.WARNING_NORMAL, totalNormalSize);
         totalSizeBySeverity.put(Severity.WARNING_LOW, totalLowSize);
 
         this.newErrorSize = newErrorSize;
-        newSizeBySeverity.put(Severity.ERROR, newErrorSize);
         this.newHighSize = newHighSize;
-        newSizeBySeverity.put(Severity.WARNING_HIGH, newHighSize);
         this.newNormalSize = newNormalSize;
-        newSizeBySeverity.put(Severity.WARNING_NORMAL, newNormalSize);
         this.newLowSize = newLowSize;
+        this.newModifiedSize = newModifiedSize;
+
+        newSizeBySeverity.put(Severity.ERROR, newErrorSize);
+        newSizeBySeverity.put(Severity.WARNING_HIGH, newHighSize);
+        newSizeBySeverity.put(Severity.WARNING_NORMAL, newNormalSize);
         newSizeBySeverity.put(Severity.WARNING_LOW, newLowSize);
 
         this.deltaErrorSize = deltaErrorSize;
@@ -77,14 +85,49 @@ public class IssuesStatistics implements Serializable {
         this.fixedSize = fixedSize;
     }
 
+    /**
+     * Aggregates the specified statistics with this statistics to a new instance, that contains all totals summed up.
+     *
+     * @param other the other statistics to aggregate
+     * @return the aggregated statistics
+     */
+    public IssuesStatistics aggregate(final IssuesStatistics other) {
+        return new IssuesStatistics(
+                totalErrorSize + other.totalErrorSize,
+                totalHighSize + other.totalHighSize,
+                totalNormalSize + other.totalNormalSize,
+                totalLowSize + other.totalLowSize,
+                totalModifiedSize + other.totalModifiedSize,
+                newErrorSize + other.newErrorSize,
+                newHighSize + other.newHighSize,
+                newNormalSize + other.newNormalSize,
+                newLowSize + other.newLowSize,
+                newModifiedSize + other.newModifiedSize,
+                deltaErrorSize + other.deltaErrorSize,
+                deltaHighSize + other.deltaHighSize,
+                deltaNormalSize + other.deltaNormalSize,
+                deltaLowSize + other.deltaLowSize,
+                fixedSize + other.fixedSize);
+    }
+
     @Whitelisted
     public int getTotalSize() {
         return totalErrorSize + totalHighSize + totalNormalSize + totalLowSize;
     }
 
     @Whitelisted
+    public int getTotalModifiedSize() {
+        return totalModifiedSize;
+    }
+
+    @Whitelisted
     public int getNewSize() {
         return newErrorSize + newHighSize + newNormalSize + newLowSize;
+    }
+
+    @Whitelisted
+    public int getNewModifiedSize() {
+        return newModifiedSize;
     }
 
     @Whitelisted
@@ -212,10 +255,12 @@ public class IssuesStatistics implements Serializable {
                 && totalHighSize == that.totalHighSize
                 && totalNormalSize == that.totalNormalSize
                 && totalLowSize == that.totalLowSize
+                && totalModifiedSize == that.totalModifiedSize
                 && newErrorSize == that.newErrorSize
                 && newHighSize == that.newHighSize
                 && newNormalSize == that.newNormalSize
                 && newLowSize == that.newLowSize
+                && newModifiedSize == that.newModifiedSize
                 && deltaErrorSize == that.deltaErrorSize
                 && deltaHighSize == that.deltaHighSize
                 && deltaNormalSize == that.deltaNormalSize
@@ -225,8 +270,10 @@ public class IssuesStatistics implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(totalErrorSize, totalHighSize, totalNormalSize, totalLowSize, newErrorSize, newHighSize,
-                newNormalSize, newLowSize, deltaErrorSize, deltaHighSize, deltaNormalSize, deltaLowSize, fixedSize);
+        return Objects.hash(
+                totalErrorSize, totalHighSize, totalNormalSize, totalLowSize, totalModifiedSize,
+                newErrorSize, newHighSize, newNormalSize, newLowSize, totalModifiedSize,
+                deltaErrorSize, deltaHighSize, deltaNormalSize, deltaLowSize, fixedSize);
     }
 
     /**
@@ -238,12 +285,14 @@ public class IssuesStatistics implements Serializable {
         TOTAL_HIGH(Messages._Statistics_Total_High(), IssuesStatistics::getTotalHighSize, "high"),
         TOTAL_NORMAL(Messages._Statistics_Total_Normal(), IssuesStatistics::getTotalNormalSize, "normal"),
         TOTAL_LOW(Messages._Statistics_Total_Low(), IssuesStatistics::getTotalLowSize, "low"),
+        TOTAL_MODIFIED(Messages._Statistics_Total_Modified(), IssuesStatistics::getTotalModifiedSize, "modified"),
 
         NEW(Messages._Statistics_New(), IssuesStatistics::getNewSize, "new"),
         NEW_ERROR(Messages._Statistics_New_Error(), IssuesStatistics::getNewErrorSize, "new/error"),
         NEW_HIGH(Messages._Statistics_New_High(), IssuesStatistics::getNewHighSize, "new/high"),
         NEW_NORMAL(Messages._Statistics_New_Normal(), IssuesStatistics::getNewNormalSize, "new/normal"),
         NEW_LOW(Messages._Statistics_New_Low(), IssuesStatistics::getNewLowSize, "new/low"),
+        NEW_MODIFIED(Messages._Statistics_New_Modified(), IssuesStatistics::getNewModifiedSize, "new/modified"),
 
         DELTA(Messages._Statistics_Delta(), IssuesStatistics::getDeltaSize, StringUtils.EMPTY),
         DELTA_ERROR(Messages._Statistics_Delta_Error(), IssuesStatistics::getDeltaErrorSize, StringUtils.EMPTY),

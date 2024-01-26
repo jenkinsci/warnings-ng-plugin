@@ -40,6 +40,8 @@ public class WarningsQualityGate extends QualityGate {
      */
     @DataBoundConstructor
     public WarningsQualityGate(final QualityGateType type) {
+        super();
+
         this.type = type;
     }
 
@@ -55,7 +57,7 @@ public class WarningsQualityGate extends QualityGate {
      */
     public WarningsQualityGate(final int threshold, final QualityGateType type,
             final QualityGateCriticality criticality) {
-        this.type = type;
+        this(type);
 
         setIntegerThreshold(threshold);
         setCriticality(criticality);
@@ -130,12 +132,14 @@ public class WarningsQualityGate extends QualityGate {
         TOTAL_HIGH(StatisticProperties.TOTAL_HIGH),
         TOTAL_NORMAL(StatisticProperties.TOTAL_NORMAL),
         TOTAL_LOW(StatisticProperties.TOTAL_LOW),
+        TOTAL_MODIFIED(StatisticProperties.TOTAL_MODIFIED),
 
         NEW(StatisticProperties.NEW),
         NEW_ERROR(StatisticProperties.NEW_ERROR),
         NEW_HIGH(StatisticProperties.NEW_HIGH),
         NEW_NORMAL(StatisticProperties.NEW_NORMAL),
         NEW_LOW(StatisticProperties.NEW_LOW),
+        NEW_MODIFIED(StatisticProperties.NEW_MODIFIED),
 
         DELTA(StatisticProperties.DELTA),
         DELTA_ERROR(StatisticProperties.DELTA_ERROR),

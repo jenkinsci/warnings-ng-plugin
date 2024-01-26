@@ -29,6 +29,7 @@ import hudson.model.ModelObject;
 import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.charts.HealthTrendChart;
+import io.jenkins.plugins.analysis.core.charts.ModifiedCodePieChart;
 import io.jenkins.plugins.analysis.core.charts.NewVersusFixedPieChart;
 import io.jenkins.plugins.analysis.core.charts.NewVersusFixedTrendChart;
 import io.jenkins.plugins.analysis.core.charts.SeverityPieChart;
@@ -317,6 +318,17 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
     @SuppressWarnings("unused") // Called by jelly view
     public String getTrendModel() {
         return JACKSON_FACADE.toJson(new NewVersusFixedPieChart().create(newIssues, outstandingIssues, fixedIssues));
+    }
+
+    /**
+     * Returns the UI model for an ECharts doughnut chart that shows the issues in modified code.
+     *
+     * @return the UI model as JSON
+     */
+    @JavaScriptMethod
+    @SuppressWarnings("unused") // Called by jelly view
+    public String getModifiedModel() {
+        return JACKSON_FACADE.toJson(new ModifiedCodePieChart().create(report));
     }
 
     /**

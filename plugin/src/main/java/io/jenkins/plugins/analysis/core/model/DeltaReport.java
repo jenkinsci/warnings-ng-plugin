@@ -57,7 +57,7 @@ public class DeltaReport {
         else {
             report.logInfo("No valid reference build found that meets the criteria (%s)", history);
             report.logInfo("All reported issues will be considered outstanding");
-            report.forEach(issue -> issue.setReference(String.valueOf(currentBuildNumber)));
+            report.setReference(String.valueOf(currentBuildNumber));
             outstandingIssues = report;
             referenceIssues = EMPTY_REPORT;
             newIssues = EMPTY_REPORT;
@@ -94,7 +94,7 @@ public class DeltaReport {
     }
 
     /**
-     * Returns all outstanding issues: i.e. all issues, that are part of the current and reference report.
+     * Returns all outstanding issues: i.e., all issues, that are part of the current and reference report.
      *
      * @return the outstanding issues
      */
@@ -103,7 +103,7 @@ public class DeltaReport {
     }
 
     /**
-     * Returns all new issues: i.e. all issues, that are part of the current report but have not been shown up in the
+     * Returns all new issues: i.e., all issues, that are part of the current report but have not been shown up in the
      * reference report.
      *
      * @return the new issues
@@ -113,7 +113,7 @@ public class DeltaReport {
     }
 
     /**
-     * Returns all fixed issues: i.e. all issues, that are part of the reference report but are not present in the
+     * Returns all fixed issues: i.e., all issues, that are part of the reference report but are not present in the
      * current report anymore.
      *
      * @return the fixed issues
@@ -124,7 +124,7 @@ public class DeltaReport {
 
     /**
      * Returns statistics for the number of issues (total, new, delta).
-     * 
+     *
      * @return the issues statistics
      */
     public IssuesStatistics getStatistics() {
@@ -132,11 +132,13 @@ public class DeltaReport {
         builder.setTotalErrorSize(allIssues.getSizeOf(ERROR))
                 .setTotalHighSize(allIssues.getSizeOf(WARNING_HIGH))
                 .setTotalNormalSize(allIssues.getSizeOf(WARNING_NORMAL))
-                .setTotalLowSize(allIssues.getSizeOf(WARNING_LOW));
+                .setTotalLowSize(allIssues.getSizeOf(WARNING_LOW))
+                .setTotalModifiedSize(allIssues.getInModifiedCode().size());
         builder.setNewErrorSize(newIssues.getSizeOf(ERROR))
                 .setNewHighSize(newIssues.getSizeOf(WARNING_HIGH))
                 .setNewNormalSize(newIssues.getSizeOf(WARNING_NORMAL))
-                .setNewLowSize(newIssues.getSizeOf(WARNING_LOW));
+                .setNewLowSize(newIssues.getSizeOf(WARNING_LOW))
+                .setNewModifiedSize(newIssues.getInModifiedCode().size());
         builder.setFixedSize(fixedIssues.size());
         if (!referenceBuildId.isEmpty()) {
             builder.setDeltaErrorSize(allIssues.getSizeOf(ERROR) - referenceIssues.getSizeOf(ERROR))

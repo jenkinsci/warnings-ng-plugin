@@ -50,7 +50,7 @@ class IssuesAggregatorTest {
 
         aggregator.endBuild();
 
-        verify(recorder, never()).publishResult(any(), any(), anyString(), any(), anyString(), any());
+        verify(recorder, never()).publishResult(any(), any(), any(), anyString(), any(), anyString(), any());
     }
 
     @Test
@@ -71,7 +71,7 @@ class IssuesAggregatorTest {
 
         aggregator.endBuild();
 
-        verify(recorder).publishResult(any(), any(), anyString(), any(), anyString(), any());
+        verify(recorder).publishResult(any(), any(), any(), anyString(), any(), anyString(), any());
     }
 
     @Test @org.junitpioneer.jupiter.Issue("JENKINS-59178")
@@ -96,7 +96,7 @@ class IssuesAggregatorTest {
 
         aggregator.endBuild();
 
-        verify(recorder, times(2)).publishResult(any(), any(), anyString(), any(), anyString(), any());
+        verify(recorder, times(2)).publishResult(any(), any(), any(), anyString(), any(), anyString(), any());
     }
 
     @Test
@@ -120,7 +120,7 @@ class IssuesAggregatorTest {
 
         aggregator.endBuild();
 
-        verify(recorder, times(2)).publishResult(any(), any(), anyString(), any(), anyString(), any());
+        verify(recorder, times(2)).publishResult(any(), any(), any(), anyString(), any(), anyString(), any());
     }
 
     @Test
@@ -148,7 +148,7 @@ class IssuesAggregatorTest {
 
         aggregator.endBuild();
 
-        verify(recorder).publishResult(any(), any(), anyString(), any(), anyString(), any());
+        verify(recorder).publishResult(any(), any(), any(), anyString(), any(), anyString(), any());
     }
 
     private Issue createIssue(final String pmd) {
