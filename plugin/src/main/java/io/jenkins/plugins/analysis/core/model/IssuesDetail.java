@@ -539,16 +539,16 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
     }
 
     /**
-     * Returns a new sub page for the selected link.
+     * Returns a new subpage for the selected link.
      *
      * @param link
-     *         the link to identify the sub page to show
+     *         the link to identify the subpage to show
      * @param request
      *         Stapler request
      * @param response
      *         Stapler response
      *
-     * @return the new sub page
+     * @return the new subpage
      */
     @SuppressWarnings("unused") // Called by jelly view
     public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response) {

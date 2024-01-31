@@ -31,5 +31,10 @@ public class Cargo extends AnalysisModelParser {
         public Descriptor() {
             super(ID);
         }
+
+        @Override
+        public boolean canScanConsoleLog() {
+            return false;
+        }
     }
 }

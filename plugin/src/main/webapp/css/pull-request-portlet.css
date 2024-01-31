@@ -5,11 +5,11 @@
 
 .no-issues-banner {
     padding: 20px;
-    fill: #009688;
+    fill: var(--success-color);
 }
 
 .no-new-issues-banner {
-    fill: #009688;
+    fill: var(--success-color);
     width: 30px;
     height: 30px;
 }

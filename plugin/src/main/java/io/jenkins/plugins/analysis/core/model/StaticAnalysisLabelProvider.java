@@ -12,6 +12,7 @@ import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 import org.jvnet.localizer.Localizable;
+import hudson.model.Job;
 import hudson.model.Run;
 
 import static j2html.TagCreator.*;
@@ -110,7 +111,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      * @return the age builder
      */
     protected DefaultAgeBuilder getAgeBuilder(final Run<?, ?> owner, final String url) {
-        return new DefaultAgeBuilder(owner.getNumber(), url);
+        return new DefaultAgeBuilder(owner.getNumber(), url, owner.getParent());
     }
 
     /**
@@ -165,7 +166,8 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
         return this;
     }
 
-    @Override @Generated
+    @Override
+    @Generated
     public String toString() {
         return String.format("%s: %s", getId(), getName());
     }
@@ -273,27 +275,52 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
     /**
      * Computes the age of a build as a hyperlink.
      */
+    @SuppressWarnings("DeprecatedIsStillUsed")
     public static class DefaultAgeBuilder implements AgeBuilder {
-        private final int currentBuild;
+        private final int currentBuildNumber;
         private final String resultUrl;
+        @CheckForNull
+        private Job<?, ?> owner;
 
         /**
          * Creates a new instance of {@link DefaultAgeBuilder}.
          *
-         * @param currentBuild
+         * @param currentBuildNumber
          *         number of the current build
          * @param resultUrl
          *         URL to the results
+         * @deprecated use {@link #DefaultAgeBuilder(int, String, Job)}
          */
-        public DefaultAgeBuilder(final int currentBuild, final String resultUrl) {
-            this.currentBuild = currentBuild;
+        @Deprecated
+        public DefaultAgeBuilder(final int currentBuildNumber, final String resultUrl) {
+            this.currentBuildNumber = currentBuildNumber;
             this.resultUrl = resultUrl;
+        }
+
+        /**
+         * Creates a new instance of {@link DefaultAgeBuilder}.
+         *
+         * @param currentBuildNumber
+         *         number of the current build
+         * @param resultUrl
+         *         URL to the results
+         * @param job
+         *         the job
+         */
+        public DefaultAgeBuilder(final int currentBuildNumber, final String resultUrl, final Job<?, ?> job) {
+            this(currentBuildNumber, resultUrl);
+
+            this.owner = job;
         }
 
         @Override
         public String apply(final Integer referenceBuild) {
-            if (referenceBuild >= currentBuild) {
+            if (referenceBuild >= currentBuildNumber) {
                 return "1"; // fallback
+            }
+            var referenceBuildId = String.valueOf(referenceBuild);
+            if (owner != null && owner.getBuild(referenceBuildId) == null) {
+                return computeAge(referenceBuild); // plain link
             }
             else {
                 String cleanUrl = StringUtils.stripEnd(resultUrl, "/");
@@ -308,7 +335,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
         }
 
         private String computeAge(final int buildNumber) {
-            return String.valueOf(currentBuild - buildNumber + 1);
+            return String.valueOf(currentBuildNumber - buildNumber + 1);
         }
     }
 

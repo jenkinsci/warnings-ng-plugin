@@ -8,11 +8,15 @@ import org.junitpioneer.jupiter.Issue;
 
 import edu.hm.hafner.analysis.IssueBuilder;
 
+import hudson.model.Job;
+import hudson.model.Run;
+
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.CompositeLocalizable;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.DefaultAgeBuilder;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests the class {@link StaticAnalysisLabelProvider}.
@@ -97,14 +101,21 @@ class StaticAnalysisLabelProviderTest {
     class AgeBuilderTest {
         @Test
         void shouldCreateAgeLinkForFirstBuild() {
-            AgeBuilder builder = new DefaultAgeBuilder(1, "checkstyle/");
+            AgeBuilder builder = new DefaultAgeBuilder(1, "checkstyle/", createProject());
 
             assertThat(builder.apply(1)).isEqualTo("1");
         }
 
+        private Job<?, ?> createProject() {
+            var job = mock(Job.class);
+            var run = mock(Run.class);
+            when(job.getBuild(anyString())).thenReturn(run);
+            return job;
+        }
+
         @Test
         void shouldCreateAgeLinkForPreviousBuilds() {
-            AgeBuilder builder = new DefaultAgeBuilder(10, "checkstyle/");
+            AgeBuilder builder = new DefaultAgeBuilder(10, "checkstyle/", createProject());
             assertThat(builder.apply(1))
                     .isEqualTo("<a href=\"../../1/checkstyle\">10</a>");
             assertThat(builder.apply(9))
@@ -113,9 +124,17 @@ class StaticAnalysisLabelProviderTest {
                     .isEqualTo("1");
         }
 
+        @Test @Issue("JENKINS-65845")
+        void shouldCreatePlainTextForDeletedBuilds() {
+            AgeBuilder builder = new DefaultAgeBuilder(10, "checkstyle/", mock(Job.class));
+            assertThat(builder.apply(1)).isEqualTo("10");
+            assertThat(builder.apply(9)).isEqualTo("2");
+            assertThat(builder.apply(10)).isEqualTo("1");
+        }
+
         @Test
         void shouldCreateAgeLinkForSubDetails() {
-            AgeBuilder builder = new DefaultAgeBuilder(10, "checkstyle/package.1234/");
+            AgeBuilder builder = new DefaultAgeBuilder(10, "checkstyle/package.1234/", createProject());
             assertThat(builder.apply(1))
                     .isEqualTo("<a href=\"../../../1/checkstyle\">10</a>");
             assertThat(builder.apply(9))
