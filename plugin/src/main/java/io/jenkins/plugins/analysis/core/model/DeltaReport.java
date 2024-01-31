@@ -57,7 +57,7 @@ public class DeltaReport {
         else {
             report.logInfo("No valid reference build found that meets the criteria (%s)", history);
             report.logInfo("All reported issues will be considered outstanding");
-            report.forEach(issue -> issue.setReference(String.valueOf(currentBuildNumber)));
+            report.setReference(String.valueOf(currentBuildNumber));
             outstandingIssues = report;
             referenceIssues = EMPTY_REPORT;
             newIssues = EMPTY_REPORT;
@@ -124,7 +124,7 @@ public class DeltaReport {
 
     /**
      * Returns statistics for the number of issues (total, new, delta).
-     * 
+     *
      * @return the issues statistics
      */
     public IssuesStatistics getStatistics() {
