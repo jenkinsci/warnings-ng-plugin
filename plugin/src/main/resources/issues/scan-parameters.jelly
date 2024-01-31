@@ -20,6 +20,10 @@
 
   <p:sourceConfig/>
 
+  <f:entry title="${%sourceCodeRetention.title}" field="sourceCodeRetention">
+    <f:select default="LAST_BUILD"/>
+  </f:entry>
+
   <i:hr title="${%Issue filters}"/>
 
   <f:entry title="${%Filters}" description="${%description.filter}">
