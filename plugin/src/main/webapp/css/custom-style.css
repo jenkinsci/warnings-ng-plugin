@@ -46,7 +46,7 @@
 
 .no-issues-banner {
     padding: 30px;
-    color: var(--success-color);
+    color: var(--success-color) !important;
     height: 200px;
     width: 200px;
 }
