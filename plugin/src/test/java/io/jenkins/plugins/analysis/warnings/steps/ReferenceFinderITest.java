@@ -22,6 +22,7 @@ import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTe
 import io.jenkins.plugins.analysis.core.util.WarningsQualityGate;
 import io.jenkins.plugins.analysis.core.util.WarningsQualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.warnings.Java;
+import io.jenkins.plugins.forensics.reference.SimpleReferenceRecorder;
 import io.jenkins.plugins.util.QualityGate.QualityGateCriticality;
 import io.jenkins.plugins.util.QualityGateStatus;
 
@@ -39,43 +40,6 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
     private static final String JAVA_TWO_WARNINGS = "java-start.txt";
     private static final String DISCOVER_REFERENCE_BUILD_STEP = "discoverReferenceBuild(referenceJob:'reference')";
     private static final String PUBLISH_ISSUES_STEP = "publishIssues issues:[issues]";
-
-    /**
-     * Creates a reference job and starts a build having 2 warnings.  Then two builds for the job.  Then another job is
-     * created that uses the first build as a reference.  Verifies that the association is correctly stored.
-     */
-    // TODO: The functionality within this test is deprecated and will be removed in a future release
-    @Test
-    void shouldUseOtherJobBuildAsReference() {
-        WorkflowJob reference = createPipeline("reference");
-        copyMultipleFilesToWorkspaceWithSuffix(reference, JAVA_ONE_WARNING);
-        reference.setDefinition(createPipelineScriptWithScanAndPublishSteps(new Java()));
-
-        AnalysisResult firstReferenceResult = scheduleSuccessfulBuild(reference);
-        cleanWorkspace(reference);
-        copyMultipleFilesToWorkspaceWithSuffix(reference, JAVA_TWO_WARNINGS);
-        AnalysisResult secondReferenceResult = scheduleSuccessfulBuild(reference);
-
-        assertThat(firstReferenceResult).hasTotalSize(1);
-        assertThat(firstReferenceResult.getReferenceBuild()).isEmpty();
-        assertThat(firstReferenceResult.getOwner().getId()).isEqualTo("1");
-
-        assertThat(secondReferenceResult).hasTotalSize(2).hasNewSize(1);
-        assertThat(secondReferenceResult.getReferenceBuild().get().getId()).isEqualTo("1");
-        assertThat(secondReferenceResult.getOwner().getId()).isEqualTo("2");
-
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix(JAVA_TWO_WARNINGS);
-        job.setDefinition(asStage(createScanForIssuesStep(new Java()),
-                "publishIssues issues:[issues], referenceJobName:'reference', referenceBuildId: '1'"));
-
-        AnalysisResult result = scheduleSuccessfulBuild(job);
-
-        assertThat(result.getReferenceBuild()).isPresent();
-        assertThat(result.getReferenceBuild().get().getId()).isEqualTo(firstReferenceResult.getOwner().getId());
-        assertThat(result.getReferenceBuild().get().getId()).isEqualTo("1");
-
-        assertThat(result.getNewIssues()).hasSize(1);
-    }
 
     /**
      * Creates a reference job and starts the analysis for this job. Then another job is created that uses the first one
@@ -104,7 +68,7 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
 
         assertThat(getConsoleLog(result)).contains(
                 "[ReferenceFinder] Configured reference job: 'reference'",
-                "[ReferenceFinder] Found reference build '#1' for target branch",
+                "[ReferenceFinder] Found reference build '#1' of reference job 'reference'",
                 "Obtaining reference build from reference recorder",
                 "-> Found 'reference #1'");
     }
@@ -132,8 +96,7 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(getConsoleLog(result)).contains(
                 "Obtaining reference build from reference recorder",
                 "-> No reference build recorded",
-                "Obtaining reference build from same job",
-                "No valid reference build found that meets the criteria (NO_JOB_FAILURE - SUCCESSFUL_QUALITY_GATE)",
+                "No valid reference build found",
                 "All reported issues will be considered outstanding");
     }
 
@@ -143,7 +106,7 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
     @Test
     void shouldResetReference() {
         // #1 SUCCESS
-        FreeStyleProject project = createJob(JOB_NAME, "eclipse2Warnings.txt");
+        FreeStyleProject project = createReferenceJob();
         enableWarnings(project, recorder -> recorder.setQualityGates(List.of(
                 new WarningsQualityGate(3, QualityGateType.NEW, QualityGateCriticality.UNSTABLE))));
         scheduleBuildAndAssertStatus(project, Result.SUCCESS,
@@ -208,7 +171,7 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
     @Test
     void shouldCreateSuccessResultWithIgnoredUnstableInBetween() {
         // #1 SUCCESS
-        FreeStyleProject project = createJob(JOB_NAME, "eclipse2Warnings.txt");
+        FreeStyleProject project = createReferenceJob();
         enableWarnings(project, recorder -> recorder.setQualityGates(List.of(
                 new WarningsQualityGate(3, QualityGateType.NEW, QualityGateCriticality.UNSTABLE))));
         Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(project, Result.SUCCESS,
@@ -236,6 +199,10 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
                         .hasReferenceBuild(Optional.of(expectedReference)));
     }
 
+    private FreeStyleProject createReferenceJob() {
+        return createJob(JOB_NAME, "eclipse2Warnings.txt");
+    }
+
     private void createResetAction(final Run<?, ?> unstable, final String id) {
         ResetQualityGateCommand resetCommand = new ResetQualityGateCommand();
         resetCommand.resetReferenceBuild(unstable, id);
@@ -247,7 +214,7 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
     @Test
     void shouldCreateUnstableResultWithIgnoredUnstableInBetween() {
         // #1 SUCCESS
-        FreeStyleProject project = createJob(JOB_NAME, "eclipse2Warnings.txt");
+        FreeStyleProject project = createReferenceJob();
         enableWarnings(project, recorder -> recorder.setQualityGates(List.of(
                 new WarningsQualityGate(3, QualityGateType.NEW, QualityGateCriticality.UNSTABLE))));
         Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(project, Result.SUCCESS,
@@ -277,7 +244,7 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
     @Test
     void shouldCreateSuccessResultWithNotIgnoredUnstableInBetween() {
         // #1 SUCCESS
-        FreeStyleProject project = createJob(JOB_NAME, "eclipse2Warnings.txt");
+        FreeStyleProject project = createReferenceJob();
         enableWarnings(project, recorder -> {
             recorder.setIgnoreQualityGate(true);
             recorder.setQualityGates(List.of(
@@ -345,7 +312,7 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
     @Test
     void shouldCreateUnstableResultWithOverAllMustBeSuccess() {
         // #1 SUCCESS
-        FreeStyleProject project = createJob(JOB_NAME, "eclipse2Warnings.txt");
+        FreeStyleProject project = createReferenceJob();
         enableWarnings(project, recorder -> {
             recorder.setIgnoreFailedBuilds(true);
             recorder.setEnabledForFailure(true);
@@ -457,7 +424,7 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
     @Test
     void shouldCreateSuccessResultWithOverAllMustNotBeSuccess() {
         // #1 SUCCESS
-        FreeStyleProject project = createJob(JOB_NAME, "eclipse2Warnings.txt");
+        FreeStyleProject project = createReferenceJob();
         enableWarnings(project, recorder -> {
             recorder.setIgnoreFailedBuilds(false);
             recorder.setEnabledForFailure(true);
@@ -512,10 +479,10 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
 
         // #1 SUCCESS (Reference #1)
         FreeStyleProject project = createJob(JOB_NAME, "eclipse4Warnings.txt");
+
         enableWarnings(project, recorder -> {
             recorder.setQualityGates(List.of(
                     new WarningsQualityGate(3, QualityGateType.NEW, QualityGateCriticality.UNSTABLE)));
-            recorder.setReferenceJobName(REFERENCE_JOB_NAME);
             recorder.setQualityGates(List.of(
                     new WarningsQualityGate(7, QualityGateType.TOTAL, QualityGateCriticality.UNSTABLE)));
         });
@@ -553,10 +520,10 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
 
         // #1 SUCCESS (Reference #1)
         FreeStyleProject project = createJob(JOB_NAME, "eclipse8Warnings.txt");
+
         enableWarnings(project, recorder -> {
             recorder.setQualityGates(List.of(
                     new WarningsQualityGate(3, QualityGateType.NEW, QualityGateCriticality.UNSTABLE)));
-            recorder.setReferenceJobName(REFERENCE_JOB_NAME);
             recorder.setIgnoreQualityGate(false);
         });
 
@@ -594,10 +561,10 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
 
         // #1 SUCCESS (Reference #2)
         FreeStyleProject project = createJob(JOB_NAME, "eclipse8Warnings.txt");
+
         enableWarnings(project, recorder -> {
             recorder.setQualityGates(List.of(
                     new WarningsQualityGate(3, QualityGateType.NEW, QualityGateCriticality.UNSTABLE)));
-            recorder.setReferenceJobName(REFERENCE_JOB_NAME);
             recorder.setIgnoreQualityGate(true);
         });
         scheduleBuildAndAssertStatus(project, Result.SUCCESS, analysisResult -> assertThat(analysisResult)
@@ -633,11 +600,11 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
 
         // #1 SUCCESS (Reference #2)
         FreeStyleProject project = createJob(JOB_NAME, "eclipse8Warnings.txt");
+
         enableWarnings(project, recorder -> {
             recorder.setQualityGates(List.of(
                     new WarningsQualityGate(3, QualityGateType.NEW, QualityGateCriticality.UNSTABLE),
                     new WarningsQualityGate(9, QualityGateType.TOTAL, QualityGateCriticality.UNSTABLE)));
-            recorder.setReferenceJobName(REFERENCE_JOB_NAME);
             recorder.setIgnoreQualityGate(true);
         });
         scheduleBuildAndAssertStatus(project, Result.UNSTABLE, analysisResult -> assertThat(analysisResult)
@@ -677,10 +644,10 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
 
         // #1 SUCCESS (Reference #1)
         FreeStyleProject project = createJob(JOB_NAME, "eclipse6Warnings.txt");
+
         enableWarnings(project, recorder -> {
             recorder.setQualityGates(List.of(
                     new WarningsQualityGate(3, QualityGateType.NEW, QualityGateCriticality.UNSTABLE)));
-            recorder.setReferenceJobName(REFERENCE_JOB_NAME);
             recorder.setIgnoreFailedBuilds(true);
             recorder.setEnabledForFailure(true);
         });
@@ -720,10 +687,10 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
 
         // #1 SUCCESS (Reference #1)
         FreeStyleProject project = createJob(JOB_NAME, "eclipse6Warnings.txt");
+
         enableWarnings(project, recorder -> {
             recorder.setQualityGates(List.of(
                     new WarningsQualityGate(3, QualityGateType.NEW, QualityGateCriticality.UNSTABLE)));
-            recorder.setReferenceJobName(REFERENCE_JOB_NAME);
             recorder.setIgnoreFailedBuilds(true);
             recorder.setEnabledForFailure(true);
         });
@@ -764,10 +731,10 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
 
         // #1 UNSTABLE (Reference #2)
         FreeStyleProject project = createJob(JOB_NAME, "eclipse6Warnings.txt");
+
         enableWarnings(project, recorder -> {
             recorder.setQualityGates(List.of(
                     new WarningsQualityGate(3, QualityGateType.NEW, QualityGateCriticality.UNSTABLE)));
-            recorder.setReferenceJobName(REFERENCE_JOB_NAME);
             recorder.setIgnoreFailedBuilds(false);
             recorder.setEnabledForFailure(true);
         });
@@ -809,10 +776,10 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
 
         // #1 UNSTABLE (Reference #2)
         FreeStyleProject project = createJob(JOB_NAME, "eclipse6Warnings.txt");
+
         enableWarnings(project, recorder -> {
             recorder.setQualityGates(List.of(
                     new WarningsQualityGate(3, QualityGateType.NEW, QualityGateCriticality.UNSTABLE)));
-            recorder.setReferenceJobName(REFERENCE_JOB_NAME);
             recorder.setIgnoreFailedBuilds(false);
             recorder.setEnabledForFailure(true);
         });
@@ -848,6 +815,11 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
 
     private FreeStyleProject createJob(final String jobName, final String fileName) {
         FreeStyleProject job = createProject(FreeStyleProject.class, jobName);
+        var referenceRecorder = new SimpleReferenceRecorder();
+        job.getPublishersList().add(referenceRecorder);
+        if (!referenceRecorder.equals(REFERENCE_JOB_NAME)) {
+            referenceRecorder.setReferenceJob(REFERENCE_JOB_NAME);
+        }
         copyMultipleFilesToWorkspaceWithSuffix(job, fileName);
         return job;
     }

@@ -37,6 +37,7 @@ import io.jenkins.plugins.checks.api.ChecksPublisherFactory;
 import io.jenkins.plugins.checks.api.ChecksStatus;
 import io.jenkins.plugins.checks.util.CapturingChecksPublisher;
 import io.jenkins.plugins.checks.util.CapturingChecksPublisher.Factory;
+import io.jenkins.plugins.forensics.reference.SimpleReferenceRecorder;
 import io.jenkins.plugins.util.QualityGate.QualityGateCriticality;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
@@ -98,6 +99,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
     private void configureScanner(final WorkflowJob job, final String fileName, final String parameters) {
         job.setDefinition(new CpsFlowDefinition("node {\n"
                 + "  stage ('Integration Test') {\n"
+                + "         discoverReferenceBuild()\n"
                 + "         recordIssues tool: checkStyle(pattern: '**/" + fileName + "-*') "
                 + parameters
                 + "\n"
@@ -143,7 +145,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldParseHtmlMessage() {
-        FreeStyleProject project = createFreeStyleProject();
+        FreeStyleProject project = getFreeStyleJob();
         enableWarnings(project, new PVSStudio());
 
         buildSuccessfully(project);
@@ -168,7 +170,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldReportNoIssuesInTitle() {
-        FreeStyleProject project = createFreeStyleProject();
+        FreeStyleProject project = getFreeStyleJob();
         enableCheckStyleWarnings(project);
 
         Run<?, ?> run = buildSuccessfully(project);
@@ -209,7 +211,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldReportOnlyNewIssuesInTitleWhenAllIssuesAreNew() {
-        FreeStyleProject project = createFreeStyleProject();
+        FreeStyleProject project = getFreeStyleJob();
         enableCheckStyleWarnings(project);
 
         Run<?, ?> reference = buildSuccessfully(project);
@@ -235,7 +237,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldIgnoreColumnsWhenBuildMultipleLineAnnotation() {
-        FreeStyleProject project = createFreeStyleProject();
+        FreeStyleProject project = getFreeStyleJob();
         enableWarnings(project, new Pmd());
 
         buildSuccessfully(project);
@@ -371,7 +373,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldFallbackToIssueCategory() {
-        FreeStyleProject project = createFreeStyleProject();
+        FreeStyleProject project = getFreeStyleJob();
         enableWarnings(project, createTool(new MsBuild(), "msbuild.log"));
 
         buildSuccessfully(project);
@@ -384,6 +386,12 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
 
         assertThat(details.getOutput().get().getChecksAnnotations().get(0))
                 .hasFieldOrPropertyWithValue("title", Optional.of("C4101"));
+    }
+
+    private FreeStyleProject getFreeStyleJob() {
+        var project = createFreeStyleProject();
+        project.getPublishersList().add(new SimpleReferenceRecorder());
+        return project;
     }
 
     private ChecksDetails createExpectedCheckStyleDetails() {

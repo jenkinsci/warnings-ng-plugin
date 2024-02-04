@@ -41,7 +41,9 @@
     <testcontainers.version>1.19.3</testcontainers.version>
 
     <!-- Jenkins Plug-in Dependencies Versions -->
-    <git-forensics.version>2.0.0</git-forensics.version>
+    <forensics-api.version>2.4.0-SNAPSHOT</forensics-api.version>
+    <git-forensics.version>2.1.0-SNAPSHOT</git-forensics.version>
+
     <jenkins-maven-plugin.version>3.22</jenkins-maven-plugin.version>
     <job-dsl.version>1.84</job-dsl.version>
     <flexible-publish.version>0.15.2</flexible-publish.version>
@@ -171,6 +173,7 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>forensics-api</artifactId>
+      <version>${forensics-api.version}</version>
     </dependency>
 
     <!-- AxivionSuite Dependencies -->

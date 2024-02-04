@@ -45,7 +45,6 @@ class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldObtainBlamesAndForensicsWithScanAndPublishIssuesSteps() {
-        runStepAndVerifyBlamesAndForensics(createScanForIssuesStep("sourceDirectory: 'forensics-api'"));
         runStepAndVerifyBlamesAndForensics(createScanForIssuesStep("sourceDirectories: [[path: 'forensics-api']]"));
         runStepAndVerifyBlamesAndForensics(createScanForIssuesStep("sourceDirectories: [[path: 'does-not-exist'], [path: 'forensics-api']]"));
     }
@@ -63,7 +62,6 @@ class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldObtainBlamesAndForensicsWithRecordIssuesStep() {
-        runStepAndVerifyBlamesAndForensics(createRecordIssuesStep("sourceDirectory: 'forensics-api'"));
         runStepAndVerifyBlamesAndForensics(createRecordIssuesStep("sourceDirectories: [[path: 'forensics-api']]"));
         runStepAndVerifyBlamesAndForensics(createRecordIssuesStep("sourceDirectories: [[path: 'does-not-exist'], [path: 'forensics-api']]"));
     }
@@ -99,7 +97,7 @@ class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
 
         createFileInWorkspace(job, "java-issues.txt", createJavaWarning(SCM_RESOLVER, AFFECTED_LINE));
 
-        job.setDefinition(asStage(CHECKOUT_FORENSICS_API, MINE_REPOSITORY, step));
+        job.setDefinition(asStage(CHECKOUT_FORENSICS_API, MINE_REPOSITORY, "discoverReferenceBuild()", step));
 
         verifyBlaming(job);
     }
@@ -130,7 +128,7 @@ class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     void shouldSkipBlamesAndForensicsWithScanAndPublishIssuesSteps() {
         runStepAndVerifyScmSkipping("def issues = scanForIssues "
-                + "sourceDirectory: 'forensics-api',"
+                + "sourceDirectories: [[path: 'forensics-api']],"
                 + "scm: 'nothing', "
                 + "tool: java(pattern:'**/*issues.txt', reportEncoding:'UTF-8')\n"
                 + PUBLISH_ISSUES_STEP);
@@ -143,7 +141,7 @@ class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     void shouldSkipBlamesAndForensicsWithRecordIssuesStep() {
         runStepAndVerifyScmSkipping("recordIssues "
-                + "sourceDirectory: 'forensics-api',"
+                + "sourceDirectories: [[path: 'forensics-api']],"
                 + "scm: 'nothing', "
                 + "tool: java(pattern:'**/*issues.txt', reportEncoding:'UTF-8')");
     }

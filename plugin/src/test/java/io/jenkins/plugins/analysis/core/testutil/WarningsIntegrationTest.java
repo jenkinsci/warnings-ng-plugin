@@ -57,6 +57,8 @@ public abstract class WarningsIntegrationTest extends IntegrationTest {
 
     /** Step to publish a set of issues. Uses default options for all options. */
     protected static final String PUBLISH_ISSUES_STEP = "publishIssues issues:[issues]";
+    /** Step to record the reference builds. */
+    protected static final String REFERENCE_BUILD = "discoverReferenceBuild()";
 
     /**
      * Copies the specified files to the workspace using a generated file name that uses the same suffix. So the pattern
@@ -131,7 +133,7 @@ public abstract class WarningsIntegrationTest extends IntegrationTest {
      * @return the pipeline script
      */
     protected CpsFlowDefinition createPipelineScriptWithScanAndPublishSteps(final AnalysisModelParser tool) {
-        return asStage(createScanForIssuesStep(tool), PUBLISH_ISSUES_STEP);
+        return asStage(REFERENCE_BUILD, createScanForIssuesStep(tool), PUBLISH_ISSUES_STEP);
     }
 
     /**

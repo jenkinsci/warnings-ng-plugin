@@ -57,7 +57,7 @@ public class PublishIssuesStep extends Step implements Serializable {
     private boolean ignoreQualityGate = false; // by default, a successful quality gate is mandatory
     private boolean ignoreFailedBuilds = true; // by default, failed builds are ignored
     private String referenceJobName = StringUtils.EMPTY;
-    private String referenceBuildId = StringUtils.EMPTY;
+    private final String referenceBuildId = StringUtils.EMPTY;
     private boolean failOnError = false; // by default, it should not fail on error
 
     private boolean skipPublishingChecks; // by default, warnings should be published to SCM platforms
@@ -253,48 +253,6 @@ public class PublishIssuesStep extends Step implements Serializable {
         this.referenceJobName = referenceJobName;
     }
 
-    /**
-     * Returns the reference job to get the results for the issue difference computation. If the job is not defined,
-     * then {@link IssuesRecorder#NO_REFERENCE_DEFINED} is returned.
-     *
-     * @return the name of reference job, or {@link IssuesRecorder#NO_REFERENCE_DEFINED} if undefined
-     */
-    public String getReferenceJobName() {
-        if (StringUtils.isBlank(referenceJobName)) {
-            return IssuesRecorder.NO_REFERENCE_DEFINED;
-        }
-        return referenceJobName;
-    }
-
-    /**
-     * Sets the reference build id of the reference job for the issue difference computation.
-     *
-     * @param referenceBuildId
-     *         the build id of the reference job
-     */
-    @DataBoundSetter
-    public void setReferenceBuildId(final String referenceBuildId) {
-        if (IssuesRecorder.NO_REFERENCE_DEFINED.equals(referenceBuildId)) {
-            this.referenceBuildId = StringUtils.EMPTY;
-        }
-        else {
-            this.referenceBuildId = referenceBuildId;
-        }
-    }
-
-    /**
-     * Returns the reference build id of the reference job to get the results for the issue difference computation.
-     * If the build id is not defined, then {@link IssuesRecorder#NO_REFERENCE_DEFINED} is returned.
-     *
-     * @return the reference build id, or {@link IssuesRecorder#NO_REFERENCE_DEFINED} if undefined
-     */
-    public String getReferenceBuildId() {
-        if (StringUtils.isBlank(referenceBuildId)) {
-            return IssuesRecorder.NO_REFERENCE_DEFINED;
-        }
-        return referenceBuildId;
-    }
-
     @CheckForNull
     public String getSourceCodeEncoding() {
         return sourceCodeEncoding;
@@ -453,7 +411,7 @@ public class PublishIssuesStep extends Step implements Serializable {
             IssuesPublisher publisher = new IssuesPublisher(getRun(), report,
                     new HealthDescriptor(step.getHealthy(), step.getUnhealthy(),
                             step.getMinimumSeverityAsSeverity()), step.getQualityGates(),
-                    StringUtils.defaultString(step.getName()), step.getReferenceJobName(), step.getReferenceBuildId(),
+                    StringUtils.defaultString(step.getName()),
                     step.getIgnoreQualityGate(), step.getIgnoreFailedBuilds(),
                     getCharset(step.getSourceCodeEncoding()), getLogger(report), notifier, step.getFailOnError());
             ResultAction action = publisher.attachAction(step.getTrendChartType());

@@ -33,7 +33,7 @@ class DeltaReportTest {
         when(history.getBuild()).thenReturn(Optional.empty());
         Report report = new Report();
 
-        DeltaReport deltaReport = new DeltaReport(report, history, 0);
+        DeltaReport deltaReport = new DeltaReport(report,  0);
         assertThat(deltaReport)
                 .isEmpty()
                 .hasNoAllIssues()
@@ -48,9 +48,6 @@ class DeltaReportTest {
         Run<?, ?> run = mock(Run.class);
         when(run.getExternalizableId()).thenReturn(REFERENCE_BUILD_ID);
 
-        History history = mock(History.class);
-        when(history.getBuild()).thenReturn(Optional.of(run));
-
         Issue issue = getIssue("issue");
         Issue fixedIssue = getIssue("fixedIssue");
         Issue newIssue = getIssue("newIssue");
@@ -58,13 +55,12 @@ class DeltaReportTest {
         Report referenceIssues = new Report();
         referenceIssues.add(issue);
         referenceIssues.add(fixedIssue);
-        when(history.getIssues()).thenReturn(referenceIssues);
 
         Report report = new Report();
         report.add(issue);
         report.add(newIssue);
 
-        DeltaReport deltaReport = new DeltaReport(report, history, 0);
+        DeltaReport deltaReport = new DeltaReport(report, run, 0, referenceIssues);
         assertThat(deltaReport)
                 .hasAllIssues(issue, newIssue)
                 .hasOutstandingIssues(issue)
@@ -105,7 +101,7 @@ class DeltaReportTest {
                 .setFixedSize(1)
                 .build();
 
-        DeltaReport deltaReport = new DeltaReport(report, history, 0);
+        DeltaReport deltaReport = new DeltaReport(report,  run, 0, referenceIssues);
         IssuesStatistics issuesStatistics = deltaReport.getStatistics();
         IssuesStatisticsAssert.assertThat(issuesStatistics)
                 .isNotNull().usingRecursiveComparison()
@@ -113,10 +109,14 @@ class DeltaReportTest {
     }
 
     private Issue getIssue(final String name) {
-        return new IssueBuilder().setFileName(name).setFingerprint(name).build();
+        try (var builder = new IssueBuilder()) {
+            return builder.setFileName(name).setFingerprint(name).build();
+        }
     }
 
     private Issue getIssueWithSeverity(final String name, final Severity severity) {
-        return new IssueBuilder().setFileName(name).setFingerprint(name).setSeverity(severity).build();
+        try (var builder = new IssueBuilder()) {
+            return builder.setFileName(name).setFingerprint(name).setSeverity(severity).build();
+        }
     }
 }

@@ -53,6 +53,7 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String ECLIPSE_REPORT_ONE_AFFECTED_AFFECTED_FILE = FOLDER + "/eclipseOneAffectedFile.txt";
     private static final int ROW_NUMBER_ACTUAL_AFFECTED_FILE = 0;
     private static final String COPY_FILES = "Copying affected files to Jenkins' build folder";
+    private static final String ZIP = ".zip";
 
     /**
      * Verifies that the affected source code is copied and shown in the source code view. If the file is deleted in the
@@ -107,7 +108,8 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private void makeAffectedFilesInBuildFolderUnreadable(final AnalysisResult result) {
-        makeFileUnreadable(AffectedFilesResolver.getFile(result.getOwner(), getIssueWithSource(result).getFileName()));
+        makeFileUnreadable(AffectedFilesResolver.getFile(result.getOwner(),
+                getIssueWithSource(result).getFileName() + ZIP));
     }
 
     private Issue getIssueWithSource(final AnalysisResult result) {
@@ -120,7 +122,7 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
     private void deleteAffectedFilesInBuildFolder(final AnalysisResult result) {
         Set<String> files = result.getIssues().getFiles();
         for (String fileName : files) {
-            Path file = AffectedFilesResolver.getFile(result.getOwner(), fileName);
+            Path file = AffectedFilesResolver.getFile(result.getOwner(), fileName + ZIP);
             try {
                 Files.delete(file);
             }

@@ -75,8 +75,7 @@ public class RecordIssuesStep extends Step implements Serializable {
 
     private boolean ignoreQualityGate = false; // by default, a successful quality gate is mandatory;
     private boolean ignoreFailedBuilds = true; // by default, failed builds are ignored;
-    private String referenceJobName = StringUtils.EMPTY;
-    private String referenceBuildId = StringUtils.EMPTY;
+    private final String referenceBuildId = StringUtils.EMPTY;
 
     private int healthy;
     private int unhealthy;
@@ -507,62 +506,6 @@ public class RecordIssuesStep extends Step implements Serializable {
         return failOnError;
     }
 
-    /**
-     * Sets the reference job to get the results for the issue difference computation.
-     *
-     * @param referenceJobName
-     *         the name of reference job
-     */
-    @DataBoundSetter
-    public void setReferenceJobName(final String referenceJobName) {
-        if (IssuesRecorder.NO_REFERENCE_DEFINED.equals(referenceJobName)) {
-            this.referenceJobName = StringUtils.EMPTY;
-        }
-        this.referenceJobName = referenceJobName;
-    }
-
-    /**
-     * Returns the reference job to get the results for the issue difference computation. If the job is not defined,
-     * then {@link IssuesRecorder#NO_REFERENCE_DEFINED} is returned.
-     *
-     * @return the name of reference job, or {@link IssuesRecorder#NO_REFERENCE_DEFINED} if undefined
-     */
-    public String getReferenceJobName() {
-        if (StringUtils.isBlank(referenceJobName)) {
-            return IssuesRecorder.NO_REFERENCE_DEFINED;
-        }
-        return referenceJobName;
-    }
-
-    /**
-     * Sets the reference build id of the reference job for the issue difference computation.
-     *
-     * @param referenceBuildId
-     *         the build id of the reference job
-     */
-    @DataBoundSetter
-    public void setReferenceBuildId(final String referenceBuildId) {
-        if (IssuesRecorder.NO_REFERENCE_DEFINED.equals(referenceBuildId)) {
-            this.referenceBuildId = StringUtils.EMPTY;
-        }
-        else {
-            this.referenceBuildId = referenceBuildId;
-        }
-    }
-
-    /**
-     * Returns the reference build id of the reference job to get the results for the issue difference computation. If
-     * the build id is not defined, then {@link IssuesRecorder#NO_REFERENCE_DEFINED} is returned.
-     *
-     * @return the reference build id, or {@link IssuesRecorder#NO_REFERENCE_DEFINED} if undefined
-     */
-    public String getReferenceBuildId() {
-        if (StringUtils.isBlank(referenceBuildId)) {
-            return IssuesRecorder.NO_REFERENCE_DEFINED;
-        }
-        return referenceBuildId;
-    }
-
     public int getHealthy() {
         return healthy;
     }
@@ -660,8 +603,6 @@ public class RecordIssuesStep extends Step implements Serializable {
             recorder.setSourceCodeEncoding(step.getSourceCodeEncoding());
             recorder.setIgnoreQualityGate(step.getIgnoreQualityGate());
             recorder.setIgnoreFailedBuilds(step.getIgnoreFailedBuilds());
-            recorder.setReferenceJobName(step.getReferenceJobName());
-            recorder.setReferenceBuildId(step.getReferenceBuildId());
             recorder.setHealthy(step.getHealthy());
             recorder.setUnhealthy(step.getUnhealthy());
             recorder.setMinimumSeverity(step.getMinimumSeverity());

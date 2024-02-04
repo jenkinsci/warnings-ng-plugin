@@ -150,6 +150,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     private void configureRecorder(final WorkflowJob job, final String fileName) {
         job.setDefinition(new CpsFlowDefinition("node {\n"
                 + "  stage ('Integration Test') {\n"
+                + "         discoverReferenceBuild()\n"
                 + "         def reports = recordIssues tool: checkStyle(pattern: '**/" + fileName
                 + "*'), qualityGates: [[threshold: 4, type: 'TOTAL', unstable: true]]\n"
                 + "         echo '[reportsSize=' + reports.size() + ']' \n"
@@ -264,6 +265,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         String qualityGateParameter = String.format("qualityGates: [%s]", qualityGate);
         job.setDefinition(new CpsFlowDefinition("node {\n"
                 + "  stage ('Integration Test') {\n"
+                + "         discoverReferenceBuild()\n"
                 + "         def issues = scanForIssues tool: checkStyle(pattern: '**/" + fileName + "*')\n"
                 + "         def action = publishIssues issues:[issues], " + qualityGateParameter + "\n"
                 + "         echo '[id=' + action.getId() + ']' \n"
@@ -1006,27 +1008,6 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     private void setFilter(final WorkflowJob job, final String filters) {
         String scanWithFilter = createScanForIssuesStep(new Pmd(), "issues", String.format("filters:[%s]", filters));
         job.setDefinition(asStage(scanWithFilter, "publishIssues issues:[issues]"));
-    }
-
-    /**
-     * Creates a reference job with a build, then builds the job, referring to a non-existing build in the reference
-     * job.
-     */
-    @Test
-    void shouldHandleMissingJobBuildIdAsReference() {
-        WorkflowJob reference = createPipeline("reference");
-        reference.setDefinition(createPipelineScriptWithScanAndPublishSteps(new Java()));
-
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("java-start.txt");
-        job.setDefinition(asStage(createScanForIssuesStep(new Java()),
-                "publishIssues issues:[issues], referenceJobName:'reference', referenceBuildId: '1'"));
-
-        AnalysisResult result = scheduleSuccessfulBuild(job);
-
-        assertThat(result.getReferenceBuild()).isEmpty();
-        assertThat(result).hasNewSize(0).hasTotalSize(2);
-        assertThat(result.getErrorMessages()).contains(
-                "Reference job 'reference' does not contain configured build '1'");
     }
 
     /**

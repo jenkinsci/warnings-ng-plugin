@@ -7,7 +7,6 @@ import java.util.Optional;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.FilteredLog;
 
-import hudson.model.Job;
 import hudson.model.Result;
 import hudson.model.Run;
 
@@ -28,7 +27,6 @@ import io.jenkins.plugins.analysis.core.util.TrendChartType;
 import io.jenkins.plugins.analysis.core.util.WarningsQualityGate;
 import io.jenkins.plugins.analysis.core.util.WarningsQualityGateEvaluator;
 import io.jenkins.plugins.forensics.reference.ReferenceFinder;
-import io.jenkins.plugins.util.JenkinsFacade;
 import io.jenkins.plugins.util.LogHandler;
 import io.jenkins.plugins.util.QualityGateResult;
 import io.jenkins.plugins.util.ResultHandler;
@@ -50,8 +48,6 @@ class IssuesPublisher {
     private final String name;
     private final Charset sourceCodeEncoding;
     private final List<WarningsQualityGate> qualityGates;
-    private final String referenceJobName;
-    private final String referenceBuildId;
     private final QualityGateEvaluationMode qualityGateEvaluationMode;
     private final JobResultEvaluationMode jobResultEvaluationMode;
     private final LogHandler logger;
@@ -61,9 +57,8 @@ class IssuesPublisher {
     @SuppressWarnings("ParameterNumber")
     IssuesPublisher(final Run<?, ?> run, final AnnotatedReport report,
             final HealthDescriptor healthDescriptor, final List<WarningsQualityGate> qualityGates,
-            final String name, final String referenceJobName, final String referenceBuildId,
-            final boolean ignoreQualityGate,
-            final boolean ignoreFailedBuilds, final Charset sourceCodeEncoding, final LogHandler logger,
+            final String name, final boolean ignoreQualityGate, final boolean ignoreFailedBuilds,
+            final Charset sourceCodeEncoding, final LogHandler logger,
             final ResultHandler notifier, final boolean failOnErrors) {
         this.report = report;
         this.run = run;
@@ -71,8 +66,6 @@ class IssuesPublisher {
         this.name = name;
         this.sourceCodeEncoding = sourceCodeEncoding;
         this.qualityGates = qualityGates;
-        this.referenceJobName = referenceJobName;
-        this.referenceBuildId = referenceBuildId;
         qualityGateEvaluationMode = ignoreQualityGate ? IGNORE_QUALITY_GATE : SUCCESSFUL_QUALITY_GATE;
         jobResultEvaluationMode = ignoreFailedBuilds ? NO_JOB_FAILURE : IGNORE_JOB_RESULT;
         this.logger = logger;
@@ -97,7 +90,14 @@ class IssuesPublisher {
         ResultSelector selector = ensureThatIdIsUnique();
 
         Report issues = report.getReport();
-        DeltaReport deltaReport = new DeltaReport(issues, createAnalysisHistory(selector, issues), run.getNumber());
+        var history = createAnalysisHistory(selector, issues);
+        DeltaReport deltaReport;
+        if (history.getBuild().isPresent()) {
+            deltaReport = new DeltaReport(issues, history.getBuild().get(), run.getNumber(), history.getIssues());
+        }
+        else {
+            deltaReport = new DeltaReport(issues, run.getNumber());
+        }
         QualityGateResult qualityGateResult = evaluateQualityGate(issues, deltaReport);
         reportHealth(issues);
 
@@ -171,63 +171,19 @@ class IssuesPublisher {
     }
 
     private History createAnalysisHistory(final ResultSelector selector, final Report issues) {
-        if (isValidReference(referenceJobName)) {
-            return findConfiguredReference(selector, issues);
-        }
-
-        return new AnalysisHistory(findReference(issues), selector,
-                determineQualityGateEvaluationMode(issues), jobResultEvaluationMode);
-    }
-
-    private boolean isValidReference(final String referenceName) {
-        return !IssuesRecorder.NO_REFERENCE_DEFINED.equals(referenceName);
-    }
-
-    private History findConfiguredReference(final ResultSelector selector, final Report issues) {
-        final String message = "Setting the reference job has been deprecated, please use the new reference recorder";
-        if (failOnErrors) {
-            // Log at info level otherwise this will fail the step, even if everything else is ok.
-            issues.logInfo(message);
+        var reference = findReference(issues);
+        if (reference.isPresent()) {
+            return new AnalysisHistory(reference.get(), selector,
+                    determineQualityGateEvaluationMode(issues), jobResultEvaluationMode);
         }
         else {
-            issues.logError(message);
+            return new NullAnalysisHistory();
         }
-
-        Optional<Job<?, ?>> referenceJob = new JenkinsFacade().getJob(referenceJobName);
-        if (referenceJob.isPresent()) {
-            Job<?, ?> job = referenceJob.get();
-
-            Run<?, ?> baseline;
-            if (isValidReference(referenceBuildId)) {
-                baseline = job.getBuild(referenceBuildId);
-                if (baseline == null) {
-                    issues.logError("Reference job '%s' does not contain configured build '%s'",
-                            job.getFullDisplayName(), referenceBuildId);
-                    return new NullAnalysisHistory();
-                }
-            }
-            else {
-                baseline = job.getLastCompletedBuild();
-                if (baseline == null) {
-                    issues.logInfo("Reference job '%s' has no completed build yet", job.getFullDisplayName());
-                    return new NullAnalysisHistory();
-                }
-            }
-            return new AnalysisHistory(baseline, selector, determineQualityGateEvaluationMode(issues),
-                    jobResultEvaluationMode);
-        }
-        issues.logError("Configured reference job '%s' does not exist", referenceJobName);
-        return new NullAnalysisHistory();
     }
 
-    private Run<?, ?> findReference(final Report issues) {
-        ReferenceFinder referenceFinder = new ReferenceFinder();
+    private Optional<Run<?, ?>> findReference(final Report issues) {
         FilteredLog log = new FilteredLog("Errors while resolving the reference build:");
-        Run<?, ?> reference = referenceFinder.findReference(run, log)
-                .orElseGet(() -> {
-                    log.logInfo("Obtaining reference build from same job (%s)", run.getParent().getDisplayName());
-                    return run;
-                });
+        Optional<Run<?, ?>> reference = new ReferenceFinder().findReference(run, log);
         issues.mergeLogMessages(log);
         return reference;
     }
