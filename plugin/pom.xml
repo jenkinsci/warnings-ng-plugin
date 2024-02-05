@@ -42,7 +42,7 @@
 
     <!-- Jenkins Plug-in Dependencies Versions -->
     <forensics-api.version>2.4.0-rc1560.b_4b_993ec6a_9f</forensics-api.version>
-    <git-forensics.version>2.1.0-SNAPSHOT</git-forensics.version>
+    <git-forensics.version>2.1.0-20240205.180020-1</git-forensics.version>
 
     <jenkins-maven-plugin.version>3.22</jenkins-maven-plugin.version>
     <job-dsl.version>1.84</job-dsl.version>
