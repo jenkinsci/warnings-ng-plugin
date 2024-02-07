@@ -59,7 +59,6 @@ class JobDslITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(recorder.getEnabledForFailure()).isFalse();
         assertThat(recorder.getHealthy()).isEqualTo(0);
         assertThat(recorder.getId()).isNull();
-        assertThat(recorder.getIgnoreFailedBuilds()).isTrue();
         assertThat(recorder.getIgnoreQualityGate()).isFalse();
         assertThat(recorder.getMinimumSeverity()).isEqualTo("LOW");
         assertThat(recorder.getName()).isNull();
@@ -101,7 +100,6 @@ class JobDslITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(recorder.getEnabledForFailure()).isTrue();
         assertThat(recorder.getHealthy()).isEqualTo(10);
         assertThat(recorder.getId()).isEqualTo("test-id");
-        assertThat(recorder.getIgnoreFailedBuilds()).isFalse();
         assertThat(recorder.getIgnoreQualityGate()).isTrue();
         assertThat(recorder.isSkipPublishingChecks()).isTrue();
         assertThat(recorder.getMinimumSeverity()).isEqualTo("ERROR");

@@ -74,8 +74,6 @@ public class RecordIssuesStep extends Step implements Serializable {
     private SourceCodeRetention sourceCodeRetention = SourceCodeRetention.EVERY_BUILD;
 
     private boolean ignoreQualityGate = false; // by default, a successful quality gate is mandatory;
-    private boolean ignoreFailedBuilds = true; // by default, failed builds are ignored;
-    private final String referenceBuildId = StringUtils.EMPTY;
 
     private int healthy;
     private int unhealthy;
@@ -471,24 +469,6 @@ public class RecordIssuesStep extends Step implements Serializable {
     }
 
     /**
-     * If {@code true}, then only successful or unstable reference builds will be considered. This option is enabled by
-     * default, since analysis results might be inaccurate if the build failed. If {@code false}, every build that
-     * contains a static analysis result is considered, even if the build failed.
-     *
-     * @param ignoreFailedBuilds
-     *         if {@code true} then a stable build is used as reference
-     */
-    @DataBoundSetter
-    public void setIgnoreFailedBuilds(final boolean ignoreFailedBuilds) {
-        this.ignoreFailedBuilds = ignoreFailedBuilds;
-    }
-
-    @SuppressWarnings("PMD.BooleanGetMethodName")
-    public boolean getIgnoreFailedBuilds() {
-        return ignoreFailedBuilds;
-    }
-
-    /**
      * Determines whether to fail the step on errors during the step of recording issues.
      *
      * @param failOnError
@@ -602,7 +582,6 @@ public class RecordIssuesStep extends Step implements Serializable {
             recorder.setTools(step.getTools());
             recorder.setSourceCodeEncoding(step.getSourceCodeEncoding());
             recorder.setIgnoreQualityGate(step.getIgnoreQualityGate());
-            recorder.setIgnoreFailedBuilds(step.getIgnoreFailedBuilds());
             recorder.setHealthy(step.getHealthy());
             recorder.setUnhealthy(step.getUnhealthy());
             recorder.setMinimumSeverity(step.getMinimumSeverity());

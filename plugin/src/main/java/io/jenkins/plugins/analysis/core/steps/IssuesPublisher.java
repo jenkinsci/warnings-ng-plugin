@@ -12,13 +12,10 @@ import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.model.AggregationAction;
 import io.jenkins.plugins.analysis.core.model.AnalysisHistory;
-import io.jenkins.plugins.analysis.core.model.AnalysisHistory.JobResultEvaluationMode;
-import io.jenkins.plugins.analysis.core.model.AnalysisHistory.QualityGateEvaluationMode;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ByIdResultSelector;
 import io.jenkins.plugins.analysis.core.model.DeltaReport;
-import io.jenkins.plugins.analysis.core.model.History;
-import io.jenkins.plugins.analysis.core.model.NullAnalysisHistory;
+import io.jenkins.plugins.analysis.core.model.QualityGateEvaluationMode;
 import io.jenkins.plugins.analysis.core.model.ResetReferenceAction;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.ResultSelector;
@@ -26,13 +23,13 @@ import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
 import io.jenkins.plugins.analysis.core.util.WarningsQualityGate;
 import io.jenkins.plugins.analysis.core.util.WarningsQualityGateEvaluator;
+import io.jenkins.plugins.forensics.reference.ReferenceBuild;
 import io.jenkins.plugins.forensics.reference.ReferenceFinder;
 import io.jenkins.plugins.util.LogHandler;
 import io.jenkins.plugins.util.QualityGateResult;
 import io.jenkins.plugins.util.ResultHandler;
 
-import static io.jenkins.plugins.analysis.core.model.AnalysisHistory.JobResultEvaluationMode.*;
-import static io.jenkins.plugins.analysis.core.model.AnalysisHistory.QualityGateEvaluationMode.*;
+import static io.jenkins.plugins.analysis.core.model.QualityGateEvaluationMode.*;
 
 /**
  * Publishes issues: Stores the created issues in an {@link AnalysisResult}. The result is attached to the {@link Run}
@@ -49,7 +46,6 @@ class IssuesPublisher {
     private final Charset sourceCodeEncoding;
     private final List<WarningsQualityGate> qualityGates;
     private final QualityGateEvaluationMode qualityGateEvaluationMode;
-    private final JobResultEvaluationMode jobResultEvaluationMode;
     private final LogHandler logger;
     private final ResultHandler notifier;
     private final boolean failOnErrors;
@@ -57,9 +53,8 @@ class IssuesPublisher {
     @SuppressWarnings("ParameterNumber")
     IssuesPublisher(final Run<?, ?> run, final AnnotatedReport report,
             final HealthDescriptor healthDescriptor, final List<WarningsQualityGate> qualityGates,
-            final String name, final boolean ignoreQualityGate, final boolean ignoreFailedBuilds,
-            final Charset sourceCodeEncoding, final LogHandler logger,
-            final ResultHandler notifier, final boolean failOnErrors) {
+            final String name, final boolean ignoreQualityGate, final Charset sourceCodeEncoding,
+            final LogHandler logger, final ResultHandler notifier, final boolean failOnErrors) {
         this.report = report;
         this.run = run;
         this.healthDescriptor = healthDescriptor;
@@ -67,7 +62,6 @@ class IssuesPublisher {
         this.sourceCodeEncoding = sourceCodeEncoding;
         this.qualityGates = qualityGates;
         qualityGateEvaluationMode = ignoreQualityGate ? IGNORE_QUALITY_GATE : SUCCESSFUL_QUALITY_GATE;
-        jobResultEvaluationMode = ignoreFailedBuilds ? NO_JOB_FAILURE : IGNORE_JOB_RESULT;
         this.logger = logger;
         this.notifier = notifier;
         this.failOnErrors = failOnErrors;
@@ -87,17 +81,8 @@ class IssuesPublisher {
      * @return the created result action
      */
     ResultAction attachAction(final TrendChartType trendChartType) {
-        ResultSelector selector = ensureThatIdIsUnique();
-
         Report issues = report.getReport();
-        var history = createAnalysisHistory(selector, issues);
-        DeltaReport deltaReport;
-        if (history.getBuild().isPresent()) {
-            deltaReport = new DeltaReport(issues, history.getBuild().get(), run.getNumber(), history.getIssues());
-        }
-        else {
-            deltaReport = new DeltaReport(issues, run.getNumber());
-        }
+        var deltaReport = computeDelta(issues);
         QualityGateResult qualityGateResult = evaluateQualityGate(issues, deltaReport);
         reportHealth(issues);
 
@@ -121,7 +106,7 @@ class IssuesPublisher {
         logger.logInfoMessages(issues.getInfoMessages());
         logger.logErrorMessages(issues.getErrorMessages());
 
-        AnalysisResult result = new AnalysisHistory(run, selector).getResult()
+        AnalysisResult result = new AnalysisHistory(run, ensureThatIdIsUnique()).getResult()
                 .map(previous -> new AnalysisResult(run, getId(), deltaReport, report.getBlames(),
                         report.getStatistics(), qualityGateResult, report.getSizeOfOrigin(),
                         previous))
@@ -136,6 +121,20 @@ class IssuesPublisher {
         }
 
         return action;
+    }
+
+    private DeltaReport computeDelta(final Report issues) {
+        ResultSelector selector = ensureThatIdIsUnique();
+        var possibleReferenceBuild = findReferenceBuild(selector, issues);
+        if (possibleReferenceBuild.isPresent()) {
+            Run<?, ?> build = possibleReferenceBuild.get();
+            var resultAction = selector.get(build)
+                    .orElseThrow(() -> new IllegalStateException("Reference build does not contain a result action"));
+            return new DeltaReport(issues, build, run.getNumber(), resultAction.getResult().getIssues());
+        }
+        else {
+            return new DeltaReport(issues, run.getNumber());
+        }
     }
 
     private ResultSelector ensureThatIdIsUnique() {
@@ -170,22 +169,67 @@ class IssuesPublisher {
         return qualityGateStatus;
     }
 
-    private History createAnalysisHistory(final ResultSelector selector, final Report issues) {
-        var reference = findReference(issues);
+    private Optional<Run<?, ?>> findReferenceBuild(final ResultSelector selector, final Report logger) {
+        FilteredLog log = new FilteredLog("Errors while resolving the reference build:");
+        var reference = new ReferenceFinder().findReference(run, log);
+        logger.mergeLogMessages(log);
+
         if (reference.isPresent()) {
-            return new AnalysisHistory(reference.get(), selector,
-                    determineQualityGateEvaluationMode(issues), jobResultEvaluationMode);
+            return refineReferenceBasedOnQualityGate(selector, logger, reference.get());
         }
-        else {
-            return new NullAnalysisHistory();
-        }
+        return Optional.empty();
     }
 
-    private Optional<Run<?, ?>> findReference(final Report issues) {
-        FilteredLog log = new FilteredLog("Errors while resolving the reference build:");
-        Optional<Run<?, ?>> reference = new ReferenceFinder().findReference(run, log);
-        issues.mergeLogMessages(log);
-        return reference;
+    private Optional<Run<?, ?>> refineReferenceBasedOnQualityGate(final ResultSelector selector, final Report issues,
+            final Run<?, ?> reference) {
+        boolean isSkipped = false;
+        var gateEvaluationMode = determineQualityGateEvaluationMode(issues);
+        for (Run<?, ?> r = reference; r != null; r = r.getPreviousBuild()) {
+            var result = r.getResult();
+            if (result != null && result.isBetterOrEqualTo(getRequiredResult())) {
+                var displayName = r.getFullDisplayName();
+                Optional<ResultAction> action = selector.get(r);
+                if (action.isPresent()) {
+                    ResultAction resultAction = action.get();
+                    if (resultAction.isSuccessful()) {
+                        issues.logInfo(
+                                "Quality gate successful for reference build '%s', using this build as reference",
+                                displayName);
+                        return Optional.of(r);
+                    }
+                    if (gateEvaluationMode == IGNORE_QUALITY_GATE) {
+                        issues.logInfo(
+                                "Quality gate has been missed for reference build '%s', but is configured to be ignored",
+                                displayName);
+                        return Optional.of(r);
+                    }
+                    if (!isSkipped) {
+                        issues.logInfo("Quality gate failed for reference build '%s', analyzing previous builds",
+                                displayName);
+                        isSkipped = true;
+                    }
+                }
+                else {
+                    if (!isSkipped) {
+                        issues.logInfo(
+                                "Reference build '%s' does not contain a result action, analyzing previous builds",
+                                displayName);
+                        isSkipped = true;
+                    }
+                }
+            }
+        }
+        issues.logInfo("No reference build with successful quality gate found, skipping delta computation");
+
+        return Optional.empty();
+    }
+
+    private Result getRequiredResult() {
+        ReferenceBuild action = run.getAction(ReferenceBuild.class);
+        if (action == null) {
+            return Result.UNSTABLE;
+        }
+        return action.getRequiredResult();
     }
 
     private QualityGateEvaluationMode determineQualityGateEvaluationMode(final Report filtered) {

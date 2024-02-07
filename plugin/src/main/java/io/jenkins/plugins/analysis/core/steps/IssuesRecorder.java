@@ -97,7 +97,6 @@ public class IssuesRecorder extends Recorder {
     private SourceCodeRetention sourceCodeRetention = SourceCodeRetention.EVERY_BUILD;
 
     private boolean ignoreQualityGate = false; // by default, a successful quality gate is mandatory;
-    private boolean ignoreFailedBuilds = true; // by default, failed builds are ignored;
 
     private boolean failOnError = false;
 
@@ -511,24 +510,6 @@ public class IssuesRecorder extends Recorder {
         return ignoreQualityGate;
     }
 
-    /**
-     * If {@code true}, then only successful or unstable reference builds will be considered. This option is enabled by
-     * default, since analysis results might be inaccurate if the build failed. If {@code false}, every build that
-     * contains a static analysis result is considered, even if the build failed.
-     *
-     * @param ignoreFailedBuilds
-     *         if {@code true} then a stable build is used as reference
-     */
-    @DataBoundSetter
-    public void setIgnoreFailedBuilds(final boolean ignoreFailedBuilds) {
-        this.ignoreFailedBuilds = ignoreFailedBuilds;
-    }
-
-    @SuppressWarnings("PMD.BooleanGetMethodName")
-    public boolean getIgnoreFailedBuilds() {
-        return ignoreFailedBuilds;
-    }
-
     public int getHealthy() {
         return healthy;
     }
@@ -747,8 +728,7 @@ public class IssuesRecorder extends Recorder {
 
         IssuesPublisher publisher = new IssuesPublisher(run, annotatedReport,
                 new HealthDescriptor(healthy, unhealthy, minimumSeverity), qualityGates,
-                reportName, ignoreQualityGate, ignoreFailedBuilds,
-                getSourceCodeCharset(), logHandler, resultHandler, failOnError);
+                reportName, ignoreQualityGate, getSourceCodeCharset(), logHandler, resultHandler, failOnError);
         ResultAction action = publisher.attachAction(trendChartType);
 
         if (!skipPublishingChecks) {

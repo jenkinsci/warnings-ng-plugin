@@ -55,9 +55,6 @@ public class PublishIssuesStep extends Step implements Serializable {
     private String sourceCodeEncoding = StringUtils.EMPTY;
 
     private boolean ignoreQualityGate = false; // by default, a successful quality gate is mandatory
-    private boolean ignoreFailedBuilds = true; // by default, failed builds are ignored
-    private String referenceJobName = StringUtils.EMPTY;
-    private final String referenceBuildId = StringUtils.EMPTY;
     private boolean failOnError = false; // by default, it should not fail on error
 
     private boolean skipPublishingChecks; // by default, warnings should be published to SCM platforms
@@ -204,25 +201,6 @@ public class PublishIssuesStep extends Step implements Serializable {
     }
 
     /**
-     * If {@code true}, then only successful or unstable reference builds will be considered. This option is enabled by
-     * default, since analysis results might be inaccurate if the build failed. If {@code false}, every build that
-     * contains a static analysis result is considered, even if the build failed.
-     *
-     * @param ignoreFailedBuilds
-     *         if {@code true} then a stable build is used as reference
-     */
-    @DataBoundSetter
-    @SuppressWarnings("unused") // Used by Stapler
-    public void setIgnoreFailedBuilds(final boolean ignoreFailedBuilds) {
-        this.ignoreFailedBuilds = ignoreFailedBuilds;
-    }
-
-    @SuppressWarnings({"PMD.BooleanGetMethodName", "WeakerAccess"})
-    public boolean getIgnoreFailedBuilds() {
-        return ignoreFailedBuilds;
-    }
-
-    /**
      * If {@code true}, then logger content is muted
      * If {@code false}, then logger content goes to loghandler output.
      *
@@ -237,20 +215,6 @@ public class PublishIssuesStep extends Step implements Serializable {
 
     public boolean isQuiet() {
         return quiet;
-    }
-
-    /**
-     * Sets the reference job to get the results for the issue difference computation.
-     *
-     * @param referenceJobName
-     *         the name of reference job
-     */
-    @DataBoundSetter
-    public void setReferenceJobName(final String referenceJobName) {
-        if (IssuesRecorder.NO_REFERENCE_DEFINED.equals(referenceJobName)) {
-            this.referenceJobName = StringUtils.EMPTY;
-        }
-        this.referenceJobName = referenceJobName;
     }
 
     @CheckForNull
@@ -411,8 +375,7 @@ public class PublishIssuesStep extends Step implements Serializable {
             IssuesPublisher publisher = new IssuesPublisher(getRun(), report,
                     new HealthDescriptor(step.getHealthy(), step.getUnhealthy(),
                             step.getMinimumSeverityAsSeverity()), step.getQualityGates(),
-                    StringUtils.defaultString(step.getName()),
-                    step.getIgnoreQualityGate(), step.getIgnoreFailedBuilds(),
+                    StringUtils.defaultString(step.getName()), step.getIgnoreQualityGate(),
                     getCharset(step.getSourceCodeEncoding()), getLogger(report), notifier, step.getFailOnError());
             ResultAction action = publisher.attachAction(step.getTrendChartType());
 
