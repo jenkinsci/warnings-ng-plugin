@@ -108,6 +108,18 @@ public class SummaryModel {
         return analysisResult.getFixedSize();
     }
 
+    public int getModifiedSize() {
+        return analysisResult.getTotals().getTotalModifiedSize();
+    }
+
+    public int getModifiedNewSize() {
+        return analysisResult.getTotals().getNewModifiedSize();
+    }
+
+    public int getModifiedOutstandingSize() {
+        return getModifiedSize() - getModifiedNewSize();
+    }
+
     /**
      * Returns the tools that contribute to this result.
      *

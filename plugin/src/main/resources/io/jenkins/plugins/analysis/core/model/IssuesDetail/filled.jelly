@@ -14,6 +14,11 @@
           <div class="carousel-item" data-bs-interval="false">
             <c:pie-chart id="trend" model="${it.trendModel}" height="256" enableLinks="true"/>
           </div>
+          <j:if test="${it.hasIssuesInModifiedCode()}">
+            <div class="carousel-item" data-bs-interval="false">
+              <c:pie-chart id="modified" model="${it.modifiedModel}" height="256" enableLinks="true"/>
+            </div>
+          </j:if>
         </bs:carousel>
       </bs:card>
 

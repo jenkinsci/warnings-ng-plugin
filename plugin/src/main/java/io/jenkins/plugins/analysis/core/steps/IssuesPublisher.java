@@ -3,7 +3,12 @@ package io.jenkins.plugins.analysis.core.steps;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
+
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.IssuesInModifiedCodeMarker;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.FilteredLog;
 
@@ -24,6 +29,8 @@ import io.jenkins.plugins.analysis.core.util.TrendChartType;
 import io.jenkins.plugins.analysis.core.util.WarningsQualityGate;
 import io.jenkins.plugins.analysis.core.util.WarningsQualityGateEvaluator;
 import io.jenkins.plugins.forensics.reference.ReferenceBuild;
+import io.jenkins.plugins.forensics.delta.DeltaCalculator;
+import io.jenkins.plugins.forensics.delta.FileChanges;
 import io.jenkins.plugins.forensics.reference.ReferenceFinder;
 import io.jenkins.plugins.util.LogHandler;
 import io.jenkins.plugins.util.QualityGateResult;
@@ -37,10 +44,11 @@ import static io.jenkins.plugins.analysis.core.model.QualityGateEvaluationMode.*
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings({"PMD.ExcessiveImports", "checkstyle:ClassFanOutComplexity"})
+@SuppressWarnings({"PMD.ExcessiveImports", "checkstyle:ClassFanOutComplexity", "checkstyle:ClassDataAbstractionCoupling"})
 class IssuesPublisher {
     private final AnnotatedReport report;
     private final Run<?, ?> run;
+    private final DeltaCalculator deltaCalculator;
     private final HealthDescriptor healthDescriptor;
     private final String name;
     private final Charset sourceCodeEncoding;
@@ -51,12 +59,13 @@ class IssuesPublisher {
     private final boolean failOnErrors;
 
     @SuppressWarnings("ParameterNumber")
-    IssuesPublisher(final Run<?, ?> run, final AnnotatedReport report,
+    IssuesPublisher(final Run<?, ?> run, final AnnotatedReport report, final DeltaCalculator deltaCalculator,
             final HealthDescriptor healthDescriptor, final List<WarningsQualityGate> qualityGates,
             final String name, final boolean ignoreQualityGate, final Charset sourceCodeEncoding,
             final LogHandler logger, final ResultHandler notifier, final boolean failOnErrors) {
         this.report = report;
         this.run = run;
+        this.deltaCalculator = deltaCalculator;
         this.healthDescriptor = healthDescriptor;
         this.name = name;
         this.sourceCodeEncoding = sourceCodeEncoding;
@@ -83,6 +92,9 @@ class IssuesPublisher {
     ResultAction attachAction(final TrendChartType trendChartType) {
         Report issues = report.getReport();
         var deltaReport = computeDelta(issues);
+
+        markIssuesInModifiedFiles(analysisHistory, issues, deltaReport);
+
         QualityGateResult qualityGateResult = evaluateQualityGate(issues, deltaReport);
         reportHealth(issues);
 
@@ -121,6 +133,44 @@ class IssuesPublisher {
         }
 
         return action;
+    }
+
+    private void markIssuesInModifiedFiles(final History history, final Report issues, final DeltaReport deltaReport) {
+        if (history.getBuild().isPresent() && issues.isNotEmpty()) {
+            report.logInfo("Detect all issues that are part of modified code");
+            Run<?, ?> referenceBuild = history.getBuild().get();
+
+            var log = new FilteredLog("Errors while computing delta: ");
+            var delta = deltaCalculator.calculateDelta(run, referenceBuild, StringUtils.EMPTY, log); // get rid of SCM
+            issues.mergeLogMessages(log);
+
+            if (delta.isPresent()) {
+                var changes = delta.get().getFileChangesMap().values().stream()
+                        .collect(Collectors.toMap(
+                                FileChanges::getFileName,
+                                FileChanges::getModifiedLines,
+                                (left, right) -> {
+                                    left.addAll(right);
+                                    return left;
+                                }));
+                var marker = new IssuesInModifiedCodeMarker();
+                marker.markIssuesInModifiedCode(issues, changes);
+                report.logInfo("Issues in modified code: %d (new: %d, outstanding: %d)",
+                        count(deltaReport.getAllIssues()),
+                        count(deltaReport.getNewIssues()),
+                        count(deltaReport.getOutstandingIssues()));
+            }
+            else {
+                report.logInfo("No relevant modified code found");
+            }
+        }
+        else {
+            report.logInfo("Skip detection of issues in modified code");
+        }
+    }
+
+    private long count(final Report issues) {
+        return issues.stream().filter(Issue::isPartOfModifiedCode).count();
     }
 
     private DeltaReport computeDelta(final Report issues) {

@@ -1,44 +1,42 @@
 package io.jenkins.plugins.analysis.core.charts;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import edu.hm.hafner.analysis.Severity;
 
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
+import io.jenkins.plugins.analysis.core.util.IssuesStatistics;
+import io.jenkins.plugins.analysis.core.util.IssuesStatisticsBuilder;
 
 /**
  * A build result that is composed of a series of other builds results simply by summing up the number of issues.
  *
  * @author Ullrich Hafner
  */
-// FIXME: IssueStatistics?
 public class CompositeBuildResult implements AnalysisBuildResult {
-    private final Map<String, Integer> sizesPerOrigin = new HashMap<>();
-    private final Map<Severity, Integer> sizesPerSeverity = new HashMap<>();
-    private final Map<Severity, Integer> newSizesPerSeverity = new HashMap<>();
-
-    private int fixedSize = 0;
+    private final Map<String, Integer> sizesPerOrigin;
+    private final IssuesStatistics totals;
 
     /**
-     * Adds the specified results to this composition. Adds the new value of each property to the existing value of the
+     * Creates a composition of the specified results. Adds the new value of each property to the existing value of the
      * same property.
      *
-     * @param additionalResults
-     *         the additional results to add
-     *
-     * @return returns this to simplify call chains
+     * @param results
+     *         the results to add
      */
-    public CompositeBuildResult add(final AnalysisBuildResult... additionalResults) {
-        for (AnalysisBuildResult another : additionalResults) {
-            sizesPerOrigin.putAll(another.getSizePerOrigin());
-            for (Severity severity : Severity.getPredefinedValues()) {
-                sizesPerSeverity.merge(severity, another.getTotalSizeOf(severity), Integer::sum);
-                newSizesPerSeverity.merge(severity, another.getNewSizeOf(severity), Integer::sum);
-            }
-            fixedSize += another.getFixedSize();
-        }
-        return this;
+    public CompositeBuildResult(final Collection<? extends AnalysisBuildResult> results) {
+        totals = results.stream()
+                .map(AnalysisBuildResult::getTotals)
+                .map(Objects::requireNonNull)
+                .reduce(new IssuesStatisticsBuilder().build(), IssuesStatistics::aggregate);
+        sizesPerOrigin = results.stream().map(AnalysisBuildResult::getSizePerOrigin)
+                .reduce(new HashMap<>(), (first, second) -> {
+                    second.forEach((key, value) -> first.merge(key, value, Integer::sum));
+                    return first;
+                });
     }
 
     @Override
@@ -48,30 +46,31 @@ public class CompositeBuildResult implements AnalysisBuildResult {
 
     @Override
     public int getFixedSize() {
-        return fixedSize;
+        return getTotals().getFixedSize();
     }
 
     @Override
     public int getTotalSize() {
-        return sum(sizesPerSeverity);
+        return getTotals().getTotalSize();
     }
 
     @Override
     public int getTotalSizeOf(final Severity severity) {
-        return sizesPerSeverity.getOrDefault(severity, 0);
+        return getTotals().getTotalSizeOf(severity);
     }
 
     @Override
     public int getNewSize() {
-        return sum(newSizesPerSeverity);
-    }
-
-    private Integer sum(final Map<Severity, Integer> map) {
-        return map.values().stream().reduce(0, Integer::sum);
+        return getTotals().getNewSize();
     }
 
     @Override
     public int getNewSizeOf(final Severity severity) {
-        return newSizesPerSeverity.getOrDefault(severity, 0);
+        return getTotals().getNewSizeOf(severity);
+    }
+
+    @Override
+    public IssuesStatistics getTotals() {
+        return totals;
     }
 }

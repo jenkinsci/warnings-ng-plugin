@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.impl.factory.Sets;
 
 import edu.hm.hafner.analysis.Severity;
+import edu.hm.hafner.util.FilteredLog;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -34,6 +35,7 @@ import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
 import io.jenkins.plugins.analysis.core.util.WarningsQualityGate;
 import io.jenkins.plugins.checks.steps.ChecksInfo;
+import io.jenkins.plugins.forensics.delta.DeltaCalculatorFactory;
 import io.jenkins.plugins.util.LogHandler;
 import io.jenkins.plugins.util.PipelineResultHandler;
 import io.jenkins.plugins.util.ResultHandler;
@@ -72,6 +74,7 @@ public class PublishIssuesStep extends Step implements Serializable {
 
     private String id = StringUtils.EMPTY;
     private String name = StringUtils.EMPTY;
+    private String scm = StringUtils.EMPTY;
 
     /**
      * Creates a new instance of {@link PublishIssuesStep}.
@@ -130,6 +133,22 @@ public class PublishIssuesStep extends Step implements Serializable {
 
     public String getName() {
         return name;
+    }
+
+    /**
+     * Sets the SCM that should be used to find the reference build for. The reference recorder will select the SCM
+     * based on a substring comparison, there is no need to specify the full name.
+     *
+     * @param scm
+     *         the ID of the SCM to use (a substring of the full ID)
+     */
+    @DataBoundSetter
+    public void setScm(final String scm) {
+        this.scm = scm;
+    }
+
+    public String getScm() {
+        return scm;
     }
 
     /**
@@ -372,8 +391,12 @@ public class PublishIssuesStep extends Step implements Serializable {
 
             ResultHandler notifier = new PipelineResultHandler(getRun(),
                     getContext().get(FlowNode.class));
+
+            var deltaCalculator = DeltaCalculatorFactory
+                    .findDeltaCalculator(step.scm, getRun(), getWorkspace(), getTaskListener(), new FilteredLog());
+
             IssuesPublisher publisher = new IssuesPublisher(getRun(), report,
-                    new HealthDescriptor(step.getHealthy(), step.getUnhealthy(),
+                    deltaCalculator, new HealthDescriptor(step.getHealthy(), step.getUnhealthy(),
                             step.getMinimumSeverityAsSeverity()), step.getQualityGates(),
                     StringUtils.defaultString(step.getName()), step.getIgnoreQualityGate(),
                     getCharset(step.getSourceCodeEncoding()), getLogger(report), notifier, step.getFailOnError());

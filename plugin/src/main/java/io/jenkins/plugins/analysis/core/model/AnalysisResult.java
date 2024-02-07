@@ -565,6 +565,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
         return new JenkinsFacade().getBuild(referenceBuildId);
     }
 
+    @Override
     @Whitelisted
     public IssuesStatistics getTotals() {
         return totals;

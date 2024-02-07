@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Severity;
+import edu.hm.hafner.util.FilteredLog;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -58,6 +59,7 @@ import io.jenkins.plugins.analysis.core.util.ModelValidation;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
 import io.jenkins.plugins.analysis.core.util.WarningsQualityGate;
 import io.jenkins.plugins.checks.steps.ChecksInfo;
+import io.jenkins.plugins.forensics.delta.DeltaCalculatorFactory;
 import io.jenkins.plugins.prism.SourceCodeDirectory;
 import io.jenkins.plugins.prism.SourceCodeRetention;
 import io.jenkins.plugins.util.JenkinsFacade;
@@ -635,7 +637,7 @@ public class IssuesRecorder extends Recorder {
                 totalIssues.add(scanWithTool(run, workspace, listener, tool), tool.getActualId());
             }
             String toolName = StringUtils.defaultIfEmpty(getName(), Messages.Tool_Default_Name());
-            results.add(publishResult(run, listener, toolName, totalIssues, toolName, resultHandler));
+            results.add(publishResult(run, workspace, listener, toolName, totalIssues, toolName, resultHandler));
         }
         else {
             for (Tool tool : analysisTools) {
@@ -650,7 +652,7 @@ public class IssuesRecorder extends Recorder {
                             name, id);
                 }
                 results.add(
-                        publishResult(run, listener, tool.getActualName(), report, getReportName(tool), resultHandler));
+                        publishResult(run, workspace, listener, tool.getActualName(), report, getReportName(tool), resultHandler));
             }
         }
         return results;
@@ -703,6 +705,8 @@ public class IssuesRecorder extends Recorder {
      *
      * @param run
      *         the run
+     * @param workspace
+     *         the workspace
      * @param listener
      *         the listener
      * @param loggerName
@@ -716,17 +720,19 @@ public class IssuesRecorder extends Recorder {
      *
      * @return the created results
      */
-    AnalysisResult publishResult(final Run<?, ?> run, final TaskListener listener, final String loggerName,
+    AnalysisResult publishResult(final Run<?, ?> run, final FilePath workspace, final TaskListener listener, final String loggerName,
             final AnnotatedReport annotatedReport, final String reportName, final ResultHandler resultHandler) {
-        LogHandler logHandler = new LogHandler(listener, loggerName);
-
+        var logHandler = new LogHandler(listener, loggerName);
         logHandler.setQuiet(quiet);
 
         var report = annotatedReport.getReport();
         logHandler.logInfoMessages(report.getInfoMessages());
         logHandler.logErrorMessages(report.getErrorMessages());
 
-        IssuesPublisher publisher = new IssuesPublisher(run, annotatedReport,
+        var deltaCalculator = DeltaCalculatorFactory
+                .findDeltaCalculator(scm, run, workspace, listener, new FilteredLog());
+
+        IssuesPublisher publisher = new IssuesPublisher(run, annotatedReport, deltaCalculator,
                 new HealthDescriptor(healthy, unhealthy, minimumSeverity), qualityGates,
                 reportName, ignoreQualityGate, getSourceCodeCharset(), logHandler, resultHandler, failOnError);
         ResultAction action = publisher.attachAction(trendChartType);

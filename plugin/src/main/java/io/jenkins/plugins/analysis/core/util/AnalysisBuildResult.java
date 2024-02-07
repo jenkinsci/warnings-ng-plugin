@@ -56,4 +56,11 @@ public interface AnalysisBuildResult {
      * @return total number of issues
      */
     int getNewSizeOf(Severity severity);
+
+    /**
+     * Returns the total number of issues (by severity, new, total, fixed and delta) in a build.
+     *
+     * @return the totals
+     */
+    IssuesStatistics getTotals();
 }

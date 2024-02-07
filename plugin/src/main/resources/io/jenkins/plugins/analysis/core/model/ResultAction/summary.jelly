@@ -76,6 +76,25 @@
             <a href="${it.id}/new">${s.newSize}</a>
           </li>
         </j:if>
+        <j:if test="${s.modifiedSize != 0}">
+          <li>
+            <j:choose>
+              <j:when test="${s.modifiedNewSize != 0 and s.modifiedOutstandingSize != 0}">
+                ${%Issues in modified code}:
+                <a href="${it.id}/modified">${s.modifiedSize}</a>
+                (${%new}: ${s.modifiedNewSize}, ${%outstanding}: ${s.modifiedOutstandingSize})
+              </j:when>
+              <j:when test="${s.modifiedNewSize == 0}">
+                ${%Outstanding issues in modified code}:
+                <a href="${it.id}/modified">${s.modifiedSize}</a>
+              </j:when>
+              <j:otherwise>
+                ${%New issues in modified code}:
+                <a href="${it.id}/modified">${s.modifiedSize}</a>
+              </j:otherwise>
+            </j:choose>
+          </li>
+        </j:if>
         <j:if test="${s.referenceBuild.present}">
           <j:set var="r" value="${s.referenceBuild.get()}"/>
           <li>

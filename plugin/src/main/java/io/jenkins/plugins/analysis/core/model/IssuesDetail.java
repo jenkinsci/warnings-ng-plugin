@@ -29,6 +29,7 @@ import hudson.model.ModelObject;
 import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.charts.HealthTrendChart;
+import io.jenkins.plugins.analysis.core.charts.ModifiedCodePieChart;
 import io.jenkins.plugins.analysis.core.charts.NewVersusFixedPieChart;
 import io.jenkins.plugins.analysis.core.charts.NewVersusFixedTrendChart;
 import io.jenkins.plugins.analysis.core.charts.SeverityPieChart;
@@ -320,6 +321,17 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
     }
 
     /**
+     * Returns the UI model for an ECharts doughnut chart that shows the issues in modified code.
+     *
+     * @return the UI model as JSON
+     */
+    @JavaScriptMethod
+    @SuppressWarnings("unused") // Called by jelly view
+    public String getModifiedModel() {
+        return JACKSON_FACADE.toJson(new ModifiedCodePieChart().create(report));
+    }
+
+    /**
      * Returns the UI model for an ECharts line chart that shows the issues stacked by severity.
      *
      * @param configuration
@@ -393,6 +405,15 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
 
     private AnalysisHistory createHistory() {
         return new AnalysisHistory(owner, new ByIdResultSelector(result.getId()));
+    }
+
+    /**
+     * Returns whether there are any issues in the associated static analysis run that are part of modified code.
+     *
+     * @return {@code true} if there are issues in modified code, {@code false} otherwise
+     */
+    public boolean hasIssuesInModifiedCode() {
+        return result.getTotals().getTotalModifiedSize() > 0;
     }
 
     /**
