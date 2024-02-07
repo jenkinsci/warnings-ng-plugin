@@ -29,41 +29,51 @@ public class DeltaReport {
     private final String referenceBuildId;
 
     /**
+     * Creates a new {@link DeltaReport}. Since no reference build is available, all issues are considered outstanding.
+     *
+     * @param report
+     *         the current report
+     * @param currentBuildNumber
+     *         the number of the current build, the reference of all new warnings will be set to this number
+     */
+    public DeltaReport(final Report report, final int currentBuildNumber) {
+        allIssues = report;
+        outstandingIssues = report;
+        referenceIssues = EMPTY_REPORT;
+        newIssues = EMPTY_REPORT;
+        fixedIssues = EMPTY_REPORT;
+        referenceBuildId = StringUtils.EMPTY;
+
+        report.logInfo("No valid reference build found");
+        report.logInfo("All reported issues will be considered outstanding");
+        report.setReference(String.valueOf(currentBuildNumber));
+    }
+
+    /**
      * Creates a new instance of {@link DeltaReport}.
      *
      * @param report
      *         the current report
-     * @param history
-     *         the history that will provide the reference build (if there is any)
+     * @param referenceBuild
+     *         the reference build
      * @param currentBuildNumber
      *         the number of the current build, the reference of all new warnings will be set to this number
+     * @param referenceIssues
+     *         the issues in the reference build
      */
-    public DeltaReport(final Report report, final History history, final int currentBuildNumber) {
-        allIssues = report;
-        if (history.getBuild().isPresent()) {
-            Run<?, ?> build = history.getBuild().get();
-            report.logInfo("Using reference build '%s' to compute new, fixed, and outstanding issues",
-                    build);
+    public DeltaReport(final Report report, final Run<?, ?> referenceBuild, final int currentBuildNumber, final Report referenceIssues) {
+        report.logInfo("Using reference build '%s' to compute new, fixed, and outstanding issues",
+                referenceBuild);
 
-            referenceIssues = history.getIssues();
-            IssueDifference difference = new IssueDifference(report, String.valueOf(currentBuildNumber), referenceIssues);
-            outstandingIssues = difference.getOutstandingIssues();
-            newIssues = difference.getNewIssues();
-            fixedIssues = difference.getFixedIssues();
-            report.logInfo("Issues delta (vs. reference build): outstanding: %d, new: %d, fixed: %d",
-                    outstandingIssues.size(), newIssues.size(), fixedIssues.size());
-            referenceBuildId = build.getExternalizableId();
-        }
-        else {
-            report.logInfo("No valid reference build found that meets the criteria (%s)", history);
-            report.logInfo("All reported issues will be considered outstanding");
-            report.setReference(String.valueOf(currentBuildNumber));
-            outstandingIssues = report;
-            referenceIssues = EMPTY_REPORT;
-            newIssues = EMPTY_REPORT;
-            fixedIssues = EMPTY_REPORT;
-            referenceBuildId = StringUtils.EMPTY;
-        }
+        allIssues = report;
+        this.referenceIssues = referenceIssues;
+        IssueDifference difference = new IssueDifference(report, String.valueOf(currentBuildNumber), referenceIssues);
+        outstandingIssues = difference.getOutstandingIssues();
+        newIssues = difference.getNewIssues();
+        fixedIssues = difference.getFixedIssues();
+        report.logInfo("Issues delta (vs. reference build): outstanding: %d, new: %d, fixed: %d",
+                outstandingIssues.size(), newIssues.size(), fixedIssues.size());
+        referenceBuildId = referenceBuild.getExternalizableId();
     }
 
     /**

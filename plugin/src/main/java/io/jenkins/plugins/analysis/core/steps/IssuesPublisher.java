@@ -28,9 +28,9 @@ import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
 import io.jenkins.plugins.analysis.core.util.WarningsQualityGate;
 import io.jenkins.plugins.analysis.core.util.WarningsQualityGateEvaluator;
-import io.jenkins.plugins.forensics.reference.ReferenceBuild;
 import io.jenkins.plugins.forensics.delta.DeltaCalculator;
 import io.jenkins.plugins.forensics.delta.FileChanges;
+import io.jenkins.plugins.forensics.reference.ReferenceBuild;
 import io.jenkins.plugins.forensics.reference.ReferenceFinder;
 import io.jenkins.plugins.util.LogHandler;
 import io.jenkins.plugins.util.QualityGateResult;
@@ -93,8 +93,6 @@ class IssuesPublisher {
         Report issues = report.getReport();
         var deltaReport = computeDelta(issues);
 
-        markIssuesInModifiedFiles(analysisHistory, issues, deltaReport);
-
         QualityGateResult qualityGateResult = evaluateQualityGate(issues, deltaReport);
         reportHealth(issues);
 
@@ -135,10 +133,32 @@ class IssuesPublisher {
         return action;
     }
 
-    private void markIssuesInModifiedFiles(final History history, final Report issues, final DeltaReport deltaReport) {
-        if (history.getBuild().isPresent() && issues.isNotEmpty()) {
+    private long count(final Report issues) {
+        return issues.stream().filter(Issue::isPartOfModifiedCode).count();
+    }
+
+    private DeltaReport computeDelta(final Report issues) {
+        ResultSelector selector = ensureThatIdIsUnique();
+        var possibleReferenceBuild = findReferenceBuild(selector, issues);
+        if (possibleReferenceBuild.isPresent()) {
+            Run<?, ?> build = possibleReferenceBuild.get();
+            var resultAction = selector.get(build)
+                    .orElseThrow(() -> new IllegalStateException("Reference build does not contain a result action"));
+
+            var deltaReport = new DeltaReport(issues, build, run.getNumber(), resultAction.getResult().getIssues());
+
+            markIssuesInModifiedFiles(build, issues, deltaReport);
+
+            return deltaReport;
+        }
+        else {
+            return new DeltaReport(issues, run.getNumber());
+        }
+    }
+
+    private void markIssuesInModifiedFiles(final Run<?, ?> referenceBuild, final Report issues, final DeltaReport deltaReport) {
+        if (issues.isNotEmpty()) {
             report.logInfo("Detect all issues that are part of modified code");
-            Run<?, ?> referenceBuild = history.getBuild().get();
 
             var log = new FilteredLog("Errors while computing delta: ");
             var delta = deltaCalculator.calculateDelta(run, referenceBuild, StringUtils.EMPTY, log); // get rid of SCM
@@ -166,24 +186,6 @@ class IssuesPublisher {
         }
         else {
             report.logInfo("Skip detection of issues in modified code");
-        }
-    }
-
-    private long count(final Report issues) {
-        return issues.stream().filter(Issue::isPartOfModifiedCode).count();
-    }
-
-    private DeltaReport computeDelta(final Report issues) {
-        ResultSelector selector = ensureThatIdIsUnique();
-        var possibleReferenceBuild = findReferenceBuild(selector, issues);
-        if (possibleReferenceBuild.isPresent()) {
-            Run<?, ?> build = possibleReferenceBuild.get();
-            var resultAction = selector.get(build)
-                    .orElseThrow(() -> new IllegalStateException("Reference build does not contain a result action"));
-            return new DeltaReport(issues, build, run.getNumber(), resultAction.getResult().getIssues());
-        }
-        else {
-            return new DeltaReport(issues, run.getNumber());
         }
     }
 
@@ -219,13 +221,13 @@ class IssuesPublisher {
         return qualityGateStatus;
     }
 
-    private Optional<Run<?, ?>> findReferenceBuild(final ResultSelector selector, final Report logger) {
+    private Optional<Run<?, ?>> findReferenceBuild(final ResultSelector selector, final Report issues) {
         FilteredLog log = new FilteredLog("Errors while resolving the reference build:");
         var reference = new ReferenceFinder().findReference(run, log);
-        logger.mergeLogMessages(log);
+        issues.mergeLogMessages(log);
 
         if (reference.isPresent()) {
-            return refineReferenceBasedOnQualityGate(selector, logger, reference.get());
+            return refineReferenceBasedOnQualityGate(selector, issues, reference.get());
         }
         return Optional.empty();
     }

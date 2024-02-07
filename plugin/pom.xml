@@ -49,8 +49,9 @@
     <form-element-path.version>1.11</form-element-path.version>
 
     <prism-api.version>1.29.0-8</prism-api.version>
-    <plugin-util-api.version>3.9.0-rc856.7a_4b_8d226cb_2</plugin-util-api.version>
-    <forensics-api.version>2.4.0-rc1530.ccd6a_b_012b_c7</forensics-api.version>
+    <plugin-util-api.version>3.9.0-rc875.a_d0273a_e2df1</plugin-util-api.version>
+    <forensics-api.version>2.4.0-rc1561.1f746b_248f63</forensics-api.version>
+    <git-forensics.version>2.1.0-20240207.074913-2</git-forensics.version>
 
     <!-- Maven Surefire ArgLine -->
     <argLine>-Djava.awt.headless=true -Xmx1024m -Djenkins.test.timeout=1000 --add-opens java.base/java.lang=ALL-UNNAMED
