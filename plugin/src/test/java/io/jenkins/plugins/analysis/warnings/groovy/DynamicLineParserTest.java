@@ -2,10 +2,10 @@ package io.jenkins.plugins.analysis.warnings.groovy;
 
 import org.junit.jupiter.api.Test;
 
-import edu.hm.hafner.analysis.AbstractParserTest;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.analysis.assertions.SoftAssertions;
+import edu.hm.hafner.analysis.registry.AbstractParserTest;
 
 import static edu.hm.hafner.analysis.assertions.Assertions.*;
 
@@ -43,13 +43,13 @@ class DynamicLineParserTest extends AbstractParserTest {
     public DynamicLineParser createParser() {
         return new DynamicLineParser("(.*):(\\d+):(\\d+): (\\D\\d*) (.*)", toString("pep8.groovy"));
     }
-    
+
     @Test
     void shouldScanAllLinesAndAssignLineNumberAndFileName() {
-        DynamicLineParser parser = new DynamicLineParser("^(.*)$", 
+        DynamicLineParser parser = new DynamicLineParser("^(.*)$",
                 "return builder.setFileName(fileName).setLineStart(lineNumber).setMessage(matcher.group(1)).buildOptional()");
         Report report = parser.parse(createReaderFactory(FILE_NAME));
-        
+
         assertThat(report).hasSize(3);
         for (int i = 0; i < 3; i++) {
             assertThat(report.get(i)).hasBaseName(FILE_NAME).hasLineStart(i + 1).hasMessage(String.valueOf(i + 1));
