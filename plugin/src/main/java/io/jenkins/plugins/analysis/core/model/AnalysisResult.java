@@ -370,11 +370,13 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     }
 
     @Override
+    @Whitelisted
     public ImmutableList<String> getErrorMessages() {
         return Lists.immutable.withAll(errors);
     }
 
     @Override
+    @Whitelisted
     public ImmutableList<String> getInfoMessages() {
         return Lists.immutable.withAll(messages);
     }
@@ -541,6 +543,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
         return qualityGateResult.isSuccessful();
     }
 
+    @Whitelisted
     @Override
     public QualityGateStatus getQualityGateStatus() {
         return qualityGateResult.getOverallStatus();
@@ -558,6 +561,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     }
 
     @Override
+    @Whitelisted
     public Optional<Run<?, ?>> getReferenceBuild() {
         if (NO_REFERENCE.equals(referenceBuildId)) {
             return Optional.empty();
@@ -572,6 +576,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     }
 
     @Override
+    @Whitelisted
     public Map<String, Integer> getSizePerOrigin() {
         return Maps.immutable.ofAll(sizePerOrigin).toMap();
     }
@@ -595,11 +600,13 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     }
 
     @Override
+    @Whitelisted
     public int getTotalSize() {
         return totals.getTotalSize();
     }
 
     @Override
+    @Whitelisted
     public int getTotalSizeOf(final Severity severity) {
         return totals.getTotalSizeOf(severity);
     }
@@ -641,11 +648,13 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     }
 
     @Override
+    @Whitelisted
     public int getNewSize() {
         return totals.getNewSize();
     }
 
     @Override
+    @Whitelisted
     public int getNewSizeOf(final Severity severity) {
         return totals.getNewSizeOf(severity);
     }
@@ -687,6 +696,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     }
 
     @Override
+    @Whitelisted
     public int getFixedSize() {
         return totals.getFixedSize();
     }

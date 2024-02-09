@@ -519,8 +519,8 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Verifies that the numbers of new, fixed and outstanding warnings are correctly computed, if the warnings are from
-     * the same file but have different properties (e.g. line number). Checks that the fallback-fingerprint is using
+     * Verifies that the numbers of new, fixed and outstanding warnings are correctly computed if the warnings are from
+     * the same file but have different properties (e.g., line number). Checks that the fallback-fingerprint is using
      * several properties of the issue if the source code has not been found.
      */
     // TODO: there should be also some tests that use the fingerprinting algorithm on existing source files

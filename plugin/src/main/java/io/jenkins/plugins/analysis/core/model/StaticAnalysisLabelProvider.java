@@ -315,7 +315,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
 
         @Override
         public String apply(final Integer referenceBuild) {
-            if (referenceBuild >= currentBuildNumber) {
+            if (referenceBuild >= currentBuildNumber || referenceBuild <= 0) {
                 return "1"; // fallback
             }
             var referenceBuildId = String.valueOf(referenceBuild);

@@ -513,7 +513,7 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
                         .hasQualityGateStatus(QualityGateStatus.WARNING));
 
         // #1 SUCCESS (Reference #1)
-        FreeStyleProject project = createEmptyReferenceJob(JOB_NAME, "eclipse8Warnings.txt");
+        FreeStyleProject project = createJob(JOB_NAME, "eclipse8Warnings.txt", Result.UNSTABLE, REFERENCE_JOB_NAME);
 
         enableWarnings(project, recorder -> {
             recorder.setQualityGates(List.of(
@@ -554,7 +554,7 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
                         .hasQualityGateStatus(QualityGateStatus.WARNING)).getOwner();
 
         // #1 SUCCESS (Reference #2)
-        FreeStyleProject project = createEmptyReferenceJob(JOB_NAME, "eclipse8Warnings.txt");
+        FreeStyleProject project = createJob(JOB_NAME, "eclipse8Warnings.txt", Result.UNSTABLE, REFERENCE_JOB_NAME);
 
         enableWarnings(project, recorder -> {
             recorder.setQualityGates(List.of(
@@ -593,7 +593,7 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
                         .hasQualityGateStatus(QualityGateStatus.WARNING)).getOwner();
 
         // #1 SUCCESS (Reference #2)
-        FreeStyleProject project = createEmptyReferenceJob(JOB_NAME, "eclipse8Warnings.txt");
+        FreeStyleProject project = createJob(JOB_NAME, "eclipse8Warnings.txt", Result.UNSTABLE, REFERENCE_JOB_NAME);
 
         enableWarnings(project, recorder -> {
             recorder.setQualityGates(List.of(
@@ -636,7 +636,7 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
         removeBuilder(reference, failureStep);
 
         // #1 SUCCESS (Reference #1)
-        FreeStyleProject project = createEmptyReferenceJob(JOB_NAME, "eclipse6Warnings.txt");
+        FreeStyleProject project = createJob(JOB_NAME, "eclipse6Warnings.txt", Result.UNSTABLE, REFERENCE_JOB_NAME);
 
         enableWarnings(project, recorder -> {
             recorder.setQualityGates(List.of(
@@ -720,7 +720,7 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
                         .hasQualityGateStatus(QualityGateStatus.PASSED));
 
         // #1 SUCCESS (Reference #1)
-        FreeStyleProject project = createEmptyReferenceJob(JOB_NAME, "eclipse6Warnings.txt");
+        FreeStyleProject project = createJob(JOB_NAME, "eclipse6Warnings.txt", Result.UNSTABLE, REFERENCE_JOB_NAME);
 
         enableWarnings(project, recorder -> {
             recorder.setQualityGates(List.of(
