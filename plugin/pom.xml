@@ -38,7 +38,7 @@
     <jsoup.version>1.17.2</jsoup.version>
     <json-smart.version>2.5.0</json-smart.version>
     <jmh.version>1.37</jmh.version>
-    <testcontainers.version>1.19.3</testcontainers.version>
+    <testcontainers.version>1.19.5</testcontainers.version>
 
     <!-- Jenkins Plug-in Dependencies Versions -->
     <git-forensics.version>2.0.0</git-forensics.version>
