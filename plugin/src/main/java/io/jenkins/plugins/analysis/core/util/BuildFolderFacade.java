@@ -15,8 +15,8 @@ import edu.hm.hafner.analysis.Issue;
 import hudson.model.Run;
 
 /**
- * Facade to files in the build folder of the Jenkins master. Encapsulates all calls to the running Jenkins server so
- * that tests can replace this facade with a stub.
+ * Facade to the files in the build folder of the Jenkins controller. Encapsulates all calls to the running Jenkins
+ * server so that tests can replace this facade with a stub.
  *
  * @author Ullrich Hafner
  */

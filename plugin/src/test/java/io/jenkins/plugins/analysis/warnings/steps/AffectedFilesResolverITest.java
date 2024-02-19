@@ -108,8 +108,8 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private void makeAffectedFilesInBuildFolderUnreadable(final AnalysisResult result) {
-        makeFileUnreadable(AffectedFilesResolver.getFile(result.getOwner(),
-                getIssueWithSource(result).getFileName() + ZIP));
+        makeFileUnreadable(AffectedFilesResolver.getZipFile(result.getOwner(),
+                getIssueWithSource(result).getFileName()));
     }
 
     private Issue getIssueWithSource(final AnalysisResult result) {
@@ -122,7 +122,7 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
     private void deleteAffectedFilesInBuildFolder(final AnalysisResult result) {
         Set<String> files = result.getIssues().getFiles();
         for (String fileName : files) {
-            Path file = AffectedFilesResolver.getFile(result.getOwner(), fileName + ZIP);
+            Path file = AffectedFilesResolver.getZipFile(result.getOwner(), fileName);
             try {
                 Files.delete(file);
             }
@@ -178,7 +178,7 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
 
         String consoleLog = getConsoleLog(result);
         assertThat(consoleLog).contains("0 copied");
-        if (isWindows() && Runtime.version().feature() < 21) { // In Windows a file does not exist if it is unreadable
+        if (isWindows() && Runtime.version().feature() < 21) { // In Windows, a file does not exist if it is unreadable
             assertThat(consoleLog).contains("4 not-found", "0 with I/O error");
         }
         else {

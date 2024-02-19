@@ -250,7 +250,13 @@ public class AffectedFilesResolver {
         }
 
         public void copy(final String from, final String to) throws IOException, InterruptedException {
-            createFile(from).zip(computeBuildFolderFileName(to));
+            var file = createFile(from);
+            if (file.toVirtualFile().canRead()) {
+                file.zip(computeBuildFolderFileName(to));
+            }
+            else {
+                throw new IOException("Can't read file: " + from);
+            }
         }
 
         public boolean existsInBuildFolder(final String fileName) {
