@@ -37,7 +37,7 @@
         <!-- ClassNotFoundException if omitted -->
         <groupId>io.netty</groupId>
         <artifactId>netty-bom</artifactId>
-        <version>4.1.106.Final</version>
+        <version>4.1.107.Final</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
