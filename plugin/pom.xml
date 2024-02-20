@@ -26,7 +26,7 @@
     <changelist>-SNAPSHOT</changelist>
     <module.name>${project.groupId}.warnings.ng</module.name>
 
-    <analysis-model-api.version>11.20.0-rc789.31c8340705ef</analysis-model-api.version>
+    <analysis-model-api.version>12.0.0-rc793.27a_0cec323e2</analysis-model-api.version>
     <analysis-model-tests.version>11.6.0</analysis-model-tests.version>
     <pull-request-monitoring.version>1.7.8</pull-request-monitoring.version>
 
@@ -40,7 +40,7 @@
     <testcontainers.version>1.19.3</testcontainers.version>
 
     <!-- Jenkins Plug-in Dependencies Versions -->
-    <forensics-api.version>2.4.0-rc1561.1f746b_248f63</forensics-api.version>
+    <forensics-api.version>2.4.0-rc1565.4c3ec58d800d</forensics-api.version>
     <git-forensics.version>2.1.0-20240207.074913-2</git-forensics.version>
 
     <jenkins-maven-plugin.version>3.22</jenkins-maven-plugin.version>
@@ -49,8 +49,8 @@
     <form-element-path.version>1.11</form-element-path.version>
 
     <prism-api.version>1.29.0-8</prism-api.version>
-    <plugin-util-api.version>3.9.0-rc875.a_d0273a_e2df1</plugin-util-api.version>
-    <forensics-api.version>2.4.0-rc1561.1f746b_248f63</forensics-api.version>
+    <plugin-util-api.version>3.9.0-rc894.7431fa_59180b_</plugin-util-api.version>
+    <forensics-api.version>2.4.0-rc1565.4c3ec58d800d</forensics-api.version>
     <git-forensics.version>2.1.0-20240207.074913-2</git-forensics.version>
 
     <!-- Maven Surefire ArgLine -->
