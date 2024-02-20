@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>7.1.0</version>
+    <version>7.2.0</version>
     <relativePath />
   </parent>
 
@@ -26,8 +26,8 @@
     <changelist>-SNAPSHOT</changelist>
     <module.name>${project.groupId}.warnings.ng</module.name>
 
-    <analysis-model-api.version>12.0.0-rc793.27a_0cec323e2</analysis-model-api.version>
-    <analysis-model-tests.version>11.6.0</analysis-model-tests.version>
+    <analysis-model-api.version>12.0.0-rc794.1a_384a_2a_5d0b_</analysis-model-api.version>
+    <analysis-model-tests.version>12.0.0-rc5529.ee276a_8eb_005</analysis-model-tests.version>
     <pull-request-monitoring.version>1.7.8</pull-request-monitoring.version>
 
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
