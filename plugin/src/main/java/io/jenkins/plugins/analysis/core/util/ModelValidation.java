@@ -53,6 +53,7 @@ public class ModelValidation {
      */
     public ListBoxModel getAllSeverityFilters() {
         ListBoxModel options = new ListBoxModel();
+        options.add(Messages.SeverityFilter_Error(), Severity.ERROR.getName());
         options.add(Messages.SeverityFilter_High(), Severity.WARNING_HIGH.getName());
         options.add(Messages.SeverityFilter_Normal(), Severity.WARNING_NORMAL.getName());
         options.add(Messages.SeverityFilter_Low(), Severity.WARNING_LOW.getName());

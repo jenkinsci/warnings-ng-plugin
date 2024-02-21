@@ -29,7 +29,7 @@ public class SnippetGeneratorUiTest extends UiTest {
 
         String script = snippetGenerator.generateScript();
 
-        assertThat(script).isEqualTo("recordIssues(tools: [java()])");
+        assertThat(script).isEqualTo("recordIssues healthy: 1, sourceCodeRetention: 'LAST_BUILD', tools: [java()], unhealthy: 9");
     }
 
     /**
@@ -44,14 +44,13 @@ public class SnippetGeneratorUiTest extends UiTest {
                 .setSkipBlames(false)
                 .setSkipPostProcessing(false)
                 .setEnabledForFailure(false)
-                .setIgnoreFailedBuilds(true)
                 .setIgnoreQualityGate(false)
                 .setSourceCodeEncoding("")
                 .setTool(JAVA_COMPILER);
 
         String script = snippetGenerator.generateScript();
 
-        assertThat(script).isEqualTo("recordIssues(tools: [java()])");
+        assertThat(script).isEqualTo("recordIssues sourceCodeRetention: 'LAST_BUILD', tools: [java()]");
     }
 
     /**
@@ -67,7 +66,6 @@ public class SnippetGeneratorUiTest extends UiTest {
                 .setSkipBlames(true)
                 .setSkipPostProcessing(true)
                 .setEnabledForFailure(true)
-                .setIgnoreFailedBuilds(false)
                 .setIgnoreQualityGate(true)
                 .setSourceCodeEncoding("otherText")
                 .setToolWithPattern(JAVA_COMPILER, "firstText");
@@ -79,7 +77,6 @@ public class SnippetGeneratorUiTest extends UiTest {
         assertThat(script).contains("skipBlames: true");
         assertThat(script).contains("skipPostProcessing: true");
         assertThat(script).contains("enabledForFailure: true");
-        assertThat(script).contains("ignoreFailedBuilds: false");
         assertThat(script).contains("ignoreQualityGate: true");
         assertThat(script).contains("quiet: true");
 
@@ -102,7 +99,7 @@ public class SnippetGeneratorUiTest extends UiTest {
 
         String script = snippetGenerator.generateScript();
 
-        assertThat(script).isEqualTo("recordIssues healthy: 1, tools: [java()], unhealthy: 9");
+        assertThat(script).isEqualTo("recordIssues healthy: 1, sourceCodeRetention: 'LAST_BUILD', tools: [java()], unhealthy: 9");
     }
 
     /**
@@ -118,7 +115,6 @@ public class SnippetGeneratorUiTest extends UiTest {
                 .setSkipPostProcessing(true)
                 .setEnabledForFailure(true)
                 .setHealthReport(1, 9, "HIGH")
-                .setIgnoreFailedBuilds(false)
                 .setIgnoreQualityGate(true)
                 .setSourceCodeEncoding("otherText")
                 .addIssueFilter("Exclude types", "*toExclude*")
@@ -133,7 +129,6 @@ public class SnippetGeneratorUiTest extends UiTest {
         assertThat(script).contains("skipPostProcessing: true");
         assertThat(script).contains("enabledForFailure: true");
         assertThat(script).contains("filters: [excludeType('*toExclude*')]");
-        assertThat(script).contains("ignoreFailedBuilds: false");
         assertThat(script).contains("ignoreQualityGate: true");
         assertThat(script).contains("qualityGates: [[criticality: 'FAILURE', integerThreshold: 1, threshold: 1.0, type: 'NEW']]");
 

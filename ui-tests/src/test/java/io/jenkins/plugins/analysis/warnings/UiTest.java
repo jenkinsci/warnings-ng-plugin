@@ -60,6 +60,7 @@ abstract class UiTest extends AbstractJUnitTest {
         for (String resource : resourcesToCopy) {
             job.copyResource(WARNINGS_PLUGIN_PREFIX + resource);
         }
+        job.addPublisher(ReferenceFinder.class);
         return job;
     }
 
@@ -454,7 +455,6 @@ abstract class UiTest extends AbstractJUnitTest {
                 + "    .buildOptional()");
 
         groovyConfiguration.enterExampleLogMessage("optparse.py:69:11: E401 multiple imports on one line");
-
         settings.save();
     }
 }

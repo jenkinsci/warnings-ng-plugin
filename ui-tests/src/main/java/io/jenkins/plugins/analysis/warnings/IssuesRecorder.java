@@ -36,9 +36,9 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     private final Control aggregatingResults = control("aggregatingResults");
     private final Control sourceCodeEncoding = control("sourceCodeEncoding");
     private final Control sourceDirectories = findRepeatableAddButtonFor("sourceDirectories");
+    private final Control sourceCodeRetention = control("sourceCodeRetention");
     private final Control skipBlames = control("skipBlames");
     private final Control skipPostProcessing = control("skipPostProcessing");
-    private final Control ignoreFailedBuilds = control("ignoreFailedBuilds");
     private final Control failOnError = control("failOnError");
     private final Control skipPublishingChecks = control("skipPublishingChecks");
     private final Control publishAllIssues = control("publishAllIssues");
@@ -75,7 +75,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      * @param toolName
      *         the tool name
      *
-     * @return the sub page of the tool
+     * @return the subpage of the tool
      */
     public StaticAnalysisTool setTool(final String toolName) {
         StaticAnalysisTool tool = new StaticAnalysisTool(this, "toolProxies");
@@ -216,10 +216,6 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
         return isChecked(skipPostProcessing);
     }
 
-    public boolean isIgnoringFailedBuilds() {
-        return isChecked(ignoreFailedBuilds);
-    }
-
     public boolean isSkipPublishingChecks() {
         return isChecked(skipPublishingChecks);
     }
@@ -268,6 +264,10 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
         return qualityGateCriticality.get();
     }
 
+    public String getSourceCodeRetention() {
+        return sourceCodeRetention.get();
+    }
+
     /**
      * Sets the source code encoding to the specified value.
      *
@@ -312,7 +312,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
 
     /**
      * If {@code true}, then the result of the quality gate is ignored when selecting a reference build. This option is
-     * disabled by default so a failing quality gate will be passed from build to build until the original reason for
+     * disabled by default, so a failing quality gate will be passed from build to build until the original reason for
      * the failure has been resolved.
      *
      * @param ignoreQualityGate
@@ -419,22 +419,6 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     }
 
     /**
-     * If {@code true}, then only successful or unstable reference builds will be considered. This option is enabled by
-     * default, since analysis results might be inaccurate if the build failed. If {@code false}, every build that
-     * contains a static analysis result is considered, even if the build failed.
-     *
-     * @param ignoreFailedBuilds
-     *         if {@code true} then a stable build is used as reference
-     *
-     * @return this recorder
-     */
-    public IssuesRecorder setIgnoreFailedBuilds(final boolean ignoreFailedBuilds) {
-        this.ignoreFailedBuilds.check(ignoreFailedBuilds);
-
-        return this;
-    }
-
-    /**
      * Determines whether to fail the build on errors during the step of recording issues.
      *
      * @param failOnError
@@ -502,6 +486,20 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      */
     public IssuesRecorder setTrendChartType(final TrendChartType trendChartType) {
         this.trendChartType.select(trendChartType.toString());
+
+        return this;
+    }
+
+    /**
+     * Sets the source code retention strategy.
+     *
+     * @param sourceCodeRetention
+     *         the type of strategy to use
+     *
+     * @return this recorder
+     */
+    public IssuesRecorder setSourceCodeRetention(final SourceCodeRetention sourceCodeRetention) {
+        this.sourceCodeRetention.select(sourceCodeRetention.toString());
 
         return this;
     }
@@ -681,6 +679,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
         private final Control id = control("tool/id");
         private final Control name = control("tool/name");
         private final Control analysisModelId = control("tool/analysisModelId");
+        private final Control skipSymbolicLinks = control("tool/skipSymbolicLinks");
 
         StaticAnalysisTool(final PageArea issuesRecorder, final String path) {
             super(issuesRecorder, path);
@@ -690,7 +689,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
          * Sets the name of the tool.
          *
          * @param toolName
-         *         the name of the tool, e.g. CheckStyle, CPD, etc.
+         *         the name of the tool, e.g., CheckStyle, CPD, etc.
          *
          * @return this
          */
@@ -782,6 +781,20 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
 
             return this;
         }
+
+        /**
+         * Sets whether to ignore symbolic links.
+         *
+         * @param skipSymbolicLinks
+         *         determines the check state
+         *
+         * @return this
+         */
+        public StaticAnalysisTool setSkipSymbolicLinks(final boolean skipSymbolicLinks) {
+            this.skipSymbolicLinks.check(skipSymbolicLinks);
+
+            return this;
+        }
     }
 
     /**
@@ -851,5 +864,19 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
         TOOLS_ONLY,
         /** Neither the aggregation trend nor analysis tool trend charts are shown. */
         NONE
+    }
+
+    /**
+     * Defines the retention strategy for source code files.
+     */
+    public enum SourceCodeRetention {
+        /** Never store source code files. */
+        NEVER,
+        /** Store source code files of the last build, delete older artifacts. */
+        LAST_BUILD,
+        /** Store source code files for all builds, never delete those files automatically. */
+        EVERY_BUILD,
+        /** Store only changed source code files for all builds, never delete those files automatically. */
+        MODIFIED
     }
 }

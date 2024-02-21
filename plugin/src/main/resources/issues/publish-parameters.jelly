@@ -16,25 +16,13 @@
   <f:entry field="failOnError">
     <f:checkbox title="${%title.failOnError}"/>
   </f:entry>
-  <f:entry title="${%title.trendChartType}" description="${%description.trendChartType}"
-           field="trendChartType">
-    <f:select default="AGGREGATION_TOOLS"/>
-  </f:entry>
-
-  <i:hr title="${%Reference Analysis Results}"/>
-
-  <tr>
-    <td/>
-    <td colspan="3">
-      ${%description.reference}
-    </td>
-  </tr>
-
   <f:entry field="ignoreQualityGate">
     <f:checkbox title="${%title.ignoreQualityGate}"/>
   </f:entry>
-  <f:entry field="ignoreFailedBuilds">
-    <f:checkbox default="true" title="${%title.ignoreFailedBuilds}"/>
+
+
+  <f:entry title="${%title.trendChartType}" field="trendChartType">
+    <f:select default="AGGREGATION_TOOLS"/>
   </f:entry>
 
   <i:hr title="${%Thresholds}"/>
@@ -59,7 +47,7 @@
   <f:entry title="${%Unhealthy Threshold}" description="${%description.unhealthy}" field="unhealthy">
     <f:number/>
   </f:entry>
-  <f:entry title="${%Health Severities}" description="${%description.health.severities}" field="minimumSeverity">
+  <f:entry title="${%title.health.severities}" field="minimumSeverity">
     <f:select default="LOW"/>
   </f:entry>
 

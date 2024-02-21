@@ -31,8 +31,7 @@
     <f:checkbox title="${%title.skipSymbolicLinks}"/>
   </f:entry>
 
-  <f:entry title="${%title.reportEncoding}" field="reportEncoding"
-           description="${%description.reportEncoding}">
+  <f:entry title="${%title.reportEncoding}" field="reportEncoding">
     <f:combobox/>
   </f:entry>
 

@@ -47,11 +47,10 @@ public class SnippetGenerator extends PageObject {
      * @return script
      */
     public String generateScript() {
-        WebElement button = find(By.xpath("//button[contains(text(),'Generate Pipeline Script')]"));
+        WebElement button = find(By.id("generatePipelineScript-button"));
         button.click();
-
-        WebElement textarea = find(By.xpath("//textarea[@name='_.']"));
-
+        elasticSleep(500);
+        WebElement textarea = find(By.id("prototypeText"));
         return textarea.getAttribute("value");
     }
 }

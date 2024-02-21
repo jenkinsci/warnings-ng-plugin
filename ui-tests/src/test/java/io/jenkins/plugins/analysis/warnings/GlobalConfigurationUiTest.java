@@ -49,7 +49,7 @@ public class GlobalConfigurationUiTest extends UiTest {
 
         createFileInWorkspace(job, homeDir);
 
-        // First build contains an error and no source code
+        // The first build contains an error and no source code
         Build build = buildJob(job);
         verifyGcc(build, LinkType.SHOULD_NOT_HAVE_SOURCE_CODE_LINK);
 
@@ -95,7 +95,9 @@ public class GlobalConfigurationUiTest extends UiTest {
         settings.configure();
         String homeDir = settings.getHomeDirectory();
         String jobDir = getJobDir(homeDir, job);
-        settings.enterSourceDirectoryPath(jobDir);
+        var prismSettings = new GlobalPrismSettings(jenkins);
+        prismSettings.configure();
+        prismSettings.enterSourceDirectoryPath(jobDir);
         settings.save();
     }
 

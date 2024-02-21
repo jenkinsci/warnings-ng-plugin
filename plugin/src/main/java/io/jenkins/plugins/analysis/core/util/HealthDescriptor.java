@@ -20,11 +20,11 @@ public class HealthDescriptor implements Serializable {
      * Creates a new {@link HealthDescriptor}.
      *
      * @param healthy
-     *         the healthy threshold, i.e. when health is reported as 100%.
+     *         the healthy threshold, i.e., when health is reported as 100%.
      * @param unhealthy
-     *         the unhealthy threshold, i.e. when health is reported as 0%.
+     *         the unhealthy threshold, i.e., when health is reported as 0%.
      * @param minimumSeverity
-     *         the minimum severity that should be considered when computing build health
+     *         the minimum severity that should be considered when computing the build health
      */
     public HealthDescriptor(final int healthy, final int unhealthy, final Severity minimumSeverity) {
         this.healthy = healthy;
@@ -33,7 +33,7 @@ public class HealthDescriptor implements Serializable {
     }
 
     /**
-     * Returns the healthy threshold, i.e. when health is reported as 100%.
+     * Returns the healthy threshold, i.e., when health is reported as 100%.
      *
      * @return the 100% healthiness
      */
@@ -42,7 +42,7 @@ public class HealthDescriptor implements Serializable {
     }
 
     /**
-     * Returns the unhealthy threshold, i.e. when health is reported as 0%.
+     * Returns the unhealthy threshold, i.e., when health is reported as 0%.
      *
      * @return the 0% unhealthiness
      */
@@ -51,7 +51,7 @@ public class HealthDescriptor implements Serializable {
     }
 
     /**
-     * Returns the minimum severity that should be considered when computing build health. E.g., if {@link
+     * Returns the minimum severity that should be considered when computing the build health. E.g., if {@link
      * Severity#WARNING_NORMAL} is returned, then annotations with severity {@link Severity#WARNING_LOW} are ignored.
      *
      * @return the minimum severity to consider
@@ -63,7 +63,7 @@ public class HealthDescriptor implements Serializable {
     /**
      * Determines whether health reporting is enabled.
      *
-     * @return {@code true} if  health reporting is enabled, {@code false} otherwise
+     * @return {@code true} if health reporting is enabled, {@code false} otherwise
      */
     public boolean isEnabled() {
         return healthy > 0 || unhealthy > 0;
@@ -72,7 +72,7 @@ public class HealthDescriptor implements Serializable {
     /**
      * Determines whether health reporting is enabled.
      *
-     * @return {@code true} if  health reporting is enabled, {@code false} otherwise
+     * @return {@code true} if health reporting is enabled, {@code false} otherwise
      */
     public boolean isValid() {
         return healthy > 0 && unhealthy > healthy;
