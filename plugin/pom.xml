@@ -48,7 +48,6 @@
     <flexible-publish.version>0.15.2</flexible-publish.version>
     <form-element-path.version>1.11</form-element-path.version>
 
-    <prism-api.version>1.29.0-8</prism-api.version>
     <plugin-util-api.version>3.9.0-rc894.7431fa_59180b_</plugin-util-api.version>
     <forensics-api.version>2.4.0-rc1565.4c3ec58d800d</forensics-api.version>
     <git-forensics.version>2.1.0-20240207.074913-2</git-forensics.version>
@@ -139,7 +138,6 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>prism-api</artifactId>
-      <version>${prism-api.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
