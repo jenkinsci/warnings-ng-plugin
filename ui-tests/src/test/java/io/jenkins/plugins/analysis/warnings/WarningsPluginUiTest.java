@@ -183,7 +183,7 @@ public class WarningsPluginUiTest extends UiTest {
         IssuesRecorder recorder = job.addPublisher(IssuesRecorder.class);
         recorder.setToolWithPattern(MAVEN_TOOL, "");
         recorder.setEnabledForFailure(true);
-
+        recorder.addIssueFilter("Include types", ".*:.*");
         job.save();
 
         Build build = buildJob(job).shouldSucceed();
@@ -196,29 +196,22 @@ public class WarningsPluginUiTest extends UiTest {
 
         AnalysisSummary summary = new AnalysisSummary(build, MAVEN_ID);
         assertThat(summary)
-                .hasTitleText("Maven: 5 warnings")
+                .hasTitleText("Maven: 3 warnings")
                 .hasNewSize(0)
                 .hasFixedSize(0)
                 .hasReferenceBuild(0);
 
         AnalysisResult mavenDetails = summary.openOverallResult();
-        assertThat(mavenDetails).hasActiveTab(Tab.MODULES)
-                .hasTotal(5)
-                .hasOnlyAvailableTabs(Tab.MODULES, Tab.TYPES, Tab.ISSUES);
+        assertThat(mavenDetails).hasActiveTab(Tab.TYPES)
+                .hasTotal(3)
+                .hasOnlyAvailableTabs(Tab.TYPES, Tab.ISSUES);
 
         IssuesTable issuesTable = mavenDetails.openIssuesTable();
 
         IssuesTableRow firstRow = issuesTable.getRow(0);
         ConsoleLogView sourceView = firstRow.openConsoleLog();
-        assertThat(sourceView).hasTitle("Console Output (lines 9-36)")
-                .hasHighlightedText("[WARNING]\n"
-                        + "[WARNING] Some problems were encountered while building the effective model for edu.hm.hafner.irrelevant.groupId:random-artifactId:jar:1.0\n"
-                        + "[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-compiler-plugin is missing. @ line 13, column 15\n"
-                        + "[WARNING]\n"
-                        + "[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.\n"
-                        + "[WARNING]\n"
-                        + "[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.\n"
-                        + "[WARNING]");
+        assertThat(sourceView).hasTitle("Console Output (lines 23-43)")
+                .hasHighlightedText("[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!");
     }
 
     /**
