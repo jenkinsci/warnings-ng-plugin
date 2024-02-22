@@ -1,4 +1,4 @@
-name: 'Run UI tests'
+name: 'UI Tests'
 
 on:
   push:
@@ -7,9 +7,14 @@ on:
   pull_request:
 
 jobs:
-  details-tab:
+  ui-tests:
+    strategy:
+      matrix:
+        test: [ DetailsTabUiTest, FreeStyleConfigurationUiTest, GlobalConfigurationUiTest, IssuesColumnUiTest, SnippetGeneratorUiTest, TrendChartsUiTest, WarningsPluginUiTest, SmokeTests ]
+        browser: [ firefox-container, chrome-container ]
+
     runs-on: [ubuntu-latest]
-    name: Details tab UI tests
+    name: Run UI tests `${{ matrix.test }}` with browser ${{ matrix.browser }}
 
     steps:
       - uses: actions/checkout@v4
@@ -28,174 +33,5 @@ jobs:
         run: mvn -V --color always -ntp verify -Pskip --file plugin/pom.xml -Dgpg.skip
       - name: Run UI tests for the details tabs
         env:
-          BROWSER: firefox-container
-        run: mvn -V --color always -ntp test --file ui-tests/pom.xml -Dtest=DetailsTabUiTest -Dgpg.skip -Dsurefire.rerunFailingTestsCount=1
-
-  smoke-tests:
-    runs-on: [ubuntu-latest]
-    name: Smoke UI tests
-
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '21'
-          check-latest: true
-          cache: 'maven'
-      - name: Set up Maven
-        uses: stCarolas/setup-maven@v4.5
-        with:
-          maven-version: 3.9.6
-      - name: Build warnings plugin and download dependencies
-        run: mvn -V --color always -ntp verify -Pskip --file plugin/pom.xml -Dgpg.skip
-      - name: Run Smoke UI tests
-        env:
-          BROWSER: firefox-container
-        run: mvn -V --color always -ntp test --file ui-tests/pom.xml -Dtest=FreeStyleConfigurationUiTest -Dgpg.skip -Dsurefire.rerunFailingTestsCount=1
-
-  freestyle-configuration:
-    runs-on: [ubuntu-latest]
-    name: Freestyle configuration UI tests
-
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '21'
-          check-latest: true
-          cache: 'maven'
-      - name: Set up Maven
-        uses: stCarolas/setup-maven@v4.5
-        with:
-          maven-version: 3.9.6
-      - name: Build warnings plugin and download dependencies
-        run: mvn -V --color always -ntp verify -Pskip --file plugin/pom.xml -Dgpg.skip
-      - name: Run UI tests for the freestyle configuration
-        env:
-          BROWSER: firefox-container
-        run: mvn -V --color always -ntp test --file ui-tests/pom.xml -Dtest=SmokeTests -Dgpg.skip -Dsurefire.rerunFailingTestsCount=1
-
-  pipeline-snippet-generator:
-    runs-on: [ubuntu-latest]
-    name: Pipeline snippet configurator UI tests
-
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '21'
-          check-latest: true
-          cache: 'maven'
-      - name: Set up Maven
-        uses: stCarolas/setup-maven@v4.5
-        with:
-          maven-version: 3.9.6
-      - name: Build warnings plugin and download dependencies
-        run: mvn -V --color always -ntp verify -Pskip --file plugin/pom.xml -Dgpg.skip
-      - name: Run UI tests for the pipeline snippet configurator
-        env:
-          BROWSER: firefox-container
-        run: mvn -V --color always -ntp test --file ui-tests/pom.xml -Dtest=SnippetGeneratorUiTest -Dgpg.skip -Dsurefire.rerunFailingTestsCount=1
-
-  global-configuration:
-    runs-on: [ubuntu-latest]
-    name: Global configuration UI tests
-
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '21'
-          check-latest: true
-          cache: 'maven'
-      - name: Set up Maven
-        uses: stCarolas/setup-maven@v4.5
-        with:
-          maven-version: 3.9.6
-      - name: Build warnings plugin and download dependencies
-        run: mvn -V --color always -ntp verify -Pskip --file plugin/pom.xml -Dgpg.skip
-      - name: Run UI tests for Jenkins' global configuration
-        env:
-          BROWSER: firefox-container
-        run: mvn -V --color always -ntp test --file ui-tests/pom.xml -Dtest=GlobalConfigurationUiTest -Dgpg.skip -Dsurefire.rerunFailingTestsCount=1
-
-  issues-column:
-    runs-on: [ubuntu-latest]
-    name: Issues column UI tests
-
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '21'
-          check-latest: true
-          cache: 'maven'
-      - name: Set up Maven
-        uses: stCarolas/setup-maven@v4.5
-        with:
-          maven-version: 3.9.6
-      - name: Build warnings plugin and download dependencies
-        run: mvn -V --color always -ntp verify -Pskip --file plugin/pom.xml -Dgpg.skip
-      - name: Run UI tests for the issues column
-        env:
-          BROWSER: firefox-container
-        run: mvn -V --color always -ntp test --file ui-tests/pom.xml -Dtest=IssuesColumnUiTest -Dgpg.skip -Dsurefire.rerunFailingTestsCount=1
-
-  trend-charts:
-    runs-on: [ubuntu-latest]
-    name: Trend charts UI tests
-
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '21'
-          check-latest: true
-          cache: 'maven'
-      - name: Set up Maven
-        uses: stCarolas/setup-maven@v4.5
-        with:
-          maven-version: 3.9.6
-      - name: Build warnings plugin and download dependencies
-        run: mvn -V --color always -ntp verify -Pskip --file plugin/pom.xml -Dgpg.skip
-      - name: Run UI tests for the trend charts
-        env:
-          BROWSER: firefox-container
-        run: mvn -V --color always -ntp test --file ui-tests/pom.xml -Dtest=TrendChartsUiTest -Dgpg.skip -Dsurefire.rerunFailingTestsCount=1
-
-  miscellaneous:
-    runs-on: [ubuntu-latest]
-    name: Miscellaneous UI tests
-
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '21'
-          check-latest: true
-          cache: 'maven'
-      - name: Set up Maven
-        uses: stCarolas/setup-maven@v4.5
-        with:
-          maven-version: 3.9.6
-      - name: Build warnings plugin and download dependencies
-        run: mvn -V --color always -ntp verify -Pskip --file plugin/pom.xml -Dgpg.skip
-      - name: Run miscellaneous UI tests of the warnings plugin
-        env:
-          BROWSER: firefox-container
-        run: mvn -V --color always -ntp test --file ui-tests/pom.xml -Dtest=WarningsPluginUiTest -Dgpg.skip -Dsurefire.rerunFailingTestsCount=1
-
+          BROWSER: ${{ matrix.browser }}
+        run: mvn -V --color always -ntp test --file ui-tests/pom.xml -Dtest=${{ matrix.test }} -Dgpg.skip -Dsurefire.rerunFailingTestsCount=1
