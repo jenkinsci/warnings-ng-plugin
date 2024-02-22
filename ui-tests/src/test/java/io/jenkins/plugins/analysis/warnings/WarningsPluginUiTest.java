@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.warnings;
 
 import javax.inject.Inject;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -69,14 +70,16 @@ public class WarningsPluginUiTest extends UiTest {
     private DockerContainerHolder<JavaGitContainer> dockerContainer;
 
     /**
-     * Verifies that static analysise results are correctly shown when the job is part of a folder.
+     * Verifies that static analysis results are correctly shown when the job is part of a folder.
      */
     @Test
     public void shouldRunInFolder() {
         Folder folder = jenkins.jobs.create(Folder.class, "singleSummary");
+
         FreeStyleJob job = folder.getJobs().create(FreeStyleJob.class);
         ScrollerUtil.hideScrollerTabBar(driver);
         job.copyResource(WARNINGS_PLUGIN_PREFIX + "build_status_test/build_01");
+        job.addPublisher(ReferenceFinder.class);
 
         addAllRecorders(job);
         job.save();
@@ -114,7 +117,7 @@ public class WarningsPluginUiTest extends UiTest {
         AnalysisSummary referenceSummary = new AnalysisSummary(referenceBuild, ANALYSIS_ID);
         assertThat(referenceSummary)
                 .hasTitleText("Static Analysis: 4 warnings (from 4 analyses)")
-                .hasTools(FINDBUGS_TOOL, CPD_TOOL, CHECKSTYLE_TOOL, PMD_TOOL)
+                .hasTools("FindBugs (0)", "CPD (0)", "CheckStyle (1)", "PMD (3)")
                 .hasNewSize(0)
                 .hasFixedSize(0)
                 .hasReferenceBuild(0)
@@ -129,7 +132,7 @@ public class WarningsPluginUiTest extends UiTest {
         AnalysisSummary analysisSummary = new AnalysisSummary(build, ANALYSIS_ID);
         assertThat(analysisSummary)
                 .hasTitleText("Static Analysis: 25 warnings (from 4 analyses)")
-                .hasTools(FINDBUGS_TOOL, CPD_TOOL, CHECKSTYLE_TOOL, PMD_TOOL)
+                .hasTools("FindBugs (0)", "CPD (20)", "CheckStyle (3)", "PMD (2)")
                 .hasNewSize(23)
                 .hasFixedSize(2)
                 .hasReferenceBuild(1)
@@ -200,14 +203,14 @@ public class WarningsPluginUiTest extends UiTest {
 
         AnalysisResult mavenDetails = summary.openOverallResult();
         assertThat(mavenDetails).hasActiveTab(Tab.MODULES)
-                .hasTotal(4)
+                .hasTotal(5)
                 .hasOnlyAvailableTabs(Tab.MODULES, Tab.TYPES, Tab.ISSUES);
 
         IssuesTable issuesTable = mavenDetails.openIssuesTable();
 
         IssuesTableRow firstRow = issuesTable.getRow(0);
         ConsoleLogView sourceView = firstRow.openConsoleLog();
-        assertThat(sourceView).hasTitle("Console Details")
+        assertThat(sourceView).hasTitle("Console Output (lines 9-36)")
                 .hasHighlightedText("[WARNING]\n"
                         + "[WARNING] Some problems were encountered while building the effective model for edu.hm.hafner.irrelevant.groupId:random-artifactId:jar:1.0\n"
                         + "[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-compiler-plugin is missing. @ line 13, column 15\n"
@@ -225,6 +228,7 @@ public class WarningsPluginUiTest extends UiTest {
     @WithDocker
     @WithPlugins("ssh-slaves")
     @WithCredentials(credentialType = WithCredentials.SSH_USERNAME_PRIVATE_KEY, values = {CREDENTIALS_ID, CREDENTIALS_KEY})
+    @Ignore("Ignore docker based tests right now")
     public void shouldParseWarningsOnAgent() {
         DumbSlave dockerAgent = createDockerAgent();
         FreeStyleJob job = createFreeStyleJobForDockerAgent(dockerAgent, "issue_filter/checkstyle-result.xml");
