@@ -29,7 +29,7 @@ public class SnippetGeneratorUiTest extends UiTest {
 
         String script = snippetGenerator.generateScript();
 
-        assertThat(script).isEqualTo("recordIssues healthy: 1, sourceCodeRetention: 'LAST_BUILD', tools: [java()], unhealthy: 9");
+        assertThat(script).isEqualTo("recordIssues sourceCodeRetention: 'LAST_BUILD', tools: [java()]");
     }
 
     /**
