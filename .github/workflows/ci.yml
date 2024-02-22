@@ -34,4 +34,6 @@ jobs:
       - name: Build with Maven
         env:
           BROWSER: chrome-container
-        run: mvn -V --color always -ntp clean verify --file pom.xml '-Djenkins.test.timeout=5000' '-Dgpg.skip'
+        run: | 
+          cd plugin
+          mvn -V --color always -ntp clean verify '-Djenkins.test.timeout=5000' '-Dgpg.skip'

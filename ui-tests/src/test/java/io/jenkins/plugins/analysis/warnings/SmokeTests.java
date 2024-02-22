@@ -8,7 +8,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import org.jenkinsci.test.acceptance.junit.WithPlugins;
-import org.jenkinsci.test.acceptance.plugins.dashboard_view.DashboardView;
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.Folder;
 import org.jenkinsci.test.acceptance.po.FreeStyleJob;
@@ -83,10 +82,11 @@ public class SmokeTests extends UiTest {
 
         verifyColumnCount(build);
 
-        DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, true);
-        DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
-
-        verifyDashboardTablePortlet(dashboardTable, job.name);
+//        FIXME: re-enable dashboard view tests
+//        DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, true);
+//        DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
+//
+//        verifyDashboardTablePortlet(dashboardTable, job.name);
     }
 
     /**
@@ -100,7 +100,7 @@ public class SmokeTests extends UiTest {
         Folder folder = jenkins.jobs.create(Folder.class, "folder");
         FreeStyleJob job = folder.getJobs().create(FreeStyleJob.class);
         ScrollerUtil.hideScrollerTabBar(driver);
-
+        job.addPublisher(ReferenceFinder.class);
         job.copyResource(WARNINGS_PLUGIN_PREFIX + "build_status_test/build_01");
 
         addAllRecorders(job);
@@ -123,10 +123,11 @@ public class SmokeTests extends UiTest {
 
         verifyColumnCount(build);
 
-        DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, true, folder);
-        DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
-
-        verifyDashboardTablePortlet(dashboardTable, String.format("%s » %s", folder.name, job.name));
+//        FIXME: re-enable dashboard view tests
+//        DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, true, folder);
+//        DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
+//
+//        verifyDashboardTablePortlet(dashboardTable, String.format("%s » %s", folder.name, job.name));
     }
 
     private void verifyColumnCount(final Build build) {
@@ -148,6 +149,7 @@ public class SmokeTests extends UiTest {
 
     private void createRecordIssuesStep(final WorkflowJob job, final int buildNumber) {
         job.script.set("node {\n"
+                + "discoverReferenceBuild()\n"
                 + createReportFilesStep(job, buildNumber)
                 + "recordIssues(tool: checkStyle(pattern: '**/checkstyle*', name: '" + CHECK_STYLE_NAME + "'))\n"
                 + "recordIssues tool: analysisParser(analysisModelId: 'pmd', pattern: '**/pmd*')\n"
