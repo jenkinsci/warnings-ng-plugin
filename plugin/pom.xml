@@ -26,8 +26,8 @@
     <changelist>-SNAPSHOT</changelist>
     <module.name>${project.groupId}.warnings.ng</module.name>
 
-    <analysis-model-api.version>12.0.0-rc794.1a_384a_2a_5d0b_</analysis-model-api.version>
-    <analysis-model-tests.version>12.0.0</analysis-model-tests.version>
+    <analysis-model-api.version>12.1.0</analysis-model-api.version>
+    <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
     <pull-request-monitoring.version>1.7.8</pull-request-monitoring.version>
 
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
