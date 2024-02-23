@@ -6,6 +6,7 @@ import org.jenkinsci.test.acceptance.junit.AbstractJUnitTest;
 import org.jenkinsci.test.acceptance.junit.WithPlugins;
 import org.jenkinsci.test.acceptance.po.FreeStyleJob;
 
+import io.jenkins.plugins.analysis.warnings.IssuesRecorder.ChecksAnnotationScope;
 import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateCriticality;
 import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateType;
 import io.jenkins.plugins.analysis.warnings.IssuesRecorder.SourceCodeRetention;
@@ -46,7 +47,6 @@ public class FreeStyleConfigurationUiTest extends AbstractJUnitTest {
         issuesRecorder.setIgnoreQualityGate(true);
         issuesRecorder.setSkipPublishingChecks(true);
         issuesRecorder.setSkipPostProcessing(true);
-        issuesRecorder.setPublishAllIssues(true);
         issuesRecorder.setFailOnError(true);
         issuesRecorder.setQuiet(true);
         issuesRecorder.setHealthReport(1, 9, SEVERITY);
@@ -54,6 +54,7 @@ public class FreeStyleConfigurationUiTest extends AbstractJUnitTest {
         issuesRecorder.addIssueFilter("Exclude categories", REGEX);
         issuesRecorder.addQualityGateConfiguration(1, QualityGateType.TOTAL_ERROR, QualityGateCriticality.UNSTABLE);
         issuesRecorder.setSourceCodeRetention(SourceCodeRetention.MODIFIED);
+        issuesRecorder.setChecksAnnotationScope(ChecksAnnotationScope.MODIFIED);
 
         job.save();
         job.configure();
@@ -69,7 +70,6 @@ public class FreeStyleConfigurationUiTest extends AbstractJUnitTest {
         assertThat(issuesRecorder).isIgnoringQualityGate();
         assertThat(issuesRecorder).isSkipPublishingChecks();
         assertThat(issuesRecorder).isSkipPostProcessing();
-        assertThat(issuesRecorder).isPublishAllIssues();
         assertThat(issuesRecorder).isFailingOnError();
         assertThat(issuesRecorder).isQuiet();
         assertThat(issuesRecorder).hasHealthThreshold("1");
@@ -81,11 +81,11 @@ public class FreeStyleConfigurationUiTest extends AbstractJUnitTest {
         assertThat(issuesRecorder).hasQualityGateType(QualityGateType.TOTAL_ERROR.toString());
         assertThat(issuesRecorder).hasQualityGateCriticality(QualityGateCriticality.UNSTABLE.toString());
         assertThat(issuesRecorder).hasSourceCodeRetention(SourceCodeRetention.MODIFIED.toString());
+        assertThat(issuesRecorder).hasChecksAnnotationScope(ChecksAnnotationScope.MODIFIED.toString());
 
         // Now invert all booleans:
         issuesRecorder.setAggregatingResults(false);
         issuesRecorder.setSkipBlames(false);
-        issuesRecorder.setPublishAllIssues(false);
         issuesRecorder.setEnabledForFailure(false);
         issuesRecorder.setIgnoreQualityGate(false);
         issuesRecorder.setFailOnError(false);
@@ -98,7 +98,6 @@ public class FreeStyleConfigurationUiTest extends AbstractJUnitTest {
         issuesRecorder.openAdvancedOptions();
 
         assertThat(issuesRecorder).isNotAggregatingResults();
-        assertThat(issuesRecorder).isNotPublishAllIssues();
         assertThat(issuesRecorder).isNotEnabledForFailure();
         assertThat(issuesRecorder).isNotIgnoringQualityGate();
         assertThat(issuesRecorder).isNotFailingOnError();

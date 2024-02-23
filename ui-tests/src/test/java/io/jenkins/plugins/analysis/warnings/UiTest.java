@@ -56,7 +56,6 @@ abstract class UiTest extends AbstractJUnitTest {
 
     protected FreeStyleJob createFreeStyleJob(final String... resourcesToCopy) {
         FreeStyleJob job = jenkins.getJobs().create(FreeStyleJob.class);
-        ScrollerUtil.hideScrollerTabBar(driver);
         for (String resource : resourcesToCopy) {
             job.copyResource(WARNINGS_PLUGIN_PREFIX + resource);
         }
@@ -93,22 +92,14 @@ abstract class UiTest extends AbstractJUnitTest {
     }
 
     /**
-     * Reads the contents of the desired resource. The rules for searching resources associated with this test class are
-     * implemented by the defining {@linkplain ClassLoader class loader} of this test class.  This method delegates to
-     * this object's class loader.  If this object was loaded by the bootstrap class loader, the method delegates to
-     * {@link ClassLoader#getSystemResource}.
-     * <p>
-     * Before delegation, an absolute resource name is constructed from the given resource name using this algorithm:
-     * </p>
-     * <ul>
-     * <li> If the {@code name} begins with a {@code '/'} (<tt>'&#92;u002f'</tt>), then the absolute name of the
-     * resource is the portion of the {@code name} following the {@code '/'}.</li>
-     * <li> Otherwise, the absolute name is of the following form:
-     * <blockquote> {@code modified_package_name/name} </blockquote>
-     * <p> Where the {@code modified_package_name} is the package name of this object with {@code '/'}
-     * substituted for {@code '.'} (<tt>'&#92;u002e'</tt>).</li>
-     * </ul>
+     * Reads all the bytes from a file. The method ensures that the file is
+     * closed when all bytes have been read or an I/O error, or other runtime
+     * exception, is thrown.
      *
+     * <p> Note that this method is intended for simple cases where it is
+     * convenient to read all bytes into a byte array. It is not intended for
+     * reading in large files.
+     **
      * @param fileName
      *         name of the desired resource
      *

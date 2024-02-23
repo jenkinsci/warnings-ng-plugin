@@ -99,7 +99,6 @@ public class SmokeTests extends UiTest {
 
         Folder folder = jenkins.jobs.create(Folder.class, "folder");
         FreeStyleJob job = folder.getJobs().create(FreeStyleJob.class);
-        ScrollerUtil.hideScrollerTabBar(driver);
         job.addPublisher(ReferenceFinder.class);
         job.copyResource(WARNINGS_PLUGIN_PREFIX + "build_status_test/build_01");
 

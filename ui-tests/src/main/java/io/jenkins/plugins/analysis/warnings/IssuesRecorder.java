@@ -41,7 +41,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     private final Control skipPostProcessing = control("skipPostProcessing");
     private final Control failOnError = control("failOnError");
     private final Control skipPublishingChecks = control("skipPublishingChecks");
-    private final Control publishAllIssues = control("publishAllIssues");
+    private final Control checksAnnotationScope = control("checksAnnotationScope");
     private final Control reportFilePattern = control("/toolProxies/tool/pattern");
     private final Control trendChartType = control("trendChartType");
     private final Control healthyThreshold = control("healthy");
@@ -61,7 +61,6 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     public IssuesRecorder(final Job parent, final String path) {
         super(parent, path);
 
-        ScrollerUtil.hideScrollerTabBar(driver);
         openAdvancedOptions();
     }
 
@@ -91,7 +90,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      * @param pattern
      *         the file name pattern
      *
-     * @return the sub page of the tool
+     * @return the subpage of the tool
      */
     public StaticAnalysisTool setTool(final String toolName, final String pattern) {
         return setTool(toolName, tool -> tool.setPattern(pattern));
@@ -105,7 +104,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      * @param configuration
      *         the additional configuration options for this tool
      *
-     * @return the sub page of the tool
+     * @return the subpage of the tool
      */
     public StaticAnalysisTool setTool(final String toolName, final Consumer<StaticAnalysisTool> configuration) {
         StaticAnalysisTool tool = setTool(toolName);
@@ -119,7 +118,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      * @param toolName
      *         the tool name
      *
-     * @return the sub page of the tool
+     * @return the subpage of the tool
      */
     public StaticAnalysisTool addTool(final String toolName) {
         return createToolPageArea(toolName);
@@ -133,7 +132,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      * @param configuration
      *         the additional configuration options for this tool
      *
-     * @return the sub page of the tool
+     * @return the subpage of the tool
      */
     public StaticAnalysisTool addTool(final String toolName, final Consumer<StaticAnalysisTool> configuration) {
         StaticAnalysisTool tool = addTool(toolName);
@@ -149,7 +148,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      * @param pattern
      *         the file name pattern
      *
-     * @return the sub page of the tool
+     * @return the subpage of the tool
      */
     public StaticAnalysisTool addTool(final String toolName, final String pattern) {
         return addTool(toolName, tool -> tool.setPattern(pattern));
@@ -220,8 +219,8 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
         return isChecked(skipPublishingChecks);
     }
 
-    public boolean isPublishAllIssues() {
-        return isChecked(publishAllIssues);
+    public String getChecksAnnotationScope() {
+        return checksAnnotationScope.get();
     }
 
     private boolean isChecked(final Control control) {
@@ -448,16 +447,15 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     }
 
     /**
-     * Sets whether all issues should be published using the Checks API. If set to {@code false} only new issues will be
-     * published.
+     * Determines which issues should be published using the Checks API as annotations.
      *
-     * @param publishAllIssues
-     *         {@code true} if all issues should be published, {@code false} if only new issues should be published
+     * @param checksAnnotationScope
+     *         determines which issues should be shown
      *
      * @return this recorder
      */
-    public IssuesRecorder setPublishAllIssues(final boolean publishAllIssues) {
-        this.publishAllIssues.check(publishAllIssues);
+    public IssuesRecorder setChecksAnnotationScope(final ChecksAnnotationScope checksAnnotationScope) {
+        this.checksAnnotationScope.select(checksAnnotationScope.toString());
 
         return this;
     }
@@ -878,5 +876,19 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
         EVERY_BUILD,
         /** Store only changed source code files for all builds, never delete those files automatically. */
         MODIFIED
+    }
+
+    /**
+     * Defines the scope of SCM checks annotations.
+     */
+    public enum ChecksAnnotationScope {
+        /** All issues, i.e., new and outstanding. */
+        ALL,
+        /** Only new issues. */
+        NEW,
+        /** Only issues in modified code. */
+        MODIFIED,
+        /** No annotations will be created. */
+        SKIP
     }
 }

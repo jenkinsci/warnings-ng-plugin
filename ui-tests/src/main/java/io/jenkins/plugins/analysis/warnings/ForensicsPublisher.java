@@ -23,7 +23,5 @@ public class ForensicsPublisher extends AbstractStep implements PostBuildStep {
      */
     public ForensicsPublisher(final Job parent, final String path) {
         super(parent, path);
-
-        ScrollerUtil.hideScrollerTabBar(driver);
     }
 }

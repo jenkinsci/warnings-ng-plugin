@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.jenkinsci.test.acceptance.junit.WithPlugins;
 import org.jenkinsci.test.acceptance.po.WorkflowJob;
 
+import io.jenkins.plugins.analysis.warnings.IssuesRecorder.ChecksAnnotationScope;
 import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateCriticality;
 import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateType;
 
@@ -117,6 +118,7 @@ public class SnippetGeneratorUiTest extends UiTest {
                 .setHealthReport(1, 9, "HIGH")
                 .setIgnoreQualityGate(true)
                 .setSourceCodeEncoding("otherText")
+                .setChecksAnnotationScope(ChecksAnnotationScope.ALL)
                 .addIssueFilter("Exclude types", "*toExclude*")
                 .addQualityGateConfiguration(1, QualityGateType.NEW, QualityGateCriticality.PIPELINE_FAILURE)
                 .setToolWithPattern(JAVA_COMPILER, "firstText");
@@ -134,6 +136,7 @@ public class SnippetGeneratorUiTest extends UiTest {
 
         assertThat(script).contains("pattern: 'firstText'");
         assertThat(script).contains("sourceCodeEncoding: 'otherText'");
+        assertThat(script).contains("checksAnnotationScope: 'ALL'");
 
         assertThat(script).contains("healthy: 1");
         assertThat(script).contains("unhealthy: 9");
