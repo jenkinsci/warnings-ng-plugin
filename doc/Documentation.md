@@ -1040,12 +1040,12 @@ issues statistics will be displayed.
 ![checks](images/checks.png)
 
 When a new pull request or commit causes new issues, these issues will be added as annotations right below the source
-code. You can also choose to show all issues by toggling the property `publishAllIssues`. In this case not only new issues
+code. You can also choose to show all issues by chaning the property `checksAnnotationScope`. In this case, not only new issues
 will be highlighted but also outstanding ones. (Note: GitHub renders annotations only for source
 code blocks that have been changed in a commit.)
 
 ```groovy
-recordIssues publishAllIssues: true, tool: java(pattern: '*.log')
+recordIssues checksAnnotationScope: 'ALL', tool: java(pattern: '*.log')
 ```
 
 ![check annotation](images/check-annotation.png)
