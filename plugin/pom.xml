@@ -40,17 +40,14 @@
     <testcontainers.version>1.19.3</testcontainers.version>
 
     <!-- Jenkins Plug-in Dependencies Versions -->
-    <forensics-api.version>2.4.0-rc1565.4c3ec58d800d</forensics-api.version>
-    <git-forensics.version>2.1.0-20240207.074913-2</git-forensics.version>
+    <plugin-util-api.version>4.1.0</plugin-util-api.version>
+    <forensics-api.version>2.4.0</forensics-api.version>
+    <git-forensics.version>2.1.0</git-forensics.version>
 
     <jenkins-maven-plugin.version>3.22</jenkins-maven-plugin.version>
     <job-dsl.version>1.84</job-dsl.version>
     <flexible-publish.version>0.15.2</flexible-publish.version>
     <form-element-path.version>1.11</form-element-path.version>
-
-    <plugin-util-api.version>3.9.0-rc894.7431fa_59180b_</plugin-util-api.version>
-    <forensics-api.version>2.4.0-rc1565.4c3ec58d800d</forensics-api.version>
-    <git-forensics.version>2.1.0-20240207.074913-2</git-forensics.version>
 
     <!-- Maven Surefire ArgLine -->
     <argLine>-Djava.awt.headless=true -Xmx1024m -Djenkins.test.timeout=1000 --add-opens java.base/java.lang=ALL-UNNAMED
@@ -634,7 +631,7 @@
     <connection>scm:git:https://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
     <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
     <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
-    <tag>v10.5.3</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <repositories>
