@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.opentest4j.TestAbortedException;
@@ -18,10 +19,11 @@ import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.IssueReportScanner;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
-import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
-import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
-import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
+import io.jenkins.plugins.analysis.core.util.WarningsQualityGate;
+import io.jenkins.plugins.analysis.core.util.WarningsQualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
+import io.jenkins.plugins.util.QualityGate.QualityGateCriticality;
+import io.jenkins.plugins.util.QualityGateStatus;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import static org.assertj.core.api.Assumptions.*;
@@ -126,7 +128,8 @@ class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
     void findIssuesWithMultipleFiles() {
         FreeStyleProject project = createJobWithWorkspaceFile(MULTIPLE_FILES_WORKSPACE);
         IssuesRecorder recorder = enableWarnings(project, createTool(new CheckStyle(), "*.xml"));
-        recorder.addQualityGate(6, QualityGateType.TOTAL, QualityGateResult.FAILURE);
+        recorder.setQualityGates(List.of(
+                new WarningsQualityGate(6, QualityGateType.TOTAL, QualityGateCriticality.FAILURE)));
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.FAILURE);
 
@@ -163,7 +166,8 @@ class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
         createSymbolicLinkAssumingSupported(realPath, subdirPath.resolve("link_to_actual_files"));
 
         IssuesRecorder recorder = enableWarnings(project, createTool(new CheckStyle(), false));
-        recorder.addQualityGate(6, QualityGateType.TOTAL, QualityGateResult.FAILURE);
+        recorder.setQualityGates(List.of(
+                new WarningsQualityGate(6, QualityGateType.TOTAL, QualityGateCriticality.FAILURE)));
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.FAILURE);
 
@@ -202,13 +206,16 @@ class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
         createSymbolicLinkAssumingSupported(realPath, subdirPath.resolve("link_to_actual_files"));
 
         IssuesRecorder recorder = enableWarnings(project, createTool(new CheckStyle(), true));
-        recorder.addQualityGate(6, QualityGateType.TOTAL, QualityGateResult.FAILURE);
+        recorder.setQualityGates(List.of(
+                new WarningsQualityGate(6, QualityGateType.TOTAL, QualityGateCriticality.FAILURE)));
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(0);
         assertThat(result).hasInfoMessages(
-                "-> PASSED - Total (any severity): 0 - Quality Gate: 6");
+                "-> All quality gates have been passed",
+                "-> Details for each quality gate:",
+                "   - [Total (any severity)]: ≪Success≫ - (Actual value: 0, Quality gate: 6.00)");
     }
 
     private AnalysisModelParser createTool(final AnalysisModelParser tool, final boolean skipSymbolicLinks) {

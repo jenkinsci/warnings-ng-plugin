@@ -43,7 +43,6 @@ import io.jenkins.plugins.analysis.core.portlets.PullRequestMonitoringPortlet;
 import io.jenkins.plugins.analysis.core.steps.PublishIssuesStep;
 import io.jenkins.plugins.analysis.core.steps.ScanForIssuesStep;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
-import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.FindBugs;
@@ -53,6 +52,7 @@ import io.jenkins.plugins.analysis.warnings.JcReport;
 import io.jenkins.plugins.analysis.warnings.Pmd;
 import io.jenkins.plugins.analysis.warnings.groovy.GroovyParser;
 import io.jenkins.plugins.analysis.warnings.groovy.ParserConfiguration;
+import io.jenkins.plugins.util.QualityGateStatus;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
@@ -68,9 +68,6 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String NO_QUALITY_GATE = "";
 
-    /**
-     * Runs a pipeline and verifies the {@code scanForIssues} step has some allowlisted methods.
-     */
     @Test
     void shouldParseCheckstyleUsingTheParserRegistry() {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("checkstyle1.xml", "checkstyle2.xml");
@@ -153,6 +150,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     private void configureRecorder(final WorkflowJob job, final String fileName) {
         job.setDefinition(new CpsFlowDefinition("node {\n"
                 + "  stage ('Integration Test') {\n"
+                + "         discoverReferenceBuild()\n"
                 + "         def reports = recordIssues tool: checkStyle(pattern: '**/" + fileName
                 + "*'), qualityGates: [[threshold: 4, type: 'TOTAL', unstable: true]]\n"
                 + "         echo '[reportsSize=' + reports.size() + ']' \n"
@@ -160,7 +158,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
                 + "         echo '[totalSize=' + result.getTotals().getTotalSize() + ']' \n"
                 + "         echo '[newSize=' + result.getTotals().getNewSize() + ']' \n"
                 + "         echo '[fixedSize=' + result.getTotals().getFixedSize() + ']' \n"
-                + "         echo '[qualityGate=' + result.getQualityGateStatus() + ']' \n"
+                + "         echo '[qualityGate=' + result.getQualityGateResult() + ']' \n"
                 + "         echo '[id=' + result.getId() + ']' \n"
                 + "         result.getIssues().each { issue ->\n"
                 + "             echo issue.toString()\n"
@@ -194,8 +192,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
 
         job.setDefinition(new CpsFlowDefinition("node {\n"
                 + "  stage ('Integration Test') {\n"
-                + "         recordIssues forensicsDisabled: true, skipBlames: true, tool: checkStyle(pattern: '**/"
-                + "checkstyle1" + "*')\n"
+                + "         recordIssues skipBlames: true, tool: checkStyle(pattern: '**/checkstyle1" + "*')\n"
                 + "  }\n"
                 + "}", true));
         Run<?, ?> baseline = buildSuccessfully(job);
@@ -268,13 +265,14 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         String qualityGateParameter = String.format("qualityGates: [%s]", qualityGate);
         job.setDefinition(new CpsFlowDefinition("node {\n"
                 + "  stage ('Integration Test') {\n"
+                + "         discoverReferenceBuild()\n"
                 + "         def issues = scanForIssues tool: checkStyle(pattern: '**/" + fileName + "*')\n"
                 + "         def action = publishIssues issues:[issues], " + qualityGateParameter + "\n"
                 + "         echo '[id=' + action.getId() + ']' \n"
                 + "         echo '[name=' + action.getDisplayName() + ']' \n"
                 + "         echo '[isSuccessful=' + action.isSuccessful() + ']' \n"
                 + "         def result = action.getResult()\n"
-                + "         def status = result.getQualityGateStatus()\n"
+                + "         def status = result.getQualityGateResult()\n"
                 + "         echo '[status=' + status + ']' \n"
                 + "         echo '[isSuccessfulQualityGate=' + status.isSuccessful() + ']' \n"
                 + "         def totals = result.getTotals()\n"
@@ -571,56 +569,6 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
                 "recordIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8'), failOnError: true"));
 
         scheduleBuildAndAssertStatus(job, Result.FAILURE);
-    }
-
-    /** Runs the JavaDoc parser and enforces quality gates. */
-    @Test
-    @org.junitpioneer.jupiter.Issue("JENKINS-58253")
-    void shouldSupportDeprecatedAttributesInRecord() {
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("javadoc.txt");
-
-        job.setDefinition(asStage(
-                "recordIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8'), "
-                        + "unstableTotalAll: 6"));
-        buildWithResult(job, Result.UNSTABLE);
-
-        job.setDefinition(asStage(
-                "recordIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8'), "
-                        + "failedTotalAll: 6"));
-        buildWithResult(job, Result.FAILURE);
-
-        job.setDefinition(asStage(
-                "recordIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8'), "
-                        + "unstableTotalNormal: 6"));
-        buildWithResult(job, Result.UNSTABLE);
-
-        job.setDefinition(asStage(
-                "recordIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8'), "
-                        + "failedTotalNormal: 6"));
-        buildWithResult(job, Result.FAILURE);
-    }
-
-    /** Runs the JavaDoc parser and enforces quality gates. */
-    @Test
-    @org.junitpioneer.jupiter.Issue("JENKINS-58253")
-    void shouldSupportDeprecatedAttributesInPublish() {
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("javadoc.txt");
-
-        job.setDefinition(asStage(createScanForIssuesStep(new JavaDoc(), "java"),
-                "publishIssues issues:[java], unstableTotalAll: 6"));
-        buildWithResult(job, Result.UNSTABLE);
-
-        job.setDefinition(asStage(createScanForIssuesStep(new JavaDoc(), "java"),
-                "publishIssues issues:[java], failedTotalAll: 6"));
-        buildWithResult(job, Result.FAILURE);
-
-        job.setDefinition(asStage(createScanForIssuesStep(new JavaDoc(), "java"),
-                "publishIssues issues:[java], unstableTotalNormal: 6"));
-        buildWithResult(job, Result.UNSTABLE);
-
-        job.setDefinition(asStage(createScanForIssuesStep(new JavaDoc(), "java"),
-                "publishIssues issues:[java], failedTotalNormal: 6"));
-        buildWithResult(job, Result.FAILURE);
     }
 
     /**
@@ -1063,27 +1011,6 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Creates a reference job with a build, then builds the job, referring to a non-existing build in the reference
-     * job.
-     */
-    @Test
-    void shouldHandleMissingJobBuildIdAsReference() {
-        WorkflowJob reference = createPipeline("reference");
-        reference.setDefinition(createPipelineScriptWithScanAndPublishSteps(new Java()));
-
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("java-start.txt");
-        job.setDefinition(asStage(createScanForIssuesStep(new Java()),
-                "publishIssues issues:[issues], referenceJobName:'reference', referenceBuildId: '1'"));
-
-        AnalysisResult result = scheduleSuccessfulBuild(job);
-
-        assertThat(result.getReferenceBuild()).isEmpty();
-        assertThat(result).hasNewSize(0).hasTotalSize(2);
-        assertThat(result.getErrorMessages()).contains(
-                "Reference job 'reference' does not contain configured build '1'");
-    }
-
-    /**
      * Verifies that when publishIssues marks the build as unstable it also marks the step with WarningAction so that
      * visualizations can display the step as unstable rather than just the whole build.
      *
@@ -1101,7 +1028,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(publishIssuesNode).isNotNull();
         WarningAction warningAction = publishIssuesNode.getPersistentAction(WarningAction.class);
         assertThat(warningAction).isNotNull();
-        assertThat(warningAction.getMessage()).isEqualTo(
+        assertThat(warningAction.getMessage()).endsWith(
                 "Some quality gates have been missed: overall result is UNSTABLE");
     }
 
@@ -1123,7 +1050,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(publishIssuesNode).isNotNull();
         WarningAction warningAction = publishIssuesNode.getPersistentAction(WarningAction.class);
         assertThat(warningAction).isNotNull();
-        assertThat(warningAction.getMessage()).isEqualTo(
+        assertThat(warningAction.getMessage()).endsWith(
                 "Some quality gates have been missed: overall result is UNSTABLE");
     }
 

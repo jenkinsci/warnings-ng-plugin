@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.warnings;
 
 import javax.inject.Inject;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -22,7 +23,7 @@ import org.jenkinsci.test.acceptance.po.Slave;
 
 import io.jenkins.plugins.analysis.warnings.AnalysisResult.Tab;
 import io.jenkins.plugins.analysis.warnings.AnalysisSummary.QualityGateResult;
-import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateBuildResult;
+import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateCriticality;
 import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateType;
 
 import static io.jenkins.plugins.analysis.warnings.Assertions.*;
@@ -69,14 +70,15 @@ public class WarningsPluginUiTest extends UiTest {
     private DockerContainerHolder<JavaGitContainer> dockerContainer;
 
     /**
-     * Verifies that static analysise results are correctly shown when the job is part of a folder.
+     * Verifies that static analysis results are correctly shown when the job is part of a folder.
      */
     @Test
     public void shouldRunInFolder() {
         Folder folder = jenkins.jobs.create(Folder.class, "singleSummary");
+
         FreeStyleJob job = folder.getJobs().create(FreeStyleJob.class);
-        ScrollerUtil.hideScrollerTabBar(driver);
         job.copyResource(WARNINGS_PLUGIN_PREFIX + "build_status_test/build_01");
+        job.addPublisher(ReferenceFinder.class);
 
         addAllRecorders(job);
         job.save();
@@ -102,8 +104,8 @@ public class WarningsPluginUiTest extends UiTest {
         FreeStyleJob job = createFreeStyleJob("build_status_test/build_01");
         IssuesRecorder recorder = addAllRecorders(job);
         recorder.setEnabledForAggregation(true);
-        recorder.addQualityGateConfiguration(4, QualityGateType.TOTAL, QualityGateBuildResult.UNSTABLE);
-        recorder.addQualityGateConfiguration(3, QualityGateType.NEW, QualityGateBuildResult.FAILED);
+        recorder.addQualityGateConfiguration(4, QualityGateType.TOTAL, QualityGateCriticality.UNSTABLE);
+        recorder.addQualityGateConfiguration(3, QualityGateType.NEW, QualityGateCriticality.FAILURE);
         recorder.setIgnoreQualityGate(true);
 
         job.save();
@@ -114,7 +116,7 @@ public class WarningsPluginUiTest extends UiTest {
         AnalysisSummary referenceSummary = new AnalysisSummary(referenceBuild, ANALYSIS_ID);
         assertThat(referenceSummary)
                 .hasTitleText("Static Analysis: 4 warnings (from 4 analyses)")
-                .hasTools(FINDBUGS_TOOL, CPD_TOOL, CHECKSTYLE_TOOL, PMD_TOOL)
+                .hasTools("FindBugs (0)", "CPD (0)", "CheckStyle (1)", "PMD (3)")
                 .hasNewSize(0)
                 .hasFixedSize(0)
                 .hasReferenceBuild(0)
@@ -129,7 +131,7 @@ public class WarningsPluginUiTest extends UiTest {
         AnalysisSummary analysisSummary = new AnalysisSummary(build, ANALYSIS_ID);
         assertThat(analysisSummary)
                 .hasTitleText("Static Analysis: 25 warnings (from 4 analyses)")
-                .hasTools(FINDBUGS_TOOL, CPD_TOOL, CHECKSTYLE_TOOL, PMD_TOOL)
+                .hasTools("FindBugs (0)", "CPD (20)", "CheckStyle (3)", "PMD (2)")
                 .hasNewSize(23)
                 .hasFixedSize(2)
                 .hasReferenceBuild(1)
@@ -180,7 +182,7 @@ public class WarningsPluginUiTest extends UiTest {
         IssuesRecorder recorder = job.addPublisher(IssuesRecorder.class);
         recorder.setToolWithPattern(MAVEN_TOOL, "");
         recorder.setEnabledForFailure(true);
-
+        recorder.addIssueFilter("Include types", ".*:.*");
         job.save();
 
         Build build = buildJob(job).shouldSucceed();
@@ -193,29 +195,22 @@ public class WarningsPluginUiTest extends UiTest {
 
         AnalysisSummary summary = new AnalysisSummary(build, MAVEN_ID);
         assertThat(summary)
-                .hasTitleText("Maven: 5 warnings")
+                .hasTitleText("Maven: 3 warnings")
                 .hasNewSize(0)
                 .hasFixedSize(0)
                 .hasReferenceBuild(0);
 
         AnalysisResult mavenDetails = summary.openOverallResult();
-        assertThat(mavenDetails).hasActiveTab(Tab.MODULES)
-                .hasTotal(4)
-                .hasOnlyAvailableTabs(Tab.MODULES, Tab.TYPES, Tab.ISSUES);
+        assertThat(mavenDetails).hasActiveTab(Tab.TYPES)
+                .hasTotal(3)
+                .hasOnlyAvailableTabs(Tab.TYPES, Tab.ISSUES);
 
         IssuesTable issuesTable = mavenDetails.openIssuesTable();
 
         IssuesTableRow firstRow = issuesTable.getRow(0);
         ConsoleLogView sourceView = firstRow.openConsoleLog();
-        assertThat(sourceView).hasTitle("Console Details")
-                .hasHighlightedText("[WARNING]\n"
-                        + "[WARNING] Some problems were encountered while building the effective model for edu.hm.hafner.irrelevant.groupId:random-artifactId:jar:1.0\n"
-                        + "[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-compiler-plugin is missing. @ line 13, column 15\n"
-                        + "[WARNING]\n"
-                        + "[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.\n"
-                        + "[WARNING]\n"
-                        + "[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.\n"
-                        + "[WARNING]");
+        assertThat(sourceView).hasTitle("Console Output (lines 23-43)")
+                .hasHighlightedText("[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!");
     }
 
     /**
@@ -225,6 +220,7 @@ public class WarningsPluginUiTest extends UiTest {
     @WithDocker
     @WithPlugins("ssh-slaves")
     @WithCredentials(credentialType = WithCredentials.SSH_USERNAME_PRIVATE_KEY, values = {CREDENTIALS_ID, CREDENTIALS_KEY})
+    @Ignore("Ignore docker based tests right now")
     public void shouldParseWarningsOnAgent() {
         DumbSlave dockerAgent = createDockerAgent();
         FreeStyleJob job = createFreeStyleJobForDockerAgent(dockerAgent, "issue_filter/checkstyle-result.xml");

@@ -5,7 +5,8 @@ import org.junit.Test;
 import org.jenkinsci.test.acceptance.junit.WithPlugins;
 import org.jenkinsci.test.acceptance.po.WorkflowJob;
 
-import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateBuildResult;
+import io.jenkins.plugins.analysis.warnings.IssuesRecorder.ChecksAnnotationScope;
+import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateCriticality;
 import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateType;
 
 import static io.jenkins.plugins.analysis.warnings.Assertions.*;
@@ -29,7 +30,7 @@ public class SnippetGeneratorUiTest extends UiTest {
 
         String script = snippetGenerator.generateScript();
 
-        assertThat(script).isEqualTo("recordIssues(tools: [java()])");
+        assertThat(script).isEqualTo("recordIssues sourceCodeRetention: 'LAST_BUILD', tools: [java()]");
     }
 
     /**
@@ -44,14 +45,13 @@ public class SnippetGeneratorUiTest extends UiTest {
                 .setSkipBlames(false)
                 .setSkipPostProcessing(false)
                 .setEnabledForFailure(false)
-                .setIgnoreFailedBuilds(true)
                 .setIgnoreQualityGate(false)
                 .setSourceCodeEncoding("")
                 .setTool(JAVA_COMPILER);
 
         String script = snippetGenerator.generateScript();
 
-        assertThat(script).isEqualTo("recordIssues(tools: [java()])");
+        assertThat(script).isEqualTo("recordIssues sourceCodeRetention: 'LAST_BUILD', tools: [java()]");
     }
 
     /**
@@ -67,7 +67,6 @@ public class SnippetGeneratorUiTest extends UiTest {
                 .setSkipBlames(true)
                 .setSkipPostProcessing(true)
                 .setEnabledForFailure(true)
-                .setIgnoreFailedBuilds(false)
                 .setIgnoreQualityGate(true)
                 .setSourceCodeEncoding("otherText")
                 .setToolWithPattern(JAVA_COMPILER, "firstText");
@@ -79,7 +78,6 @@ public class SnippetGeneratorUiTest extends UiTest {
         assertThat(script).contains("skipBlames: true");
         assertThat(script).contains("skipPostProcessing: true");
         assertThat(script).contains("enabledForFailure: true");
-        assertThat(script).contains("ignoreFailedBuilds: false");
         assertThat(script).contains("ignoreQualityGate: true");
         assertThat(script).contains("quiet: true");
 
@@ -102,7 +100,7 @@ public class SnippetGeneratorUiTest extends UiTest {
 
         String script = snippetGenerator.generateScript();
 
-        assertThat(script).isEqualTo("recordIssues healthy: 1, tools: [java()], unhealthy: 9");
+        assertThat(script).isEqualTo("recordIssues healthy: 1, sourceCodeRetention: 'LAST_BUILD', tools: [java()], unhealthy: 9");
     }
 
     /**
@@ -118,11 +116,11 @@ public class SnippetGeneratorUiTest extends UiTest {
                 .setSkipPostProcessing(true)
                 .setEnabledForFailure(true)
                 .setHealthReport(1, 9, "HIGH")
-                .setIgnoreFailedBuilds(false)
                 .setIgnoreQualityGate(true)
                 .setSourceCodeEncoding("otherText")
+                .setChecksAnnotationScope(ChecksAnnotationScope.ALL)
                 .addIssueFilter("Exclude types", "*toExclude*")
-                .addQualityGateConfiguration(1, QualityGateType.NEW, QualityGateBuildResult.FAILED)
+                .addQualityGateConfiguration(1, QualityGateType.NEW, QualityGateCriticality.PIPELINE_FAILURE)
                 .setToolWithPattern(JAVA_COMPILER, "firstText");
 
         String script = snippetGenerator.generateScript();
@@ -133,12 +131,12 @@ public class SnippetGeneratorUiTest extends UiTest {
         assertThat(script).contains("skipPostProcessing: true");
         assertThat(script).contains("enabledForFailure: true");
         assertThat(script).contains("filters: [excludeType('*toExclude*')]");
-        assertThat(script).contains("ignoreFailedBuilds: false");
         assertThat(script).contains("ignoreQualityGate: true");
-        assertThat(script).contains("qualityGates: [[threshold: 1, type: 'NEW', unstable: false]]");
+        assertThat(script).contains("qualityGates: [[criticality: 'FAILURE', integerThreshold: 1, threshold: 1.0, type: 'NEW']]");
 
         assertThat(script).contains("pattern: 'firstText'");
         assertThat(script).contains("sourceCodeEncoding: 'otherText'");
+        assertThat(script).contains("checksAnnotationScope: 'ALL'");
 
         assertThat(script).contains("healthy: 1");
         assertThat(script).contains("unhealthy: 9");

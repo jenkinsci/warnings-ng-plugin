@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Optional;
 
+import org.jenkinsci.plugins.workflow.graph.FlowNode;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.SynchronousNonBlockingStepExecution;
 import hudson.FilePath;
@@ -12,6 +13,7 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 
+import io.jenkins.plugins.util.PipelineResultHandler;
 import io.jenkins.plugins.util.ValidationUtilities;
 
 /**
@@ -54,7 +56,7 @@ abstract class AnalysisExecution<T> extends SynchronousNonBlockingStepExecution<
      *
      * @return the channel
      * @throws IOException
-     *         if the computer could be be resolved
+     *         if the computer could be resolved
      * @throws InterruptedException
      *         if the user canceled the run
      */
@@ -73,7 +75,7 @@ abstract class AnalysisExecution<T> extends SynchronousNonBlockingStepExecution<
      *
      * @return the build folder
      * @throws IOException
-     *         if the build folder could be be resolved
+     *         if the build folder could be resolved
      * @throws InterruptedException
      *         if the user canceled the run
      */
@@ -122,7 +124,7 @@ abstract class AnalysisExecution<T> extends SynchronousNonBlockingStepExecution<
 
     /**
      * Returns the default charset for the specified encoding string. If the default encoding is empty or {@code null},
-     * or if the charset is not valid then the default encoding of the platform is returned.
+     * or if the charset is not valid, then the default encoding of the platform is returned.
      *
      * @param charset
      *         identifier of the character set
@@ -133,4 +135,7 @@ abstract class AnalysisExecution<T> extends SynchronousNonBlockingStepExecution<
         return new ValidationUtilities().getCharset(charset);
     }
 
+    protected PipelineResultHandler createResultHandler() throws IOException, InterruptedException {
+        return new PipelineResultHandler(getRun(), getContext().get(FlowNode.class));
+    }
 }

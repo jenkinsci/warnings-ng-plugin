@@ -11,14 +11,9 @@ import edu.hm.hafner.util.Generated;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 
-import j2html.tags.ContainerTag;
-import j2html.tags.DomContent;
-
 import org.jvnet.localizer.Localizable;
 import hudson.model.Job;
 import hudson.model.Run;
-
-import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 
 import static j2html.TagCreator.*;
 
@@ -183,18 +178,6 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      * @return the name of the side panel link
      */
     public String getLinkName() {
-        return getRawLinkName();
-    }
-
-    /**
-     * Returns the name of the link to the results.
-     *
-     * @return the name of the side panel link
-     * @deprecated use {@link #getLinkName()}
-     */
-    @Deprecated
-    @Generated
-    public String getRawLinkName() {
         if (StringUtils.isNotBlank(name)) {
             return Messages.Tool_Link_Name(name);
         }
@@ -226,114 +209,6 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      */
     public String getLargeIconUrl() {
         return ANALYSIS_SVG_ICON;
-    }
-
-    /**
-     * Returns the title for the small information box in the corresponding build page.
-     *
-     * @param result
-     *         the result
-     * @param hasErrors
-     *         indicates if an error has been reported
-     *
-     * @return the title div
-     * @deprecated rendering of the summary is now done on the client side with the new model {@link SummaryModel}
-     */
-    @Deprecated
-    public ContainerTag getTitle(final AnalysisResult result, final boolean hasErrors) {
-        return emptyElementForDeprecatedMethod();
-    }
-
-    /**
-     * Returns the HTML label for the link to the new issues of the build.
-     *
-     * @param newSize
-     *         the number of new issues
-     *
-     * @return the legend of the trend chart
-     * @deprecated rendering of the summary is now done on the client side with the new model {@link SummaryModel}
-     */
-    @Deprecated
-    public ContainerTag getNewIssuesLabel(final int newSize) {
-        return emptyElementForDeprecatedMethod();
-    }
-
-    /**
-     * Returns the HTML label for the link to the fixed issues of the build.
-     *
-     * @param fixedSize
-     *         the number of fixed issues
-     *
-     * @return the legend of the trend chart
-     * @deprecated rendering of the summary is now done on the client side with the new model {@link SummaryModel}
-     */
-    @Deprecated
-    public ContainerTag getFixedIssuesLabel(final int fixedSize) {
-        return emptyElementForDeprecatedMethod();
-    }
-
-    /**
-     * Returns the HTML text showing the number of builds since the project has no issues.
-     *
-     * @param currentBuild
-     *         the current build number
-     * @param noIssuesSinceBuild
-     *         the build since there are no issues
-     *
-     * @return the legend of the trend chart
-     * @deprecated rendering of the summary is now done on the client side with the new model {@link SummaryModel}
-     */
-    @Deprecated
-    public DomContent getNoIssuesSinceLabel(final int currentBuild, final int noIssuesSinceBuild) {
-        return emptyElementForDeprecatedMethod();
-    }
-
-    private ContainerTag emptyElementForDeprecatedMethod() {
-        return div();
-    }
-
-    /**
-     * Returns the HTML text showing the result of the quality gate.
-     *
-     * @param qualityGateStatus
-     *         the status of the quality gate
-     *
-     * @return the legend of the trend chart
-     * @deprecated rendering of the summary is now done on the client side with the new model {@link SummaryModel}
-     */
-    @Deprecated
-    public DomContent getQualityGateResult(final QualityGateStatus qualityGateStatus) {
-        return emptyElementForDeprecatedMethod();
-    }
-
-    /**
-     * Returns the HTML text showing the result of the quality gate.
-     *
-     * @param qualityGateStatus
-     *         the status of the quality gate
-     * @param hasResetLink
-     *         determines whether the reset reference link is shown
-     *
-     * @return the legend of the trend chart
-     * @deprecated rendering of the summary is now done on the client side with the new model {@link SummaryModel}
-     */
-    @Deprecated
-    public DomContent getQualityGateResult(final QualityGateStatus qualityGateStatus, final boolean hasResetLink) {
-        return emptyElementForDeprecatedMethod();
-    }
-
-    /**
-     * Returns the HTML text showing a link to the reference build.
-     *
-     * @param referenceBuild
-     *         the reference build
-     *
-     * @return the legend of the trend chart
-     * @deprecated rendering of the summary is now done on the client side with the new model {@link SummaryModel}
-     */
-    @Deprecated
-    public DomContent getReferenceBuild(final Run<?, ?> referenceBuild) {
-        return emptyElementForDeprecatedMethod();
     }
 
     /**
@@ -440,7 +315,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
 
         @Override
         public String apply(final Integer referenceBuild) {
-            if (referenceBuild >= currentBuildNumber) {
+            if (referenceBuild >= currentBuildNumber || referenceBuild <= 0) {
                 return "1"; // fallback
             }
             var referenceBuildId = String.valueOf(referenceBuild);

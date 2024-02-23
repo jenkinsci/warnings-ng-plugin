@@ -21,13 +21,12 @@ import j2html.tags.DomContent;
 
 import hudson.model.Run;
 import hudson.model.TaskListener;
+import hudson.util.ListBoxModel;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.model.Messages;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.util.IssuesStatistics;
-import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.checks.api.ChecksAnnotation;
 import io.jenkins.plugins.checks.api.ChecksAnnotation.ChecksAnnotationBuilder;
 import io.jenkins.plugins.checks.api.ChecksAnnotation.ChecksAnnotationLevel;
@@ -40,6 +39,7 @@ import io.jenkins.plugins.checks.api.ChecksPublisherFactory;
 import io.jenkins.plugins.checks.api.ChecksStatus;
 import io.jenkins.plugins.checks.steps.ChecksInfo;
 import io.jenkins.plugins.util.JenkinsFacade;
+import io.jenkins.plugins.util.QualityGateStatus;
 
 import static j2html.TagCreator.*;
 
@@ -50,9 +50,27 @@ import static j2html.TagCreator.*;
  */
 @SuppressWarnings("PMD.ExcessiveImports")
 class WarningChecksPublisher {
-    enum AnnotationScope {
-        PUBLISH_ALL_ISSUES,
-        PUBLISH_NEW_ISSUES
+    /**
+     * Defines the scope of SCM checks annotations.
+     */
+    public enum ChecksAnnotationScope {
+        /** All issues, i.e., new and outstanding. */
+        ALL,
+        /** Only new issues. */
+        NEW,
+        /** Only issues in modified code. */
+        MODIFIED,
+        /** No annotations will be created. */
+        SKIP;
+
+        static ListBoxModel fillItems() {
+            ListBoxModel items = new ListBoxModel();
+            items.add(Messages.ChecksAnnotationScope_ALL(), ChecksAnnotationScope.ALL.name());
+            items.add(Messages.ChecksAnnotationScope_NEW(), ChecksAnnotationScope.NEW.name());
+            items.add(Messages.ChecksAnnotationScope_MODIFIED(), ChecksAnnotationScope.MODIFIED.name());
+            items.add(Messages.ChecksAnnotationScope_SKIP(), ChecksAnnotationScope.SKIP.name());
+            return items;
+        }
     }
 
     // fallback name for issue type / category.
@@ -77,13 +95,13 @@ class WarningChecksPublisher {
      * @param annotationScope
      *         scope of the annotations to publish
      */
-    void publishChecks(final AnnotationScope annotationScope) {
+    void publishChecks(final ChecksAnnotationScope annotationScope) {
         ChecksPublisher publisher = ChecksPublisherFactory.fromRun(action.getOwner(), listener);
         publisher.publish(extractChecksDetails(annotationScope));
     }
 
     @VisibleForTesting
-    ChecksDetails extractChecksDetails(final AnnotationScope annotationScope) {
+    ChecksDetails extractChecksDetails(final ChecksAnnotationScope annotationScope) {
         AnalysisResult result = action.getResult();
         IssuesStatistics totals = result.getTotals();
 
@@ -94,19 +112,31 @@ class WarningChecksPublisher {
                 .orElse(labelProvider.getName());
 
         String summary = extractChecksSummary(totals) + "\n" + extractReferenceBuild(result);
-        Report issues = annotationScope == AnnotationScope.PUBLISH_NEW_ISSUES ? result.getNewIssues() : result.getIssues();
         return new ChecksDetailsBuilder()
                 .withName(checksName)
                 .withStatus(ChecksStatus.COMPLETED)
-                .withConclusion(extractChecksConclusion(result.getQualityGateStatus()))
+                .withConclusion(extractChecksConclusion(result.getQualityGateResult().getOverallStatus()))
                 .withOutput(new ChecksOutputBuilder()
                         .withTitle(extractChecksTitle(totals))
                         .withSummary(summary)
                         .withText(extractChecksText(totals))
-                        .withAnnotations(extractChecksAnnotations(issues, labelProvider))
+                        .withAnnotations(extractChecksAnnotations(filterIssuesForAnnotations(annotationScope, result), labelProvider))
                         .build())
                 .withDetailsURL(action.getAbsoluteUrl())
                 .build();
+    }
+
+    private Report filterIssuesForAnnotations(final ChecksAnnotationScope annotationScope, final AnalysisResult result) {
+        if (annotationScope == ChecksAnnotationScope.SKIP) {
+            return new Report();
+        }
+        if (annotationScope == ChecksAnnotationScope.MODIFIED) {
+            return result.getIssues().filter(Issue::isPartOfModifiedCode);
+        }
+        if (annotationScope == ChecksAnnotationScope.NEW) {
+            return result.getNewIssues();
+        }
+        return result.getIssues();
     }
 
     private String extractReferenceBuild(final AnalysisResult result) {
@@ -205,7 +235,9 @@ class WarningChecksPublisher {
             case PASSED:
                 return ChecksConclusion.SUCCESS;
             case FAILED:
+            case ERROR:
             case WARNING:
+            case NOTE:
                 return ChecksConclusion.FAILURE;
             default:
                 throw new IllegalArgumentException("Unsupported quality gate status: " + status);

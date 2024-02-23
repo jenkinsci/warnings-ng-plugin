@@ -32,7 +32,7 @@ class JobActionTest {
     void shouldUseLabelProvider() {
         StaticAnalysisLabelProvider labelProvider = mock(StaticAnalysisLabelProvider.class);
         when(labelProvider.getLinkName()).thenReturn(LINK_NAME);
-        when(labelProvider.getRawLinkName()).thenReturn(LINK_NAME);
+        when(labelProvider.getLinkName()).thenReturn(LINK_NAME);
         when(labelProvider.getTrendName()).thenReturn(TREND_NAME);
         when(labelProvider.getId()).thenReturn(ID);
 

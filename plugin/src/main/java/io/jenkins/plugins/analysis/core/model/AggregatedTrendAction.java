@@ -31,7 +31,6 @@ import io.jenkins.plugins.echarts.AsyncConfigurableTrendChart;
  */
 public class AggregatedTrendAction implements Action, AsyncConfigurableTrendChart {
     private static final int MIN_TOOLS = 2;
-    private static final String EMPTY = "{}";
 
     private final Job<?, ?> owner;
 
@@ -74,17 +73,6 @@ public class AggregatedTrendAction implements Action, AsyncConfigurableTrendChar
                     .map(id -> new AnalysisHistory(lastFinishedRun, new ByIdResultSelector(id)))
                     .collect(Collectors.toSet());
         }
-    }
-
-    /**
-     * Returns the trend chart model that renders the aggregated build results.
-     *
-     * @return the trend chart
-     * @deprecated replaced {@link #getConfigurableBuildTrendModel(String)}
-     */
-    @Deprecated
-    public String getBuildTrendModel() {
-        return getConfigurableBuildTrendModel(EMPTY);
     }
 
     /**
@@ -157,7 +145,7 @@ public class AggregatedTrendAction implements Action, AsyncConfigurableTrendChar
 
         @Override
         public BuildResult<AnalysisBuildResult> next() {
-            if (!latestAction.isPresent()) {
+            if (latestAction.isEmpty()) {
                 throw new NoSuchElementException("No more build results available");
             }
             Run<?, ?> run = latestAction.get();
@@ -167,11 +155,7 @@ public class AggregatedTrendAction implements Action, AsyncConfigurableTrendChar
                     .stream()
                     .map(ResultAction::getResult)
                     .collect(Collectors.toSet());
-            CompositeBuildResult compositeBuildResult = new CompositeBuildResult();
-            for (AnalysisResult result : results) {
-                compositeBuildResult.add(result);
-            }
-            return new BuildResult<>(new JenkinsBuild(run), compositeBuildResult);
+            return new BuildResult<>(new JenkinsBuild(run), new CompositeBuildResult(results));
         }
     }
 }

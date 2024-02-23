@@ -8,6 +8,7 @@ import edu.hm.hafner.echarts.BuildResult;
 import edu.hm.hafner.util.VisibleForTesting;
 
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
+import io.jenkins.plugins.analysis.core.util.IssuesStatisticsBuilder;
 
 import static org.mockito.Mockito.*;
 
@@ -33,6 +34,15 @@ public final class BuildResultStubs {
         when(buildResult.getTotalSizeOf(Severity.WARNING_NORMAL)).thenReturn(normal);
         when(buildResult.getTotalSizeOf(Severity.WARNING_LOW)).thenReturn(low);
         when(buildResult.getTotalSize()).thenReturn(low + normal + high + errors);
+
+        var statistics = new IssuesStatisticsBuilder();
+        statistics.setTotalErrorSize(errors);
+        statistics.setTotalHighSize(high);
+        statistics.setTotalNormalSize(normal);
+        statistics.setTotalLowSize(low);
+
+        when(buildResult.getTotals()).thenReturn(statistics.build());
+
         return buildResult;
     }
 
@@ -59,6 +69,14 @@ public final class BuildResultStubs {
         when(buildResult.getNewSizeOf(Severity.WARNING_LOW)).thenReturn(low);
         when(buildResult.getNewSize()).thenReturn(low + normal + high + errors);
 
+        var statistics = new IssuesStatisticsBuilder();
+        statistics.setNewErrorSize(errors);
+        statistics.setNewHighSize(high);
+        statistics.setNewNormalSize(normal);
+        statistics.setNewLowSize(low);
+
+        when(buildResult.getTotals()).thenReturn(statistics.build());
+
         return buildResult;
     }
 
@@ -75,19 +93,20 @@ public final class BuildResultStubs {
         when(buildResult.getFixedSize()).thenReturn(fixedSize);
         when(buildResult.getNewSize()).thenReturn(newSize);
 
+        var statistics = new IssuesStatisticsBuilder();
+        statistics.setFixedSize(fixedSize);
+        statistics.setNewNormalSize(newSize);
+
+        when(buildResult.getTotals()).thenReturn(statistics.build());
+
         return buildResult;
-    }
-
-    static BuildResult<AnalysisBuildResult> createResult(final int buildNumber, final String toolId, final int total) {
-        AnalysisBuildResult buildResult = createAnalysisBuildResult(toolId, total);
-
-        return createBuildResult(buildNumber, buildResult);
     }
 
     static AnalysisBuildResult createAnalysisBuildResult(final String toolId, final int total) {
         AnalysisBuildResult buildResult = mock(AnalysisBuildResult.class);
 
         when(buildResult.getSizePerOrigin()).thenReturn(Maps.mutable.of(toolId, total));
+        when(buildResult.getTotals()).thenReturn(new IssuesStatisticsBuilder().build());
 
         return buildResult;
     }

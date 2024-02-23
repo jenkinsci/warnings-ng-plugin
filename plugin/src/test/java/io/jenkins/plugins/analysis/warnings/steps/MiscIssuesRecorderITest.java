@@ -30,7 +30,6 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.portlets.PullRequestMonitoringPortlet;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
-import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.FindBugs;
@@ -38,6 +37,8 @@ import io.jenkins.plugins.analysis.warnings.Java;
 import io.jenkins.plugins.analysis.warnings.Pmd;
 import io.jenkins.plugins.analysis.warnings.RegisteredParser;
 import io.jenkins.plugins.analysis.warnings.tasks.OpenTasks;
+import io.jenkins.plugins.forensics.reference.SimpleReferenceRecorder;
+import io.jenkins.plugins.util.QualityGateStatus;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
@@ -59,7 +60,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test @org.junitpioneer.jupiter.Issue("JENKINS-55514")
     void shouldMapSeverityFilterForFindBugs() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("findbugs-severities.xml");
+        FreeStyleProject project = createFreestyleJob("findbugs-severities.xml");
 
         FindBugs findbugs = new FindBugs();
         findbugs.setUseRankAsPriority(true);
@@ -96,7 +97,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldCreateResultWithWarnings() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("eclipse.txt");
+        FreeStyleProject project = createFreestyleJob("eclipse.txt");
         enableEclipseWarnings(project);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
@@ -114,7 +115,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldScanForOpenTasks() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("eclipse.txt");
+        FreeStyleProject project = createFreestyleJob("eclipse.txt");
         OpenTasks tasks = new OpenTasks();
         tasks.setIncludePattern("**/*.txt");
         String tag = "WARNING";
@@ -138,7 +139,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldCreateResultWithDifferentNameAndId() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("eclipse.txt");
+        FreeStyleProject project = createFreestyleJob("eclipse.txt");
         ReportScanningTool configuration = configurePattern(new Eclipse());
         String id = "new-id";
         configuration.setId(id);
@@ -227,8 +228,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldHaveOriginsIfBuildContainsWarnings() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle.xml",
-                "pmd-warnings.xml");
+        FreeStyleProject project = createFreestyleJob("checkstyle.xml", "pmd-warnings.xml");
         enableWarnings(project,
                 recorder -> {
                     recorder.setAggregatingResults(true);
@@ -290,8 +290,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldUseSameToolTwice() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle.xml",
-                "checkstyle-twice.xml");
+        FreeStyleProject project = createFreestyleJob("checkstyle.xml", "checkstyle-twice.xml");
         ReportScanningTool first = createTool(new CheckStyle(), "**/checkstyle-issues.txt");
         ReportScanningTool second = createTool(new CheckStyle(), "**/checkstyle-twice-issues.txt");
         second.setId("second");
@@ -322,8 +321,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private Run<?, ?> runJobWithCheckStyleTwice(final boolean isAggregationEnabled, final Result result) {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle.xml",
-                "checkstyle-twice.xml");
+        FreeStyleProject project = createFreestyleJob("checkstyle.xml", "checkstyle-twice.xml");
         enableWarnings(project, recorder -> recorder.setAggregatingResults(isAggregationEnabled),
                 createTool(new CheckStyle(), "**/checkstyle-issues.txt"),
                 createTool(new CheckStyle(), "**/checkstyle-twice-issues.txt"));
@@ -338,8 +336,8 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldCreateFixedWarnings() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("eclipse_8_Warnings.txt",
-                "eclipse_5_Warnings.txt");
+        FreeStyleProject project = createFreestyleJob("eclipse_8_Warnings.txt", "eclipse_5_Warnings.txt");
+
         IssuesRecorder recorder = enableGenericWarnings(project, createEclipse("eclipse_8_Warnings-issues.txt"));
 
         // First build: baseline
@@ -371,6 +369,12 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         assertThatJson(successfulModel).node("new").node("error").isEqualTo(0);
 
         verifyNoNewWarningsPortletModel(portlet, 5, 3);
+    }
+
+    private FreeStyleProject createFreestyleJob(final String... strings) {
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(strings);
+        project.getPublishersList().add(new SimpleReferenceRecorder());
+        return project;
     }
 
     private void verifyNoNewWarningsPortletModel(final PullRequestMonitoringPortlet portlet,
@@ -405,8 +409,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldCreateNewWarnings() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("eclipse_5_Warnings.txt",
-                "eclipse_8_Warnings.txt");
+        FreeStyleProject project = createFreestyleJob("eclipse_5_Warnings.txt", "eclipse_8_Warnings.txt");
         IssuesRecorder recorder = enableWarnings(project, createEclipse("eclipse_5_Warnings-issues.txt"));
 
         // First build: baseline
@@ -442,7 +445,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldCreateNoFixedWarningsOrNewWarnings() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("eclipse_8_Warnings.txt");
+        FreeStyleProject project = createFreestyleJob("eclipse_8_Warnings.txt");
         ReportScanningTool eclipse = createEclipse("eclipse_8_Warnings-issues.txt");
         IssuesRecorder recorder = enableWarnings(project, eclipse);
 
@@ -481,8 +484,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldCreateSomeNewWarningsAndSomeFixedWarnings() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("eclipse_5_Warnings.txt",
-                "eclipse_4_Warnings.txt");
+        FreeStyleProject project = createFreestyleJob("eclipse_5_Warnings.txt", "eclipse_4_Warnings.txt");
         IssuesRecorder recorder = enableWarnings(project, createEclipse("eclipse_5_Warnings-issues.txt"));
 
         // First build: baseline
@@ -517,8 +519,8 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Verifies that the numbers of new, fixed and outstanding warnings are correctly computed, if the warnings are from
-     * the same file but have different properties (e.g. line number). Checks that the fallback-fingerprint is using
+     * Verifies that the numbers of new, fixed and outstanding warnings are correctly computed if the warnings are from
+     * the same file but have different properties (e.g., line number). Checks that the fallback-fingerprint is using
      * several properties of the issue if the source code has not been found.
      */
     // TODO: there should be also some tests that use the fingerprinting algorithm on existing source files
@@ -529,8 +531,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private void shouldFindNewCheckStyleWarnings(final Supplier<ReportScanningTool> tool) {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle1.xml",
-                "checkstyle2.xml");
+        FreeStyleProject project = createFreestyleJob("checkstyle1.xml", "checkstyle2.xml");
 
         buildWithResult(project, Result.SUCCESS); // dummy build to ensure that the first CheckStyle build starts at #2
 

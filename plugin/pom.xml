@@ -1,10 +1,11 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>6.17.0</version>
+    <version>7.2.0</version>
     <relativePath />
   </parent>
 
@@ -21,17 +22,15 @@
   <url>https://github.com/jenkinsci/warnings-ng-plugin</url>
 
   <properties>
-    <revision>10.8.0</revision>
+    <revision>11.0.0</revision>
     <changelist>-SNAPSHOT</changelist>
     <module.name>${project.groupId}.warnings.ng</module.name>
 
-    <analysis-model-api.version>11.14.0</analysis-model-api.version>
+    <analysis-model-api.version>12.1.0</analysis-model-api.version>
     <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
     <pull-request-monitoring.version>1.7.8</pull-request-monitoring.version>
 
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
-
-    <json.version>20231013</json.version>
 
     <!-- Test Library Dependencies Versions -->
     <xmlunit.version>2.9.1</xmlunit.version>
@@ -41,17 +40,20 @@
     <testcontainers.version>1.19.6</testcontainers.version>
 
     <!-- Jenkins Plug-in Dependencies Versions -->
-    <git-forensics.version>2.0.0</git-forensics.version>
+    <plugin-util-api.version>4.1.0</plugin-util-api.version>
+    <forensics-api.version>2.4.0</forensics-api.version>
+    <git-forensics.version>2.1.0</git-forensics.version>
+
     <jenkins-maven-plugin.version>3.22</jenkins-maven-plugin.version>
     <job-dsl.version>1.84</job-dsl.version>
     <flexible-publish.version>0.15.2</flexible-publish.version>
     <form-element-path.version>1.11</form-element-path.version>
 
     <!-- Maven Surefire ArgLine -->
-    <argLine>-Djava.awt.headless=true -Xmx1024m -Djenkins.test.timeout=1000 --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.util.concurrent=ALL-UNNAMED</argLine>
-
-    <prism-api.version>1.29.0-8</prism-api.version>
-
+    <argLine>-Djava.awt.headless=true -Xmx1024m -Djenkins.test.timeout=1000 --add-opens java.base/java.lang=ALL-UNNAMED
+      --add-opens java.base/java.io=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens
+      java.base/java.util.concurrent=ALL-UNNAMED
+    </argLine>
   </properties>
 
   <licenses>
@@ -86,6 +88,12 @@
       <groupId>net.minidev</groupId>
       <artifactId>json-smart</artifactId>
       <version>${json-smart.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.json</groupId>
+          <artifactId>json</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.jsoup</groupId>
@@ -102,6 +110,7 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>plugin-util-api</artifactId>
+      <version>${plugin-util-api.version}</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
@@ -126,7 +135,6 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>prism-api</artifactId>
-      <version>${prism-api.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
@@ -169,6 +177,11 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>forensics-api</artifactId>
+      <version>${forensics-api.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>json-api</artifactId>
     </dependency>
 
     <!-- AxivionSuite Dependencies -->
@@ -181,9 +194,8 @@
       <artifactId>apache-httpcomponents-client-4-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.google.code.gson</groupId>
-      <artifactId>gson</artifactId>
-      <version>2.10.1</version>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>gson-api</artifactId>
     </dependency>
 
     <!-- Optional Jenkins Plug-in Dependencies -->
@@ -283,12 +295,6 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.json</groupId>
-      <artifactId>json</artifactId>
-      <version>${json.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.jenkins-ci.main</groupId>
       <artifactId>jenkins-test-harness-tools</artifactId>
       <version>2.2</version>
@@ -314,6 +320,7 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>plugin-util-api</artifactId>
+      <version>${plugin-util-api.version}</version>
       <scope>test</scope>
       <classifier>tests</classifier>
       <exclusions>
@@ -369,6 +376,12 @@
       <artifactId>parasoft-findings</artifactId>
       <version>10.7.1</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>warnings-ng</artifactId>
+          <groupId>io.jenkins.plugins</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
@@ -605,20 +618,20 @@
         </plugins>
       </build>
     </profile>
-      <profile>
-        <id>fast</id>
-        <properties>
-          <skipTests>true</skipTests>
-          <skipITs>true</skipITs>
-        </properties>
-      </profile>
+    <profile>
+      <id>fast</id>
+      <properties>
+        <skipTests>true</skipTests>
+        <skipITs>true</skipITs>
+      </properties>
+    </profile>
   </profiles>
 
   <scm>
     <connection>scm:git:https://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
     <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
     <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
-    <tag>v10.5.3</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <repositories>

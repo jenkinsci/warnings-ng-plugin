@@ -35,7 +35,7 @@ public class PropertyStatistics {
      * @param property
      *         the property to show the details for
      * @param propertyFormatter
-     *         the formatter that show the property
+     *         the formatter that shows the property
      */
     PropertyStatistics(final Report report, final Report newIssues,
             final String property, final Function<String, String> propertyFormatter) {
@@ -57,9 +57,9 @@ public class PropertyStatistics {
     }
 
     /**
-     * Returns the amount of issues introduced since the last build.
+     * Returns the number of issues introduced since the last build.
      *
-     * @return the amount of new issues
+     * @return the number of new issues
      */
     public int getTotalNewIssues() {
         return totalNewIssues;
@@ -151,7 +151,7 @@ public class PropertyStatistics {
      * @param key
      *         the property instance
      *
-     * @return the number of high severity issues
+     * @return the number of high-severity issues
      */
     public long getErrorsCount(final String key) {
         return getReportFor(key).getSizeOf(Severity.ERROR);
@@ -163,7 +163,7 @@ public class PropertyStatistics {
      * @param key
      *         the property instance
      *
-     * @return the number of high severity issues
+     * @return the number of high-severity issues
      */
     public long getHighCount(final String key) {
         return getReportFor(key).getSizeOf(Severity.WARNING_HIGH);
@@ -175,7 +175,7 @@ public class PropertyStatistics {
      * @param key
      *         the property instance
      *
-     * @return the number of normal severity issues
+     * @return the number of normal-severity issues
      */
     public long getNormalCount(final String key) {
         return getReportFor(key).getSizeOf(Severity.WARNING_NORMAL);
@@ -187,7 +187,7 @@ public class PropertyStatistics {
      * @param key
      *         the property instance
      *
-     * @return the number of low severity issues
+     * @return the number of low-severity issues
      */
     public long getLowCount(final String key) {
         return getReportFor(key).getSizeOf(Severity.WARNING_LOW);

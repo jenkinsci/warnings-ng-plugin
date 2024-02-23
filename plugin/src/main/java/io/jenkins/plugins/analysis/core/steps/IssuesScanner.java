@@ -37,9 +37,7 @@ import jenkins.MasterToSlaveFileCallable;
 
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.ReportLocations;
-import io.jenkins.plugins.analysis.core.model.SourceDirectory;
 import io.jenkins.plugins.analysis.core.model.Tool;
-import io.jenkins.plugins.analysis.core.model.WarningsPluginConfiguration;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 import io.jenkins.plugins.analysis.core.util.FileFinder;
@@ -52,6 +50,7 @@ import io.jenkins.plugins.forensics.miner.MinerService;
 import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
 import io.jenkins.plugins.prism.PermittedSourceCodeDirectory;
 import io.jenkins.plugins.prism.PrismConfiguration;
+import io.jenkins.plugins.prism.SourceCodeRetention;
 import io.jenkins.plugins.prism.SourceDirectoryFilter;
 import io.jenkins.plugins.util.LogHandler;
 
@@ -66,6 +65,7 @@ import static io.jenkins.plugins.analysis.core.util.AffectedFilesResolver.*;
 class IssuesScanner {
     private final FilePath workspace;
     private final Set<String> sourceDirectories;
+    private final SourceCodeRetention sourceCodeRetention;
     private final Run<?, ?> run;
     private final FilePath jenkinsRootDir;
     private final Charset sourceCodeEncoding;
@@ -87,7 +87,8 @@ class IssuesScanner {
 
     @SuppressWarnings("checkstyle:ParameterNumber")
     IssuesScanner(final Tool tool, final List<RegexpFilter> filters, final Charset sourceCodeEncoding,
-            final FilePath workspace, final Set<String> sourceDirectories, final Run<?, ?> run,
+            final FilePath workspace, final Set<String> sourceDirectories,
+            final SourceCodeRetention sourceCodeRetention, final Run<?, ?> run,
             final FilePath jenkinsRootDir, final TaskListener listener,
             final String scm, final BlameMode blameMode, final PostProcessingMode postProcessingMode,
             final boolean quiet) {
@@ -96,6 +97,7 @@ class IssuesScanner {
         this.tool = tool;
         this.workspace = workspace;
         this.sourceDirectories = sourceDirectories;
+        this.sourceCodeRetention = sourceCodeRetention;
         this.run = run;
         this.jenkinsRootDir = jenkinsRootDir;
         this.listener = listener;
@@ -151,19 +153,11 @@ class IssuesScanner {
     }
 
     private Set<String> getPermittedSourceDirectories() {
-        Set<String> permittedSourceDirectories = PrismConfiguration.getInstance()
+        return PrismConfiguration.getInstance()
                 .getSourceDirectories()
                 .stream()
                 .map(PermittedSourceCodeDirectory::getPath)
                 .collect(Collectors.toSet());
-        List<String> permittedSourceCodeDirectoriesOfWarningsPlugin
-                = WarningsPluginConfiguration.getInstance()
-                .getSourceDirectories()
-                .stream()
-                .map(SourceDirectory::getPath)
-                .collect(Collectors.toList());
-        permittedSourceDirectories.addAll(permittedSourceCodeDirectoriesOfWarningsPlugin);
-        return permittedSourceDirectories;
     }
 
     private Blamer createBlamer(final Report report) {
@@ -187,12 +181,18 @@ class IssuesScanner {
 
     private void copyAffectedFiles(final Report report, final FilePath buildFolder)
             throws InterruptedException {
-        report.logInfo("Copying affected files to Jenkins' build folder '%s'", buildFolder);
+        var log = new FilteredLog("Errors while processing affected files");
+        if (sourceCodeRetention != SourceCodeRetention.NEVER) {
+            report.logInfo("Copying affected files to Jenkins' build folder '%s'", buildFolder);
 
-        Set<String> permittedSourceDirectories = getPermittedSourceDirectories();
-        permittedSourceDirectories.add(workspace.getRemote());
-        new AffectedFilesResolver().copyAffectedFilesToBuildFolder(
-                report, workspace, permittedSourceDirectories, buildFolder);
+            Set<String> permittedSourceDirectories = getPermittedSourceDirectories();
+            permittedSourceDirectories.add(workspace.getRemote());
+            new AffectedFilesResolver().copyAffectedFilesToBuildFolder(
+                    report, workspace, permittedSourceDirectories, buildFolder);
+        }
+        sourceCodeRetention.cleanup(run, AFFECTED_FILES_FOLDER_NAME, log);
+
+        report.mergeLogMessages(log);
     }
 
     private FilePath createAffectedFilesFolder(final Report report) throws InterruptedException {

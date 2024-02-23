@@ -29,6 +29,7 @@ import hudson.model.ModelObject;
 import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.charts.HealthTrendChart;
+import io.jenkins.plugins.analysis.core.charts.ModifiedCodePieChart;
 import io.jenkins.plugins.analysis.core.charts.NewVersusFixedPieChart;
 import io.jenkins.plugins.analysis.core.charts.NewVersusFixedTrendChart;
 import io.jenkins.plugins.analysis.core.charts.SeverityPieChart;
@@ -320,18 +321,14 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
     }
 
     /**
-     * Returns the UI model for an ECharts line chart that shows the issues stacked by severity.
-     *
-     * @param isBuildOnXAxis
-     *         determines whether the Jenkins build number should be used on the X-axis or the date
+     * Returns the UI model for an ECharts doughnut chart that shows the issues in modified code.
      *
      * @return the UI model as JSON
-     * @deprecated replaced by {@link #getBuildTrend(String)}
      */
-    @Deprecated
-    @SuppressWarnings("unused")
-    public String getBuildTrend(final boolean isBuildOnXAxis) {
-        return createTrendAsJson(new SeverityTrendChart(), DEFAULT_CONFIGURATION);
+    @JavaScriptMethod
+    @SuppressWarnings("unused") // Called by jelly view
+    public String getModifiedModel() {
+        return JACKSON_FACADE.toJson(new ModifiedCodePieChart().create(report));
     }
 
     /**
@@ -351,21 +348,6 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
     /**
      * Returns the UI model for an ECharts line chart that shows the issues by tool.
      *
-     * @param isBuildOnXAxis
-     *         determines whether the Jenkins build number should be used on the X-axis or the date
-     *
-     * @return the UI model as JSON
-     * @deprecated replaced by {@link #getToolsTrend(String)}
-     */
-    @Deprecated
-    @SuppressWarnings("unused")
-    public String getToolsTrend(final boolean isBuildOnXAxis) {
-        return createTrendAsJson(new ToolsTrendChart(), DEFAULT_CONFIGURATION);
-    }
-
-    /**
-     * Returns the UI model for an ECharts line chart that shows the issues by tool.
-     *
      * @param configuration
      *         determines whether the Jenkins build number should be used on the X-axis or the date
      *
@@ -380,21 +362,6 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
     /**
      * Returns the UI model for an ECharts line chart that shows the new and fixed issues.
      *
-     * @param isBuildOnXAxis
-     *         determines whether the Jenkins build number should be used on the X-axis or the date
-     *
-     * @return the UI model as JSON
-     * @deprecated replaced by {@link #getNewVersusFixedTrend(String)}
-     */
-    @Deprecated
-    @SuppressWarnings("unused")
-    public String getNewVersusFixedTrend(final boolean isBuildOnXAxis) {
-        return createTrendAsJson(new NewVersusFixedTrendChart(), DEFAULT_CONFIGURATION);
-    }
-
-    /**
-     * Returns the UI model for an ECharts line chart that shows the new and fixed issues.
-     *
      * @param configuration
      *         determines whether the Jenkins build number should be used on the X-axis or the date
      *
@@ -404,21 +371,6 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
     @SuppressWarnings("unused") // Called by jelly view
     public String getNewVersusFixedTrend(final String configuration) {
         return createTrendAsJson(new NewVersusFixedTrendChart(), configuration);
-    }
-
-    /**
-     * Returns the UI model for an ECharts line chart that shows the issues by tool.
-     *
-     * @param isBuildOnXAxis
-     *         determines whether the Jenkins build number should be used on the X-axis or the date
-     *
-     * @return the UI model as JSON
-     * @deprecated replaced by {@link #getHealthTrend(String)}
-     */
-    @Deprecated
-    @SuppressWarnings("unused")
-    public String getHealthTrend(final boolean isBuildOnXAxis) {
-        return createTrendAsJson(new HealthTrendChart(healthDescriptor), DEFAULT_CONFIGURATION);
     }
 
     /**
@@ -456,6 +408,15 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
     }
 
     /**
+     * Returns whether there are any issues in the associated static analysis run that are part of modified code.
+     *
+     * @return {@code true} if there are issues in modified code, {@code false} otherwise
+     */
+    public boolean hasIssuesInModifiedCode() {
+        return result.getTotals().getTotalModifiedSize() > 0;
+    }
+
+    /**
      * Returns all issues of the associated static analysis run.
      *
      * @return all issues
@@ -466,7 +427,7 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
     }
 
     /**
-     * Returns all new issues of the associated static analysis run. I.e. all issues, that are part of the current
+     * Returns all new issues of the associated static analysis run. I.e., all issues that are part of the current
      * report but have not been shown up in the previous report.
      *
      * @return all new issues
@@ -477,7 +438,7 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
     }
 
     /**
-     * Returns all fixed issues of the associated static analysis run. I.e. all issues, that are part of the previous
+     * Returns all fixed issues of the associated static analysis run. I.e., all issues that are part of the previous
      * report but are not present in the current report anymore.
      *
      * @return all fixed issues
@@ -488,7 +449,7 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
     }
 
     /**
-     * Returns all outstanding issues of the associated static analysis run. I.e. all issues, that are part of the
+     * Returns all outstanding issues of the associated static analysis run. I.e., all issues that are part of the
      * current and previous report.
      *
      * @return all outstanding issues

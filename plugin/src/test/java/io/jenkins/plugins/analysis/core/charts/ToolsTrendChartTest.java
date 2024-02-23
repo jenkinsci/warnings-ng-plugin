@@ -35,10 +35,10 @@ class ToolsTrendChartTest {
         ToolsTrendChart chart = new ToolsTrendChart();
 
         List<BuildResult<AnalysisBuildResult>> compositeResults = new ArrayList<>();
-        compositeResults.add(new BuildResult<>(new Build(1), new CompositeBuildResult()
-                .add(createAnalysisBuildResult(CHECK_STYLE, 1), createAnalysisBuildResult(SPOT_BUGS, 3))));
-        compositeResults.add(new BuildResult<>(new Build(2), new CompositeBuildResult()
-                .add(createAnalysisBuildResult(CHECK_STYLE, 2), createAnalysisBuildResult(SPOT_BUGS, 4))));
+        compositeResults.add(new BuildResult<>(new Build(1), new CompositeBuildResult(List.of(
+                createAnalysisBuildResult(CHECK_STYLE, 1), createAnalysisBuildResult(SPOT_BUGS, 3)))));
+        compositeResults.add(new BuildResult<>(new Build(2), new CompositeBuildResult(List.of(
+                createAnalysisBuildResult(CHECK_STYLE, 2), createAnalysisBuildResult(SPOT_BUGS, 4)))));
 
         LinesChartModel model = chart.create(compositeResults, new ChartModelConfiguration());
 
@@ -89,7 +89,6 @@ class ToolsTrendChartTest {
 
         boolean modelHasDuplicateColors = hasDuplicates(lineColors);
         assertThat(modelHasDuplicateColors).isTrue();
-
     }
 
     private boolean hasDuplicates(final List<String> list) {

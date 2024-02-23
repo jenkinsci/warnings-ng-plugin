@@ -23,7 +23,7 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
  */
 class NewVersusFixedTrendChartTest {
     @Test
-    void shouldCreateALinesChartModel() {
+    void shouldCreateLinesChartModel() {
         NewVersusFixedTrendChart chart = new NewVersusFixedTrendChart();
 
         List<BuildResult<AnalysisBuildResult>> results = new ArrayList<>();

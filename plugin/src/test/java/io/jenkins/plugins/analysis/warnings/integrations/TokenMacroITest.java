@@ -93,6 +93,7 @@ class TokenMacroITest extends IntegrationTestWithJenkinsPerTest {
     private void configureToken(final WorkflowJob job, final String fileName) {
         job.setDefinition(new CpsFlowDefinition("node {\n"
                 + "  stage ('Integration Test') {\n"
+                + "         discoverReferenceBuild()\n"
                 + "         recordIssues tool: checkStyle(pattern: '**/" + fileName + "*')\n"
                 + "         def total = tm('${ANALYSIS_ISSUES_COUNT}')\n"
                 + "         def checkstyle = tm('${ANALYSIS_ISSUES_COUNT, tool=\"checkstyle\"}')\n"

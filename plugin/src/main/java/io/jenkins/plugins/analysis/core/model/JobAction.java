@@ -44,21 +44,6 @@ public class JobAction implements Action, AsyncConfigurableTrendChart {
      *         the job that owns this action
      * @param labelProvider
      *         the label provider
-     *
-     * @deprecated use {@link #JobAction(Job, StaticAnalysisLabelProvider, int)}
-     */
-    @Deprecated
-    public JobAction(final Job<?, ?> owner, final StaticAnalysisLabelProvider labelProvider) {
-        this(owner, labelProvider, 1);
-    }
-
-    /**
-     * Creates a new instance of {@link JobAction}.
-     *
-     * @param owner
-     *         the job that owns this action
-     * @param labelProvider
-     *         the label provider
      * @param numberOfTools
      *         the number of tools that have results to show
      */
@@ -179,17 +164,6 @@ public class JobAction implements Action, AsyncConfigurableTrendChart {
      */
     public Optional<ResultAction> getLatestAction() {
         return createBuildHistory().getBaselineAction();
-    }
-
-    /**
-     * Returns the trend chart model that renders the aggregated build results.
-     *
-     * @return the trend chart
-     * @deprecated replaced {@link #getConfigurableBuildTrendModel(String)}
-     */
-    @Deprecated
-    public String getBuildTrendModel() {
-        return getConfigurableBuildTrendModel("{}");
     }
 
     /**

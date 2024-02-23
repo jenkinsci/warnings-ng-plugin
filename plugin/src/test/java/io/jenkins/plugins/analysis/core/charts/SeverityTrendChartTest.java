@@ -32,12 +32,14 @@ class SeverityTrendChartTest {
         SeverityTrendChart chart = new SeverityTrendChart();
 
         List<BuildResult<AnalysisBuildResult>> compositeResults = new ArrayList<>();
-        compositeResults.add(new BuildResult<>(new Build(2), new CompositeBuildResult().add(
-                createAnalysisBuildResult(0, 2, 4, 6),
-                createAnalysisBuildResult(0, 12, 14, 16))));
-        compositeResults.add(new BuildResult<>(new Build(1), new CompositeBuildResult().add(
+        var first = createAnalysisBuildResult(0, 2, 4, 6);
+        var second = createAnalysisBuildResult(0, 12, 14, 16);
+        compositeResults.add(new BuildResult<>(new Build(2), new CompositeBuildResult(List.of(
+                first,
+                second))));
+        compositeResults.add(new BuildResult<>(new Build(1), new CompositeBuildResult(List.of(
                 createAnalysisBuildResult(3, 1, 2, 3),
-                createAnalysisBuildResult(1, 11, 12, 13))));
+                createAnalysisBuildResult(1, 11, 12, 13)))));
 
         LinesChartModel model = chart.create(compositeResults, new ChartModelConfiguration());
 
@@ -162,5 +164,4 @@ class SeverityTrendChartTest {
             assertThatJson(series).node("data").isArray().hasSize(values.length).contains(value);
         }
     }
-
 }

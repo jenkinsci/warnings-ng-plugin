@@ -33,16 +33,21 @@ class ModelValidationTest {
         ModelValidation model = new ModelValidation();
         ListBoxModel allFilters = model.getAllSeverityFilters();
 
-        assertThat(allFilters.size()).isEqualTo(3);
+        assertThat(allFilters.size()).isEqualTo(Severity.getPredefinedValues().size());
 
-        Option actualHighOption = allFilters.get(0);
-        Option actualNormalOption = allFilters.get(1);
-        Option actualLowOption = allFilters.get(2);
+        Option actualErrorOption = allFilters.get(0);
+        assertThat(actualErrorOption.value).isEqualTo(Severity.ERROR.getName());
+        assertThat(actualErrorOption.name).isEqualTo(Messages.SeverityFilter_Error());
 
+        Option actualHighOption = allFilters.get(1);
         assertThat(actualHighOption.value).isEqualTo(Severity.WARNING_HIGH.getName());
         assertThat(actualHighOption.name).isEqualTo(Messages.SeverityFilter_High());
+
+        Option actualNormalOption = allFilters.get(2);
         assertThat(actualNormalOption.value).isEqualTo(Severity.WARNING_NORMAL.getName());
         assertThat(actualNormalOption.name).isEqualTo(Messages.SeverityFilter_Normal());
+
+        Option actualLowOption = allFilters.get(3);
         assertThat(actualLowOption.value).isEqualTo(Severity.WARNING_LOW.getName());
         assertThat(actualLowOption.name).isEqualTo(Messages.SeverityFilter_Low());
     }

@@ -13,11 +13,11 @@ import com.thoughtworks.xstream.mapper.Mapper;
 
 import edu.hm.hafner.analysis.DuplicationGroup;
 import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.LineRange;
-import edu.hm.hafner.analysis.LineRangeList;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.Ensure;
+import edu.hm.hafner.util.LineRange;
+import edu.hm.hafner.util.LineRangeList;
 import edu.hm.hafner.util.TreeString;
 
 import hudson.util.RobustCollectionConverter;
@@ -47,6 +47,8 @@ class ReportXmlStream extends AbstractXmlStream<Report> {
         xStream.registerConverter(new LineRangeListConverter(xStream));
         xStream.registerConverter(new SeverityConverter());
         xStream.alias("lineRange", LineRange.class);
+        xStream.alias("edu.hm.hafner.analysis.LineRangeList", LineRangeList.class);
+        xStream.alias("edu.hm.hafner.analysis.LineRange", DuplicationGroup.class);
         xStream.alias("edu.hm.hafner.analysis.parser.dry.DuplicationGroup", DuplicationGroup.class);
         xStream.alias("treeString", TreeString.class);
         xStream.alias("issue", Issue.class);

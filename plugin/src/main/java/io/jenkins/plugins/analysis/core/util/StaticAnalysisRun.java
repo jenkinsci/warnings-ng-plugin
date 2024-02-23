@@ -7,6 +7,9 @@ import org.eclipse.collections.api.list.ImmutableList;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
 import hudson.model.Run;
 
+import io.jenkins.plugins.util.QualityGateResult;
+import io.jenkins.plugins.util.QualityGateStatus;
+
 /**
  * Provides detailed information for the results of a static analysis run.
  */
@@ -48,12 +51,19 @@ public interface StaticAnalysisRun extends AnalysisBuildResult {
     int getSuccessfulSinceBuild();
 
     /**
-     * Returns the {@link QualityGateStatus} of the {@link QualityGateEvaluator} evaluation of the static analysis run.
+     * Returns the {@link QualityGateStatus} of the quality gates evaluation of the static analysis run.
+     *
+     * @return the quality gate status
+     */
+    QualityGateStatus getQualityGateStatus();
+
+    /**
+     * Returns the {@link QualityGateResult} of the quality gates evaluation of the static analysis run.
      *
      * @return the quality gate status
      */
     @Whitelisted
-    QualityGateStatus getQualityGateStatus();
+    QualityGateResult getQualityGateResult();
 
     /**
      * Returns the reference static analysis run that has been used to compute the new issues.

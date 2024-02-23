@@ -192,7 +192,7 @@ public abstract class DetailsTableModel extends TableModel {
          * @param issue
          *         the issue to show in the row
          * @param jenkinsFacade
-         *         Jenkins facade to replaced with a stub during unit tests
+         *         Jenkins facade to be replaced with a stub during unit tests
          */
         protected TableRow(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
                 final DescriptionProvider descriptionProvider, final Issue issue,
@@ -210,8 +210,8 @@ public abstract class DetailsTableModel extends TableModel {
         }
 
         /**
-         * Formats the text of the details column. The details column is not directly shown, it rather is a hidden
-         * element that is expanded if the corresponding button is selected. The actual text value is stored in the
+         * Formats the text of the details' column. The details' column is not directly shown, it rather is a hidden
+         * element expanded if the corresponding button is selected. The actual text value is stored in the
          * {@code data-description} attribute.
          *
          * @param issue

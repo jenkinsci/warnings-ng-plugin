@@ -18,7 +18,8 @@ import edu.hm.hafner.echarts.Build;
 import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.model.SummaryModel.LabelProviderFactoryFacade;
-import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
+import io.jenkins.plugins.util.QualityGateResult;
+import io.jenkins.plugins.util.QualityGateStatus;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -173,7 +174,9 @@ class SummaryModelTest {
                 Lists.immutable.of(ERROR_MESSAGE), 0);
 
         QualityGateStatus qualityGateStatus = QualityGateStatus.FAILED;
-        when(analysisResult.getQualityGateStatus()).thenReturn(qualityGateStatus);
+        var result = mock(QualityGateResult.class);
+        when(result.getOverallStatus()).thenReturn(qualityGateStatus);
+        when(analysisResult.getQualityGateResult()).thenReturn(result);
 
         SummaryModel summary = createSummary(analysisResult);
 
@@ -223,7 +226,9 @@ class SummaryModelTest {
         when(analysisRun.getFixedSize()).thenReturn(fixedSize);
         when(analysisRun.getErrorMessages()).thenReturn(errorMessages);
         when(analysisRun.getNoIssuesSinceBuild()).thenReturn(numberOfIssuesSinceBuild);
-        when(analysisRun.getQualityGateStatus()).thenReturn(QualityGateStatus.INACTIVE);
+        var qualityGateResult = mock(QualityGateResult.class);
+        when(qualityGateResult.getOverallStatus()).thenReturn(QualityGateStatus.INACTIVE);
+        when(analysisRun.getQualityGateResult()).thenReturn(qualityGateResult);
         when(analysisRun.getIssues()).thenReturn(createReport(sizesPerOrigin.keySet()));
         Run<?, ?> build = mock(Run.class);
         when(build.getNumber()).thenReturn(2);

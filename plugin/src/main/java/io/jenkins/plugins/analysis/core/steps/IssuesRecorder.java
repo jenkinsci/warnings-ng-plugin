@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Severity;
+import edu.hm.hafner.util.FilteredLog;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -52,20 +53,19 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.IssuesScanner.BlameMode;
 import io.jenkins.plugins.analysis.core.steps.IssuesScanner.PostProcessingMode;
-import io.jenkins.plugins.analysis.core.steps.WarningChecksPublisher.AnnotationScope;
+import io.jenkins.plugins.analysis.core.steps.WarningChecksPublisher.ChecksAnnotationScope;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
-import io.jenkins.plugins.analysis.core.util.QualityGate;
-import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
-import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
-import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
+import io.jenkins.plugins.analysis.core.util.WarningsQualityGate;
 import io.jenkins.plugins.checks.steps.ChecksInfo;
+import io.jenkins.plugins.forensics.delta.DeltaCalculatorFactory;
 import io.jenkins.plugins.prism.SourceCodeDirectory;
+import io.jenkins.plugins.prism.SourceCodeRetention;
 import io.jenkins.plugins.util.JenkinsFacade;
 import io.jenkins.plugins.util.LogHandler;
+import io.jenkins.plugins.util.ResultHandler;
 import io.jenkins.plugins.util.RunResultHandler;
-import io.jenkins.plugins.util.StageResultHandler;
 import io.jenkins.plugins.util.ValidationUtilities;
 
 /**
@@ -76,7 +76,7 @@ import io.jenkins.plugins.util.ValidationUtilities;
  * Additional features:
  * </p>
  * <ul>
- * <li>It provides a {@link QualityGateEvaluator} that is checked after each run. If the quality gate is not passed,
+ * <li>It evaluates the quality gates after each run. If the quality gate is not passed,
  * then the build will be set to {@link Result#UNSTABLE} or {@link Result#FAILURE}, depending on the configuration
  * properties.</li>
  * <li>It provides thresholds for the build health that could be adjusted in the configuration screen.
@@ -89,19 +89,16 @@ import io.jenkins.plugins.util.ValidationUtilities;
 @SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveClassLength", "PMD.ExcessiveImports", "PMD.TooManyFields", "PMD.DataClass", "PMD.GodClass", "PMD.CyclomaticComplexity", "ClassDataAbstractionCoupling", "ClassFanOutComplexity"})
 public class IssuesRecorder extends Recorder {
     private static final ValidationUtilities VALIDATION_UTILITIES = new ValidationUtilities();
-    static final String NO_REFERENCE_DEFINED = "-";
+
     static final String DEFAULT_ID = "analysis";
 
     private List<Tool> analysisTools = new ArrayList<>();
 
     private String sourceCodeEncoding = StringUtils.EMPTY;
-    private String sourceDirectory = StringUtils.EMPTY;
     private Set<SourceCodeDirectory> sourceDirectories = new HashSet<>(); // @since 9.11.0
+    private SourceCodeRetention sourceCodeRetention = SourceCodeRetention.EVERY_BUILD;
 
     private boolean ignoreQualityGate = false; // by default, a successful quality gate is mandatory;
-    private boolean ignoreFailedBuilds = true; // by default, failed builds are ignored;
-    private String referenceJobName;
-    private String referenceBuildId;
 
     private boolean failOnError = false;
 
@@ -117,16 +114,9 @@ public class IssuesRecorder extends Recorder {
     private boolean quiet = false;
 
     private boolean isBlameDisabled;
-    /**
-     * Not used anymore.
-     *
-     * @deprecated since 8.5.0
-     */
-    @Deprecated
-    private transient boolean isForensicsDisabled;
-
     private boolean skipPublishingChecks; // by default, checks will be published
-    private boolean publishAllIssues; // by default, only new issues will be published
+    private ChecksAnnotationScope checksAnnotationScope = ChecksAnnotationScope.NEW; // @since 11.0.0
+    private transient boolean publishAllIssues; // @deprecated: use checksAnnotationScope instead
 
     private boolean skipPostProcessing; // @since 10.6.0: by default, post-processing will be enabled
 
@@ -136,7 +126,7 @@ public class IssuesRecorder extends Recorder {
     private String id;
     private String name;
 
-    private List<QualityGate> qualityGates = new ArrayList<>();
+    private List<WarningsQualityGate> qualityGates = new ArrayList<>();
 
     private TrendChartType trendChartType = TrendChartType.AGGREGATION_TOOLS;
 
@@ -153,20 +143,14 @@ public class IssuesRecorder extends Recorder {
     }
 
     /**
-     * Called after de-serialization to retain backward compatibility or to populate new elements (that would be
+     * Called after deserialization to retain backward compatibility or to populate new elements (that would be
      * otherwise initialized to {@code null}).
      *
      * @return this
      */
     protected Object readResolve() {
-        if (sourceDirectory == null) {
-            sourceDirectory = StringUtils.EMPTY;
-        }
         if (sourceDirectories == null) {
             sourceDirectories = new HashSet<>();
-            if (StringUtils.isNotBlank(sourceDirectory)) {
-                sourceDirectories.add(new SourceCodeDirectory(sourceDirectory));
-            }
         }
         if (trendChartType == null) {
             trendChartType = TrendChartType.AGGREGATION_TOOLS;
@@ -179,6 +163,12 @@ public class IssuesRecorder extends Recorder {
         }
         if (scm == null) {
             scm = StringUtils.EMPTY;
+        }
+        if (sourceCodeRetention == null) {
+            sourceCodeRetention = SourceCodeRetention.EVERY_BUILD;
+        }
+        if (checksAnnotationScope == null) {
+            checksAnnotationScope = publishAllIssues ? ChecksAnnotationScope.ALL : ChecksAnnotationScope.NEW;
         }
         return this;
     }
@@ -207,26 +197,12 @@ public class IssuesRecorder extends Recorder {
      */
     @SuppressWarnings("unused") // used by Stapler view data binding
     @DataBoundSetter
-    public void setQualityGates(final List<QualityGate> qualityGates) {
+    public void setQualityGates(final List<WarningsQualityGate> qualityGates) {
         this.qualityGates = qualityGates;
     }
 
-    /**
-     * Appends the specified quality gates to the end of the list of quality gates.
-     *
-     * @param size
-     *         the minimum number of issues that fails the quality gate
-     * @param type
-     *         the type of the quality gate
-     * @param result
-     *         determines whether the quality gate is a warning or failure
-     */
-    public void addQualityGate(final int size, final QualityGateType type, final QualityGateResult result) {
-        qualityGates.add(new QualityGate(size, type, result));
-    }
-
     @SuppressWarnings("unused") // used by Stapler view data binding
-    public List<QualityGate> getQualityGates() {
+    public List<WarningsQualityGate> getQualityGates() {
         return qualityGates;
     }
 
@@ -352,24 +328,8 @@ public class IssuesRecorder extends Recorder {
         this.sourceCodeEncoding = sourceCodeEncoding;
     }
 
-    public String getSourceDirectory() {
-        return sourceDirectory;
-    }
-
     /**
-     * Sets the path to the directory that contains the source code. If not relative and thus not part of the workspace
-     * then this directory needs to be added in Jenkins global configuration to prevent accessing of forbidden resources.
-     *
-     * @param sourceDirectory
-     *         directory containing the source code
-     */
-    @DataBoundSetter
-    public void setSourceDirectory(final String sourceDirectory) {
-        this.sourceDirectory = sourceDirectory;
-    }
-
-    /**
-     * Sets the paths to the directories that contain the source code. If not relative and thus not part of the workspace
+     * Sets the paths to the directories that contain the source code. If not relative and thus not part of the workspace,
      * then these directories need to be added in Jenkins global configuration to prevent accessing of forbidden resources.
      *
      * @param sourceDirectories
@@ -382,6 +342,21 @@ public class IssuesRecorder extends Recorder {
 
     public List<SourceCodeDirectory> getSourceDirectories() {
         return new ArrayList<>(sourceDirectories);
+    }
+
+    /**
+     * Defines the retention strategy for source code files.
+     *
+     * @param sourceCodeRetention
+     *         the retention strategy for source code files
+     */
+    @DataBoundSetter
+    public void setSourceCodeRetention(final SourceCodeRetention sourceCodeRetention) {
+        this.sourceCodeRetention = sourceCodeRetention;
+    }
+
+    public SourceCodeRetention getSourceCodeRetention() {
+        return sourceCodeRetention;
     }
 
     /**
@@ -446,32 +421,6 @@ public class IssuesRecorder extends Recorder {
     }
 
     /**
-     * Not used anymore.
-     *
-     * @return {@code true} if SCM forensics should be disabled
-     * @deprecated Forensics will be automatically skipped if the Forensics recorder is not activated.
-     */
-    @SuppressWarnings("PMD.BooleanGetMethodName")
-    @Deprecated
-    public boolean getForensicsDisabled() {
-        return isForensicsDisabled;
-    }
-
-    /**
-     * Not used anymore.
-     *
-     * @param forensicsDisabled
-     *         not used
-     *
-     * @deprecated Forensics will be automatically skipped if the Forensics recorder is not activated.
-     */
-    @DataBoundSetter
-    @Deprecated
-    public void setForensicsDisabled(final boolean forensicsDisabled) {
-        isForensicsDisabled = forensicsDisabled;
-    }
-
-    /**
      * Returns whether publishing checks should be skipped.
      *
      * @return {@code true} if publishing checks should be skipped, {@code false} otherwise
@@ -486,6 +435,21 @@ public class IssuesRecorder extends Recorder {
     }
 
     /**
+     * Sets the scope of the annotations that should be published to SCM checks.
+     *
+     * @param checksAnnotationScope
+     *         the scope to use
+     */
+    @DataBoundSetter
+    public void setChecksAnnotationScope(final ChecksAnnotationScope checksAnnotationScope) {
+        this.checksAnnotationScope = checksAnnotationScope;
+    }
+
+    public ChecksAnnotationScope getChecksAnnotationScope() {
+        return checksAnnotationScope;
+    }
+
+    /**
      * Returns whether post-processing of the issues should be disabled.
      *
      * @return {@code true} if post-processing of the issues should be disabled.
@@ -497,21 +461,6 @@ public class IssuesRecorder extends Recorder {
     @DataBoundSetter
     public void setSkipPostProcessing(final boolean skipPostProcessing) {
         this.skipPostProcessing = skipPostProcessing;
-    }
-
-    /**
-     * Returns whether all issues should be published using the Checks API. If set to {@code false} only new issues will
-     * be published.
-     *
-     * @return {@code true} if all issues should be published, {@code false} if only new issues should be published
-     */
-    public boolean isPublishAllIssues() {
-        return publishAllIssues;
-    }
-
-    @DataBoundSetter
-    public void setPublishAllIssues(final boolean publishAllIssues) {
-        this.publishAllIssues = publishAllIssues;
     }
 
     /**
@@ -565,79 +514,6 @@ public class IssuesRecorder extends Recorder {
     @SuppressWarnings("PMD.BooleanGetMethodName")
     public boolean getIgnoreQualityGate() {
         return ignoreQualityGate;
-    }
-
-    /**
-     * If {@code true}, then only successful or unstable reference builds will be considered. This option is enabled by
-     * default, since analysis results might be inaccurate if the build failed. If {@code false}, every build that
-     * contains a static analysis result is considered, even if the build failed.
-     *
-     * @param ignoreFailedBuilds
-     *         if {@code true} then a stable build is used as reference
-     */
-    @DataBoundSetter
-    public void setIgnoreFailedBuilds(final boolean ignoreFailedBuilds) {
-        this.ignoreFailedBuilds = ignoreFailedBuilds;
-    }
-
-    @SuppressWarnings("PMD.BooleanGetMethodName")
-    public boolean getIgnoreFailedBuilds() {
-        return ignoreFailedBuilds;
-    }
-
-    /**
-     * Sets the reference job to get the results for the issue difference computation.
-     *
-     * @param referenceJobName
-     *         the name of reference job
-     */
-    @DataBoundSetter
-    public void setReferenceJobName(final String referenceJobName) {
-        if (NO_REFERENCE_DEFINED.equals(referenceJobName)) {
-            this.referenceJobName = StringUtils.EMPTY;
-        }
-        this.referenceJobName = referenceJobName;
-    }
-
-    /**
-     * Returns the reference job to get the results for the issue difference computation. If the job is not defined,
-     * then {@link #NO_REFERENCE_DEFINED} is returned.
-     *
-     * @return the name of reference job, or {@link #NO_REFERENCE_DEFINED} if undefined
-     */
-    public String getReferenceJobName() {
-        if (StringUtils.isBlank(referenceJobName)) {
-            return NO_REFERENCE_DEFINED;
-        }
-        return referenceJobName;
-    }
-
-    /**
-     * Sets the reference build id to get the results for the issue difference computatation.
-     *
-     * @param referenceBuildId
-     *         the build id of the reference job
-     */
-    public void setReferenceBuildId(final String referenceBuildId) {
-        if (NO_REFERENCE_DEFINED.equals(referenceBuildId)) {
-            this.referenceBuildId = StringUtils.EMPTY;
-        }
-        else {
-            this.referenceBuildId = referenceBuildId;
-        }
-    }
-
-    /**
-     * Returns the reference build id to get the results for the issue difference computation.  If the build id not
-     * defined, then {@link #NO_REFERENCE_DEFINED} is returned.
-     *
-     * @return the build id of the reference job, or {@link #NO_REFERENCE_DEFINED} if undefined.
-     */
-    public String getReferenceBuildId() {
-        if (StringUtils.isBlank(referenceBuildId)) {
-            return NO_REFERENCE_DEFINED;
-        }
-        return referenceBuildId;
     }
 
     public int getHealthy() {
@@ -738,26 +614,11 @@ public class IssuesRecorder extends Recorder {
         return true;
     }
 
-    /**
-     * Executes the build step. Used from {@link RecordIssuesStep} to provide a {@link StageResultHandler} that has
-     * Pipeline-specific behavior.
-     *
-     * @param run
-     *         the run of the pipeline or freestyle job
-     * @param workspace
-     *         workspace of the build
-     * @param listener
-     *         the logger
-     * @param statusHandler
-     *         reports the status for the build or for the stage
-     *
-     * @return the created results
-     */
     List<AnalysisResult> perform(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
-            final StageResultHandler statusHandler) throws InterruptedException, IOException {
+            final ResultHandler resultHandler) throws InterruptedException, IOException {
         Result overallResult = run.getResult();
         if (isEnabledForFailure || overallResult == null || overallResult.isBetterOrEqualTo(Result.UNSTABLE)) {
-            return record(run, workspace, listener, statusHandler);
+            return record(run, workspace, listener, resultHandler);
         }
         else {
             LogHandler logHandler = new LogHandler(listener, createLoggerPrefix());
@@ -772,7 +633,7 @@ public class IssuesRecorder extends Recorder {
     }
 
     private List<AnalysisResult> record(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
-            final StageResultHandler statusHandler) throws IOException, InterruptedException {
+            final ResultHandler resultHandler) throws IOException, InterruptedException {
         List<AnalysisResult> results = new ArrayList<>();
         if (isAggregatingResults && analysisTools.size() > 1) {
             AnnotatedReport totalIssues = new AnnotatedReport(StringUtils.defaultIfEmpty(id, DEFAULT_ID));
@@ -780,7 +641,7 @@ public class IssuesRecorder extends Recorder {
                 totalIssues.add(scanWithTool(run, workspace, listener, tool), tool.getActualId());
             }
             String toolName = StringUtils.defaultIfEmpty(getName(), Messages.Tool_Default_Name());
-            results.add(publishResult(run, listener, toolName, totalIssues, toolName, statusHandler));
+            results.add(publishResult(run, workspace, listener, toolName, totalIssues, toolName, resultHandler));
         }
         else {
             for (Tool tool : analysisTools) {
@@ -795,7 +656,7 @@ public class IssuesRecorder extends Recorder {
                             name, id);
                 }
                 results.add(
-                        publishResult(run, listener, tool.getActualName(), report, getReportName(tool), statusHandler));
+                        publishResult(run, workspace, listener, tool.getActualName(), report, getReportName(tool), resultHandler));
             }
         }
         return results;
@@ -822,7 +683,8 @@ public class IssuesRecorder extends Recorder {
     private AnnotatedReport scanWithTool(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
             final Tool tool) throws IOException, InterruptedException {
         IssuesScanner issuesScanner = new IssuesScanner(tool, getFilters(), getSourceCodeCharset(),
-                workspace, getSourceCodePaths(), run, new FilePath(run.getRootDir()), listener,
+                workspace, getSourceCodePaths(), getSourceCodeRetention(),
+                run, new FilePath(run.getRootDir()), listener,
                 scm, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED,
                 skipPostProcessing ? PostProcessingMode.DISABLED : PostProcessingMode.ENABLED, quiet);
 
@@ -842,11 +704,13 @@ public class IssuesRecorder extends Recorder {
     }
 
     /**
-     * Publishes the results as {@link Action} in the job using an {@link IssuesPublisher}. Afterwards, all affected
+     * Publishes the results as {@link Action} in the job using an {@link IssuesPublisher}. Afterward, all affected
      * files are copied to Jenkins' build folder so that they are available to show warnings in the UI.
      *
      * @param run
      *         the run
+     * @param workspace
+     *         the workspace
      * @param listener
      *         the listener
      * @param loggerName
@@ -855,33 +719,31 @@ public class IssuesRecorder extends Recorder {
      *         the analysis report to publish
      * @param reportName
      *         the name of the report (might be empty)
-     * @param statusHandler
+     * @param resultHandler
      *         the status handler to use
      *
      * @return the created results
      */
-    AnalysisResult publishResult(final Run<?, ?> run, final TaskListener listener, final String loggerName,
-            final AnnotatedReport annotatedReport, final String reportName, final StageResultHandler statusHandler) {
-        QualityGateEvaluator qualityGate = new QualityGateEvaluator();
-        qualityGate.addAll(qualityGates);
-        LogHandler logHandler = new LogHandler(listener, loggerName);
-
+    AnalysisResult publishResult(final Run<?, ?> run, final FilePath workspace, final TaskListener listener, final String loggerName,
+            final AnnotatedReport annotatedReport, final String reportName, final ResultHandler resultHandler) {
+        var logHandler = new LogHandler(listener, loggerName);
         logHandler.setQuiet(quiet);
 
         var report = annotatedReport.getReport();
         logHandler.logInfoMessages(report.getInfoMessages());
         logHandler.logErrorMessages(report.getErrorMessages());
 
-        IssuesPublisher publisher = new IssuesPublisher(run, annotatedReport,
-                new HealthDescriptor(healthy, unhealthy, minimumSeverity), qualityGate,
-                reportName, getReferenceJobName(), getReferenceBuildId(), ignoreQualityGate, ignoreFailedBuilds,
-                getSourceCodeCharset(), logHandler, statusHandler, failOnError);
+        var deltaCalculator = DeltaCalculatorFactory
+                .findDeltaCalculator(scm, run, workspace, listener, new FilteredLog());
+
+        IssuesPublisher publisher = new IssuesPublisher(run, annotatedReport, deltaCalculator,
+                new HealthDescriptor(healthy, unhealthy, minimumSeverity), qualityGates,
+                reportName, ignoreQualityGate, getSourceCodeCharset(), logHandler, resultHandler, failOnError);
         ResultAction action = publisher.attachAction(trendChartType);
 
         if (!skipPublishingChecks) {
             WarningChecksPublisher checksPublisher = new WarningChecksPublisher(action, listener, checksInfo);
-            checksPublisher.publishChecks(
-                    isPublishAllIssues() ? AnnotationScope.PUBLISH_ALL_ISSUES : AnnotationScope.PUBLISH_NEW_ISSUES);
+            checksPublisher.publishChecks(getChecksAnnotationScope());
         }
 
         return action.getResult();
@@ -949,6 +811,20 @@ public class IssuesRecorder extends Recorder {
                 return VALIDATION_UTILITIES.getAllCharsets();
             }
             return new ComboBoxModel();
+        }
+
+        /**
+         * Returns a model with all {@link SourceCodeRetention} strategies.
+         *
+         * @return a model with all {@link SourceCodeRetention} strategies.
+         */
+        @POST
+        @SuppressWarnings("unused") // used by Stapler view data binding
+        public ListBoxModel doFillSourceCodeRetentionItems() {
+            if (JENKINS.hasPermission(Jenkins.READ)) {
+                return SourceCodeRetention.fillItems();
+            }
+            return new ListBoxModel();
         }
 
         /**
@@ -1055,6 +931,20 @@ public class IssuesRecorder extends Recorder {
         public ListBoxModel doFillTrendChartTypeItems() {
             if (JENKINS.hasPermission(Jenkins.READ)) {
                 return model.getAllTrendChartTypes();
+            }
+            return new ListBoxModel();
+        }
+
+        /**
+         * Returns a model with all {@link ChecksAnnotationScope} scopes.
+         *
+         * @return a model with all {@link ChecksAnnotationScope} scopes.
+         */
+        @POST
+        @SuppressWarnings("unused") // used by Stapler view data binding
+        public ListBoxModel doFillChecksAnnotationScopeItems() {
+            if (JENKINS.hasPermission(Jenkins.READ)) {
+                return ChecksAnnotationScope.fillItems();
             }
             return new ListBoxModel();
         }

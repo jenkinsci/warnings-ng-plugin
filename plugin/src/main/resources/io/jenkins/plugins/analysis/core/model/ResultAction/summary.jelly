@@ -1,6 +1,6 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:t="/lib/hudson" xmlns:l="/lib/layout" xmlns:st="jelly:stapler"
-         xmlns:fa="/font-awesome">
+<j:jelly xmlns:j="jelly:core" xmlns:t="/lib/hudson" xmlns:st="jelly:stapler"
+         xmlns:fa="/font-awesome" xmlns:c="/controls">
 
   <st:once>
     <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
@@ -28,10 +28,12 @@
 
       <j:choose>
         <j:when test="${size(s.errors) > 0}">
-          <fa:image-button label="${%Open log messages}" name="triangle-exclamation" tooltip="${%icon.error.tooltip}" url="${it.id}/info" class="fa-image-button-warning"/>
+          <fa:image-button label="${%Open log messages}" name="triangle-exclamation" tooltip="${%icon.error.tooltip}"
+                           url="${it.id}/info" class="fa-image-button-warning"/>
         </j:when>
         <j:otherwise>
-          <fa:image-button label="${%Open error messages}" name="circle-info" tooltip="${%icon.info.tooltip}" url="${it.id}/info"/>
+          <fa:image-button label="${%Open error messages}" name="circle-info" tooltip="${%icon.info.tooltip}"
+                           url="${it.id}/info"/>
         </j:otherwise>
       </j:choose>
 
@@ -74,6 +76,25 @@
             <a href="${it.id}/new">${s.newSize}</a>
           </li>
         </j:if>
+        <j:if test="${s.modifiedSize != 0}">
+          <li>
+            <j:choose>
+              <j:when test="${s.modifiedNewSize != 0 and s.modifiedOutstandingSize != 0}">
+                ${%Issues in modified code}:
+                <a href="${it.id}/modified">${s.modifiedSize}</a>
+                (${%new}: ${s.modifiedNewSize}, ${%outstanding}: ${s.modifiedOutstandingSize})
+              </j:when>
+              <j:when test="${s.modifiedNewSize == 0}">
+                ${%Outstanding issues in modified code}:
+                <a href="${it.id}/modified">${s.modifiedSize}</a>
+              </j:when>
+              <j:otherwise>
+                ${%New issues in modified code}:
+                <a href="${it.id}/modified">${s.modifiedSize}</a>
+              </j:otherwise>
+            </j:choose>
+          </li>
+        </j:if>
         <j:if test="${s.referenceBuild.present}">
           <j:set var="r" value="${s.referenceBuild.get()}"/>
           <li>
@@ -82,18 +103,15 @@
           </li>
         </j:if>
         <j:if test="${s.qualityGateStatus.name() != 'INACTIVE'}">
-          <li>
-            ${%Quality gate}: ${s.qualityGateStatus.description}
-            <l:icon style="width: 16px; height: 16px; margin-left: 0; position: relative; top: -0.1rem;" alt="${s.qualityGateStatus.description}" class="${s.qualityGateStatus.iconClass} icon-sm"/>
-            <j:if test="${s.resetQualityGateVisible}">
-              <span class="yui-button">
-                <button id="${it.id}-reset-reference"
-                        style="padding: 0.3em 0.5em; min-width: 0.20em; min-height: 0.20em" type="button"
-                        title="Reset quality gate so that next build will use this build as a reference.">Reset
-                </button>
-              </span>
-            </j:if>
-          </li>
+          <c:qualityGate result="${it.qualityGateResult}"/>
+          <j:if test="${s.resetQualityGateVisible}">
+            <span class="yui-button">
+              <button id="${it.id}-reset-reference"
+                      style="padding: 0.3em 0.5em; min-width: 0.20em; min-height: 0.20em" type="button"
+                      title="Reset quality gate so that next build will use this build as a reference.">Reset
+              </button>
+            </span>
+          </j:if>
         </j:if>
       </ul>
     </span>

@@ -13,12 +13,12 @@ import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.IssuesDetail;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
-import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.warnings.Cpd;
 import io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner;
 import io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner.DryModel.DuplicationRow;
 import io.jenkins.plugins.datatables.TableColumn;
 import io.jenkins.plugins.datatables.TableModel;
+import io.jenkins.plugins.util.QualityGateStatus;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
@@ -40,7 +40,7 @@ class DryITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String CPD_REPORT = FOLDER + "cpd.xml";
 
     /**
-     * Verifies that the right amount of duplicate code warnings are detected.
+     * Verifies that the right number of duplicate code warnings is detected.
      */
     @Test
     void shouldHaveDuplicateCodeWarnings() {
@@ -61,7 +61,7 @@ class DryITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Verifies that the priority of the duplicate code warnings are changed corresponding to the defined thresholds for
+     * Verifies that the priority of the duplicate code warnings is changed corresponding to the defined thresholds for
      * cpd warnings.
      */
     @Test
@@ -115,7 +115,7 @@ class DryITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Verifies that the priority of the duplicate code warnings are changed corresponding to the defined thresholds for
+     * Verifies that the priority of the duplicate code warnings is changed corresponding to the defined thresholds for
      * cpd warnings.
      */
     @Test
@@ -179,7 +179,7 @@ class DryITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private TableModel getDryTableModel(final Run<?, ?> build) {
-        IssuesDetail issuesDetail = (IssuesDetail) build.getAction(ResultAction.class).getTarget();
+        IssuesDetail issuesDetail = build.getAction(ResultAction.class).getTarget();
         return issuesDetail.getTableModel("issues");
     }
 

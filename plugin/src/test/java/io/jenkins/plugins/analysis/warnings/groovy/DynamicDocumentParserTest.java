@@ -1,11 +1,11 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
-import edu.hm.hafner.analysis.AbstractParserTest;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.analysis.assertions.Assertions;
 import edu.hm.hafner.analysis.assertions.SoftAssertions;
+import edu.hm.hafner.analysis.registry.AbstractParserTest;
 
 /**
  * Tests the class {@link DynamicDocumentParser}. Creates a new Eclipse parser in Groovy. All Eclipse test cases are
@@ -15,12 +15,12 @@ import edu.hm.hafner.analysis.assertions.SoftAssertions;
  */
 class DynamicDocumentParserTest extends AbstractParserTest {
     private static final String ANT_ECLIPSE_WARNING_PATTERN =
-            "(?:\\[?(?:INFO|WARNING|ERROR)\\]?.*)?"     // Ignore leading type (output embedded in output)
+            "(?:\\[?(?:INFO|WARNING|ERROR)\\]?.*)?"     // Ignore the leading type (output embedded in output)
                     + "\\[?(INFO|WARNING|ERROR)\\]?"    // group 1 'type': INFO, WARNING or ERROR in optional []
-                    + "\\s*(?:in)?"                     // optional " in"
+                    + "\\s*(?:in)?"                     // optional "in"
                     + "\\s*(.*)"                        // group 2 'filename'
                     + "(?:\\(at line\\s*(\\d+)\\)|"     // either group 3 'lineNumber': at line dd
-                    + ":\\[(\\d+)).*"                   // or group 4 'rowNumber': eg :[row,col] - col ignored
+                    + ":\\[(\\d+)).*"                   // or group 4 'rowNumber': e.g., :[row,col] - col ignored
                     + "(?:\\r?\\n[^\\^\\n]*)+?"         // 1+ ignored lines (no column pointer) eg source excerpt
                     + "\\r?\\n.*\\t([^\\^]*)"           // newline then group 5 (indent for column pointers)
                     + "([\\^]+).*"                      // group 6 column pointers (^^^^^)

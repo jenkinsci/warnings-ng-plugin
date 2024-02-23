@@ -15,9 +15,11 @@ import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
+import io.jenkins.plugins.analysis.core.util.WarningsQualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.warnings.Java;
 import io.jenkins.plugins.casc.ConfigurationAsCode;
 import io.jenkins.plugins.casc.ConfiguratorException;
+import io.jenkins.plugins.util.QualityGate.QualityGateCriticality;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -57,7 +59,6 @@ class JobDslITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(recorder.getEnabledForFailure()).isFalse();
         assertThat(recorder.getHealthy()).isEqualTo(0);
         assertThat(recorder.getId()).isNull();
-        assertThat(recorder.getIgnoreFailedBuilds()).isTrue();
         assertThat(recorder.getIgnoreQualityGate()).isFalse();
         assertThat(recorder.getMinimumSeverity()).isEqualTo("LOW");
         assertThat(recorder.getName()).isNull();
@@ -99,20 +100,21 @@ class JobDslITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(recorder.getEnabledForFailure()).isTrue();
         assertThat(recorder.getHealthy()).isEqualTo(10);
         assertThat(recorder.getId()).isEqualTo("test-id");
-        assertThat(recorder.getIgnoreFailedBuilds()).isFalse();
         assertThat(recorder.getIgnoreQualityGate()).isTrue();
         assertThat(recorder.isSkipPublishingChecks()).isTrue();
         assertThat(recorder.getMinimumSeverity()).isEqualTo("ERROR");
         assertThat(recorder.getName()).isEqualTo("test-name");
         assertThat(recorder.getSourceCodeEncoding()).isEqualTo("UTF-8");
         assertThat(recorder.getUnhealthy()).isEqualTo(50);
-        assertThat(recorder.getReferenceJobName()).isEqualTo("test-job");
-        assertThat(recorder.getQualityGates()).hasSize(1);
+        assertThat(recorder.getQualityGates()).hasSize(1)
+                .first().satisfies(gate -> {
+                    assertThat(gate.getThreshold()).isEqualTo(10.0);
+                    assertThat(gate.getType()).isEqualTo(QualityGateType.TOTAL);
+                    assertThat(gate.getCriticality()).isEqualTo(QualityGateCriticality.FAILURE);
+                });
 
         List<Tool> tools = recorder.getTools();
-        assertThat(tools).hasSize(2);
-        assertThat(tools.get(0)).isInstanceOf(Java.class);
-
+        assertThat(tools).hasSize(2).first().isInstanceOf(Java.class);
     }
 
     /**

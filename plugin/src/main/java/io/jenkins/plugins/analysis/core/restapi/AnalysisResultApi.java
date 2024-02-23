@@ -8,8 +8,8 @@ import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 import hudson.model.Run;
 
-import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
+import io.jenkins.plugins.util.QualityGateResult.QualityGateResultApi;
 
 /**
  * Remote API for the {@link StaticAnalysisRun}. Simple Java Bean that exposes several methods of an {@link
@@ -56,9 +56,9 @@ public class AnalysisResultApi {
         return result.getSuccessfulSinceBuild();
     }
 
-    @Exported
-    public QualityGateStatus getQualityGateStatus() {
-        return result.getQualityGateStatus();
+    @Exported(inline = true)
+    public QualityGateResultApi getQualityGates() {
+        return new QualityGateResultApi(result.getQualityGateResult());
     }
 
     @Exported

@@ -10,31 +10,19 @@
   <f:entry field="skipPublishingChecks">
     <f:checkbox title="${%title.skipPublishingChecks}" />
   </f:entry>
-  <f:entry field="publishAllIssues">
-    <f:checkbox title="${%title.publishAllIssues}" />
+  <f:entry title="${%title.checksAnnotationScope}" field="checksAnnotationScope">
+    <f:select default="NEW"/>
   </f:entry>
   <f:entry field="failOnError">
     <f:checkbox title="${%title.failOnError}"/>
   </f:entry>
-  <f:entry title="${%title.trendChartType}" description="${%description.trendChartType}"
-           field="trendChartType">
-    <f:select default="AGGREGATION_TOOLS"/>
-  </f:entry>
-
-  <i:hr title="${%Reference Analysis Results}"/>
-
-  <tr>
-    <td/>
-    <td colspan="3">
-      ${%description.reference}
-    </td>
-  </tr>
-
   <f:entry field="ignoreQualityGate">
     <f:checkbox title="${%title.ignoreQualityGate}"/>
   </f:entry>
-  <f:entry field="ignoreFailedBuilds">
-    <f:checkbox default="true" title="${%title.ignoreFailedBuilds}"/>
+
+
+  <f:entry title="${%title.trendChartType}" field="trendChartType">
+    <f:select default="AGGREGATION_TOOLS"/>
   </f:entry>
 
   <i:hr title="${%Thresholds}"/>
@@ -53,13 +41,13 @@
 
   <f:block><l:icon alt="Healthy" class="icon-health-80plus icon-md"/></f:block>
   <f:entry title="${%Healthy Threshold}" description="${%description.healthy}" field="healthy">
-    <i:number/>
+    <f:number/>
   </f:entry>
   <f:block><l:icon alt="Healthy" class="icon-health-00to19 icon-md"/></f:block>
   <f:entry title="${%Unhealthy Threshold}" description="${%description.unhealthy}" field="unhealthy">
-    <i:number/>
+    <f:number/>
   </f:entry>
-  <f:entry title="${%Health Severities}" description="${%description.health.severities}" field="minimumSeverity">
+  <f:entry title="${%title.health.severities}" field="minimumSeverity">
     <f:select default="LOW"/>
   </f:entry>
 

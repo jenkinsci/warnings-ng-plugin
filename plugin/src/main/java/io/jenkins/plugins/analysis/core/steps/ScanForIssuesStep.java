@@ -30,6 +30,7 @@ import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.IssuesScanner.BlameMode;
 import io.jenkins.plugins.analysis.core.steps.IssuesScanner.PostProcessingMode;
 import io.jenkins.plugins.prism.SourceCodeDirectory;
+import io.jenkins.plugins.prism.SourceCodeRetention;
 
 /**
  * Scan files or the console log for issues.
@@ -39,8 +40,8 @@ public class ScanForIssuesStep extends Step {
     private Tool tool;
 
     private String sourceCodeEncoding = StringUtils.EMPTY;
-    private String sourceDirectory = StringUtils.EMPTY;
     private Set<SourceCodeDirectory> sourceDirectories = new HashSet<>(); // @since 9.11.0
+    private SourceCodeRetention sourceCodeRetention = SourceCodeRetention.EVERY_BUILD;
     private boolean isBlameDisabled;
     private boolean skipPostProcessing; // @since 10.6.0: by default, post-processing will be enabled
     private boolean quiet;
@@ -130,32 +131,6 @@ public class ScanForIssuesStep extends Step {
     }
 
     /**
-     * Not used anymore.
-     *
-     * @return {@code true} if SCM forensics should be disabled
-     * @deprecated Forensics will be automatically skipped if the Forensics recorder is not activated.
-     */
-    @SuppressWarnings("PMD.BooleanGetMethodName")
-    @Deprecated
-    public boolean getForensicsDisabled() {
-        return false;
-    }
-
-    /**
-     * Not used anymore.
-     *
-     * @param forensicsDisabled
-     *         not used
-     *
-     * @deprecated Forensics will be automatically skipped if the Forensics recorder is not activated.
-     */
-    @DataBoundSetter
-    @Deprecated
-    public void setForensicsDisabled(final boolean forensicsDisabled) {
-        // do nothing
-    }
-
-    /**
      * Returns whether post-processing of the issues should be disabled.
      *
      * @return {@code true} if post-processing of the issues should be disabled.
@@ -185,25 +160,9 @@ public class ScanForIssuesStep extends Step {
         this.sourceCodeEncoding = sourceCodeEncoding;
     }
 
-    public String getSourceDirectory() {
-        return sourceDirectory;
-    }
-
-    /**
-     * Sets the path to the folder that contains the source code. If not relative and thus not part of the workspace
-     * then this folder needs to be added in Jenkins global configuration.
-     *
-     * @param sourceDirectory
-     *         a folder containing the source code
-     */
-    @DataBoundSetter
-    public void setSourceDirectory(final String sourceDirectory) {
-        this.sourceDirectory = sourceDirectory;
-    }
-
     /**
      * Sets the paths to the directories that contain the source code. If not relative and thus not part of the
-     * workspace then these directories need to be added in Jenkins global configuration to prevent accessing of
+     *  workspace, then these directories need to be added in Jenkins global configuration to prevent accessing of
      * forbidden resources.
      *
      * @param sourceDirectories
@@ -219,14 +178,24 @@ public class ScanForIssuesStep extends Step {
     }
 
     private Set<String> getAllSourceDirectories() {
-        Set<String> directories = new HashSet<>();
-        if (StringUtils.isNotBlank(getSourceDirectory())) {
-            directories.add(getSourceDirectory());
-        }
-        directories.addAll(getSourceDirectories().stream()
+        return getSourceDirectories().stream()
                 .map(SourceCodeDirectory::getPath)
-                .collect(Collectors.toSet()));
-        return directories;
+                .collect(Collectors.toSet());
+    }
+
+    /**
+     * Defines the retention strategy for source code files.
+     *
+     * @param sourceCodeRetention
+     *         the retention strategy for source code files
+     */
+    @DataBoundSetter
+    public void setSourceCodeRetention(final SourceCodeRetention sourceCodeRetention) {
+        this.sourceCodeRetention = sourceCodeRetention;
+    }
+
+    public SourceCodeRetention getSourceCodeRetention() {
+        return sourceCodeRetention;
     }
 
     @Override
@@ -249,6 +218,7 @@ public class ScanForIssuesStep extends Step {
         private final Set<String> sourceDirectories;
         private final String scm;
         private final boolean quiet;
+        private final SourceCodeRetention sourceCodeRetention;
 
         /**
          * Creates a new instance of the step execution object.
@@ -266,6 +236,7 @@ public class ScanForIssuesStep extends Step {
             isBlameDisabled = step.getBlameDisabled();
             filters = step.getFilters();
             sourceDirectories = step.getAllSourceDirectories();
+            sourceCodeRetention = step.getSourceCodeRetention();
             scm = step.getScm();
             skipPostProcessing = step.isSkipPostProcessing();
             quiet = step.isQuiet();
@@ -278,7 +249,7 @@ public class ScanForIssuesStep extends Step {
 
             IssuesScanner issuesScanner = new IssuesScanner(tool, filters,
                     getCharset(sourceCodeEncoding), workspace, sourceDirectories,
-                    getRun(), new FilePath(getRun().getRootDir()), listener,
+                    sourceCodeRetention, getRun(), new FilePath(getRun().getRootDir()), listener,
                     scm, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED,
                     skipPostProcessing ? PostProcessingMode.DISABLED : PostProcessingMode.ENABLED,
                     quiet);

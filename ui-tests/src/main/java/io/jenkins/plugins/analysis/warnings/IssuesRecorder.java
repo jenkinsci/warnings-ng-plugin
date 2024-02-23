@@ -5,7 +5,6 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.events.EventFiringWebDriver;
 
 import org.jenkinsci.test.acceptance.po.AbstractStep;
 import org.jenkinsci.test.acceptance.po.Control;
@@ -28,20 +27,21 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     private final Control filtersRepeatable = findRepeatableAddButtonFor("filters");
     private final Control filterRegex = control("/filters/pattern");
     private final Control qualityGatesRepeatable = findRepeatableAddButtonFor("qualityGates");
-    private final Control qualityGateThreshold = control("/qualityGates/threshold");
+    private final Control qualityGateThreshold = control("/qualityGates/integerThreshold");
     private final Control qualityGateType = control("/qualityGates/type");
+    private final Control qualityGateCriticality = control("/qualityGates/criticality");
     private final Control advancedButton = control("advanced-button");
     private final Control enabledForFailureCheckBox = control("enabledForFailure");
     private final Control ignoreQualityGate = control("ignoreQualityGate");
     private final Control aggregatingResults = control("aggregatingResults");
     private final Control sourceCodeEncoding = control("sourceCodeEncoding");
     private final Control sourceDirectories = findRepeatableAddButtonFor("sourceDirectories");
+    private final Control sourceCodeRetention = control("sourceCodeRetention");
     private final Control skipBlames = control("skipBlames");
     private final Control skipPostProcessing = control("skipPostProcessing");
-    private final Control ignoreFailedBuilds = control("ignoreFailedBuilds");
     private final Control failOnError = control("failOnError");
     private final Control skipPublishingChecks = control("skipPublishingChecks");
-    private final Control publishAllIssues = control("publishAllIssues");
+    private final Control checksAnnotationScope = control("checksAnnotationScope");
     private final Control reportFilePattern = control("/toolProxies/tool/pattern");
     private final Control trendChartType = control("trendChartType");
     private final Control healthyThreshold = control("healthy");
@@ -49,14 +49,6 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     private final Control healthSeverity = control("minimumSeverity");
     private final Control scm = control("scm");
     private final Control quiet = control("quiet");
-
-    /**
-     * Determines the result of the quality gate.
-     */
-    public enum QualityGateBuildResult {
-        UNSTABLE,
-        FAILED
-    }
 
     /**
      * Creates a new page object.
@@ -69,7 +61,6 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     public IssuesRecorder(final Job parent, final String path) {
         super(parent, path);
 
-        ScrollerUtil.hideScrollerTabBar(driver);
         openAdvancedOptions();
     }
 
@@ -83,7 +74,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      * @param toolName
      *         the tool name
      *
-     * @return the sub page of the tool
+     * @return the subpage of the tool
      */
     public StaticAnalysisTool setTool(final String toolName) {
         StaticAnalysisTool tool = new StaticAnalysisTool(this, "toolProxies");
@@ -99,7 +90,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      * @param pattern
      *         the file name pattern
      *
-     * @return the sub page of the tool
+     * @return the subpage of the tool
      */
     public StaticAnalysisTool setTool(final String toolName, final String pattern) {
         return setTool(toolName, tool -> tool.setPattern(pattern));
@@ -113,7 +104,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      * @param configuration
      *         the additional configuration options for this tool
      *
-     * @return the sub page of the tool
+     * @return the subpage of the tool
      */
     public StaticAnalysisTool setTool(final String toolName, final Consumer<StaticAnalysisTool> configuration) {
         StaticAnalysisTool tool = setTool(toolName);
@@ -127,7 +118,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      * @param toolName
      *         the tool name
      *
-     * @return the sub page of the tool
+     * @return the subpage of the tool
      */
     public StaticAnalysisTool addTool(final String toolName) {
         return createToolPageArea(toolName);
@@ -141,7 +132,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      * @param configuration
      *         the additional configuration options for this tool
      *
-     * @return the sub page of the tool
+     * @return the subpage of the tool
      */
     public StaticAnalysisTool addTool(final String toolName, final Consumer<StaticAnalysisTool> configuration) {
         StaticAnalysisTool tool = addTool(toolName);
@@ -157,7 +148,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      * @param pattern
      *         the file name pattern
      *
-     * @return the sub page of the tool
+     * @return the subpage of the tool
      */
     public StaticAnalysisTool addTool(final String toolName, final String pattern) {
         return addTool(toolName, tool -> tool.setPattern(pattern));
@@ -224,16 +215,12 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
         return isChecked(skipPostProcessing);
     }
 
-    public boolean isIgnoringFailedBuilds() {
-        return isChecked(ignoreFailedBuilds);
-    }
-
     public boolean isSkipPublishingChecks() {
         return isChecked(skipPublishingChecks);
     }
 
-    public boolean isPublishAllIssues() {
-        return isChecked(publishAllIssues);
+    public String getChecksAnnotationScope() {
+        return checksAnnotationScope.get();
     }
 
     private boolean isChecked(final Control control) {
@@ -272,14 +259,12 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
         return qualityGateType.get();
     }
 
-    /**
-     * Gets the quality gate result.
-     *
-     * @return the quality gate result
-     **/
-    public QualityGateBuildResult getQualityGateResult() {
-        return findUnstableRadioButton(self(), true).isSelected()
-                ? QualityGateBuildResult.UNSTABLE : QualityGateBuildResult.FAILED;
+    public String getQualityGateCriticality() {
+        return qualityGateCriticality.get();
+    }
+
+    public String getSourceCodeRetention() {
+        return sourceCodeRetention.get();
     }
 
     /**
@@ -326,7 +311,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
 
     /**
      * If {@code true}, then the result of the quality gate is ignored when selecting a reference build. This option is
-     * disabled by default so a failing quality gate will be passed from build to build until the original reason for
+     * disabled by default, so a failing quality gate will be passed from build to build until the original reason for
      * the failure has been resolved.
      *
      * @param ignoreQualityGate
@@ -433,22 +418,6 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     }
 
     /**
-     * If {@code true}, then only successful or unstable reference builds will be considered. This option is enabled by
-     * default, since analysis results might be inaccurate if the build failed. If {@code false}, every build that
-     * contains a static analysis result is considered, even if the build failed.
-     *
-     * @param ignoreFailedBuilds
-     *         if {@code true} then a stable build is used as reference
-     *
-     * @return this recorder
-     */
-    public IssuesRecorder setIgnoreFailedBuilds(final boolean ignoreFailedBuilds) {
-        this.ignoreFailedBuilds.check(ignoreFailedBuilds);
-
-        return this;
-    }
-
-    /**
      * Determines whether to fail the build on errors during the step of recording issues.
      *
      * @param failOnError
@@ -478,16 +447,15 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     }
 
     /**
-     * Sets whether all issues should be published using the Checks API. If set to {@code false} only new issues will be
-     * published.
+     * Determines which issues should be published using the Checks API as annotations.
      *
-     * @param publishAllIssues
-     *         {@code true} if all issues should be published, {@code false} if only new issues should be published
+     * @param checksAnnotationScope
+     *         determines which issues should be shown
      *
      * @return this recorder
      */
-    public IssuesRecorder setPublishAllIssues(final boolean publishAllIssues) {
-        this.publishAllIssues.check(publishAllIssues);
+    public IssuesRecorder setChecksAnnotationScope(final ChecksAnnotationScope checksAnnotationScope) {
+        this.checksAnnotationScope.select(checksAnnotationScope.toString());
 
         return this;
     }
@@ -516,6 +484,20 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      */
     public IssuesRecorder setTrendChartType(final TrendChartType trendChartType) {
         this.trendChartType.select(trendChartType.toString());
+
+        return this;
+    }
+
+    /**
+     * Sets the source code retention strategy.
+     *
+     * @param sourceCodeRetention
+     *         the type of strategy to use
+     *
+     * @return this recorder
+     */
+    public IssuesRecorder setSourceCodeRetention(final SourceCodeRetention sourceCodeRetention) {
+        this.sourceCodeRetention.select(sourceCodeRetention.toString());
 
         return this;
     }
@@ -582,18 +564,18 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      *         the minimum number of issues that fails the quality gate
      * @param type
      *         the type of the quality gate
-     * @param result
+     * @param criticality
      *         determines whether the quality gate sets the build result to Unstable or Failed
      *
      * @return this recorder
      */
     public IssuesRecorder addQualityGateConfiguration(final int threshold, final QualityGateType type,
-            final QualityGateBuildResult result) {
+            final QualityGateCriticality criticality) {
         String path = createPageArea("qualityGates", qualityGatesRepeatable::click);
         QualityGatePanel qualityGate = new QualityGatePanel(this, path);
         qualityGate.setThreshold(threshold);
         qualityGate.setType(type);
-        qualityGate.setUnstable(result == QualityGateBuildResult.UNSTABLE);
+        qualityGate.setCriticality(criticality);
 
         return this;
     }
@@ -660,6 +642,31 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     }
 
     /**
+     * Available quality gate types.
+     */
+    public enum QualityGateCriticality {
+        FAILURE("Fail the build"),
+        UNSTABLE("Mark the build as unstable"),
+        PIPELINE_FAILURE("Fail the step and the build"),
+        PIPELINE_UNSTABLE("Mark the step and the build as unstable");
+
+        private final String displayName;
+
+        QualityGateCriticality(final String displayName) {
+            this.displayName = displayName;
+        }
+
+        /**
+         * Returns the localized human-readable name of this criticality.
+         *
+         * @return human-readable name
+         */
+        public String getDisplayName() {
+            return displayName;
+        }
+    }
+
+    /**
      * Page area of a static analysis tool configuration.
      */
     public static class StaticAnalysisTool extends PageAreaImpl {
@@ -670,6 +677,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
         private final Control id = control("tool/id");
         private final Control name = control("tool/name");
         private final Control analysisModelId = control("tool/analysisModelId");
+        private final Control skipSymbolicLinks = control("tool/skipSymbolicLinks");
 
         StaticAnalysisTool(final PageArea issuesRecorder, final String path) {
             super(issuesRecorder, path);
@@ -679,7 +687,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
          * Sets the name of the tool.
          *
          * @param toolName
-         *         the name of the tool, e.g. CheckStyle, CPD, etc.
+         *         the name of the tool, e.g., CheckStyle, CPD, etc.
          *
          * @return this
          */
@@ -771,6 +779,20 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
 
             return this;
         }
+
+        /**
+         * Sets whether to ignore symbolic links.
+         *
+         * @param skipSymbolicLinks
+         *         determines the check state
+         *
+         * @return this
+         */
+        public StaticAnalysisTool setSkipSymbolicLinks(final boolean skipSymbolicLinks) {
+            this.skipSymbolicLinks.check(skipSymbolicLinks);
+
+            return this;
+        }
     }
 
     /**
@@ -792,8 +814,9 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      * Page area of a quality gate configuration.
      */
     private static class QualityGatePanel extends PageAreaImpl {
-        private final Control threshold = control("threshold");
+        private final Control threshold = control("integerThreshold");
         private final Control type = control("type");
+        private final Control criticality = control("criticality");
 
         QualityGatePanel(final PageArea area, final String path) {
             super(area, path);
@@ -807,9 +830,8 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
             this.type.select(type.getDisplayName());
         }
 
-        public void setUnstable(final boolean isUnstable) {
-            WebElement radioButton = IssuesRecorder.findUnstableRadioButton(self(), isUnstable);
-            ((EventFiringWebDriver) driver).executeScript("arguments[0].click();", radioButton);
+        public void setCriticality(final QualityGateCriticality criticality) {
+            this.criticality.select(criticality.getDisplayName());
         }
     }
 
@@ -840,5 +862,33 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
         TOOLS_ONLY,
         /** Neither the aggregation trend nor analysis tool trend charts are shown. */
         NONE
+    }
+
+    /**
+     * Defines the retention strategy for source code files.
+     */
+    public enum SourceCodeRetention {
+        /** Never store source code files. */
+        NEVER,
+        /** Store source code files of the last build, delete older artifacts. */
+        LAST_BUILD,
+        /** Store source code files for all builds, never delete those files automatically. */
+        EVERY_BUILD,
+        /** Store only changed source code files for all builds, never delete those files automatically. */
+        MODIFIED
+    }
+
+    /**
+     * Defines the scope of SCM checks annotations.
+     */
+    public enum ChecksAnnotationScope {
+        /** All issues, i.e., new and outstanding. */
+        ALL,
+        /** Only new issues. */
+        NEW,
+        /** Only issues in modified code. */
+        MODIFIED,
+        /** No annotations will be created. */
+        SKIP
     }
 }

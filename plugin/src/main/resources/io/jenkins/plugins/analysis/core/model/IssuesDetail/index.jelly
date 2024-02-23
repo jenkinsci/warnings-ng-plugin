@@ -24,9 +24,9 @@
 
     </j:choose>
 
-    <script>var view =<st:bind value="${it}"/></script>
 
-    <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/issues-detail.js"/>
+    <st:bind var="proxy" value="${it}" />
+    <st:adjunct includes="io.jenkins.plugins.analysis.core.model.IssuesDetail.issues-detail"/>
 
   </bs:page>
 

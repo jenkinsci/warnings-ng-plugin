@@ -32,14 +32,15 @@ import hudson.model.Run;
 import io.jenkins.plugins.analysis.core.charts.JenkinsBuild;
 import io.jenkins.plugins.analysis.core.util.IssuesStatistics;
 import io.jenkins.plugins.analysis.core.util.IssuesStatisticsBuilder;
-import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
-import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
 import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.forensics.blame.BlamesXmlStream;
 import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
 import io.jenkins.plugins.forensics.miner.RepositoryStatisticsXmlStream;
 import io.jenkins.plugins.util.JenkinsFacade;
+import io.jenkins.plugins.util.QualityGateEvaluator;
+import io.jenkins.plugins.util.QualityGateResult;
+import io.jenkins.plugins.util.QualityGateStatus;
 import io.jenkins.plugins.util.ValidationUtilities;
 
 /**
@@ -49,7 +50,7 @@ import io.jenkins.plugins.util.ValidationUtilities;
  * @author Ullrich Hafner
  */
 @SuppressFBWarnings(value = "SE, DESERIALIZATION_GADGET", justification = "transient fields are restored using a Jenkins callback (or are checked for null)")
-@SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveClassLength", "PMD.GodClass", "checkstyle:ClassFanOutComplexity"})
+@SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveClassLength", "PMD.GodClass", "checkstyle:ClassFanOutComplexity", "checkstyle:ClassDataAbstractionCoupling"})
 public class AnalysisResult implements Serializable, StaticAnalysisRun {
     private static final long serialVersionUID = 1110545450292087475L;
 
@@ -74,18 +75,18 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     private transient Run<?, ?> owner;
 
     /**
-     * All outstanding issues: i.e. all issues, that are part of the current and reference report.
+     * All outstanding issues: i.e., all issues, that are part of the current and reference report.
      */
     @CheckForNull
     private transient WeakReference<Report> outstandingIssuesReference;
     /**
-     * All new issues: i.e. all issues, that are part of the current report but have not been shown up in the reference
+     * All new issues: i.e., all issues, that are part of the current report but have not been shown up in the reference
      * report.
      */
     @CheckForNull
     private transient WeakReference<Report> newIssuesReference;
     /**
-     * All fixed issues: i.e. all issues, that are part of the reference report but are not present in the current
+     * All fixed issues: i.e., all issues, that are part of the reference report but are not present in the current
      * report anymore.
      */
     @CheckForNull
@@ -104,13 +105,15 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     /** Determines since which build the result is successful. */
     private int successfulSinceBuild;
     /** The result of the quality gate evaluation. */
-    private final QualityGateStatus qualityGateStatus;
+    private transient QualityGateStatus qualityGateStatus;
+    /** The result of the quality gate evaluation. */
+    private QualityGateResult qualityGateResult;
 
     /**
      * Creates a new instance of {@link AnalysisResult}.
      *
      * @param owner
-     *         the current build as owner of this action
+     *         the current build as the owner of this action
      * @param id
      *         ID of the results
      * @param report
@@ -119,7 +122,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      *         author and commit information for all issues
      * @param totals
      *         repository statistics for all issues
-     * @param qualityGateStatus
+     * @param qualityGateResult
      *         the quality gate status
      * @param sizePerOrigin
      *         the number of issues per origin
@@ -128,10 +131,9 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      */
     @SuppressWarnings("checkstyle:ParameterNumber")
     public AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report, final Blames blames,
-            final RepositoryStatistics totals, final QualityGateStatus qualityGateStatus,
-            final Map<String, Integer> sizePerOrigin,
-            final AnalysisResult previousResult) {
-        this(owner, id, report, blames, totals, qualityGateStatus, sizePerOrigin, true);
+            final RepositoryStatistics totals, final QualityGateResult qualityGateResult,
+            final Map<String, Integer> sizePerOrigin, final AnalysisResult previousResult) {
+        this(owner, id, report, blames, totals, qualityGateResult, sizePerOrigin, true);
 
         if (report.isEmpty()) {
             if (previousResult.noIssuesSinceBuild == NO_BUILD) {
@@ -145,8 +147,9 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
             noIssuesSinceBuild = NO_BUILD;
         }
 
-        if (this.qualityGateStatus == QualityGateStatus.PASSED) {
-            if (previousResult.qualityGateStatus == QualityGateStatus.PASSED) {
+        var overallStatus = qualityGateResult.getOverallStatus();
+        if (overallStatus == QualityGateStatus.PASSED) {
+            if (previousResult.getQualityGateResult().getOverallStatus() == QualityGateStatus.PASSED) {
                 successfulSinceBuild = previousResult.successfulSinceBuild;
             }
             else {
@@ -162,7 +165,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      * Creates a new instance of {@link AnalysisResult}.
      *
      * @param owner
-     *         the current build as owner of this action
+     *         the current build as the owner of this action
      * @param id
      *         ID of the results
      * @param report
@@ -171,15 +174,15 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      *         author and commit information for all issues
      * @param totals
      *         repository statistics for all issues
-     * @param qualityGateStatus
+     * @param qualityGateResult
      *         the quality gate status
      * @param sizePerOrigin
      *         the number of issues per origin
      */
     public AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report, final Blames blames,
-            final RepositoryStatistics totals, final QualityGateStatus qualityGateStatus,
+            final RepositoryStatistics totals, final QualityGateResult qualityGateResult,
             final Map<String, Integer> sizePerOrigin) {
-        this(owner, id, report, blames, totals, qualityGateStatus, sizePerOrigin, true);
+        this(owner, id, report, blames, totals, qualityGateResult, sizePerOrigin, true);
 
         if (report.isEmpty()) {
             noIssuesSinceBuild = owner.getNumber();
@@ -187,7 +190,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
         else {
             noIssuesSinceBuild = NO_BUILD;
         }
-        if (this.qualityGateStatus == QualityGateStatus.PASSED) {
+        if (qualityGateResult.getOverallStatus() == QualityGateStatus.PASSED) {
             successfulSinceBuild = owner.getNumber();
         }
         else {
@@ -199,7 +202,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      * Creates a new instance of {@link AnalysisResult}.
      *
      * @param owner
-     *         the current run as owner of this action
+     *         the current run as the owner of this action
      * @param id
      *         ID of the results
      * @param report
@@ -208,7 +211,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      *         author and commit information for all issues
      * @param repositoryStatistics
      *         source code repository statistics for all issues
-     * @param qualityGateStatus
+     * @param qualityGateResult
      *         the quality gate status
      * @param sizePerOrigin
      *         the number of issues per origin
@@ -219,7 +222,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     @SuppressWarnings("checkstyle:ParameterNumber")
     protected AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report,
             final Blames blames, final RepositoryStatistics repositoryStatistics,
-            final QualityGateStatus qualityGateStatus, final Map<String, Integer> sizePerOrigin,
+            final QualityGateResult qualityGateResult, final Map<String, Integer> sizePerOrigin,
             final boolean canSerialize) {
         this.owner = owner;
 
@@ -245,7 +248,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
         messages = new ArrayList<>(aggregatedMessages);
         errors = new ArrayList<>(allIssues.getErrorMessages());
 
-        this.qualityGateStatus = qualityGateStatus;
+        this.qualityGateResult = qualityGateResult;
 
         blamesReference = new WeakReference<>(blames);
         this.repositoryStatistics = new WeakReference<>(repositoryStatistics);
@@ -263,21 +266,11 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      * @return this
      */
     protected Object readResolve() {
+        if (qualityGateResult == null && qualityGateStatus != null) {
+            qualityGateResult = new QualityGateResult(qualityGateStatus);
+        }
         if (totals == null) {
-            IssuesStatisticsBuilder builder = new IssuesStatisticsBuilder();
-
-            builder.setTotalErrorSize(sizePerSeverity.getOrDefault(Severity.ERROR, 0));
-            builder.setTotalHighSize(sizePerSeverity.getOrDefault(Severity.WARNING_HIGH, 0));
-            builder.setTotalNormalSize(sizePerSeverity.getOrDefault(Severity.WARNING_NORMAL, 0));
-            builder.setTotalLowSize(sizePerSeverity.getOrDefault(Severity.WARNING_LOW, 0));
-
-            builder.setNewErrorSize(newSizePerSeverity.getOrDefault(Severity.ERROR, 0));
-            builder.setNewHighSize(newSizePerSeverity.getOrDefault(Severity.WARNING_HIGH, 0));
-            builder.setNewNormalSize(newSizePerSeverity.getOrDefault(Severity.WARNING_NORMAL, 0));
-            builder.setNewLowSize(newSizePerSeverity.getOrDefault(Severity.WARNING_LOW, 0));
-
-            builder.setFixedSize(fixedSize);
-            totals = builder.build();
+            totals = new IssuesStatisticsBuilder().build();
         }
         return this;
     }
@@ -377,11 +370,13 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     }
 
     @Override
+    @Whitelisted
     public ImmutableList<String> getErrorMessages() {
         return Lists.immutable.withAll(errors);
     }
 
     @Override
+    @Whitelisted
     public ImmutableList<String> getInfoMessages() {
         return Lists.immutable.withAll(messages);
     }
@@ -439,7 +434,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     }
 
     /**
-     * Returns all outstanding issues of the associated static analysis run. I.e. all issues, that are part of the
+     * Returns all outstanding issues of the associated static analysis run. I.e., all issues that are part of the
      * current and previous report.
      *
      * @return all outstanding issues
@@ -451,7 +446,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     }
 
     /**
-     * Returns all new issues of the associated static analysis run. I.e. all issues, that are part of the current
+     * Returns all new issues of the associated static analysis run. I.e., all issues that are part of the current
      * report but have not been shown up in the previous report.
      *
      * @return all new issues
@@ -463,7 +458,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     }
 
     /**
-     * Returns all fixed issues of the associated static analysis run. I.e. all issues, that are part of the previous
+     * Returns all fixed issues of the associated static analysis run. I.e., all issues that are part of the previous
      * report but are not present in the current report anymore.
      *
      * @return all fixed issues
@@ -474,6 +469,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
                 "fixed");
     }
 
+    @CheckForNull
     private WeakReference<Report> getOutstandingIssuesReference() {
         return outstandingIssuesReference;
     }
@@ -482,6 +478,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
         this.outstandingIssuesReference = outstandingIssuesReference;
     }
 
+    @CheckForNull
     private WeakReference<Report> getNewIssuesReference() {
         return newIssuesReference;
     }
@@ -490,6 +487,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
         this.newIssuesReference = newIssuesReference;
     }
 
+    @CheckForNull
     private WeakReference<Report> getFixedIssuesReference() {
         return fixedIssuesReference;
     }
@@ -542,13 +540,19 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      * @see QualityGateEvaluator
      */
     public boolean isSuccessful() {
-        return qualityGateStatus.isSuccessful();
+        return qualityGateResult.isSuccessful();
     }
 
     @Whitelisted
     @Override
     public QualityGateStatus getQualityGateStatus() {
-        return qualityGateStatus;
+        return qualityGateResult.getOverallStatus();
+    }
+
+    @Whitelisted
+    @Override
+    public QualityGateResult getQualityGateResult() {
+        return qualityGateResult;
     }
 
     @Override
@@ -557,6 +561,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     }
 
     @Override
+    @Whitelisted
     public Optional<Run<?, ?>> getReferenceBuild() {
         if (NO_REFERENCE.equals(referenceBuildId)) {
             return Optional.empty();
@@ -564,12 +569,14 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
         return new JenkinsFacade().getBuild(referenceBuildId);
     }
 
+    @Override
     @Whitelisted
     public IssuesStatistics getTotals() {
         return totals;
     }
 
     @Override
+    @Whitelisted
     public Map<String, Integer> getSizePerOrigin() {
         return Maps.immutable.ofAll(sizePerOrigin).toMap();
     }
@@ -593,11 +600,13 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     }
 
     @Override
+    @Whitelisted
     public int getTotalSize() {
         return totals.getTotalSize();
     }
 
     @Override
+    @Whitelisted
     public int getTotalSizeOf(final Severity severity) {
         return totals.getTotalSizeOf(severity);
     }
@@ -612,9 +621,9 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     }
 
     /**
-     * Returns the total number of high severity issues in this analysis run.
+     * Returns the total number of high-severity issues in this analysis run.
      *
-     * @return total number of high severity issues
+     * @return total number of high-severity issues
      */
     public int getTotalHighPrioritySize() {
         return getTotalSizeOf(Severity.WARNING_HIGH);
@@ -630,20 +639,22 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     }
 
     /**
-     * Returns the total number of low severity issues in this analysis run.
+     * Returns the total number of low-severity issues in this analysis run.
      *
-     * @return total number of low severity of issues
+     * @return total number of low-severity issues
      */
     public int getTotalLowPrioritySize() {
         return getTotalSizeOf(Severity.WARNING_LOW);
     }
 
     @Override
+    @Whitelisted
     public int getNewSize() {
         return totals.getNewSize();
     }
 
     @Override
+    @Whitelisted
     public int getNewSizeOf(final Severity severity) {
         return totals.getNewSizeOf(severity);
     }
@@ -658,33 +669,34 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     }
 
     /**
-     * Returns the number of new high severity issues in this analysis run.
+     * Returns the number of new high-severity issues in this analysis run.
      *
-     * @return number of new high severity issues
+     * @return number of new high-severity issues
      */
     public int getNewHighPrioritySize() {
         return getNewSizeOf(Severity.WARNING_HIGH);
     }
 
     /**
-     * Returns the number of new normal severity issues in this analysis run.
+     * Returns the number of new normal-severity issues in this analysis run.
      *
-     * @return number of new normal severity issues
+     * @return number of new normal-severity issues
      */
     public int getNewNormalPrioritySize() {
         return getNewSizeOf(Severity.WARNING_NORMAL);
     }
 
     /**
-     * Returns the number of new low severity issues in this analysis run.
+     * Returns the number of new low-severity issues in this analysis run.
      *
-     * @return number of new low severity of issues
+     * @return number of new low-severity issues
      */
     public int getNewLowPrioritySize() {
         return getNewSizeOf(Severity.WARNING_LOW);
     }
 
     @Override
+    @Whitelisted
     public int getFixedSize() {
         return totals.getFixedSize();
     }
@@ -692,45 +704,6 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     public int getDeltaSize() {
         return totals.getDeltaSize();
     }
-
-    /**
-     * Old serialization item.
-     *
-     * @deprecated Replaced by {@link AnalysisResult#totals}.
-     */
-    @Deprecated @SuppressFBWarnings("SS_SHOULD_BE_STATIC")
-    private final transient int size = 0;
-    /**
-     * Old serialization item.
-     *
-     * @deprecated Replaced by {@link AnalysisResult#totals}.
-     */
-    @Deprecated @SuppressFBWarnings("SS_SHOULD_BE_STATIC")
-    private final transient int newSize = 0;
-    /**
-     * Old serialization item.
-     *
-     * @deprecated Replaced by {@link AnalysisResult#totals}.
-     */
-    @Deprecated
-    @SuppressWarnings("DeprecatedIsStillUsed")
-    private transient int fixedSize;
-    /**
-     * Old serialization item.
-     *
-     * @deprecated Replaced by {@link AnalysisResult#totals}.
-     */
-    @Deprecated
-    @SuppressWarnings({"DeprecatedIsStillUsed", "MismatchedQueryAndUpdateOfCollection"})
-    private final Map<Severity, Integer> sizePerSeverity = new HashMap<>();
-    /**
-     * Old serialization item.
-     *
-     * @deprecated Replaced by {@link AnalysisResult#totals}.
-     */
-    @Deprecated
-    @SuppressWarnings({"DeprecatedIsStillUsed", "MismatchedQueryAndUpdateOfCollection"})
-    private final Map<Severity, Integer> newSizePerSeverity = new HashMap<>();
 
     public Build getBuild() {
         return new JenkinsBuild(getOwner());

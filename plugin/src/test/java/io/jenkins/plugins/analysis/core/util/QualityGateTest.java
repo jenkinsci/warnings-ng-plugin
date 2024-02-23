@@ -7,12 +7,13 @@ import edu.hm.hafner.util.SerializableTest;
 import hudson.model.BuildableItem;
 import hudson.model.Item;
 
-import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateDescriptor;
-import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
-import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
+import io.jenkins.plugins.analysis.core.util.WarningsQualityGate.QualityGateType;
+import io.jenkins.plugins.analysis.core.util.WarningsQualityGate.WarningsQualityGateDescriptor;
 import io.jenkins.plugins.util.JenkinsFacade;
+import io.jenkins.plugins.util.QualityGate;
+import io.jenkins.plugins.util.QualityGate.QualityGateCriticality;
 
-import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
+import static io.jenkins.plugins.analysis.core.testutil.FormValidationAssert.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -20,13 +21,13 @@ import static org.mockito.Mockito.*;
  *
  * @author Ullrich Hafner
  */
-class QualityGateTest extends SerializableTest<QualityGate> {
+class QualityGateTest extends SerializableTest<WarningsQualityGate> {
     @Test
     void shouldValidateThreshold() {
         JenkinsFacade jenkinsFacade = mock(JenkinsFacade.class);
         when(jenkinsFacade.hasPermission(Item.CONFIGURE, (BuildableItem) null)).thenReturn(true);
 
-        QualityGateDescriptor descriptor = new QualityGateDescriptor(jenkinsFacade);
+        WarningsQualityGateDescriptor descriptor = new WarningsQualityGateDescriptor(jenkinsFacade);
 
         assertThat(descriptor.doCheckThreshold(null, 0))
                 .isError()
@@ -40,7 +41,10 @@ class QualityGateTest extends SerializableTest<QualityGate> {
     }
 
     @Override
-    protected QualityGate createSerializable() {
-        return new QualityGate(1, QualityGateType.TOTAL, QualityGateResult.UNSTABLE);
+    protected WarningsQualityGate createSerializable() {
+        var qualityGate = new WarningsQualityGate(QualityGateType.TOTAL);
+        qualityGate.setCriticality(QualityGateCriticality.UNSTABLE);
+        qualityGate.setIntegerThreshold(1);
+        return qualityGate;
     }
 }

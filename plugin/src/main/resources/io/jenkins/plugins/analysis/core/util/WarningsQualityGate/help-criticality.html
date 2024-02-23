@@ -1,0 +1,31 @@
+<div>
+    When a quality gate has been missed, this property determines whether the result of the associated step
+    or the overall build will be marked as unstable or failure.
+
+    The following enum values are possible for freestyle jobs:
+
+    <dl>
+        <dt>UNSTABLE</dt>
+        <dd>
+            Set the step and build status to unstable if the quality gate has been missed.
+        </dd>
+        <dt>FAILURE</dt>
+        <dd>
+            Fail the step and build if the quality gate has been missed.
+        </dd>
+    </dl>
+
+    For Pipelines two additional fine-grained options are available, that allow setting the status of the step without
+    touching the overall build status:
+
+    <dl>
+        <dt>NOTE</dt>
+        <dd>
+            Set the step to unstable if the quality gate has been missed.
+        </dd>
+        <dt>ERROR</dt>
+        <dd>
+            Fail the step if the quality gate has been missed.
+        </dd>
+    </dl>
+</div>

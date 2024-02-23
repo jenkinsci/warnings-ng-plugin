@@ -151,7 +151,7 @@ public class DetailFactory {
                 .withColumnEnd(issue.getColumnEnd()).build();
     }
 
-    @SuppressWarnings("checkstyle:ParameterNumber")
+    @SuppressWarnings({"checkstyle:ParameterNumber", "PMD.CyclomaticComplexity", "PMD.NPathComplexity"})
     @SuppressFBWarnings("IMPROPER_UNICODE")
     private Object createNewDetailView(final String link, final Run<?, ?> owner, final AnalysisResult result,
             final Report allIssues, final Report newIssues, final Report outstandingIssues, final Report fixedIssues,
@@ -161,6 +161,16 @@ public class DetailFactory {
         if ("all".equalsIgnoreCase(link)) {
             return new IssuesDetail(owner, result, allIssues, newIssues, outstandingIssues, fixedIssues,
                     labelProvider.getLinkName(), url, labelProvider, sourceEncoding);
+        }
+        if ("modified".equalsIgnoreCase(link)) {
+            return new IssuesDetail(owner, result, filterModified(allIssues), filterModified(newIssues),
+                    filterModified(outstandingIssues), EMPTY,
+                    Messages.Modified_Warnings_Header(), url, labelProvider, sourceEncoding);
+        }
+        if ("unchanged".equalsIgnoreCase(link)) {
+            return new IssuesDetail(owner, result, filterUnchanged(allIssues), filterUnchanged(newIssues),
+                    filterUnchanged(outstandingIssues), EMPTY,
+                    Messages.Modified_Warnings_Header(), url, labelProvider, sourceEncoding);
         }
         if ("fixed".equalsIgnoreCase(link)) {
             return new FixedWarningsDetail(owner, result, fixedIssues, url, labelProvider, sourceEncoding);
@@ -189,6 +199,14 @@ public class DetailFactory {
             }
         }
         throw new NoSuchElementException(String.format("There is no URL mapping for %s and %s", parent.getUrl(), link));
+    }
+
+    private Report filterModified(final Report report) {
+        return report.filter(Issue::isPartOfModifiedCode);
+    }
+
+    private Report filterUnchanged(final Report report) {
+        return report.filter(Predicate.not(Issue::isPartOfModifiedCode));
     }
 
     private Predicate<Issue> createPropertyFilter(final String plainLink, final String property) {

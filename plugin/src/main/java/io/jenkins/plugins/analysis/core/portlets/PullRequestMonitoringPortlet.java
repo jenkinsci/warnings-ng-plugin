@@ -20,9 +20,9 @@ import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
-import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.monitoring.MonitorPortlet;
 import io.jenkins.plugins.monitoring.MonitorPortletFactory;
+import io.jenkins.plugins.util.QualityGateStatus;
 
 /**
  * A portlet that can be used for the
@@ -152,18 +152,6 @@ public class PullRequestMonitoringPortlet extends MonitorPortlet {
     @SuppressWarnings("unused") // used by jelly view
     public boolean hasQualityGate() {
         return !result.getQualityGateStatus().equals(QualityGateStatus.INACTIVE);
-    }
-
-    /**
-     * Get the icon of the quality gate.
-     *
-     * @return
-     *          the image url of the icon.
-     * @deprecated replaced by {@link #getQualityGateResultClass()}
-     */
-    @Deprecated
-    public String getQualityGateResultIconUrl() {
-        return result.getQualityGateStatus().getResult().color.getImageOf("16x16");
     }
 
     /**

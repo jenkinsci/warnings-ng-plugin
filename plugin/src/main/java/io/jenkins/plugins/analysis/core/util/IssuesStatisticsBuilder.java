@@ -20,6 +20,8 @@ public class IssuesStatisticsBuilder {
     private int totalLowSize;
     private int newLowSize;
     private int deltaLowSize;
+    private int totalModifiedSize; // @since 11.0.0
+    private int newModifiedSize; // @since 11.0.0
     private int fixedSize;
 
     public IssuesStatisticsBuilder setTotalErrorSize(final int totalErrorSize) {
@@ -57,6 +59,11 @@ public class IssuesStatisticsBuilder {
         return this;
     }
 
+    public IssuesStatisticsBuilder setTotalModifiedSize(final int totalModifiedSize) {
+        this.totalModifiedSize = totalModifiedSize;
+        return this;
+    }
+
     public IssuesStatisticsBuilder setNewNormalSize(final int newNormalSize) {
         this.newNormalSize = newNormalSize;
         return this;
@@ -77,6 +84,11 @@ public class IssuesStatisticsBuilder {
         return this;
     }
 
+    public IssuesStatisticsBuilder setNewModifiedSize(final int newModifiedSize) {
+        this.newModifiedSize = newModifiedSize;
+        return this;
+    }
+
     public IssuesStatisticsBuilder setDeltaLowSize(final int deltaLowSize) {
         this.deltaLowSize = deltaLowSize;
         return this;
@@ -89,8 +101,8 @@ public class IssuesStatisticsBuilder {
 
     public IssuesStatistics build() {
         return new IssuesStatistics(
-                totalErrorSize, totalHighSize, totalNormalSize, totalLowSize,
-                newErrorSize, newHighSize, newNormalSize, newLowSize,
+                totalErrorSize, totalHighSize, totalNormalSize, totalLowSize, totalModifiedSize,
+                newErrorSize, newHighSize, newNormalSize, newLowSize, newModifiedSize,
                 deltaErrorSize, deltaHighSize, deltaNormalSize, deltaLowSize,
                 fixedSize);
     }
@@ -100,11 +112,13 @@ public class IssuesStatisticsBuilder {
         totalHighSize = 0;
         totalNormalSize = 0;
         totalLowSize = 0;
+        totalModifiedSize = 0;
 
         newErrorSize = 0;
         newHighSize = 0;
         newNormalSize = 0;
         newLowSize = 0;
+        newModifiedSize = 0;
 
         deltaErrorSize = 0;
         deltaHighSize = 0;
@@ -112,47 +126,5 @@ public class IssuesStatisticsBuilder {
         deltaLowSize = 0;
 
         fixedSize = 0;
-    }
-
-    /**
-     * Computed automatically since 6.1.0.
-     *
-     * @param unused
-     *         not used
-     *
-     * @return this
-     * @deprecated Computed automatically.
-     */
-    @Deprecated
-    public IssuesStatisticsBuilder setTotalSize(final int unused) {
-        return this;
-    }
-
-    /**
-     * Computed automatically since 6.1.0.
-     *
-     * @param unused
-     *         not used
-     *
-     * @return this
-     * @deprecated Computed automatically.
-     */
-    @Deprecated
-    public IssuesStatisticsBuilder setNewSize(final int unused) {
-        return this;
-    }
-
-    /**
-     * Computed automatically since 6.1.0.
-     *
-     * @param unused
-     *         not used
-     *
-     * @return this
-     * @deprecated Computed automatically.
-     */
-    @Deprecated
-    public IssuesStatisticsBuilder setDeltaSize(final int unused) {
-        return this;
     }
 }

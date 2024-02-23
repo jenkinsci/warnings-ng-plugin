@@ -29,12 +29,20 @@ class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String JAVA_ONE_WARNING = "java-start-rev0.txt";
     private static final String PUBLISH_ISSUES_STEP = "publishIssues issues:[issues]";
     private static final String FORENSICS_API_PLUGIN = "https://github.com/jenkinsci/forensics-api-plugin.git";
+    private static final String OLD_COMMIT = "3097ea1037fb809c84d2752d7f98f71eedcfe97a";
     private static final String COMMIT = "a6d0ef09ab3c418e370449a884da99b8190ae950";
-    private static final String CHECKOUT_FORENSICS_API = "checkout([$class: 'GitSCM', "
-            + "branches: [[name: '" + COMMIT + "' ]],\n"
-            + "userRemoteConfigs: [[url: '" + FORENSICS_API_PLUGIN + "']],\n"
-            + "extensions: [[$class: 'RelativeTargetDirectory', \n"
-            + "            relativeTargetDir: 'forensics-api']]])";
+    private static final String CHECKOUT_FORENSICS_API = checkout(COMMIT);
+    private static final String MODIFIED_FILE = "src/main/java/io/jenkins/plugins/forensics/blame/Blames.java";
+
+    private static String checkout(final String commit) {
+        return "checkout([$class: 'GitSCM', "
+                + "branches: [[name: '" + commit
+                + "' ]],\n"
+                + "userRemoteConfigs: [[url: '" + FORENSICS_API_PLUGIN + "']],\n"
+                + "extensions: [[$class: 'RelativeTargetDirectory', \n"
+                + "            relativeTargetDir: 'forensics-api']]])";
+    }
+
     private static final String MINE_REPOSITORY = "mineRepository()";
     private static final String SCM_RESOLVER = "src/main/java/io/jenkins/plugins/forensics/util/ScmResolver.java";
     private static final int AFFECTED_LINE = 20;
@@ -45,9 +53,9 @@ class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldObtainBlamesAndForensicsWithScanAndPublishIssuesSteps() {
-        runStepAndVerifyBlamesAndForensics(createScanForIssuesStep("sourceDirectory: 'forensics-api'"));
         runStepAndVerifyBlamesAndForensics(createScanForIssuesStep("sourceDirectories: [[path: 'forensics-api']]"));
-        runStepAndVerifyBlamesAndForensics(createScanForIssuesStep("sourceDirectories: [[path: 'does-not-exist'], [path: 'forensics-api']]"));
+        runStepAndVerifyBlamesAndForensics(
+                createScanForIssuesStep("sourceDirectories: [[path: 'does-not-exist'], [path: 'forensics-api']]"));
     }
 
     private String createScanForIssuesStep(final String sourceDirectories) {
@@ -63,7 +71,6 @@ class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldObtainBlamesAndForensicsWithRecordIssuesStep() {
-        runStepAndVerifyBlamesAndForensics(createRecordIssuesStep("sourceDirectory: 'forensics-api'"));
         runStepAndVerifyBlamesAndForensics(createRecordIssuesStep("sourceDirectories: [[path: 'forensics-api']]"));
         runStepAndVerifyBlamesAndForensics(createRecordIssuesStep("sourceDirectories: [[path: 'does-not-exist'], [path: 'forensics-api']]"));
     }
@@ -75,8 +82,8 @@ class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Checks out an existing Git repository and starts a freestyle job. Verifies that the
-     * Git forensics plugin is correctly invoked.
+     * Checks out an existing Git repository and starts a freestyle job. Verifies that the Git forensics plugin is
+     * correctly invoked.
      */
     @Test
     void shouldObtainBlamesAndForensicsInFreestyleJob() throws IOException {
@@ -89,7 +96,7 @@ class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
                 Collections.singletonList(new RelativeTargetDirectory("forensics-api")));
         job.setScm(scm);
         job.getPublishersList().add(new RepositoryMinerStep());
-        enableGenericWarnings(job, recorder -> recorder.setPublishAllIssues(true), new Java());
+        enableGenericWarnings(job, new Java());
 
         verifyBlaming(job);
     }
@@ -97,14 +104,38 @@ class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
     private void runStepAndVerifyBlamesAndForensics(final String step) {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix();
 
-        createFileInWorkspace(job, "java-issues.txt", createJavaWarning(SCM_RESOLVER, AFFECTED_LINE));
+        createFileInWorkspace(job, "java-issues.txt",
+                createJavaWarning(MODIFIED_FILE, 111)
+                        + createJavaWarning(SCM_RESOLVER, AFFECTED_LINE));
 
-        job.setDefinition(asStage(CHECKOUT_FORENSICS_API, MINE_REPOSITORY, step));
+        job.setDefinition(asStage(checkout(OLD_COMMIT), MINE_REPOSITORY, step));
 
-        verifyBlaming(job);
+        buildSuccessfully(job); // reference build
+
+        createFileInWorkspace(job, "java-issues.txt",
+                createJavaWarning(MODIFIED_FILE, 111)    // outstanding and modified
+                        + createJavaWarning(MODIFIED_FILE, 112)  // new and modified
+                        + createJavaWarning(MODIFIED_FILE, 113)  // new and modified
+                        + createJavaWarning(SCM_RESOLVER, AFFECTED_LINE)   // outstanding (not modified)
+                        + createJavaWarning(MODIFIED_FILE, 2));  // new (not modified)
+
+        job.setDefinition(asStage(CHECKOUT_FORENSICS_API, MINE_REPOSITORY, "discoverReferenceBuild()", step));
+
+        var result = verifyBlamingWithModifiedFiles(job);
+
+        assertThat(getConsoleLog(result)).contains(
+                "Detect all issues that are part of modified code",
+                "-> Using commit 'a6d0ef0' as latest commit for build",
+                "-> Using commit '3097ea1' as latest commit for build",
+                "-> Invoking Git delta calculator for determining the changes between commits 'a6d0ef0' and '3097ea1'",
+                "-> Start scanning for differences between commits...",
+                "-> 121 files contain changes",
+                "-> Creating the Git diff file",
+                "-> Git code delta successfully calculated",
+                "Issues in modified code: 3 (new: 2, outstanding: 1)");
     }
 
-    private void verifyBlaming(final ParameterizedJob<?, ?> job) {
+    private AnalysisResult verifyBlaming(final ParameterizedJob<?, ?> job) {
         AnalysisResult result = scheduleSuccessfulBuild(job);
 
         assertThat(result).hasTotalSize(1).hasNewSize(0).hasFixedSize(0);
@@ -121,6 +152,31 @@ class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
                 "-> blamed authors of issues in 1 files",
                 "Extracting repository forensics for 1 affected files (files in repository: 121)",
                 "-> 1 affected files processed");
+
+        return result;
+    }
+
+    private AnalysisResult verifyBlamingWithModifiedFiles(final ParameterizedJob<?, ?> job) {
+        AnalysisResult result = scheduleSuccessfulBuild(job);
+
+        assertThat(result).hasTotalSize(5).hasNewSize(3).hasFixedSize(0);
+        assertThat(result.getTotals()).hasNewModifiedSize(2).hasTotalModifiedSize(3);
+
+        assertThat(result.getBlames().contains(SCM_RESOLVER)).isTrue();
+
+        FileBlame blame = result.getBlames().getBlame(SCM_RESOLVER);
+        assertThat(blame.getFileName()).isEqualTo(SCM_RESOLVER);
+        assertThat(blame.getEmail(AFFECTED_LINE)).isEqualTo("ullrich.hafner@gmail.com");
+        assertThat(blame.getCommit(AFFECTED_LINE)).isEqualTo("43dde5d4f7a06122216494a896c51830ed684572");
+
+        assertThat(getConsoleLog(result)).contains(
+                "Invoking Git blamer to create author and commit information for 2 affected files",
+                "Git commit ID = 'a6d0ef09ab3c418e370449a884da99b8190ae950'",
+                "-> blamed authors of issues in 2 files",
+                "Extracting repository forensics for 2 affected files (files in repository: 121)",
+                "-> 2 affected files processed");
+
+        return result;
     }
 
     /**
@@ -130,7 +186,7 @@ class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     void shouldSkipBlamesAndForensicsWithScanAndPublishIssuesSteps() {
         runStepAndVerifyScmSkipping("def issues = scanForIssues "
-                + "sourceDirectory: 'forensics-api',"
+                + "sourceDirectories: [[path: 'forensics-api']],"
                 + "scm: 'nothing', "
                 + "tool: java(pattern:'**/*issues.txt', reportEncoding:'UTF-8')\n"
                 + PUBLISH_ISSUES_STEP);
@@ -143,14 +199,14 @@ class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     void shouldSkipBlamesAndForensicsWithRecordIssuesStep() {
         runStepAndVerifyScmSkipping("recordIssues "
-                + "sourceDirectory: 'forensics-api',"
+                + "sourceDirectories: [[path: 'forensics-api']],"
                 + "scm: 'nothing', "
                 + "tool: java(pattern:'**/*issues.txt', reportEncoding:'UTF-8')");
     }
 
     /**
-     * Checks out an existing Git repository and starts a freestyle job. Verifies that the Git forensics
-     * plugin is correctly skipped.
+     * Checks out an existing Git repository and starts a freestyle job. Verifies that the Git forensics plugin is
+     * correctly skipped.
      */
     @Test
     void shouldSkipBlamesAndForensicsInFreestyleJob() throws IOException {

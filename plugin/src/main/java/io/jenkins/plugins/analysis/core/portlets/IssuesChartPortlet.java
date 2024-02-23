@@ -140,17 +140,6 @@ public class IssuesChartPortlet extends DashboardPortlet {
     }
 
     /**
-     * Returns the UI model for an ECharts line chart that shows the issues stacked by severity.
-     *
-     * @return the UI model as JSON
-     * @deprecated replaced by {@link #getBuildTrendModel()} which is called from JS file
-     */
-    @JavaScriptMethod @Deprecated @SuppressWarnings("unused") // Called by jelly view
-    public String getTrend() {
-        return getBuildTrendModel();
-    }
-
-    /**
      * Registers the specified jobs in this portlet. These jobs will be used to render the trend chart. Note that
      * rendering of the trend chart is done using an Ajax call later on.
      *

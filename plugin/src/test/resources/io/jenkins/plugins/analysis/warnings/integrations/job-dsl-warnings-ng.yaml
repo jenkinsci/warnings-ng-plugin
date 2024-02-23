@@ -6,11 +6,9 @@ jobs:
                     trendChartType('NONE')
                     aggregatingResults(true)
                     blameDisabled(true)
-                    forensicsDisabled(true)
                     enabledForFailure(true)
                     quiet(false)
                     healthy(10)
-                    ignoreFailedBuilds(false)
                     ignoreQualityGate(true)
                     skipPublishingChecks(true)
                     id('test-id')
@@ -18,12 +16,11 @@ jobs:
                     minimumSeverity('ERROR')
                     sourceCodeEncoding('UTF-8')
                     unhealthy(50)
-                    referenceJobName('test-job')
                     qualityGates {
-                        qualityGate {
+                        warningsQualityGate {
                             threshold(10)
                             type('TOTAL')
-                            unstable(true)
+                            criticality('FAILURE')
                         }
                     }
                     tools {

@@ -2,14 +2,12 @@ package io.jenkins.plugins.analysis.core.model;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 import edu.hm.hafner.util.VisibleForTesting;
 
 import hudson.model.Item;
 import hudson.model.Run;
 
-import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
@@ -93,15 +91,11 @@ public class ResetQualityGateCommand {
             return false;
         }
 
-        Optional<ResultAction> resultAction = selectedBuild.getActions(ResultAction.class)
+        return selectedBuild.getActions(ResultAction.class)
                 .stream()
                 .filter(action -> action.getId().equals(id))
-                .findAny();
-        if (resultAction.isEmpty()) {
-            return false;
-        }
-
-        QualityGateStatus status = resultAction.get().getResult().getQualityGateStatus();
-        return status == QualityGateStatus.FAILED || status == QualityGateStatus.WARNING;
+                .findAny()
+                .filter(action -> !action.getResult().getQualityGateResult().isSuccessful())
+                .isPresent();
     }
 }

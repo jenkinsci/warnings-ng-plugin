@@ -15,7 +15,9 @@ import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import jenkins.model.Jenkins;
 
+import io.jenkins.plugins.analysis.core.steps.WarningChecksPublisher.ChecksAnnotationScope;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
+import io.jenkins.plugins.prism.SourceCodeRetention;
 import io.jenkins.plugins.util.JenkinsFacade;
 import io.jenkins.plugins.util.ValidationUtilities;
 
@@ -86,6 +88,20 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
     }
 
     /**
+     * Returns a model with all {@link SourceCodeRetention} strategies.
+     *
+     * @return a model with all {@link SourceCodeRetention} strategies.
+     */
+    @POST
+    @SuppressWarnings("unused") // used by Stapler view data binding
+    public ListBoxModel doFillSourceCodeRetentionItems() {
+        if (JENKINS.hasPermission(Jenkins.READ)) {
+            return SourceCodeRetention.fillItems();
+        }
+        return new ListBoxModel();
+    }
+
+    /**
      * Returns a model with all available severity filters.
      *
      * @return a model with all available severity filters
@@ -96,24 +112,6 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
             return model.getAllSeverityFilters();
         }
         return new ListBoxModel();
-
-    }
-
-    /**
-     * Returns the model with the possible reference jobs.
-     *
-     * @param project
-     *         the project that is configured
-     * @return the model with the possible reference jobs
-     * @deprecated not used anymore, part of forensics plugin
-     */
-    @Deprecated
-    @POST
-    public ComboBoxModel doFillReferenceJobNameItems(@AncestorInPath final BuildableItem project) {
-        if (JENKINS.hasPermission(Item.CONFIGURE, project)) {
-            return model.getAllJobs();
-        }
-        return new ComboBoxModel();
     }
 
     /**
@@ -189,6 +187,20 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
         }
 
         return VALIDATION_UTILITIES.validateId(id);
+    }
+
+    /**
+     * Returns a model with all {@link ChecksAnnotationScope} scopes.
+     *
+     * @return a model with all {@link ChecksAnnotationScope} scopes.
+     */
+    @POST
+    @SuppressWarnings("unused") // used by Stapler view data binding
+    public ListBoxModel doFillChecksAnnotationScopeItems() {
+        if (JENKINS.hasPermission(Jenkins.READ)) {
+            return ChecksAnnotationScope.fillItems();
+        }
+        return new ListBoxModel();
     }
 
     @Override

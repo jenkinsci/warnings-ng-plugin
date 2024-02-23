@@ -10,7 +10,7 @@ import edu.hm.hafner.util.VisibleForTesting;
 
 import hudson.model.Run;
 
-import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
+import io.jenkins.plugins.util.QualityGateStatus;
 
 /**
  * Summary message of a static analysis run. This message is shown as part of the 'summary.jelly' information of the
@@ -108,6 +108,18 @@ public class SummaryModel {
         return analysisResult.getFixedSize();
     }
 
+    public int getModifiedSize() {
+        return analysisResult.getTotals().getTotalModifiedSize();
+    }
+
+    public int getModifiedNewSize() {
+        return analysisResult.getTotals().getNewModifiedSize();
+    }
+
+    public int getModifiedOutstandingSize() {
+        return getModifiedSize() - getModifiedNewSize();
+    }
+
     /**
      * Returns the tools that contribute to this result.
      *
@@ -132,7 +144,7 @@ public class SummaryModel {
     }
 
     public QualityGateStatus getQualityGateStatus() {
-        return analysisResult.getQualityGateStatus();
+        return analysisResult.getQualityGateResult().getOverallStatus();
     }
 
     public boolean isResetQualityGateVisible() {

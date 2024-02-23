@@ -4,6 +4,8 @@ import java.util.Map;
 
 import edu.hm.hafner.analysis.Severity;
 
+import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
+
 /**
  * Provides statistics for the results of a static analysis run.
  */
@@ -14,6 +16,7 @@ public interface AnalysisBuildResult {
      *
      * @return number of issues per origin
      */
+    @Whitelisted
     Map<String, Integer> getSizePerOrigin();
 
     /**
@@ -21,6 +24,7 @@ public interface AnalysisBuildResult {
      *
      * @return number of fixed issues
      */
+    @Whitelisted
     int getFixedSize();
 
     /**
@@ -28,6 +32,7 @@ public interface AnalysisBuildResult {
      *
      * @return total number of issues
      */
+    @Whitelisted
     int getTotalSize();
 
     /**
@@ -38,6 +43,7 @@ public interface AnalysisBuildResult {
      *
      * @return total number of issues
      */
+    @Whitelisted
     int getTotalSizeOf(Severity severity);
 
     /**
@@ -45,6 +51,7 @@ public interface AnalysisBuildResult {
      *
      * @return number of new issues
      */
+    @Whitelisted
     int getNewSize();
 
     /**
@@ -55,5 +62,14 @@ public interface AnalysisBuildResult {
      *
      * @return total number of issues
      */
+    @Whitelisted
     int getNewSizeOf(Severity severity);
+
+    /**
+     * Returns the total number of issues (by severity, new, total, fixed and delta) in a build.
+     *
+     * @return the totals
+     */
+    @Whitelisted
+    IssuesStatistics getTotals();
 }
