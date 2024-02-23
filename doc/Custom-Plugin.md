@@ -83,7 +83,7 @@ Here is an example that can be used as a starting point.
 ```java
 package io.jenkins.plugins.analysis.warnings;
 
-import javax.annotation.Nonnull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
