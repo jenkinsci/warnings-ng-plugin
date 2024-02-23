@@ -433,6 +433,18 @@ public class RecordIssuesStep extends Step implements Serializable {
     }
 
     /**
+     * Returns whether all issues should be published using the Checks API. If set to {@code false} only new issues will
+     * be published.
+     *
+     * @return {@code true} if all issues should be published, {@code false} if only new issues should be published
+     * @deprecated use {@link #getChecksAnnotationScope()} instead
+     */
+    @Deprecated
+    public boolean isPublishAllIssues() {
+        return getChecksAnnotationScope() == ChecksAnnotationScope.ALL;
+    }
+
+    /**
      * Returns whether all issues should be published to SCM checks.
      *
      * @param publishAllIssues if {@code true} then all issues should be published, otherwise only new issues
