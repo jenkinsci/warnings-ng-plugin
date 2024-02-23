@@ -1,4 +1,4 @@
-/* global jQuery3, view, echartsJenkinsApi, bootstrap5 */
+/* global jQuery3, proxy, echartsJenkinsApi, bootstrap5 */
 (function ($) {
     const trendConfigurationDialogId = 'chart-configuration-issues-history';
 
@@ -83,7 +83,7 @@
      */
     function redrawTrendCharts () {
         const openBuild = function (build) {
-            view.getUrlForBuild(build, window.location.href, function (buildUrl) {
+            proxy.getUrlForBuild(build, window.location.href, function (buildUrl) {
                 if (buildUrl.responseJSON.startsWith('http')) {
                     window.location.assign(buildUrl.responseJSON);
                 }
@@ -96,7 +96,7 @@
          * Creates a build trend chart that shows the number of issues for a couple of builds.
          * Requires that a DOM <div> element exists with the ID '#severities-trend-chart'.
          */
-        view.getBuildTrend(configuration, function (lineModel) {
+        proxy.getBuildTrend(configuration, function (lineModel) {
             echartsJenkinsApi.renderConfigurableZoomableTrendChart('severities-trend-chart',
                 lineModel.responseJSON, trendConfigurationDialogId, openBuild);
         });
@@ -105,7 +105,7 @@
          * Creates a build trend chart that shows the number of issues per tool.
          * Requires that a DOM <div> element exists with the ID '#tools-trend-chart'.
          */
-        view.getToolsTrend(configuration, function (lineModel) {
+        proxy.getToolsTrend(configuration, function (lineModel) {
             echartsJenkinsApi.renderConfigurableZoomableTrendChart('tools-trend-chart',
                 lineModel.responseJSON, trendConfigurationDialogId, openBuild);
         });
@@ -114,7 +114,7 @@
          * Creates a build trend chart that shows the number of issues per tool.
          * Requires that a DOM <div> element exists with the ID '#new-versus-fixed-trend-chart'.
          */
-        view.getNewVersusFixedTrend(configuration, function (lineModel) {
+        proxy.getNewVersusFixedTrend(configuration, function (lineModel) {
             echartsJenkinsApi.renderConfigurableZoomableTrendChart('new-versus-fixed-trend-chart',
                 lineModel.responseJSON, trendConfigurationDialogId, openBuild);
         });
@@ -124,7 +124,7 @@
          * Requires that a DOM <div> element exists with the ID '#health-trend-chart'.
          */
         if ($('#health-trend-chart').length) {
-            view.getHealthTrend(configuration, function (lineModel) {
+            proxy.getHealthTrend(configuration, function (lineModel) {
                 echartsJenkinsApi.renderConfigurableZoomableTrendChart('health-trend-chart',
                     lineModel.responseJSON, trendConfigurationDialogId, openBuild);
             });
