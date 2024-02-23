@@ -1,0 +1,26 @@
+<div>
+    Select the scope of source code annotations in SCM checks.
+
+    The following different scopes are supported:
+
+    <dl>
+        <dt>SKIP - Skip annotations</dt>
+        <dd>
+            Do not publish any annotations, only report the static analysis report summary.
+        </dd>
+        <dt>ALL - Publish annotations for all issues</dt>
+        <dd>
+            Publish annotations for all issues. This includes new and all outstanding issues. There might be a lot of
+            annotations depending on the quality of your code.
+        </dd>
+        <dt>NEW - Only publish annotations for new issues</dt>
+        <dd>
+            Publish annotations only for issues, that have been marked as new.
+        </dd>
+        <dt>MODIFIED - Publish all annotations in modified code</dt>
+        <dd>
+            Publish all annotations that are part of the modified code. This includes new and all outstanding issues.
+            Additionally, all annotations for new issues are published, as they might be caused by changed code as well.
+        </dd>
+    </dl>
+</div>

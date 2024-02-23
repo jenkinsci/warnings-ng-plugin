@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
-
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssuesInModifiedCodeMarker;
 import edu.hm.hafner.analysis.Report;
@@ -161,7 +159,7 @@ class IssuesPublisher {
             report.logInfo("Detect all issues that are part of modified code");
 
             var log = new FilteredLog("Errors while computing delta: ");
-            var delta = deltaCalculator.calculateDelta(run, referenceBuild, StringUtils.EMPTY, log); // get rid of SCM
+            var delta = deltaCalculator.calculateDelta(run, referenceBuild, log);
             issues.mergeLogMessages(log);
 
             if (delta.isPresent()) {

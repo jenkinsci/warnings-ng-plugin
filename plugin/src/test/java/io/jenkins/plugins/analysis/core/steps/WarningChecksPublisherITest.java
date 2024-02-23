@@ -18,7 +18,7 @@ import hudson.model.FreeStyleProject;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 
-import io.jenkins.plugins.analysis.core.steps.WarningChecksPublisher.AnnotationScope;
+import io.jenkins.plugins.analysis.core.steps.WarningChecksPublisher.ChecksAnnotationScope;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.core.util.WarningsQualityGate;
 import io.jenkins.plugins.analysis.core.util.WarningsQualityGate.QualityGateType;
@@ -74,12 +74,12 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
                 .hasNewSize(2);
 
         WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(run), TaskListener.NULL, null);
-        assertThat(publisher.extractChecksDetails(AnnotationScope.PUBLISH_NEW_ISSUES))
+        assertThat(publisher.extractChecksDetails(ChecksAnnotationScope.NEW))
                 .hasFieldOrPropertyWithValue("detailsURL", Optional.of(getResultAction(run).getAbsoluteUrl()))
                 .usingRecursiveComparison()
                 .ignoringFields("detailsURL", "output.value.summary.value")
                 .isEqualTo(createExpectedCheckStyleDetails());
-        assertThat(publisher.extractChecksDetails(AnnotationScope.PUBLISH_NEW_ISSUES).getOutput()).isPresent()
+        assertThat(publisher.extractChecksDetails(ChecksAnnotationScope.NEW).getOutput()).isPresent()
                 .get()
                 .satisfies(
                         output -> {
@@ -91,9 +91,12 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
                                     .endsWith("#1</a>");
                             assertThat(output.getChecksAnnotations()).hasSize(2);
                         });
-        assertThat(publisher.extractChecksDetails(AnnotationScope.PUBLISH_ALL_ISSUES).getOutput()).isPresent().get()
+        assertThat(publisher.extractChecksDetails(ChecksAnnotationScope.ALL).getOutput()).isPresent().get()
                 .satisfies(
                         output -> assertThat(output.getChecksAnnotations()).hasSize(6));
+        assertThat(publisher.extractChecksDetails(ChecksAnnotationScope.SKIP).getOutput()).isPresent().get()
+                .satisfies(
+                        output -> assertThat(output.getChecksAnnotations()).isEmpty());
     }
 
     private void configureScanner(final WorkflowJob job, final String fileName, final String parameters) {
@@ -120,7 +123,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
         Run<?, ?> build = buildSuccessfully(project);
         WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(build), TaskListener.NULL, null);
 
-        assertThat(publisher.extractChecksDetails(AnnotationScope.PUBLISH_NEW_ISSUES).getConclusion())
+        assertThat(publisher.extractChecksDetails(ChecksAnnotationScope.NEW).getConclusion())
                 .isEqualTo(ChecksConclusion.SUCCESS);
     }
 
@@ -154,7 +157,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
         Run<?, ?> run = buildSuccessfully(project);
 
         WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(run), TaskListener.NULL, null);
-        ChecksDetails details = publisher.extractChecksDetails(AnnotationScope.PUBLISH_NEW_ISSUES);
+        ChecksDetails details = publisher.extractChecksDetails(ChecksAnnotationScope.NEW);
 
         assertThat(details.getOutput().get().getChecksAnnotations())
                 .usingRecursiveFieldByFieldElementComparatorOnFields("message")
@@ -179,7 +182,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
                 .hasNewSize(0);
 
         assertThat(new WarningChecksPublisher(getResultAction(run), TaskListener.NULL, null)
-                .extractChecksDetails(AnnotationScope.PUBLISH_NEW_ISSUES).getOutput())
+                .extractChecksDetails(ChecksAnnotationScope.NEW).getOutput())
                 .isPresent()
                 .get()
                 .hasFieldOrPropertyWithValue("title", Optional.of("No issues"));
@@ -200,7 +203,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
                 .hasNewSize(0);
 
         assertThat(new WarningChecksPublisher(getResultAction(run), TaskListener.NULL, null)
-                .extractChecksDetails(AnnotationScope.PUBLISH_NEW_ISSUES).getOutput())
+                .extractChecksDetails(ChecksAnnotationScope.NEW).getOutput())
                 .isPresent()
                 .get()
                 .hasFieldOrPropertyWithValue("title", Optional.of("No new issues, 4 total"));
@@ -226,7 +229,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
                 .hasNewSize(6);
 
         assertThat(new WarningChecksPublisher(getResultAction(run), TaskListener.NULL, null)
-                .extractChecksDetails(AnnotationScope.PUBLISH_NEW_ISSUES).getOutput())
+                .extractChecksDetails(ChecksAnnotationScope.NEW).getOutput())
                 .isPresent()
                 .get()
                 .hasFieldOrPropertyWithValue("title", Optional.of("6 new issues"));
@@ -246,7 +249,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
         Run<?, ?> run = buildSuccessfully(project);
 
         WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(run), TaskListener.NULL, null);
-        ChecksDetails details = publisher.extractChecksDetails(AnnotationScope.PUBLISH_NEW_ISSUES);
+        ChecksDetails details = publisher.extractChecksDetails(ChecksAnnotationScope.NEW);
 
         assertThat(details.getOutput().get().getChecksAnnotations().get(0))
                 .hasFieldOrPropertyWithValue("startLine", Optional.of(123))
@@ -279,19 +282,18 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldReportSelectedIssues() {
-        buildCheckForNewAndOutstandingWarnings(AnnotationScope.PUBLISH_NEW_ISSUES, 2);
-        buildCheckForNewAndOutstandingWarnings(AnnotationScope.PUBLISH_ALL_ISSUES, 6);
+        buildCheckForNewAndOutstandingWarnings(ChecksAnnotationScope.NEW, 2);
+        buildCheckForNewAndOutstandingWarnings(ChecksAnnotationScope.ALL, 6);
+        buildCheckForNewAndOutstandingWarnings(ChecksAnnotationScope.SKIP, 0);
     }
 
-    private void buildCheckForNewAndOutstandingWarnings(final AnnotationScope scope, final int expectedSize) {
+    private void buildCheckForNewAndOutstandingWarnings(final ChecksAnnotationScope scope, final int expectedSize) {
         WorkflowJob project = createPipelineWithWorkspaceFilesWithSuffix(OLD_CHECKSTYLE_REPORT, NEW_CHECKSTYLE_REPORT);
-        configureScanner(project, "checkstyle", ", publishAllIssues: "
-                + (scope == AnnotationScope.PUBLISH_ALL_ISSUES));
+        configureScanner(project, "checkstyle", ", checksAnnotationScope: '" + scope.name() + "'");
         buildSuccessfully(project);
         resetCapturedChecks();
 
-        configureScanner(project, "checkstyle1", ", publishAllIssues: "
-                + (scope == AnnotationScope.PUBLISH_ALL_ISSUES));
+        configureScanner(project, "checkstyle1", ", checksAnnotationScope: '" + scope.name() + "'");
         buildSuccessfully(project);
 
         List<ChecksDetails> publishedChecks = getPublishedChecks();
@@ -369,7 +371,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Verifies that {@link WarningChecksPublisher} uses issue category when type is not provided.
+     * Verifies that {@link WarningChecksPublisher} uses issue category when the type is not provided.
      */
     @Test
     void shouldFallbackToIssueCategory() {
@@ -382,7 +384,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
         Run<?, ?> run = buildSuccessfully(project);
 
         WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(run), TaskListener.NULL, null);
-        ChecksDetails details = publisher.extractChecksDetails(AnnotationScope.PUBLISH_NEW_ISSUES);
+        ChecksDetails details = publisher.extractChecksDetails(ChecksAnnotationScope.NEW);
 
         assertThat(details.getOutput().get().getChecksAnnotations().get(0))
                 .hasFieldOrPropertyWithValue("title", Optional.of("C4101"));
@@ -473,7 +475,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
                 .hasQualityGateStatus(criticality.getStatus());
 
         WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(build), TaskListener.NULL, null);
-        assertThat(publisher.extractChecksDetails(AnnotationScope.PUBLISH_NEW_ISSUES).getConclusion())
+        assertThat(publisher.extractChecksDetails(ChecksAnnotationScope.NEW).getConclusion())
                 .isEqualTo(ChecksConclusion.FAILURE);
     }
 

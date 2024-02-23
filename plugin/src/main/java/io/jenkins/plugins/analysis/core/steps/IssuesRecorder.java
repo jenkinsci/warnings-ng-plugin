@@ -53,7 +53,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.IssuesScanner.BlameMode;
 import io.jenkins.plugins.analysis.core.steps.IssuesScanner.PostProcessingMode;
-import io.jenkins.plugins.analysis.core.steps.WarningChecksPublisher.AnnotationScope;
+import io.jenkins.plugins.analysis.core.steps.WarningChecksPublisher.ChecksAnnotationScope;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
@@ -89,7 +89,7 @@ import io.jenkins.plugins.util.ValidationUtilities;
 @SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveClassLength", "PMD.ExcessiveImports", "PMD.TooManyFields", "PMD.DataClass", "PMD.GodClass", "PMD.CyclomaticComplexity", "ClassDataAbstractionCoupling", "ClassFanOutComplexity"})
 public class IssuesRecorder extends Recorder {
     private static final ValidationUtilities VALIDATION_UTILITIES = new ValidationUtilities();
-    static final String NO_REFERENCE_DEFINED = "-";
+
     static final String DEFAULT_ID = "analysis";
 
     private List<Tool> analysisTools = new ArrayList<>();
@@ -115,7 +115,8 @@ public class IssuesRecorder extends Recorder {
 
     private boolean isBlameDisabled;
     private boolean skipPublishingChecks; // by default, checks will be published
-    private boolean publishAllIssues; // by default, only new issues will be published
+    private ChecksAnnotationScope checksAnnotationScope = ChecksAnnotationScope.NEW; // @since 11.0.0
+    private transient boolean publishAllIssues; // @deprecated: use checksAnnotationScope instead
 
     private boolean skipPostProcessing; // @since 10.6.0: by default, post-processing will be enabled
 
@@ -142,7 +143,7 @@ public class IssuesRecorder extends Recorder {
     }
 
     /**
-     * Called after de-serialization to retain backward compatibility or to populate new elements (that would be
+     * Called after deserialization to retain backward compatibility or to populate new elements (that would be
      * otherwise initialized to {@code null}).
      *
      * @return this
@@ -165,6 +166,9 @@ public class IssuesRecorder extends Recorder {
         }
         if (sourceCodeRetention == null) {
             sourceCodeRetention = SourceCodeRetention.EVERY_BUILD;
+        }
+        if (checksAnnotationScope == null) {
+            checksAnnotationScope = publishAllIssues ? ChecksAnnotationScope.ALL : ChecksAnnotationScope.NEW;
         }
         return this;
     }
@@ -431,6 +435,21 @@ public class IssuesRecorder extends Recorder {
     }
 
     /**
+     * Sets the scope of the annotations that should be published to SCM checks.
+     *
+     * @param checksAnnotationScope
+     *         the scope to use
+     */
+    @DataBoundSetter
+    public void setChecksAnnotationScope(final ChecksAnnotationScope checksAnnotationScope) {
+        this.checksAnnotationScope = checksAnnotationScope;
+    }
+
+    public ChecksAnnotationScope getChecksAnnotationScope() {
+        return checksAnnotationScope;
+    }
+
+    /**
      * Returns whether post-processing of the issues should be disabled.
      *
      * @return {@code true} if post-processing of the issues should be disabled.
@@ -442,21 +461,6 @@ public class IssuesRecorder extends Recorder {
     @DataBoundSetter
     public void setSkipPostProcessing(final boolean skipPostProcessing) {
         this.skipPostProcessing = skipPostProcessing;
-    }
-
-    /**
-     * Returns whether all issues should be published using the Checks API. If set to {@code false} only new issues will
-     * be published.
-     *
-     * @return {@code true} if all issues should be published, {@code false} if only new issues should be published
-     */
-    public boolean isPublishAllIssues() {
-        return publishAllIssues;
-    }
-
-    @DataBoundSetter
-    public void setPublishAllIssues(final boolean publishAllIssues) {
-        this.publishAllIssues = publishAllIssues;
     }
 
     /**
@@ -739,8 +743,7 @@ public class IssuesRecorder extends Recorder {
 
         if (!skipPublishingChecks) {
             WarningChecksPublisher checksPublisher = new WarningChecksPublisher(action, listener, checksInfo);
-            checksPublisher.publishChecks(
-                    isPublishAllIssues() ? AnnotationScope.PUBLISH_ALL_ISSUES : AnnotationScope.PUBLISH_NEW_ISSUES);
+            checksPublisher.publishChecks(getChecksAnnotationScope());
         }
 
         return action.getResult();
@@ -928,6 +931,20 @@ public class IssuesRecorder extends Recorder {
         public ListBoxModel doFillTrendChartTypeItems() {
             if (JENKINS.hasPermission(Jenkins.READ)) {
                 return model.getAllTrendChartTypes();
+            }
+            return new ListBoxModel();
+        }
+
+        /**
+         * Returns a model with all {@link ChecksAnnotationScope} scopes.
+         *
+         * @return a model with all {@link ChecksAnnotationScope} scopes.
+         */
+        @POST
+        @SuppressWarnings("unused") // used by Stapler view data binding
+        public ListBoxModel doFillChecksAnnotationScopeItems() {
+            if (JENKINS.hasPermission(Jenkins.READ)) {
+                return ChecksAnnotationScope.fillItems();
             }
             return new ListBoxModel();
         }

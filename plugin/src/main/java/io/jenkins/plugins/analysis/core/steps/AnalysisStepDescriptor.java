@@ -15,6 +15,7 @@ import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import jenkins.model.Jenkins;
 
+import io.jenkins.plugins.analysis.core.steps.WarningChecksPublisher.ChecksAnnotationScope;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
 import io.jenkins.plugins.prism.SourceCodeRetention;
 import io.jenkins.plugins.util.JenkinsFacade;
@@ -186,6 +187,20 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
         }
 
         return VALIDATION_UTILITIES.validateId(id);
+    }
+
+    /**
+     * Returns a model with all {@link ChecksAnnotationScope} scopes.
+     *
+     * @return a model with all {@link ChecksAnnotationScope} scopes.
+     */
+    @POST
+    @SuppressWarnings("unused") // used by Stapler view data binding
+    public ListBoxModel doFillChecksAnnotationScopeItems() {
+        if (JENKINS.hasPermission(Jenkins.READ)) {
+            return ChecksAnnotationScope.fillItems();
+        }
+        return new ListBoxModel();
     }
 
     @Override

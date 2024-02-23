@@ -35,14 +35,13 @@ import io.jenkins.plugins.analysis.core.model.HealthReportBuilder;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
+import io.jenkins.plugins.analysis.core.steps.WarningChecksPublisher.ChecksAnnotationScope;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
 import io.jenkins.plugins.analysis.core.util.WarningsQualityGate;
 import io.jenkins.plugins.checks.steps.ChecksInfo;
 import io.jenkins.plugins.prism.SourceCodeDirectory;
 import io.jenkins.plugins.prism.SourceCodeRetention;
-import io.jenkins.plugins.util.PipelineResultHandler;
 import io.jenkins.plugins.util.QualityGateEvaluator;
-import io.jenkins.plugins.util.ResultHandler;
 import io.jenkins.plugins.util.ValidationUtilities;
 
 /**
@@ -88,7 +87,7 @@ public class RecordIssuesStep extends Step implements Serializable {
 
     private boolean skipPostProcessing; // @since 10.6.0: by default, post-processing will be enabled
     private boolean skipPublishingChecks; // by default, checks will be published
-    private boolean publishAllIssues; // by default, only new issues will be published
+    private ChecksAnnotationScope checksAnnotationScope = ChecksAnnotationScope.NEW; // @since 11.0.0
 
     private String id;
     private String name;
@@ -419,18 +418,30 @@ public class RecordIssuesStep extends Step implements Serializable {
     }
 
     /**
-     * Returns whether all issues should be published using the Checks API. If set to {@code false} only new issues will
-     * be published.
+     * Sets the scope of the annotations that should be published to SCM checks.
      *
-     * @return {@code true} if all issues should be published, {@code false} if only new issues should be published
+     * @param checksAnnotationScope
+     *         the scope to use
      */
-    public boolean isPublishAllIssues() {
-        return publishAllIssues;
+    @DataBoundSetter
+    public void setChecksAnnotationScope(final ChecksAnnotationScope checksAnnotationScope) {
+        this.checksAnnotationScope = checksAnnotationScope;
     }
 
+    public ChecksAnnotationScope getChecksAnnotationScope() {
+        return checksAnnotationScope;
+    }
+
+    /**
+     * Returns whether all issues should be published to SCM checks.
+     *
+     * @param publishAllIssues if {@code true} then all issues should be published, otherwise only new issues
+     * @deprecated use {@link #setChecksAnnotationScope(ChecksAnnotationScope)} instead
+     */
+    @Deprecated
     @DataBoundSetter
     public void setPublishAllIssues(final boolean publishAllIssues) {
-        this.publishAllIssues = publishAllIssues;
+        checksAnnotationScope = publishAllIssues ? ChecksAnnotationScope.ALL : ChecksAnnotationScope.NEW;
     }
 
     /**
@@ -592,7 +603,7 @@ public class RecordIssuesStep extends Step implements Serializable {
             recorder.setSkipPostProcessing(step.isSkipPostProcessing());
             recorder.setScm(step.getScm());
             recorder.setSkipPublishingChecks(step.isSkipPublishingChecks());
-            recorder.setPublishAllIssues(step.isPublishAllIssues());
+            recorder.setChecksAnnotationScope(step.getChecksAnnotationScope());
             recorder.setId(step.getId());
             recorder.setName(step.getName());
             recorder.setQualityGates(step.getQualityGates());
@@ -602,13 +613,10 @@ public class RecordIssuesStep extends Step implements Serializable {
             recorder.setChecksInfo(getContext().get(ChecksInfo.class));
             recorder.setQuiet(step.isQuiet());
 
-            // FIXME: change base class
-            ResultHandler notifier = new PipelineResultHandler(getRun(), getContext().get(FlowNode.class));
-
             FilePath workspace = getWorkspace();
             workspace.mkdirs();
 
-            return recorder.perform(getRun(), workspace, getTaskListener(), notifier);
+            return recorder.perform(getRun(), workspace, getTaskListener(), createResultHandler());
         }
     }
 

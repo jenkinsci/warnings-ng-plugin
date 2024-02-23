@@ -96,7 +96,7 @@ class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
                 Collections.singletonList(new RelativeTargetDirectory("forensics-api")));
         job.setScm(scm);
         job.getPublishersList().add(new RepositoryMinerStep());
-        enableGenericWarnings(job, recorder -> recorder.setPublishAllIssues(true), new Java());
+        enableGenericWarnings(job, new Java());
 
         verifyBlaming(job);
     }

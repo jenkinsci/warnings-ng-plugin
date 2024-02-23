@@ -10,8 +10,8 @@
   <f:entry field="skipPublishingChecks">
     <f:checkbox title="${%title.skipPublishingChecks}" />
   </f:entry>
-  <f:entry field="publishAllIssues">
-    <f:checkbox title="${%title.publishAllIssues}" />
+  <f:entry title="${%title.checksAnnotationScope}" field="checksAnnotationScope">
+    <f:select default="NEW"/>
   </f:entry>
   <f:entry field="failOnError">
     <f:checkbox title="${%title.failOnError}"/>

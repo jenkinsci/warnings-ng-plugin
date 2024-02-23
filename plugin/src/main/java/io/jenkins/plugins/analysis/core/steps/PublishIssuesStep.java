@@ -30,15 +30,13 @@ import hudson.model.TaskListener;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.steps.WarningChecksPublisher.AnnotationScope;
+import io.jenkins.plugins.analysis.core.steps.WarningChecksPublisher.ChecksAnnotationScope;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
 import io.jenkins.plugins.analysis.core.util.WarningsQualityGate;
 import io.jenkins.plugins.checks.steps.ChecksInfo;
 import io.jenkins.plugins.forensics.delta.DeltaCalculatorFactory;
 import io.jenkins.plugins.util.LogHandler;
-import io.jenkins.plugins.util.PipelineResultHandler;
-import io.jenkins.plugins.util.ResultHandler;
 import io.jenkins.plugins.util.ValidationUtilities;
 
 /**
@@ -60,7 +58,7 @@ public class PublishIssuesStep extends Step implements Serializable {
     private boolean failOnError = false; // by default, it should not fail on error
 
     private boolean skipPublishingChecks; // by default, warnings should be published to SCM platforms
-    private boolean publishAllIssues; // by default, only new issues will be published
+    private ChecksAnnotationScope checksAnnotationScope = ChecksAnnotationScope.NEW; // @since 11.0.0
 
     private boolean quiet = false; // by default, logger content goes to loghandler output
 
@@ -185,18 +183,30 @@ public class PublishIssuesStep extends Step implements Serializable {
     }
 
     /**
-     * Returns whether all issues should be published using the Checks API. If set to {@code false} only new issues will
-     * be published.
+     * Sets the scope of the annotations that should be published to SCM checks.
      *
-     * @return {@code true} if all issues should be published, {@code false} if only new issues should be published
+     * @param checksAnnotationScope
+     *         the scope to use
      */
-    public boolean isPublishAllIssues() {
-        return publishAllIssues;
+    @DataBoundSetter
+    public void setChecksAnnotationScope(final ChecksAnnotationScope checksAnnotationScope) {
+        this.checksAnnotationScope = checksAnnotationScope;
     }
 
+    public ChecksAnnotationScope getChecksAnnotationScope() {
+        return checksAnnotationScope;
+    }
+
+    /**
+     * Returns whether all issues should be published to SCM checks.
+     *
+     * @param publishAllIssues if {@code true} then all issues should be published, otherwise only new issues
+     * @deprecated use {@link #setChecksAnnotationScope(ChecksAnnotationScope)} instead
+     */
+    @Deprecated
     @DataBoundSetter
     public void setPublishAllIssues(final boolean publishAllIssues) {
-        this.publishAllIssues = publishAllIssues;
+        checksAnnotationScope = publishAllIssues ? ChecksAnnotationScope.ALL : ChecksAnnotationScope.NEW;
     }
 
     /**
@@ -389,9 +399,6 @@ public class PublishIssuesStep extends Step implements Serializable {
             }
             report.addAll(step.reports);
 
-            ResultHandler notifier = new PipelineResultHandler(getRun(),
-                    getContext().get(FlowNode.class));
-
             var deltaCalculator = DeltaCalculatorFactory
                     .findDeltaCalculator(step.scm, getRun(), getWorkspace(), getTaskListener(), new FilteredLog());
 
@@ -399,13 +406,12 @@ public class PublishIssuesStep extends Step implements Serializable {
                     deltaCalculator, new HealthDescriptor(step.getHealthy(), step.getUnhealthy(),
                             step.getMinimumSeverityAsSeverity()), step.getQualityGates(),
                     StringUtils.defaultString(step.getName()), step.getIgnoreQualityGate(),
-                    getCharset(step.getSourceCodeEncoding()), getLogger(report), notifier, step.getFailOnError());
+                    getCharset(step.getSourceCodeEncoding()), getLogger(report), createResultHandler(), step.getFailOnError());
             ResultAction action = publisher.attachAction(step.getTrendChartType());
 
             if (!step.isSkipPublishingChecks()) {
                 WarningChecksPublisher checksPublisher = new WarningChecksPublisher(action, getTaskListener(), getContext().get(ChecksInfo.class));
-                checksPublisher.publishChecks(
-                        step.isPublishAllIssues() ? AnnotationScope.PUBLISH_ALL_ISSUES : AnnotationScope.PUBLISH_NEW_ISSUES);
+                checksPublisher.publishChecks(step.getChecksAnnotationScope());
             }
 
             return action;
