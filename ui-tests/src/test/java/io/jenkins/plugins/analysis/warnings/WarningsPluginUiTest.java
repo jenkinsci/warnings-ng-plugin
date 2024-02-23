@@ -77,7 +77,6 @@ public class WarningsPluginUiTest extends UiTest {
         Folder folder = jenkins.jobs.create(Folder.class, "singleSummary");
 
         FreeStyleJob job = folder.getJobs().create(FreeStyleJob.class);
-        ScrollerUtil.hideScrollerTabBar(driver);
         job.copyResource(WARNINGS_PLUGIN_PREFIX + "build_status_test/build_01");
         job.addPublisher(ReferenceFinder.class);
 
