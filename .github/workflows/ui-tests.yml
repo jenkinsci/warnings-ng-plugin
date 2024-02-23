@@ -9,6 +9,7 @@ on:
 jobs:
   ui-tests:
     strategy:
+      fail-fast: false
       matrix:
         test: [ DetailsTabUiTest, FreeStyleConfigurationUiTest, GlobalConfigurationUiTest, IssuesColumnUiTest, SnippetGeneratorUiTest, TrendChartsUiTest, WarningsPluginUiTest, SmokeTests ]
         browser: [ firefox-container, chrome-container ]
