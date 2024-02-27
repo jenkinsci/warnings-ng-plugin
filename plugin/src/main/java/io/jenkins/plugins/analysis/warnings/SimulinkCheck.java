@@ -31,5 +31,4 @@ public class SimulinkCheck extends AnalysisModelParser {
             super(ID);
         }
     }
-
 }

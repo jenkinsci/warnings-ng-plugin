@@ -55,9 +55,8 @@ class RemoteAxivionDashboard implements AxivionDashboard {
         CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
         credentialsProvider.setCredentials(AuthScope.ANY, credentials);
 
-        try (CloseableHttpClient client =
-                     HttpClients.custom().setDefaultCredentialsProvider(credentialsProvider).build()) {
-
+        try (CloseableHttpClient client
+                = HttpClients.custom().setDefaultCredentialsProvider(credentialsProvider).build()) {
             URIBuilder uriBuilder = new URIBuilder(projectUrl + "/issues");
             uriBuilder.setParameter("kind", kind.toString());
             if (!namedFilter.isEmpty()) {

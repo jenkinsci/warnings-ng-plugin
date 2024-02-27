@@ -187,7 +187,6 @@ public final class AxivionSuite extends Tool {
     @Override
     public Report scan(final Run<?, ?> run, final FilePath workspace, final Charset sourceCodeEncoding,
             final LogHandler logger) throws ParsingException, ParsingCanceledException {
-
         final UsernamePasswordCredentials httpClientCredentials = withValidCredentials(run.getParent());
         final AxivionDashboard dashboard = new RemoteAxivionDashboard(projectUrl, httpClientCredentials, namedFilter);
         final AxivionParser.Config config = new Config(projectUrl, expandBaseDir(run, basedir),
@@ -246,7 +245,6 @@ public final class AxivionSuite extends Tool {
 
     /** Provides the Axivion icons. */
     private static class LabelProvider extends IconLabelProvider {
-
         LabelProvider() {
             super(ID, "Axivion Suite", EMPTY_DESCRIPTION, "axivion");
         }
@@ -256,7 +254,6 @@ public final class AxivionSuite extends Tool {
     @Symbol({"axivionSuite", "axivion"})
     @Extension
     public static class AxivionSuiteToolDescriptor extends ToolDescriptor {
-
         private static final JenkinsFacade JENKINS = new JenkinsFacade();
 
         /** Creates the descriptor instance. */

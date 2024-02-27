@@ -56,7 +56,6 @@ public class FixedWarningsDetail extends IssuesDetail {
         Optional<Run<?, ?>> referenceBuild = getResult().getReferenceBuild();
         return referenceBuild.filter(run -> ConsoleLogHandler.isInConsoleLog(issue.getFileName())
                 || AffectedFilesResolver.hasAffectedFile(run, issue)).isPresent();
-
     }
 
     /**

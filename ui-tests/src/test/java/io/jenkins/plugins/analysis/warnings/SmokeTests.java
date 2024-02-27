@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
 import java.util.List;
-import java.util.Map;
 
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -14,7 +13,6 @@ import org.jenkinsci.test.acceptance.po.FreeStyleJob;
 import org.jenkinsci.test.acceptance.po.WorkflowJob;
 
 import io.jenkins.plugins.analysis.warnings.AnalysisResult.Tab;
-import io.jenkins.plugins.analysis.warnings.DashboardTable.DashboardTableEntry;
 
 import static io.jenkins.plugins.analysis.warnings.Assertions.*;
 import static io.jenkins.plugins.analysis.warnings.IssuesColumnConfiguration.*;
@@ -134,17 +132,18 @@ public class SmokeTests extends UiTest {
         assertThat(column).hasTotalCount("33");
     }
 
-    private void verifyDashboardTablePortlet(final DashboardTable dashboardTable, final String jobName) {
-        assertThat(dashboardTable.getHeaders()).containsExactly(
-                "Job", CHECKSTYLE_ICON, DRY_ICON, FINDBUGS_ICON, ANALYSIS_ICON, PMD_ICON);
-
-        Map<String, Map<String, DashboardTableEntry>> table = dashboardTable.getTable();
-        assertThat(table.get(jobName).get(FINDBUGS_ICON)).hasWarningsCount(0);
-        assertThat(table.get(jobName).get(CHECKSTYLE_ICON)).hasWarningsCount(3);
-        assertThat(table.get(jobName).get(ANALYSIS_ICON)).hasWarningsCount(8);
-        assertThat(table.get(jobName).get(PMD_ICON)).hasWarningsCount(2);
-        assertThat(table.get(jobName).get(DRY_ICON)).hasWarningsCount(20);
-    }
+//        FIXME: re-enable dashboard view tests
+//    private void verifyDashboardTablePortlet(final DashboardTable dashboardTable, final String jobName) {
+//        assertThat(dashboardTable.getHeaders()).containsExactly(
+//                "Job", CHECKSTYLE_ICON, DRY_ICON, FINDBUGS_ICON, ANALYSIS_ICON, PMD_ICON);
+//
+//        Map<String, Map<String, DashboardTableEntry>> table = dashboardTable.getTable();
+//        assertThat(table.get(jobName).get(FINDBUGS_ICON)).hasWarningsCount(0);
+//        assertThat(table.get(jobName).get(CHECKSTYLE_ICON)).hasWarningsCount(3);
+//        assertThat(table.get(jobName).get(ANALYSIS_ICON)).hasWarningsCount(8);
+//        assertThat(table.get(jobName).get(PMD_ICON)).hasWarningsCount(2);
+//        assertThat(table.get(jobName).get(DRY_ICON)).hasWarningsCount(20);
+//    }
 
     private void createRecordIssuesStep(final WorkflowJob job, final int buildNumber) {
         job.script.set("node {\n"

@@ -1,11 +1,10 @@
 package io.jenkins.plugins.analysis.warnings.axivion;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import org.junit.jupiter.api.Test;
 
-class AxivionSuiteTest {
+import static org.assertj.core.api.Assertions.*;
 
+class AxivionSuiteTest {
     private static AxivionSuite newTool(final String projectUrl) {
         return new AxivionSuite(projectUrl, "", "");
     }

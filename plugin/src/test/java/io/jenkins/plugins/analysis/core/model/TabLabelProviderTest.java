@@ -57,7 +57,6 @@ class TabLabelProviderTest {
         TabLabelProvider tabLabelProvider = createTabLabelProvider("Testfile.java");
 
         assertThat(tabLabelProvider).hasPackages(Messages.Tab_Packages());
-
     }
 
     @Test

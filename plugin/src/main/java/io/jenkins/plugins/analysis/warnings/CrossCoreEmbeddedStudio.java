@@ -29,5 +29,4 @@ public class CrossCoreEmbeddedStudio extends AnalysisModelParser {
             super(ID);
         }
     }
-
 }
