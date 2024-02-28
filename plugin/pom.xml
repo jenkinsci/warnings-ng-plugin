@@ -39,8 +39,6 @@
     <testcontainers.version>1.19.6</testcontainers.version>
 
     <!-- Jenkins Plug-in Dependencies Versions -->
-    <plugin-util-api.version>4.1.0</plugin-util-api.version>
-    <forensics-api.version>2.4.0</forensics-api.version>
     <git-forensics.version>2.1.0</git-forensics.version>
 
     <jenkins-maven-plugin.version>3.22</jenkins-maven-plugin.version>
@@ -109,7 +107,6 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>plugin-util-api</artifactId>
-      <version>${plugin-util-api.version}</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
@@ -176,7 +173,6 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>forensics-api</artifactId>
-      <version>${forensics-api.version}</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
@@ -319,7 +315,6 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>plugin-util-api</artifactId>
-      <version>${plugin-util-api.version}</version>
       <scope>test</scope>
       <classifier>tests</classifier>
       <exclusions>
