@@ -34,7 +34,6 @@
     <!-- Test Library Dependencies Versions -->
     <xmlunit.version>2.9.1</xmlunit.version>
     <jsoup.version>1.17.2</jsoup.version>
-    <json-smart.version>2.5.0</json-smart.version>
     <jmh.version>1.37</jmh.version>
     <testcontainers.version>1.19.6</testcontainers.version>
 
@@ -80,17 +79,6 @@
       <groupId>org.eclipse.collections</groupId>
       <artifactId>eclipse-collections</artifactId>
       <version>${eclipse-collections.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>net.minidev</groupId>
-      <artifactId>json-smart</artifactId>
-      <version>${json-smart.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.json</groupId>
-          <artifactId>json</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.jsoup</groupId>
@@ -177,6 +165,10 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>json-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>json-path-api</artifactId>
     </dependency>
 
     <!-- AxivionSuite Dependencies -->
