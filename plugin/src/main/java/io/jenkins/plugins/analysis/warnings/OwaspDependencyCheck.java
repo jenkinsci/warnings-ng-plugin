@@ -25,7 +25,6 @@ public class OwaspDependencyCheck extends AnalysisModelParser {
     @Symbol("owaspDependencyCheck")
     @Extension
     public static class Descriptor extends AnalysisModelParserDescriptor {
-
         /** Create instance. **/
         public Descriptor() {
             super(ID);

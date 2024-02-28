@@ -19,7 +19,7 @@ class DynamicDocumentParser extends IssueParser {
     private static final long serialVersionUID = -690643673847390322L;
     private final Pattern pattern;
     private static final int NO_LINE_NUMBER_AVAILABLE = 0;
-    
+
     private final GroovyExpressionMatcher expressionMatcher;
 
     /**
@@ -35,7 +35,6 @@ class DynamicDocumentParser extends IssueParser {
 
         pattern = Pattern.compile(regexp, Pattern.MULTILINE);
         expressionMatcher = new GroovyExpressionMatcher(script);
-
     }
 
     @Override

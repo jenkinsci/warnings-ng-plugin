@@ -31,5 +31,4 @@ public class EmbeddedEngineer extends AnalysisModelParser {
             super(ID);
         }
     }
-
 }

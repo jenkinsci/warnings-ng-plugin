@@ -92,14 +92,14 @@ abstract class UiTest extends AbstractJUnitTest {
     }
 
     /**
-     * Reads all the bytes from a file. The method ensures that the file is
-     * closed when all bytes have been read or an I/O error, or other runtime
-     * exception, is thrown.
+     * Reads all the bytes from a file. The method ensures that the file is closed when all bytes have been read or an
+     * I/O error, or other runtime exception, is thrown.
      *
-     * <p> Note that this method is intended for simple cases where it is
-     * convenient to read all bytes into a byte array. It is not intended for
-     * reading in large files.
-     **
+     * <p>
+     * Note that this method is intended for simple cases where it is convenient to read all bytes into a byte array. It
+     * is not intended for reading in large files.
+     * </p>
+     *
      * @param fileName
      *         name of the desired resource
      *

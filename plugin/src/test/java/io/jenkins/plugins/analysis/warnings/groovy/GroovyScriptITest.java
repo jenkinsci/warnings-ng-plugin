@@ -14,7 +14,6 @@ import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
  * Tests the class {@link GroovyScript}.
  */
 class GroovyScriptITest extends IntegrationTestWithJenkinsPerSuite {
-
     /** Tests that the descriptor's canScanConsoleLog method returns the same as the configured permission ... for the "true" case */
     @Test
     void descriptorMethodCanScanConsoleLogReturnsTrueIfConfigurationSaysConsoleLogScanningPermittedIsTrue() {

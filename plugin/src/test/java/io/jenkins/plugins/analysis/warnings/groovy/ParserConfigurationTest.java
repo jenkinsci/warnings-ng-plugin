@@ -6,6 +6,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import hudson.util.FormValidation;
+
 import io.jenkins.plugins.util.GlobalConfigurationFacade;
 
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
@@ -107,6 +108,5 @@ class ParserConfigurationTest {
 
         configuration.deleteParser(firstTestParser.getId());
         assertThat(configuration.getParsers()).containsExactly(secondTestParser);
-
     }
 }

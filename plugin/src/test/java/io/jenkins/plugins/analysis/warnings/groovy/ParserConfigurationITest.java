@@ -64,5 +64,4 @@ class ParserConfigurationITest extends IntegrationTestWithJenkinsPerSuite {
     private GroovyParser createParser() {
         return new GroovyParser(ID, NAME, "regexp", "script", "example");
     }
-
 }

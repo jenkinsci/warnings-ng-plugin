@@ -14,6 +14,14 @@ import io.jenkins.plugins.util.QualityGateStatus;
 public class WarningsQualityGateEvaluator extends QualityGateEvaluator<WarningsQualityGate> {
     private final IssuesStatistics statistics;
 
+    /**
+     * Creates a new instance of {@link WarningsQualityGateEvaluator}.
+     *
+     * @param qualityGates
+     *         the quality gates to evaluate
+     * @param statistics
+     *         the statistics to evaluate
+     */
     public WarningsQualityGateEvaluator(final Collection<? extends WarningsQualityGate> qualityGates,
             final IssuesStatistics statistics) {
         super(qualityGates);

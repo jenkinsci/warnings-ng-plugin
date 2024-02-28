@@ -82,5 +82,4 @@ public class AggregationAction implements RunAction2, LastBuildAction {
     public void onLoad(final Run<?, ?> r) {
         owner = r;
     }
-
 }

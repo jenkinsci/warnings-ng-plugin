@@ -84,7 +84,6 @@ public class TaskScannerBenchmark extends ResourceTest {
                     .setCaseMode(CaseMode.CASE_SENSITIVE)
                     .setMatcherMode(MatcherMode.STRING_MATCH)
                     .build();
-
         }
 
         public TaskScanner getScanner() {

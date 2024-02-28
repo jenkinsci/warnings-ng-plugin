@@ -230,6 +230,7 @@ class IssuesPublisher {
         return Optional.empty();
     }
 
+    @SuppressWarnings("PMD.CognitiveComplexity")
     private Optional<Run<?, ?>> refineReferenceBasedOnQualityGate(final ResultSelector selector, final Report issues,
             final Run<?, ?> reference) {
         boolean isSkipped = false;
