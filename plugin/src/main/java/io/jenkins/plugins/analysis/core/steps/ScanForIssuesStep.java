@@ -120,11 +120,23 @@ public class ScanForIssuesStep extends Step {
      *
      * @return {@code true} if SCM blaming should be disabled
      */
-    @SuppressWarnings("PMD.BooleanGetMethodName")
-    public boolean getBlameDisabled() {
+    public boolean isSkipBlames() {
         return isBlameDisabled;
     }
 
+    @DataBoundSetter
+    public void setSkipBlames(final boolean skipBlames) {
+        isBlameDisabled = skipBlames;
+    }
+
+    /**
+     * Sets whether SCM blaming should be disabled.
+     *
+     * @param blameDisabled
+     *         {@code true} if SCM blaming should be disabled
+     * @deprecated use {@link #setSkipBlames(boolean)} instead
+     */
+    @Deprecated
     @DataBoundSetter
     public void setBlameDisabled(final boolean blameDisabled) {
         isBlameDisabled = blameDisabled;
@@ -233,7 +245,7 @@ public class ScanForIssuesStep extends Step {
 
             tool = step.getTool();
             sourceCodeEncoding = step.getSourceCodeEncoding();
-            isBlameDisabled = step.getBlameDisabled();
+            isBlameDisabled = step.isSkipBlames();
             filters = step.getFilters();
             sourceDirectories = step.getAllSourceDirectories();
             sourceCodeRetention = step.getSourceCodeRetention();
