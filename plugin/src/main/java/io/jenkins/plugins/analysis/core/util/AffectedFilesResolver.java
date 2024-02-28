@@ -92,7 +92,12 @@ public class AffectedFilesResolver {
             return Files.newInputStream(sourceFile);
         }
         finally {
-            unzippedSourcesDir.deleteRecursive();
+            try {
+                unzippedSourcesDir.deleteRecursive();
+            }
+            catch (IOException | InterruptedException ignored) {
+                // ignore
+            }
         }
     }
 
