@@ -21,7 +21,7 @@ class PropertyStatisticsTest {
     private static final String KEY = "key";
 
     /**
-     * Verifies that getTotal() returns the total number of issues if there is one issues.
+     * Verifies that getTotal() returns the total number of issues if there is one issue.
      */
     @Test
     void shouldReturnTotalNumber() {
@@ -37,7 +37,7 @@ class PropertyStatisticsTest {
     }
 
     /**
-     * Verifies that getTotal() returns the total number of issues if there is one issues.
+     * Verifies that getTotal() returns the total number of issues if there is one issue.
      */
     @Test
     void shouldReturnTotalNumberMoreIssues() {
@@ -136,7 +136,7 @@ class PropertyStatisticsTest {
     }
 
     /**
-     * Verifies that getKeys() returns empty string if the instances for this property is empty.
+     * Verifies that getKeys() returns "-" string if the instances for this property are empty.
      */
     @Test
     void shouldReturnEmptyStringKeys() {
@@ -147,7 +147,7 @@ class PropertyStatisticsTest {
             PropertyStatistics statistics = new PropertyStatistics(issues, new Report(), "category",
                     Function.identity());
 
-            assertThat(statistics).hasOnlyKeys("");
+            assertThat(statistics).hasOnlyKeys("-");
         }
     }
 
@@ -178,7 +178,7 @@ class PropertyStatisticsTest {
     }
 
     /**
-     * Verifies that getMax() returns one if there is one issues.
+     * Verifies that getMax() returns one if there is one issue.
      */
     @Test
     void shouldReturnMaxValue() {
@@ -245,7 +245,7 @@ class PropertyStatisticsTest {
     }
 
     /**
-     * Verifies that getCount() returns one if there is one issues for the specified property instance.
+     * Verifies that getCount() returns one if there is one issue for the specified property instance.
      */
     @Test
     void shouldReturnCountOne() {
@@ -546,7 +546,7 @@ class PropertyStatisticsTest {
     }
 
     /**
-     * Verifies that getNewCount() returns  zero if there is one issues for the specified property instance, but it isn't new.
+     * Verifies that getNewCount() returns  zero if there is one issue for the specified property instance, but it isn't new.
      */
     @Test
     void shouldReturnNewCountZero() {

@@ -83,7 +83,7 @@ public class PropertyStatistics {
      * @return the display name
      */
     public String getDisplayName(final String key) {
-        return propertyFormatter.apply(key);
+        return StringUtils.defaultIfBlank(propertyFormatter.apply(key), "-");
     }
 
     /**
