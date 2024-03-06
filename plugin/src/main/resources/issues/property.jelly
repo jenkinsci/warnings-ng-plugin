@@ -47,7 +47,7 @@
                 <td class="text-end">${count}</td>
                 <td class="text-end">${newCount}</td>
                 <td>
-                  <issues:severity-distribution max="${t.max}" error="${t.getErrorsCount(key)}"
+                  <issues:severity-distribution max="${t.max}" error="${t.getErrorCount(key)}"
                                                 high="${t.getHighCount(key)}"
                                                 normal="${t.getNormalCount(key)}" low="${t.getLowCount(key)}"/>
                 </td>
