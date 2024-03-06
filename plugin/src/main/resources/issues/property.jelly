@@ -18,20 +18,13 @@
     <div role="tabpanel" id="${property}Content" class="tab-pane fade" aria-labelledby="${property}Content-tab">
       <j:set var="l" value="${it.tabLabelProvider}"/>
       <j:set var="t" value="${it.getDetails(property)}"/>
-      <div class="table-responsive">
-        <table class="table table-hover table-striped display property-table" id="${property}" isLoaded="true">
-          <colgroup>
-            <col class="col-width-5"/>
-            <col class="col-width-1 text-end"/>
-            <col class="col-width-1 text-end" />
-            <col class="col-width-5"/>
-          </colgroup>
+        <table class="table table-hover display property-table" id="${property}" isLoaded="true" style="width: 100%;">
           <thead>
             <tr>
-              <th>${name}</th>
-              <th class="text-end">${%Total}</th>
-              <th class="text-end">${%New}</th>
-              <th class="no-sort">${%Distribution}</th>
+              <th class="col-width-3">${name}</th>
+              <th class="col-width-1 text-end">${%Total}</th>
+              <th class="col-width-1 text-end">${%New}</th>
+              <th class="col-width-5 no-sort">${%Distribution}</th>
             </tr>
           </thead>
           <tbody>
@@ -64,7 +57,6 @@
           </tbody>
         </table>
       </div>
-    </div>
   </j:if>
 
 </j:jelly>
