@@ -10,6 +10,7 @@ import edu.hm.hafner.util.VisibleForTesting;
 
 import hudson.model.Run;
 
+import io.jenkins.plugins.forensics.reference.ReferenceBuild;
 import io.jenkins.plugins.util.QualityGateStatus;
 
 /**
@@ -155,6 +156,20 @@ public class SummaryModel {
         return analysisResult.getReferenceBuild();
     }
 
+    /**
+     * Renders the reference build as an HTML link.
+     *
+     * @return the reference build
+     * @see #getReferenceBuild()
+     */
+    @SuppressWarnings("unused") // Called by jelly view
+    public String getReferenceBuildLink() {
+        return facade.getReferenceLink(
+                analysisResult.getReferenceBuild()
+                        .map(Run::getExternalizableId)
+                        .orElse("-"));
+    }
+
     public boolean isZeroIssuesHighscore() {
         return getNoIssuesSinceBuild() > 0 && analysisResult.getOwner().getNumber() > getNoIssuesSinceBuild();
     }
@@ -174,6 +189,10 @@ public class SummaryModel {
     static class LabelProviderFactoryFacade {
         public StaticAnalysisLabelProvider get(final String id) {
             return new LabelProviderFactory().create(id);
+        }
+
+        public String getReferenceLink(final String id) {
+            return ReferenceBuild.getReferenceBuildLink(id);
         }
     }
 }
