@@ -97,11 +97,11 @@ class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String ANT_BUILD_FILE_LOCATION = "ant/";
     private static final String OSGI_BUILD_FILE_LOCATION = "osgi/";
     private static final String DEFAULT_DEBUG_LOG_LINE = "Resolving module names from module definitions (build.xml, pom.xml, or Manifest.mf files)";
-    private static final String EMPTY_MODULE_NAME = "";
+    private static final String EMPTY_MODULE_NAME = "-";
     private static final String PROPERTY = "moduleName";
 
     /**
-     * Verifies that the HTML output is correct if there are OSGI, Maven and Ant modules used within the build. This
+     * Verifies that the HTML output is correct if there are OSGI, Maven, and Ant modules used within the build. This
      * test doesn't check for correct precedence in every possible case as this might fail.
      */
     @Test
