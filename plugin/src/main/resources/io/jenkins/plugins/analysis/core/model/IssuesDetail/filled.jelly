@@ -4,7 +4,7 @@
   <div class="row py-3 flex-nowrap">
 
     <!-- A carousel with all pie charts on small screens -->
-    <div class="col-xs-12 col-sm-6 col-md-5 col-lg-4 d-none d-block d-sm-block d-xl-none d-xxl-none">
+    <div class="col-xs-12 col-sm-6 col-md-5 col-lg-4 col-xl-3 d-none d-block d-sm-block d-xxl-none">
 
       <bs:card title="${%Overview}" fontAwesomeIcon="bell">
         <bs:carousel id="overview-carousel">
@@ -25,7 +25,7 @@
     </div>
 
     <!-- A single trend chart with the severities pie chart on large screens -->
-    <div class="col-xl-3 col-xxl-2 d-none d-xl-block">
+    <div class="col-xxl-2 d-none d-xxl-block">
 
       <bs:card title="${%Severities Distribution}" fontAwesomeIcon="chart-pie">
         <c:pie-chart id="severities-solo" model="${it.severityModel}" height="256" enableLinks="true"/>
@@ -34,12 +34,19 @@
     </div>
 
     <!-- A single trend chart with the reference pie chart on large screens -->
-    <div class="col-xl-3 col-xxl-2 d-none d-xl-block">
+    <div class="col-xxl-2 d-none d-xxl-block">
 
       <bs:card title="${%Reference Comparison}" fontAwesomeIcon="bell">
         <c:pie-chart id="trend-solo" model="${it.trendModel}" height="256" enableLinks="true"/>
       </bs:card>
 
+    </div>
+
+    <!-- A single trend chart with the modified vs. unchanged chart on large screens -->
+    <div class="col-xxl-2 d-none d-xxl-block">
+      <bs:card title="${%Modified vs. Unchanged}" fontAwesomeIcon="file-pen">
+        <c:pie-chart id="modified-solo" model="${it.modifiedModel}" height="256" enableLinks="true"/>
+      </bs:card>
     </div>
 
     <div class="col">

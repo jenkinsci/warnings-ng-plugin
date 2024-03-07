@@ -56,6 +56,7 @@ class SummaryModelTest {
                 .hasAnalysesCount(1)
                 .hasQualityGateStatus(QualityGateStatus.INACTIVE)
                 .hasReferenceBuild(Optional.empty())
+                .hasReferenceBuildLink("-")
                 .isNotZeroIssuesHighscore()
                 .hasNoErrors()
                 .isNotResetQualityGateVisible();
@@ -157,6 +158,7 @@ class SummaryModelTest {
 
         Run<?, ?> run = mock(Run.class);
         when(run.getFullDisplayName()).thenReturn("Job #15");
+        when(run.getExternalizableId()).thenReturn("#15");
         when(run.getUrl()).thenReturn("job/my-job/15");
         when(analysisResult.getReferenceBuild()).thenReturn(Optional.of(run));
 
@@ -164,7 +166,8 @@ class SummaryModelTest {
 
         SummaryModel summary = createSummary(analysisResult);
 
-        assertThat(summary).hasReferenceBuild(Optional.of(run));
+        assertThat(summary).hasReferenceBuild(Optional.of(run))
+                .hasReferenceBuildLink("#reference-link");
     }
 
     @Test
@@ -209,6 +212,8 @@ class SummaryModelTest {
         when(facade.get(CHECK_STYLE_ID)).thenReturn(checkStyleLabelProvider);
         StaticAnalysisLabelProvider pmdLabelProvider = new StaticAnalysisLabelProvider(PMD_ID, PMD_NAME);
         when(facade.get(PMD_ID)).thenReturn(pmdLabelProvider);
+        when(facade.getReferenceLink("-")).thenReturn("-");
+        when(facade.getReferenceLink(startsWith("#"))).thenReturn("#reference-link");
 
         SummaryModel summaryModel = new SummaryModel(new StaticAnalysisLabelProvider(TOOL_ID, TOOL_NAME), analysisResult, facade);
         summaryModel.setResetQualityGateCommand(createResetReferenceAction(false));

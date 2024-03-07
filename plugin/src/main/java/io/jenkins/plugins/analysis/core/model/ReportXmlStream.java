@@ -48,7 +48,7 @@ class ReportXmlStream extends AbstractXmlStream<Report> {
         xStream.registerConverter(new SeverityConverter());
         xStream.alias("lineRange", LineRange.class);
         xStream.alias("edu.hm.hafner.analysis.LineRangeList", LineRangeList.class);
-        xStream.alias("edu.hm.hafner.analysis.LineRange", DuplicationGroup.class);
+        xStream.alias("edu.hm.hafner.analysis.LineRange", LineRange.class);
         xStream.alias("edu.hm.hafner.analysis.parser.dry.DuplicationGroup", DuplicationGroup.class);
         xStream.alias("treeString", TreeString.class);
         xStream.alias("issue", Issue.class);

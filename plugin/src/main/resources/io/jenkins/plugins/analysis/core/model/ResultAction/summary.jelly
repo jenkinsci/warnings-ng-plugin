@@ -99,7 +99,7 @@
           <j:set var="r" value="${s.referenceBuild.get()}"/>
           <li>
             Reference build:
-            <t:buildLink jobName="${r.parent.displayName}" job="${r.parent}" number="${r.number}"/>
+            <j:out value="${s.referenceBuildLink}"/>
           </li>
         </j:if>
         <j:if test="${s.qualityGateStatus.name() != 'INACTIVE'}">
