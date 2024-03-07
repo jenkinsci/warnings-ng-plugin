@@ -83,7 +83,7 @@ public class PropertyStatistics {
      * @return the display name
      */
     public String getDisplayName(final String key) {
-        return propertyFormatter.apply(key);
+        return StringUtils.defaultIfBlank(propertyFormatter.apply(key), "-");
     }
 
     /**
@@ -151,9 +151,9 @@ public class PropertyStatistics {
      * @param key
      *         the property instance
      *
-     * @return the number of high-severity issues
+     * @return the number of error issues
      */
-    public long getErrorsCount(final String key) {
+    public long getErrorCount(final String key) {
         return getReportFor(key).getSizeOf(Severity.ERROR);
     }
 
