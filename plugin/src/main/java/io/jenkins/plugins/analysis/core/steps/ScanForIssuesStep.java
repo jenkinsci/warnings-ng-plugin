@@ -134,12 +134,24 @@ public class ScanForIssuesStep extends Step {
      *
      * @param blameDisabled
      *         {@code true} if SCM blaming should be disabled
+     *
      * @deprecated use {@link #setSkipBlames(boolean)} instead
      */
     @Deprecated
     @DataBoundSetter
     public void setBlameDisabled(final boolean blameDisabled) {
         isBlameDisabled = blameDisabled;
+    }
+
+    /**
+     * Returns whether SCM blaming is disabled.
+     *
+     * @return {@code true} if SCM blaming should be disabled
+     * @deprecated use {@link #isSkipBlames()} instead
+     */
+    @Deprecated
+    public boolean isBlameDisabled() {
+        return isBlameDisabled;
     }
 
     /**
@@ -174,7 +186,7 @@ public class ScanForIssuesStep extends Step {
 
     /**
      * Sets the paths to the directories that contain the source code. If not relative and thus not part of the
-     *  workspace, then these directories need to be added in Jenkins global configuration to prevent accessing of
+     * workspace, then these directories need to be added in Jenkins global configuration to prevent accessing of
      * forbidden resources.
      *
      * @param sourceDirectories
