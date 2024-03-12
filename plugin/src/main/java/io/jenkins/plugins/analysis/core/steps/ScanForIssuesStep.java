@@ -42,7 +42,7 @@ public class ScanForIssuesStep extends Step {
     private String sourceCodeEncoding = StringUtils.EMPTY;
     private Set<SourceCodeDirectory> sourceDirectories = new HashSet<>(); // @since 9.11.0
     private SourceCodeRetention sourceCodeRetention = SourceCodeRetention.EVERY_BUILD;
-    private boolean isBlameDisabled;
+    private boolean skipBlames;
     private boolean skipPostProcessing; // @since 10.6.0: by default, post-processing will be enabled
     private boolean quiet;
 
@@ -121,12 +121,12 @@ public class ScanForIssuesStep extends Step {
      * @return {@code true} if SCM blaming should be disabled
      */
     public boolean isSkipBlames() {
-        return isBlameDisabled;
+        return skipBlames;
     }
 
     @DataBoundSetter
     public void setSkipBlames(final boolean skipBlames) {
-        isBlameDisabled = skipBlames;
+        this.skipBlames = skipBlames;
     }
 
     /**
@@ -140,7 +140,7 @@ public class ScanForIssuesStep extends Step {
     @Deprecated
     @DataBoundSetter
     public void setBlameDisabled(final boolean blameDisabled) {
-        isBlameDisabled = blameDisabled;
+        this.skipBlames = blameDisabled;
     }
 
     /**
@@ -151,7 +151,7 @@ public class ScanForIssuesStep extends Step {
      */
     @Deprecated
     public boolean isBlameDisabled() {
-        return isBlameDisabled;
+        return skipBlames;
     }
 
     /**
