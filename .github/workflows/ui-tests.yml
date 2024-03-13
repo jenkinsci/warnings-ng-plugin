@@ -15,7 +15,7 @@ jobs:
         browser: [ firefox-container, chrome-container ]
 
     runs-on: [ubuntu-latest]
-    name: Run UI tests `${{ matrix.test }}` with browser ${{ matrix.browser }}
+    name: '${{ matrix.browser }} / ${{ matrix.test }}'
 
     steps:
       - uses: actions/checkout@v4
@@ -32,7 +32,7 @@ jobs:
           maven-version: 3.9.6
       - name: Build warnings plugin and download dependencies
         run: mvn -V --color always -ntp verify -Pskip --file plugin/pom.xml -Dgpg.skip
-      - name: Run UI tests for the details tabs
+      - name: Run UI tests ${{ matrix.test }} on ${{ matrix.browser }}
         env:
           BROWSER: ${{ matrix.browser }}
         run: mvn -V --color always -ntp test --file ui-tests/pom.xml -Dtest=${{ matrix.test }} -DSKIP_UPDATES -Dgpg.skip -Dsurefire.rerunFailingTestsCount=1
