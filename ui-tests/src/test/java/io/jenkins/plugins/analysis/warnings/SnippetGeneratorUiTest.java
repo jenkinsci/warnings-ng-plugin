@@ -12,7 +12,7 @@ import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateType;
 import static io.jenkins.plugins.analysis.warnings.Assertions.*;
 
 /**
- * Acceptance tests for the SnippetGenerator.
+ * Acceptance tests for the WarningsSnippetGenerator.
  *
  * @author Matthias Herpers
  * @author Lion Kosiuk
@@ -24,7 +24,7 @@ public class SnippetGeneratorUiTest extends UiTest {
      */
     @Test
     public void defaultConfigurationTest() {
-        SnippetGenerator snippetGenerator = createSnippetGenerator();
+        WarningsSnippetGenerator snippetGenerator = createSnippetGenerator();
 
         snippetGenerator.selectRecordIssues().setTool(JAVA_COMPILER);
 
@@ -38,7 +38,7 @@ public class SnippetGeneratorUiTest extends UiTest {
      */
     @Test
     public void defaultConfigurationExplicitTest() {
-        SnippetGenerator snippetGenerator = createSnippetGenerator();
+        WarningsSnippetGenerator snippetGenerator = createSnippetGenerator();
 
         snippetGenerator.selectRecordIssues()
                 .setAggregatingResults(false)
@@ -59,7 +59,7 @@ public class SnippetGeneratorUiTest extends UiTest {
      */
     @Test
     public void antiDefaultConfigurationExplicitTest() {
-        SnippetGenerator snippetGenerator = createSnippetGenerator();
+        WarningsSnippetGenerator snippetGenerator = createSnippetGenerator();
 
         snippetGenerator.selectRecordIssues()
                 .setAggregatingResults(true)
@@ -92,7 +92,7 @@ public class SnippetGeneratorUiTest extends UiTest {
      */
     @Test
     public void configureHealthReportTest() {
-        SnippetGenerator snippetGenerator = createSnippetGenerator();
+        WarningsSnippetGenerator snippetGenerator = createSnippetGenerator();
 
         snippetGenerator.selectRecordIssues()
                 .setHealthReport(1, 9, "LOW")
@@ -108,7 +108,7 @@ public class SnippetGeneratorUiTest extends UiTest {
      */
     @Test
     public void shouldHandleComplexConfiguration() {
-        SnippetGenerator snippetGenerator = createSnippetGenerator();
+        WarningsSnippetGenerator snippetGenerator = createSnippetGenerator();
 
         snippetGenerator.selectRecordIssues()
                 .setAggregatingResults(true)
@@ -150,14 +150,9 @@ public class SnippetGeneratorUiTest extends UiTest {
         return job;
     }
 
-    /**
-     * Creates a SnippetGenerator page object and opens the view for tests.
-     *
-     * @return SnippetGenerator
-     */
-    private SnippetGenerator createSnippetGenerator() {
+    private WarningsSnippetGenerator createSnippetGenerator() {
         WorkflowJob job = createWorkflowJob();
-        SnippetGenerator snippetGenerator = new SnippetGenerator(job);
+        WarningsSnippetGenerator snippetGenerator = new WarningsSnippetGenerator(job);
         snippetGenerator.open();
         elasticSleep(2000);
 

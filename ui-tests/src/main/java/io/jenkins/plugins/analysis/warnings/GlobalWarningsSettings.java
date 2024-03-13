@@ -20,18 +20,6 @@ public class GlobalWarningsSettings extends JenkinsConfig {
     }
 
     /**
-     * Returns the home directory of the current jenkins instance which is displayed on the system configuration page.
-     *
-     * @return home directory of the current jenkins instance.
-     */
-    public String getHomeDirectory() {
-        ensureConfigPage();
-
-        return driver.findElement(By.xpath("//div[contains(text(), 'Home directory')]//..//*[@class='setting-main']"))
-                .getText();
-    }
-
-    /**
      * Opens the groovy parser configuration section on the system configuration page from jenkins.
      *
      * @return GroovyConfiguration Page Object to fill the parser configuration.
