@@ -16,7 +16,7 @@
   <name>UI Tests of Warnings Plugin</name>
 
   <properties>
-    <jenkins.version>2.448</jenkins.version>
+    <jenkins.version>2.449</jenkins.version>
     <hpi-plugin.version>3.53</hpi-plugin.version>
     <json-smart.version>2.3</json-smart.version>
     <json-unit-assertj.version>2.38.0</json-unit-assertj.version>
