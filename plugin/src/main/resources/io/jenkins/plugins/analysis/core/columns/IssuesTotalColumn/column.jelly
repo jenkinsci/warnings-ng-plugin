@@ -38,8 +38,7 @@
   </j:set>
   <td class="healthReport issues-total" data-html-tooltip="${total.isPresent() ? tooltip : null}"
       data-tooltip-interactive="true"
-      onmouseover="this.className='healthReport hover';return true;"
-      onmouseout="this.className='healthReport';return true;">
+      data="${total.orElse(-1)}">
     <j:choose>
       <j:when test="${total.isPresent() and size(url) > 0}">
         <a href="${rootURL}/${job.url}/${url}">${total.asInt}</a>
