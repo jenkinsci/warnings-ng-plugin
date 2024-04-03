@@ -9,7 +9,7 @@ on:
       - .github/workflows/sync-labels.yml
 
 jobs:
-  snyc-labels:
+  sync-labels:
     name: Sync labels
     runs-on: ubuntu-latest
     steps:
