@@ -69,6 +69,15 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String NO_QUALITY_GATE = "";
 
     @Test
+    void shouldNotFailWhenJobHasNoWorkspace() {
+        var job = createPipelineWithWorkspaceFilesWithSuffix("eclipse.txt");
+        job.setDefinition(new CpsFlowDefinition("def r; node {r = scanForIssues tool: eclipse(pattern: '*issues.txt')}; publishIssues issues: [r]", true));
+
+        var build = buildSuccessfully(job);
+        assertThat(build.getAction(ResultAction.class).getResult().getIssues()).hasSize(8);
+    }
+
+    @Test
     void shouldParseCheckstyleUsingTheParserRegistry() {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("checkstyle1.xml", "checkstyle2.xml");
 
