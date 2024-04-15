@@ -22,6 +22,7 @@ import org.jenkinsci.plugins.workflow.steps.Step;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.StepExecution;
 import hudson.Extension;
+import hudson.FilePath;
 import hudson.model.Action;
 import hudson.model.Job;
 import hudson.model.Run;
@@ -35,6 +36,7 @@ import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
 import io.jenkins.plugins.analysis.core.util.WarningsQualityGate;
 import io.jenkins.plugins.checks.steps.ChecksInfo;
+import io.jenkins.plugins.forensics.delta.DeltaCalculator;
 import io.jenkins.plugins.forensics.delta.DeltaCalculatorFactory;
 import io.jenkins.plugins.util.LogHandler;
 import io.jenkins.plugins.util.ValidationUtilities;
@@ -411,8 +413,9 @@ public class PublishIssuesStep extends Step implements Serializable {
             }
             report.addAll(step.reports);
 
-            var deltaCalculator = DeltaCalculatorFactory
-                    .findDeltaCalculator(step.scm, getRun(), getWorkspace(), getTaskListener(), new FilteredLog());
+            var workspace = getContext().get(FilePath.class);
+            var deltaCalculator = workspace == null ? new DeltaCalculator.NullDeltaCalculator() : DeltaCalculatorFactory
+                    .findDeltaCalculator(step.scm, getRun(), workspace, getTaskListener(), new FilteredLog());
 
             IssuesPublisher publisher = new IssuesPublisher(getRun(), report,
                     deltaCalculator, new HealthDescriptor(step.getHealthy(), step.getUnhealthy(),
