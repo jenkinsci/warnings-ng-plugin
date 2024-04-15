@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "remark-cli": "^12.0.0",
-    "remark-lint": "^9.1.0",
+    "remark-lint": "^10.0.0",
     "remark-preset-lint-recommended": "^7.0.0"
   },
   "devDependencies": {
