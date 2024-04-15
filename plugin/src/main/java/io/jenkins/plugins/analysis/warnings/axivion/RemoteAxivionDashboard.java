@@ -50,7 +50,7 @@ class RemoteAxivionDashboard implements AxivionDashboard {
     }
 
     @Override
-    @SuppressFBWarnings("RCN")
+    @SuppressFBWarnings(value = "RCN", justification = "Value might be null in old serializations")
     public JsonObject getIssues(final AxIssueKind kind) {
         CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
         credentialsProvider.setCredentials(AuthScope.ANY, credentials);
