@@ -210,9 +210,8 @@
 
     <!-- ASM is required by token-macro but does not declare its dependency -->
     <dependency>
-      <groupId>org.ow2.asm</groupId>
-      <artifactId>asm</artifactId>
-      <version>9.6</version>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>asm-api</artifactId>
       <scope>test</scope>
     </dependency>
 
