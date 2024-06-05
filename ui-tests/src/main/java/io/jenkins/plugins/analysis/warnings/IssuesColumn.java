@@ -53,7 +53,6 @@ public class IssuesColumn extends PageObject {
         for (WebElement row : rows) {
             if (row.getAttribute("id").startsWith("job_")) {
                 return row.findElement(By.xpath("td[" + columnIndex + "]"));
-
             }
         }
         throw new NoSuchElementException("Cannot find a valid project row");

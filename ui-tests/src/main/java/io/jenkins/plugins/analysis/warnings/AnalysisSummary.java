@@ -43,6 +43,7 @@ public class AnalysisSummary extends PageObject {
      * @param id
      *         the type of the result page (e.g. simian, checkstyle, cpd, etc.)
      */
+    @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
     public AnalysisSummary(final Build parent, final String id) {
         super(parent, parent.url(id));
 
