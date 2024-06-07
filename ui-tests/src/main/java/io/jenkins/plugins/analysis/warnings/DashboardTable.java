@@ -35,6 +35,7 @@ public class DashboardTable extends PageObject {
      *         the type of the result page (e.g. simian, checkstyle, cpd, etc.)
      */
     @SuppressFBWarnings("MC")
+    @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
     public DashboardTable(final Build parent, final URL url) {
         super(parent, url);
 
@@ -63,7 +64,7 @@ public class DashboardTable extends PageObject {
 
         List<List<List<String>>> lines = rows.stream().skip(1)
                 .map(dom -> dom.findElements(by.tagName("td")).stream().map(td -> {
-                    if (td.findElements(by.tagName("a")).size() == 0) {
+                    if (td.findElements(by.tagName("a")).isEmpty()) {
                         return Arrays.asList(td.getText(), null);
                     }
                     else {

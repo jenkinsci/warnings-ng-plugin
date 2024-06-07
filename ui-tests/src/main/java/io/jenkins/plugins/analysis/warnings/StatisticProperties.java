@@ -60,5 +60,4 @@ public enum StatisticProperties {
         }
         return prefix + "/" + url;
     }
-
 }
