@@ -76,6 +76,7 @@ public class ResetQualityGateCommand {
      *
      * @return {@code true} if the command is enabled, {@code false} otherwise
      */
+    @SuppressWarnings("PMD.SimplifyBooleanReturns")
     public boolean isEnabled(final Run<?, ?> selectedBuild, final String id) {
         if (!selectedBuild.hasPermission(Item.CONFIGURE)
                 && !jenkinsFacade.hasPermission(Item.CONFIGURE, selectedBuild.getParent())) {

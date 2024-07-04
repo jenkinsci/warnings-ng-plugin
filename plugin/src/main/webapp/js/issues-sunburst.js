@@ -76,8 +76,8 @@
                     borderWidth: 2
                 },
                 label: {
-                    rotate: 'horizontal',
-                },
+                    rotate: 'horizontal'
+                }
             },
             tooltip: {
                 trigger: 'item',

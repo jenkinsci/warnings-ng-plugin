@@ -372,7 +372,7 @@ public class AnalysisResult extends PageObject {
          *         if the tab could not be found
          */
         static Tab valueWithHref(final String href) {
-            for (Tab tab : Tab.values()) {
+            for (Tab tab : values()) {
                 if (tab.contentId.equals(href.substring(1))) {
                     return tab;
                 }

@@ -15,8 +15,8 @@
   <version>${revision}${changelist}</version>
 
   <description>Collects compiler warnings or issues reported by static analysis
-    tools and visualizes the results. It has built-in support for numerous static analysis tools (including several
-    compilers), see the list of supported report formats.
+    tools and visualizes the results. It has built-in support for more than one hundred static analysis tools
+    (including several compilers), see the list of supported report formats.
   </description>
   <url>https://github.com/jenkinsci/warnings-ng-plugin</url>
 

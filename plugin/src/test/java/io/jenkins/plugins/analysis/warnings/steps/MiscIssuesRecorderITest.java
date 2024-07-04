@@ -54,6 +54,7 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 @SuppressWarnings({"PMD.ExcessiveImports", "checkstyle:ClassFanOutComplexity"})
 class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     private static final Pattern TAG_REGEX = Pattern.compile(">(.+?)</", Pattern.DOTALL);
+    private static final String CHECKSTYLE = "checkstyle";
 
     /**
      * Verifies that {@link FindBugs} handles the different severity mapping modes ({@link PriorityProperty}).
@@ -179,7 +180,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(results).hasSize(2);
 
         for (AnalysisResult element : results) {
-            if ("checkstyle".equals(element.getId())) {
+            if (CHECKSTYLE.equals(element.getId())) {
                 assertThat(element).hasTotalSize(6);
             }
             else {
@@ -201,7 +202,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(results).hasSize(1);
 
         AnalysisResult result = results.get(0);
-        assertThat(result.getSizePerOrigin()).containsExactly(entry("checkstyle", 6), entry("pmd", 4));
+        assertThat(result.getSizePerOrigin()).containsExactly(entry(CHECKSTYLE, 6), entry("pmd", 4));
         assertThat(result).hasTotalSize(10);
         assertThat(result).hasId("analysis");
         assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
@@ -239,7 +240,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
 
         AnalysisResult result = getAnalysisResult(buildWithResult(project, Result.SUCCESS));
         assertThat(result).hasTotalSize(0);
-        assertThat(result.getSizePerOrigin()).containsExactly(entry("checkstyle", 0), entry("pmd", 0));
+        assertThat(result.getSizePerOrigin()).containsExactly(entry(CHECKSTYLE, 0), entry("pmd", 0));
         assertThat(result).hasId("analysis");
         assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
 
@@ -280,7 +281,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         AnalysisResult result = getAnalysisResult(build);
         assertThat(getConsoleLog(result)).contains("ID checkstyle is already used by another action: "
                 + "io.jenkins.plugins.analysis.core.model.ResultAction for CheckStyle");
-        assertThat(result).hasId("checkstyle");
+        assertThat(result).hasId(CHECKSTYLE);
         assertThat(result).hasTotalSize(6);
     }
 
@@ -302,7 +303,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(results).hasSize(2);
 
         Set<String> ids = results.stream().map(AnalysisResult::getId).collect(Collectors.toSet());
-        assertThat(ids).containsExactly("checkstyle", "second");
+        assertThat(ids).containsExactly(CHECKSTYLE, "second");
     }
 
     /**
@@ -526,7 +527,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     // TODO: there should be also some tests that use the fingerprinting algorithm on existing source files
     @Test
     void shouldFindNewCheckStyleWarnings() {
-        shouldFindNewCheckStyleWarnings(() -> new RegisteredParser("checkstyle"));
+        shouldFindNewCheckStyleWarnings(() -> new RegisteredParser(CHECKSTYLE));
         shouldFindNewCheckStyleWarnings(CheckStyle::new);
     }
 
@@ -555,7 +556,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
 
         ResultAction resultAction = getResultAction(result.getOwner());
         assertThat(resultAction.getDisplayName()).isEqualTo("CheckStyle Warnings");
-        assertThat(resultAction.getUrlName()).isEqualTo("checkstyle");
+        assertThat(resultAction.getUrlName()).isEqualTo(CHECKSTYLE);
     }
 
     private void verifyDetails(final AnalysisResult result) {

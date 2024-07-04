@@ -13,7 +13,6 @@ import org.jenkinsci.Symbol;
 import hudson.Extension;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
-import jenkins.model.GlobalConfiguration;
 import jenkins.model.Jenkins;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
@@ -57,7 +56,7 @@ public class ParserConfiguration extends GlobalConfigurationItem {
      * @return the singleton instance
      */
     public static ParserConfiguration getInstance() {
-        return GlobalConfiguration.all().get(ParserConfiguration.class);
+        return all().get(ParserConfiguration.class);
     }
 
     @Override
@@ -88,7 +87,7 @@ public class ParserConfiguration extends GlobalConfigurationItem {
     }
 
     /**
-     * Removes a GroovyParser from the list by Id.
+     * Removes a GroovyParser from the list by ID.
      *
      * @param parserId
      *         the ID of the Groovy parser to be deleted

@@ -76,7 +76,7 @@ public class PropertyRow {
         return total;
     }
 
-    @SuppressWarnings("PMD.CollapsibleIfStatements")
+    @SuppressWarnings({"PMD.CollapsibleIfStatements", "PMD.SimplifyBooleanReturns"})
     @Override
     public boolean equals(final Object o) {
         if (this == o) {

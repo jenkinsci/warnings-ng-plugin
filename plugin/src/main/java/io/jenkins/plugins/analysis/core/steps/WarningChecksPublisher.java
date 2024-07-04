@@ -48,7 +48,7 @@ import static j2html.TagCreator.*;
  *
  * @author Kezhi Xiong
  */
-@SuppressWarnings("PMD.ExcessiveImports")
+@SuppressWarnings({"PMD.CouplingBetweenObjects", "PMD.ExcessiveImports"})
 class WarningChecksPublisher {
     /**
      * Defines the scope of SCM checks annotations.
@@ -65,10 +65,10 @@ class WarningChecksPublisher {
 
         static ListBoxModel fillItems() {
             ListBoxModel items = new ListBoxModel();
-            items.add(Messages.ChecksAnnotationScope_ALL(), ChecksAnnotationScope.ALL.name());
-            items.add(Messages.ChecksAnnotationScope_NEW(), ChecksAnnotationScope.NEW.name());
-            items.add(Messages.ChecksAnnotationScope_MODIFIED(), ChecksAnnotationScope.MODIFIED.name());
-            items.add(Messages.ChecksAnnotationScope_SKIP(), ChecksAnnotationScope.SKIP.name());
+            items.add(Messages.ChecksAnnotationScope_ALL(), ALL.name());
+            items.add(Messages.ChecksAnnotationScope_NEW(), NEW.name());
+            items.add(Messages.ChecksAnnotationScope_MODIFIED(), MODIFIED.name());
+            items.add(Messages.ChecksAnnotationScope_SKIP(), SKIP.name());
             return items;
         }
     }

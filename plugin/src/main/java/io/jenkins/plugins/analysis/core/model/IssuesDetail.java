@@ -53,11 +53,15 @@ import io.jenkins.plugins.forensics.util.CommitDecoratorFactory;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings({"PMD.ExcessiveImports", "PMD.GodClass", "ClassDataAbstractionCoupling", "ClassFanOutComplexity"})
+@SuppressWarnings({"PMD.ExcessiveImports", "PMD.CouplingBetweenObjects", "PMD.GodClass", "ClassDataAbstractionCoupling", "ClassFanOutComplexity"})
 public class IssuesDetail extends DefaultAsyncTableContentProvider implements ModelObject {
     private static final ResetQualityGateCommand RESET_QUALITY_GATE_COMMAND = new ResetQualityGateCommand();
     private static final JacksonFacade JACKSON_FACADE = new JacksonFacade();
-    private static final String DEFAULT_CONFIGURATION = "{}";
+    private static final String ISSUES_TABLE_ID = "issues";
+    private static final String BLAMES_TABLE_ID = "blames";
+    private static final String FORENSICS_TABLE_ID = "forensics";
+    private static final String FILE_NAME_PROPERTY = "fileName";
+    private static final String ORIGIN_PROPERTY = "origin";
 
     private final Run<?, ?> owner;
 
@@ -242,17 +246,17 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
      */
     @Override
     public TableModel getTableModel(final String id) {
-        if ("issues".equals(id)) {
+        if (ISSUES_TABLE_ID.equals(id)) {
             return labelProvider.getIssuesModel(owner, getUrl(), report);
         }
-        else if ("blames".equals(id)) {
+        else if (BLAMES_TABLE_ID.equals(id)) {
             return new BlamesModel(report, result.getBlames(),
                     labelProvider.getFileNameRenderer(owner),
                     labelProvider.getAgeBuilder(owner, getUrl()),
                     labelProvider,
                     CommitDecoratorFactory.findCommitDecorator(owner));
         }
-        else if ("forensics".equals(id)) {
+        else if (FORENSICS_TABLE_ID.equals(id)) {
             return new ForensicsModel(report, result.getForensics(),
                     labelProvider.getFileNameRenderer(owner),
                     labelProvider.getAgeBuilder(owner, getUrl()),
@@ -541,10 +545,10 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
     @SuppressWarnings("unused") // Called by jelly view
     public PropertyStatistics getDetails(final String propertyName) {
         Function<String, String> propertyFormatter;
-        if ("fileName".equals(propertyName)) {
+        if (FILE_NAME_PROPERTY.equals(propertyName)) {
             propertyFormatter = new BaseNameMapper();
         }
-        else if ("origin".equals(propertyName)) {
+        else if (ORIGIN_PROPERTY.equals(propertyName)) {
             propertyFormatter = origin -> new LabelProviderFactory().create(origin,
                     getIssues().getNameOfOrigin(origin)).getName();
         }

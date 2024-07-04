@@ -219,7 +219,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      *         determines whether the result should be persisted in the build folder
      */
     @VisibleForTesting
-    @SuppressWarnings("checkstyle:ParameterNumber")
+    @SuppressWarnings({"checkstyle:ParameterNumber", "PMD.ConstructorCallsOverridableMethod"})
     protected AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report,
             final Blames blames, final RepositoryStatistics repositoryStatistics,
             final QualityGateResult qualityGateResult, final Map<String, Integer> sizePerOrigin,
@@ -261,7 +261,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     }
 
     /**
-     * Called after de-serialization to retain backward compatibility.
+     * Called after deserialization to retain backward compatibility.
      *
      * @return this
      */

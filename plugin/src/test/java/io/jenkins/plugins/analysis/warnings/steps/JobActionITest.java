@@ -39,6 +39,7 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String ECLIPSE_URL_NAME = "eclipse";
     private static final String ECLIPSE_LOG = "eclipse.txt";
     private static final String CHECKSTYLE_XML = "checkstyle.xml";
+    private static final String CHECKSTYLE_ID = "checkstyle";
 
     /**
      * Verifies that the trend chart is visible if there are two valid builds available.
@@ -210,7 +211,7 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         JobAction checkstyle;
         JobAction eclipse;
 
-        if ("checkstyle".equals(jobActions.get(0).getUrlName())) {
+        if (CHECKSTYLE_ID.equals(jobActions.get(0).getUrlName())) {
             checkstyle = jobActions.get(0);
             eclipse = jobActions.get(1);
         }

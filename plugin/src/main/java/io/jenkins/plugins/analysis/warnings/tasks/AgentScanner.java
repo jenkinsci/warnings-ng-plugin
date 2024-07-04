@@ -73,6 +73,7 @@ class AgentScanner extends MasterToSlaveFileCallable<Report> {
     }
 
     @Override
+    @SuppressWarnings("PMD.DoNotUseThreads")
     public Report invoke(final File workspace, final VirtualChannel channel) {
         Report report = new Report();
         report.logInfo("Searching for files in workspace '%s' that match the include pattern '%s' and exclude pattern '%s'",
