@@ -241,9 +241,9 @@ public class AnalysisResult extends PageObject {
     }
 
     /**
-     * Method for getting the paginate WebElement for any active tab.
+     * Method for getting the pagination control of the active tab.
      *
-     * @return parent WebElement that contains the paginate buttons for a result table.
+     * @return parent WebElement that contains the pagination buttons for a result table.
      */
     public WebElement getPaginateElementByActiveTab() {
         return getElement(By.id(getActiveTab().property + "_paginate"));
@@ -255,8 +255,7 @@ public class AnalysisResult extends PageObject {
      * @return WebElement where a user can filter the table by text input.
      */
     public WebElement getFilterInputElementByActiveTab() {
-        WebElement filter = find(By.id(getActiveTab().property + "_filter"));
-        return filter.findElement(By.cssSelector("label > input"));
+        return find(By.xpath("//div[contains(@class, 'tab-pane') and contains(@class, 'active')]//input[@type='search']"));
     }
 
     /**
