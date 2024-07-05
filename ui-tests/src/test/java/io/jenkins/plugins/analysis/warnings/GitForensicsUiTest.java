@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.warnings;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.inject.Inject;
@@ -110,10 +111,15 @@ public class GitForensicsUiTest extends UiTest {
     @SuppressFBWarnings("BC_UNCONFIRMED_CAST_OF_RETURN_VALUE")
     @SuppressWarnings("PMD.CloseResource")
     public void initGitRepository() {
-        GitContainer gitContainer = gitServer.get();
-        repoUrl = gitContainer.getRepoUrl();
-        host = gitContainer.host();
-        port = gitContainer.port();
+        try {
+            GitContainer gitContainer = gitServer.get();
+            repoUrl = gitContainer.getRepoUrl();
+            host = gitContainer.host();
+            port = gitContainer.port();
+        }
+        catch (MalformedURLException exception) {
+            throw new AssertionError("Could not initialize GitContainer", exception);
+        }
     }
 
     /** Dispose the docker container. */
