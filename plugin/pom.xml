@@ -32,7 +32,7 @@
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
 
     <!-- Test Library Dependencies Versions -->
-    <xmlunit.version>2.9.1</xmlunit.version>
+    <xmlunit.version>2.10.0</xmlunit.version>
     <jsoup.version>1.17.2</jsoup.version>
     <jmh.version>1.37</jmh.version>
     <testcontainers.version>1.19.8</testcontainers.version>
