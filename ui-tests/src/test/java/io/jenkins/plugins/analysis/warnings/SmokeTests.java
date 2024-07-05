@@ -1,10 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.util.List;
-
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 
 import org.jenkinsci.test.acceptance.junit.WithPlugins;
 import org.jenkinsci.test.acceptance.po.Build;
@@ -179,9 +175,7 @@ public class SmokeTests extends UiTest {
         assertThat(categoriesDetailsTable.getSize()).isEqualTo(2);
         assertThat(categoriesDetailsTable.getTotal()).isEqualTo(2);
 
-        WebElement categoryPaginate = resultPage.getPaginateElementByActiveTab();
-        List<WebElement> categoryPaginateButtons = categoryPaginate.findElements(By.cssSelector("ul li"));
-        assertThat(categoryPaginateButtons.size()).isEqualTo(1);
+        assertThat(resultPage.getPaginationButtons()).hasSize(1);
     }
 
     private StringBuilder createReportFilesStep(final WorkflowJob job, final int build) {
