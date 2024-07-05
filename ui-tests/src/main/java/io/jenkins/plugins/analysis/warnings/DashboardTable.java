@@ -32,7 +32,7 @@ public class DashboardTable extends PageObject {
      * @param parent
      *         a finished build
      * @param url
-     *         the type of the result page (e.g. simian, checkstyle, cpd, etc.)
+     *         the type of the result page (e.g., simian, checkstyle, cpd, etc.)
      */
     @SuppressFBWarnings("MC")
     @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")

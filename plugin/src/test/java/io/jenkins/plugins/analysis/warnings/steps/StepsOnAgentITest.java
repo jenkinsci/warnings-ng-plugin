@@ -27,8 +27,10 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  * @see ScanForIssuesStep
  * @see PublishIssuesStep
  */
+@SuppressWarnings("PMD.CouplingBetweenObjects")
 class StepsOnAgentITest extends IntegrationTestWithJenkinsPerTest {
     private static final String JAVA_CONTENT = "public class Test {}";
+    private static final String JAVA_ID = "java-1";
 
     /**
      * Verifies that affected source files are copied to Jenkins build folder, even if the controller - agent security is
@@ -85,7 +87,7 @@ class StepsOnAgentITest extends IntegrationTestWithJenkinsPerTest {
 
         ResultAction first;
         ResultAction second;
-        if ("java-1".equals(actions.get(0).getId())) {
+        if (JAVA_ID.equals(actions.get(0).getId())) {
             first = actions.get(0);
             second = actions.get(1);
         }

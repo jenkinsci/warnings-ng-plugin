@@ -43,6 +43,9 @@ public class DetailFactory {
     private static final Report EMPTY = new Report();
     private static final String LINK_SEPARATOR = ".";
 
+    private static final String ORIGIN_PROPERTY = "origin";
+    private static final String FILE_NAME_PROPERTY = "fileName";
+
     private final JenkinsFacade jenkins;
     private final BuildFolderFacade buildFolder;
 
@@ -63,7 +66,7 @@ public class DetailFactory {
      * Returns a detail object for the selected element for the specified issues.
      *
      * @param link
-     *         the link to identify the sub page to show
+     *         the link to identify the subpage to show
      * @param owner
      *         the build as owner of the detail page
      * @param result
@@ -151,7 +154,7 @@ public class DetailFactory {
                 .withColumnEnd(issue.getColumnEnd()).build();
     }
 
-    @SuppressWarnings({"checkstyle:ParameterNumber", "PMD.CyclomaticComplexity", "PMD.NPathComplexity"})
+    @SuppressWarnings({"checkstyle:ParameterNumber", "PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.AvoidLiteralsInIfCondition"})
     @SuppressFBWarnings("IMPROPER_UNICODE")
     private Object createNewDetailView(final String link, final Run<?, ?> owner, final AnalysisResult result,
             final Report allIssues, final Report newIssues, final Report outstandingIssues, final Report fixedIssues,
@@ -215,9 +218,10 @@ public class DetailFactory {
     }
 
     @SuppressFBWarnings(value = "UNSAFE_HASH_EQUALS", justification = "Hashcode is used as URL")
+    @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
     private String getDisplayNameOfDetails(final String property, final Report selectedIssues,
             final String originHash, final Set<String> origins) {
-        if ("origin".equals(property)) {
+        if (ORIGIN_PROPERTY.equals(property)) {
             LabelProviderFactory factory = createFactory();
             for (String origin : origins) {
                 if (String.valueOf(origin.hashCode()).equals(originHash)) {
@@ -240,7 +244,7 @@ public class DetailFactory {
         if (selectedIssues.isEmpty()) {
             return "n/a";
         }
-        if ("fileName".equals(property)) {
+        if (FILE_NAME_PROPERTY.equals(property)) {
             return selectedIssues.get(0).getBaseName();
         }
 

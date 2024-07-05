@@ -32,6 +32,8 @@ import io.jenkins.plugins.echarts.AsyncConfigurableTrendChart;
  */
 public class JobAction implements Action, AsyncConfigurableTrendChart {
     private static final JacksonFacade JACKSON_FACADE = new JacksonFacade();
+    private static final String NEW_ISSUES_TREND_ID = "new";
+    private static final String HEALTH_REPORT_TREND_ID = "health";
     private final Job<?, ?> owner;
     private final StaticAnalysisLabelProvider labelProvider;
     private final int numberOfTools;
@@ -185,10 +187,10 @@ public class JobAction implements Action, AsyncConfigurableTrendChart {
     }
 
     private TrendChart selectChart(final String chartType) {
-        if ("new".equals(chartType)) {
+        if (NEW_ISSUES_TREND_ID.equals(chartType)) {
             return new NewVersusFixedTrendChart();
         }
-        if ("health".equals(chartType)) {
+        if (HEALTH_REPORT_TREND_ID.equals(chartType)) {
             Optional<ResultAction> latestAction = getLatestAction();
             if (latestAction.isPresent()) {
                 return new HealthTrendChart(latestAction.get().getHealthDescriptor());

@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.junit.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
@@ -212,18 +211,12 @@ public class DetailsTabUiTest extends UiTest {
         WebElement issuesInfo = findBugsAnalysisResult.getInfoElementByActiveTab();
         waitUntilCondition(issuesInfo, "Showing 1 to 10 of 12 entries");
 
-        WebElement issuesPaginate = findBugsAnalysisResult.getPaginateElementByActiveTab();
-        List<WebElement> issuesPaginateButtons = issuesPaginate.findElements(By.cssSelector("ul li"));
-
-        assertThat(issuesPaginateButtons.size()).isEqualTo(2);
+        assertThat(findBugsAnalysisResult.getPaginationButtons()).hasSize(2);
 
         issuesLengthSelect.selectByValue("25");
         waitUntilCondition(issuesInfo, "Showing 1 to 12 of 12 entries");
 
-        issuesPaginateButtons.clear();
-        issuesPaginateButtons = issuesPaginate.findElements(By.cssSelector("ul li"));
-
-        assertThat(issuesPaginateButtons.size()).isEqualTo(1);
+        assertThat(findBugsAnalysisResult.getPaginationButtons()).hasSize(1);
     }
 
     /**
@@ -285,25 +278,18 @@ public class DetailsTabUiTest extends UiTest {
         WebElement issuesInfo = findBugsAnalysisResult.getInfoElementByActiveTab();
         waitUntilCondition(issuesInfo, "Showing 1 to 12 of 12 entries");
 
-        WebElement issuesPaginate = findBugsAnalysisResult.getPaginateElementByActiveTab();
-        List<WebElement> issuesPaginateButtons = issuesPaginate.findElements(By.cssSelector("ul li"));
-
-        assertThat(issuesPaginateButtons.size()).isEqualTo(1);
+        assertThat(findBugsAnalysisResult.getPaginationButtons()).hasSize(1);
 
         resultPage.open();
         findBugsAnalysisResult.reload();
 
-        issuesInfo = resultPage.getElement(By.id("issues_info"));
+        issuesInfo = findBugsAnalysisResult.getInfoElementByActiveTab();
         waitUntilCondition(issuesInfo, "Showing 1 to 12 of 12 entries");
 
         issuesLengthSelect = findBugsAnalysisResult.getLengthSelectElementByActiveTab();
         assertThat(issuesLengthSelect.getFirstSelectedOption().getText()).isEqualTo("50");
 
-        issuesPaginate = resultPage.getElement(By.id("issues_paginate"));
-        issuesPaginateButtons.clear();
-        issuesPaginateButtons = issuesPaginate.findElements(By.cssSelector("ul li"));
-
-        assertThat(issuesPaginateButtons.size()).isEqualTo(1);
+        assertThat(findBugsAnalysisResult.getPaginationButtons()).hasSize(1);
     }
 
     /**

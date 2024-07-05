@@ -149,7 +149,7 @@
         const activeCarousel = localStorage.getItem(carouselId);
         if (activeCarousel && carousel.is(':visible')) {
             const carouselControl = new bootstrap5.Carousel(carousel[0]);
-            carouselControl.to(parseInt(activeCarousel));
+            carouselControl.to(parseInt(activeCarousel, 10));
             carouselControl.pause();
         }
     }

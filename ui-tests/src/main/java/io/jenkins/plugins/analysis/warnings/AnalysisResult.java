@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.warnings;
 
 import java.net.URL;
 import java.util.Collection;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
@@ -27,6 +28,7 @@ import org.jenkinsci.test.acceptance.po.PageObject;
 public class AnalysisResult extends PageObject {
     private static final int MAX_ATTEMPTS = 5;
     private static final String TARGET_HREF = "data-bs-target";
+    private static final String ACTIVE_TAB = "//div[contains(@class, 'tab-pane') and contains(@class, 'active')]//";
     private final String id;
 
     /**
@@ -222,41 +224,50 @@ public class AnalysisResult extends PageObject {
     }
 
     /**
-     * Method for getting the row length select element by the currently active tab.
+     * Returns the row length select-element of the table in the currently active tab.
      *
-     * @return Select WebElement where the user can choose how many rows should be displayed.
+     * @return the select-element where the user can choose how many rows should be displayed
      */
     public Select getLengthSelectElementByActiveTab() {
-        WebElement lengthSelect = find(By.id(getActiveTab().property + "_length"));
-        return new Select(lengthSelect.findElement(By.cssSelector("label > select")));
+        var element = find(By.xpath(ACTIVE_TAB + "select[contains(@name, 'length')]"));
+        return new Select(element);
     }
 
     /**
-     * Method for getting the paginate WebElement for any active tab.
+     * Return the information label of the table in the currently active tab.
+     * This labels shows information about the current visible number of table elements.
      *
-     * @return parent WebElement that contains the paginate buttons for a result table.
+     * @return the element that shows information about the current visible number of table elements
      */
     public WebElement getInfoElementByActiveTab() {
-        return getElement(By.id(getActiveTab().property + "_info"));
+        return find(By.xpath(ACTIVE_TAB + "div[@class='dt-info']"));
     }
 
     /**
-     * Method for getting the paginate WebElement for any active tab.
+     * Method for getting the pagination control of the table in the currently active tab.
      *
-     * @return parent WebElement that contains the paginate buttons for a result table.
+     * @return parent WebElement that contains the pagination buttons for a result table.
      */
     public WebElement getPaginateElementByActiveTab() {
-        return getElement(By.id(getActiveTab().property + "_paginate"));
+        return find(By.xpath(ACTIVE_TAB + "div[@class='dt-paging paging_numbers']"));
     }
 
     /**
-     * Method for getting the input field of any active tab.
+     * Returns the pagination buttons of the table in the currently active tab.
      *
-     * @return WebElement where a user can filter the table by text input.
+     * @return the pagination buttons that select the currently visible portion of the issues
+     */
+    public List<WebElement> getPaginationButtons() {
+        return getPaginateElementByActiveTab().findElements(By.cssSelector("ul li"));
+    }
+
+    /**
+     * Returns the search input field of the table in the currently active tab.
+     *
+     * @return input-element where a user can filter the table by text
      */
     public WebElement getFilterInputElementByActiveTab() {
-        WebElement filter = find(By.id(getActiveTab().property + "_filter"));
-        return filter.findElement(By.cssSelector("label > input"));
+        return find(By.xpath(ACTIVE_TAB + "input[@type='search']"));
     }
 
     /**
@@ -373,7 +384,7 @@ public class AnalysisResult extends PageObject {
          */
         @SuppressWarnings("PMD.UnnecessaryFullyQualifiedName") // false positives
         static Tab valueWithHref(final String href) {
-            for (Tab tab : Tab.values()) {
+            for (Tab tab : values()) {
                 if (tab.contentId.equals(href.substring(1))) {
                     return tab;
                 }

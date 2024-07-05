@@ -138,6 +138,7 @@ public class IssuesTablePortlet extends DashboardPortlet {
         return jobs.stream().filter(this::isVisible).collect(Collectors.toList());
     }
 
+    @SuppressWarnings("PMD.SimplifyBooleanReturns")
     private boolean isVisible(final Job<?, ?> job) {
         Run<?, ?> lastCompletedBuild = job.getLastCompletedBuild();
         if (lastCompletedBuild == null) {

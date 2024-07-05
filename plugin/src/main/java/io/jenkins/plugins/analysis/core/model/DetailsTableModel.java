@@ -241,7 +241,7 @@ public abstract class DetailsTableModel extends TableModel {
          *
          * @return the formatted column
          */
-        protected String formatSeverity(final Severity severity) {
+        protected final String formatSeverity(final Severity severity) {
             return String.format("<a href=\"%s\">%s</a>",
                     severity.getName(), LocalizedSeverity.getLocalizedString(severity));
         }
@@ -257,7 +257,7 @@ public abstract class DetailsTableModel extends TableModel {
          *
          * @return the formatted column
          */
-        protected String formatProperty(final String property, final String value) {
+        protected final String formatProperty(final String property, final String value) {
             String renderedValue = render(value);
             if (StringUtils.isBlank(value)) {
                 renderedValue = "-";

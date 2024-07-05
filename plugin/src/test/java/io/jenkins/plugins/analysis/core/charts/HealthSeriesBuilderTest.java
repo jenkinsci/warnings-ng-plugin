@@ -122,8 +122,8 @@ class HealthSeriesBuilderTest {
 
     private static HealthDescriptor createEnabledDescriptor() {
         HealthDescriptor healthDescriptor = createDescriptor(true);
-        when(healthDescriptor.getHealthy()).thenReturn(HealthSeriesBuilderTest.HEALTH_THRESHOLD);
-        when(healthDescriptor.getUnhealthy()).thenReturn(HealthSeriesBuilderTest.UNHEALTHY_THRESHOLD);
+        when(healthDescriptor.getHealthy()).thenReturn(HEALTH_THRESHOLD);
+        when(healthDescriptor.getUnhealthy()).thenReturn(UNHEALTHY_THRESHOLD);
         return healthDescriptor;
     }
 

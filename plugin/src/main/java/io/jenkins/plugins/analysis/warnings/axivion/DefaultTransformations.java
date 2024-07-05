@@ -12,6 +12,7 @@ import edu.hm.hafner.analysis.Severity;
 /**
  * Provides json to generic jenkins issue transformations for all six Axivion violation kinds.
  */
+@SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
 final class DefaultTransformations {
     private DefaultTransformations() {
         throw new InstantiationError("no instances");
@@ -31,17 +32,18 @@ final class DefaultTransformations {
         final JsonObject payload = rawIssue.getPayload();
         final String description = createDescription(rawIssue, payload);
 
-        return new IssueBuilder()
-                .setPathName(rawIssue.getProjectDir())
-                .setFileName(getString(payload, "sourcePath"))
-                .setLineStart(getString(payload, "sourceLine"))
-                .setType(getString(payload, "violationType"))
-                .setCategory(rawIssue.getKind().name())
-                .setMessage("Architecture Violation")
-                .setDescription(description)
-                .setFingerprint(rawIssue.getKind().name() + getString(payload, "id"))
-                .setSeverity(Severity.WARNING_HIGH)
-                .build();
+        try (var builder = new IssueBuilder()) {
+            return builder.setPathName(rawIssue.getProjectDir())
+                    .setFileName(getString(payload, "sourcePath"))
+                    .setLineStart(getString(payload, "sourceLine"))
+                    .setType(getString(payload, "violationType"))
+                    .setCategory(rawIssue.getKind().name())
+                    .setMessage("Architecture Violation")
+                    .setDescription(description)
+                    .setFingerprint(rawIssue.getKind().name() + getString(payload, "id"))
+                    .setSeverity(Severity.WARNING_HIGH)
+                    .build();
+        }
     }
 
     private static String createDescription(final AxRawIssue rawIssue, final JsonObject payload) {
@@ -102,23 +104,24 @@ final class DefaultTransformations {
         final String description =
                 "Left part of clone pair"
                         + " of "
-                        + (cloneType + " clone")
+                        + cloneType + " clone"
                         + " of length "
                         + getInt(payload, "leftLength")
                         + "LOC"
                         + createLink(rawIssue, getInt(payload, "id"));
-        return new IssueBuilder()
-                .setPathName(rawIssue.getProjectDir())
-                .setFileName(getString(payload, "leftPath"))
-                .setLineStart(getInt(payload, "leftLine"))
-                .setLineEnd(getInt(payload, "leftEndLine"))
-                .setType(cloneType)
-                .setCategory(rawIssue.getKind().name())
-                .setMessage(cloneType + " clone")
-                .setDescription(description)
-                .setFingerprint(rawIssue.getKindName() + getInt(payload, "id"))
-                .setSeverity(Severity.WARNING_NORMAL)
-                .build();
+        try (var builder = new IssueBuilder()) {
+            return builder.setPathName(rawIssue.getProjectDir())
+                    .setFileName(getString(payload, "leftPath"))
+                    .setLineStart(getInt(payload, "leftLine"))
+                    .setLineEnd(getInt(payload, "leftEndLine"))
+                    .setType(cloneType)
+                    .setCategory(rawIssue.getKind().name())
+                    .setMessage(cloneType + " clone")
+                    .setDescription(description)
+                    .setFingerprint(rawIssue.getKindName() + getInt(payload, "id"))
+                    .setSeverity(Severity.WARNING_NORMAL)
+                    .build();
+        }
     }
 
     static Issue createCYIssue(final AxRawIssue rawIssue) {
@@ -129,17 +132,18 @@ final class DefaultTransformations {
                         + " Target: "
                         + getString(payload, "targetEntity")
                         + createLink(rawIssue, getInt(payload, "id"));
-        return new IssueBuilder()
-                .setPathName(rawIssue.getProjectDir())
-                .setFileName(getString(payload, "sourcePath"))
-                .setLineStart(getInt(payload, "sourceLine"))
-                .setType("Cycle")
-                .setCategory(rawIssue.getKindName())
-                .setMessage("Call cycle")
-                .setDescription(description)
-                .setFingerprint(rawIssue.getKindName() + getInt(payload, "id"))
-                .setSeverity(Severity.WARNING_HIGH)
-                .build();
+        try (var builder = new IssueBuilder()) {
+            return builder.setPathName(rawIssue.getProjectDir())
+                    .setFileName(getString(payload, "sourcePath"))
+                    .setLineStart(getInt(payload, "sourceLine"))
+                    .setType("Cycle")
+                    .setCategory(rawIssue.getKindName())
+                    .setMessage("Call cycle")
+                    .setDescription(description)
+                    .setFingerprint(rawIssue.getKindName() + getInt(payload, "id"))
+                    .setSeverity(Severity.WARNING_HIGH)
+                    .build();
+        }
     }
 
     /**
@@ -160,17 +164,18 @@ final class DefaultTransformations {
                         + getString(payload, "entity")
                         + "</i>"
                         + createLink(rawIssue, getInt(payload, "id"));
-        return new IssueBuilder()
-                .setPathName(rawIssue.getProjectDir())
-                .setFileName(getString(payload, "path"))
-                .setLineStart(getInt(payload, "line"))
-                .setType("Dead Entity")
-                .setCategory(rawIssue.getKindName())
-                .setMessage("Entity is dead")
-                .setDescription(description)
-                .setFingerprint(rawIssue.getKindName() + getInt(payload, "id"))
-                .setSeverity(Severity.WARNING_HIGH)
-                .build();
+        try (var builder = new IssueBuilder()) {
+            return builder.setPathName(rawIssue.getProjectDir())
+                    .setFileName(getString(payload, "path"))
+                    .setLineStart(getInt(payload, "line"))
+                    .setType("Dead Entity")
+                    .setCategory(rawIssue.getKindName())
+                    .setMessage("Entity is dead")
+                    .setDescription(description)
+                    .setFingerprint(rawIssue.getKindName() + getInt(payload, "id"))
+                    .setSeverity(Severity.WARNING_HIGH)
+                    .build();
+        }
     }
 
     /**
@@ -198,17 +203,18 @@ final class DefaultTransformations {
                         + "<br>Min: "
                         + getInt(payload, "min")
                         + createLink(rawIssue, getInt(payload, "id"));
-        return new IssueBuilder()
-                .setPathName(rawIssue.getProjectDir())
-                .setFileName(getString(payload, "path"))
-                .setLineStart(getInt(payload, "line"))
-                .setType(getString(payload, "description"))
-                .setCategory(rawIssue.getKindName())
-                .setMessage("Metric " + getString(payload, "description") + " out of valid range")
-                .setDescription(description)
-                .setFingerprint(rawIssue.getKindName() + getInt(payload, "id"))
-                .setSeverity(Severity.WARNING_HIGH)
-                .build();
+        try (var builder = new IssueBuilder()) {
+            return builder.setPathName(rawIssue.getProjectDir())
+                    .setFileName(getString(payload, "path"))
+                    .setLineStart(getInt(payload, "line"))
+                    .setType(getString(payload, "description"))
+                    .setCategory(rawIssue.getKindName())
+                    .setMessage("Metric " + getString(payload, "description") + " out of valid range")
+                    .setDescription(description)
+                    .setFingerprint(rawIssue.getKindName() + getInt(payload, "id"))
+                    .setSeverity(Severity.WARNING_HIGH)
+                    .build();
+        }
     }
 
     /**
@@ -229,17 +235,18 @@ final class DefaultTransformations {
                         + getString(payload, "entity")
                         + "</i>"
                         + createLink(rawIssue, getInt(payload, "id"));
-        return new IssueBuilder()
-                .setPathName(rawIssue.getProjectDir())
-                .setFileName(getString(payload, "path"))
-                .setLineStart(getInt(payload, "line"))
-                .setType(getString(payload, "errorNumber"))
-                .setCategory(rawIssue.getKindName())
-                .setMessage("Style violation " + getString(payload, "errorNumber"))
-                .setDescription(description)
-                .setFingerprint(rawIssue.getKindName() + getInt(payload, "id"))
-                .setSeverity(parsePriority(payload))
-                .build();
+        try (var builder = new IssueBuilder()) {
+            return builder.setPathName(rawIssue.getProjectDir())
+                    .setFileName(getString(payload, "path"))
+                    .setLineStart(getInt(payload, "line"))
+                    .setType(getString(payload, "errorNumber"))
+                    .setCategory(rawIssue.getKindName())
+                    .setMessage("Style violation " + getString(payload, "errorNumber"))
+                    .setDescription(description)
+                    .setFingerprint(rawIssue.getKindName() + getInt(payload, "id"))
+                    .setSeverity(parsePriority(payload))
+                    .build();
+        }
     }
 
     /**
@@ -268,7 +275,7 @@ final class DefaultTransformations {
      * Creates a link to the issue instance inside the Axivion-Dashboard.
      *
      * @param issue
-     *         2    the issue to link
+     *         the issue to link
      * @param id
      *         the ID of the issue
      *

@@ -253,8 +253,8 @@ public class RecordIssuesStep extends Step implements Serializable {
         if (tool == null) {
             throw new IllegalArgumentException("No valid tool defined! You probably used a symbol in the tools "
                     + "definition that is also a symbol in another plugin. "
-                    + ("Additionally check if your step is called 'checkStyle' and not 'checkstyle', "
-                    + "since 'checkstyle' is a reserved keyword in the CheckStyle plugin!")
+                    + "Additionally check if your step is called 'checkStyle' and not 'checkstyle', "
+                    + "since 'checkstyle' is a reserved keyword in the CheckStyle plugin!"
                     + "If not please create a new bug report in Jenkins issue tracker.");
         }
     }

@@ -287,8 +287,8 @@ class DetailFactoryTest {
         JenkinsFacade jenkins = mock(JenkinsFacade.class);
         when(jenkins.getDescriptorsFor(Tool.class)).thenReturn(DescriptorExtensionList.createDescriptorList((Jenkins) null, Tool.class));
         DetailFactory detailFactory = new DetailFactory(jenkins, mock(BuildFolderFacade.class));
-        Object details = detailFactory.createTrendDetails(link, DetailFactoryTest.RUN,
-                result, allIssues, newIssues, outstandingIssues, fixedIssues, DetailFactoryTest.ENCODING, parent);
+        Object details = detailFactory.createTrendDetails(link, RUN,
+                result, allIssues, newIssues, outstandingIssues, fixedIssues, ENCODING, parent);
         assertThat(details).isInstanceOf(actualType);
         return actualType.cast(details);
     }
