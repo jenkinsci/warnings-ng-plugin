@@ -33,7 +33,7 @@
 
     <!-- Test Library Dependencies Versions -->
     <xmlunit.version>2.10.0</xmlunit.version>
-    <jsoup.version>1.17.2</jsoup.version>
+    <jsoup.version>1.18.1</jsoup.version>
     <jmh.version>1.37</jmh.version>
     <testcontainers.version>1.19.8</testcontainers.version>
 
