@@ -19,7 +19,7 @@
     <jenkins.version>2.466</jenkins.version>
     <hpi-plugin.version>3.55</hpi-plugin.version>
     <json-smart.version>2.3</json-smart.version>
-    <json-unit-assertj.version>2.40.0</json-unit-assertj.version>
+    <json-unit-assertj.version>3.4.1</json-unit-assertj.version>
     <module.name>${project.groupId}.warnings.ui.tests</module.name>
 
     <!-- Maven Surefire ArgLine -->
