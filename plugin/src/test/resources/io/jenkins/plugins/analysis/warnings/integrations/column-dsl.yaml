@@ -1,0 +1,19 @@
+jobs:
+  - script: >
+      listView("dsl-view") {
+        jobs {
+          regex("^bar")
+        }
+        recurse(true)
+        columns {
+          issueTotalsColumn()
+          status()
+          weather()
+          name()
+          lastSuccess()
+          lastFailure()
+          lastDuration()
+          testResult(1)
+          buildButton()
+        }
+      }
