@@ -8,12 +8,17 @@ import hudson.model.Descriptor;
 import hudson.model.FreeStyleProject;
 import hudson.model.HealthReport;
 import hudson.model.TopLevelItem;
+import hudson.model.View;
 import hudson.tasks.Publisher;
 import hudson.util.DescribableList;
+import hudson.views.ListViewColumn;
 
+import io.jenkins.plugins.analysis.core.columns.IssuesTotalColumn;
+import io.jenkins.plugins.analysis.core.columns.Messages;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
+import io.jenkins.plugins.analysis.core.util.IssuesStatistics.StatisticProperties;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
 import io.jenkins.plugins.analysis.core.util.WarningsQualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.warnings.Java;
@@ -21,7 +26,7 @@ import io.jenkins.plugins.casc.ConfigurationAsCode;
 import io.jenkins.plugins.casc.ConfiguratorException;
 import io.jenkins.plugins.util.QualityGate.QualityGateCriticality;
 
-import static org.assertj.core.api.Assertions.*;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
 /**
  * Tests the Job DSL Plugin.
@@ -30,6 +35,28 @@ import static org.assertj.core.api.Assertions.*;
  * @author Lorenz Munsch
  */
 class JobDslITest extends IntegrationTestWithJenkinsPerTest {
+    /**
+     * Creates a freestyle job from a YAML file and verifies that issue recorder finds warnings.
+     */
+    @Test
+    void shouldCreateColumnFromYamlConfiguration() {
+        configureJenkins("column-dsl.yaml");
+
+        View view = getJenkins().getInstance().getView("dsl-view");
+
+        assertThat(view).isNotNull();
+
+        assertThat(view.getColumns())
+                .extracting(ListViewColumn::getColumnCaption)
+                .contains(new IssuesTotalColumn().getColumnCaption());
+
+        assertThat(view.getColumns()).first()
+                .isInstanceOfSatisfying(IssuesTotalColumn.class,
+                        c -> assertThat(c)
+                                .hasColumnCaption(Messages.IssuesTotalColumn_Name())
+                                .hasType(StatisticProperties.TOTAL));
+    }
+
     /**
      * Creates a freestyle job from a YAML file and verifies that issue recorder finds warnings.
      */
