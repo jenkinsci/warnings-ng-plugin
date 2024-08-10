@@ -10,9 +10,9 @@ cp -fv plugin/target/${1}.hpi $JENKINS_HOME/plugins/${1}.jpi
 
 CURRENT_UID="$(id -u):$(id -g)"
 export CURRENT_UID
-IS_RUNNING=$(docker-compose ps -q jenkins-controller)
+IS_RUNNING=$(docker compose ps -q devenv-jenkins)
 if [[ "$IS_RUNNING" != "" ]]; then
-    docker-compose restart
+    docker compose restart
     echo "Restarting Jenkins (docker compose with user ID ${CURRENT_UID}) ..."
 fi
 
