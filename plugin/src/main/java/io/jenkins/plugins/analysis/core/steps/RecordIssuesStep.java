@@ -603,6 +603,7 @@ public class RecordIssuesStep extends Step implements Serializable {
         protected List<AnalysisResult> run() throws IOException, InterruptedException {
             IssuesRecorder recorder = new IssuesRecorder();
             recorder.setTools(step.getTools());
+            recorder.setSourceCodeRetention(step.getSourceCodeRetention());
             recorder.setSourceCodeEncoding(step.getSourceCodeEncoding());
             recorder.setIgnoreQualityGate(step.getIgnoreQualityGate());
             recorder.setHealthy(step.getHealthy());
