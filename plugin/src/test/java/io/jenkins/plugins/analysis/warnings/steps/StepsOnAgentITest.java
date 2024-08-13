@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -35,7 +33,6 @@ class StepsOnAgentITest extends IntegrationTestWithJenkinsPerTest {
     private static final String JAVA_CONTENT = "public class Test {}";
     private static final String JAVA_ID = "java-1";
 
-
     /**
      * Verifies that affected source files are copied to Jenkins build folder, even if the controller - agent security is
      * active, see JENKINS-56007 for details.
@@ -61,7 +58,6 @@ class StepsOnAgentITest extends IntegrationTestWithJenkinsPerTest {
 
         // TODO: check for the links in the table model
         assertThat(getSourceCode(result, 0)).contains(JAVA_CONTENT);
-
     }
 
     private String getSourceCode(final AnalysisResult result, final int rowIndex) {
@@ -104,6 +100,7 @@ class StepsOnAgentITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(first.getResult().getIssues()).hasSize(5);
         assertThat(second.getResult().getIssues()).hasSize(3);
     }
+
     /**
      * Verifies that source files are not retained in the Jenkins build folder when
      * the 'sourceCodeRetention' policy is set to 'NEVER'
@@ -125,7 +122,6 @@ class StepsOnAgentITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(result).hasNoErrorMessages();
         assertThat(result).hasTotalSize(1);
         assertThat(getSourceCode(result, 0)).contains("FileNotFoundException");
-
     }
 
 }
