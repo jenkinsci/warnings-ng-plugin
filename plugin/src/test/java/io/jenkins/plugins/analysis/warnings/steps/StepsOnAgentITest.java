@@ -1,5 +1,7 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -17,6 +19,7 @@ import io.jenkins.plugins.analysis.core.steps.PublishIssuesStep;
 import io.jenkins.plugins.analysis.core.steps.ScanForIssuesStep;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 import io.jenkins.plugins.prism.SourceCodeViewModel;
+import org.junitpioneer.jupiter.Issue;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
@@ -32,12 +35,13 @@ class StepsOnAgentITest extends IntegrationTestWithJenkinsPerTest {
     private static final String JAVA_CONTENT = "public class Test {}";
     private static final String JAVA_ID = "java-1";
 
+
     /**
      * Verifies that affected source files are copied to Jenkins build folder, even if the controller - agent security is
      * active, see JENKINS-56007 for details.
      */
     @Test
-    @org.junitpioneer.jupiter.Issue("JENKINS-56007")
+    @Issue("JENKINS-56007")
     void shouldCopySourcesIfMasterAgentSecurityIsActive() {
         Slave agent = createAgentWithEnabledSecurity("agent");
 
@@ -57,6 +61,7 @@ class StepsOnAgentITest extends IntegrationTestWithJenkinsPerTest {
 
         // TODO: check for the links in the table model
         assertThat(getSourceCode(result, 0)).contains(JAVA_CONTENT);
+
     }
 
     private String getSourceCode(final AnalysisResult result, final int rowIndex) {
@@ -99,4 +104,28 @@ class StepsOnAgentITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(first.getResult().getIssues()).hasSize(5);
         assertThat(second.getResult().getIssues()).hasSize(3);
     }
+    /**
+     * Verifies that source files are not retained in the Jenkins build folder when
+     * the 'sourceCodeRetention' policy is set to 'NEVER'
+     **/
+    @Test
+    void shouldNotCopySourcesWhenSourceCodeRetentionIsNever() {
+        Slave agent = createAgentWithEnabledSecurity("agent");
+
+        WorkflowJob project = createPipeline();
+
+        createFileInAgentWorkspace(agent, project, "Test.java", JAVA_CONTENT);
+
+        project.setDefinition(new CpsFlowDefinition("node('agent') {\n"
+                + "    echo '[javac] Test.java:39: warning: Test Warning'\n"
+                + "    recordIssues tool: java(), sourceCodeRetention: 'NEVER'\n"
+                + "}", true));
+
+        AnalysisResult result = scheduleSuccessfulBuild(project);
+        assertThat(result).hasNoErrorMessages();
+        assertThat(result).hasTotalSize(1);
+        assertThat(getSourceCode(result, 0)).contains("FileNotFoundException");
+
+    }
+
 }
