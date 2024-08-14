@@ -103,7 +103,7 @@ class StepsOnAgentITest extends IntegrationTestWithJenkinsPerTest {
 
     /**
      * Verifies that source files are not retained in the Jenkins build folder when
-     * the 'sourceCodeRetention' policy is set to 'NEVER'
+     * the 'sourceCodeRetention' policy is set to 'NEVER'.
      **/
     @Test
     void shouldNotCopySourcesWhenSourceCodeRetentionIsNever() {
