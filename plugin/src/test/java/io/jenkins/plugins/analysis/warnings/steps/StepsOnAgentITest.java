@@ -123,5 +123,4 @@ class StepsOnAgentITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(result).hasTotalSize(1);
         assertThat(getSourceCode(result, 0)).contains("FileNotFoundException");
     }
-
 }
