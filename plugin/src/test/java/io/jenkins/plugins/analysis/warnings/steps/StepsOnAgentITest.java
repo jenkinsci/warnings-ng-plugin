@@ -1,14 +1,7 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
-import java.util.List;
-
-import org.junit.jupiter.api.Test;
-
-import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
-import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.model.Run;
 import hudson.model.Slave;
-
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.FileNameRenderer;
 import io.jenkins.plugins.analysis.core.model.IssuesDetail;
@@ -17,9 +10,14 @@ import io.jenkins.plugins.analysis.core.steps.PublishIssuesStep;
 import io.jenkins.plugins.analysis.core.steps.ScanForIssuesStep;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 import io.jenkins.plugins.prism.SourceCodeViewModel;
+import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
+import org.jenkinsci.plugins.workflow.job.WorkflowJob;
+import org.junit.jupiter.api.Test;
 import org.junitpioneer.jupiter.Issue;
 
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import java.util.List;
+
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.assertThat;
 
 /**
  * Integration tests of the warnings plug-in in pipelines.
@@ -91,8 +89,7 @@ class StepsOnAgentITest extends IntegrationTestWithJenkinsPerTest {
         if (JAVA_ID.equals(actions.get(0).getId())) {
             first = actions.get(0);
             second = actions.get(1);
-        }
-        else {
+        } else {
             first = actions.get(1);
             second = actions.get(0);
         }
@@ -121,6 +118,7 @@ class StepsOnAgentITest extends IntegrationTestWithJenkinsPerTest {
         AnalysisResult result = scheduleSuccessfulBuild(project);
         assertThat(result).hasNoErrorMessages();
         assertThat(result).hasTotalSize(1);
+        assertThat(getConsoleLog(result)).contains("Skipping copying of affected files");
         assertThat(getSourceCode(result, 0)).contains("FileNotFoundException");
     }
 }
