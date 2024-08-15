@@ -177,7 +177,8 @@ class IssuesScanner {
             permittedSourceDirectories.add(workspace.getRemote());
             new AffectedFilesResolver().copyAffectedFilesToBuildFolder(
                     report, workspace, permittedSourceDirectories, buildFolder);
-        } else {
+        } 
+        else {
             report.logInfo("Skipping copying of affected files");
         }
         sourceCodeRetention.cleanup(run, AFFECTED_FILES_FOLDER_NAME, log);
