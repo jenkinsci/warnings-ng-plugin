@@ -15,7 +15,7 @@
 
   <properties>
     <java.version>1.8</java.version>
-    <hpi-plugin.version>3.56</hpi-plugin.version>
+    <hpi-plugin.version>3.57</hpi-plugin.version>
     <scmTag>HEAD</scmTag>
 
     <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
