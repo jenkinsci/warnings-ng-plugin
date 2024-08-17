@@ -182,16 +182,16 @@ class IssuesScanner {
     private void copyAffectedFiles(final Report report, final FilePath buildFolder)
             throws InterruptedException {
         var log = new FilteredLog("Errors while processing affected files");
-        if (sourceCodeRetention != SourceCodeRetention.NEVER) {
+        if (sourceCodeRetention == SourceCodeRetention.NEVER) {
+            report.logInfo("Skipping copying of affected files");
+        }
+        else {
             report.logInfo("Copying affected files to Jenkins' build folder '%s'", buildFolder);
 
             Set<String> permittedSourceDirectories = getPermittedSourceDirectories();
             permittedSourceDirectories.add(workspace.getRemote());
             new AffectedFilesResolver().copyAffectedFilesToBuildFolder(
                     report, workspace, permittedSourceDirectories, buildFolder);
-        }
-        else {
-            report.logInfo("Skipping copying of affected files");
         }
         sourceCodeRetention.cleanup(run, AFFECTED_FILES_FOLDER_NAME, log);
 
