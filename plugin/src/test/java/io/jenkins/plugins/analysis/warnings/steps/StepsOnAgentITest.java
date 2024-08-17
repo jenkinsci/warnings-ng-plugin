@@ -99,4 +99,28 @@ class StepsOnAgentITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(first.getResult().getIssues()).hasSize(5);
         assertThat(second.getResult().getIssues()).hasSize(3);
     }
+
+    /**
+     * Verifies that source files are not retained in the Jenkins build folder when
+     * the 'sourceCodeRetention' policy is set to 'NEVER'.
+     **/
+    @Test
+    void shouldNotCopySourcesWhenSourceCodeRetentionIsNever() {
+        Slave agent = createAgentWithEnabledSecurity("agent");
+
+        WorkflowJob project = createPipeline();
+
+        createFileInAgentWorkspace(agent, project, "Test.java", JAVA_CONTENT);
+
+        project.setDefinition(new CpsFlowDefinition("node('agent') {\n"
+                + "    echo '[javac] Test.java:39: warning: Test Warning'\n"
+                + "    recordIssues tool: java(), sourceCodeRetention: 'NEVER'\n"
+                + "}", true));
+
+        AnalysisResult result = scheduleSuccessfulBuild(project);
+        assertThat(result).hasNoErrorMessages();
+        assertThat(result).hasTotalSize(1);
+        assertThat(getConsoleLog(result)).contains("Skipping copying of affected files");
+        assertThat(getSourceCode(result, 0)).contains("FileNotFoundException");
+    }
 }
