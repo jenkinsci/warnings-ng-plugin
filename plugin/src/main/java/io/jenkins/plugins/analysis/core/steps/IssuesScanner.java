@@ -1,15 +1,40 @@
 package io.jenkins.plugins.analysis.core.steps;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+
 import com.google.errorprone.annotations.MustBeClosed;
-import edu.hm.hafner.analysis.*;
+
+import edu.hm.hafner.analysis.FileNameResolver;
+import edu.hm.hafner.analysis.FingerprintGenerator;
+import edu.hm.hafner.analysis.FullTextFingerprint;
+import edu.hm.hafner.analysis.ModuleDetector;
 import edu.hm.hafner.analysis.ModuleDetector.FileSystem;
+import edu.hm.hafner.analysis.ModuleResolver;
+import edu.hm.hafner.analysis.PackageNameResolver;
+import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 import edu.hm.hafner.util.FilteredLog;
+
 import hudson.FilePath;
 import hudson.model.Computer;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
+import jenkins.MasterToSlaveFileCallable;
+
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.ReportLocations;
 import io.jenkins.plugins.analysis.core.model.Tool;
@@ -28,23 +53,8 @@ import io.jenkins.plugins.prism.PrismConfiguration;
 import io.jenkins.plugins.prism.SourceCodeRetention;
 import io.jenkins.plugins.prism.SourceDirectoryFilter;
 import io.jenkins.plugins.util.LogHandler;
-import jenkins.MasterToSlaveFileCallable;
-import org.apache.commons.lang3.StringUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.InvalidPathException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static io.jenkins.plugins.analysis.core.util.AffectedFilesResolver.AFFECTED_FILES_FOLDER_NAME;
+import static io.jenkins.plugins.analysis.core.util.AffectedFilesResolver.*;
 
 /**
  * Scans report files or the console log for issues.
@@ -77,11 +87,11 @@ class IssuesScanner {
 
     @SuppressWarnings("checkstyle:ParameterNumber")
     IssuesScanner(final Tool tool, final List<RegexpFilter> filters, final Charset sourceCodeEncoding,
-                  final FilePath workspace, final Set<String> sourceDirectories,
-                  final SourceCodeRetention sourceCodeRetention, final Run<?, ?> run,
-                  final FilePath jenkinsRootDir, final TaskListener listener,
-                  final String scm, final BlameMode blameMode, final PostProcessingMode postProcessingMode,
-                  final boolean quiet) {
+            final FilePath workspace, final Set<String> sourceDirectories,
+            final SourceCodeRetention sourceCodeRetention, final Run<?, ?> run,
+            final FilePath jenkinsRootDir, final TaskListener listener,
+            final String scm, final BlameMode blameMode, final PostProcessingMode postProcessingMode,
+            final boolean quiet) {
         this.filters = new ArrayList<>(filters);
         this.sourceCodeEncoding = sourceCodeEncoding;
         this.tool = tool;
@@ -129,7 +139,8 @@ class IssuesScanner {
             AnnotatedReport result = workspace.act(createPostProcessor(report));
             copyAffectedFiles(result.getReport(), createAffectedFilesFolder(result.getReport()));
             return result;
-        } else {
+        }
+        else {
             report.logInfo("Skipping post processing");
             return new AnnotatedReport(tool.getActualId(), filter(report, filters));
         }
@@ -153,7 +164,8 @@ class IssuesScanner {
         if (blameMode == BlameMode.DISABLED) {
             report.logInfo("Skipping SCM blames as requested");
             return new NullBlamer();
-        } else {
+        }
+        else {
             FilteredLog log = new FilteredLog("Errors while determining a supported blamer for "
                     + run.getFullDisplayName());
             report.logInfo("Creating SCM blamer to obtain author and commit information for affected files");
@@ -177,7 +189,7 @@ class IssuesScanner {
             permittedSourceDirectories.add(workspace.getRemote());
             new AffectedFilesResolver().copyAffectedFilesToBuildFolder(
                     report, workspace, permittedSourceDirectories, buildFolder);
-        } 
+        }
         else {
             report.logInfo("Skipping copying of affected files");
         }
@@ -190,7 +202,8 @@ class IssuesScanner {
         FilePath buildDirectory = jenkinsRootDir.child(AFFECTED_FILES_FOLDER_NAME);
         try {
             buildDirectory.mkdirs();
-        } catch (IOException exception) {
+        }
+        catch (IOException exception) {
             report.logException(exception,
                     "Can't create directory '%s' for affected workspace files.", buildDirectory);
         }
@@ -223,7 +236,8 @@ class IssuesScanner {
             filtered.logInfo(
                     "Applying %d filters on the set of %d issues (%d issues have been removed, %d issues will be published)",
                     filters.size(), report.size(), report.size() - filtered.size(), filtered.size());
-        } else {
+        }
+        else {
             filtered.logInfo("No filter has been set, publishing all %d issues", filtered.size());
         }
         return filtered;
@@ -249,8 +263,8 @@ class IssuesScanner {
 
         @SuppressWarnings("checkstyle:ParameterNumber")
         ReportPostProcessor(final String id, final Report report, final String sourceCodeEncoding,
-                            final Blamer blamer, final List<RegexpFilter> filters, final Set<String> permittedSourceDirectories,
-                            final Set<String> requestedSourceDirectories, final PostProcessingMode postProcessingMode) {
+                final Blamer blamer, final List<RegexpFilter> filters, final Set<String> permittedSourceDirectories,
+                final Set<String> requestedSourceDirectories, final PostProcessingMode postProcessingMode) {
             super();
 
             this.id = id;
@@ -269,7 +283,8 @@ class IssuesScanner {
             if (postProcessingMode == PostProcessingMode.ENABLED) {
                 resolveModuleNames(originalReport, workspace);
                 resolvePackageNames(originalReport);
-            } else {
+            }
+            else {
                 originalReport.logInfo(SKIPPING_POST_PROCESSING);
             }
 
@@ -304,7 +319,8 @@ class IssuesScanner {
                     report.logInfo("Resolving file names for all issues in source directory '%s'", sourceDirectory);
                     nameResolver.run(report, sourceDirectory, ConsoleLogHandler::isInConsoleLog);
                 }
-            } catch (InvalidPathException exception) {
+            }
+            catch (InvalidPathException exception) {
                 report.logException(exception, "Resolving of file names aborted");
             }
         }
@@ -321,7 +337,8 @@ class IssuesScanner {
             try {
                 ModuleResolver resolver = new ModuleResolver();
                 resolver.run(report, new ModuleDetector(workspace.toPath(), new DefaultFileSystem()));
-            } catch (InvalidPathException exception) {
+            }
+            catch (InvalidPathException exception) {
                 report.logException(exception, "Resolving of modul names aborted");
             }
         }
@@ -332,7 +349,8 @@ class IssuesScanner {
             try {
                 PackageNameResolver resolver = new PackageNameResolver();
                 resolver.run(report, getCharset());
-            } catch (InvalidPathException exception) {
+            }
+            catch (InvalidPathException exception) {
                 report.logException(exception, "Resolving of package names aborted");
             }
         }
