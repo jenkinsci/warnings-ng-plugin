@@ -25,7 +25,7 @@ jobs:
       - name: Set up Maven
         uses: stCarolas/setup-maven@v5
         with:
-          maven-version: 3.9.6
+          maven-version: 3.9.9
       - name: Generate coverage with JaCoCo
         run: mvn -V --color always -ntp clean verify -Pci --file plugin/pom.xml
       - name: Upload coverage to Codecov
