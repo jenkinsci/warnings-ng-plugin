@@ -65,6 +65,42 @@ class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
                 + PUBLISH_ISSUES_STEP;
     }
 
+    @Test
+    void shouldSkipDeltaCalculation() {
+        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix();
+
+        createFileInWorkspace(job, "java-issues.txt",
+                createJavaWarning(MODIFIED_FILE, 111)
+                        + createJavaWarning(SCM_RESOLVER, AFFECTED_LINE));
+
+        var step = "recordIssues skipDeltaCalculation: true, "
+                + "sourceDirectories: [[path: 'forensics-api']], tool: java(pattern:'**/*issues.txt', reportEncoding:'UTF-8')";
+        job.setDefinition(asStage(checkout(OLD_COMMIT), step));
+
+        buildSuccessfully(job); // reference build
+
+        createFileInWorkspace(job, "java-issues.txt",
+                createJavaWarning(MODIFIED_FILE, 111)    // outstanding and modified
+                        + createJavaWarning(MODIFIED_FILE, 112)  // new and modified
+                        + createJavaWarning(MODIFIED_FILE, 113)  // new and modified
+                        + createJavaWarning(SCM_RESOLVER, AFFECTED_LINE)   // outstanding (not modified)
+                        + createJavaWarning(MODIFIED_FILE, 2));  // new (not modified)
+
+        job.setDefinition(asStage(CHECKOUT_FORENSICS_API, "discoverReferenceBuild()", step));
+
+        AnalysisResult result = scheduleSuccessfulBuild(job);
+        assertThat(getConsoleLog(result)).contains(
+                "Detect all issues that are part of modified code",
+                "No relevant modified code found",
+                "Created analysis result for 5 issues (found 3 new issues, fixed 0 issues)");
+        assertThat(getConsoleLog(result)).doesNotContain(
+                "-> Using commit 'a6d0ef0' as latest commit for build",
+                "-> Using commit '3097ea1' as latest commit for build",
+                "-> Invoking Git delta calculator for determining the changes between commits 'a6d0ef0' and '3097ea1'",
+                "-> Start scanning for differences between commits...",
+                "Issues in modified code");
+    }
+
     /**
      * Checks out an existing Git repository and starts a pipeline with the record step. Verifies that the Git forensics
      * plugin is correctly invoked.

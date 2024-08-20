@@ -59,6 +59,7 @@ public class PublishIssuesStep extends Step implements Serializable {
     private boolean ignoreQualityGate = false; // by default, a successful quality gate is mandatory
     private boolean failOnError = false; // by default, it should not fail on error
 
+    private boolean skipDeltaCalculation; // @since 11.5.0: by default, delta computation is enabled
     private boolean skipPublishingChecks; // by default, warnings should be published to SCM platforms
     private ChecksAnnotationScope checksAnnotationScope = ChecksAnnotationScope.NEW; // @since 11.0.0
 
@@ -167,6 +168,20 @@ public class PublishIssuesStep extends Step implements Serializable {
     @SuppressWarnings({"PMD.BooleanGetMethodName", "WeakerAccess"})
     public boolean getFailOnError() {
         return failOnError;
+    }
+
+    /**
+     * Returns whether the SCM delta calculation for the new issue detection should be disabled.
+     *
+     * @return {@code true} if the SCM delta calculation for the new issue detection should be disabled.
+     */
+    public boolean isSkipDeltaCalculation() {
+        return skipDeltaCalculation;
+    }
+
+    @DataBoundSetter
+    public void setSkipDeltaCalculation(final boolean skipDeltaCalculation) {
+        this.skipDeltaCalculation = skipDeltaCalculation;
     }
 
     /**
@@ -414,8 +429,9 @@ public class PublishIssuesStep extends Step implements Serializable {
             report.addAll(step.reports);
 
             var workspace = getContext().get(FilePath.class);
-            var deltaCalculator = workspace == null ? new DeltaCalculator.NullDeltaCalculator() : DeltaCalculatorFactory
-                    .findDeltaCalculator(step.scm, getRun(), workspace, getTaskListener(), new FilteredLog());
+            var deltaCalculator = workspace == null || step.isSkipDeltaCalculation()
+                    ? new DeltaCalculator.NullDeltaCalculator()
+                    : DeltaCalculatorFactory.findDeltaCalculator(step.scm, getRun(), workspace, getTaskListener(), new FilteredLog());
 
             IssuesPublisher publisher = new IssuesPublisher(getRun(), report,
                     deltaCalculator, new HealthDescriptor(step.getHealthy(), step.getUnhealthy(),

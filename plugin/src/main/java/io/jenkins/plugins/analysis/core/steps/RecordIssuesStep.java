@@ -86,6 +86,7 @@ public class RecordIssuesStep extends Step implements Serializable {
     private boolean isBlameDisabled;
 
     private boolean skipPostProcessing; // @since 10.6.0: by default, post-processing will be enabled
+    private boolean skipDeltaCalculation; // @since 11.5.0: by default, delta computation is enabled
     private boolean skipPublishingChecks; // by default, checks will be published
     private ChecksAnnotationScope checksAnnotationScope = ChecksAnnotationScope.NEW; // @since 11.0.0
 
@@ -404,6 +405,20 @@ public class RecordIssuesStep extends Step implements Serializable {
     }
 
     /**
+     * Returns whether the SCM delta calculation for the new issue detection should be disabled.
+     *
+     * @return {@code true} if the SCM delta calculation for the new issue detection should be disabled.
+     */
+    public boolean isSkipDeltaCalculation() {
+        return skipDeltaCalculation;
+    }
+
+    @DataBoundSetter
+    public void setSkipDeltaCalculation(final boolean skipDeltaCalculation) {
+        this.skipDeltaCalculation = skipDeltaCalculation;
+    }
+
+    /**
      * Returns whether publishing checks should be skipped.
      *
      * @return {@code true} if publishing checks should be skipped, {@code false} otherwise
@@ -614,6 +629,7 @@ public class RecordIssuesStep extends Step implements Serializable {
             recorder.setAggregatingResults(step.getAggregatingResults());
             recorder.setBlameDisabled(step.isSkipBlames());
             recorder.setSkipPostProcessing(step.isSkipPostProcessing());
+            recorder.setSkipDeltaCalculation(step.isSkipDeltaCalculation());
             recorder.setScm(step.getScm());
             recorder.setSkipPublishingChecks(step.isSkipPublishingChecks());
             recorder.setChecksAnnotationScope(step.getChecksAnnotationScope());

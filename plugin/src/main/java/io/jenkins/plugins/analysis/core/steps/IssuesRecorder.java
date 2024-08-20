@@ -59,6 +59,7 @@ import io.jenkins.plugins.analysis.core.util.ModelValidation;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
 import io.jenkins.plugins.analysis.core.util.WarningsQualityGate;
 import io.jenkins.plugins.checks.steps.ChecksInfo;
+import io.jenkins.plugins.forensics.delta.DeltaCalculator.NullDeltaCalculator;
 import io.jenkins.plugins.forensics.delta.DeltaCalculatorFactory;
 import io.jenkins.plugins.prism.SourceCodeDirectory;
 import io.jenkins.plugins.prism.SourceCodeRetention;
@@ -119,6 +120,7 @@ public class IssuesRecorder extends Recorder {
     private transient boolean publishAllIssues; // @deprecated: use checksAnnotationScope instead
 
     private boolean skipPostProcessing; // @since 10.6.0: by default, post-processing will be enabled
+    private boolean skipDeltaCalculation; // @since 11.5.0: by default, delta computation is enabled
 
     @CheckForNull
     private ChecksInfo checksInfo;
@@ -464,6 +466,20 @@ public class IssuesRecorder extends Recorder {
     }
 
     /**
+     * Returns whether the SCM delta calculation for the new issue detection should be disabled.
+     *
+     * @return {@code true} if the SCM delta calculation for the new issue detection should be disabled.
+     */
+    public boolean isSkipDeltaCalculation() {
+        return skipDeltaCalculation;
+    }
+
+    @DataBoundSetter
+    public void setSkipDeltaCalculation(final boolean skipDeltaCalculation) {
+        this.skipDeltaCalculation = skipDeltaCalculation;
+    }
+
+    /**
      * Determines whether to fail the step on errors during the step of recording issues.
      *
      * @param failOnError
@@ -733,8 +749,9 @@ public class IssuesRecorder extends Recorder {
         logHandler.logInfoMessages(report.getInfoMessages());
         logHandler.logErrorMessages(report.getErrorMessages());
 
-        var deltaCalculator = DeltaCalculatorFactory
-                .findDeltaCalculator(scm, run, workspace, listener, new FilteredLog());
+        var deltaCalculator = isSkipDeltaCalculation()
+                ? new NullDeltaCalculator()
+                : DeltaCalculatorFactory.findDeltaCalculator(scm, run, workspace, listener, new FilteredLog());
 
         IssuesPublisher publisher = new IssuesPublisher(run, annotatedReport, deltaCalculator,
                 new HealthDescriptor(healthy, unhealthy, minimumSeverity), qualityGates,
