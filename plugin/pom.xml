@@ -38,7 +38,7 @@
     <testcontainers.version>1.20.1</testcontainers.version>
 
     <!-- Jenkins Plug-in Dependencies Versions -->
-    <git-forensics.version>2.1.0</git-forensics.version>
+    <git-forensics.version>2.2.0</git-forensics.version>
 
     <jenkins-maven-plugin.version>3.22</jenkins-maven-plugin.version>
     <job-dsl.version>1.84</job-dsl.version>
