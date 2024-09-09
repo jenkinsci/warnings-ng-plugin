@@ -196,6 +196,12 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         shouldFindIssuesOfTool(4, new YamlLint(), "yamllint.txt");
     }
 
+    /** Runs the YamlLint parser on an output file that contains 4 issues. */
+    @Test
+    void shouldFindAllYoctoIssues() {
+        shouldFindIssuesOfTool(25, new YoctoScanner(), "yocto_scanner_result.json");
+    }
+
     /** Runs the Iar parser on an output file that contains 6 issues. */
     @Test
     void shouldFindAllIarIssues() {
