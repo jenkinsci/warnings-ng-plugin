@@ -7,19 +7,22 @@
 
   <i:hr title="${%Publishing Options}"/>
 
-  <f:entry field="skipPublishingChecks">
-    <f:checkbox title="${%title.skipPublishingChecks}" />
+  <f:entry field="skipPublishingChecks" title="${%title.skipPublishingChecks}">
+    <f:checkbox />
   </f:entry>
-  <f:entry title="${%title.checksAnnotationScope}" field="checksAnnotationScope">
+  <f:entry field="checksAnnotationScope" title="${%title.checksAnnotationScope}">
     <f:select default="NEW"/>
   </f:entry>
-  <f:entry field="failOnError">
-    <f:checkbox title="${%title.failOnError}"/>
-  </f:entry>
-  <f:entry field="ignoreQualityGate">
-    <f:checkbox title="${%title.ignoreQualityGate}"/>
+  <f:entry field="skipDeltaCalculation" title="${%title.skipDeltaCalculation}" >
+    <f:checkbox />
   </f:entry>
 
+  <f:entry field="failOnError" title="${%title.failOnError}">
+    <f:checkbox />
+  </f:entry>
+  <f:entry field="ignoreQualityGate" title="${%title.ignoreQualityGate}">
+    <f:checkbox />
+  </f:entry>
 
   <f:entry title="${%title.trendChartType}" field="trendChartType">
     <f:select default="AGGREGATION_TOOLS"/>
