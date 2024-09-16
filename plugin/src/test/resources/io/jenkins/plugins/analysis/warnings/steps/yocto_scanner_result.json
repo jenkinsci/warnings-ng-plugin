@@ -1,0 +1,416 @@
+{
+  "version": "1",
+  "package": [
+    {
+      "name": "acl",
+      "layer": "meta",
+      "version": "2.3.2",
+      "products": [
+        {
+          "product": "acl",
+          "cvesInRecord": "Yes"
+        }
+      ],
+      "issue": [
+        {
+          "id": "CVE-2009-4411",
+          "summary": "The (1) setfacl and (2) getfacl commands in XFS acl 2.2.47, when running in recursive (-R) mode, follow symbolic links even when the --physical (aka -P) or -L option is specified, which might allow local users to modify the ACL for arbitrary files or directories via a symlink attack.",
+          "scorev2": "3.7",
+          "scorev3": "0.0",
+          "vector": "LOCAL",
+          "vectorString": "AV:L/AC:H/Au:N/C:P/I:P/A:P",
+          "status": "Unpatched",
+          "link": "https://nvd.nist.gov/vuln/detail/CVE-2009-4411"
+        }
+      ]
+    },
+    {
+      "name": "acl-native",
+      "layer": "meta",
+      "version": "2.3.2",
+      "products": [
+        {
+          "product": "acl",
+          "cvesInRecord": "Yes"
+        }
+      ],
+      "issue": [
+        {
+          "id": "CVE-2009-4411",
+          "summary": "The (1) setfacl and (2) getfacl commands in XFS acl 2.2.47, when running in recursive (-R) mode, follow symbolic links even when the --physical (aka -P) or -L option is specified, which might allow local users to modify the ACL for arbitrary files or directories via a symlink attack.",
+          "scorev2": "3.7",
+          "scorev3": "0.0",
+          "vector": "LOCAL",
+          "vectorString": "AV:L/AC:H/Au:N/C:P/I:P/A:P",
+          "status": "Unpatched",
+          "link": "https://nvd.nist.gov/vuln/detail/CVE-2009-4411"
+        }
+      ]
+    },
+    {
+      "name": "attr",
+      "layer": "meta",
+      "version": "2.5.1",
+      "products": [
+        {
+          "product": "attr",
+          "cvesInRecord": "No"
+        }
+      ],
+      "issue": []
+    },
+    {
+      "name": "attr-native",
+      "layer": "meta",
+      "version": "2.5.1",
+      "products": [
+        {
+          "product": "attr",
+          "cvesInRecord": "No"
+        }
+      ],
+      "issue": []
+    },
+    {
+      "name": "autoconf-archive-native",
+      "layer": "meta",
+      "version": "2023.02.20",
+      "products": [
+        {
+          "product": "autoconf-archive",
+          "cvesInRecord": "No"
+        }
+      ],
+      "issue": []
+    },
+    {
+      "name": "autoconf-native",
+      "layer": "meta",
+      "version": "2.72e",
+      "products": [
+        {
+          "product": "autoconf",
+          "cvesInRecord": "No"
+        }
+      ],
+      "issue": []
+    },
+    {
+      "name": "automake-native",
+      "layer": "meta",
+      "version": "1.16.5",
+      "products": [
+        {
+          "product": "automake",
+          "cvesInRecord": "Yes"
+        }
+      ],
+      "issue": [
+        {
+          "id": "CVE-2009-4029",
+          "summary": "The (1) dist or (2) distcheck rules in GNU Automake 1.11.1, 1.10.3, and release branches branch-1-4 through branch-1-9, when producing a distribution tarball for a package that uses Automake, assign insecure permissions (777) to directories in the build tree, which introduces a race condition that allows local users to modify the contents of package files, introduce Trojan horse programs, or conduct other attacks before the build is complete.",
+          "scorev2": "4.4",
+          "scorev3": "0.0",
+          "vector": "LOCAL",
+          "vectorString": "AV:L/AC:M/Au:N/C:P/I:P/A:P",
+          "status": "Unpatched",
+          "link": "https://nvd.nist.gov/vuln/detail/CVE-2009-4029"
+        },
+        {
+          "id": "CVE-2012-3386",
+          "summary": "The \"make distcheck\" rule in GNU Automake before 1.11.6 and 1.12.x before 1.12.2 grants world-writable permissions to the extraction directory, which introduces a race condition that allows local users to execute arbitrary code via unspecified vectors.",
+          "scorev2": "4.4",
+          "scorev3": "0.0",
+          "vector": "LOCAL",
+          "vectorString": "AV:L/AC:M/Au:N/C:P/I:P/A:P",
+          "status": "Unpatched",
+          "link": "https://nvd.nist.gov/vuln/detail/CVE-2012-3386"
+        }
+      ]
+    },
+    {
+      "name": "avahi",
+      "layer": "meta",
+      "version": "0.8",
+      "products": [
+        {
+          "product": "avahi",
+          "cvesInRecord": "Yes"
+        }
+      ],
+      "issue": [
+        {
+          "id": "CVE-2006-2288",
+          "summary": "Avahi before 0.6.10 allows local users to cause a denial of service (mDNS/DNS-SD service disconnect) via unspecified mDNS name conflicts.",
+          "scorev2": "3.6",
+          "scorev3": "0.0",
+          "vector": "LOCAL",
+          "vectorString": "AV:L/AC:L/Au:N/C:N/I:P/A:P",
+          "status": "Unpatched",
+          "link": "https://nvd.nist.gov/vuln/detail/CVE-2006-2288"
+        },
+        {
+          "id": "CVE-2006-2289",
+          "summary": "Buffer overflow in avahi-core in Avahi before 0.6.10 allows local users to execute arbitrary code via unknown vectors.",
+          "scorev2": "2.1",
+          "scorev3": "0.0",
+          "vector": "LOCAL",
+          "vectorString": "AV:L/AC:L/Au:N/C:N/I:P/A:N",
+          "status": "Unpatched",
+          "link": "https://nvd.nist.gov/vuln/detail/CVE-2006-2289"
+        },
+        {
+          "id": "CVE-2006-5461",
+          "summary": "Avahi before 0.6.15 does not verify the sender identity of netlink messages to ensure that they come from the kernel instead of another process, which allows local users to spoof network changes to Avahi.",
+          "scorev2": "2.1",
+          "scorev3": "0.0",
+          "vector": "LOCAL",
+          "vectorString": "AV:L/AC:L/Au:N/C:N/I:P/A:N",
+          "status": "Unpatched",
+          "link": "https://nvd.nist.gov/vuln/detail/CVE-2006-5461"
+        },
+        {
+          "id": "CVE-2006-6870",
+          "summary": "The consume_labels function in avahi-core/dns.c in Avahi before 0.6.16 allows remote attackers to cause a denial of service (infinite loop) via a crafted compressed DNS response with a label that points to itself.",
+          "scorev2": "5.0",
+          "scorev3": "0.0",
+          "vector": "NETWORK",
+          "vectorString": "AV:N/AC:L/Au:N/C:N/I:N/A:P",
+          "status": "Unpatched",
+          "link": "https://nvd.nist.gov/vuln/detail/CVE-2006-6870"
+        },
+        {
+          "id": "CVE-2007-3372",
+          "summary": "The Avahi daemon in Avahi before 0.6.20 allows attackers to cause a denial of service (exit) via empty TXT data over D-Bus, which triggers an assert error.",
+          "scorev2": "2.1",
+          "scorev3": "0.0",
+          "vector": "LOCAL",
+          "vectorString": "AV:L/AC:L/Au:N/C:N/I:N/A:P",
+          "status": "Unpatched",
+          "link": "https://nvd.nist.gov/vuln/detail/CVE-2007-3372"
+        },
+        {
+          "id": "CVE-2008-5081",
+          "summary": "The originates_from_local_legacy_unicast_socket function (avahi-core/server.c) in avahi-daemon in Avahi before 0.6.24 allows remote attackers to cause a denial of service (crash) via a crafted mDNS packet with a source port of 0, which triggers an assertion failure.",
+          "scorev2": "5.0",
+          "scorev3": "0.0",
+          "vector": "NETWORK",
+          "vectorString": "AV:N/AC:L/Au:N/C:N/I:N/A:P",
+          "status": "Unpatched",
+          "link": "https://nvd.nist.gov/vuln/detail/CVE-2008-5081"
+        },
+        {
+          "id": "CVE-2010-2244",
+          "summary": "The AvahiDnsPacket function in avahi-core/socket.c in avahi-daemon in Avahi 0.6.16 and 0.6.25 allows remote attackers to cause a denial of service (assertion failure and daemon exit) via a DNS packet with an invalid checksum followed by a DNS packet with a valid checksum, a different vulnerability than CVE-2008-5081.",
+          "scorev2": "4.3",
+          "scorev3": "0.0",
+          "vector": "NETWORK",
+          "vectorString": "AV:N/AC:M/Au:N/C:N/I:N/A:P",
+          "status": "Unpatched",
+          "link": "https://nvd.nist.gov/vuln/detail/CVE-2010-2244"
+        },
+        {
+          "id": "CVE-2011-1002",
+          "summary": "avahi-core/socket.c in avahi-daemon in Avahi before 0.6.29 allows remote attackers to cause a denial of service (infinite loop) via an empty mDNS (1) IPv4 or (2) IPv6 UDP packet to port 5353.  NOTE: this vulnerability exists because of an incorrect fix for CVE-2010-2244.",
+          "scorev2": "5.0",
+          "scorev3": "0.0",
+          "vector": "NETWORK",
+          "vectorString": "AV:N/AC:L/Au:N/C:N/I:N/A:P",
+          "status": "Unpatched",
+          "link": "https://nvd.nist.gov/vuln/detail/CVE-2011-1002"
+        },
+        {
+          "id": "CVE-2017-6519",
+          "summary": "avahi-daemon in Avahi through 0.6.32 and 0.7 inadvertently responds to IPv6 unicast queries with source addresses that are not on-link, which allows remote attackers to cause a denial of service (traffic amplification) and may cause information leakage by obtaining potentially sensitive  information from the responding device via port-5353 UDP packets.  NOTE: this may overlap CVE-2015-2809.",
+          "scorev2": "6.4",
+          "scorev3": "9.1",
+          "vector": "NETWORK",
+          "vectorString": "AV:N/AC:L/Au:N/C:P/I:N/A:P",
+          "status": "Unpatched",
+          "link": "https://nvd.nist.gov/vuln/detail/CVE-2017-6519"
+        },
+        {
+          "id": "CVE-2021-26720",
+          "summary": "avahi-daemon-check-dns.sh in the Debian avahi package through 0.8-4 is executed as root via /etc/network/if-up.d/avahi-daemon, and allows a local attacker to cause a denial of service or create arbitrary empty files via a symlink attack on files under /run/avahi-daemon. NOTE: this only affects the packaging for Debian GNU/Linux (used indirectly by SUSE), not the upstream Avahi product.",
+          "scorev2": "4.6",
+          "scorev3": "7.8",
+          "vector": "LOCAL",
+          "vectorString": "AV:L/AC:L/Au:N/C:P/I:P/A:P",
+          "status": "Ignored",
+          "link": "https://nvd.nist.gov/vuln/detail/CVE-2021-26720",
+          "detail": "not-applicable-platform",
+          "description": "Issue only affects Debian/SUSE"
+        },
+        {
+          "id": "CVE-2021-3468",
+          "summary": "A flaw was found in avahi in versions 0.6 up to 0.8. The event used to signal the termination of the client connection on the avahi Unix socket is not correctly handled in the client_work function, allowing a local attacker to trigger an infinite loop. The highest threat from this vulnerability is to the availability of the avahi service, which becomes unresponsive after this flaw is triggered.",
+          "scorev2": "2.1",
+          "scorev3": "5.5",
+          "vector": "LOCAL",
+          "vectorString": "AV:L/AC:L/Au:N/C:N/I:N/A:P",
+          "status": "Unpatched",
+          "link": "https://nvd.nist.gov/vuln/detail/CVE-2021-3468"
+        },
+        {
+          "id": "CVE-2021-3502",
+          "summary": "A flaw was found in avahi 0.8-5. A reachable assertion is present in avahi_s_host_name_resolver_start function allowing a local attacker to crash the avahi service by requesting hostname resolutions through the avahi socket or dbus methods for invalid hostnames. The highest threat from this vulnerability is to the service availability.",
+          "scorev2": "2.1",
+          "scorev3": "5.5",
+          "vector": "LOCAL",
+          "vectorString": "AV:L/AC:L/Au:N/C:N/I:N/A:P",
+          "status": "Unpatched",
+          "link": "https://nvd.nist.gov/vuln/detail/CVE-2021-3502"
+        },
+        {
+          "id": "CVE-2023-1981",
+          "summary": "A vulnerability was found in the avahi library. This flaw allows an unprivileged user to make a dbus call, causing the avahi daemon to crash.",
+          "scorev2": "0.0",
+          "scorev3": "5.5",
+          "vector": "LOCAL",
+          "vectorString": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+          "status": "Unpatched",
+          "link": "https://nvd.nist.gov/vuln/detail/CVE-2023-1981"
+        },
+        {
+          "id": "CVE-2023-38469",
+          "summary": "A vulnerability was found in Avahi, where a reachable assertion exists in avahi_dns_packet_append_record.",
+          "scorev2": "0.0",
+          "scorev3": "5.5",
+          "vector": "LOCAL",
+          "vectorString": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+          "status": "Unpatched",
+          "link": "https://nvd.nist.gov/vuln/detail/CVE-2023-38469"
+        },
+        {
+          "id": "CVE-2023-38470",
+          "summary": "A vulnerability was found in Avahi. A reachable assertion exists in the avahi_escape_label() function.",
+          "scorev2": "0.0",
+          "scorev3": "5.5",
+          "vector": "LOCAL",
+          "vectorString": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+          "status": "Unpatched",
+          "link": "https://nvd.nist.gov/vuln/detail/CVE-2023-38470"
+        },
+        {
+          "id": "CVE-2023-38471",
+          "summary": "A vulnerability was found in Avahi. A reachable assertion exists in the dbus_set_host_name function.",
+          "scorev2": "0.0",
+          "scorev3": "5.5",
+          "vector": "LOCAL",
+          "vectorString": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+          "status": "Unpatched",
+          "link": "https://nvd.nist.gov/vuln/detail/CVE-2023-38471"
+        },
+        {
+          "id": "CVE-2023-38472",
+          "summary": "A vulnerability was found in Avahi. A reachable assertion exists in the avahi_rdata_parse() function.",
+          "scorev2": "0.0",
+          "scorev3": "5.5",
+          "vector": "LOCAL",
+          "vectorString": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+          "status": "Unpatched",
+          "link": "https://nvd.nist.gov/vuln/detail/CVE-2023-38472"
+        },
+        {
+          "id": "CVE-2023-38473",
+          "summary": "A vulnerability was found in Avahi. A reachable assertion exists in the avahi_alternative_host_name() function.",
+          "scorev2": "0.0",
+          "scorev3": "5.5",
+          "vector": "LOCAL",
+          "vectorString": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+          "status": "Unpatched",
+          "link": "https://nvd.nist.gov/vuln/detail/CVE-2023-38473"
+        }
+      ]
+    },
+    {
+      "name": "texinfo-dummy-native",
+      "layer": "meta",
+      "version": "1.0",
+      "products": [
+        {
+          "product": "texinfo-dummy",
+          "cvesInRecord": "No"
+        }
+      ],
+      "issue": []
+    },
+    {
+      "name": "u-boot-fslc",
+      "layer": "meta-freescale",
+      "version": "2024.07+fslc+git",
+      "products": [
+        {
+          "product": "u-boot-fslc",
+          "cvesInRecord": "No"
+        }
+      ],
+      "issue": []
+    },
+    {
+      "name": "udev-rules-imx",
+      "layer": "meta-freescale",
+      "version": "1.0",
+      "products": [
+        {
+          "product": "udev-rules-imx",
+          "cvesInRecord": "No"
+        }
+      ],
+      "issue": []
+    },
+    {
+      "name": "zstd-native",
+      "layer": "meta",
+      "version": "1.5.5",
+      "products": [
+        {
+          "product": "zstandard",
+          "cvesInRecord": "Yes"
+        }
+      ],
+      "issue": [
+        {
+          "id": "CVE-2019-11922",
+          "summary": "A race condition in the one-pass compression functions of Zstandard prior to version 1.3.8 could allow an attacker to write bytes out of bounds if an output buffer smaller than the recommended size was used.",
+          "scorev2": "6.8",
+          "scorev3": "8.1",
+          "vector": "NETWORK",
+          "vectorString": "AV:N/AC:M/Au:N/C:P/I:P/A:P",
+          "status": "Unpatched",
+          "link": "https://nvd.nist.gov/vuln/detail/CVE-2019-11922"
+        },
+        {
+          "id": "CVE-2021-24031",
+          "summary": "In the Zstandard command-line utility prior to v1.4.1, output files were created with default permissions. Correct file permissions (matching the input) would only be set at completion time. Output files could therefore be readable or writable to unintended parties.",
+          "scorev2": "2.1",
+          "scorev3": "5.5",
+          "vector": "LOCAL",
+          "vectorString": "AV:L/AC:L/Au:N/C:P/I:N/A:N",
+          "status": "Unpatched",
+          "link": "https://nvd.nist.gov/vuln/detail/CVE-2021-24031"
+        },
+        {
+          "id": "CVE-2021-24032",
+          "summary": "Beginning in v1.4.1 and prior to v1.4.9, due to an incomplete fix for CVE-2021-24031, the Zstandard command-line utility created output files with default permissions and restricted those permissions immediately afterwards. Output files could therefore momentarily be readable or writable to unintended parties.",
+          "scorev2": "1.9",
+          "scorev3": "4.7",
+          "vector": "LOCAL",
+          "vectorString": "AV:L/AC:M/Au:N/C:P/I:N/A:N",
+          "status": "Unpatched",
+          "link": "https://nvd.nist.gov/vuln/detail/CVE-2021-24032"
+        },
+        {
+          "id": "CVE-2022-4899",
+          "summary": "A vulnerability was found in zstd v1.4.10, where an attacker can supply empty string as an argument to the command line tool to cause buffer overrun.",
+          "scorev2": "0.0",
+          "scorev3": "7.5",
+          "vector": "NETWORK",
+          "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "status": "Unpatched",
+          "link": "https://nvd.nist.gov/vuln/detail/CVE-2022-4899"
+        }
+      ]
+    }
+  ]
+}
