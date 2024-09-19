@@ -29,7 +29,7 @@
     <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
     <pull-request-monitoring.version>335.v525cd64ec76b_</pull-request-monitoring.version>
 
-    <eclipse-collections.version>9.2.0</eclipse-collections.version>
+    <eclipse-collections.version>10.0.0</eclipse-collections.version>
 
     <!-- Test Library Dependencies Versions -->
     <xmlunit.version>2.10.0</xmlunit.version>
