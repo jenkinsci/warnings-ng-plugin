@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.model.Run;
 import hudson.model.Slave;
@@ -45,10 +44,10 @@ class StepsOnAgentITest extends IntegrationTestWithJenkinsPerTest {
 
         createFileInAgentWorkspace(agent, project, "Test.java", JAVA_CONTENT);
 
-        project.setDefinition(new CpsFlowDefinition("node('agent') {\n"
+        project.setDefinition(createPipelineScript("node('agent') {\n"
                 + "    echo '[javac] Test.java:39: warning: Test Warning'\n"
                 + "    recordIssues tool: java(), skipBlames: true\n"
-                + "}", true));
+                + "}"));
 
         AnalysisResult result = scheduleSuccessfulBuild(project);
         assertThat(result).hasNoErrorMessages();
@@ -112,10 +111,10 @@ class StepsOnAgentITest extends IntegrationTestWithJenkinsPerTest {
 
         createFileInAgentWorkspace(agent, project, "Test.java", JAVA_CONTENT);
 
-        project.setDefinition(new CpsFlowDefinition("node('agent') {\n"
+        project.setDefinition(createPipelineScript("node('agent') {\n"
                 + "    echo '[javac] Test.java:39: warning: Test Warning'\n"
                 + "    recordIssues tool: java(), sourceCodeRetention: 'NEVER'\n"
-                + "}", true));
+                + "}"));
 
         AnalysisResult result = scheduleSuccessfulBuild(project);
         assertThat(result).hasNoErrorMessages();

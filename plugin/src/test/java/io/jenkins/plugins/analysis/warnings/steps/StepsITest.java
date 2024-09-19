@@ -71,7 +71,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     void shouldNotFailWhenJobHasNoWorkspace() {
         var job = createPipelineWithWorkspaceFilesWithSuffix("eclipse.txt");
-        job.setDefinition(new CpsFlowDefinition("def r; node {r = scanForIssues tool: eclipse(pattern: '*issues.txt')}; publishIssues issues: [r]", true));
+        job.setDefinition(createPipelineScript("def r; node {r = scanForIssues tool: eclipse(pattern: '*issues.txt')}; publishIssues issues: [r]"));
 
         var build = buildSuccessfully(job);
         assertThat(build.getAction(ResultAction.class).getResult().getIssues()).hasSize(8);
@@ -81,12 +81,12 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldParseCheckstyleUsingTheParserRegistry() {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("checkstyle1.xml", "checkstyle2.xml");
 
-        job.setDefinition(new CpsFlowDefinition("node {\n"
+        job.setDefinition(createPipelineScript("node {\n"
                 + "  stage ('Integration Test') {\n"
                 + "         recordIssues tool: analysisParser(analysisModelId: 'checkstyle', pattern: '**/"
                 + "checkstyle1" + "*')\n"
                 + "  }\n"
-                + "}", true));
+                + "}"));
 
         AnalysisResult baseline = scheduleSuccessfulBuild(job);
         assertThat(baseline).hasTotalSize(3);
@@ -157,7 +157,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private void configureRecorder(final WorkflowJob job, final String fileName) {
-        job.setDefinition(new CpsFlowDefinition("node {\n"
+        job.setDefinition(createPipelineScript("node {\n"
                 + "  stage ('Integration Test') {\n"
                 + "         discoverReferenceBuild()\n"
                 + "         def reports = recordIssues tool: checkStyle(pattern: '**/" + fileName
@@ -173,11 +173,11 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
                 + "             echo issue.toString()\n"
                 + "         }"
                 + "  }\n"
-                + "}", true));
+                + "}"));
     }
 
     private void configureScanner(final WorkflowJob job, final String fileName) {
-        job.setDefinition(new CpsFlowDefinition("node {\n"
+        job.setDefinition(createPipelineScript("node {\n"
                 + "  stage ('Integration Test') {\n"
                 + "         def report = scanForIssues tool: checkStyle(pattern: '**/" + fileName + "*')\n"
                 + "         echo '[total=' + report.size() + ']' \n"
@@ -189,7 +189,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
                 + "             echo issue.getAuthorName()\n"
                 + "         }"
                 + "  }\n"
-                + "}", true));
+                + "}"));
     }
 
     /**
@@ -199,11 +199,11 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldSkipBlaming() {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("checkstyle1.xml");
 
-        job.setDefinition(new CpsFlowDefinition("node {\n"
+        job.setDefinition(createPipelineScript("node {\n"
                 + "  stage ('Integration Test') {\n"
                 + "         recordIssues skipBlames: true, tool: checkStyle(pattern: '**/checkstyle1" + "*')\n"
                 + "  }\n"
-                + "}", true));
+                + "}"));
         Run<?, ?> baseline = buildSuccessfully(job);
         assertThat(getConsoleLog(baseline)).contains("Skipping SCM blames as requested");
     }
@@ -214,13 +214,13 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldToggleQuietStatusOfLogger(final boolean quiet) {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("checkstyle1.xml");
 
-        job.setDefinition(new CpsFlowDefinition("node {\n"
+        job.setDefinition(createPipelineScript("node {\n"
                 + "  stage ('Integration Test') {\n"
                 + "         recordIssues "
                 + "             quiet: " + quiet + ", "
                 + "             tool: checkStyle(pattern: '**/" + "checkstyle1" + "*')\n"
                 + "  }\n"
-                + "}", true));
+                + "}"));
         Run<?, ?> baseline = buildSuccessfully(job);
         String consoleLog = getConsoleLog(baseline);
         String message = "[CheckStyle]";
@@ -272,7 +272,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
 
     private void configurePublisher(final WorkflowJob job, final String fileName, final String qualityGate) {
         String qualityGateParameter = String.format("qualityGates: [%s]", qualityGate);
-        job.setDefinition(new CpsFlowDefinition("node {\n"
+        job.setDefinition(createPipelineScript("node {\n"
                 + "  stage ('Integration Test') {\n"
                 + "         discoverReferenceBuild()\n"
                 + "         def issues = scanForIssues tool: checkStyle(pattern: '**/" + fileName + "*')\n"
@@ -289,7 +289,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
                 + "         echo '[new=' + totals.getNewSize() + ']' \n"
                 + "         echo '[fixed=' + totals.getFixedSize() + ']' \n"
                 + "  }\n"
-                + "}", true));
+                + "}"));
     }
 
     /** Verifies that a {@link Tool} defines a {@link Symbol}. */
@@ -307,7 +307,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldRunInDeclarativePipeline() {
         WorkflowJob job = createPipeline();
 
-        job.setDefinition(new CpsFlowDefinition("pipeline {\n"
+        job.setDefinition(createPipelineScript("pipeline {\n"
                 + "    agent 'any'\n"
                 + "    stages {\n"
                 + "        stage ('Create a fake warning') {\n"
@@ -321,7 +321,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
                 + "            recordIssues tool: gcc4(pattern: 'warnings.log')\n"
                 + "        }\n"
                 + "    }\n"
-                + "}", true));
+                + "}"));
 
         AnalysisResult result = scheduleSuccessfulBuild(job);
 

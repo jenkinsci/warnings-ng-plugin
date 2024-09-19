@@ -6,7 +6,6 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.PathUtil;
 
-import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
@@ -32,12 +31,12 @@ class TimeStamperPluginITest extends IntegrationTestWithJenkinsPerSuite {
 
         createFileInWorkspace(project, "Test.java", "public class Test {}");
 
-        project.setDefinition(new CpsFlowDefinition("node {\n"
+        project.setDefinition(createPipelineScript("node {\n"
                 + "    timestamps {\n"
                 + "        echo '[javac] Test.java:39: warning: Test Warning'\n"
                 + "        recordIssues tools: [java()], skipBlames: true\n"
                 + "    }\n"
-                + "}", true));
+                + "}"));
 
         AnalysisResult result = scheduleSuccessfulBuild(project);
 
@@ -71,12 +70,12 @@ class TimeStamperPluginITest extends IntegrationTestWithJenkinsPerSuite {
 
         createFileInWorkspace(project, "test.c", "int main(void) { }");
 
-        project.setDefinition(new CpsFlowDefinition("node {\n"
+        project.setDefinition(createPipelineScript("node {\n"
                 + "    timestamps {\n"
                 + "        echo 'test.c:1:2: error: This is an error.'\n"
                 + "        recordIssues tools: [clang(id: 'clang', name: 'clang')], skipBlames: true\n"
                 + "    }\n"
-                + "}", true));
+                + "}"));
 
         AnalysisResult result = scheduleSuccessfulBuild(project);
 
