@@ -43,6 +43,7 @@ class GroovyExpressionMatcher implements Serializable {
         this.script = script;
     }
 
+    @SuppressWarnings("PMD.AvoidSynchronizedStatement")
     private boolean compileScriptIfNotYetDone() {
         synchronized (script) {
             if (compiled == null) {
