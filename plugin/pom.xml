@@ -21,12 +21,12 @@
   <url>https://github.com/jenkinsci/warnings-ng-plugin</url>
 
   <properties>
-    <revision>11.7.0</revision>
+    <revision>11.8.0</revision>
     <changelist>-SNAPSHOT</changelist>
     <module.name>${project.groupId}.warnings.ng</module.name>
 
-    <analysis-model-api.version>12.6.0-rc839.46d92a_4783a_5</analysis-model-api.version>
-    <analysis-model-tests.version>12.5.0</analysis-model-tests.version>
+    <analysis-model-api.version>12.7.0</analysis-model-api.version>
+    <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
     <pull-request-monitoring.version>335.v525cd64ec76b_</pull-request-monitoring.version>
 
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
@@ -95,7 +95,7 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>plugin-util-api</artifactId>
-      <version>5.0.0-rc990.a_c915b_e8801a_</version>
+      <version>5.1.0</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
@@ -307,7 +307,7 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>plugin-util-api</artifactId>
-      <version>5.0.0-rc990.a_c915b_e8801a_</version>
+      <version>5.1.0</version>
       <scope>test</scope>
       <classifier>tests</classifier>
       <exclusions>
