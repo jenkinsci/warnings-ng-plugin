@@ -2,7 +2,6 @@ package io.jenkins.plugins.analysis.warnings.integrations;
 
 import org.junit.jupiter.api.Test;
 
-import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.model.Result;
 
@@ -44,7 +43,7 @@ class TokenMacroITest extends IntegrationTestWithJenkinsPerTest {
     void shouldExpandDifferentSeverities() {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("all-severities.xml");
 
-        job.setDefinition(new CpsFlowDefinition("node {\n"
+        job.setDefinition(createPipelineScript("node {\n"
                 + "  stage ('Integration Test') {\n"
                 + "         recordIssues tool: checkStyle(pattern: '**/" + "all-severities" + "*')\n"
                 + "         def total = tm('${ANALYSIS_ISSUES_COUNT}')\n"
@@ -58,7 +57,7 @@ class TokenMacroITest extends IntegrationTestWithJenkinsPerTest {
                 + "         echo '[normal=' + normal + ']' \n"
                 + "         echo '[low=' + low + ']' \n"
                 + "  }\n"
-                + "}", true));
+                + "}"));
 
         AnalysisResult baseline = scheduleBuildAndAssertStatus(job, Result.SUCCESS);
 
@@ -91,7 +90,7 @@ class TokenMacroITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     private void configureToken(final WorkflowJob job, final String fileName) {
-        job.setDefinition(new CpsFlowDefinition("node {\n"
+        job.setDefinition(createPipelineScript("node {\n"
                 + "  stage ('Integration Test') {\n"
                 + "         discoverReferenceBuild()\n"
                 + "         recordIssues tool: checkStyle(pattern: '**/" + fileName + "*')\n"
@@ -106,6 +105,6 @@ class TokenMacroITest extends IntegrationTestWithJenkinsPerTest {
                 + "         echo '[new=' + additional + ']' \n"
                 + "         echo '[fixed=' + fixed + ']' \n"
                 + "  }\n"
-                + "}", true));
+                + "}"));
     }
 }

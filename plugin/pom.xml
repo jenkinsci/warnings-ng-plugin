@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>8.6.0</version>
+    <version>9.0.0</version>
     <relativePath />
   </parent>
 
@@ -21,12 +21,12 @@
   <url>https://github.com/jenkinsci/warnings-ng-plugin</url>
 
   <properties>
-    <revision>11.7.0</revision>
+    <revision>11.8.0</revision>
     <changelist>-SNAPSHOT</changelist>
     <module.name>${project.groupId}.warnings.ng</module.name>
 
-    <analysis-model-api.version>12.5.0</analysis-model-api.version>
-    <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
+    <analysis-model-api.version>12.7.0</analysis-model-api.version>
+    <analysis-model-tests.version>12.5.0</analysis-model-tests.version>
     <pull-request-monitoring.version>335.v525cd64ec76b_</pull-request-monitoring.version>
 
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
@@ -95,6 +95,7 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>plugin-util-api</artifactId>
+      <version>5.1.0</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
@@ -306,6 +307,7 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>plugin-util-api</artifactId>
+      <version>5.1.0</version>
       <scope>test</scope>
       <classifier>tests</classifier>
       <exclusions>

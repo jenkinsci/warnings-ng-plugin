@@ -184,10 +184,11 @@ abstract class AbstractIssuesTable<T extends GenericTableRow> {
      *         the number representing the page to open
      */
     public void openTablePage(final int pageNumber) {
-        WebElement webElement = analysisResult.find(By.xpath("//a[@class='page-link' and @data-dt-idx='" + (pageNumber - 1) + "']"));
+        var pageButton = "//button[@class='page-link' and @data-dt-idx='" + (pageNumber - 1) + "']";
+        WebElement webElement = analysisResult.find(By.xpath(pageButton));
         webElement.click();
 
-        analysisResult.waitFor(By.xpath("//a[@class='page-link' and @data-dt-idx='" + (pageNumber - 1) + "']/parent::li[contains(@class, 'active')]"));
+        analysisResult.waitFor(By.xpath(pageButton + "/parent::li[contains(@class, 'active')]"));
 
         updateTableRows();
     }

@@ -10,7 +10,6 @@ import org.junitpioneer.jupiter.Issue;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
-import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.model.AbstractProject;
 import hudson.model.FreeStyleProject;
@@ -48,14 +47,14 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldUseTwoQualityGates() {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("checkstyle1.xml", "checkstyle2.xml");
 
-        job.setDefinition(new CpsFlowDefinition("node {\n"
+        job.setDefinition(createPipelineScript("node {\n"
                 + "  stage ('Integration Test') {\n"
                 + "         recordIssues tools: [checkStyle(pattern: '**/*issues.txt')],\n"
                 + "                qualityGates: [\n"
                 + "                    [threshold: 3, type: 'TOTAL', criticality: 'NOTE'],\n"
                 + "                    [threshold: 7, type: 'TOTAL', criticality: 'ERROR']]\n"
                 + "  }\n"
-                + "}", true));
+                + "}"));
 
         AnalysisResult result = scheduleSuccessfulBuild(job);
         assertThat(result).hasTotalSize(6);

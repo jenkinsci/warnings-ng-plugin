@@ -11,7 +11,6 @@ import org.jvnet.hudson.test.TestExtension;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
-import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.model.AbstractProject;
 import hudson.model.FreeStyleProject;
@@ -100,14 +99,14 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private void configureScanner(final WorkflowJob job, final String fileName, final String parameters) {
-        job.setDefinition(new CpsFlowDefinition("node {\n"
+        job.setDefinition(createPipelineScript("node {\n"
                 + "  stage ('Integration Test') {\n"
                 + "         discoverReferenceBuild()\n"
                 + "         recordIssues tool: checkStyle(pattern: '**/" + fileName + "-*') "
                 + parameters
                 + "\n"
                 + "  }\n"
-                + "}", true));
+                + "}"));
     }
 
     /**
