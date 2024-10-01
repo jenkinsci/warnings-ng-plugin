@@ -35,7 +35,7 @@
     <xmlunit.version>2.10.0</xmlunit.version>
     <jsoup.version>1.18.1</jsoup.version>
     <jmh.version>1.37</jmh.version>
-    <testcontainers.version>1.20.1</testcontainers.version>
+    <testcontainers.version>1.20.2</testcontainers.version>
 
     <!-- Jenkins Plug-in Dependencies Versions -->
     <git-forensics.version>2.2.1</git-forensics.version>
