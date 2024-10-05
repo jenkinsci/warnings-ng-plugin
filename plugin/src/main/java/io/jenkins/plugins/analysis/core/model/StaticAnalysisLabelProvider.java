@@ -7,6 +7,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.analysis.registry.ParserDescriptor;
+import edu.hm.hafner.analysis.registry.ParserDescriptor.Type;
 import edu.hm.hafner.util.Generated;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
@@ -33,6 +35,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
     protected static final DescriptionProvider EMPTY_DESCRIPTION = Issue::getDescription;
 
     private final String id;
+    private final String icon;
     @CheckForNull
     private String name;
     private final DescriptionProvider descriptionProvider;
@@ -72,14 +75,45 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      */
     public StaticAnalysisLabelProvider(final String id, @CheckForNull final String name,
             final DescriptionProvider descriptionProvider) {
+        this(id, name, descriptionProvider, Type.WARNING);
+    }
+
+    /**
+     * Creates a new {@link StaticAnalysisLabelProvider} with the specified ID.
+     *
+     * @param id
+     *         the ID
+     * @param name
+     *         the name of the static analysis tool
+     * @param descriptionProvider
+     *         provides additional descriptions for an issue
+     * @param type
+     *        the type of the parser
+     */
+    public StaticAnalysisLabelProvider(final String id, @CheckForNull final String name,
+            final DescriptionProvider descriptionProvider, final ParserDescriptor.Type type) {
         this.id = id;
         this.descriptionProvider = descriptionProvider;
+        this.icon = getIcon(type);
 
         changeName(name);
     }
 
+    private String getIcon(final ParserDescriptor.Type type) {
+        switch (type) {
+            case BUG:
+                return "symbol-solid/bug plugin-font-awesome-api";
+            case DUPLICATION:
+                return "symbol-regular/clone plugin-font-awesome-api";
+            case VULNERABILITY:
+                return "symbol-solid/shield-halved plugin-font-awesome-api";
+            default:
+                return ANALYSIS_SVG_ICON;
+        }
+    }
+
     private void changeName(final String originalName) {
-        if (StringUtils.isNotBlank(originalName) && !"-".equals(originalName)) { // don't overwrite with empty or -
+        if (StringUtils.isNotBlank(originalName) && !"-".equals(originalName)) { // don't overwrite with empty or "-"
             name = originalName;
         }
     }
@@ -199,7 +233,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      * @return absolute URL
      */
     public String getSmallIconUrl() {
-        return ANALYSIS_SVG_ICON;
+        return icon;
     }
 
     /**
@@ -208,7 +242,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      * @return absolute URL
      */
     public String getLargeIconUrl() {
-        return ANALYSIS_SVG_ICON;
+        return icon;
     }
 
     /**

@@ -5,8 +5,6 @@ import org.jenkinsci.Symbol;
 import hudson.Extension;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.model.SymbolIconLabelProvider;
 
 /**
  * Provides a parser and customized messages for Yocto Scanner CLI (scannercli) reports.
@@ -43,11 +41,6 @@ public class YoctoScanner extends AnalysisModelParser {
         @Override
         public boolean isPostProcessingEnabled() {
             return false;
-        }
-
-        @Override
-        public StaticAnalysisLabelProvider getLabelProvider() {
-            return new SymbolIconLabelProvider(getId(), getDisplayName(), getDescriptionProvider(), "symbol-solid/shield-halved plugin-font-awesome-api");
         }
     }
 }
