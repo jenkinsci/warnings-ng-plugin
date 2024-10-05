@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
@@ -10,15 +11,36 @@
 
   <groupId>io.jenkins.plugins</groupId>
   <artifactId>warnings-ng</artifactId>
+  <version>${revision}${changelist}</version>
   <packaging>hpi</packaging>
   <name>Warnings Plugin</name>
-  <version>${revision}${changelist}</version>
 
   <description>Collects compiler warnings or issues reported by static analysis
     tools and visualizes the results. It has built-in support for more than one hundred static analysis tools
-    (including several compilers), see the list of supported report formats.
-  </description>
+    (including several compilers), see the list of supported report formats.</description>
   <url>https://github.com/jenkinsci/warnings-ng-plugin</url>
+
+  <licenses>
+    <license>
+      <name>MIT license</name>
+      <comments>All source code is under the MIT license.</comments>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <id>uhafner</id>
+      <name>Ullrich Hafner</name>
+      <email>ullrich.hafner@gmail.com</email>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:git:https://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
+    <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
+    <tag>v11.3.0</tag>
+    <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
+  </scm>
 
   <properties>
     <revision>11.10.0</revision>
@@ -46,24 +68,8 @@
     <!-- Maven Surefire ArgLine -->
     <argLine>-Djava.awt.headless=true -Xmx1024m -Djenkins.test.timeout=1000 --add-opens java.base/java.lang=ALL-UNNAMED
       --add-opens java.base/java.io=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens
-      java.base/java.util.concurrent=ALL-UNNAMED
-    </argLine>
+      java.base/java.util.concurrent=ALL-UNNAMED</argLine>
   </properties>
-
-  <licenses>
-    <license>
-      <name>MIT license</name>
-      <comments>All source code is under the MIT license.</comments>
-    </license>
-  </licenses>
-
-  <developers>
-    <developer>
-      <name>Ullrich Hafner</name>
-      <id>uhafner</id>
-      <email>ullrich.hafner@gmail.com</email>
-    </developer>
-  </developers>
 
   <dependencies>
 
@@ -264,8 +270,8 @@
           <artifactId>jaxen</artifactId>
         </exclusion>
         <exclusion>
-          <artifactId>*</artifactId>
           <groupId>org.ow2.asm</groupId>
+          <artifactId>*</artifactId>
         </exclusion>
         <exclusion>
           <groupId>com.google.errorprone</groupId>
@@ -300,8 +306,8 @@
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>plugin-util-api</artifactId>
       <version>5.1.0</version>
-      <scope>test</scope>
       <classifier>tests</classifier>
+      <scope>test</scope>
       <exclusions>
         <exclusion>
           <groupId>com.google.errorprone</groupId>
@@ -312,15 +318,15 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>data-tables-api</artifactId>
-      <scope>test</scope>
       <classifier>tests</classifier>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>checks-api</artifactId>
-      <scope>test</scope>
       <classifier>tests</classifier>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
@@ -351,8 +357,8 @@
       <scope>test</scope>
       <exclusions>
         <exclusion>
-          <artifactId>warnings-ng</artifactId>
           <groupId>io.jenkins.plugins</groupId>
+          <artifactId>warnings-ng</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -379,8 +385,8 @@
       <scope>test</scope>
       <exclusions>
         <exclusion>
-          <artifactId>annotations</artifactId>
           <groupId>com.google.code.findbugs</groupId>
+          <artifactId>annotations</artifactId>
         </exclusion>
         <exclusion>
           <groupId>commons-net</groupId>
@@ -398,8 +404,8 @@
       <scope>test</scope>
       <exclusions>
         <exclusion>
-          <artifactId>xmlunit</artifactId>
           <groupId>xmlunit</groupId>
+          <artifactId>xmlunit</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -489,7 +495,50 @@
     </dependency>
   </dependencies>
 
+  <repositories>
+    <repository>
+      <id>repo.jenkins-ci.org</id>
+      <url>https://repo.jenkins-ci.org/public/</url>
+    </repository>
+    <repository>
+      <id>incrementals.jenkins-ci.org</id>
+      <url>https://repo.jenkins-ci.org/incrementals/</url>
+    </repository>
+  </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>repo.jenkins-ci.org</id>
+      <url>https://repo.jenkins-ci.org/public/</url>
+    </pluginRepository>
+  </pluginRepositories>
+
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-release-plugin</artifactId>
+          <configuration>
+            <arguments>-Djenkins.test.timeout=2000</arguments>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>${jacoco-maven-plugin.version}</version>
+          <configuration>
+            <excludes combine.children="append">
+              <exclude>**/JenkinsFacade.*</exclude>
+              <exclude>**/*BlameRunner.*</exclude>
+              <exclude>**/*FilesScanner.*</exclude>
+              <exclude>**/*Summary.class</exclude>
+              <exclude>**/NullAnalysisHistory.*</exclude>
+            </excludes>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -552,31 +601,6 @@
         </configuration>
       </plugin>
     </plugins>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-release-plugin</artifactId>
-          <configuration>
-            <arguments>-Djenkins.test.timeout=2000</arguments>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.jacoco</groupId>
-          <artifactId>jacoco-maven-plugin</artifactId>
-          <version>${jacoco-maven-plugin.version}</version>
-          <configuration>
-            <excludes combine.children="append">
-              <exclude>**/JenkinsFacade.*</exclude>
-              <exclude>**/*BlameRunner.*</exclude>
-              <exclude>**/*FilesScanner.*</exclude>
-              <exclude>**/*Summary.class</exclude>
-              <exclude>**/NullAnalysisHistory.*</exclude>
-            </excludes>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
   </build>
 
   <profiles>
@@ -607,30 +631,5 @@
       </properties>
     </profile>
   </profiles>
-
-  <scm>
-    <connection>scm:git:https://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
-    <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
-    <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
-    <tag>v11.3.0</tag>
-  </scm>
-
-  <repositories>
-    <repository>
-      <id>repo.jenkins-ci.org</id>
-      <url>https://repo.jenkins-ci.org/public/</url>
-    </repository>
-    <repository>
-      <id>incrementals.jenkins-ci.org</id>
-      <url>https://repo.jenkins-ci.org/incrementals/</url>
-    </repository>
-  </repositories>
-
-  <pluginRepositories>
-    <pluginRepository>
-      <id>repo.jenkins-ci.org</id>
-      <url>https://repo.jenkins-ci.org/public/</url>
-    </pluginRepository>
-  </pluginRepositories>
 
 </project>
