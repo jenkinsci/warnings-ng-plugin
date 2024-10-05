@@ -29,5 +29,15 @@ public class OwaspDependencyCheck extends AnalysisModelParser {
         public Descriptor() {
             super(ID);
         }
+
+        @Override
+        public boolean canScanConsoleLog() {
+            return false;
+        }
+
+        @Override
+        public boolean isPostProcessingEnabled() {
+            return false;
+        }
     }
 }
