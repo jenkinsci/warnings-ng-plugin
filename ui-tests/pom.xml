@@ -16,7 +16,7 @@
   <name>UI Tests of Warnings Plugin</name>
 
   <properties>
-    <jenkins.version>2.478</jenkins.version>
+    <jenkins.version>2.480</jenkins.version>
     <hpi-plugin.version>3.58</hpi-plugin.version>
     <json-smart.version>2.3</json-smart.version>
     <json-unit-assertj.version>2.40.0</json-unit-assertj.version>
@@ -38,7 +38,7 @@
         <!-- ClassNotFoundException if omitted -->
         <groupId>io.netty</groupId>
         <artifactId>netty-bom</artifactId>
-        <version>4.1.113.Final</version>
+        <version>4.1.114.Final</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -49,7 +49,7 @@
     <dependency>
       <groupId>org.jenkins-ci</groupId>
       <artifactId>acceptance-test-harness</artifactId>
-      <version>5997.v2a_1a_696620a_0</version>
+      <version>6040.v72ed2f5b_59f6</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>

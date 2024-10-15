@@ -1852,7 +1852,7 @@ analyze - iccxxxxcompiler_opts cstat2.c</pre></code>For details check the IAR C-
         </tr>
         <tr>
             <td colspan="5">
-                :bulb: Use the options: --no-progress --error-format checkstyle
+                :bulb: Use the options: --no-progress --error-format=checkstyle
             </td>
         </tr>
         <tr>

@@ -1,5 +1,5 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:dp="/hudson/plugins/view/dashboard" xmlns:st="jelly:stapler">
+<j:jelly xmlns:j="jelly:core" xmlns:dp="/hudson/plugins/view/dashboard" xmlns:st="jelly:stapler" xmlns:f="/lib/form">
 
   <j:set var="model" value="${it.register(jobs)}"/>
 
@@ -15,12 +15,10 @@
 
   <st:adjunct includes="io.jenkins.plugins.echarts"/>
 
-  <script>
-      {
-          const trendProxy = <st:bind value="${it}"/>;
-
-          echartsJenkinsApi.renderTrendChart('${it.id}-issues-chart', `false`, trendProxy);
-      }
-  </script>
+  <st:bind value="${it}" var="trendProxy"/>
+  <f:invisibleEntry>
+    <span class="issues-chart-portlet-data-holder" data-id="${it.id}" />
+  </f:invisibleEntry>
+  <st:adjunct includes="io.jenkins.plugins.analysis.core.portlets.IssuesChartPortlet.render-trend-chart" />
 
 </j:jelly>
