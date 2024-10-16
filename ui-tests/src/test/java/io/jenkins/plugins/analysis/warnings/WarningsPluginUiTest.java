@@ -147,7 +147,7 @@ public class WarningsPluginUiTest extends UiTest {
      */
     @Test
     public void shouldFilterIssuesByIncludeAndExcludeFilters() {
-        FreeStyleJob job = createFreeStyleJob("issue_filter/checkstyle-result.xml");
+        FreeStyleJob job = createFreeStyleJob("issue_filter/checkstyle-report.xml");
         job.addPublisher(IssuesRecorder.class, recorder -> {
             recorder.setTool("CheckStyle").setPattern("**/checkstyle-report.xml");
             recorder.setEnabledForFailure(true);
