@@ -52,7 +52,7 @@ class FiltersITest extends IntegrationTestWithJenkinsPerSuite {
             FreeStyleProject project = createFreeStyleProject();
             copyDirectoryToWorkspace(project, MODULE_FILTER);
             enableWarnings(project, recorder -> recorder.setFilters(toFilter(entry)),
-                    createTool(new Pmd(), "**/pmd.xml"));
+                    createTool(new Pmd(), "**/pmd-report.xml"));
 
             buildAndVerifyResults(project, entry.getValue());
         }

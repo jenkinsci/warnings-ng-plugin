@@ -240,11 +240,13 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     void shouldIgnoreColumnsWhenBuildMultipleLineAnnotation() {
         FreeStyleProject project = getFreeStyleJob();
-        enableWarnings(project, new Pmd());
+        var pmd = new Pmd();
+        pmd.setPattern("**/pmd-report.xml");
+        enableWarnings(project, pmd);
 
         buildSuccessfully(project);
 
-        copySingleFileToWorkspace(project, "pmd.xml");
+        copySingleFileToWorkspace(project, "pmd-report.xml");
         Run<?, ?> run = buildSuccessfully(project);
 
         WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(run), TaskListener.NULL, null);

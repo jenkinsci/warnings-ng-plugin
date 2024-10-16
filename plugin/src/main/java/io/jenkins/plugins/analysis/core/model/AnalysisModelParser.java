@@ -76,7 +76,8 @@ public abstract class AnalysisModelParser extends ReportScanningTool {
          */
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new StaticAnalysisLabelProvider(getId(), getDisplayName(), descriptionProvider);
+            return new StaticAnalysisLabelProvider(getId(), getDisplayName(), descriptionProvider,
+                    analysisModelDescriptor.getType());
         }
 
         /**

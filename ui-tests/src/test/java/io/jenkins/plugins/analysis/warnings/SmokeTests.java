@@ -179,7 +179,7 @@ public class SmokeTests extends UiTest {
     }
 
     private StringBuilder createReportFilesStep(final WorkflowJob job, final int build) {
-        String[] fileNames = {"checkstyle-result.xml", "pmd.xml", "findbugsXml.xml", "cpd.xml", "Main.java", "pep8Test.txt"};
+        String[] fileNames = {"checkstyle-report.xml", "pmd-report.xml", "findbugsXml.xml", "cpd.xml", "Main.java", "pep8Test.txt"};
         StringBuilder resourceCopySteps = new StringBuilder();
         for (String fileName : fileNames) {
             resourceCopySteps.append(job.copyResourceStep(

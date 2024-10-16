@@ -88,8 +88,8 @@ public class DetailsTabUiTest extends UiTest {
      */
     @Test
     public void shouldMemorizeSelectedTabAsActiveOnPageReload() {
-        FreeStyleJob job = createFreeStyleJob("checkstyle-result.xml");
-        job.addPublisher(IssuesRecorder.class, recorder -> recorder.setTool(CHECKSTYLE_TOOL));
+        FreeStyleJob job = createFreeStyleJob("checkstyle-report.xml");
+        job.addPublisher(IssuesRecorder.class, recorder -> recorder.setTool(CHECKSTYLE_TOOL).setPattern("**/checkstyle-report.xml"));
         job.save();
 
         Build build = job.startBuild().waitUntilFinished();
@@ -114,8 +114,8 @@ public class DetailsTabUiTest extends UiTest {
      */
     @Test
     public void shouldWorkWithMultipleTabsAndPages() {
-        FreeStyleJob job = createFreeStyleJob("checkstyle-result.xml");
-        job.addPublisher(IssuesRecorder.class, recorder -> recorder.setTool(CHECKSTYLE_TOOL));
+        FreeStyleJob job = createFreeStyleJob("checkstyle-report.xml");
+        job.addPublisher(IssuesRecorder.class, recorder -> recorder.setTool(CHECKSTYLE_TOOL).setPattern("**/checkstyle-report.xml"));
         job.save();
 
         Build build = job.startBuild().waitUntilFinished();

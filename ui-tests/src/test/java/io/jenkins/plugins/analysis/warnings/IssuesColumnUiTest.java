@@ -101,7 +101,7 @@ public class IssuesColumnUiTest extends UiTest {
 
     private void addCheckStyle(final FreeStyleJob job) {
         job.addPublisher(IssuesRecorder.class, recorder -> {
-            recorder.setTool(CHECKSTYLE_TOOL);
+            recorder.setTool(CHECKSTYLE_TOOL).setPattern("**/checkstyle-report.xml");
             recorder.setEnabledForFailure(true);
         });
     }

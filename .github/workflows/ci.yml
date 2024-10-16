@@ -35,4 +35,4 @@ jobs:
           BROWSER: chrome-container
         run: | 
           cd plugin
-          mvn -V --color always -ntp clean verify '-Djenkins.test.timeout=5000' '-Dgpg.skip'
+          mvn -V --color always -ntp clean verify -Dquite '-Djenkins.test.timeout=5000' '-Dgpg.skip'

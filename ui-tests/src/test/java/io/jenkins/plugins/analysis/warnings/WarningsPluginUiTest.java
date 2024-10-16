@@ -147,9 +147,9 @@ public class WarningsPluginUiTest extends UiTest {
      */
     @Test
     public void shouldFilterIssuesByIncludeAndExcludeFilters() {
-        FreeStyleJob job = createFreeStyleJob("issue_filter/checkstyle-result.xml");
+        FreeStyleJob job = createFreeStyleJob("issue_filter/checkstyle-report.xml");
         job.addPublisher(IssuesRecorder.class, recorder -> {
-            recorder.setTool("CheckStyle");
+            recorder.setTool("CheckStyle").setPattern("**/checkstyle-report.xml");
             recorder.setEnabledForFailure(true);
             recorder.addIssueFilter("Exclude categories", "Checks");
             recorder.addIssueFilter("Include types", "JavadocMethodCheck");
@@ -223,8 +223,8 @@ public class WarningsPluginUiTest extends UiTest {
     @Ignore("Ignore docker based tests right now")
     public void shouldParseWarningsOnAgent() {
         DumbSlave dockerAgent = createDockerAgent();
-        FreeStyleJob job = createFreeStyleJobForDockerAgent(dockerAgent, "issue_filter/checkstyle-result.xml");
-        job.addPublisher(IssuesRecorder.class, recorder -> recorder.setTool("CheckStyle", "**/checkstyle-result.xml"));
+        FreeStyleJob job = createFreeStyleJobForDockerAgent(dockerAgent, "issue_filter/checkstyle-report.xml");
+        job.addPublisher(IssuesRecorder.class, recorder -> recorder.setTool("CheckStyle", "**/checkstyle-report.xml"));
         job.save();
 
         Build build = buildJob(job);
