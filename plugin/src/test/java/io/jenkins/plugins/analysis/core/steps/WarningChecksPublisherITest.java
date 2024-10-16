@@ -244,7 +244,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
 
         buildSuccessfully(project);
 
-        copySingleFileToWorkspace(project, "pmd.xml");
+        copySingleFileToWorkspace(project, "pmd-report.xml", "pmd.xml");
         Run<?, ?> run = buildSuccessfully(project);
 
         WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(run), TaskListener.NULL, null);
