@@ -120,11 +120,11 @@ public class DashboardViewPortletUiTest extends UiTest {
         DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, false);
         FreeStyleJob job = createFreeStyleJob(CHECKSTYLE_RESULT,
                 DASHBOARD_PREFIX + "eclipse.txt",
-                DASHBOARD_PREFIX + "pmd.xml");
+                DASHBOARD_PREFIX + "pmd-report.xml");
         job.addPublisher(IssuesRecorder.class, recorder -> {
             recorder.setTool(CHECKSTYLE_TOOL, "**/checkstyle-result.xml");
             recorder.addTool(ECLIPSE_COMPILER, "**/eclipse.txt");
-            recorder.addTool(PMD_TOOL, "**/pmd.xml");
+            recorder.addTool(PMD_TOOL, "**/pmd-report.xml");
         });
         job.save();
         Build build = buildSuccessfully(job);
