@@ -21,7 +21,7 @@ import static io.jenkins.plugins.analysis.warnings.Assertions.*;
 public class DashboardViewPortletUiTest extends UiTest {
     private static final String DASHBOARD_PREFIX = "dashboard_test/";
     private static final String CLEAN_CHECKSTYLE_RESULT = DASHBOARD_PREFIX + "checkstyle-clean.xml";
-    private static final String CHECKSTYLE_RESULT = DASHBOARD_PREFIX + "checkstyle-result.xml";
+    private static final String CHECKSTYLE_RESULT = DASHBOARD_PREFIX + "checkstyle-report.xml";
 
     /**
      * Creates one Dashboard which will then display one successful build and its checkstyle warnings (icons in header).
@@ -93,7 +93,7 @@ public class DashboardViewPortletUiTest extends UiTest {
         FreeStyleJob job = createFreeStyleJob(CHECKSTYLE_RESULT,
                 DASHBOARD_PREFIX + "eclipse.txt");
         job.addPublisher(IssuesRecorder.class, recorder -> {
-            recorder.setTool(CHECKSTYLE_TOOL, "**/checkstyle-result.xml");
+            recorder.setTool(CHECKSTYLE_TOOL, "**/checkstyle-report.xml");
             recorder.addTool(ECLIPSE_COMPILER, "**/eclipse.txt");
         });
         job.save();
@@ -122,7 +122,7 @@ public class DashboardViewPortletUiTest extends UiTest {
                 DASHBOARD_PREFIX + "eclipse.txt",
                 DASHBOARD_PREFIX + "pmd-report.xml");
         job.addPublisher(IssuesRecorder.class, recorder -> {
-            recorder.setTool(CHECKSTYLE_TOOL, "**/checkstyle-result.xml");
+            recorder.setTool(CHECKSTYLE_TOOL, "**/checkstyle-report.xml");
             recorder.addTool(ECLIPSE_COMPILER, "**/eclipse.txt");
             recorder.addTool(PMD_TOOL, "**/pmd-report.xml");
         });
