@@ -149,7 +149,7 @@ public class WarningsPluginUiTest extends UiTest {
     public void shouldFilterIssuesByIncludeAndExcludeFilters() {
         FreeStyleJob job = createFreeStyleJob("issue_filter/checkstyle-result.xml");
         job.addPublisher(IssuesRecorder.class, recorder -> {
-            recorder.setTool("CheckStyle");
+            recorder.setTool("CheckStyle").setPattern("**/checkstyle-report.xml");
             recorder.setEnabledForFailure(true);
             recorder.addIssueFilter("Exclude categories", "Checks");
             recorder.addIssueFilter("Include types", "JavadocMethodCheck");
