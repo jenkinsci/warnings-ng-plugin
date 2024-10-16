@@ -223,7 +223,7 @@ public class WarningsPluginUiTest extends UiTest {
     @Ignore("Ignore docker based tests right now")
     public void shouldParseWarningsOnAgent() {
         DumbSlave dockerAgent = createDockerAgent();
-        FreeStyleJob job = createFreeStyleJobForDockerAgent(dockerAgent, "issue_filter/checkstyle-result.xml");
+        FreeStyleJob job = createFreeStyleJobForDockerAgent(dockerAgent, "issue_filter/checkstyle-report.xml");
         job.addPublisher(IssuesRecorder.class, recorder -> recorder.setTool("CheckStyle", "**/checkstyle-report.xml"));
         job.save();
 
