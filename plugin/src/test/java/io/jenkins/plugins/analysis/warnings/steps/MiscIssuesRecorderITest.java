@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -159,16 +160,16 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
      * Runs the CheckStyle parser without specifying a pattern: the default pattern should be used.
      */
     @Test
-    void shouldUseDefaultFileNamePattern() {
-        FreeStyleProject project = createFreeStyleProject();
-        copySingleFileToWorkspace(project, "checkstyle.xml");
-        var checkStyle = new CheckStyle();
-        checkStyle.setPattern("**/checkstyle.xml");
-        enableWarnings(project, createTool(checkStyle, StringUtils.EMPTY));
+    void shouldUseDefaultFileNamePattern() throws IOException, InterruptedException {
+        var project = createFreeStyleProject();
+        var report = "checkstyle-result.xml";
+        copySingleFileToWorkspace(project, "checkstyle.xml", report);
+        enableWarnings(project, createTool(new CheckStyle(), StringUtils.EMPTY));
 
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(6);
+        getWorkspace(project).child(report).delete();
     }
 
     /**
