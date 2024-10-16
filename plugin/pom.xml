@@ -11,7 +11,7 @@
 
   <groupId>io.jenkins.plugins</groupId>
   <artifactId>warnings-ng</artifactId>
-  <version>11.10.0</version>
+  <version>${revision}${changelist}</version>
   <packaging>hpi</packaging>
   <name>Warnings Plugin</name>
 
@@ -43,7 +43,7 @@
   </scm>
 
   <properties>
-    <revision>11.10.0</revision>
+    <revision>11.11.0</revision>
     <changelist>-SNAPSHOT</changelist>
     <module.name>${project.groupId}.warnings.ng</module.name>
 
