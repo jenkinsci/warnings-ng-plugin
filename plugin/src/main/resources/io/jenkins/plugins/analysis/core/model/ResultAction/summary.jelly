@@ -118,12 +118,12 @@
 
   </t:summary>
 
-  <script>
-    {
-    const proxy =<st:bind value="${it}"/>;
-    const handler = new ResetQualityGateButtonHandler();
-    handler.bindResetButton('${it.id}', proxy);
-    }
-  </script>
+  <j:set var="proxyId" value="${h.generateId()}" />
+  <st:bind value="${it}" var="bindResetButtonProxy${proxyId}"/>
+  <span class="bind-reset-button-data-holder"
+        data-action-id="${it.id}"
+        data-proxy-name="bindResetButtonProxy${proxyId}"
+        style="display:none"/>
+  <st:adjunct includes="io.jenkins.plugins.analysis.core.model.ResultAction.bind-reset-button" />
 
 </j:jelly>
