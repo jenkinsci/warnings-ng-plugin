@@ -38,7 +38,7 @@
       ${it.getQualityGateResultDescription()}</p>
   </j:if>
 
-  <script>var portlet = <st:bind value="${it}"/></script>
+  <st:bind value="${it}" var="portlet"/>
   <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/issues-sunburst.js"/>
 
 </j:jelly>
