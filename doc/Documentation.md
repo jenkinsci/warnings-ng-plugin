@@ -242,6 +242,12 @@ if(!config.contains('pep8-groovy')){
 }
 ```
 
+The following variables are automatically injected into the script by the plugin:
+* `builder`: fluent API based builder for creating new issues (see above code snippet)
+* `matcher`: regular expression matcher (can be used to get more details on regular expression match)
+* `fileName`: name of the file (or console) being analyzed
+* `lineNumber`: current line number containing the match
+
 #### Importing a parser using configuration as code (JCasC)
 
 Groovy based parsers can also be specified using a section in your
