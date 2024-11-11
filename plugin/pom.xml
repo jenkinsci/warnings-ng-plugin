@@ -353,7 +353,7 @@
     <dependency>
       <groupId>com.parasoft</groupId>
       <artifactId>parasoft-findings</artifactId>
-      <version>10.7.4</version>
+      <version>10.7.5</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
