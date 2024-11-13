@@ -3,12 +3,8 @@ name: "CodeQL"
 on:
   push:
     branches:
-      - master
       - main
-  pull_request:
-    branches:
-      - master
-      - main
+  pull_request_target:
   schedule:
     - cron: "32 3 * * 0"
 
@@ -49,7 +45,7 @@ jobs:
           queries: +security-and-quality
 
       - name: Build with Maven
-        run: mvn -V --color always -ntp clean verify --file pom.xml -Pskip
+        run: mvn -V --color always -ntp clean verify -Pskip
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
