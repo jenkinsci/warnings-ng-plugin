@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-  pull_request:
+  pull_request_target:
 
 jobs:
   build:
@@ -33,6 +33,4 @@ jobs:
       - name: Build with Maven
         env:
           BROWSER: chrome-container
-        run: | 
-          cd plugin
-          mvn -V --color always -ntp clean verify -Dquite '-Djenkins.test.timeout=5000' '-Dgpg.skip'
+        run: mvn -V --color always -ntp clean verify '-Djenkins.test.timeout=5000' '-Dgpg.skip' -Pno-ui-tests

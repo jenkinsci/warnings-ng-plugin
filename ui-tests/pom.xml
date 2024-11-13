@@ -251,6 +251,12 @@
       </properties>
     </profile>
     <profile>
+      <id>no-ui-tests</id>
+      <properties>
+        <maven.test.skip>true</maven.test.skip>
+      </properties>
+    </profile>
+    <profile>
       <id>ui-tests-locally</id>
       <properties>
         <maven.test.skip>false</maven.test.skip>
