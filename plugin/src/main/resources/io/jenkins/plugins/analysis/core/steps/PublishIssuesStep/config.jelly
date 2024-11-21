@@ -1,5 +1,5 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:i="/issues">
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:i="/issues" xmlns:s="/forensics">
 
   <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
 
@@ -17,6 +17,7 @@
   <f:entry title="${%title.sourceCodeEncoding}" description="${%description.sourceCodeEncoding}" field="sourceCodeEncoding">
     <f:combobox />
   </f:entry>
+  <s:scm/>
 
   <f:entry field="quiet">
     <f:checkbox title="${%title.quiet}"/>
