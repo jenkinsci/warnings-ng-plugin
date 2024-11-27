@@ -19,6 +19,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        if: github.event_name == 'push'
+      - uses: actions/checkout@v4
+        with:
+          ref: "${{ github.event.pull_request.merge_commit_sha }}"
+        if: github.event_name == 'pull_request_target'
       - name: Set up JDK ${{ matrix.jdk }}
         uses: actions/setup-java@v4
         with:
