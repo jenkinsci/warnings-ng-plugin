@@ -86,7 +86,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
     }
 
     private static boolean containsNewline(final String expression) {
-        return StringUtils.contains(expression, "\\n") || StringUtils.contains(expression, "\\r");
+        return StringUtils.containsAny(expression, "\\n", "\\r", "\\R");
     }
 
     /**
