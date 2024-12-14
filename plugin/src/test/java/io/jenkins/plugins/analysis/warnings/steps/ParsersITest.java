@@ -431,6 +431,12 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
                 "A high number of imports can indicate a high degree of coupling within an object.");
     }
 
+    /** Runs the Valgrind Pipeline Issues parser on output file that contains 5 issues. */
+    @Test
+    void shouldFindAllValgrindIssues() {
+        shouldFindIssuesOfTool(5, new Valgrind(), "valgrind.xml");
+    }
+
     /** Runs the CheckStyle parser on an output file that contains 6 issues. */
     @Test
     void shouldFindAllCheckStyleIssues() {
