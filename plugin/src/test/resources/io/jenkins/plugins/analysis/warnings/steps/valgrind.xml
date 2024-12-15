@@ -1,0 +1,497 @@
+<?xml version="1.0"?>
+
+<valgrindoutput>
+
+  <protocolversion>4</protocolversion>
+  <protocoltool>memcheck</protocoltool>
+
+  <preamble>
+    <line>Memcheck, a memory error detector</line>
+    <line>Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.</line>
+    <line>Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info</line>
+    <line>Command: ./terrible_program</line>
+  </preamble>
+
+  <pid>36556</pid>
+  <ppid>26175</ppid>
+  <tool>memcheck</tool>
+
+  <args>
+    <vargv>
+      <exe>/usr/bin/valgrind.bin</exe>
+      <arg>--gen-suppressions=all</arg>
+      <arg>--xml=yes</arg>
+      <arg>--xml-file=valgrind.xml</arg>
+      <arg>--track-origins=yes</arg>
+      <arg>--leak-check=full</arg>
+      <arg>--show-leak-kinds=all</arg>
+    </vargv>
+    <argv>
+      <exe>./terrible_program</exe>
+    </argv>
+  </args>
+
+  <status>
+    <state>RUNNING</state>
+    <time>00:00:00:00.146 </time>
+  </status>
+
+  <error>
+    <unique>0x0</unique>
+    <tid>1</tid>
+    <threadname>worst thread ever</threadname>
+    <kind>UninitCondition</kind>
+    <what>Conditional jump or move depends on uninitialised value(s)</what>
+    <stack>
+      <frame>
+        <ip>0x109163</ip>
+        <obj>/home/some_user/terrible_program/terrible_program</obj>
+        <fn>main</fn>
+        <dir>/home/some_user/terrible_program</dir>
+        <file>terrible_program.cpp</file>
+        <line>5</line>
+      </frame>
+    </stack>
+    <auxwhat>Uninitialised value was created by a heap allocation</auxwhat>
+    <stack>
+      <frame>
+        <ip>0x483B20F</ip>
+        <obj>/usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so</obj>
+        <fn>operator new[](unsigned long)</fn>
+        <dir>./coregrind/m_replacemalloc</dir>
+        <file>vg_replace_malloc.c</file>
+        <line>640</line>
+      </frame>
+      <frame>
+        <ip>0x109151</ip>
+        <obj>/home/some_user/terrible_program/terrible_program</obj>
+        <fn>main</fn>
+        <dir>/home/some_user/terrible_program</dir>
+        <file>terrible_program.cpp</file>
+        <line>3</line>
+      </frame>
+    </stack>
+    <suppression>
+      <sname>insert_a_suppression_name_here</sname>
+      <skind>Memcheck:Cond</skind>
+      <sframe> <fun>main</fun> </sframe>
+      <rawtext>
+        <![CDATA[
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Cond
+   fun:main
+}
+]]>
+      </rawtext>
+    </suppression>
+  </error>
+
+  <suppression>
+    <sname>insert_a_suppression_name_here</sname>
+    <skind>Memcheck:Cond</skind>
+    <sframe> <fun>main</fun> </sframe>
+    <rawtext>
+      <![CDATA[
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Cond
+   fun:main
+}
+]]>
+    </rawtext>
+  </suppression>
+  <error>
+    <unique>0x1</unique>
+    <tid>1</tid>
+    <kind>InvalidWrite</kind>
+    <what>Invalid write of size 4</what>
+    <stack>
+      <frame>
+        <ip>0x109177</ip>
+        <obj>/home/some_user/terrible_program/terrible_program</obj>
+        <fn>main</fn>
+        <dir>/home/some_user/terrible_program</dir>
+        <file>terrible_program.cpp</file>
+        <line>10</line>
+      </frame>
+    </stack>
+    <auxwhat>Address 0x4dd0c90 is 0 bytes after a block of size 16 alloc'd</auxwhat>
+    <stack>
+      <frame>
+        <ip>0x483B20F</ip>
+        <obj>/usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so</obj>
+        <fn>operator new[](unsigned long)</fn>
+        <dir>./coregrind/m_replacemalloc</dir>
+        <file>vg_replace_malloc.c</file>
+        <line>640</line>
+      </frame>
+      <frame>
+        <ip>0x109151</ip>
+        <obj>/home/some_user/terrible_program/terrible_program</obj>
+        <fn>main</fn>
+        <dir>/home/some_user/terrible_program</dir>
+        <file>terrible_program.cpp</file>
+        <line>3</line>
+      </frame>
+    </stack>
+    <suppression>
+      <sname>insert_a_suppression_name_here</sname>
+      <skind>Memcheck:Addr4</skind>
+      <sframe> <fun>main</fun> </sframe>
+      <rawtext>
+        <![CDATA[
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Addr4
+   fun:main
+}
+]]>
+      </rawtext>
+    </suppression>
+  </error>
+
+  <suppression>
+    <sname>insert_a_suppression_name_here</sname>
+    <skind>Memcheck:Addr4</skind>
+    <sframe> <fun>main</fun> </sframe>
+    <rawtext>
+      <![CDATA[
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Addr4
+   fun:main
+}
+]]>
+    </rawtext>
+  </suppression>
+
+  <status>
+    <state>FINISHED</state>
+    <time>00:00:00:00.693 </time>
+  </status>
+
+  <error>
+    <unique>0x2</unique>
+    <tid>1</tid>
+    <kind>Leak_DefinitelyLost</kind>
+    <xwhat>
+      <text>16 bytes in 1 blocks are definitely lost in loss record 1 of 1</text>
+      <leakedbytes>16</leakedbytes>
+      <leakedblocks>1</leakedblocks>
+    </xwhat>
+    <stack>
+      <frame>
+        <ip>0x483B20F</ip>
+        <obj>/usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so</obj>
+        <fn>operator new[](unsigned long)</fn>
+        <dir>./coregrind/m_replacemalloc</dir>
+        <file>vg_replace_malloc.c</file>
+        <line>640</line>
+      </frame>
+      <frame>
+        <ip>0x109151</ip>
+        <obj>/home/some_user/terrible_program/terrible_program</obj>
+        <fn>main</fn>
+        <dir>/home/some_user/terrible_program</dir>
+        <file>terrible_program.cpp</file>
+        <line>3</line>
+      </frame>
+    </stack>
+    <suppression>
+      <sname>insert_a_suppression_name_here</sname>
+      <skind>Memcheck:Leak</skind>
+      <skaux>match-leak-kinds: definite</skaux>
+      <sframe> <fun>_Znam</fun> </sframe>
+      <sframe> <fun>main</fun> </sframe>
+      <rawtext>
+        <![CDATA[
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znam
+   fun:main
+}
+]]>
+      </rawtext>
+    </suppression>
+  </error>
+
+  <suppression>
+    <sname>insert_a_suppression_name_here</sname>
+    <skind>Memcheck:Leak</skind>
+    <skaux>match-leak-kinds: definite</skaux>
+    <sframe> <fun>_Znam</fun> </sframe>
+    <sframe> <fun>main</fun> </sframe>
+    <rawtext>
+      <![CDATA[
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znam
+   fun:main
+}
+]]>
+    </rawtext>
+  </suppression>
+  <error>
+    <unique>0x3</unique>
+    <tid>1</tid>
+    <kind>SyscallParam</kind>
+    <what>Syscall param write(buf) points to uninitialised byte(s)</what>
+    <stack>
+      <frame>
+        <ip>0x4057F73</ip>
+        <obj>/lib/ld-musl-x86_64.so.1</obj>
+        <dir>/home/buildozer/aports/main/musl/src/1.2.4/src/thread/x86_64</dir>
+        <file>syscall_cp.s</file>
+        <line>29</line>
+      </frame>
+      <frame>
+        <ip>0x40550FD</ip>
+        <obj>/lib/ld-musl-x86_64.so.1</obj>
+        <fn>__syscall_cp_c</fn>
+        <file>pthread_cancel.c</file>
+        <line>33</line>
+      </frame>
+      <frame>
+        <ip>0x405B67F</ip>
+        <obj>/lib/ld-musl-x86_64.so.1</obj>
+        <fn>write</fn>
+        <dir>/home/buildozer/aports/main/musl/src/1.2.4/src/unistd</dir>
+        <file>write.c</file>
+        <line>6</line>
+      </frame>
+      <frame>
+        <ip>0x109226</ip>
+        <obj>/workspace/awful project/awful_program</obj>
+        <fn>make_spaghetti(int)</fn>
+        <dir>/workspace/awful project</dir>
+        <file>spaghetti.cpp</file>
+        <line>11</line>
+      </frame>
+      <frame>
+        <ip>0x1091F2</ip>
+        <obj>/workspace/awful project/awful_program</obj>
+        <fn>make_spaghetti(int)</fn>
+        <dir>/workspace/awful project</dir>
+        <file>spaghetti.cpp</file>
+        <line>6</line>
+      </frame>
+      <frame>
+        <ip>0x1091F2</ip>
+        <obj>/workspace/awful project/awful_program</obj>
+        <fn>make_spaghetti(int)</fn>
+        <dir>/workspace/awful project</dir>
+        <file>spaghetti.cpp</file>
+        <line>6</line>
+      </frame>
+      <frame>
+        <ip>0x1091F2</ip>
+        <obj>/workspace/awful project/awful_program</obj>
+        <fn>make_spaghetti(int)</fn>
+        <dir>/workspace/awful project</dir>
+        <file>spaghetti.cpp</file>
+        <line>6</line>
+      </frame>
+      <frame>
+        <ip>0x109283</ip>
+        <obj>/workspace/awful project/awful_program</obj>
+        <fn>main</fn>
+        <dir>/workspace/awful project</dir>
+        <file>awful_program.cpp</file>
+        <line>14</line>
+      </frame>
+    </stack>
+    <auxwhat>Address 0x4b31cd0 is 0 bytes inside a block of size 10 alloc'd</auxwhat>
+    <stack>
+      <frame>
+        <ip>0x48A5733</ip>
+        <obj>/usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so</obj>
+        <fn>malloc</fn>
+      </frame>
+      <frame>
+        <ip>0x1091FE</ip>
+        <obj>/workspace/awful project/awful_program</obj>
+        <fn>make_spaghetti(int)</fn>
+        <dir>/workspace/awful project</dir>
+        <file>spaghetti.cpp</file>
+        <line>9</line>
+      </frame>
+      <frame>
+        <ip>0x1091F2</ip>
+        <obj>/workspace/awful project/awful_program</obj>
+        <fn>make_spaghetti(int)</fn>
+        <dir>/workspace/awful project</dir>
+        <file>spaghetti.cpp</file>
+        <line>6</line>
+      </frame>
+      <frame>
+        <ip>0x1091F2</ip>
+        <obj>/workspace/awful project/awful_program</obj>
+        <fn>make_spaghetti(int)</fn>
+        <dir>/workspace/awful project</dir>
+        <file>spaghetti.cpp</file>
+        <line>6</line>
+      </frame>
+      <frame>
+        <ip>0x1091F2</ip>
+        <obj>/workspace/awful project/awful_program</obj>
+        <fn>make_spaghetti(int)</fn>
+        <dir>/workspace/awful project</dir>
+        <file>spaghetti.cpp</file>
+        <line>6</line>
+      </frame>
+      <frame>
+        <ip>0x109283</ip>
+        <obj>/workspace/awful project/awful_program</obj>
+        <fn>main</fn>
+        <dir>/workspace/awful project</dir>
+        <file>awful_program.cpp</file>
+        <line>14</line>
+      </frame>
+    </stack>
+    <auxwhat>Uninitialised value was created by a heap allocation</auxwhat>
+    <stack>
+      <frame>
+        <ip>0x48A5733</ip>
+        <obj>/usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so</obj>
+        <fn>malloc</fn>
+      </frame>
+      <frame>
+        <ip>0x1091FE</ip>
+        <obj>/workspace/awful project/awful_program</obj>
+        <fn>make_spaghetti(int)</fn>
+        <dir>/workspace/awful project</dir>
+        <file>spaghetti.cpp</file>
+        <line>9</line>
+      </frame>
+      <frame>
+        <ip>0x1091F2</ip>
+        <obj>/workspace/awful project/awful_program</obj>
+        <fn>make_spaghetti(int)</fn>
+        <dir>/workspace/awful project</dir>
+        <file>spaghetti.cpp</file>
+        <line>6</line>
+      </frame>
+      <frame>
+        <ip>0x1091F2</ip>
+        <obj>/workspace/awful project/awful_program</obj>
+        <fn>make_spaghetti(int)</fn>
+        <dir>/workspace/awful project</dir>
+        <file>spaghetti.cpp</file>
+      </frame>
+      <frame>
+        <ip>0x1091F2</ip>
+        <obj>/workspace/awful project/awful_program</obj>
+        <fn>make_spaghetti(int)</fn>
+        <dir>/workspace/awful project</dir>
+        <file>spaghetti.cpp</file>
+        <line>6</line>
+      </frame>
+      <frame>
+        <ip>0x109283</ip>
+        <obj>/workspace/awful project/awful_program</obj>
+        <fn>main</fn>
+        <dir>/workspace/awful project</dir>
+        <file>awful_program.cpp</file>
+        <line>14</line>
+      </frame>
+    </stack>
+    <suppression>
+      <sname>insert_a_suppression_name_here</sname>
+      <skind>Memcheck:Param</skind>
+      <skaux>write(buf)</skaux>
+      <sframe> <obj>/lib/ld-musl-x86_64.so.1</obj> </sframe>
+      <sframe> <fun>__syscall_cp_c</fun> </sframe>
+      <sframe> <fun>write</fun> </sframe>
+      <sframe> <fun>_Z14make_spaghettii</fun> </sframe>
+      <sframe> <fun>_Z14make_spaghettii</fun> </sframe>
+      <sframe> <fun>_Z14make_spaghettii</fun> </sframe>
+      <sframe> <fun>_Z14make_spaghettii</fun> </sframe>
+      <sframe> <fun>main</fun> </sframe>
+      <rawtext>
+        <![CDATA[
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Param
+   write(buf)
+   obj:/lib/ld-musl-x86_64.so.1
+   fun:__syscall_cp_c
+   fun:write
+   fun:_Z14make_spaghettii
+   fun:_Z14make_spaghettii
+   fun:_Z14make_spaghettii
+   fun:_Z14make_spaghettii
+   fun:main
+}
+]]>
+      </rawtext>
+    </suppression>
+  </error>
+
+  <suppression>
+    <sname>insert_a_suppression_name_here</sname>
+    <skind>Memcheck:Param</skind>
+    <skaux>write(buf)</skaux>
+    <sframe> <obj>/lib/ld-musl-x86_64.so.1</obj> </sframe>
+    <sframe> <fun>__syscall_cp_c</fun> </sframe>
+    <sframe> <fun>write</fun> </sframe>
+    <sframe> <fun>_Z14make_spaghettii</fun> </sframe>
+    <sframe> <fun>_Z14make_spaghettii</fun> </sframe>
+    <sframe> <fun>_Z14make_spaghettii</fun> </sframe>
+    <sframe> <fun>_Z14make_spaghettii</fun> </sframe>
+    <sframe> <fun>main</fun> </sframe>
+    <rawtext>
+      <![CDATA[
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Param
+   write(buf)
+   obj:/lib/ld-musl-x86_64.so.1
+   fun:__syscall_cp_c
+   fun:write
+   fun:_Z14make_spaghettii
+   fun:_Z14make_spaghettii
+   fun:_Z14make_spaghettii
+   fun:_Z14make_spaghettii
+   fun:main
+}
+]]>
+    </rawtext>
+  </suppression>
+  <error>
+    <unique>0x4</unique>
+    <tid>1</tid>
+    <kind>Not_A_Real_Error</kind>
+    <what>Some type of error without a stack trace</what>
+  </error>
+  <errorcounts>
+    <pair>
+      <count>1</count>
+      <unique>0x4</unique>
+    </pair>
+    <pair>
+      <count>1</count>
+      <unique>0x3</unique>
+    </pair>
+    <pair>
+      <count>1</count>
+      <unique>0x2</unique>
+    </pair>
+    <pair>
+      <count>1</count>
+      <unique>0x1</unique>
+    </pair>
+    <pair>
+      <count>1</count>
+      <unique>0x0</unique>
+    </pair>
+  </errorcounts>
+
+  <suppcounts>
+  </suppcounts>
+
+</valgrindoutput>
