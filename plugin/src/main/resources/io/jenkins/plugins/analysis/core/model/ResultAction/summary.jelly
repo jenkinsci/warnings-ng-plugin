@@ -105,12 +105,13 @@
         <j:if test="${s.qualityGateStatus.name() != 'INACTIVE'}">
           <c:qualityGate result="${it.qualityGateResult}"/>
           <j:if test="${s.resetQualityGateVisible}">
-            <span class="yui-button">
-              <button id="${it.id}-reset-reference"
-                      style="padding: 0.3em 0.5em; min-width: 0.20em; min-height: 0.20em" type="button"
-                      title="Reset quality gate so that next build will use this build as a reference.">Reset
-              </button>
-            </span>
+            <button 
+              id="${it.id}-reset-reference"
+              class="jenkins-button"
+              style="padding: 0.3em 0.5em; min-width: 0.20em; min-height: 0.20em"
+              type="button"
+              title="Reset quality gate so that next build will use this build as a reference.">Reset
+            </button>
           </j:if>
         </j:if>
       </ul>
