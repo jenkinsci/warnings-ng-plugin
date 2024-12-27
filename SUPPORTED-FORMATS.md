@@ -2547,30 +2547,6 @@ analyze - iccxxxxcompiler_opts cstat2.c</pre></code>For details check the IAR C-
         </tr>
         <tr>
             <td>
-                vale
-            </td>
-            <td>
-                vale()
-            </td>
-            <td>
-                <img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/triangle-exclamation.svg" alt="YamlLint" height="48" width="48">
-            </td>
-            <td>
-                <a href="https://vale.sh">
-                    Vale
-                </a>
-            </td>
-            <td>
-                **/vale-report.json
-            </td>
-        </tr>
-        <tr>
-            <td colspan="5">
-                :bulb: Use option --output=JSON
-            </td>
-        </tr>
-        <tr>
-            <td>
                 yamllint
             </td>
             <td>
