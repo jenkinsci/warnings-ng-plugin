@@ -19,7 +19,7 @@ import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
 
 /**
- * A report of issues and the associated blame information, i.e. author and commit information of the SCM.
+ * A report of issues and the associated blame information, i.e., author and commit information of the SCM.
  *
  * @author Ullrich Hafner
  */
@@ -27,7 +27,7 @@ public class AnnotatedReport implements Serializable {
     private static final long serialVersionUID = -4797152016409014028L;
 
     private final String id;
-    private final Report aggregatedReport = new Report();
+    private Report aggregatedReport = new Report();
     private final Blames aggregatedBlames = new Blames();
     private final RepositoryStatistics aggregatedRepositoryStatistics = new RepositoryStatistics();
 
@@ -44,14 +44,14 @@ public class AnnotatedReport implements Serializable {
     }
 
     /**
-     * Creates a new instance of {@link AnnotatedReport}. The blames will be initialized empty.
+     * Creates a new instance of {@link AnnotatedReport}. The SCM blames will be initialized empty.
      *
      * @param id
      *         the ID of the report
      * @param report
      *         report with issues
      */
-    public AnnotatedReport(@CheckForNull final String id, final Report report) {
+    public AnnotatedReport(final String id, final Report report) {
         this(id, report, new Blames(), new RepositoryStatistics());
     }
 
@@ -65,7 +65,7 @@ public class AnnotatedReport implements Serializable {
      * @param blames
      *         author and commit information for affected files
      */
-    public AnnotatedReport(@CheckForNull final String id, final Report report, final Blames blames) {
+    public AnnotatedReport(final String id, final Report report, final Blames blames) {
         this(id, report, blames, new RepositoryStatistics());
     }
 
@@ -81,11 +81,13 @@ public class AnnotatedReport implements Serializable {
      * @param statistics
      *         repository statistics for affected files
      */
-    public AnnotatedReport(@CheckForNull final String id, final Report report, final Blames blames,
+    public AnnotatedReport(final String id, final Report report, final Blames blames,
             final RepositoryStatistics statistics) {
         this(id);
 
-        addReport(id, report, blames, statistics);
+        aggregatedReport = report;
+
+        addBlames(id, blames, statistics, report.size());
     }
 
     /**
@@ -99,6 +101,7 @@ public class AnnotatedReport implements Serializable {
     public AnnotatedReport(@CheckForNull final String id, final List<AnnotatedReport> reports) {
         this(id);
 
+        aggregatedReport = new Report();
         addAllReports(reports);
     }
 
@@ -113,6 +116,7 @@ public class AnnotatedReport implements Serializable {
     public AnnotatedReport(@CheckForNull final String id, final Iterable<AnnotatedReport> reports) {
         this(id);
 
+        aggregatedReport = new Report();
         addAllReports(reports);
     }
 
@@ -248,7 +252,12 @@ public class AnnotatedReport implements Serializable {
     private void addReport(final String actualId, final Report report, final Blames blames,
             final RepositoryStatistics statistics) {
         aggregatedReport.addAll(report);
-        sizeOfOrigin.merge(actualId, report.size(), Integer::sum);
+        addBlames(actualId, blames, statistics, report.size());
+    }
+
+    private void addBlames(final String actualId, final Blames blames,
+            final RepositoryStatistics statistics, final int size) {
+        sizeOfOrigin.merge(actualId, size, Integer::sum);
         aggregatedBlames.addAll(blames);
         aggregatedRepositoryStatistics.addAll(statistics);
     }

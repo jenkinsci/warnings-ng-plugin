@@ -39,9 +39,12 @@ public class DeltaReport {
     public DeltaReport(final Report report, final int currentBuildNumber) {
         allIssues = report;
         outstandingIssues = report;
-        referenceIssues = EMPTY_REPORT;
-        newIssues = EMPTY_REPORT;
-        fixedIssues = EMPTY_REPORT;
+
+        var empty = report.copyEmptyInstance();
+        referenceIssues = empty;
+        newIssues = empty;
+        fixedIssues = empty;
+
         referenceBuildId = StringUtils.EMPTY;
 
         report.logInfo("No valid reference build found");
