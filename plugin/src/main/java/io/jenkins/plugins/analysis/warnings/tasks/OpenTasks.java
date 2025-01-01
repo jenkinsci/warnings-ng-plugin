@@ -127,9 +127,9 @@ public class OpenTasks extends Tool {
     }
 
     /**
-     * Returns whether case should be ignored during the scanning.
+     * Returns whether the case of the characters should be ignored during the scanning.
      *
-     * @return {@code true}  if case should be ignored during the scanning
+     * @return {@code true} if the case should be ignored during the scanning
      */
     @SuppressWarnings("PMD.BooleanGetMethodName")
     public boolean getIgnoreCase() {

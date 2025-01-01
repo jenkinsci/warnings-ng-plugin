@@ -157,6 +157,37 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
+     * Runs the CheckStyle parser and changes name and ID and icon.
+     */
+    @Test
+    @org.junitpioneer.jupiter.Issue("JENKINS-73636, JENKINS-72777")
+    void shouldCreateResultWithCorrectIcon() {
+        var checkstyleImage = "checkstyle.svg";
+
+        FreeStyleProject project = createFreestyleJob("checkstyle.xml");
+        ReportScanningTool configuration = configurePattern(new CheckStyle());
+        enableGenericWarnings(project, configuration);
+
+        ResultAction checkstyle = getResultAction(buildWithResult(project, Result.SUCCESS));
+        assertThat(checkstyle.getId()).isEqualTo("checkstyle");
+        assertThat(checkstyle.getDisplayName()).startsWith("CheckStyle");
+        assertThat(checkstyle.getIconFileName()).endsWith(checkstyleImage);
+
+        project.getPublishersList().clear();
+
+        String changedId = "new-id";
+        configuration.setId(changedId);
+        String changedName = "new-name";
+        configuration.setName(changedName);
+        enableGenericWarnings(project, configuration);
+
+        ResultAction changedProperties = getResultAction(buildWithResult(project, Result.SUCCESS));
+        assertThat(changedProperties.getId()).isEqualTo(changedId);
+        assertThat(changedProperties.getDisplayName()).startsWith(changedName);
+        assertThat(checkstyle.getIconFileName()).endsWith(checkstyleImage);
+    }
+
+    /**
      * Runs the CheckStyle parser without specifying a pattern: the default pattern should be used.
      */
     @Test

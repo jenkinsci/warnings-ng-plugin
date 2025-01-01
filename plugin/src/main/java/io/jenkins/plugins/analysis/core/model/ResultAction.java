@@ -314,7 +314,15 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      * @return the label provider for this tool
      */
     public StaticAnalysisLabelProvider getLabelProvider() {
-        return new LabelProviderFactory().create(id, name);
+        return new LabelProviderFactory().create(getParserId(), name);
+    }
+
+    private String getParserId() {
+        var originalReport = getResult().getIssues();
+        if (originalReport.hasParserId()) {
+            return originalReport.getParserId();
+        }
+        return id;
     }
 
     /**

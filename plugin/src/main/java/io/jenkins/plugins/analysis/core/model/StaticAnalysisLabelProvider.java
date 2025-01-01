@@ -99,16 +99,12 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
     }
 
     private String getIcon(final IssueType type) {
-        switch (type) {
-            case BUG:
-                return "symbol-solid/bug plugin-font-awesome-api";
-            case DUPLICATION:
-                return "symbol-regular/clone plugin-font-awesome-api";
-            case VULNERABILITY:
-                return "symbol-solid/shield-halved plugin-font-awesome-api";
-            default:
-                return ANALYSIS_SVG_ICON;
-        }
+        return switch (type) {
+            case BUG -> "symbol-solid/bug plugin-font-awesome-api";
+            case DUPLICATION -> "symbol-regular/clone plugin-font-awesome-api";
+            case VULNERABILITY -> "symbol-solid/shield-halved plugin-font-awesome-api";
+            default -> ANALYSIS_SVG_ICON;
+        };
     }
 
     private void changeName(final String originalName) {
