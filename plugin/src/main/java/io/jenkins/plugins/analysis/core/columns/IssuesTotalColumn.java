@@ -61,7 +61,7 @@ public class IssuesTotalColumn extends ListViewColumn {
     }
 
     /**
-     * Called after de-serialization to retain backward compatibility..
+     * Called after deserialization to retain backward compatibility..
      *
      * @return this
      */

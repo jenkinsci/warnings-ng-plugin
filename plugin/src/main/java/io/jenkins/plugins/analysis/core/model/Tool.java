@@ -50,7 +50,7 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
     }
 
     /**
-     * Called after de-serialization to retain backward compatibility.
+     * Called after deserialization to retain backward compatibility.
      *
      * @return this
      */

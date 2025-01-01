@@ -33,11 +33,6 @@ public class SpotBugs extends FindBugs {
         }
 
         @Override
-        public boolean canScanConsoleLog() {
-            return false;
-        }
-
-        @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
             return new SvgIconLabelProvider(getId(), getName(), getDescriptionProvider());
         }

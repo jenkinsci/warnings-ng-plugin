@@ -171,7 +171,7 @@ public final class AxivionSuite extends Tool {
     }
 
     /**
-     * Called after de-serialization to retain backward compatibility.
+     * Called after deserialization to retain backward compatibility.
      *
      * @return this
      */

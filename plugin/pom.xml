@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>9.0.0</version>
+    <version>10.0.0</version>
     <relativePath />
   </parent>
 
@@ -38,16 +38,16 @@
   <scm>
     <connection>scm:git:https://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
     <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
-    <tag>v11.10.0</tag>
+    <tag>HEAD</tag>
     <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
   </scm>
 
   <properties>
-    <revision>11.13.0</revision>
+    <revision>12.0.0</revision>
     <changelist>-SNAPSHOT</changelist>
     <module.name>${project.groupId}.warnings.ng</module.name>
 
-    <analysis-model-api.version>12.9.1</analysis-model-api.version>
+    <analysis-model-api.version>13.0.0-SNAPSHOT</analysis-model-api.version>
     <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
     <pull-request-monitoring.version>335.v525cd64ec76b_</pull-request-monitoring.version>
 
@@ -73,6 +73,12 @@
 
   <dependencies>
 
+    <!-- Temporary -->
+    <dependency>
+      <groupId>edu.hm.hafner</groupId>
+      <artifactId>analysis-model</artifactId>
+      <version>${analysis-model-api.version}</version>
+    </dependency>
     <!-- Project Library Dependencies -->
     <dependency>
       <groupId>org.eclipse.collections</groupId>
@@ -93,13 +99,8 @@
     <!-- Required Jenkins Plug-in Dependencies -->
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
-      <artifactId>analysis-model-api</artifactId>
-      <version>${analysis-model-api.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
       <artifactId>plugin-util-api</artifactId>
-      <version>5.1.0</version>
+      <version>6.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
@@ -578,6 +579,7 @@
           <excludes combine.children="append">
             <exclude>.*Thresholds</exclude>
             <exclude>.*Test.*</exclude>
+            <exclude>.*Benchmark.*</exclude>
             <exclude>.*TaskScanner.*</exclude>
           </excludes>
           <entryPointClassPackage>io.jenkins.plugins.analysis.core.assertions</entryPointClassPackage>
