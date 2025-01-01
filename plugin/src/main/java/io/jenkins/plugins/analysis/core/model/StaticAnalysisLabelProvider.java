@@ -7,8 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
-import edu.hm.hafner.analysis.registry.ParserDescriptor;
-import edu.hm.hafner.analysis.registry.ParserDescriptor.Type;
+import edu.hm.hafner.analysis.Report.IssueType;
 import edu.hm.hafner.util.Generated;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
@@ -75,7 +74,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      */
     public StaticAnalysisLabelProvider(final String id, @CheckForNull final String name,
             final DescriptionProvider descriptionProvider) {
-        this(id, name, descriptionProvider, Type.WARNING);
+        this(id, name, descriptionProvider, IssueType.WARNING);
     }
 
     /**
@@ -91,7 +90,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      *        the type of the parser
      */
     public StaticAnalysisLabelProvider(final String id, @CheckForNull final String name,
-            final DescriptionProvider descriptionProvider, final ParserDescriptor.Type type) {
+            final DescriptionProvider descriptionProvider, final IssueType type) {
         this.id = id;
         this.descriptionProvider = descriptionProvider;
         this.icon = getIcon(type);
@@ -99,7 +98,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
         changeName(name);
     }
 
-    private String getIcon(final ParserDescriptor.Type type) {
+    private String getIcon(final IssueType type) {
         switch (type) {
             case BUG:
                 return "symbol-solid/bug plugin-font-awesome-api";
