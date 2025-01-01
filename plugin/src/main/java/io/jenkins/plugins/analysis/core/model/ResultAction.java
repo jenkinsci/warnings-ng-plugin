@@ -99,7 +99,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
     }
 
     /**
-     * Called after de-serialization to retain backward compatibility.
+     * Called after deserialization to retain backward compatibility.
      *
      * @return this
      */
