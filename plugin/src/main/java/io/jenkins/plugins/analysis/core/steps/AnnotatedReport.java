@@ -9,6 +9,7 @@ import java.util.Map;
 import com.google.errorprone.annotations.FormatMethod;
 
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.util.Ensure;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
@@ -40,6 +41,8 @@ public class AnnotatedReport implements Serializable {
      *         the ID of the report
      */
     public AnnotatedReport(final String id) {
+        Ensure.that(id).isNotBlank("The ID of the report must not be empty");
+
         this.id = id;
     }
 

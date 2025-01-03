@@ -125,8 +125,9 @@ public class IssuesRecorder extends Recorder {
     @CheckForNull
     private ChecksInfo checksInfo;
 
-    private String id;
-    private String name;
+    private String id = StringUtils.EMPTY;
+    private String name = StringUtils.EMPTY;
+    private String icon = StringUtils.EMPTY; // @since 12.0.0: by default no custom icon is set
 
     private List<WarningsQualityGate> qualityGates = new ArrayList<>();
 
@@ -171,6 +172,9 @@ public class IssuesRecorder extends Recorder {
         }
         if (checksAnnotationScope == null) {
             checksAnnotationScope = publishAllIssues ? ChecksAnnotationScope.ALL : ChecksAnnotationScope.NEW;
+        }
+        if (icon == null) {
+            icon = StringUtils.EMPTY;
         }
         return this;
     }
@@ -233,6 +237,7 @@ public class IssuesRecorder extends Recorder {
     /**
      * Defines the name of the results. The name is used for all labels in the UI. If no name is given, then the name of
      * the associated {@link StaticAnalysisLabelProvider} is used.
+     *
      * <p>
      * Note: this property is not used if {@link #isAggregatingResults} is {@code false}. It is also not visible in the
      * UI in order to simplify the user interface.
@@ -248,6 +253,22 @@ public class IssuesRecorder extends Recorder {
 
     public String getName() {
         return name;
+    }
+
+    /**
+     * Defines the custom icon of the results. If no icon is given, then the default icon of
+     * the associated {@link StaticAnalysisLabelProvider} is used.
+     *
+     * @param icon
+     *         the icon of the results
+     */
+    @DataBoundSetter
+    public void setIcon(final String icon) {
+        this.icon = icon;
+    }
+
+    public String getIcon() {
+        return icon;
     }
 
     /**
@@ -632,50 +653,84 @@ public class IssuesRecorder extends Recorder {
 
     List<AnalysisResult> perform(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
             final ResultHandler resultHandler) throws InterruptedException, IOException {
+        LogHandler logHandler = new LogHandler(listener, DEFAULT_ID);
+        logHandler.setQuiet(quiet);
+
         Result overallResult = run.getResult();
         if (isEnabledForFailure || overallResult == null || overallResult.isBetterOrEqualTo(Result.UNSTABLE)) {
-            return record(run, workspace, listener, resultHandler);
+            return record(run, workspace, listener, resultHandler, logHandler);
         }
         else {
-            LogHandler logHandler = new LogHandler(listener, createLoggerPrefix());
-            logHandler.setQuiet(quiet);
             logHandler.log("Skipping execution of recorder since overall result is '%s'", overallResult);
             return Collections.emptyList();
         }
     }
 
-    private String createLoggerPrefix() {
-        return analysisTools.stream().map(Tool::getActualName).collect(Collectors.joining());
-    }
-
     private List<AnalysisResult> record(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
-            final ResultHandler resultHandler) throws IOException, InterruptedException {
+            final ResultHandler resultHandler, final LogHandler logHandler) throws IOException, InterruptedException {
+        if (analysisTools.isEmpty()) {
+            throw new IllegalStateException("No tools configured to record issues");
+        }
+
         List<AnalysisResult> results = new ArrayList<>();
-        if (isAggregatingResults && analysisTools.size() > 1) {
-            AnnotatedReport totalIssues = new AnnotatedReport(StringUtils.defaultIfEmpty(id, DEFAULT_ID));
-            for (Tool tool : analysisTools) {
-                totalIssues.add(scanWithTool(run, workspace, listener, tool), tool.getActualId());
+        if (analysisTools.size() == 1) {
+            Tool tool = analysisTools.get(0);
+
+            var customId = StringUtils.defaultIfBlank(getId(), tool.getActualId());
+            AnnotatedReport report = new AnnotatedReport(customId);
+            report.add(scanWithTool(run, workspace, listener, tool), tool.getActualId());
+
+            var customName = StringUtils.defaultIfBlank(getName(), tool.getActualName());
+            var customIcon = StringUtils.defaultIfBlank(getIcon(), tool.getIcon());
+
+            results.add(publishResult(run, workspace, listener, customName,
+                    report, customName, customIcon, resultHandler));
+
+            if (isAggregatingResults) {
+                logHandler.log("Ignoring property 'aggregatingResults' since only a single tool is defined.");
             }
-            String toolName = StringUtils.defaultIfEmpty(getName(), Messages.Tool_Default_Name());
-            results.add(publishResult(run, workspace, listener, toolName, totalIssues, toolName, resultHandler));
+            if (isNotUnique(tool)) {
+                logHandler.log("Do not set id, name, or icon for both the tool and the recorder");
+            }
         }
         else {
-            for (Tool tool : analysisTools) {
-                AnnotatedReport report = new AnnotatedReport(tool.getActualId());
-                if (isAggregatingResults) {
-                    report.logInfo("Ignoring 'aggregatingResults' and ID '%s' since only a single tool is defined.",
-                            id);
+            if (isAggregatingResults) {
+                AnnotatedReport report = new AnnotatedReport(StringUtils.defaultIfBlank(getId(), DEFAULT_ID));
+                for (Tool tool : analysisTools) {
+                    report.add(scanWithTool(run, workspace, listener, tool), tool.getActualId());
                 }
-                report.add(scanWithTool(run, workspace, listener, tool));
-                if (StringUtils.isNotBlank(id) || StringUtils.isNotBlank(name)) {
-                    report.logInfo("Ignoring name='%s' and id='%s' when publishing non-aggregating reports",
-                            name, id);
+
+                results.add(publishResult(run, workspace, listener, getCustomName(),
+                        report, getCustomName(), getIcon(), resultHandler));
+            }
+            else {
+                for (Tool tool : analysisTools) {
+                    AnnotatedReport report = new AnnotatedReport(tool.getActualId());
+                    report.add(scanWithTool(run, workspace, listener, tool));
+
+                    results.add(publishResult(run, workspace, listener, tool.getActualName(),
+                            report, getReportName(tool), tool.getIcon(), resultHandler));
                 }
-                results.add(
-                        publishResult(run, workspace, listener, tool.getActualName(), report, getReportName(tool), resultHandler));
+            }
+            if (StringUtils.isNotBlank(getId()) || !StringUtils.isNotBlank(getName()) || !StringUtils.isNotBlank(getIcon())) {
+                logHandler.log("Do not set id, name, or icon for both the tool and the recorder");
             }
         }
         return results;
+    }
+
+    private String getCustomName() {
+        return StringUtils.defaultIfBlank(getName(), Messages.Tool_Default_Name());
+    }
+
+    private boolean isNotUnique(final Tool tool) {
+        if (StringUtils.isNotBlank(getId()) && StringUtils.isNotBlank(tool.getId())) {
+            return true;
+        }
+        if (StringUtils.isNotBlank(getName()) && StringUtils.isNotBlank(tool.getName())) {
+            return true;
+        }
+        return StringUtils.isNotBlank(getIcon()) && StringUtils.isNotBlank(tool.getIcon());
     }
 
     /**
@@ -733,15 +788,18 @@ public class IssuesRecorder extends Recorder {
      *         the name of the logger
      * @param annotatedReport
      *         the analysis report to publish
-     * @param reportName
+     * @param customName
      *         the name of the report (might be empty)
+     * @param customIcon
+     *         the icon to use for the report (might be empty)
      * @param resultHandler
      *         the status handler to use
      *
      * @return the created results
      */
-    AnalysisResult publishResult(final Run<?, ?> run, final FilePath workspace, final TaskListener listener, final String loggerName,
-            final AnnotatedReport annotatedReport, final String reportName, final ResultHandler resultHandler) {
+    AnalysisResult publishResult(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
+            final String loggerName, final AnnotatedReport annotatedReport, final String customName, final String customIcon,
+            final ResultHandler resultHandler) {
         var logHandler = new LogHandler(listener, loggerName);
         logHandler.setQuiet(quiet);
 
@@ -755,7 +813,7 @@ public class IssuesRecorder extends Recorder {
 
         IssuesPublisher publisher = new IssuesPublisher(run, annotatedReport, deltaCalculator,
                 new HealthDescriptor(healthy, unhealthy, minimumSeverity), qualityGates,
-                reportName, ignoreQualityGate, getSourceCodeCharset(), logHandler, resultHandler, failOnError);
+                customName, customIcon, ignoreQualityGate, getSourceCodeCharset(), logHandler, resultHandler, failOnError);
         ResultAction action = publisher.attachAction(trendChartType);
 
         if (!skipPublishingChecks) {
@@ -783,6 +841,18 @@ public class IssuesRecorder extends Recorder {
         }
 
         private final ModelValidation model = new ModelValidation();
+
+        public String getDefaultId() {
+            return DEFAULT_ID;
+        }
+
+        public String getDefaultName() {
+            return Messages.Tool_Default_Name();
+        }
+
+        public String getDefaultIcon() {
+            return StaticAnalysisLabelProvider.ANALYSIS_SVG_ICON;
+        }
 
         @NonNull
         @Override

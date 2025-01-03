@@ -92,6 +92,7 @@ public class RecordIssuesStep extends Step implements Serializable {
 
     private String id;
     private String name;
+    private String icon = StringUtils.EMPTY; // @since 12.0.0: by default no custom icon is set
 
     private List<WarningsQualityGate> qualityGates = new ArrayList<>();
 
@@ -185,6 +186,22 @@ public class RecordIssuesStep extends Step implements Serializable {
 
     public String getName() {
         return name;
+    }
+
+    /**
+     * Defines the custom icon of the results. If no icon is given, then the default icon of
+     * the associated {@link StaticAnalysisLabelProvider} is used.
+     *
+     * @param icon
+     *         the icon of the results
+     */
+    @DataBoundSetter
+    public void setIcon(final String icon) {
+        this.icon = icon;
+    }
+
+    public String getIcon() {
+        return icon;
     }
 
     /**
@@ -635,6 +652,7 @@ public class RecordIssuesStep extends Step implements Serializable {
             recorder.setChecksAnnotationScope(step.getChecksAnnotationScope());
             recorder.setId(step.getId());
             recorder.setName(step.getName());
+            recorder.setIcon(step.getIcon());
             recorder.setQualityGates(step.getQualityGates());
             recorder.setFailOnError(step.getFailOnError());
             recorder.setTrendChartType(step.getTrendChartType());

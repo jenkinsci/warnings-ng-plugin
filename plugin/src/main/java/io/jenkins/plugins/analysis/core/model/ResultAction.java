@@ -45,8 +45,9 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
     private final HealthDescriptor healthDescriptor;
     private final String id;
     private final String name;
+    private /* almost final */ String icon;
     private final String charset;
-    private TrendChartType trendChartType;
+    private /* almost final */ TrendChartType trendChartType;
 
     /**
      * Creates a new instance of {@link ResultAction}.
@@ -61,39 +62,23 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      *         the ID of the results
      * @param name
      *         the optional name of the results
-     * @param charset
-     *         the charset to use to display source files
-     */
-    public ResultAction(final Run<?, ?> owner, final AnalysisResult result, final HealthDescriptor healthDescriptor,
-            final String id, final String name, final Charset charset) {
-        this(owner, result, healthDescriptor, id, name, charset, TrendChartType.AGGREGATION_TOOLS);
-    }
-
-    /**
-     * Creates a new instance of {@link ResultAction}.
-     *
-     * @param owner
-     *         the associated build/run that created the static analysis result
-     * @param result
-     *         the result of the static analysis run
-     * @param healthDescriptor
-     *         the health descriptor of the static analysis run
-     * @param id
-     *         the ID of the results
-     * @param name
-     *         the optional name of the results
+     * @param icon
+     *         the optional icon of the results
      * @param charset
      *         the charset to use to display source files
      * @param trendChartType
      *         determines if the trend chart will be shown
      */
+    @SuppressWarnings("checkstyle:ParameterNumber")
     public ResultAction(final Run<?, ?> owner, final AnalysisResult result, final HealthDescriptor healthDescriptor,
-            final String id, final String name, final Charset charset, final TrendChartType trendChartType) {
+            final String id, final String name, final String icon,
+            final Charset charset, final TrendChartType trendChartType) {
         this.owner = owner;
         this.result = result;
         this.healthDescriptor = healthDescriptor;
         this.id = id;
         this.name = name;
+        this.icon = icon;
         this.charset = charset.name();
         this.trendChartType = trendChartType;
     }
@@ -106,6 +91,9 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
     protected Object readResolve() {
         if (trendChartType == null) {
             trendChartType = TrendChartType.TOOLS_ONLY;
+        }
+        if (icon == null) {
+            icon = StringUtils.EMPTY;
         }
         return this;
     }
@@ -276,8 +264,10 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      *
      * @return the URL of the image
      */
-    @SuppressWarnings({"unused", "WeakerAccess"}) // Called by jelly view
     public String getSmallImage() {
+        if (StringUtils.isNotBlank(icon)) {
+            return icon;
+        }
         return getLabelProvider().getSmallIconUrl();
     }
 

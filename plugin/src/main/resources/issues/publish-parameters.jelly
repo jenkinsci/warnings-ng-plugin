@@ -7,6 +7,18 @@
 
   <i:hr title="${%Publishing Options}"/>
 
+  <f:entry title="${%title.id}" description="${%description.id(descriptor.defaultId)}" field="id">
+    <f:textbox/>
+  </f:entry>
+
+  <f:entry title="${%title.name}" description="${%description.name(descriptor.defaultName)}" field="name">
+    <f:textbox/>
+  </f:entry>
+
+  <f:entry title="${%title.icon}" description="${%description.icon(descriptor.defaultIcon)}" field="icon">
+    <f:textbox/>
+  </f:entry>
+
   <f:entry field="skipPublishingChecks" title="${%title.skipPublishingChecks}">
     <f:checkbox />
   </f:entry>

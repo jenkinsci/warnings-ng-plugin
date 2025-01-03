@@ -13,4 +13,8 @@
     <f:textbox/>
   </f:entry>
 
+  <f:entry title="${%title.icon}" description="${%description.icon(descriptor.icon)}" field="icon">
+    <f:textbox/>
+  </f:entry>
+
 </j:jelly>

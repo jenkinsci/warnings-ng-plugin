@@ -15,6 +15,7 @@ import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import jenkins.model.Jenkins;
 
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.steps.WarningChecksPublisher.ChecksAnnotationScope;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
 import io.jenkins.plugins.prism.SourceCodeRetention;
@@ -22,7 +23,7 @@ import io.jenkins.plugins.util.JenkinsFacade;
 import io.jenkins.plugins.util.ValidationUtilities;
 
 /**
- * Descriptor base class for all analysis steps. Provides generic validation methods, and list box models for UI select
+ * Descriptor base class for all analysis steps. Provides generic validation methods and list box models for UI select
  * elements.
  *
  * @author Ullrich Hafner
@@ -31,6 +32,18 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
     private static final ValidationUtilities VALIDATION_UTILITIES = new ValidationUtilities();
     private static final JenkinsFacade JENKINS = new JenkinsFacade();
     private final ModelValidation model = new ModelValidation();
+
+    public String getDefaultId() {
+        return IssuesRecorder.DEFAULT_ID;
+    }
+
+    public String getDefaultName() {
+        return Messages.Tool_Default_Name();
+    }
+
+    public String getDefaultIcon() {
+        return StaticAnalysisLabelProvider.ANALYSIS_SVG_ICON;
+    }
 
     /**
      * Returns a model with all available charsets.
