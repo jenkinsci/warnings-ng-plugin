@@ -89,7 +89,7 @@ public class IssuesAggregator extends MatrixAggregator {
         resultsPerTool.forEachKeyMultiValues((tool, reports) -> {
             AnnotatedReport aggregatedReport = new AnnotatedReport(tool, reports);
             recorder.publishResult(build, build.getWorkspace(), listener, Messages.Tool_Default_Name(),
-                    aggregatedReport, StringUtils.EMPTY, new RunResultHandler(build));
+                    aggregatedReport, StringUtils.EMPTY, recorder.getIcon(), new RunResultHandler(build));
         });
         return true;
     }

@@ -56,6 +56,10 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     private static final Pattern TAG_REGEX = Pattern.compile(">(.+?)</", Pattern.DOTALL);
     private static final String CHECKSTYLE = "checkstyle";
+    private static final String CUSTOM_ID = "custom-id";
+    private static final String CUSTOM_NAME = "custom-name";
+    private static final String CUSTOM_ICON = "custom.png";
+    private static final String CHECKSTYLE_ICON = "checkstyle.svg";
 
     /**
      * Verifies that {@link FindBugs} handles the different severity mapping modes ({@link PriorityProperty}).
@@ -141,50 +145,83 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldCreateResultWithDifferentNameAndId() {
-        FreeStyleProject project = createFreestyleJob("eclipse.txt");
-        ReportScanningTool configuration = configurePattern(new Eclipse());
-        String id = "new-id";
-        configuration.setId(id);
-        String name = "new-name";
-        configuration.setName(name);
-        enableGenericWarnings(project, configuration);
+        var project = createFreestyleJob("eclipse.txt");
 
-        Run<?, ?> build = buildWithResult(project, Result.SUCCESS);
+        var tool = configurePattern(new Eclipse());
+        tool.setId(CUSTOM_ID);
+        tool.setName(CUSTOM_NAME);
 
-        ResultAction action = getResultAction(build);
-        assertThat(action.getId()).isEqualTo(id);
-        assertThat(action.getDisplayName()).startsWith(name);
+        enableGenericWarnings(project, tool);
+
+        var action = getResultAction(buildWithResult(project, Result.SUCCESS));
+        assertThat(action.getId()).isEqualTo(CUSTOM_ID);
+        assertThat(action.getDisplayName()).startsWith(CUSTOM_NAME);
+        assertThat(action.getIconFileName()).contains("triangle-exclamation");
     }
 
-    /**
-     * Runs the CheckStyle parser and changes name and ID and icon.
-     */
     @Test
     @org.junitpioneer.jupiter.Issue("JENKINS-73636, JENKINS-72777")
-    void shouldCreateResultWithCorrectIcon() {
-        var checkstyleImage = "checkstyle.svg";
+    void shouldCreateResultWithDefaultIcon() {
+        var project = createFreestyleJob("checkstyle.xml");
 
-        FreeStyleProject project = createFreestyleJob("checkstyle.xml");
-        ReportScanningTool configuration = configurePattern(new CheckStyle());
-        enableGenericWarnings(project, configuration);
+        var tool = configurePattern(new CheckStyle());
+        enableGenericWarnings(project, tool);
 
-        ResultAction checkstyle = getResultAction(buildWithResult(project, Result.SUCCESS));
-        assertThat(checkstyle.getId()).isEqualTo("checkstyle");
-        assertThat(checkstyle.getDisplayName()).startsWith("CheckStyle");
-        assertThat(checkstyle.getIconFileName()).endsWith(checkstyleImage);
+        var action = getResultAction(buildWithResult(project, Result.SUCCESS));
+        assertThat(action.getId()).isEqualTo("checkstyle");
+        assertThat(action.getDisplayName()).startsWith("CheckStyle");
+        assertThat(action.getIconFileName()).endsWith(CHECKSTYLE_ICON);
+    }
 
-        project.getPublishersList().clear();
+    @Test
+    @org.junitpioneer.jupiter.Issue("JENKINS-73636, JENKINS-72777")
+    void shouldCreateResultWithCorrectIconAndCustomId() {
+        var project = createFreestyleJob("checkstyle.xml");
 
-        String changedId = "new-id";
-        configuration.setId(changedId);
-        String changedName = "new-name";
-        configuration.setName(changedName);
-        enableGenericWarnings(project, configuration);
+        var tool = configurePattern(new CheckStyle());
+        tool.setId(CUSTOM_ID);
+        tool.setName(CUSTOM_NAME);
 
-        ResultAction changedProperties = getResultAction(buildWithResult(project, Result.SUCCESS));
-        assertThat(changedProperties.getId()).isEqualTo(changedId);
-        assertThat(changedProperties.getDisplayName()).startsWith(changedName);
-        assertThat(checkstyle.getIconFileName()).endsWith(checkstyleImage);
+        enableGenericWarnings(project, tool);
+
+        var action = getResultAction(buildWithResult(project, Result.SUCCESS));
+        assertThat(action.getId()).isEqualTo(CUSTOM_ID);
+        assertThat(action.getDisplayName()).startsWith(CUSTOM_NAME);
+        assertThat(action.getIconFileName()).endsWith(CHECKSTYLE_ICON);
+    }
+
+    @Test
+    @org.junitpioneer.jupiter.Issue("JENKINS-73636, JENKINS-72777")
+    void shouldCreateResultWithCorrectIconInTool() {
+        var project = createFreestyleJob("checkstyle.xml");
+
+        var tool = configurePattern(new CheckStyle());
+        tool.setId(CUSTOM_ID);
+        tool.setName(CUSTOM_NAME);
+        tool.setIcon(CUSTOM_ICON);
+
+        enableGenericWarnings(project, tool);
+
+        var action = getResultAction(buildWithResult(project, Result.SUCCESS));
+        assertThat(action.getId()).isEqualTo(CUSTOM_ID);
+        assertThat(action.getDisplayName()).startsWith(CUSTOM_NAME);
+        assertThat(action.getIconFileName()).isEqualTo(CUSTOM_ICON);
+    }
+
+    @Test
+    @org.junitpioneer.jupiter.Issue("JENKINS-73636, JENKINS-72777")
+    void shouldCreateResultWithCorrectIconInRecorder() {
+        var project = createFreestyleJob("checkstyle.xml");
+
+        var recorder = enableGenericWarnings(project, configurePattern(new CheckStyle()));
+        recorder.setId(CUSTOM_ID);
+        recorder.setName(CUSTOM_NAME);
+        recorder.setIcon(CUSTOM_ICON);
+
+        ResultAction action = getResultAction(buildWithResult(project, Result.SUCCESS));
+        assertThat(action.getId()).isEqualTo(CUSTOM_ID);
+        assertThat(action.getDisplayName()).startsWith(CUSTOM_NAME);
+        assertThat(action.getIconFileName()).isEqualTo(CUSTOM_ICON);
     }
 
     /**

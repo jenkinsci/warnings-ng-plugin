@@ -41,6 +41,7 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
 
     private String id = StringUtils.EMPTY;
     private String name = StringUtils.EMPTY;
+    private String icon = StringUtils.EMPTY; // @since 12.0.0: by default no custom icon is set
 
     private JenkinsFacade jenkins = new JenkinsFacade();
 
@@ -56,6 +57,10 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
      */
     protected Object readResolve() {
         jenkins = new JenkinsFacade();
+
+        if (icon == null) {
+            icon = StringUtils.EMPTY;
+        }
 
         return this;
     }
@@ -121,6 +126,21 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
     }
 
     /**
+     * Defines the custom icon of the tool. If no icon is given, then the default icon of the tool is used.
+     *
+     * @param icon
+     *         the icon of the tool
+     */
+    @DataBoundSetter
+    public void setIcon(final String icon) {
+        this.icon = icon;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    /**
      * Returns the {@link Symbol} name of this tool.
      *
      * @return the name of this tool, or "undefined" if no symbol has been defined
@@ -149,7 +169,7 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
 
     /**
      * Scans the results of a build for issues. This method is invoked on Jenkins master. I.e., if a tool wants to
-     * process some build results it is required to run a {@link MasterToSlaveCallable}.
+     * process some build results, it is required to run a {@link MasterToSlaveCallable}.
      *
      * @param run
      *         the build
@@ -162,9 +182,9 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
      *
      * @return the created report
      * @throws ParsingException
-     *         Signals that during parsing a non recoverable error has been occurred
+     *         signals that during parsing a non-recoverable error has been occurred
      * @throws ParsingCanceledException
-     *         Signals that the parsing has been aborted by the user
+     *         signals that the user has aborted the parsing
      */
     public abstract Report scan(Run<?, ?> run, FilePath workspace, Charset sourceCodeEncoding, LogHandler logger)
             throws ParsingException, ParsingCanceledException;
@@ -244,6 +264,10 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
          */
         public StaticAnalysisLabelProvider getLabelProvider() {
             return new StaticAnalysisLabelProvider(getId(), getDisplayName());
+        }
+
+        public String getIcon() {
+            return getLabelProvider().getSmallIconUrl();
         }
 
         /**

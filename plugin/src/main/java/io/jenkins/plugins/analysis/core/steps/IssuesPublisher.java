@@ -49,6 +49,7 @@ class IssuesPublisher {
     private final DeltaCalculator deltaCalculator;
     private final HealthDescriptor healthDescriptor;
     private final String name;
+    private final String icon;
     private final Charset sourceCodeEncoding;
     private final List<WarningsQualityGate> qualityGates;
     private final QualityGateEvaluationMode qualityGateEvaluationMode;
@@ -59,13 +60,14 @@ class IssuesPublisher {
     @SuppressWarnings("ParameterNumber")
     IssuesPublisher(final Run<?, ?> run, final AnnotatedReport report, final DeltaCalculator deltaCalculator,
             final HealthDescriptor healthDescriptor, final List<WarningsQualityGate> qualityGates,
-            final String name, final boolean ignoreQualityGate, final Charset sourceCodeEncoding,
+            final String name, final String icon, final boolean ignoreQualityGate, final Charset sourceCodeEncoding,
             final LogHandler logger, final ResultHandler notifier, final boolean failOnErrors) {
         this.report = report;
         this.run = run;
         this.deltaCalculator = deltaCalculator;
         this.healthDescriptor = healthDescriptor;
         this.name = name;
+        this.icon = icon;
         this.sourceCodeEncoding = sourceCodeEncoding;
         this.qualityGates = qualityGates;
         qualityGateEvaluationMode = ignoreQualityGate ? IGNORE_QUALITY_GATE : SUCCESSFUL_QUALITY_GATE;
@@ -120,8 +122,8 @@ class IssuesPublisher {
                         previous))
                 .orElseGet(() -> new AnalysisResult(run, getId(), deltaReport, report.getBlames(),
                         report.getStatistics(), qualityGateResult, report.getSizeOfOrigin()));
-        ResultAction action
-                = new ResultAction(run, result, healthDescriptor, getId(), name, sourceCodeEncoding, trendChartType);
+        ResultAction action = new ResultAction(run, result, healthDescriptor, getId(), name, icon,
+                sourceCodeEncoding, trendChartType);
         run.addAction(action);
 
         if (trendChartType == TrendChartType.TOOLS_AGGREGATION || trendChartType == TrendChartType.AGGREGATION_ONLY) {
