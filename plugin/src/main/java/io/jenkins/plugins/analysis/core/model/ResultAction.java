@@ -7,12 +7,17 @@ import java.util.Collections;
 
 import org.apache.commons.lang3.StringUtils;
 
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.util.Generated;
+import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import org.kohsuke.stapler.StaplerProxy;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
+import org.jvnet.localizer.Localizable;
 import hudson.model.Action;
 import hudson.model.HealthReport;
 import hudson.model.HealthReportingAction;
@@ -265,9 +270,6 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      * @return the URL of the image
      */
     public String getSmallImage() {
-        if (StringUtils.isNotBlank(icon)) {
-            return icon;
-        }
         return getLabelProvider().getSmallIconUrl();
     }
 
@@ -304,7 +306,12 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      * @return the label provider for this tool
      */
     public StaticAnalysisLabelProvider getLabelProvider() {
-        return new LabelProviderFactory().create(getParserId(), name);
+        var registeredLabelProvider = new LabelProviderFactory().create(getParserId(), name);
+        if (StringUtils.isBlank(icon)) {
+            return registeredLabelProvider;
+        }
+
+        return new CustomIconLabelProvider(registeredLabelProvider, icon);
     }
 
     private String getParserId() {
@@ -335,5 +342,99 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
     public String resetReference() {
         // Empty method as workaround for Stapler bug that does not find JavaScript proxy methods in target object IssueDetail
         return "{}";
+    }
+
+    private static class CustomIconLabelProvider extends StaticAnalysisLabelProvider {
+        @Override
+        public DetailsTableModel getIssuesModel(final Run<?, ?> build, final String url, final Report report) {
+            return decorated.getIssuesModel(build, url, report);
+        }
+
+        @Override
+        public DefaultAgeBuilder getAgeBuilder(final Run<?, ?> owner, final String url) {
+            return decorated.getAgeBuilder(owner, url);
+        }
+
+        @Override
+        public FileNameRenderer getFileNameRenderer(final Run<?, ?> owner) {
+            return decorated.getFileNameRenderer(owner);
+        }
+
+        @VisibleForTesting
+        @Override
+        public String getDefaultName() {
+            return decorated.getDefaultName();
+        }
+
+        @Override
+        public String getId() {
+            return decorated.getId();
+        }
+
+        @Override
+        public String getName() {
+            return decorated.getName();
+        }
+
+        @Override
+        public StaticAnalysisLabelProvider setName(@CheckForNull final String name) {
+            return decorated.setName(name);
+        }
+
+        @Override
+        @Generated
+        public String toString() {
+            return decorated.toString();
+        }
+
+        @Override
+        public String getLinkName() {
+            return decorated.getLinkName();
+        }
+
+        @Override
+        public String getTrendName() {
+            return decorated.getTrendName();
+        }
+
+        @Override
+        public String getToolTip(final int numberOfItems) {
+            return decorated.getToolTip(numberOfItems);
+        }
+
+        @Override
+        public Localizable getToolTipLocalizable(final int numberOfItems) {
+            return decorated.getToolTipLocalizable(numberOfItems);
+        }
+
+        @Override
+        public String getDescription(final Issue issue) {
+            return decorated.getDescription(issue);
+        }
+
+        @Override
+        public String getSourceCodeDescription(final Run<?, ?> build, final Issue issue) {
+            return decorated.getSourceCodeDescription(build, issue);
+        }
+
+        private final StaticAnalysisLabelProvider decorated;
+        private final String icon;
+
+        CustomIconLabelProvider(final StaticAnalysisLabelProvider decorated, final String icon) {
+            super(decorated.getId(), decorated.getName());
+            this.decorated = decorated;
+
+            this.icon = icon;
+        }
+
+        @Override
+        public String getSmallIconUrl() {
+            return icon;
+        }
+
+        @Override
+        public String getLargeIconUrl() {
+            return icon;
+        }
     }
 }
