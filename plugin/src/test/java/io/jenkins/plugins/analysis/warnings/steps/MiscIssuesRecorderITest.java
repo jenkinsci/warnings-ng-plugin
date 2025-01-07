@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
-import edu.hm.hafner.analysis.parser.findbugs.FindBugsParser.PriorityProperty;
+import edu.hm.hafner.analysis.parser.FindBugsParser.PriorityProperty;
 
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
