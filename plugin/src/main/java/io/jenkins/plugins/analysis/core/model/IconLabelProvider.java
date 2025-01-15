@@ -18,6 +18,18 @@ public class IconLabelProvider extends StaticAnalysisLabelProvider {
      *         the ID (i.e., URL)
      * @param name
      *         the name of the tool
+     */
+    public IconLabelProvider(final String id, final String name) {
+        this(id, name, EMPTY_DESCRIPTION);
+    }
+
+    /**
+     * Creates a new label provider with the specified ID and name.
+     *
+     * @param id
+     *         the ID (i.e., URL)
+     * @param name
+     *         the name of the tool
      * @param descriptionProvider
      *         provides additional descriptions for an issue
      */
