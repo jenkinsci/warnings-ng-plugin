@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
-import edu.hm.hafner.analysis.parser.FindBugsParser.PriorityProperty;
 
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
@@ -62,7 +61,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String CHECKSTYLE_ICON = "checkstyle.svg";
 
     /**
-     * Verifies that {@link FindBugs} handles the different severity mapping modes ({@link PriorityProperty}).
+     * Verifies that {@link FindBugs} handles the different severity mapping modes.
      */
     @Test @org.junitpioneer.jupiter.Issue("JENKINS-55514")
     void shouldMapSeverityFilterForFindBugs() {
