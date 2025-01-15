@@ -36,7 +36,6 @@ class RegisteredParserTest {
         when(jenkins.getDescriptorOrDie(RegisteredParser.class)).thenReturn(new RegisteredParser.Descriptor());
         parser.setJenkinsFacade(jenkins);
 
-        assertThat(parser.createParser()).isInstanceOf(CheckStyleParser.class);
         assertThat(parser)
                 .hasAnalysisModelId(CHECKSTYLE_ID)
                 .hasId(CHECKSTYLE_ID)

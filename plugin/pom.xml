@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>10.0.0</version>
+    <version>10.2.0</version>
     <relativePath />
   </parent>
 
@@ -47,21 +47,19 @@
     <changelist>-SNAPSHOT</changelist>
     <module.name>${project.groupId}.warnings.ng</module.name>
 
-    <analysis-model-api.version> 13.0.0-rc852.f04104a_881e9</analysis-model-api.version>
-    <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
+    <analysis-model-api.version>13.0.0-rc852.f04104a_881e9</analysis-model-api.version>
+    <analysis-model-tests.version>13.0.0-rc5991.66662b_93493c</analysis-model-tests.version>
     <pull-request-monitoring.version>335.v525cd64ec76b_</pull-request-monitoring.version>
 
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
 
     <!-- Test Library Dependencies Versions -->
     <xmlunit.version>2.10.0</xmlunit.version>
-    <jsoup.version>1.18.1</jsoup.version>
+    <jsoup.version>1.18.3</jsoup.version>
     <jmh.version>1.37</jmh.version>
     <testcontainers.version>1.20.3</testcontainers.version>
 
     <!-- Jenkins Plug-in Dependencies Versions -->
-    <git-forensics.version>2.2.1</git-forensics.version>
-
     <flexible-publish.version>0.15.2</flexible-publish.version>
     <form-element-path.version>1.11</form-element-path.version>
 
@@ -73,12 +71,6 @@
 
   <dependencies>
 
-    <!-- Temporary -->
-    <dependency>
-      <groupId>edu.hm.hafner</groupId>
-      <artifactId>analysis-model</artifactId>
-      <version>${analysis-model-api.version}</version>
-    </dependency>
     <!-- Project Library Dependencies -->
     <dependency>
       <groupId>org.eclipse.collections</groupId>
@@ -99,8 +91,13 @@
     <!-- Required Jenkins Plug-in Dependencies -->
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
+      <artifactId>analysis-model-api</artifactId>
+      <version>${analysis-model-api.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
       <artifactId>plugin-util-api</artifactId>
-      <version>6.0.0-SNAPSHOT</version>
+      <version>6.0.0-rc1031.7a_4203d33c1f</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
@@ -225,7 +222,6 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>git-forensics</artifactId>
-      <version>${git-forensics.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -306,7 +302,7 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>plugin-util-api</artifactId>
-      <version>5.1.0</version>
+      <version>6.0.0-rc1031.7a_4203d33c1f</version>
       <classifier>tests</classifier>
       <scope>test</scope>
       <exclusions>
