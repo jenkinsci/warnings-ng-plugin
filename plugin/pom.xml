@@ -47,7 +47,7 @@
     <changelist>-SNAPSHOT</changelist>
     <module.name>${project.groupId}.warnings.ng</module.name>
 
-    <analysis-model-api.version>13.0.0-SNAPSHOT</analysis-model-api.version>
+    <analysis-model-api.version> 13.0.0-rc852.f04104a_881e9</analysis-model-api.version>
     <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
     <pull-request-monitoring.version>335.v525cd64ec76b_</pull-request-monitoring.version>
 
