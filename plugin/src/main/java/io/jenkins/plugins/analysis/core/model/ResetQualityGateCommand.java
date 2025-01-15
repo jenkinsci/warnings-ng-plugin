@@ -16,6 +16,7 @@ import io.jenkins.plugins.util.JenkinsFacade;
  * build (started automatically or manually) will not evaluate a quality gate that considers the number of new warnings.
  * This helps to start over from a clean state if the number of new warnings have been increased accidentally. Otherwise
  * you won't get a successful build anymore until all new warnings have been fixed.
+ *
  * <p>
  * Technically, this command just adds a marker action to the selected build. Once a new build is running, this marker
  * action will be checked for existence and the quality gate will be bypassed for one single build.

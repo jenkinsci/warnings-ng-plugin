@@ -151,6 +151,7 @@ public class IssuesRecorder extends Recorder {
      *
      * @return this
      */
+    @SuppressWarnings("PMD.NPathComplexity")
     protected Object readResolve() {
         if (sourceDirectories == null) {
             sourceDirectories = new HashSet<>();
@@ -215,6 +216,7 @@ public class IssuesRecorder extends Recorder {
     /**
      * Defines the ID of the results. The ID is used as URL of the results and as name in UI elements. If no ID is
      * given, then the ID of the associated result object is used.
+     *
      * <p>
      * Note: this property is not used if {@link #isAggregatingResults} is {@code false}. It is also not visible in the
      * UI in order to simplify the user interface.
@@ -666,6 +668,7 @@ public class IssuesRecorder extends Recorder {
         }
     }
 
+    @SuppressWarnings("PMD.CognitiveComplexity")
     private List<AnalysisResult> record(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
             final ResultHandler resultHandler, final LogHandler logHandler) throws IOException, InterruptedException {
         if (analysisTools.isEmpty()) {
@@ -727,10 +730,8 @@ public class IssuesRecorder extends Recorder {
         if (StringUtils.isNotBlank(getId()) && StringUtils.isNotBlank(tool.getId())) {
             return true;
         }
-        if (StringUtils.isNotBlank(getName()) && StringUtils.isNotBlank(tool.getName())) {
-            return true;
-        }
-        return StringUtils.isNotBlank(getIcon()) && StringUtils.isNotBlank(tool.getIcon());
+        return StringUtils.isNotBlank(getName()) && StringUtils.isNotBlank(tool.getName())
+                || StringUtils.isNotBlank(getIcon()) && StringUtils.isNotBlank(tool.getIcon());
     }
 
     /**
