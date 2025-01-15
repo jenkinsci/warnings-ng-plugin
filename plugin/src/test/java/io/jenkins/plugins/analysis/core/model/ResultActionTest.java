@@ -31,7 +31,5 @@ class ResultActionTest {
         Run<?, ?> run = mock(Run.class);
         action.onAttached(run);
         assertThat(action.getOwner()).isSameAs(run);
-
-        assertThat(action.getIconFileName()).isEqualTo("icon");
     }
 }

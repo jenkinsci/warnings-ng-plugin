@@ -797,9 +797,10 @@ public class IssuesRecorder extends Recorder {
      *
      * @return the created results
      */
+    @SuppressWarnings("checkstyle:ParameterNumber")
     AnalysisResult publishResult(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
-            final String loggerName, final AnnotatedReport annotatedReport, final String customName, final String customIcon,
-            final ResultHandler resultHandler) {
+            final String loggerName, final AnnotatedReport annotatedReport, final String customName,
+            final String customIcon, final ResultHandler resultHandler) {
         var logHandler = new LogHandler(listener, loggerName);
         logHandler.setQuiet(quiet);
 
