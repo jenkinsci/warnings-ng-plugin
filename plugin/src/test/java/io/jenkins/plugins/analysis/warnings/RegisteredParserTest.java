@@ -5,8 +5,6 @@ import java.util.NoSuchElementException;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import edu.hm.hafner.analysis.parser.checkstyle.CheckStyleParser;
-
 import jenkins.model.Jenkins;
 
 import io.jenkins.plugins.analysis.warnings.RegisteredParser.Descriptor;
