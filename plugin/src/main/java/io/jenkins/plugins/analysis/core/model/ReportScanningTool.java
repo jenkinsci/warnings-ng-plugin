@@ -51,6 +51,7 @@ public abstract class ReportScanningTool extends Tool {
     private String pattern = StringUtils.EMPTY;
     private String reportEncoding = StringUtils.EMPTY;
     private boolean skipSymbolicLinks = false;
+    private int linesLookAhead = 3;
 
     /**
      * Sets the Ant file-set pattern of files to work with. If the pattern is undefined, then the console log is
@@ -131,6 +132,15 @@ public abstract class ReportScanningTool extends Tool {
     @CheckForNull
     public String getReportEncoding() {
         return reportEncoding;
+    }
+
+    @DataBoundSetter
+    public void setLinesLookAhead(final int linesLookAhead) {
+        this.linesLookAhead = linesLookAhead;
+    }
+
+    public int getLinesLookAhead() {
+        return linesLookAhead;
     }
 
     @Override
