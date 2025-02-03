@@ -38,6 +38,7 @@ import jenkins.MasterToSlaveFileCallable;
 
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.ReportLocations;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
@@ -148,9 +149,13 @@ class IssuesScanner {
     }
 
     private ReportPostProcessor createPostProcessor(final Report report) {
+        int linesLookAhead = -1;
+        if (tool instanceof ReportScanningTool) {
+            linesLookAhead = ((ReportScanningTool) tool).getLinesLookAhead();
+        }
         return new ReportPostProcessor(tool.getActualId(), report, sourceCodeEncoding.name(),
                 createBlamer(report), filters, getPermittedSourceDirectories(), sourceDirectories,
-                postProcessingMode);
+                postProcessingMode, linesLookAhead);
     }
 
     private Set<String> getPermittedSourceDirectories() {
@@ -261,11 +266,12 @@ class IssuesScanner {
         private final Set<String> requestedSourceDirectories;
         private final PostProcessingMode postProcessingMode;
         private final List<RegexpFilter> filters;
+        private final int linesLookAhead;
 
         @SuppressWarnings("checkstyle:ParameterNumber")
         ReportPostProcessor(final String id, final Report report, final String sourceCodeEncoding,
                 final Blamer blamer, final List<RegexpFilter> filters, final Set<String> permittedSourceDirectories,
-                final Set<String> requestedSourceDirectories, final PostProcessingMode postProcessingMode) {
+                final Set<String> requestedSourceDirectories, final PostProcessingMode postProcessingMode, final int linesLookAhead) {
             super();
 
             this.id = id;
@@ -276,6 +282,7 @@ class IssuesScanner {
             this.permittedSourceDirectories = permittedSourceDirectories;
             this.requestedSourceDirectories = requestedSourceDirectories;
             this.postProcessingMode = postProcessingMode;
+            this.linesLookAhead = linesLookAhead;
         }
 
         @Override
@@ -365,7 +372,13 @@ class IssuesScanner {
             report.logInfo("Creating fingerprints for all affected code blocks to track issues over different builds");
 
             FingerprintGenerator generator = new FingerprintGenerator();
-            generator.run(new FullTextFingerprint(), report, getCharset());
+            if (linesLookAhead < 0) {
+                //Empty constructor defaults context lines to 3
+                generator.run(new FullTextFingerprint(), report, getCharset());
+            }
+            else {
+                generator.run(new FullTextFingerprint(linesLookAhead), report, getCharset());
+            }
         }
     }
 
