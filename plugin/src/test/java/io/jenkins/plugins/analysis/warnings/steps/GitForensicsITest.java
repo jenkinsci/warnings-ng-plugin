@@ -3,6 +3,7 @@ package io.jenkins.plugins.analysis.warnings.steps;
 import java.io.IOException;
 import java.util.Collections;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
@@ -25,6 +26,7 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  *
  * @author Ullrich Hafner
  */
+@Disabled("This test is failing without latest Git Forensics plugin")
 class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String JAVA_ONE_WARNING = "java-start-rev0.txt";
     private static final String PUBLISH_ISSUES_STEP = "publishIssues issues:[issues]";
