@@ -35,6 +35,11 @@
     <f:combobox/>
   </f:entry>
 
+  <f:entry title="${%title.configureContextLines}" field="linesLookAhead"
+           help="${descriptor.getHelpFile('contextLines')}">
+    <f:number default="3" min="0"/>
+  </f:entry>
+
   <st:include class="${descriptor.clazz}" page="local-config.jelly" optional="true"/>
 
   <i:tool-defaults/>

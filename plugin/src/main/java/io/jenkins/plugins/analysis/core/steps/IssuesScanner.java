@@ -373,7 +373,7 @@ class IssuesScanner {
 
             FingerprintGenerator generator = new FingerprintGenerator();
             if (linesLookAhead < 0) {
-                //Empty constructor defaults context lines to 3
+                // no-arg constructor defaults context lines to 3
                 generator.run(new FullTextFingerprint(), report, getCharset());
             }
             else {
