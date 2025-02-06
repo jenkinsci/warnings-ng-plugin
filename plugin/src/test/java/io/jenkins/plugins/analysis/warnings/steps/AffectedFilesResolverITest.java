@@ -53,7 +53,6 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String ECLIPSE_REPORT_ONE_AFFECTED_AFFECTED_FILE = FOLDER + "/eclipseOneAffectedFile.txt";
     private static final int ROW_NUMBER_ACTUAL_AFFECTED_FILE = 0;
     private static final String COPY_FILES = "Copying affected files to Jenkins' build folder";
-    private static final String ZIP = ".zip";
 
     /**
      * Verifies that the affected source code is copied and shown in the source code view. If the file is deleted in the
@@ -178,12 +177,7 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
 
         String consoleLog = getConsoleLog(result);
         assertThat(consoleLog).contains("0 copied");
-        if (isWindows() && Runtime.version().feature() < 21) { // In Windows, a file does not exist if it is unreadable
-            assertThat(consoleLog).contains("4 not-found", "0 with I/O error");
-        }
-        else {
-            assertThat(consoleLog).contains("3 not-found", "1 with I/O error");
-        }
+        assertThat(consoleLog).contains("3 not-found", "1 with I/O error");
     }
 
     /**
