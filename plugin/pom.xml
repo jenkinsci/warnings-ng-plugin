@@ -5,13 +5,13 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>10.2.0</version>
+    <version>10.4.0</version>
     <relativePath />
   </parent>
 
   <groupId>io.jenkins.plugins</groupId>
   <artifactId>warnings-ng</artifactId>
-  <version>${revision}${changelist}</version>
+  <version>12.0.0-SNAPSHOT</version>
   <packaging>hpi</packaging>
   <name>Warnings Plugin</name>
 
@@ -43,8 +43,6 @@
   </scm>
 
   <properties>
-    <revision>12.0.0</revision>
-    <changelist>-SNAPSHOT</changelist>
     <module.name>${project.groupId}.warnings.ng</module.name>
 
     <analysis-model-api.version>13.0.0-rc852.f04104a_881e9</analysis-model-api.version>
@@ -227,6 +225,8 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>git-forensics</artifactId>
+      <!-- TODO: remove the version when a matching BOM is available -->
+      <version>3.1.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
