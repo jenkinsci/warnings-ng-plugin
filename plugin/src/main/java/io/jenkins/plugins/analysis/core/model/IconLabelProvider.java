@@ -20,7 +20,7 @@ public class IconLabelProvider extends StaticAnalysisLabelProvider {
      *         the name of the tool
      */
     public IconLabelProvider(final String id, final String name) {
-        this(id, name, EMPTY_DESCRIPTION, id);
+        this(id, name, EMPTY_DESCRIPTION);
     }
 
     /**

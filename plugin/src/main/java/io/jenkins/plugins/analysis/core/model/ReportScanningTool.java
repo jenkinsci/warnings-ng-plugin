@@ -50,11 +50,10 @@ public abstract class ReportScanningTool extends Tool {
 
     private String pattern = StringUtils.EMPTY;
     private String reportEncoding = StringUtils.EMPTY;
-    // Use negative case to allow defaulting to false and defaulting to existing behaviour.
     private boolean skipSymbolicLinks = false;
 
     /**
-     * Sets the Ant file-set pattern of files to work with. If the pattern is undefined then the console log is
+     * Sets the Ant file-set pattern of files to work with. If the pattern is undefined, then the console log is
      * scanned.
      *
      * @param pattern
@@ -95,7 +94,7 @@ public abstract class ReportScanningTool extends Tool {
     public abstract IssueParser createParser();
 
     /**
-     * Specify if file scanning skip traversal of symbolic links.
+     * Specify if the file scanning step should skip the traversal of symbolic links.
      *
      * @param skipSymbolicLinks
      *         if symbolic links should be skipped during directory scanning.
@@ -180,6 +179,7 @@ public abstract class ReportScanningTool extends Tool {
 
             List<Report> results = report.getResults();
             Report aggregation;
+            // FIXME: properties are not set in the aggregation
             if (results.isEmpty()) {
                 aggregation = new Report();
             }

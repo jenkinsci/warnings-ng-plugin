@@ -75,6 +75,7 @@ public class PublishIssuesStep extends Step implements Serializable {
 
     private String id = StringUtils.EMPTY;
     private String name = StringUtils.EMPTY;
+    private String icon = StringUtils.EMPTY; // @since 12.0.0: by default no custom icon is set
     private String scm = StringUtils.EMPTY;
 
     /**
@@ -134,6 +135,22 @@ public class PublishIssuesStep extends Step implements Serializable {
 
     public String getName() {
         return name;
+    }
+
+    /**
+     * Defines the custom icon of the results. If no icon is given, then the default icon of
+     * the associated {@link StaticAnalysisLabelProvider} is used.
+     *
+     * @param icon
+     *         the icon of the results
+     */
+    @DataBoundSetter
+    public void setIcon(final String icon) {
+        this.icon = icon;
+    }
+
+    public String getIcon() {
+        return icon;
     }
 
     /**
@@ -436,7 +453,7 @@ public class PublishIssuesStep extends Step implements Serializable {
             IssuesPublisher publisher = new IssuesPublisher(getRun(), report,
                     deltaCalculator, new HealthDescriptor(step.getHealthy(), step.getUnhealthy(),
                             step.getMinimumSeverityAsSeverity()), step.getQualityGates(),
-                    StringUtils.defaultString(step.getName()), step.getIgnoreQualityGate(),
+                    StringUtils.defaultString(step.getName()), step.getIcon(), step.getIgnoreQualityGate(),
                     getCharset(step.getSourceCodeEncoding()), getLogger(report), createResultHandler(), step.getFailOnError());
             ResultAction action = publisher.attachAction(step.getTrendChartType());
 

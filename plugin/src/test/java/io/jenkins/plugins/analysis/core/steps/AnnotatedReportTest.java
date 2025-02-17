@@ -67,8 +67,8 @@ class AnnotatedReportTest {
     @Test
     void addTwoReportsWithActualIdToAnEmptyAnnotatedReport() {
         AnnotatedReport sut = new AnnotatedReport("sut");
-        sut.add(new AnnotatedReport(null, REPORT1), "report-1");
-        sut.add(new AnnotatedReport(null, REPORT2), "report-2");
+        sut.add(new AnnotatedReport("r1", REPORT1), "report-1");
+        sut.add(new AnnotatedReport("r1", REPORT2), "report-2");
 
         assertThat(sut.getSizeOfOrigin()).containsOnly(entry("report-1", 1), entry("report-2", 2));
         assertThreeIssuesOfReport(sut);

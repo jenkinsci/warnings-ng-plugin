@@ -38,7 +38,7 @@ class IssuesAggregatorTest {
 
     @Test
     void shouldHandleBuildWithoutActions() {
-        IssuesRecorder recorder = mock(IssuesRecorder.class);
+        IssuesRecorder recorder = createRecorder();
         IssuesAggregator aggregator = createIssueAggregator(recorder);
 
         MatrixRun build = createBuild(AXIS_WINDOWS);
@@ -50,12 +50,12 @@ class IssuesAggregatorTest {
 
         aggregator.endBuild();
 
-        verify(recorder, never()).publishResult(any(), any(), any(), anyString(), any(), anyString(), any());
+        verify(recorder, never()).publishResult(any(), any(), any(), anyString(), any(), anyString(), anyString(), any());
     }
 
     @Test
     void shouldCollectSingleResultForSingleAxis() {
-        IssuesRecorder recorder = mock(IssuesRecorder.class);
+        IssuesRecorder recorder = createRecorder();
         IssuesAggregator aggregator = createIssueAggregator(recorder);
 
         Issue warning = createIssue(PMD);
@@ -71,12 +71,12 @@ class IssuesAggregatorTest {
 
         aggregator.endBuild();
 
-        verify(recorder).publishResult(any(), any(), any(), anyString(), any(), anyString(), any());
+        verify(recorder).publishResult(any(), any(), any(), anyString(), any(), anyString(), anyString(), any());
     }
 
     @Test @org.junitpioneer.jupiter.Issue("JENKINS-59178")
     void shouldCollectDifferentResultsForTwoAxes() {
-        IssuesRecorder recorder = mock(IssuesRecorder.class);
+        IssuesRecorder recorder = createRecorder();
         IssuesAggregator aggregator = createIssueAggregator(recorder);
 
         Issue warning = createIssue(PMD);
@@ -96,12 +96,19 @@ class IssuesAggregatorTest {
 
         aggregator.endBuild();
 
-        verify(recorder, times(2)).publishResult(any(), any(), any(), anyString(), any(), anyString(), any());
+        verify(recorder, times(2))
+                .publishResult(any(), any(), any(), anyString(), any(), anyString(), anyString(), any());
+    }
+
+    private IssuesRecorder createRecorder() {
+        var recorder = mock(IssuesRecorder.class);
+        when(recorder.getIcon()).thenReturn("icon.png");
+        return recorder;
     }
 
     @Test
     void shouldCollectMultipleToolsOneAxis() {
-        IssuesRecorder recorder = mock(IssuesRecorder.class);
+        IssuesRecorder recorder = createRecorder();
         IssuesAggregator aggregator = createIssueAggregator(recorder);
 
         Issue warning = createIssue(PMD);
@@ -120,12 +127,12 @@ class IssuesAggregatorTest {
 
         aggregator.endBuild();
 
-        verify(recorder, times(2)).publishResult(any(), any(), any(), anyString(), any(), anyString(), any());
+        verify(recorder, times(2)).publishResult(any(), any(), any(), anyString(), any(), anyString(), anyString(), any());
     }
 
     @Test
     void shouldCollectOneToolMultipleAxes() {
-        IssuesRecorder recorder = mock(IssuesRecorder.class);
+        IssuesRecorder recorder = createRecorder();
         IssuesAggregator aggregator = createIssueAggregator(recorder);
 
         Issue unixWarning = createIssue(PMD);
@@ -148,7 +155,7 @@ class IssuesAggregatorTest {
 
         aggregator.endBuild();
 
-        verify(recorder).publishResult(any(), any(), any(), anyString(), any(), anyString(), any());
+        verify(recorder).publishResult(any(), any(), any(), anyString(), any(), anyString(), anyString(), any());
     }
 
     private Issue createIssue(final String pmd) {

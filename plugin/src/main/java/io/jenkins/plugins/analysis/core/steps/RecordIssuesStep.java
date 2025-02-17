@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.core.steps;
 
 import java.io.IOException;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -63,6 +64,7 @@ import io.jenkins.plugins.util.ValidationUtilities;
  */
 @SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveImports", "PMD.TooManyFields", "PMD.DataClass", "PMD.CyclomaticComplexity", "PMD.ExcessiveClassLength", "PMD.GodClass"})
 public class RecordIssuesStep extends Step implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
     private static final ValidationUtilities VALIDATION_UTILITIES = new ValidationUtilities();
 
@@ -92,6 +94,7 @@ public class RecordIssuesStep extends Step implements Serializable {
 
     private String id;
     private String name;
+    private String icon = StringUtils.EMPTY; // @since 12.0.0: by default no custom icon is set
 
     private List<WarningsQualityGate> qualityGates = new ArrayList<>();
 
@@ -148,6 +151,7 @@ public class RecordIssuesStep extends Step implements Serializable {
     /**
      * Defines the ID of the results. The ID is used as URL of the results and as name in UI elements. If no ID is
      * given, then the ID of the associated result object is used.
+     *
      * <p>
      * Note: this property is not used if {@link #isAggregatingResults} is {@code false}. It is also not visible in the
      * UI in order to simplify the user interface.
@@ -170,6 +174,7 @@ public class RecordIssuesStep extends Step implements Serializable {
     /**
      * Defines the name of the results. The name is used for all labels in the UI. If no name is given, then the name of
      * the associated {@link StaticAnalysisLabelProvider} is used.
+     *
      * <p>
      * Note: this property is not used if {@link #isAggregatingResults} is {@code false}. It is also not visible in the
      * UI in order to simplify the user interface.
@@ -185,6 +190,22 @@ public class RecordIssuesStep extends Step implements Serializable {
 
     public String getName() {
         return name;
+    }
+
+    /**
+     * Defines the custom icon of the results. If no icon is given, then the default icon of
+     * the associated {@link StaticAnalysisLabelProvider} is used.
+     *
+     * @param icon
+     *         the icon of the results
+     */
+    @DataBoundSetter
+    public void setIcon(final String icon) {
+        this.icon = icon;
+    }
+
+    public String getIcon() {
+        return icon;
     }
 
     /**
@@ -635,6 +656,7 @@ public class RecordIssuesStep extends Step implements Serializable {
             recorder.setChecksAnnotationScope(step.getChecksAnnotationScope());
             recorder.setId(step.getId());
             recorder.setName(step.getName());
+            recorder.setIcon(step.getIcon());
             recorder.setQualityGates(step.getQualityGates());
             recorder.setFailOnError(step.getFailOnError());
             recorder.setTrendChartType(step.getTrendChartType());

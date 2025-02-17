@@ -69,7 +69,7 @@ class JobDslITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(project).isNotNull();
         assertThat(project).isInstanceOf(FreeStyleProject.class);
 
-        DescribableList<Publisher, Descriptor<Publisher>> publishers = ((FreeStyleProject) project).getPublishersList();
+        var publishers = ((FreeStyleProject) project).getPublishersList();
         assertThat(publishers).hasSize(1);
 
         Publisher publisher = publishers.get(0);
@@ -85,10 +85,11 @@ class JobDslITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(recorder.getBlameDisabled()).isFalse();
         assertThat(recorder.getEnabledForFailure()).isFalse();
         assertThat(recorder.getHealthy()).isEqualTo(0);
-        assertThat(recorder.getId()).isNull();
+        assertThat(recorder.getId()).isEmpty();
+        assertThat(recorder.getIcon()).isEmpty();
         assertThat(recorder.getIgnoreQualityGate()).isFalse();
         assertThat(recorder.getMinimumSeverity()).isEqualTo("LOW");
-        assertThat(recorder.getName()).isNull();
+        assertThat(recorder.getName()).isEmpty();
         assertThat(recorder.getQualityGates()).hasSize(0);
         assertThat(recorder.getSourceCodeEncoding()).isEmpty();
         assertThat(recorder.getUnhealthy()).isEqualTo(0);

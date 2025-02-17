@@ -54,7 +54,7 @@ public class LabelProviderFactory {
      * @param name
      *         the name of the tool (might be empty or null)
      *
-     * @return The label provider of the selected static analysis tool. If the tool is not found then a default label
+     * @return The label provider of the selected static analysis tool. If the tool is not found, then a default label
      *         provider is returned.
      */
     public StaticAnalysisLabelProvider create(final String id, @CheckForNull final String name) {

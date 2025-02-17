@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 
-import edu.hm.hafner.analysis.ModuleDetector;
+import edu.hm.hafner.analysis.ModuleDetectorRunner;
 
 import hudson.FilePath;
 import hudson.model.FreeStyleProject;
@@ -23,7 +23,7 @@ import io.jenkins.plugins.analysis.warnings.Eclipse;
 import static org.assertj.core.api.Assertions.*;
 
 /**
- * Integration test for the {@link ModuleDetector}.
+ * Integration test for the {@link ModuleDetectorRunner}.
  *
  * <p>
  * These tests work on several pom.xml, build.xml and MANIFEST.MF files that will be copied to the workspace for each

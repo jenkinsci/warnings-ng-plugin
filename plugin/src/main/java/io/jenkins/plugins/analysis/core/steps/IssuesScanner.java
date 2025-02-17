@@ -9,6 +9,7 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -20,8 +21,8 @@ import com.google.errorprone.annotations.MustBeClosed;
 import edu.hm.hafner.analysis.FileNameResolver;
 import edu.hm.hafner.analysis.FingerprintGenerator;
 import edu.hm.hafner.analysis.FullTextFingerprint;
-import edu.hm.hafner.analysis.ModuleDetector;
-import edu.hm.hafner.analysis.ModuleDetector.FileSystem;
+import edu.hm.hafner.analysis.ModuleDetectorRunner;
+import edu.hm.hafner.analysis.ModuleDetectorRunner.FileSystemFacade;
 import edu.hm.hafner.analysis.ModuleResolver;
 import edu.hm.hafner.analysis.PackageNameResolver;
 import edu.hm.hafner.analysis.Report;
@@ -335,8 +336,9 @@ class IssuesScanner {
             report.logInfo("Resolving module names from module definitions (build.xml, pom.xml, or Manifest.mf files)");
 
             try {
-                ModuleResolver resolver = new ModuleResolver();
-                resolver.run(report, new ModuleDetector(workspace.toPath(), new DefaultFileSystem()));
+                var runner = new ModuleDetectorRunner(workspace.toPath(), new DefaultFileSystem());
+                var resolver = new ModuleResolver(runner);
+                resolver.run(report);
             }
             catch (InvalidPathException exception) {
                 report.logException(exception, "Resolving of modul names aborted");
@@ -370,7 +372,7 @@ class IssuesScanner {
     /**
      * Provides file system operations using real IO.
      */
-    private static final class DefaultFileSystem implements FileSystem {
+    private static final class DefaultFileSystem implements FileSystemFacade {
         @MustBeClosed
         @Override
         public InputStream open(final String fileName) throws IOException {
@@ -378,8 +380,8 @@ class IssuesScanner {
         }
 
         @Override
-        public String[] find(final Path root, final String pattern) {
-            return new FileFinder(pattern).find(root.toFile());
+        public List<String> find(final Path root, final String pattern) {
+            return Arrays.stream(new FileFinder(pattern).find(root.toFile())).toList();
         }
     }
 }

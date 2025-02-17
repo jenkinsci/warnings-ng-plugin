@@ -60,6 +60,7 @@ public class FixedWarningsDetail extends IssuesDetail {
 
     /**
      * Returns the URL to the results of the same type of issues (i.e. same ID) in the reference build.
+     *
      * <p>
      * If no reference build is found, then an empty string is returned.
      * </p>
