@@ -308,7 +308,7 @@
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>plugin-util-api</artifactId>
       <!-- TODO: remove the version when a matching BOM is available -->
-      <version>3.0.0</version>
+      <version>6.0.0</version>
       <classifier>tests</classifier>
       <scope>test</scope>
       <exclusions>
