@@ -45,8 +45,8 @@
   <properties>
     <module.name>${project.groupId}.warnings.ng</module.name>
 
-    <analysis-model-api.version>13.0.0-rc852.f04104a_881e9</analysis-model-api.version>
-    <analysis-model-tests.version>13.0.0-rc5991.66662b_93493c</analysis-model-tests.version>
+    <analysis-model-api.version>13.0.0</analysis-model-api.version>
+    <analysis-model-tests.version>13.0.0</analysis-model-tests.version>
     <pull-request-monitoring.version>335.v525cd64ec76b_</pull-request-monitoring.version>
 
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
