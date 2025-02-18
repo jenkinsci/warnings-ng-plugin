@@ -1,0 +1,5 @@
+FingerprintITest.java:7: error: cannot find symbol
+        System.out.println(m);
+                           ^
+  symbol:   variable m
+  location: class FingerprintITest
