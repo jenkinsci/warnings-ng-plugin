@@ -33,7 +33,7 @@ jobs:
       - name: Generate coverage with JaCoCo
         run: mvn -V --color always -ntp clean verify -Pci
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5.1.2
+        uses: codecov/codecov-action@v5.3.1
         with:
           file: 'plugin/target/site/jacoco/jacoco.xml'
           disable_search: true
