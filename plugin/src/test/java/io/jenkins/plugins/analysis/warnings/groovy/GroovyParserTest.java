@@ -57,6 +57,9 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
     /**
      * Tries to expose JENKINS-35262: multi-line regular expression parser.
      *
+     * @param regexp
+     *         the regular expression to check
+     *
      * @see <a href="https://issues.jenkins-ci.org/browse/JENKINS-35262">Issue 35262</a>
      */
     @Issue("JENKINS-35262")
