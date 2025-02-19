@@ -1,15 +1,17 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
-import java.io.IOException;
-import java.io.StringReader;
-
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.junitpioneer.jupiter.Issue;
 
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.SerializableTest;
+
+import java.io.IOException;
+import java.io.StringReader;
 
 import hudson.model.Run;
 
@@ -57,13 +59,11 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
      *
      * @see <a href="https://issues.jenkins-ci.org/browse/JENKINS-35262">Issue 35262</a>
      */
-    @Test
-    void issue35262() throws IOException {
-        matchMultiLine("(make(?:(?!make)[\\s\\S])*?make-error:.*(?:\\n|\\r\\n?))");
-        matchMultiLine("(make(?:(?!make)[\\s\\S])*?make-error:.*(?:\\r?))");
-    }
-
-    private void matchMultiLine(final String multiLineRegexp) throws IOException {
+    @Issue("JENKINS-35262")
+    @ParameterizedTest(name = "{index}: Regular expression should be multiline \"{0}\"")
+    @ValueSource(strings = {"\\n|\\r\\n", "\\r", "\\R"})
+    void issue35262(final String regexp) throws IOException {
+        var multiLineRegexp = String.format("(make(?:(?!make)[\\s\\S])*?make-error:.*(?:%s?))", regexp);
         String textToMatch = toString("issue35262.log");
         String script = toString("issue35262.groovy");
 
