@@ -54,7 +54,7 @@
     <!-- Test Library Dependencies Versions -->
     <xmlunit.version>2.10.0</xmlunit.version>
     <jmh.version>1.37</jmh.version>
-    <testcontainers.version>1.20.4</testcontainers.version>
+    <testcontainers.version>1.20.5</testcontainers.version>
 
     <!-- Jenkins Plug-in Dependencies Versions -->
     <flexible-publish.version>0.15.2</flexible-publish.version>
