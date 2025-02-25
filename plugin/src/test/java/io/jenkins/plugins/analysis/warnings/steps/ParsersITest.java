@@ -1065,7 +1065,7 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the Vale analysis parser on an output file that contains 3 issues. */
     @Test
     void shouldFindAllValeIssues() {
-        shouldFindIssuesOfTool(3, new Vale(), "vale-report.json");
+        shouldFindIssuesOfTool(12, new Vale(), "vale-report.json");
     }
 
     private ResultAction shouldFindIssuesOfTool(final int expectedSizeOfIssues, final ReportScanningTool tool,
