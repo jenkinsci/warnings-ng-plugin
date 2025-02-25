@@ -1110,7 +1110,8 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock", "PMD.LinguisticNaming"})
-    private ResultAction findIssuesInPipeline(final String pipelineDefinition, final int expectedSizeOfIssues, final ReportScanningTool tool, final String... fileNames) { try {
+    private ResultAction findIssuesInPipeline(final String pipelineDefinition, final int expectedSizeOfIssues, final ReportScanningTool tool, final String... fileNames) {
+        try {
             WorkflowJob job = createPipeline();
             copyMultipleFilesToWorkspace(job, fileNames);
             job.setDefinition(asStage(String.format(
