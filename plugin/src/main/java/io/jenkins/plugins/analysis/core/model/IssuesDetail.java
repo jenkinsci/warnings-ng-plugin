@@ -21,8 +21,8 @@ import edu.hm.hafner.echarts.BuildResult;
 import edu.hm.hafner.echarts.ChartModelConfiguration;
 import edu.hm.hafner.echarts.JacksonFacade;
 
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.StaplerRequest2;
+import org.kohsuke.stapler.StaplerResponse2;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 import hudson.model.Api;
 import hudson.model.ModelObject;
@@ -576,7 +576,7 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
      * @return the new subpage
      */
     @SuppressWarnings("unused") // Called by jelly view
-    public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response) {
+    public Object getDynamic(final String link, final StaplerRequest2 request, final StaplerResponse2 response) {
         try {
             return new DetailFactory().createTrendDetails(link, owner, result,
                     report, newIssues, outstandingIssues, fixedIssues,

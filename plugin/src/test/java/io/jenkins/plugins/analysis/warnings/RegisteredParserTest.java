@@ -5,8 +5,6 @@ import java.util.NoSuchElementException;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import edu.hm.hafner.analysis.parser.checkstyle.CheckStyleParser;
-
 import jenkins.model.Jenkins;
 
 import io.jenkins.plugins.analysis.warnings.RegisteredParser.Descriptor;
@@ -38,7 +36,6 @@ class RegisteredParserTest {
         when(jenkins.getDescriptorOrDie(RegisteredParser.class)).thenReturn(new RegisteredParser.Descriptor());
         parser.setJenkinsFacade(jenkins);
 
-        assertThat(parser.createParser()).isInstanceOf(CheckStyleParser.class);
         assertThat(parser)
                 .hasAnalysisModelId(CHECKSTYLE_ID)
                 .hasId(CHECKSTYLE_ID)

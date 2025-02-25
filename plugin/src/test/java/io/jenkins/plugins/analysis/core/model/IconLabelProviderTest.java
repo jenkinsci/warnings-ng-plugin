@@ -37,10 +37,6 @@ class IconLabelProviderTest {
                 .hasName(NAME)
                 .hasSmallIconUrl(DEFAULT_SVG)
                 .hasLargeIconUrl(DEFAULT_SVG);
-        assertThat(new SvgIconLabelProvider(ID, NAME))
-                .hasName(NAME)
-                .hasSmallIconUrl(DEFAULT_SVG)
-                .hasLargeIconUrl(DEFAULT_SVG);
     }
 
     @Test
@@ -50,10 +46,6 @@ class IconLabelProviderTest {
                 .hasSmallIconUrl(PATH + SYMBOL + "-24x24.png")
                 .hasLargeIconUrl(PATH + SYMBOL + "-48x48.png");
         assertThat(new IconLabelProvider(ID, NAME, EMPTY_DESCRIPTION))
-                .hasName(NAME)
-                .hasSmallIconUrl(PATH + ID + "-24x24.png")
-                .hasLargeIconUrl(PATH + ID + "-48x48.png");
-        assertThat(new IconLabelProvider(ID, NAME))
                 .hasName(NAME)
                 .hasSmallIconUrl(PATH + ID + "-24x24.png")
                 .hasLargeIconUrl(PATH + ID + "-48x48.png");

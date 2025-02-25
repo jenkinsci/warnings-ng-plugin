@@ -24,12 +24,15 @@ import hudson.model.Run;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.IssuesDetail;
 import io.jenkins.plugins.analysis.core.model.IssuesModel.IssuesRow;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.Gcc4;
+import io.jenkins.plugins.analysis.warnings.Java;
+import io.jenkins.plugins.forensics.reference.SimpleReferenceRecorder;
 import io.jenkins.plugins.prism.PermittedSourceCodeDirectory;
 import io.jenkins.plugins.prism.PrismConfiguration;
 import io.jenkins.plugins.prism.SourceCodeDirectory;
@@ -53,7 +56,10 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String ECLIPSE_REPORT_ONE_AFFECTED_AFFECTED_FILE = FOLDER + "/eclipseOneAffectedFile.txt";
     private static final int ROW_NUMBER_ACTUAL_AFFECTED_FILE = 0;
     private static final String COPY_FILES = "Copying affected files to Jenkins' build folder";
-    private static final String ZIP = ".zip";
+    private static final String INITIAL_JAVA_REPORT = FOLDER + "/javalog-1.txt";
+    private static final String MODIFIED_JAVA_REPORT = FOLDER + "/javalog-2.txt";
+    private static final String INITIAL_JAVA_FINGERPRINT_SOURCE_FILE =  FOLDER + "/FingerprintTestWithoutModification.java";
+    private static final String MODIFIED_JAVA_FINGERPRINT_SOURCE_FILE = FOLDER + "/FingerprintTestWithModification.java";
 
     /**
      * Verifies that the affected source code is copied and shown in the source code view. If the file is deleted in the
@@ -178,12 +184,7 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
 
         String consoleLog = getConsoleLog(result);
         assertThat(consoleLog).contains("0 copied");
-        if (isWindows() && Runtime.version().feature() < 21) { // In Windows, a file does not exist if it is unreadable
-            assertThat(consoleLog).contains("4 not-found", "0 with I/O error");
-        }
-        else {
-            assertThat(consoleLog).contains("3 not-found", "1 with I/O error");
-        }
+        assertThat(consoleLog).contains("3 not-found", "1 with I/O error");
     }
 
     /**
@@ -331,6 +332,57 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
 
         assertThat(getConsoleLog(result))
                 .doesNotContain(COPY_FILES, " copied", " not-found", " with I/O error");
+    }
+
+    @Test
+    void shouldProduceDifferentFingerprints() {
+        FreeStyleProject project = createFreeStyleProject();
+
+        AnalysisResult firstBuildResult = configureBuildForFingerprintTests(project, INITIAL_JAVA_REPORT,
+                INITIAL_JAVA_FINGERPRINT_SOURCE_FILE, -1, false);
+
+        AnalysisResult secondBuildResult =  configureBuildForFingerprintTests(project, MODIFIED_JAVA_REPORT,
+                MODIFIED_JAVA_FINGERPRINT_SOURCE_FILE, -1, true);
+
+        assertThat(secondBuildResult.getNewIssues().size()).isEqualTo(1);
+        assertThat(firstBuildResult.getIssues().get(0).getFingerprint())
+                .isNotEqualTo(secondBuildResult.getIssues().get(0).getFingerprint());
+    }
+
+    @Test
+    void shouldProduceSameFingerprints() {
+        FreeStyleProject project = createFreeStyleProject();
+
+        AnalysisResult firstBuildResult = configureBuildForFingerprintTests(project, INITIAL_JAVA_REPORT,
+                INITIAL_JAVA_FINGERPRINT_SOURCE_FILE, 2, false);
+
+        AnalysisResult secondBuildResult =  configureBuildForFingerprintTests(project, MODIFIED_JAVA_REPORT,
+                MODIFIED_JAVA_FINGERPRINT_SOURCE_FILE, 2, true);
+
+        assertThat(secondBuildResult.getNewIssues().size()).isEqualTo(0);
+        assertThat(firstBuildResult.getIssues().get(0).getFingerprint())
+                .isEqualTo(secondBuildResult.getIssues().get(0).getFingerprint());
+    }
+
+    private AnalysisResult configureBuildForFingerprintTests(final FreeStyleProject project, final String logFile,
+                                                             final String srcFile, final int linesLookAhead, final boolean warningEnabled) {
+        copyFileToWorkspace(project, logFile, "log-java.txt");
+        copyFileToWorkspace(project, srcFile, "FingerprintITest.java");
+
+        ReportScanningTool tool = createTool(new Java(), "**/*.txt");
+
+        if (linesLookAhead != -1) {
+            tool.setLinesLookAhead(linesLookAhead);
+        }
+
+        // else linesLookAhead defaults to 3
+
+        if (!warningEnabled) {
+            project.getPublishersList().add(new SimpleReferenceRecorder());
+            enableWarnings(project, tool);
+        }
+
+        return scheduleBuildAndAssertStatus(project, Result.SUCCESS);
     }
 
     private AnalysisResult buildEclipseProject(final String... files) {

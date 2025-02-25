@@ -7,12 +7,17 @@ import java.util.Collections;
 
 import org.apache.commons.lang3.StringUtils;
 
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.util.Generated;
+import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import org.kohsuke.stapler.StaplerProxy;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
+import org.jvnet.localizer.Localizable;
 import hudson.model.Action;
 import hudson.model.HealthReport;
 import hudson.model.HealthReportingAction;
@@ -45,8 +50,9 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
     private final HealthDescriptor healthDescriptor;
     private final String id;
     private final String name;
+    private /* almost final */ String icon;
     private final String charset;
-    private TrendChartType trendChartType;
+    private /* almost final */ TrendChartType trendChartType;
 
     /**
      * Creates a new instance of {@link ResultAction}.
@@ -61,51 +67,38 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      *         the ID of the results
      * @param name
      *         the optional name of the results
-     * @param charset
-     *         the charset to use to display source files
-     */
-    public ResultAction(final Run<?, ?> owner, final AnalysisResult result, final HealthDescriptor healthDescriptor,
-            final String id, final String name, final Charset charset) {
-        this(owner, result, healthDescriptor, id, name, charset, TrendChartType.AGGREGATION_TOOLS);
-    }
-
-    /**
-     * Creates a new instance of {@link ResultAction}.
-     *
-     * @param owner
-     *         the associated build/run that created the static analysis result
-     * @param result
-     *         the result of the static analysis run
-     * @param healthDescriptor
-     *         the health descriptor of the static analysis run
-     * @param id
-     *         the ID of the results
-     * @param name
-     *         the optional name of the results
+     * @param icon
+     *         the optional icon of the results
      * @param charset
      *         the charset to use to display source files
      * @param trendChartType
      *         determines if the trend chart will be shown
      */
+    @SuppressWarnings("checkstyle:ParameterNumber")
     public ResultAction(final Run<?, ?> owner, final AnalysisResult result, final HealthDescriptor healthDescriptor,
-            final String id, final String name, final Charset charset, final TrendChartType trendChartType) {
+            final String id, final String name, final String icon,
+            final Charset charset, final TrendChartType trendChartType) {
         this.owner = owner;
         this.result = result;
         this.healthDescriptor = healthDescriptor;
         this.id = id;
         this.name = name;
+        this.icon = icon;
         this.charset = charset.name();
         this.trendChartType = trendChartType;
     }
 
     /**
-     * Called after de-serialization to retain backward compatibility.
+     * Called after deserialization to retain backward compatibility.
      *
      * @return this
      */
     protected Object readResolve() {
         if (trendChartType == null) {
             trendChartType = TrendChartType.TOOLS_ONLY;
+        }
+        if (icon == null) {
+            icon = StringUtils.EMPTY;
         }
         return this;
     }
@@ -276,7 +269,6 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      *
      * @return the URL of the image
      */
-    @SuppressWarnings({"unused", "WeakerAccess"}) // Called by jelly view
     public String getSmallImage() {
         return getLabelProvider().getSmallIconUrl();
     }
@@ -314,7 +306,20 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      * @return the label provider for this tool
      */
     public StaticAnalysisLabelProvider getLabelProvider() {
-        return new LabelProviderFactory().create(id, name);
+        var registeredLabelProvider = new LabelProviderFactory().create(getParserId(), name);
+        if (StringUtils.isBlank(icon)) {
+            return registeredLabelProvider;
+        }
+
+        return new CustomIconLabelProvider(registeredLabelProvider, icon);
+    }
+
+    private String getParserId() {
+        var originalReport = getResult().getIssues();
+        if (originalReport.hasParserId()) {
+            return originalReport.getParserId();
+        }
+        return id;
     }
 
     /**
@@ -337,5 +342,99 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
     public String resetReference() {
         // Empty method as workaround for Stapler bug that does not find JavaScript proxy methods in target object IssueDetail
         return "{}";
+    }
+
+    private static class CustomIconLabelProvider extends StaticAnalysisLabelProvider {
+        @Override
+        public DetailsTableModel getIssuesModel(final Run<?, ?> build, final String url, final Report report) {
+            return decorated.getIssuesModel(build, url, report);
+        }
+
+        @Override
+        public DefaultAgeBuilder getAgeBuilder(final Run<?, ?> owner, final String url) {
+            return decorated.getAgeBuilder(owner, url);
+        }
+
+        @Override
+        public FileNameRenderer getFileNameRenderer(final Run<?, ?> owner) {
+            return decorated.getFileNameRenderer(owner);
+        }
+
+        @VisibleForTesting
+        @Override
+        public String getDefaultName() {
+            return decorated.getDefaultName();
+        }
+
+        @Override
+        public String getId() {
+            return decorated.getId();
+        }
+
+        @Override
+        public String getName() {
+            return decorated.getName();
+        }
+
+        @Override
+        public StaticAnalysisLabelProvider setName(@CheckForNull final String name) {
+            return decorated.setName(name);
+        }
+
+        @Override
+        @Generated
+        public String toString() {
+            return decorated.toString();
+        }
+
+        @Override
+        public String getLinkName() {
+            return decorated.getLinkName();
+        }
+
+        @Override
+        public String getTrendName() {
+            return decorated.getTrendName();
+        }
+
+        @Override
+        public String getToolTip(final int numberOfItems) {
+            return decorated.getToolTip(numberOfItems);
+        }
+
+        @Override
+        public Localizable getToolTipLocalizable(final int numberOfItems) {
+            return decorated.getToolTipLocalizable(numberOfItems);
+        }
+
+        @Override
+        public String getDescription(final Issue issue) {
+            return decorated.getDescription(issue);
+        }
+
+        @Override
+        public String getSourceCodeDescription(final Run<?, ?> build, final Issue issue) {
+            return decorated.getSourceCodeDescription(build, issue);
+        }
+
+        private final StaticAnalysisLabelProvider decorated;
+        private final String icon;
+
+        CustomIconLabelProvider(final StaticAnalysisLabelProvider decorated, final String icon) {
+            super(decorated.getId(), decorated.getName());
+            this.decorated = decorated;
+
+            this.icon = icon;
+        }
+
+        @Override
+        public String getSmallIconUrl() {
+            return icon;
+        }
+
+        @Override
+        public String getLargeIconUrl() {
+            return icon;
+        }
     }
 }

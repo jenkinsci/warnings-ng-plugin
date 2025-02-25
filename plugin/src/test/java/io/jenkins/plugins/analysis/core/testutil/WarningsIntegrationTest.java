@@ -308,7 +308,7 @@ public abstract class WarningsIntegrationTest extends IntegrationTest {
      * @param job
      *         the job to register the recorder for
      * @param tool
-     *         the tool tool to use
+     *         the tool to use
      * @param additionalTools
      *         the tool configurations to use
      *

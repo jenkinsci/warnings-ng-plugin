@@ -8,8 +8,8 @@ import edu.hm.hafner.echarts.ChartModelConfiguration;
 import edu.hm.hafner.echarts.JacksonFacade;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.StaplerRequest2;
+import org.kohsuke.stapler.StaplerResponse2;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 import hudson.model.Action;
 import hudson.model.Job;
@@ -151,7 +151,7 @@ public class JobAction implements Action, AsyncConfigurableTrendChart {
      *         in case of an error
      */
     @SuppressWarnings("unused") // Called by jelly view
-    public void doIndex(final StaplerRequest request, final StaplerResponse response) throws IOException {
+    public void doIndex(final StaplerRequest2 request, final StaplerResponse2 response) throws IOException {
         Optional<ResultAction> action = getLatestAction();
         if (action.isPresent()) {
             response.sendRedirect2(String.format("../%d/%s", action.get().getOwner().getNumber(),

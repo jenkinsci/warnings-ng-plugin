@@ -495,7 +495,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldCombineIssuesOfSeveralFiles() {
         publishResultsWithIdAndName(
                 "publishIssues issues:[java, eclipse, javadoc]",
-                "analysis", "Static Analysis");
+                "analysis", "Static Analysis", "triangle-exclamation");
     }
 
     /** Runs the JavaDoc parser and uses a message filter to change the number of recorded warnings. */
@@ -580,6 +580,34 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         scheduleBuildAndAssertStatus(job, Result.FAILURE);
     }
 
+    @Test
+    void shouldReportResultWithDifferentIdNameAndIconInStep() {
+        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("emptyFile.txt");
+
+        job.setDefinition(asStage(
+                "recordIssues id: 'custom-id', name: 'custom-name', icon: 'custom-icon', "
+                        + "tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8')"));
+
+        var action = getResultAction(buildWithResult(job, Result.SUCCESS));
+        assertThat(action.getId()).isEqualTo("custom-id");
+        assertThat(action.getDisplayName()).startsWith("custom-name");
+        assertThat(action.getIconFileName()).isEqualTo("custom-icon");
+    }
+
+    @Test
+    void shouldReportResultWithDifferentIdNameAndIconInTool() {
+        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("emptyFile.txt");
+
+        job.setDefinition(asStage(
+                "recordIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8',"
+                        + "id: 'custom-id', name: 'custom-name', icon: 'custom-icon')"));
+
+        var action = getResultAction(buildWithResult(job, Result.SUCCESS));
+        assertThat(action.getId()).isEqualTo("custom-id");
+        assertThat(action.getDisplayName()).startsWith("custom-name");
+        assertThat(action.getIconFileName()).isEqualTo("custom-icon");
+    }
+
     /**
      * Runs the all Java parsers on three output files: the build should report issues of all tools. The results should
      * be aggregated into a new action with the specified ID. Since no name is given the default name is used.
@@ -588,7 +616,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldProvideADefaultNameIfNoOneIsGiven() {
         publishResultsWithIdAndName(
                 "publishIssues issues:[java, eclipse, javadoc], id:'my-id'",
-                "my-id", "Static Analysis Warnings");
+                "my-id", "Static Analysis Warnings", "triangle-exclamation");
     }
 
     /**
@@ -599,11 +627,22 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldUseSpecifiedName() {
         publishResultsWithIdAndName(
                 "publishIssues issues:[java, eclipse, javadoc], id:'my-id', name:'my-name'",
-                "my-id", "my-name");
+                "my-id", "my-name", "triangle-exclamation");
+    }
+
+    /**
+     * Runs the all Java parsers on three output files: the build should report issues of all tools. The results should
+     * be aggregated into a new action with the specified ID and the specified name.
+     */
+    @Test
+    void shouldUseSpecifiedIcon() {
+        publishResultsWithIdAndName(
+                "publishIssues issues:[java, eclipse, javadoc], id:'my-id', name:'my-name', icon:'my-icon'",
+                "my-id", "my-name", "my-icon");
     }
 
     private void publishResultsWithIdAndName(final String publishStep, final String expectedId,
-            final String expectedName) {
+            final String expectedName, final String expectedIcon) {
         WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("eclipse.txt", "javadoc.txt", "javac.txt");
         job.setDefinition(asStage(createScanForIssuesStep(new Java(), "java"),
                 createScanForIssuesStep(new Eclipse(), "eclipse"),
@@ -615,6 +654,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         ResultAction action = getResultAction(run);
         assertThat(action.getId()).isEqualTo(expectedId);
         assertThat(action.getDisplayName()).contains(expectedName);
+        assertThat(action.getIconFileName()).contains(expectedIcon);
 
         assertThatJavaIssuesArePublished(action.getResult());
     }
@@ -878,16 +918,15 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldLogWarningIfNameIsSetWhenNotAggregating() {
-        List<AnalysisResult> results = getAnalysisResults(runWith2GroovyParsers(false,
-                "name: 'name'", "id: 'id'"));
+        Run<?, ?> build = runWith2GroovyParsers(false,
+                "name: 'name'", "id: 'id'");
+        List<AnalysisResult> results = getAnalysisResults(build);
         assertThat(results).hasSize(2);
-        for (AnalysisResult result : results) {
-            assertThat(result.getInfoMessages())
-                    .contains("Ignoring name='name' and id='id' when publishing non-aggregating reports");
-        }
-
         Set<String> ids = results.stream().map(AnalysisResult::getId).collect(Collectors.toSet());
         assertThat(ids).containsExactly("groovy-1", "groovy-2");
+
+        assertThat(getConsoleLog(build))
+                    .contains("Do not set id, name, or icon for both the tool and the recorder");
     }
 
     /**
@@ -909,11 +948,13 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldUseGroovyParserTwiceAndAggregateIntoSingleResultWithCustomizableIdAndName() {
-        Run<?, ?> build = runWith2GroovyParsers(true, "name: 'Custom Name'", "id: 'custom-id'");
+        Run<?, ?> build = runWith2GroovyParsers(true,
+                "name: 'Custom Name'", "id: 'custom-id'", "icon: 'custom-icon.png'");
         ResultAction action = getResultAction(build);
 
         assertThat(action.getId()).isEqualTo("custom-id");
         assertThat(action.getDisplayName()).isEqualTo("Custom Name Warnings");
+        assertThat(action.getIconFileName()).isEqualTo("custom-icon.png");
     }
 
     /**

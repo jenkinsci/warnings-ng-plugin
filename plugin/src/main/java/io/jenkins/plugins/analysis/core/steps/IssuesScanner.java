@@ -9,6 +9,7 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -20,8 +21,8 @@ import com.google.errorprone.annotations.MustBeClosed;
 import edu.hm.hafner.analysis.FileNameResolver;
 import edu.hm.hafner.analysis.FingerprintGenerator;
 import edu.hm.hafner.analysis.FullTextFingerprint;
-import edu.hm.hafner.analysis.ModuleDetector;
-import edu.hm.hafner.analysis.ModuleDetector.FileSystem;
+import edu.hm.hafner.analysis.ModuleDetectorRunner;
+import edu.hm.hafner.analysis.ModuleDetectorRunner.FileSystemFacade;
 import edu.hm.hafner.analysis.ModuleResolver;
 import edu.hm.hafner.analysis.PackageNameResolver;
 import edu.hm.hafner.analysis.Report;
@@ -37,6 +38,7 @@ import jenkins.MasterToSlaveFileCallable;
 
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.ReportLocations;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
@@ -147,9 +149,13 @@ class IssuesScanner {
     }
 
     private ReportPostProcessor createPostProcessor(final Report report) {
+        int linesLookAhead = -1;
+        if (tool instanceof ReportScanningTool) {
+            linesLookAhead = ((ReportScanningTool) tool).getLinesLookAhead();
+        }
         return new ReportPostProcessor(tool.getActualId(), report, sourceCodeEncoding.name(),
                 createBlamer(report), filters, getPermittedSourceDirectories(), sourceDirectories,
-                postProcessingMode);
+                postProcessingMode, linesLookAhead);
     }
 
     private Set<String> getPermittedSourceDirectories() {
@@ -260,11 +266,12 @@ class IssuesScanner {
         private final Set<String> requestedSourceDirectories;
         private final PostProcessingMode postProcessingMode;
         private final List<RegexpFilter> filters;
+        private final int linesLookAhead;
 
         @SuppressWarnings("checkstyle:ParameterNumber")
         ReportPostProcessor(final String id, final Report report, final String sourceCodeEncoding,
-                final Blamer blamer, final List<RegexpFilter> filters, final Set<String> permittedSourceDirectories,
-                final Set<String> requestedSourceDirectories, final PostProcessingMode postProcessingMode) {
+                            final Blamer blamer, final List<RegexpFilter> filters, final Set<String> permittedSourceDirectories,
+                            final Set<String> requestedSourceDirectories, final PostProcessingMode postProcessingMode, final int linesLookAhead) {
             super();
 
             this.id = id;
@@ -275,6 +282,7 @@ class IssuesScanner {
             this.permittedSourceDirectories = permittedSourceDirectories;
             this.requestedSourceDirectories = requestedSourceDirectories;
             this.postProcessingMode = postProcessingMode;
+            this.linesLookAhead = linesLookAhead;
         }
 
         @Override
@@ -335,8 +343,9 @@ class IssuesScanner {
             report.logInfo("Resolving module names from module definitions (build.xml, pom.xml, or Manifest.mf files)");
 
             try {
-                ModuleResolver resolver = new ModuleResolver();
-                resolver.run(report, new ModuleDetector(workspace.toPath(), new DefaultFileSystem()));
+                var runner = new ModuleDetectorRunner(workspace.toPath(), new DefaultFileSystem());
+                var resolver = new ModuleResolver(runner);
+                resolver.run(report);
             }
             catch (InvalidPathException exception) {
                 report.logException(exception, "Resolving of modul names aborted");
@@ -363,14 +372,20 @@ class IssuesScanner {
             report.logInfo("Creating fingerprints for all affected code blocks to track issues over different builds");
 
             FingerprintGenerator generator = new FingerprintGenerator();
-            generator.run(new FullTextFingerprint(), report, getCharset());
+            if (linesLookAhead < 0) {
+                // no-arg constructor defaults context lines to 3
+                generator.run(new FullTextFingerprint(), report, getCharset());
+            }
+            else {
+                generator.run(new FullTextFingerprint(linesLookAhead), report, getCharset());
+            }
         }
     }
 
     /**
      * Provides file system operations using real IO.
      */
-    private static final class DefaultFileSystem implements FileSystem {
+    private static final class DefaultFileSystem implements FileSystemFacade {
         @MustBeClosed
         @Override
         public InputStream open(final String fileName) throws IOException {
@@ -378,8 +393,8 @@ class IssuesScanner {
         }
 
         @Override
-        public String[] find(final Path root, final String pattern) {
-            return new FileFinder(pattern).find(root.toFile());
+        public List<String> find(final Path root, final String pattern) {
+            return Arrays.stream(new FileFinder(pattern).find(root.toFile())).toList();
         }
     }
 }

@@ -1,12 +1,5 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.groovy.control.CompilationFailedException;
@@ -20,6 +13,12 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import groovy.lang.Script;
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -38,7 +37,7 @@ import io.jenkins.plugins.util.JenkinsFacade;
 import io.jenkins.plugins.util.ValidationUtilities;
 
 /**
- * Defines the properties of a warnings parser that uses a Groovy script to parse the warnings log.
+ * Defines the properties of a warning parser that uses a Groovy script to parse the console log.
  *
  * @author Ullrich Hafner
  */
@@ -86,7 +85,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
     }
 
     private static boolean containsNewline(final String expression) {
-        return StringUtils.contains(expression, "\\n") || StringUtils.contains(expression, "\\r");
+        return StringUtils.containsAny(expression, "\\n", "\\r", "\\R");
     }
 
     /**

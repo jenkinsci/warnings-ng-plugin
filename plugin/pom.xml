@@ -5,13 +5,13 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>9.0.0</version>
+    <version>10.4.0</version>
     <relativePath />
   </parent>
 
   <groupId>io.jenkins.plugins</groupId>
   <artifactId>warnings-ng</artifactId>
-  <version>${revision}${changelist}</version>
+  <version>12.4.0-SNAPSHOT</version>
   <packaging>hpi</packaging>
   <name>Warnings Plugin</name>
 
@@ -38,16 +38,14 @@
   <scm>
     <connection>scm:git:https://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
     <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
-    <tag>v11.10.0</tag>
+    <tag>HEAD</tag>
     <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
   </scm>
 
   <properties>
-    <revision>11.13.0</revision>
-    <changelist>-SNAPSHOT</changelist>
     <module.name>${project.groupId}.warnings.ng</module.name>
 
-    <analysis-model-api.version>12.9.1</analysis-model-api.version>
+    <analysis-model-api.version>13.0.0</analysis-model-api.version>
     <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
     <pull-request-monitoring.version>335.v525cd64ec76b_</pull-request-monitoring.version>
 
@@ -55,13 +53,10 @@
 
     <!-- Test Library Dependencies Versions -->
     <xmlunit.version>2.10.0</xmlunit.version>
-    <jsoup.version>1.18.3</jsoup.version>
     <jmh.version>1.37</jmh.version>
     <testcontainers.version>1.20.4</testcontainers.version>
 
     <!-- Jenkins Plug-in Dependencies Versions -->
-    <git-forensics.version>2.2.1</git-forensics.version>
-
     <flexible-publish.version>0.15.2</flexible-publish.version>
     <form-element-path.version>1.11</form-element-path.version>
 
@@ -84,13 +79,14 @@
       <artifactId>eclipse-collections</artifactId>
       <version>${eclipse-collections.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.jsoup</groupId>
-      <artifactId>jsoup</artifactId>
-      <version>${jsoup.version}</version>
-    </dependency>
 
     <!-- Required Jenkins Plug-in Dependencies -->
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>jsoup</artifactId>
+      <!-- TODO: remove the version when a matching BOM is available -->
+      <version>1.18.3-30.v952e9442d416</version>
+    </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>analysis-model-api</artifactId>
@@ -99,7 +95,8 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>plugin-util-api</artifactId>
-      <version>5.1.0</version>
+      <!-- TODO: remove the version when a matching BOM is available -->
+      <version>6.0.0</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
@@ -160,6 +157,8 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>forensics-api</artifactId>
+      <!-- TODO: remove the version when a matching BOM is available -->
+      <version>3.0.0</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
@@ -219,12 +218,15 @@
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>forensics-api</artifactId>
       <classifier>tests</classifier>
+      <!-- TODO: remove the version when a matching BOM is available -->
+      <version>3.0.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>git-forensics</artifactId>
-      <version>${git-forensics.version}</version>
+      <!-- TODO: remove the version when a matching BOM is available -->
+      <version>3.1.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -305,7 +307,8 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>plugin-util-api</artifactId>
-      <version>5.1.0</version>
+      <!-- TODO: remove the version when a matching BOM is available -->
+      <version>6.0.0</version>
       <classifier>tests</classifier>
       <scope>test</scope>
       <exclusions>
@@ -422,7 +425,7 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>ansicolor</artifactId>
-      <version>1.0.5</version>
+      <version>1.0.6</version>
       <scope>test</scope>
     </dependency>
 
@@ -578,6 +581,7 @@
           <excludes combine.children="append">
             <exclude>.*Thresholds</exclude>
             <exclude>.*Test.*</exclude>
+            <exclude>.*Benchmark.*</exclude>
             <exclude>.*TaskScanner.*</exclude>
           </excludes>
           <entryPointClassPackage>io.jenkins.plugins.analysis.core.assertions</entryPointClassPackage>

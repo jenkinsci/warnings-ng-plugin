@@ -5,8 +5,8 @@ import java.util.Collections;
 
 import org.junit.jupiter.api.Test;
 
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.StaplerRequest2;
+import org.kohsuke.stapler.StaplerResponse2;
 import hudson.model.Job;
 import hudson.model.Run;
 
@@ -69,8 +69,8 @@ class JobActionTest {
         assertThat(action.isTrendEmpty()).isFalse();
         assertThat(action.isTrendVisible()).isTrue();
 
-        StaplerResponse response = mock(StaplerResponse.class);
-        action.doIndex(mock(StaplerRequest.class), response);
+        StaplerResponse2 response = mock(StaplerResponse2.class);
+        action.doIndex(mock(StaplerRequest2.class), response);
 
         verify(response).sendRedirect2("../0/" + ANALYSIS_ID);
 
@@ -84,8 +84,8 @@ class JobActionTest {
         Job<?, ?> job = mock(Job.class);
         JobAction action = new JobAction(job, labelProvider, 1);
 
-        StaplerRequest request = mock(StaplerRequest.class);
-        action.doIndex(request, mock(StaplerResponse.class));
+        StaplerRequest2 request = mock(StaplerRequest2.class);
+        action.doIndex(request, mock(StaplerResponse2.class));
 
         verifyNoInteractions(request);
     }

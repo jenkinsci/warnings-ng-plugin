@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.parser.checkstyle.CheckStyleParser;
-
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
@@ -11,7 +9,7 @@ import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 /**
- * Provides a parser and customized messages for PHPStan. Delegates to {@link CheckStyleParser}.
+ * Provides a parser and customized messages for PHPStan.
  *
  * @author Jeroen Jans
  */
