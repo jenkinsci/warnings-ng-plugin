@@ -37,7 +37,7 @@ public final class AnalysisBuildsFallback extends TransientActionFactory<Job<?, 
                 .map(ResultAction.class::cast)
                 .collect(Collectors.toList());
 
-        if (!currentResultActions.isEmpty()) {
+        if (!currentResultActions.isEmpty() || currentBuild.isBuilding()) {
             return Collections.emptyList();
         }
 
