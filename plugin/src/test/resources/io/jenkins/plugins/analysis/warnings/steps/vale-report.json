@@ -1,0 +1,234 @@
+{
+  "file1.adoc": [
+    {
+      "Action": {
+        "Name": "",
+        "Params": null
+      },
+      "Span": [
+        1,
+        5
+      ],
+      "Check": "RedHat.SentenceLength",
+      "Description": "",
+      "Link": "https://redhat-documentation.github.io/vale-at-red-hat/docs/main/reference-guide/sentencelength/",
+      "Message": "Try to keep sentences to an average of 32 words or fewer.",
+      "Severity": "suggestion",
+      "Match": "While",
+      "Line": 10
+    }
+  ],
+  "file2.adoc": [
+    {
+      "Action": {
+        "Name": "replace",
+        "Params": [
+          "might",
+          "can"
+        ]
+      },
+      "Span": [
+        143,
+        145
+      ],
+      "Check": "RedHat.TermsWarnings",
+      "Description": "",
+      "Link": "https://redhat-documentation.github.io/vale-at-red-hat/docs/main/reference-guide/termswarnings/",
+      "Message": "Consider using 'might' or 'can' rather than 'may' unless updating existing content that uses the term.",
+      "Severity": "warning",
+      "Match": "may",
+      "Line": 39
+    },
+    {
+      "Action": {
+        "Name": "edit",
+        "Params": [
+          "regex",
+          "(\\w+)( using)",
+          "$1 by using"
+        ]
+      },
+      "Span": [
+        44,
+        64
+      ],
+      "Check": "RedHat.Using",
+      "Description": "",
+      "Link": "https://redhat-documentation.github.io/vale-at-red-hat/docs/main/reference-guide/using/",
+      "Message": "Use 'by using' instead of 'using' when it follows a noun for clarity and grammatical correctness.",
+      "Severity": "warning",
+      "Match": "functionalities using",
+      "Line": 51
+    },
+    {
+      "Action": {
+        "Name": "replace",
+        "Params": [
+          "might",
+          "can"
+        ]
+      },
+      "Span": [
+        24,
+        26
+      ],
+      "Check": "RedHat.TermsWarnings",
+      "Description": "",
+      "Link": "https://redhat-documentation.github.io/vale-at-red-hat/docs/main/reference-guide/termswarnings/",
+      "Message": "Consider using 'might' or 'can' rather than 'may' unless updating existing content that uses the term.",
+      "Severity": "warning",
+      "Match": "may",
+      "Line": 65
+    }
+  ],
+  "file3.adoc": [
+    {
+      "Action": {
+        "Name": "replace",
+        "Params": [
+          "give",
+          "offer"
+        ]
+      },
+      "Span": [
+        11,
+        17
+      ],
+      "Check": "RedHat.SimpleWords",
+      "Description": "",
+      "Link": "https://redhat-documentation.github.io/vale-at-red-hat/docs/main/reference-guide/simplewords/",
+      "Message": "Use simple language. Consider using 'give' or 'offer' rather than 'provide'.",
+      "Severity": "suggestion",
+      "Match": "provide",
+      "Line": 170
+    },
+    {
+      "Action": {
+        "Name": "replace",
+        "Params": [
+          "complete",
+          "finish"
+        ]
+      },
+      "Span": [
+        29,
+        36
+      ],
+      "Check": "RedHat.SimpleWords",
+      "Description": "",
+      "Link": "https://redhat-documentation.github.io/vale-at-red-hat/docs/main/reference-guide/simplewords/",
+      "Message": "Use simple language. Consider using 'complete' or 'finish' rather than 'finalize'.",
+      "Severity": "suggestion",
+      "Match": "finalize",
+      "Line": 212
+    },
+    {
+      "Action": {
+        "Name": "replace",
+        "Params": [
+          "complete",
+          "finish"
+        ]
+      },
+      "Span": [
+        5,
+        12
+      ],
+      "Check": "RedHat.SimpleWords",
+      "Description": "",
+      "Link": "https://redhat-documentation.github.io/vale-at-red-hat/docs/main/reference-guide/simplewords/",
+      "Message": "Use simple language. Consider using 'complete' or 'finish' rather than 'finalize'.",
+      "Severity": "suggestion",
+      "Match": "finalize",
+      "Line": 451
+    },
+    {
+      "Action": {
+        "Name": "replace",
+        "Params": [
+          "give",
+          "offer"
+        ]
+      },
+      "Span": [
+        16,
+        22
+      ],
+      "Check": "RedHat.SimpleWords",
+      "Description": "",
+      "Link": "https://redhat-documentation.github.io/vale-at-red-hat/docs/main/reference-guide/simplewords/",
+      "Message": "Use simple language. Consider using 'give' or 'offer' rather than 'provide'.",
+      "Severity": "suggestion",
+      "Match": "provide",
+      "Line": 530
+    },
+    {
+      "Action": {
+        "Name": "",
+        "Params": null
+      },
+      "Span": [
+        1,
+        4
+      ],
+      "Check": "RedHat.SentenceLength",
+      "Description": "",
+      "Link": "https://redhat-documentation.github.io/vale-at-red-hat/docs/main/reference-guide/sentencelength/",
+      "Message": "Try to keep sentences to an average of 32 words or fewer.",
+      "Severity": "suggestion",
+      "Match": "When",
+      "Line": 533
+    },
+    {
+      "Action": {
+        "Name": "",
+        "Params": null
+      },
+      "Span": [
+        1,
+        4
+      ],
+      "Check": "RedHat.SentenceLength",
+      "Description": "",
+      "Link": "https://redhat-documentation.github.io/vale-at-red-hat/docs/main/reference-guide/sentencelength/",
+      "Message": "Try to keep sentences to an average of 32 words or fewer.",
+      "Severity": "suggestion",
+      "Match": "When",
+      "Line": 535
+    },
+    {
+      "Action": {
+        "Name": "",
+        "Params": null
+      },
+      "Span": [
+        1,
+        3
+      ],
+      "Check": "RedHat.SentenceLength",
+      "Description": "",
+      "Link": "https://redhat-documentation.github.io/vale-at-red-hat/docs/main/reference-guide/sentencelength/",
+      "Message": "Try to keep sentences to an average of 32 words or fewer.",
+      "Severity": "suggestion",
+      "Match": "The",
+      "Line": 571
+    },
+    {
+      "Action": {
+        "Name": "",
+        "Params": null
+      },
+      "Span": [
+        1,
+        12
+      ],
+      "Check": "RedHat.SentenceLength",
+      "Description": "",
+      "Link": "https://redhat-documentation.github.io/vale-at-red-hat/docs/main/reference-guide/sentencelength/",
+      "Message": "Try to keep sentences to an average of 32 words or fewer.",
+      "Severity": "suggestion",
+      "Match": "Additionally",
+      "Line": 717
+    }
+  ]
+}

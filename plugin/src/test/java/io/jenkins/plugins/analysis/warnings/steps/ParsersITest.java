@@ -1062,6 +1062,12 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         shouldFindIssuesOfTool(3, new Grype(), "grype-report.json");
     }
 
+    /** Runs the Vale analysis parser on an output file that contains 3 issues. */
+    @Test
+    void shouldFindAllValeIssues() {
+        shouldFindIssuesOfTool(12, new Vale(), "vale-report.json");
+    }
+
     private ResultAction shouldFindIssuesOfTool(final int expectedSizeOfIssues, final ReportScanningTool tool,
             final String... fileNames) {
         String defaultPipelineDefinition = "recordIssues tool: %s(pattern:'**/%s', reportEncoding:'UTF-8')";
@@ -1104,8 +1110,7 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock", "PMD.LinguisticNaming"})
-    private ResultAction findIssuesInPipeline(final String pipelineDefinition,
-            final int expectedSizeOfIssues, final ReportScanningTool tool, final String... fileNames) {
+    private ResultAction findIssuesInPipeline(final String pipelineDefinition, final int expectedSizeOfIssues, final ReportScanningTool tool, final String... fileNames) {
         try {
             WorkflowJob job = createPipeline();
             copyMultipleFilesToWorkspace(job, fileNames);
