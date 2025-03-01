@@ -11,6 +11,7 @@ import hudson.model.Result;
 import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.model.AggregatedTrendAction;
+import io.jenkins.plugins.analysis.core.model.AnalysisBuildsFallback;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.JobAction;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
@@ -194,6 +195,34 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
 
         JobAction jobAction = project.getAction(JobAction.class);
         assertThat(jobAction).isNotNull();
+    }
+
+    /**
+     * Verifies the behaviour of {@link AnalysisBuildsFallback}.
+     */
+    @Test
+    void shouldAttachJobActionsWithoutRecordIssues() {
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(ECLIPSE_LOG);
+        enableEclipseWarnings(project);
+
+        Run<?, ?> firstBuild = buildWithResult(project, Result.SUCCESS);
+        List<ResultAction> firstBuildResultActions = firstBuild.getActions(ResultAction.class);
+        assertThat(firstBuildResultActions).isNotEmpty();
+
+        List<JobAction> jobActionsAfterFirstBuild = project.getActions(JobAction.class);
+        assertThat(jobActionsAfterFirstBuild).isNotEmpty();
+
+        project.getPublishersList().clear();
+
+        Run<?, ?> secondBuild = buildWithResult(project, Result.SUCCESS);
+        List<ResultAction> secondBuildResultActions = secondBuild.getActions(ResultAction.class);
+        assertThat(secondBuildResultActions).isEmpty();
+
+        List<JobAction> jobActionsAfterSecondBuild = project.getActions(JobAction.class);
+        assertThat(jobActionsAfterSecondBuild).isNotEmpty();
+
+        assertThat(jobActionsAfterFirstBuild.get(0).getId()).isEqualTo(jobActionsAfterSecondBuild.get(0).getId());
+        assertThat(jobActionsAfterFirstBuild.get(0).getUrlName()).isEqualTo(jobActionsAfterSecondBuild.get(0).getUrlName());
     }
 
     private void assertThatTrendChartIsVisible(final AsyncConfigurableTrendChart trendChart) {
