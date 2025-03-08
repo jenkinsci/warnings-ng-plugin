@@ -1,16 +1,5 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.eclipse.collections.impl.factory.Lists;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,6 +10,17 @@ import org.jvnet.hudson.test.TestExtension;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.kohsuke.stapler.HttpResponse;
 import org.jenkinsci.Symbol;
@@ -580,37 +580,64 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         scheduleBuildAndAssertStatus(job, Result.FAILURE);
     }
 
-    @Test
-    void shouldReportResultWithDifferentIdNameAndIconInStep() {
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("emptyFile.txt");
+    @ParameterizedTest(name = "{index} => Reading JavaDoc warnings from file \"{0}\"")
+    @ValueSource(strings = {"javadoc.txt", "emptyFile.txt"})
+    @org.junitpioneer.jupiter.Issue("JENKINS-75344")
+    void shouldReportResultWithDifferentIdNameAndIconInStep(final String fileName) {
+        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix(fileName);
 
         job.setDefinition(asStage(
                 "recordIssues id: 'custom-id', name: 'custom-name', icon: 'custom-icon', "
                         + "tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8')"));
 
         var action = getResultAction(buildWithResult(job, Result.SUCCESS));
+        assertThat(action.getUrlName()).isEqualTo("custom-id");
         assertThat(action.getId()).isEqualTo("custom-id");
         assertThat(action.getDisplayName()).startsWith("custom-name");
         assertThat(action.getIconFileName()).isEqualTo("custom-icon");
     }
 
-    @Test
-    void shouldReportResultWithDifferentIdNameAndIconInTool() {
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("emptyFile.txt");
+    @ParameterizedTest(name = "{index} => Reading JavaDoc warnings from file \"{0}\"")
+    @ValueSource(strings = {"javadoc.txt", "emptyFile.txt"})
+    @org.junitpioneer.jupiter.Issue("JENKINS-75344")
+    void shouldReportResultWithDifferentIdNameAndIconInTool(final String fileName) {
+        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix(fileName);
 
         job.setDefinition(asStage(
                 "recordIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8',"
                         + "id: 'custom-id', name: 'custom-name', icon: 'custom-icon')"));
 
         var action = getResultAction(buildWithResult(job, Result.SUCCESS));
+        assertThat(action.getUrlName()).isEqualTo("custom-id");
         assertThat(action.getId()).isEqualTo("custom-id");
         assertThat(action.getDisplayName()).startsWith("custom-name");
         assertThat(action.getIconFileName()).isEqualTo("custom-icon");
     }
 
+    @ParameterizedTest(name = "{index} => Reading JavaDoc warnings from file \"{0}\"")
+    @ValueSource(strings = {"javadoc.txt", "emptyFile.txt"})
+    @org.junitpioneer.jupiter.Issue("JENKINS-75391")
+    void shouldShowWarningWhenUsingIdForToolAndRecorder(final String fileName) {
+        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix(fileName);
+
+        job.setDefinition(asStage(
+                "recordIssues id: 'custom-id', name: 'custom-name', icon: 'custom-icon', "
+                        + "tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8',"
+                        + "id: 'custom-id', name: 'custom-name', icon: 'custom-icon')"));
+
+        var action = getResultAction(buildWithResult(job, Result.SUCCESS));
+        assertThat(action.getUrlName()).isEqualTo("custom-id");
+        assertThat(action.getId()).isEqualTo("custom-id");
+        assertThat(action.getDisplayName()).startsWith("custom-name");
+        assertThat(action.getIconFileName()).isEqualTo("custom-icon");
+
+        assertThat(getConsoleLog(action.getOwner()))
+                .contains("Do not set id, name, or icon for both the tool and the recorder");
+    }
+
     /**
      * Runs the all Java parsers on three output files: the build should report issues of all tools. The results should
-     * be aggregated into a new action with the specified ID. Since no name is given the default name is used.
+     * be aggregated into a new action with the specified ID. Since no name is given, the default name is used.
      */
     @Test
     void shouldProvideADefaultNameIfNoOneIsGiven() {
@@ -926,7 +953,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(ids).containsExactly("groovy-1", "groovy-2");
 
         assertThat(getConsoleLog(build))
-                    .contains("Do not set id, name, or icon for both the tool and the recorder");
+                    .contains("Do not set id, name, or icon of recorder when multiple tools are defined");
     }
 
     /**

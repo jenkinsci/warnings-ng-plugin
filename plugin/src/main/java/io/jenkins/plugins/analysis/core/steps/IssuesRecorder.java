@@ -1,5 +1,12 @@
 package io.jenkins.plugins.analysis.core.steps;
 
+import org.apache.commons.lang3.StringUtils;
+
+import edu.hm.hafner.analysis.Severity;
+import edu.hm.hafner.util.FilteredLog;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -8,13 +15,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
-
-import edu.hm.hafner.analysis.Severity;
-import edu.hm.hafner.util.FilteredLog;
-import edu.umd.cs.findbugs.annotations.CheckForNull;
-import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -680,11 +680,11 @@ public class IssuesRecorder extends Recorder {
             Tool tool = analysisTools.get(0);
 
             var customId = StringUtils.defaultIfBlank(getId(), tool.getActualId());
-            AnnotatedReport report = new AnnotatedReport(customId);
-            report.add(scanWithTool(run, workspace, listener, tool), tool.getActualId());
-
             var customName = StringUtils.defaultIfBlank(getName(), tool.getActualName());
             var customIcon = StringUtils.defaultIfBlank(getIcon(), tool.getIcon());
+
+            AnnotatedReport report = new AnnotatedReport(customId);
+            report.add(scanWithTool(run, workspace, listener, tool), tool.getActualId());
 
             results.add(publishResult(run, workspace, listener, customName,
                     report, customName, customIcon, resultHandler));
@@ -714,9 +714,9 @@ public class IssuesRecorder extends Recorder {
                     results.add(publishResult(run, workspace, listener, tool.getActualName(),
                             report, getReportName(tool), tool.getIcon(), resultHandler));
                 }
-            }
-            if (StringUtils.isNotBlank(getId()) || !StringUtils.isNotBlank(getName()) || !StringUtils.isNotBlank(getIcon())) {
-                logHandler.log("Do not set id, name, or icon for both the tool and the recorder");
+                if (StringUtils.isNotBlank(getId()) || StringUtils.isNotBlank(getName()) || StringUtils.isNotBlank(getIcon())) {
+                    logHandler.log("Do not set id, name, or icon of recorder when multiple tools are defined");
+                }
             }
         }
         return results;

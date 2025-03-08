@@ -1,5 +1,7 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -7,8 +9,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import org.jenkinsci.test.acceptance.junit.AbstractJUnitTest;
 import org.jenkinsci.test.acceptance.plugins.dashboard_view.DashboardView;
@@ -18,6 +18,7 @@ import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.Container;
 import org.jenkinsci.test.acceptance.po.FreeStyleJob;
 import org.jenkinsci.test.acceptance.po.Job;
+import org.jenkinsci.test.acceptance.po.WorkflowJob;
 
 import io.jenkins.plugins.analysis.warnings.AnalysisResult.Tab;
 import io.jenkins.plugins.analysis.warnings.AnalysisSummary.InfoType;
@@ -29,6 +30,7 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
  * Base class for all UI tests. Provides several helper methods that can be used by all tests.
  */
 @SuppressFBWarnings("BC")
+@SuppressWarnings("checkstyle:ClassFanOutComplexity")
 abstract class UiTest extends AbstractJUnitTest {
     static final String WARNINGS_PLUGIN_PREFIX = "/";
     static final String CHECKSTYLE_ID = "checkstyle";
@@ -61,6 +63,16 @@ abstract class UiTest extends AbstractJUnitTest {
         }
         job.addPublisher(ReferenceFinder.class);
         return job;
+    }
+
+    protected StringBuilder createReportFilesStep(final WorkflowJob job, final int build) {
+        String[] fileNames = {"checkstyle-report.xml", "pmd-report.xml", "findbugsXml.xml", "cpd.xml", "Main.java", "pep8Test.txt"};
+        StringBuilder resourceCopySteps = new StringBuilder();
+        for (String fileName : fileNames) {
+            resourceCopySteps.append(job.copyResourceStep(
+                    "/build_status_test/build_0" + build + "/" + fileName).replace("\\", "\\\\"));
+        }
+        return resourceCopySteps;
     }
 
     protected IssuesRecorder addAllRecorders(final FreeStyleJob job) {

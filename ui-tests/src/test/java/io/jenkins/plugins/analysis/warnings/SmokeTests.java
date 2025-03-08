@@ -178,16 +178,6 @@ public class SmokeTests extends UiTest {
         assertThat(resultPage.getPaginationButtons()).hasSize(1);
     }
 
-    private StringBuilder createReportFilesStep(final WorkflowJob job, final int build) {
-        String[] fileNames = {"checkstyle-report.xml", "pmd-report.xml", "findbugsXml.xml", "cpd.xml", "Main.java", "pep8Test.txt"};
-        StringBuilder resourceCopySteps = new StringBuilder();
-        for (String fileName : fileNames) {
-            resourceCopySteps.append(job.copyResourceStep(
-                    "/build_status_test/build_0" + build + "/" + fileName).replace("\\", "\\\\"));
-        }
-        return resourceCopySteps;
-    }
-
     @Override
     protected IssuesRecorder addAllRecorders(final FreeStyleJob job) {
         IssuesRecorder issuesRecorder = super.addAllRecorders(job);
