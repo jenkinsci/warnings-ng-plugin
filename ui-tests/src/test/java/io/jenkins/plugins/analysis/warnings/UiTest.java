@@ -30,7 +30,7 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
  * Base class for all UI tests. Provides several helper methods that can be used by all tests.
  */
 @SuppressFBWarnings("BC")
-@SuppressWarnings("checkstyle:ClassFanOutComplexity")
+@SuppressWarnings({"checkstyle:ClassFanOutComplexity", "PMD.CouplingBetweenObjects"})
 abstract class UiTest extends AbstractJUnitTest {
     static final String WARNINGS_PLUGIN_PREFIX = "/";
     static final String CHECKSTYLE_ID = "checkstyle";
