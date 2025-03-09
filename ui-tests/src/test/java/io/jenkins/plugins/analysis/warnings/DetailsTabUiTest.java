@@ -1,9 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.time.Duration;
-import java.util.Collection;
-import java.util.List;
-
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -11,6 +7,10 @@ import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+import java.time.Duration;
+import java.util.Collection;
+import java.util.List;
 
 import org.jenkinsci.test.acceptance.junit.WithPlugins;
 import org.jenkinsci.test.acceptance.po.Build;
@@ -33,7 +33,7 @@ public class DetailsTabUiTest extends UiTest {
     private static final String DETAILS_TAB_RESOURCES = "details_tab_test/";
 
     /**
-     * When a single warning is being recognized only the issues-tab should be shown.
+     * When a single warning is being recognized, only the issues-tab should be shown.
      */
     @Test
     public void shouldPopulateDetailsTabSingleWarning() {
@@ -56,7 +56,7 @@ public class DetailsTabUiTest extends UiTest {
     }
 
     /**
-     * When two warnings are being recognized in one file the tabs issues, files and folders should be shown.
+     * When two warnings are being recognized in one file, then the tabs "issues", "files", and "folders" should be shown.
      */
     @Test
     public void shouldPopulateDetailsTabMultipleWarnings() {
