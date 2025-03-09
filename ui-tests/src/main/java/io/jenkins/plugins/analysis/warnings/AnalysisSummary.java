@@ -1,5 +1,9 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import org.apache.commons.lang3.StringUtils;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -8,10 +12,6 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.PageObject;
@@ -34,6 +34,7 @@ public class AnalysisSummary extends PageObject {
     private final WebElement infoElement;
 
     private final List<WebElement> results;
+    private final WebElement summary;
 
     /**
      * Creates a new page object representing the analysis summary on the build page of a job.
@@ -49,7 +50,7 @@ public class AnalysisSummary extends PageObject {
 
         this.id = id;
 
-        WebElement summary = getElement(By.id(id + "-summary"));
+        summary = getElement(By.id(id + "-summary"));
         titleElement = summary.findElement(By.id(id + "-title"));
 
         infoElement = summary.findElement(By.className("fa-image-button"));
@@ -68,6 +69,15 @@ public class AnalysisSummary extends PageObject {
      */
     public String getTitleText() {
         return titleElement.getText();
+    }
+
+    /**
+     * Return the image the summary. Note that not all tools use an image. Symbols are not supported by this method.
+     *
+     * @return the image
+     */
+    public String getImage() {
+        return summary.findElement(by.xpath("../../td/img")).getDomAttribute("src");
     }
 
     /**

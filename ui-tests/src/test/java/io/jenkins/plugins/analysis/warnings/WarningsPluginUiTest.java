@@ -20,8 +20,10 @@ import org.jenkinsci.test.acceptance.po.DumbSlave;
 import org.jenkinsci.test.acceptance.po.Folder;
 import org.jenkinsci.test.acceptance.po.FreeStyleJob;
 import org.jenkinsci.test.acceptance.po.Slave;
+import org.jenkinsci.test.acceptance.po.WorkflowJob;
 
 import io.jenkins.plugins.analysis.warnings.AnalysisResult.Tab;
+import io.jenkins.plugins.analysis.warnings.AnalysisSummary.InfoType;
 import io.jenkins.plugins.analysis.warnings.AnalysisSummary.QualityGateResult;
 import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateCriticality;
 import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateType;
@@ -65,9 +67,48 @@ public class WarningsPluginUiTest extends UiTest {
      */
     private static final String CREDENTIALS_ID = "git";
     private static final String CREDENTIALS_KEY = "/org/jenkinsci/test/acceptance/docker/fixtures/GitContainer/unsafe";
+    private static final String ICON = "/plugin/warnings-ng/icons/pmd.svg";
 
     @Inject
     private DockerContainerHolder<JavaGitContainer> dockerContainer;
+
+    /**
+     * Runs a pipeline with CheckStyle that is published under a custom ID and icon.
+     * Verifies the analysis results use the correct URL and icon.
+     */
+    @Test
+    @WithPlugins({"token-macro", "pipeline-stage-step", "workflow-durable-task-step", "workflow-basic-steps"})
+    public void shouldRecordIssuesInPipelineAndExpandTokens() {
+        WorkflowJob job = jenkins.jobs.create(WorkflowJob.class);
+        job.sandbox.check();
+
+        job.script.set("node {\n"
+                + createReportFilesStep(job, 1)
+                + "recordIssues(tools: ["
+                + "     checkStyle( pattern: '**/checkstyle*', "
+                + "                 id: 'custom-id', "
+                + "                 icon: '" + ICON + "',"
+                + "                 name: '" + CHECK_STYLE_NAME + "')])\n"
+                + "}");
+
+        job.save();
+
+        Build build = buildJob(job);
+
+        build.open();
+
+        AnalysisSummary checkstyle = new AnalysisSummary(build, "custom-id");
+        assertThat(checkstyle)
+                .hasTitleText(CHECK_STYLE_NAME + ": One warning")
+                .hasInfoType(InfoType.ERROR);
+        assertThat(checkstyle.getImage())
+                .endsWith(ICON);
+
+        InfoView info = checkstyle.openInfoView();
+        assertThat(info.getErrorMessages())
+                .contains("Can't create fingerprints for some files:")
+                .last().asString().endsWith("RemoteLauncher.java' file not found");
+    }
 
     /**
      * Verifies that static analysis results are correctly shown when the job is part of a folder.

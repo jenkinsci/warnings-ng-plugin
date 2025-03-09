@@ -75,6 +75,11 @@
                     color: '#ddd',
                     borderWidth: 2
                 },
+                emphasis: {
+                    itemStyle: {
+                        color: 'inherit'
+                    }
+                },
                 label: {
                     rotate: 'horizontal'
                 }
