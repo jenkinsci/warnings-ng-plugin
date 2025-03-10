@@ -1,10 +1,10 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import org.openqa.selenium.WebElement;
+
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-
-import org.openqa.selenium.WebElement;
 
 import org.jenkinsci.test.acceptance.po.AbstractStep;
 import org.jenkinsci.test.acceptance.po.Control;
@@ -676,6 +676,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
         private final Control highThreshold = control("tool/highThreshold");
         private final Control id = control("tool/id");
         private final Control name = control("tool/name");
+        private final Control icon = control("tool/icon");
         private final Control analysisModelId = control("tool/analysisModelId");
         private final Control skipSymbolicLinks = control("tool/skipSymbolicLinks");
 
@@ -720,6 +721,20 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
          */
         public StaticAnalysisTool setName(final String name) {
             this.name.set(name);
+
+            return this;
+        }
+
+        /**
+         * Sets the custom name of the tool.
+         *
+         * @param icon
+         *         the icon
+         *
+         * @return this
+         */
+        public StaticAnalysisTool setIcon(final String icon) {
+            this.icon.set(icon);
 
             return this;
         }
