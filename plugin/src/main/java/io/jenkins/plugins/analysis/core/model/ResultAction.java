@@ -9,6 +9,7 @@ import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.util.Collection;
@@ -93,6 +94,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      *
      * @return this
      */
+    @Serial
     protected Object readResolve() {
         if (trendChartType == null) {
             trendChartType = TrendChartType.TOOLS_ONLY;
@@ -202,7 +204,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
     public Collection<? extends Action> getProjectActions() {
         return Collections.singleton(
                 new JobAction(owner.getParent(), getLabelProvider(), result.getSizePerOrigin().size(),
-                        trendChartType));
+                        trendChartType, getUrlName()));
     }
 
     @Whitelisted

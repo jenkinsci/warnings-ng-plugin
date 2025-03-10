@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.warnings;
 
 import org.junit.Test;
+import org.openqa.selenium.By;
 
 import org.jenkinsci.test.acceptance.junit.WithPlugins;
 import org.jenkinsci.test.acceptance.po.Build;
@@ -45,11 +46,51 @@ public class TrendChartsUiTest extends UiTest {
         assertThat(analysisResultPage.trendChartIsDisplayed(NEW_VERSUS_FIXED_TREND_CHART)).isTrue();
     }
 
-    /** Verifies all Charts after a series of 2 builds. */
+    /** Verifies the charts after a series of 2 builds. */
     @Test
     public void shouldShowTrendChartsWithCorrectResults() {
-        Build build = buildFreeStyleJobTwiceWithJavacIssues();
-        AnalysisResult analysisResultPage = new AnalysisResult(build, "java");
+        FreeStyleJob job = createFreeStyleJob(SOURCE_VIEW_FOLDER + "build_01");
+        job.addPublisher(IssuesRecorder.class,
+                recorder -> recorder.setToolWithPattern(JAVA_COMPILER, "**/*.txt")
+        );
+        job.save();
+
+        verifyTrendCharts(job, JAVA_ID, "java.svg");
+    }
+
+    /** Verifies the charts with a custom ID after a series of 2 builds. */
+    @Test
+    public void shouldShowTrendChartsWithCustomId() {
+        FreeStyleJob job = createFreeStyleJob(SOURCE_VIEW_FOLDER + "build_01");
+        var id = "custom-id";
+        var icon = "plugin/warnings-ng/icons/checkstyle.svg";
+        job.addPublisher(IssuesRecorder.class, recorder ->
+                recorder.setTool(JAVA_COMPILER, "**/*.txt")
+                        .setName("custom-name")
+                        .setIcon(icon)
+                        .setId(id)
+        );
+        job.save();
+
+        verifyTrendCharts(job, id, icon);
+    }
+
+    private void verifyTrendCharts(final FreeStyleJob job, final String id, final String icon) {
+        buildSuccessfully(job);
+
+        assertThat(job.all(By.className("echarts-trend"))).isEmpty();
+
+        reconfigureJobWithResource(job);
+        Build build = buildSuccessfully(job);
+
+        job.open();
+        assertThat(job.all(By.className("echarts-trend"))).hasSize(1)
+                .first().satisfies(c -> assertThat(c.getDomAttribute("tool")).isEqualTo(id));
+        assertThat(job.all(By.className("task-icon-link")))
+                .anyMatch(c ->
+                        !c.findElements(By.xpath(".//img[contains(@src, '" + icon + "')]")).isEmpty());
+
+        AnalysisResult analysisResultPage = new AnalysisResult(build, id);
         analysisResultPage.open();
 
         String severitiesTrendChart = analysisResultPage.getTrendChartById(SEVERITIES_TREND_CHART);
@@ -57,7 +98,7 @@ public class TrendChartsUiTest extends UiTest {
         String newVersusFixedTrendChart = analysisResultPage.getTrendChartById(NEW_VERSUS_FIXED_TREND_CHART);
 
         verifySeveritiesChart(severitiesTrendChart);
-        verifyToolsChart(toolsTrendChart);
+        verifyToolsChart(toolsTrendChart, id);
         verifyNewVersusFixedChart(newVersusFixedTrendChart);
     }
 
@@ -93,20 +134,14 @@ public class TrendChartsUiTest extends UiTest {
                 );
     }
 
-    /**
-     * Verifies Tools Chart after a series of 2 builds.
-     *
-     * @param toolsTrendChart
-     *         JSONString with values from Severities Tools TrendChart
-     */
-    private void verifyToolsChart(final String toolsTrendChart) {
+    private void verifyToolsChart(final String toolsTrendChart, final String id) {
         assertThatJson(toolsTrendChart)
                 .inPath("$.xAxis[*].data[*]")
                 .isArray()
                 .hasSize(2);
 
         assertThatJson(toolsTrendChart)
-               .node("series[0].name").isEqualTo("java");
+               .node("series[0].name").isEqualTo(id);
 
         assertThatJson(toolsTrendChart)
                 .node("series[0].data")
@@ -144,14 +179,5 @@ public class TrendChartsUiTest extends UiTest {
 
     private void reconfigureJobWithResource(final FreeStyleJob job) {
         job.configure(() -> job.copyResource("/" + SOURCE_VIEW_FOLDER + "build_02"));
-    }
-
-    private Build buildFreeStyleJobTwiceWithJavacIssues() {
-        FreeStyleJob job = createFreeStyleJob(SOURCE_VIEW_FOLDER + "build_01");
-        job.addPublisher(IssuesRecorder.class, recorder -> recorder.setToolWithPattern(JAVA_COMPILER, "**/*.txt"));
-        job.save();
-        buildSuccessfully(job);
-        reconfigureJobWithResource(job);
-        return buildSuccessfully(job);
     }
 }
