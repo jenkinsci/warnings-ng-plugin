@@ -1,12 +1,12 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.io.IOException;
-import java.util.Optional;
-
 import edu.hm.hafner.echarts.BuildResult;
 import edu.hm.hafner.echarts.ChartModelConfiguration;
 import edu.hm.hafner.echarts.JacksonFacade;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
+
+import java.io.IOException;
+import java.util.Optional;
 
 import org.kohsuke.stapler.StaplerRequest2;
 import org.kohsuke.stapler.StaplerResponse2;
@@ -38,6 +38,7 @@ public class JobAction implements Action, AsyncConfigurableTrendChart {
     private final StaticAnalysisLabelProvider labelProvider;
     private final int numberOfTools;
     private final TrendChartType trendChartType;
+    private final String urlName;
 
     /**
      * Creates a new instance of {@link JobAction}.
@@ -48,9 +49,12 @@ public class JobAction implements Action, AsyncConfigurableTrendChart {
      *         the label provider
      * @param numberOfTools
      *         the number of tools that have results to show
+     * @deprecated
+     *        Use {@link #JobAction(Job, StaticAnalysisLabelProvider, int, TrendChartType, String)} instead.
      */
+    @Deprecated
     public JobAction(final Job<?, ?> owner, final StaticAnalysisLabelProvider labelProvider, final int numberOfTools) {
-        this(owner, labelProvider, numberOfTools, TrendChartType.TOOLS_ONLY);
+        this(owner, labelProvider, numberOfTools, TrendChartType.TOOLS_ONLY, labelProvider.getId());
     }
 
     /**
@@ -64,9 +68,32 @@ public class JobAction implements Action, AsyncConfigurableTrendChart {
      *         the number of tools that have results to show
      * @param trendChartType
      *         determines if the trend chart will be shown
+     * @deprecated
+     *        Use {@link #JobAction(Job, StaticAnalysisLabelProvider, int, TrendChartType, String)} instead.
      */
+    @Deprecated
     public JobAction(final Job<?, ?> owner, final StaticAnalysisLabelProvider labelProvider, final int numberOfTools,
             final TrendChartType trendChartType) {
+        this(owner, labelProvider, numberOfTools, trendChartType, labelProvider.getId());
+    }
+
+    /**
+     * Creates a new instance of {@link JobAction}.
+     *
+     * @param owner
+     *         the job that owns this action
+     * @param labelProvider
+     *         the label provider
+     * @param numberOfTools
+     *         the number of tools that have results to show
+     * @param trendChartType
+     *         determines if the trend chart will be shown
+     * @param urlName
+     *        the custom URL name of this action
+     */
+    public JobAction(final Job<?, ?> owner, final StaticAnalysisLabelProvider labelProvider, final int numberOfTools,
+            final TrendChartType trendChartType, final String urlName) {
+        this.urlName = urlName;
         this.owner = owner;
         this.labelProvider = labelProvider;
         this.numberOfTools = numberOfTools;
@@ -79,7 +106,7 @@ public class JobAction implements Action, AsyncConfigurableTrendChart {
      * @return the ID
      */
     public String getId() {
-        return labelProvider.getId();
+        return urlName;
     }
 
     @Override
@@ -116,7 +143,7 @@ public class JobAction implements Action, AsyncConfigurableTrendChart {
             return new NullAnalysisHistory();
         }
         else {
-            return new AnalysisHistory(lastCompletedBuild, new ByIdResultSelector(labelProvider.getId()));
+            return new AnalysisHistory(lastCompletedBuild, new ByIdResultSelector(getId()));
         }
     }
 
@@ -129,14 +156,12 @@ public class JobAction implements Action, AsyncConfigurableTrendChart {
     @Override
     @CheckForNull
     public String getIconFileName() {
-        return createBuildHistory().getBaselineResult()
-                .map(result -> labelProvider.getSmallIconUrl())
-                .orElse(null);
+        return labelProvider.getSmallIconUrl();
     }
 
     @Override
     public String getUrlName() {
-        return labelProvider.getId();
+        return urlName;
     }
 
     /**
@@ -155,7 +180,7 @@ public class JobAction implements Action, AsyncConfigurableTrendChart {
         Optional<ResultAction> action = getLatestAction();
         if (action.isPresent()) {
             response.sendRedirect2(String.format("../%d/%s", action.get().getOwner().getNumber(),
-                    labelProvider.getId()));
+                    getId()));
         }
     }
 

@@ -1,9 +1,9 @@
 package io.jenkins.plugins.analysis.core.model;
 
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 import java.util.Collections;
-
-import org.junit.jupiter.api.Test;
 
 import org.kohsuke.stapler.StaplerRequest2;
 import org.kohsuke.stapler.StaplerResponse2;
@@ -38,12 +38,16 @@ class JobActionTest {
 
         Job<?, ?> job = mock(Job.class);
 
-        JobAction action = new JobAction(job, labelProvider, 1);
+        JobAction action = createJobAction(job, labelProvider);
         assertThat(action.getDisplayName()).isEqualTo(LINK_NAME);
         assertThat(action.getTrendName()).isEqualTo(TREND_NAME);
         assertThat(action.getId()).isEqualTo(ID);
         assertThat(action.getUrlName()).isEqualTo(ID);
         assertThat(action.getOwner()).isEqualTo(job);
+    }
+
+    private JobAction createJobAction(final Job<?, ?> job, final StaticAnalysisLabelProvider labelProvider) {
+        return new JobAction(job, labelProvider, 1, TrendChartType.TOOLS_ONLY, labelProvider.getId());
     }
 
     @Test
@@ -53,8 +57,8 @@ class JobActionTest {
         when(labelProvider.getSmallIconUrl()).thenReturn(ICON);
 
         Job<?, ?> job = mock(Job.class);
-        JobAction action = new JobAction(job, labelProvider, 1);
-        assertThat(action.getIconFileName()).isNull();
+        JobAction action = createJobAction(job, labelProvider);
+        assertThat(action.getIconFileName()).isEqualTo(ICON); // a JobAction should always show an icon
 
         Run<?, ?> reference = createValidReferenceBuild(0);
         when(job.getLastCompletedBuild()).thenAnswer(i -> reference);
@@ -74,15 +78,17 @@ class JobActionTest {
 
         verify(response).sendRedirect2("../0/" + ANALYSIS_ID);
 
-        JobAction hiddenAction = new JobAction(job, labelProvider, 1, TrendChartType.NONE);
+        var url = "something";
+        JobAction hiddenAction = new JobAction(job, labelProvider, 1, TrendChartType.NONE, url);
         assertThat(hiddenAction.isTrendVisible()).isFalse();
+        assertThat(hiddenAction.getUrlName()).isEqualTo(url);
     }
 
     @Test
     void shouldRedirect() throws IOException {
         StaticAnalysisLabelProvider labelProvider = mock(StaticAnalysisLabelProvider.class);
         Job<?, ?> job = mock(Job.class);
-        JobAction action = new JobAction(job, labelProvider, 1);
+        JobAction action = createJobAction(job, labelProvider);
 
         StaplerRequest2 request = mock(StaplerRequest2.class);
         action.doIndex(request, mock(StaplerResponse2.class));
