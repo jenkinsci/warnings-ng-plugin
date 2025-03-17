@@ -226,7 +226,7 @@
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>git-forensics</artifactId>
       <!-- TODO: remove the version when a matching BOM is available -->
-      <version>3.1.0</version>
+      <version>3.2.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
