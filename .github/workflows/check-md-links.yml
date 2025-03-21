@@ -5,10 +5,14 @@ on: push
 jobs:
   check-markdown-links:
     name: 'Check Markdown links'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
-      - uses: gaurav-nelson/github-action-markdown-link-check@v1
+      - uses: umbrelladocs/action-linkspector@v1.3.2
         with:
-          check-modified-files-only: 'no'
-          config-file: '.github/check-md-links.json'
+          github_token: ${{ secrets.github_token }}
+          reporter: github-pr-check
+          fail_on_error: true
+          filter_mode: nofilter
+          config_file: '.github/linkspector.yml'
+          level: 'info'
