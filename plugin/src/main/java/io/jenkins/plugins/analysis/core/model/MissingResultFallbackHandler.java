@@ -20,7 +20,7 @@ import jenkins.model.TransientActionFactory;
  * and then attaching the corresponding {@link JobAction} and {@link TransientProjectResultAction} to the job.
  */
 @Extension
-public final class AnalysisBuildsFallback extends TransientActionFactory<Job<?, ?>> {
+public final class MissingResultFallbackHandler extends TransientActionFactory<Job<?, ?>> {
     @Override
     @SuppressWarnings("unchecked")
     public Class<Job<?, ?>> type() {
@@ -30,20 +30,19 @@ public final class AnalysisBuildsFallback extends TransientActionFactory<Job<?, 
     @NonNull
     @Override
     public Collection<? extends Action> createFor(@NonNull final Job<?, ?> target) {
-        //Check if the current build has valid action(s) and returns an empty list.
+        // Check if the current build has valid action(s) and returns an empty list.
         Run<?, ?> currentBuild = target.getLastBuild();
-        if (currentBuild == null) {
+        if (currentBuild == null || currentBuild.isBuilding()) {
             return Collections.emptyList();
         }
 
         List<ResultAction> currentResultActions = currentBuild.getActions(ResultAction.class);
 
-        if (!currentResultActions.isEmpty() || currentBuild.isBuilding()) {
+        if (!currentResultActions.isEmpty()) {
             return Collections.emptyList();
         }
 
-        Run<?, ?> previousBuild = currentBuild.getPreviousBuild();
-        while (previousBuild != null) {
+        for (Run<?, ?> previousBuild = currentBuild.getPreviousBuild(); previousBuild != null; previousBuild = previousBuild.getPreviousBuild()) {
             List<ResultAction> resultActions = previousBuild.getActions(ResultAction.class);
 
             List<Action> actions = new ArrayList<>();
@@ -55,23 +54,18 @@ public final class AnalysisBuildsFallback extends TransientActionFactory<Job<?, 
             if (!resultActions.isEmpty()) {
                 return actions;
             }
-
-            previousBuild = previousBuild.getPreviousBuild();
         }
 
         return Collections.emptyList();
     }
 
     /**
-     * A wrapper class for {@link ResultAction} that provides an absolute URL for the link on the side panel.
+     * A wrapper record for {@link ResultAction} that provides an absolute URL for the link on the side panel.
+     *
+     * @param resultAction
+     *          Valid Result Action
      */
-    static class TransientProjectResultAction implements Action {
-        private final ResultAction resultAction;
-
-        TransientProjectResultAction(final ResultAction resultActions) {
-            this.resultAction = resultActions;
-        }
-
+    private record TransientProjectResultAction(ResultAction resultAction) implements Action {
         @Override
         public String getIconFileName() {
             return resultAction.getIconFileName();
@@ -79,7 +73,7 @@ public final class AnalysisBuildsFallback extends TransientActionFactory<Job<?, 
 
         @Override
         public String getDisplayName() {
-            return resultAction.getDisplayName() + " (Previous)";
+            return resultAction.getDisplayName();
         }
 
         @Override
