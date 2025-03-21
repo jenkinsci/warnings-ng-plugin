@@ -1,11 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.net.URL;
-import java.util.Collection;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
-
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -14,6 +8,12 @@ import org.openqa.selenium.support.ui.Select;
 import com.google.inject.Injector;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+import java.net.URL;
+import java.util.Collection;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.PageObject;
@@ -217,7 +217,7 @@ public class AnalysisResult extends PageObject {
      * @return the instance of the PageObject to which the link leads to
      */
     public <T extends PageObject> T openLinkOnSite(final WebElement element, final Class<T> type) {
-        String link = element.getAttribute("href");
+        String link = element.getDomAttribute("href");
         T retVal = newInstance(type, injector, url(link));
         element.click();
         return retVal;
@@ -229,7 +229,7 @@ public class AnalysisResult extends PageObject {
      * @return the select-element where the user can choose how many rows should be displayed
      */
     public Select getLengthSelectElementByActiveTab() {
-        var element = find(By.xpath(ACTIVE_TAB + "select[contains(@name, 'length')]"));
+        var element = find(By.xpath(ACTIVE_TAB + "select[@id[starts-with(., 'dt-length')]]"));
         return new Select(element);
     }
 

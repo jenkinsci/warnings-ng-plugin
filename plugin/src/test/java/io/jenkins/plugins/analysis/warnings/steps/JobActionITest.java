@@ -1,8 +1,9 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.Issue;
+
+import java.util.List;
 
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.model.Actionable;
@@ -68,6 +69,37 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         assertThatTrendChartIsVisible(jobActions.get(0));
         assertThat(jobActions.get(0).getIconFileName()).endsWith(StaticAnalysisLabelProvider.ANALYSIS_SVG_ICON);
         assertThat(jobActions.get(0).getUrlName()).isEqualTo(ECLIPSE_URL_NAME);
+    }
+
+    @Test
+    @Issue("JENKINS-75394")
+    void shouldShowTrendChartWithCustomUrlAndIcon() {
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(ECLIPSE_LOG);
+        var tool = new Eclipse();
+        var url = "custom-eclipse";
+        tool.setId(url);
+        var icon = "custom-eclipse.svg";
+        tool.setIcon(icon);
+        enableGenericWarnings(project, tool);
+
+        Run<?, ?> build = buildWithResult(project, Result.SUCCESS);
+        assertActionProperties(project, build, url, icon);
+
+        project.getActions(JobAction.class);
+        List<JobAction> jobActions = project.getActions(JobAction.class);
+
+        assertThatTrendChartIsHidden(jobActions.get(0)); // trend chart requires at least two builds
+        assertThat(jobActions.get(0).getIconFileName()).isEqualTo(icon);
+        assertThat(jobActions.get(0).getUrlName()).isEqualTo(url);
+
+        build = buildWithResult(project, Result.SUCCESS);
+        assertActionProperties(project, build, url, icon);
+
+        jobActions = project.getActions(JobAction.class);
+
+        assertThatTrendChartIsVisible(jobActions.get(0));
+        assertThat(jobActions.get(0).getIconFileName()).isEqualTo(icon);
+        assertThat(jobActions.get(0).getUrlName()).isEqualTo(url);
     }
 
     /**
@@ -183,7 +215,7 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Verifies that the side bar link is not missing if there are no issues in the latest build.
+     * Verifies that the sidebar link is not missing if there are no issues in the latest build.
      */
     @Test
     void shouldHaveSidebarLinkEvenWhenLastActionHasNoResults() {
@@ -289,6 +321,11 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private void assertActionProperties(final FreeStyleProject project, final Run<?, ?> build) {
+        assertActionProperties(project, build, "eclipse", "symbol-solid/triangle-exclamation plugin-font-awesome-api");
+    }
+
+    private void assertActionProperties(final FreeStyleProject project, final Run<?, ?> build,
+            final String urlName, final String iconName) {
         JobAction jobAction = project.getAction(JobAction.class);
         assertThat(jobAction).isNotNull();
 
@@ -298,8 +335,8 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         StaticAnalysisLabelProvider labelProvider = new Eclipse().getLabelProvider();
         assertThat(jobAction.getDisplayName()).isEqualTo(labelProvider.getLinkName());
         assertThat(jobAction.getTrendName()).isEqualTo(labelProvider.getTrendName());
-        assertThat(jobAction.getUrlName()).isEqualTo(labelProvider.getId());
+        assertThat(jobAction.getUrlName()).isEqualTo(urlName);
         assertThat(jobAction.getOwner()).isEqualTo(project);
-        assertThat(jobAction.getIconFileName()).endsWith(labelProvider.getSmallIconUrl());
+        assertThat(jobAction.getIconFileName()).endsWith(iconName);
     }
 }

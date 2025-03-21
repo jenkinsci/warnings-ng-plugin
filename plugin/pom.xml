@@ -11,7 +11,7 @@
 
   <groupId>io.jenkins.plugins</groupId>
   <artifactId>warnings-ng</artifactId>
-  <version>12.4.0-SNAPSHOT</version>
+  <version>12.5.0-SNAPSHOT</version>
   <packaging>hpi</packaging>
   <name>Warnings Plugin</name>
 
@@ -45,7 +45,7 @@
   <properties>
     <module.name>${project.groupId}.warnings.ng</module.name>
 
-    <analysis-model-api.version>13.1.0</analysis-model-api.version>
+    <analysis-model-api.version>13.2.0</analysis-model-api.version>
     <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
     <pull-request-monitoring.version>335.v525cd64ec76b_</pull-request-monitoring.version>
 
@@ -54,7 +54,7 @@
     <!-- Test Library Dependencies Versions -->
     <xmlunit.version>2.10.0</xmlunit.version>
     <jmh.version>1.37</jmh.version>
-    <testcontainers.version>1.20.5</testcontainers.version>
+    <testcontainers.version>1.20.6</testcontainers.version>
 
     <!-- Jenkins Plug-in Dependencies Versions -->
     <flexible-publish.version>0.15.2</flexible-publish.version>
@@ -85,7 +85,7 @@
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>jsoup</artifactId>
       <!-- TODO: remove the version when a matching BOM is available -->
-      <version>1.18.3-30.v952e9442d416</version>
+      <version>1.19.1-36.v63b_c859911d0</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
