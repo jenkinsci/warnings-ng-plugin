@@ -30,7 +30,6 @@ public final class MissingResultFallbackHandler extends TransientActionFactory<J
     @NonNull
     @Override
     public Collection<? extends Action> createFor(@NonNull final Job<?, ?> target) {
-        // Check if the current build has valid action(s) and returns an empty list.
         Run<?, ?> currentBuild = target.getLastBuild();
         if (currentBuild == null || currentBuild.isBuilding()) {
             return Collections.emptyList();
