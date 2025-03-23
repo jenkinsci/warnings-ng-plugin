@@ -12,6 +12,7 @@ import hudson.model.Result;
 import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.model.AggregatedTrendAction;
+import io.jenkins.plugins.analysis.core.model.MissingResultFallbackHandler;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.JobAction;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
@@ -226,6 +227,43 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
 
         JobAction jobAction = project.getAction(JobAction.class);
         assertThat(jobAction).isNotNull();
+    }
+
+    /**
+     * Verifies the behaviour of {@link MissingResultFallbackHandler}.
+     */
+    @Test
+    void shouldAttachJobActionsWithoutRecordIssues() {
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(ECLIPSE_LOG);
+        enableEclipseWarnings(project);
+
+        Run<?, ?> firstBuild = buildWithResult(project, Result.SUCCESS);
+        List<ResultAction> firstBuildResultActions = firstBuild.getActions(ResultAction.class);
+        assertThat(firstBuildResultActions).isNotEmpty();
+
+        List<JobAction> jobActionsAfterFirstBuild = project.getActions(JobAction.class);
+        assertThat(jobActionsAfterFirstBuild).isNotEmpty();
+        assertThatTrendChartIsHidden(jobActionsAfterFirstBuild.get(0));
+
+        Run<?, ?> secondBuild = buildWithResult(project, Result.SUCCESS);
+        List<ResultAction> secondBuildResultActions = secondBuild.getActions(ResultAction.class);
+        assertThat(secondBuildResultActions).isNotEmpty();
+
+        List<JobAction> jobActionsAfterSecondBuild = project.getActions(JobAction.class);
+        assertThat(jobActionsAfterSecondBuild).isNotEmpty();
+        assertThatTrendChartIsVisible(jobActionsAfterSecondBuild.get(0));
+
+        project.getPublishersList().clear();
+
+        Run<?, ?> thirdBuild = buildWithResult(project, Result.SUCCESS);
+        List<ResultAction> thirdBuildResultActions = thirdBuild.getActions(ResultAction.class);
+        assertThat(thirdBuildResultActions).isEmpty();
+
+        List<JobAction> jobActionsAfterThirdBuild = project.getActions(JobAction.class);
+        assertThat(jobActionsAfterThirdBuild).isNotEmpty();
+        assertThat(jobActionsAfterSecondBuild.get(0).getId()).isEqualTo(jobActionsAfterThirdBuild.get(0).getId());
+        assertThat(jobActionsAfterSecondBuild.get(0).getUrlName()).isEqualTo(jobActionsAfterThirdBuild.get(0).getUrlName());
+        assertThatTrendChartIsVisible(jobActionsAfterThirdBuild.get(0));
     }
 
     private void assertThatTrendChartIsVisible(final AsyncConfigurableTrendChart trendChart) {
