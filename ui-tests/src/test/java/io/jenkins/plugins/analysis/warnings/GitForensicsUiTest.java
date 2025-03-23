@@ -1,9 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.util.HashMap;
-import java.util.Map;
 import javax.inject.Inject;
 
 import org.junit.After;
@@ -13,6 +9,11 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.jenkinsci.test.acceptance.docker.DockerContainerHolder;
 import org.jenkinsci.test.acceptance.docker.fixtures.GitContainer;
@@ -125,7 +126,6 @@ public class GitForensicsUiTest extends UiTest {
 
     /** Dispose the docker container. */
     @After
-    @SuppressFBWarnings("BC_UNCONFIRMED_CAST_OF_RETURN_VALUE")
     public void disposeContainer() {
         gitServer.get().close();
     }
