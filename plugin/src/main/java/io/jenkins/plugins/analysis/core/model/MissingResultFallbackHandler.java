@@ -37,7 +37,6 @@ public final class MissingResultFallbackHandler extends TransientActionFactory<J
         }
 
         List<ResultAction> currentResultActions = currentBuild.getActions(ResultAction.class);
-
         if (!currentResultActions.isEmpty()) {
             return Collections.emptyList();
         }
