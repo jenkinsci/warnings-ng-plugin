@@ -1,14 +1,12 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import io.jenkins.plugins.analysis.warnings.IssuesTable.Header;
 
@@ -21,7 +19,6 @@ import io.jenkins.plugins.analysis.warnings.IssuesTable.Header;
  *
  * @author Stephan Plöderl
  */
-@SuppressFBWarnings("EI")
 abstract class AbstractIssuesTable<T extends GenericTableRow> {
     private final AnalysisResult analysisResult;
     private final List<T> tableRows = new ArrayList<>();

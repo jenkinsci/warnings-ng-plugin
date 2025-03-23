@@ -7,8 +7,6 @@ import org.openqa.selenium.support.ui.Select;
 
 import com.google.inject.Injector;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 import java.net.URL;
 import java.util.Collection;
 import java.util.List;
@@ -47,16 +45,16 @@ public class AnalysisResult extends PageObject {
 
     /**
      * Creates an instance of the page displaying the details of the issues. This constructor is used for injecting a
-     * filtered instance of the page (e.g. by clicking on links which open a filtered instance of a AnalysisResult.
+     * filtered instance of the page (e.g., by clicking on links which open a filtered instance of a AnalysisResult.
      *
      * @param injector
      *         the injector of the page
      * @param url
      *         the url of the page
      * @param id
-     *         the id of  the result page (e.g., simian or cpd)
+     *         the id of the result page (e.g., simian or cpd)
      */
-    @SuppressWarnings("unused") // Required to dynamically create page object using reflection
+    @SuppressWarnings("unused") // Required to dynamically create a page object using reflection
     public AnalysisResult(final Injector injector, final URL url, final String id) {
         super(injector, url);
 
@@ -71,7 +69,7 @@ public class AnalysisResult extends PageObject {
     public Tab getActiveTab() {
         WebElement activeTab = find(By.xpath("//a[@role='tab' and contains(@class, 'active')]"));
 
-        return Tab.valueWithHref(extractRelativeUrl(activeTab.getAttribute(TARGET_HREF)));
+        return Tab.valueWithHref(extractRelativeUrl(activeTab.getDomAttribute(TARGET_HREF)));
     }
 
     /**
@@ -81,7 +79,7 @@ public class AnalysisResult extends PageObject {
      */
     public Collection<Tab> getAvailableTabs() {
         return all(By.xpath("//a[@role='tab']")).stream()
-                .map(tab -> tab.getAttribute(TARGET_HREF))
+                .map(tab -> tab.getDomAttribute(TARGET_HREF))
                 .map(this::extractRelativeUrl)
                 .map(Tab::valueWithHref)
                 .collect(Collectors.toList());
@@ -93,7 +91,7 @@ public class AnalysisResult extends PageObject {
 
     /**
      * Returns the total number of issues. This method requires that one of the tabs is shown that shows the total
-     * number of issues in the footer. I.e. the {@link Tab#ISSUES} and {@link Tab#BLAMES}.
+     * number of issues in the footer. I.e., the {@link Tab#ISSUES} and {@link Tab#BLAMES}.
      *
      * @return the total number of issues
      */
@@ -103,7 +101,7 @@ public class AnalysisResult extends PageObject {
 
     /**
      * Returns the total number of new issues. This method requires that one of the tabs is shown that shows the total
-     * number of issues in the footer. I.e. the {@link Tab#ISSUES} and {@link Tab#BLAMES}.
+     * number of issues in the footer. I.e., the {@link Tab#ISSUES} and {@link Tab#BLAMES}.
      *
      * @return the total number of new issues
      */
@@ -166,7 +164,7 @@ public class AnalysisResult extends PageObject {
 
     /**
      * Opens the analysis details page, selects the tab {@link Tab#CATEGORIES} and returns the {@link PageObject} of the
-     * categories table.
+     * category table.
      *
      * @param tab
      *         the tab to open
@@ -180,9 +178,9 @@ public class AnalysisResult extends PageObject {
 
     /**
      * Opens the analysis details page, selects the tab {@link Tab#BLAMES} and returns the {@link PageObject} of the
-     * blames table.
+     * blame table.
      *
-     * @return page object of the blames table.
+     * @return page object of the blame table.
      */
     public BlamesTable openBlamesTable() {
         openTab(Tab.BLAMES);
@@ -297,7 +295,6 @@ public class AnalysisResult extends PageObject {
     /**
      * Clicks the next-button to cycle through the Trend Charts.
      */
-    @SuppressFBWarnings(value = "THROWS", justification = "3rd party library we cannot change")
     public void clickNextOnTrendCarousel() {
         WebElement trendChart = getTrendChart();
         WebElement activeChart = trendChart.findElement(By.className("active"));
