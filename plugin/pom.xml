@@ -95,8 +95,6 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>plugin-util-api</artifactId>
-      <!-- TODO: remove the version when a matching BOM is available -->
-      <version>6.0.0</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
@@ -157,8 +155,6 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>forensics-api</artifactId>
-      <!-- TODO: remove the version when a matching BOM is available -->
-      <version>3.0.0</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
@@ -218,15 +214,11 @@
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>forensics-api</artifactId>
       <classifier>tests</classifier>
-      <!-- TODO: remove the version when a matching BOM is available -->
-      <version>3.0.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>git-forensics</artifactId>
-      <!-- TODO: remove the version when a matching BOM is available -->
-      <version>3.1.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -307,8 +299,6 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>plugin-util-api</artifactId>
-      <!-- TODO: remove the version when a matching BOM is available -->
-      <version>6.0.0</version>
       <classifier>tests</classifier>
       <scope>test</scope>
       <exclusions>
@@ -344,7 +334,7 @@
       <version>${testcontainers.version}</version>
       <scope>test</scope>
     </dependency>
-    <!-- Form element path plugin to simplify location of UI elements in HtmlUnit tests -->
+    <!-- Form element path plugin to simplify the location of UI elements in HtmlUnit tests -->
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>form-element-path</artifactId>
