@@ -65,7 +65,7 @@ main build page. From there you can also dive into the details:
     * [Simple Pipeline configuration](#simple-pipeline-configuration)
     * [Declarative Pipeline configuration](#declarative-pipeline-configuration)
     * [Advanced Pipeline configuration](#advanced-pipeline-configuration)
-* [Feature Overview](#new-features)
+* [Feature Overview](#feature-overview)
   * [Issues history: new, fixed, and outstanding issues](#issues-history-new-fixed-and-outstanding-issues)
   * [Severities](#severities)
   * [Build trend](#build-trend)
