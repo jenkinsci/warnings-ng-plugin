@@ -43,6 +43,7 @@ import io.jenkins.plugins.util.QualityGateResult;
 @SuppressWarnings("ClassFanOutComplexity")
 @SuppressFBWarnings(value = "SE", justification = "transient field owner ist restored using a Jenkins callback")
 public class ResultAction implements HealthReportingAction, LastBuildAction, RunAction2, StaplerProxy, Serializable {
+    @Serial
     private static final long serialVersionUID = 6683647181785654908L;
 
     private transient Run<?, ?> owner;
@@ -317,11 +318,15 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
     }
 
     private String getParserId() {
-        var originalReport = getResult().getIssues();
-        if (originalReport.hasParserId()) {
-            return originalReport.getParserId();
+        var parserId = getResult().getParserId();
+        if (isValidId(parserId)) {
+            return parserId;
         }
         return id;
+    }
+
+    private boolean isValidId(final String parserId) {
+        return StringUtils.isNotBlank(parserId) && !"-".equals(parserId);
     }
 
     /**
@@ -335,7 +340,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
     }
 
     /**
-     * Empty method as workaround for Stapler bug: JavaScript method in target object is not found.
+     * Empty method as workaround for Stapler bug: JavaScript method in the target object is not found.
      *
      * @return unused string (since Firefox requires that Ajax calls return something)
      */
