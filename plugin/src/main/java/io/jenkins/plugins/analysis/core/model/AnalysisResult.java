@@ -1,5 +1,18 @@
 package io.jenkins.plugins.analysis.core.model; // NOPMD
 
+import org.apache.commons.lang3.StringUtils;
+import org.eclipse.collections.api.list.ImmutableList;
+import org.eclipse.collections.impl.factory.Lists;
+import org.eclipse.collections.impl.factory.Maps;
+
+import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.analysis.Severity;
+import edu.hm.hafner.echarts.Build;
+import edu.hm.hafner.util.VisibleForTesting;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+import java.io.Serial;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.nio.file.Path;
@@ -13,18 +26,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.commons.lang3.StringUtils;
-import org.eclipse.collections.api.list.ImmutableList;
-import org.eclipse.collections.impl.factory.Lists;
-import org.eclipse.collections.impl.factory.Maps;
-
-import edu.hm.hafner.analysis.Report;
-import edu.hm.hafner.analysis.Severity;
-import edu.hm.hafner.echarts.Build;
-import edu.hm.hafner.util.VisibleForTesting;
-import edu.umd.cs.findbugs.annotations.CheckForNull;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
 import hudson.model.Run;
@@ -52,6 +53,7 @@ import io.jenkins.plugins.util.ValidationUtilities;
 @SuppressFBWarnings(value = "SE, DESERIALIZATION_GADGET", justification = "transient fields are restored using a Jenkins callback (or are checked for null)")
 @SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveClassLength", "PMD.GodClass", "checkstyle:ClassFanOutComplexity", "checkstyle:ClassDataAbstractionCoupling"})
 public class AnalysisResult implements Serializable, StaticAnalysisRun {
+    @Serial
     private static final long serialVersionUID = 1110545450292087475L;
 
     private static final Pattern ISSUES_FILE_NAME = Pattern.compile("issues.xml", Pattern.LITERAL);
@@ -59,6 +61,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     private static final String NO_REFERENCE = StringUtils.EMPTY;
 
     private final String id;
+    private /* almost final */ String parserId;
 
     private IssuesStatistics totals;
 
@@ -227,8 +230,10 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
         this.owner = owner;
 
         Report allIssues = report.getAllIssues();
+
         new ValidationUtilities().ensureValidId(id);
         this.id = id;
+        this.parserId = allIssues.getParserId();
 
         totals = report.getStatistics();
         this.sizePerOrigin = new HashMap<>(sizePerOrigin);
@@ -265,12 +270,16 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      *
      * @return this
      */
+    @Serial
     protected Object readResolve() {
         if (qualityGateResult == null && qualityGateStatus != null) {
             qualityGateResult = new QualityGateResult(qualityGateStatus);
         }
         if (totals == null) {
             totals = new IssuesStatisticsBuilder().build();
+        }
+        if (parserId == null) {
+            parserId = id; // fallback for old data
         }
         return this;
     }
@@ -351,6 +360,10 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     @Override
     public String getId() {
         return id;
+    }
+
+    String getParserId() {
+        return parserId;
     }
 
     @Override
