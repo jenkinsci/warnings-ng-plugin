@@ -1,8 +1,5 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.util.Locale;
-import java.util.function.Function;
-
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Issue;
@@ -11,6 +8,10 @@ import edu.hm.hafner.analysis.Report.IssueType;
 import edu.hm.hafner.util.Generated;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
+
+import java.io.Serial;
+import java.util.Locale;
+import java.util.function.Function;
 
 import org.jvnet.localizer.Localizable;
 import hudson.model.Job;
@@ -297,6 +298,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
     /**
      * Functional interface that maps the age of a build from an integer value to a String value.
      */
+    @FunctionalInterface
     public interface AgeBuilder extends Function<Integer, String> {
         // no new methods
     }
@@ -372,6 +374,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      * Creates a {@link Localizable} that is composed of a prefix and suffix.
      */
     static class CompositeLocalizable extends Localizable {
+        @Serial
         private static final long serialVersionUID = 2819361593374249688L;
 
         private final String prefix;

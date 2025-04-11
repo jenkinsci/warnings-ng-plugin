@@ -1,12 +1,12 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.util.List;
-import java.util.Optional;
-
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
+
+import java.util.List;
+import java.util.Optional;
 
 import hudson.ExtensionPoint;
 
@@ -85,6 +85,7 @@ public class LabelProviderFactory {
     /**
      * Provides additional {@link StaticAnalysisLabelProvider} instances that are created dynamically.
      */
+    @FunctionalInterface
     public interface StaticAnalysisToolFactory extends ExtensionPoint {
         /**
          * Returns the additional static analysis tools.

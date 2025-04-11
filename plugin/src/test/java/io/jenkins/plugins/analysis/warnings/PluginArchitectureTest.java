@@ -1,8 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.util.Arrays;
-import java.util.List;
-
 import com.tngtech.archunit.base.DescribedPredicate;
 import com.tngtech.archunit.core.domain.AccessTarget.ConstructorCallTarget;
 import com.tngtech.archunit.core.domain.JavaClass;
@@ -13,6 +10,9 @@ import com.tngtech.archunit.lang.ArchRule;
 
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.util.ArchitectureRules;
+
+import java.util.Arrays;
+import java.util.List;
 
 import io.jenkins.plugins.util.PluginArchitectureRules;
 
@@ -29,7 +29,8 @@ class PluginArchitectureTest {
     @ArchTest
     static final ArchRule NO_EXCEPTIONS_WITH_NO_ARG_CONSTRUCTOR = noClasses()
             .that().haveSimpleNameNotContaining("Benchmark")
-            .should().callConstructorWhere(new ExceptionHasNoContext(ParsingCanceledException.class));
+            .should().callConstructorWhere(new ExceptionHasNoContext(ParsingCanceledException.class,
+                    IncompatibleClassChangeError.class));
 
     @ArchTest
     static final ArchRule NO_PUBLIC_TEST_CLASSES = ArchitectureRules.NO_PUBLIC_TEST_CLASSES;

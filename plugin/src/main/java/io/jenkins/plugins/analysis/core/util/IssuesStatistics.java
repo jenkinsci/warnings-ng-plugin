@@ -1,17 +1,18 @@
 package io.jenkins.plugins.analysis.core.util;
 
+import org.apache.commons.lang3.StringUtils;
+import org.eclipse.collections.api.map.ImmutableMap;
+import org.eclipse.collections.impl.factory.Maps;
+
+import edu.hm.hafner.analysis.Severity;
+
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.function.Function;
-
-import org.apache.commons.lang3.StringUtils;
-import org.eclipse.collections.api.map.ImmutableMap;
-import org.eclipse.collections.impl.factory.Maps;
-
-import edu.hm.hafner.analysis.Severity;
 
 import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
 import org.jvnet.localizer.Localizable;
@@ -23,6 +24,7 @@ import org.jvnet.localizer.Localizable;
  */
 @SuppressWarnings("PMD.TooManyFields")
 public class IssuesStatistics implements Serializable {
+    @Serial
     private static final long serialVersionUID = 2885481384170602793L;
 
     private final int totalErrorSize;
@@ -361,6 +363,7 @@ public class IssuesStatistics implements Serializable {
         /**
          * Make sure that the method reference is serializable.
          */
+        @FunctionalInterface
         private interface SerializableGetter extends Function<IssuesStatistics, Integer>, Serializable {
             // nothing to add
         }

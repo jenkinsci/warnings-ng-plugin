@@ -1,11 +1,5 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
@@ -18,6 +12,11 @@ import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 import j2html.tags.ContainerTag;
 import j2html.tags.DomContent;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import hudson.model.Run;
 import hudson.model.TaskListener;
@@ -230,18 +229,10 @@ class WarningChecksPublisher {
     }
 
     private ChecksConclusion extractChecksConclusion(final QualityGateStatus status) {
-        switch (status) {
-            case INACTIVE:
-            case PASSED:
-                return ChecksConclusion.SUCCESS;
-            case FAILED:
-            case ERROR:
-            case WARNING:
-            case NOTE:
-                return ChecksConclusion.FAILURE;
-            default:
-                throw new IllegalArgumentException("Unsupported quality gate status: " + status);
-        }
+        return switch (status) {
+            case INACTIVE, PASSED -> ChecksConclusion.SUCCESS;
+            case FAILED, ERROR, WARNING, NOTE -> ChecksConclusion.FAILURE;
+        };
     }
 
     private List<ChecksAnnotation> extractChecksAnnotations(final Report issues,

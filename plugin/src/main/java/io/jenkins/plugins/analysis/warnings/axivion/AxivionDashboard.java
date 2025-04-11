@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 /**
  * Strategy how to retrieve issues from the Axivion dashboard.
  */
+@FunctionalInterface
 interface AxivionDashboard {
     /**
      * Loads issues for given issue kind.
