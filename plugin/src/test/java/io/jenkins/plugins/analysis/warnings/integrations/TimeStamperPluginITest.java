@@ -89,4 +89,3 @@ class TimeStamperPluginITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(issue).hasSeverity(Severity.WARNING_HIGH);
     }
 }
-

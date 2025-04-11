@@ -1,15 +1,16 @@
 package io.jenkins.plugins.analysis.core.filter;
 
-import java.io.Serializable;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 import edu.hm.hafner.util.Ensure;
 import edu.hm.hafner.util.VisibleForTesting;
+
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.QueryParameter;
@@ -28,6 +29,7 @@ import io.jenkins.plugins.util.JenkinsFacade;
  * @author Ullrich Hafner
  */
 public abstract class RegexpFilter extends AbstractDescribableImpl<RegexpFilter> implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1892735849628260157L;
 
     private final String pattern;
@@ -68,7 +70,7 @@ public abstract class RegexpFilter extends AbstractDescribableImpl<RegexpFilter>
         /**
          * Creates a new {@link RegexpFilterDescriptor}.
          */
-        public RegexpFilterDescriptor() {
+        protected RegexpFilterDescriptor() {
             this(new JenkinsFacade());
         }
 

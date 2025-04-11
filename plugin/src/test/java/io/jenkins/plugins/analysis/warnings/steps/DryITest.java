@@ -1,9 +1,9 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
+import org.junit.jupiter.api.Test;
+
 import java.util.List;
 import java.util.stream.Collectors;
-
-import org.junit.jupiter.api.Test;
 
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
@@ -56,7 +56,7 @@ class DryITest extends IntegrationTestWithJenkinsPerSuite {
         assertThatColumnsAreCorrect(table.getColumns());
 
         table.getRows().stream()
-                .map(row -> (DuplicationRow) row)
+                .map(DuplicateCodeScanner.DryModel.DuplicationRow.class::cast)
                 .forEach(row -> assertThat(row.getSeverity()).contains("LOW"));
     }
 
@@ -190,7 +190,7 @@ class DryITest extends IntegrationTestWithJenkinsPerSuite {
 
     private void assertThatLineCountForSeverityIsCorrect(final List<Object> data, final String severity, final Integer min, final Integer max) {
         data.stream()
-                .map(row -> (DuplicationRow) row)
+                .map(DuplicateCodeScanner.DryModel.DuplicationRow.class::cast)
                 .filter(row -> row.getSeverity().contains(severity))
                 .map(DuplicationRow::getLinesCount)
                 .map(Integer::valueOf)

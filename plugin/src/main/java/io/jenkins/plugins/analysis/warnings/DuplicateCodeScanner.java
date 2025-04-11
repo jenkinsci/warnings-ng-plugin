@@ -1,9 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.DuplicationGroup;
@@ -13,6 +9,10 @@ import edu.hm.hafner.analysis.registry.ParserDescriptor.Option;
 import edu.hm.hafner.util.VisibleForTesting;
 
 import j2html.tags.UnescapedText;
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -46,6 +46,7 @@ import static j2html.TagCreator.*;
  */
 @SuppressWarnings({"PMD.DataClass", "PMD.ExcessiveImports"})
 public abstract class DuplicateCodeScanner extends AnalysisModelParser {
+    @Serial
     private static final long serialVersionUID = -8446643146836067375L;
 
     /** Validates the thresholds user input. */
@@ -56,7 +57,7 @@ public abstract class DuplicateCodeScanner extends AnalysisModelParser {
 
     @Override
     protected Option[] configureOptions() {
-        return new Option[] {
+        return new Option[]{
                 new Option(HIGH_OPTION_KEY, String.valueOf(getHighThreshold())),
                 new Option(NORMAL_OPTION_KEY, String.valueOf(getNormalThreshold()))};
     }

@@ -1,13 +1,14 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.analysis.RevApiInfoExtension;
+
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.Report;
-import edu.hm.hafner.analysis.RevApiInfoExtension;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
@@ -28,6 +29,7 @@ import io.jenkins.plugins.util.JenkinsFacade;
  * Provides a parser and customized messages for Revapi.
  */
 public class RevApi extends AnalysisModelParser {
+    @Serial
     private static final long serialVersionUID = -8571635906342563283L;
     private static final String ID = "revapi";
 
@@ -154,8 +156,7 @@ public class RevApi extends AnalysisModelParser {
                     final DescriptionProvider descriptionProvider, final Issue issue,
                     final JenkinsFacade jenkinsFacade, final Serializable additionalData) {
                 super(ageBuilder, fileNameRenderer, descriptionProvider, issue, jenkinsFacade);
-                if (additionalData instanceof RevApiInfoExtension) {
-                    final RevApiInfoExtension revApiInfo = (RevApiInfoExtension) additionalData;
+                if (additionalData instanceof RevApiInfoExtension revApiInfo) {
                     this.oldFile = revApiInfo.getOldFile();
                     this.newFile = revApiInfo.getNewFile();
                     this.issueName = revApiInfo.getIssueName();

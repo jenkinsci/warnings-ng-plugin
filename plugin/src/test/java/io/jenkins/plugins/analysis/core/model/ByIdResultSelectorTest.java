@@ -1,14 +1,14 @@
 package io.jenkins.plugins.analysis.core.model;
 
+import org.junit.jupiter.api.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
+import hudson.model.Run;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
-
-import hudson.model.Run;
 
 /**
  * Tests the class {@link ByIdResultSelector}.

@@ -6,6 +6,8 @@ import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.util.Ensure;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+import java.io.Serial;
+
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.verb.POST;
@@ -26,6 +28,7 @@ import io.jenkins.plugins.util.JenkinsFacade;
  * @author Ullrich Hafner
  */
 public class GroovyScript extends ReportScanningTool {
+    @Serial
     private static final long serialVersionUID = 8580859196688994603L;
     private static final String ID = "groovy";
 

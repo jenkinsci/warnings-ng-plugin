@@ -1,13 +1,13 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.nio.file.Path;
-
 import org.junit.jupiter.api.Test;
 import org.junitpioneer.jupiter.Issue;
 
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.ResourceTest;
+
+import java.nio.file.Path;
 
 import static edu.hm.hafner.analysis.assertions.Assertions.*;
 
@@ -23,9 +23,8 @@ class ReportXmlStreamTest extends ResourceTest {
 
         Object restored = reportXmlStream.read(getResourceAsFile("npe.xml"));
         assertThat(restored).isInstanceOfSatisfying(Report.class,
-                report -> {
-                    assertThat(report).hasSize(2); // Duplicate issues will be skipped
-                });
+                report ->
+                    assertThat(report).hasSize(2));
     }
 
     @Test

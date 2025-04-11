@@ -99,9 +99,9 @@ public class IssuesRecorder extends Recorder {
     private Set<SourceCodeDirectory> sourceDirectories = new HashSet<>(); // @since 9.11.0
     private SourceCodeRetention sourceCodeRetention = SourceCodeRetention.EVERY_BUILD;
 
-    private boolean ignoreQualityGate = false; // by default, a successful quality gate is mandatory;
+    private boolean ignoreQualityGate; // by default, a successful quality gate is mandatory;
 
-    private boolean failOnError = false;
+    private boolean failOnError;
 
     private int healthy;
     private int unhealthy;
@@ -112,7 +112,7 @@ public class IssuesRecorder extends Recorder {
     private boolean isEnabledForFailure;
     private boolean isAggregatingResults;
 
-    private boolean quiet = false;
+    private boolean quiet;
 
     private boolean isBlameDisabled;
     private boolean skipPublishingChecks; // by default, checks will be published

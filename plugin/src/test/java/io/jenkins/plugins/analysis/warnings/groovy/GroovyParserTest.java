@@ -233,4 +233,3 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
         return createParser("regexp", "script", "example");
     }
 }
-

@@ -1,5 +1,13 @@
 package io.jenkins.plugins.analysis.warnings.tasks;
 
+import org.apache.commons.lang3.StringUtils;
+
+import edu.hm.hafner.analysis.IssueBuilder;
+import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.analysis.Severity;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
@@ -16,14 +24,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Stream;
-
-import org.apache.commons.lang3.StringUtils;
-
-import edu.hm.hafner.analysis.IssueBuilder;
-import edu.hm.hafner.analysis.Report;
-import edu.hm.hafner.analysis.Severity;
-import edu.umd.cs.findbugs.annotations.CheckForNull;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 
@@ -179,7 +179,7 @@ class TaskScanner {
 
     private String[] splitTags(final String tagIdentifiers) {
         if (tagIdentifiers.indexOf(',') == -1) {
-            return new String[] {tagIdentifiers};
+            return new String[]{tagIdentifiers};
         }
         else {
             return StringUtils.split(tagIdentifiers, ",");
@@ -274,7 +274,7 @@ class TaskScanner {
         private static final String IGNORE_BEGIN = " task-scanner-ignore-begin";
         private static final String IGNORE_END = " task-scanner-ignore-end";
 
-        private boolean ignore = false;
+        private boolean ignore;
 
         public boolean matches(final String line) {
             if (line.contains(IGNORE_BEGIN)) {
@@ -288,4 +288,3 @@ class TaskScanner {
         }
     }
 }
-

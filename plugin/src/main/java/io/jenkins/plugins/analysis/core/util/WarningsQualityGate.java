@@ -1,8 +1,9 @@
 package io.jenkins.plugins.analysis.core.util;
 
-import java.util.function.Function;
-
 import edu.hm.hafner.util.VisibleForTesting;
+
+import java.io.Serial;
+import java.util.function.Function;
 
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -28,6 +29,7 @@ import io.jenkins.plugins.util.QualityGate;
  * @author Ullrich Hafner
  */
 public class WarningsQualityGate extends QualityGate {
+    @Serial
     private static final long serialVersionUID = -3560049414586166711L;
 
     private final QualityGateType type;

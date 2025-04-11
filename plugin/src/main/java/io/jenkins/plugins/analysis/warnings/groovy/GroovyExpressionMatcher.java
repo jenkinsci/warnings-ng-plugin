@@ -1,11 +1,5 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
-import java.io.Serializable;
-import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-
 import org.codehaus.groovy.control.CompilationFailedException;
 
 import edu.hm.hafner.analysis.Issue;
@@ -15,6 +9,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
 
 /**
  * Creates a warning based on a regular expression match and groovy script.
@@ -28,6 +28,7 @@ import groovy.lang.Script;
  * @author Ullrich Hafner
  */
 class GroovyExpressionMatcher implements Serializable {
+    @Serial
     private static final long serialVersionUID = -2218299240520838315L;
     private static final Logger LOGGER = Logger.getLogger(GroovyExpressionMatcher.class.getName());
     private final String script;
@@ -96,7 +97,7 @@ class GroovyExpressionMatcher implements Serializable {
             if (optional.isPresent()) {
                 Object wrappedIssue = optional.get();
                 if (wrappedIssue instanceof Issue) {
-                    return Optional.of((Issue)wrappedIssue);
+                    return Optional.of((Issue) wrappedIssue);
                 }
             }
         }
@@ -141,4 +142,3 @@ class GroovyExpressionMatcher implements Serializable {
         }
     }
 }
-

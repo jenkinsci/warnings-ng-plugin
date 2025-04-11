@@ -1,5 +1,11 @@
 package io.jenkins.plugins.analysis.core.portlets;
 
+import org.apache.commons.lang3.StringUtils;
+
+import edu.hm.hafner.util.Generated;
+import edu.hm.hafner.util.VisibleForTesting;
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -8,12 +14,6 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
-
-import edu.hm.hafner.util.Generated;
-import edu.hm.hafner.util.VisibleForTesting;
-import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -39,7 +39,7 @@ import static io.jenkins.plugins.analysis.core.model.ToolSelection.*;
 public class IssuesTablePortlet extends DashboardPortlet {
     private boolean hideCleanJobs;
     private boolean showIcons;
-    private boolean selectTools = false;
+    private boolean selectTools;
     private List<ToolSelection> tools = new ArrayList<>();
 
     private LabelProviderFactory labelProviderFactory = new LabelProviderFactory();

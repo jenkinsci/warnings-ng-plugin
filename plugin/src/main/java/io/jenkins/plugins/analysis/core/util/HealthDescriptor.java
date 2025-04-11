@@ -1,8 +1,9 @@
 package io.jenkins.plugins.analysis.core.util;
 
-import java.io.Serializable;
-
 import edu.hm.hafner.analysis.Severity;
+
+import java.io.Serial;
+import java.io.Serializable;
 
 /**
  * A health descriptor defines the parameters to create the build health.
@@ -10,6 +11,7 @@ import edu.hm.hafner.analysis.Severity;
  * @author Ullrich Hafner
  */
 public class HealthDescriptor implements Serializable {
+    @Serial
     private static final long serialVersionUID = -2509226746813680432L;
 
     private final int healthy;

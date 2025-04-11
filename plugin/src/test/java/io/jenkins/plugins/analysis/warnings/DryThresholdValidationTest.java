@@ -5,8 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner.ThresholdValidation;
+
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 
 /**
  * Tests the class {@link ThresholdValidation}.
@@ -75,4 +76,3 @@ class DryThresholdValidationTest {
                 .isEqualTo(ThresholdValidation.DEFAULT_HIGH_THRESHOLD);
     }
 }
-

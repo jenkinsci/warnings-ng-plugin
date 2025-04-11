@@ -1,11 +1,11 @@
 package io.jenkins.plugins.analysis.core.testutil;
 
-import java.util.List;
-import java.util.Objects;
-
 import org.assertj.core.api.AbstractAssert;
 import org.assertj.core.util.Lists;
 import org.jfree.data.category.CategoryDataset;
+
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Assertions for {@link CategoryDataset} instances.
@@ -29,9 +29,9 @@ public class CategoryDatasetAssertions extends AbstractAssert<CategoryDatasetAss
      */
     public final CategoryDatasetAssertions containsExactly(final List<List<Integer>> expectedValues) {
         List<List<Integer>> actualValues = Lists.newArrayList();
-        for (int c = 0; c < this.actual.getColumnCount(); ++c) {
+        for (int c = 0; c < this.actual.getColumnCount(); c++) {
             List<Integer> rowValues = Lists.newArrayList();
-            for (int r = 0; r < this.actual.getRowCount(); ++r) {
+            for (int r = 0; r < this.actual.getRowCount(); r++) {
                 rowValues.add(this.actual.getValue(r, c).intValue());
             }
             actualValues.add(rowValues);

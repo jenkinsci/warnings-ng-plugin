@@ -1,10 +1,11 @@
 package io.jenkins.plugins.analysis.core.steps;
 
+import edu.hm.hafner.util.Ensure;
+
 import java.io.IOException;
+import java.io.Serial;
 import java.nio.charset.Charset;
 import java.util.Optional;
-
-import edu.hm.hafner.util.Ensure;
 
 import org.jenkinsci.plugins.workflow.graph.FlowNode;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
@@ -28,6 +29,7 @@ import io.jenkins.plugins.util.ValidationUtilities;
  * @author Ullrich Hafner
  */
 abstract class AnalysisExecution<T> extends SynchronousNonBlockingStepExecution<T> {
+    @Serial
     private static final long serialVersionUID = -127479018279069250L;
 
     AnalysisExecution(final StepContext context) {

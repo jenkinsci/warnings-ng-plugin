@@ -13,6 +13,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import groovy.lang.Script;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Optional;
@@ -43,6 +44,7 @@ import io.jenkins.plugins.util.ValidationUtilities;
  */
 @SuppressWarnings("PMD.ExcessiveImports")
 public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implements Serializable {
+    @Serial
     private static final long serialVersionUID = 2447124045452896581L;
     private static final ValidationUtilities VALIDATION_UTILITIES = new ValidationUtilities();
     static final int MAX_EXAMPLE_SIZE = 4096;
@@ -486,4 +488,3 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
         }
     }
 }
-

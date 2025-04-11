@@ -1,16 +1,17 @@
 package io.jenkins.plugins.analysis.core.util;
 
+import com.google.errorprone.annotations.MustBeClosed;
+
+import edu.hm.hafner.analysis.Issue;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.Serial;
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.util.stream.Stream;
-
-import com.google.errorprone.annotations.MustBeClosed;
-
-import edu.hm.hafner.analysis.Issue;
 
 import hudson.model.Run;
 
@@ -22,6 +23,7 @@ import hudson.model.Run;
  */
 @SuppressWarnings("PMD.ExcessiveImports")
 public class BuildFolderFacade implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1904631270145841113L;
 
     /**

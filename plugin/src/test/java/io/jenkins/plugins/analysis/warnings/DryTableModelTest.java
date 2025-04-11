@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.util.Locale;
-
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.DuplicationGroup;
@@ -9,6 +7,8 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+import java.util.Locale;
 
 import io.jenkins.plugins.analysis.core.model.AbstractDetailsModelTest;
 import io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner.DryModel;
@@ -81,7 +81,7 @@ class DryTableModelTest extends AbstractDetailsModelTest {
 
     private String getFileNameFor(final Issue issue, final int index) {
         return String.format("<a href=\"source.%s/#%d\" data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" title=\"/path/to/file-"
-                        + index + "\">file-%d:%d</a>",  issue.getId().toString(),
+                        + index + "\">file-%d:%d</a>", issue.getId().toString(),
                 issue.getLineStart(), index, issue.getLineStart());
     }
 

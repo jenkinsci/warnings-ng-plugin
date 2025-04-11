@@ -1,15 +1,15 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Consumer;
-
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.TestExtension;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Consumer;
 
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.model.AbstractProject;
@@ -35,7 +35,6 @@ import io.jenkins.plugins.checks.api.ChecksOutput.ChecksOutputBuilder;
 import io.jenkins.plugins.checks.api.ChecksPublisherFactory;
 import io.jenkins.plugins.checks.api.ChecksStatus;
 import io.jenkins.plugins.checks.util.CapturingChecksPublisher;
-import io.jenkins.plugins.checks.util.CapturingChecksPublisher.Factory;
 import io.jenkins.plugins.forensics.reference.SimpleReferenceRecorder;
 import io.jenkins.plugins.util.QualityGate.QualityGateCriticality;
 
@@ -484,11 +483,11 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
         return getFactory().getPublishedChecks();
     }
 
-    private CapturingChecksPublisher.Factory getFactory()  {
+    private CapturingChecksPublisher.Factory getFactory() {
         return getJenkins().getInstance().getExtensionList(ChecksPublisherFactory.class)
                 .stream()
-                .filter(f -> f instanceof Factory)
-                .map(f -> (Factory) f)
+                .filter(CapturingChecksPublisher.Factory.class::isInstance)
+                .map(CapturingChecksPublisher.Factory.class::cast)
                 .findAny()
                 .orElseThrow(() -> new AssertionError("No CapturingChecksPublisher registered as @TestExtension?"));
     }

@@ -2,10 +2,13 @@ package io.jenkins.plugins.analysis.core.model;
 
 import edu.hm.hafner.analysis.IssueParser;
 
+import java.io.Serial;
+
 /**
  * Stub class used for testing {@link ReportScanningTool}.
  */
 public class ReportScanningToolStubForTesting extends ReportScanningTool {
+    @Serial
     private static final long serialVersionUID = 3729285280522413163L;
     private final IssueParser valueForCreateParser;
 

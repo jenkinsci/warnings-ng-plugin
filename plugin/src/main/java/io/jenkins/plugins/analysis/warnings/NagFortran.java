@@ -1,5 +1,7 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import java.io.Serial;
+
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
@@ -12,6 +14,7 @@ import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
  * @author Joscha Behrmann
  */
 public class NagFortran extends AnalysisModelParser {
+    @Serial
     private static final long serialVersionUID = 6623024344311048456L;
     private static final String ID = "nag-fortran";
 

@@ -1,13 +1,13 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Consumer;
-
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Consumer;
 
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.model.FreeStyleProject;
@@ -347,9 +347,8 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
     void shouldCreateSuccessResultWithOverAllMustBeSuccess() {
         // #1 SUCCESS
         FreeStyleProject project = createEmptyReferenceJob(JOB_NAME, "eclipse4Warnings.txt");
-        IssuesRecorder issuesRecorder = enableWarnings(project, recorder -> {
-            recorder.setEnabledForFailure(true);
-        });
+        IssuesRecorder issuesRecorder = enableWarnings(project, recorder ->
+            recorder.setEnabledForFailure(true));
         Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(project, Result.SUCCESS,
                 analysisResult -> assertThat(analysisResult).hasTotalSize(4)
                         .hasNewSize(0)
@@ -383,9 +382,8 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
     void shouldCreateUnstableResultWithOverAllMustNotBeSuccess() {
         // #1 SUCCESS
         FreeStyleProject project = createJob(JOB_NAME, "eclipse4Warnings.txt", Result.FAILURE, StringUtils.EMPTY);
-        IssuesRecorder issuesRecorder = enableWarnings(project, recorder -> {
-            recorder.setEnabledForFailure(true);
-        });
+        IssuesRecorder issuesRecorder = enableWarnings(project, recorder ->
+            recorder.setEnabledForFailure(true));
         scheduleBuildAndAssertStatus(project, Result.SUCCESS,
                 analysisResult -> assertThat(analysisResult).hasTotalSize(4)
                         .hasNewSize(0)
@@ -701,9 +699,8 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
     void shouldCreateSuccessResultWithOverAllMustBeSuccessWithReferenceBuild() {
         // #1 SUCCESS
         FreeStyleProject reference = createEmptyReferenceJob(REFERENCE_JOB_NAME, "eclipse4Warnings.txt");
-        IssuesRecorder issuesRecorder = enableWarnings(reference, recorder -> {
-            recorder.setEnabledForFailure(true);
-        });
+        IssuesRecorder issuesRecorder = enableWarnings(reference, recorder ->
+            recorder.setEnabledForFailure(true));
         Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(reference, Result.SUCCESS,
                 analysisResult -> assertThat(analysisResult).hasTotalSize(4)
                         .hasNewSize(0)
@@ -742,9 +739,8 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
     void shouldCreateUnstableResultWithOverAllMustNotBeSuccessWithReferenceBuild() {
         // #1 SUCCESS
         FreeStyleProject reference = createEmptyReferenceJob(REFERENCE_JOB_NAME, "eclipse4Warnings.txt");
-        IssuesRecorder issuesRecorder = enableWarnings(reference, recorder -> {
-            recorder.setEnabledForFailure(true);
-        });
+        IssuesRecorder issuesRecorder = enableWarnings(reference, recorder ->
+            recorder.setEnabledForFailure(true));
         scheduleBuildAndAssertStatus(reference, Result.SUCCESS,
                 analysisResult -> assertThat(analysisResult).hasTotalSize(4)
                         .hasNewSize(0)

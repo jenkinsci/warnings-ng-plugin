@@ -1,11 +1,11 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
+import edu.hm.hafner.util.VisibleForTesting;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-
-import edu.hm.hafner.util.VisibleForTesting;
 
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
@@ -32,7 +32,7 @@ import io.jenkins.plugins.util.JenkinsFacade;
 @Symbol("warningsParsers")
 public class ParserConfiguration extends GlobalConfigurationItem {
     private List<GroovyParser> parsers = new ArrayList<>();
-    private boolean consoleLogScanningPermitted = false;
+    private boolean consoleLogScanningPermitted;
 
     /**
      * Creates the Groovy parser configuration for the warnings plugins.

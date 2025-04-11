@@ -1222,7 +1222,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @TestExtension
     public static class YouCannotTriggerMe implements UnprotectedRootAction {
-        private int triggerCount = 0;
+        private int triggerCount;
 
         @Override
         public String getIconFileName() {

@@ -5,6 +5,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
+import org.junitpioneer.jupiter.Issue;
 import hudson.model.Run;
 import hudson.model.Slave;
 
@@ -36,7 +37,7 @@ class StepsOnAgentITest extends IntegrationTestWithJenkinsPerTest {
      * active, see JENKINS-56007 for details.
      */
     @Test
-    @org.junitpioneer.jupiter.Issue("JENKINS-56007")
+    @Issue("JENKINS-56007")
     void shouldCopySourcesIfMasterAgentSecurityIsActive() {
         Slave agent = createAgentWithEnabledSecurity("agent");
 

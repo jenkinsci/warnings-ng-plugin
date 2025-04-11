@@ -1,10 +1,10 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.nio.charset.Charset;
-import java.util.Optional;
-
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
+
+import java.nio.charset.Charset;
+import java.util.Optional;
 
 import hudson.model.Run;
 
@@ -75,4 +75,3 @@ public class FixedWarningsDetail extends IssuesDetail {
                 .orElse("");
     }
 }
-

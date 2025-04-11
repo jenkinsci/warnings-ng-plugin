@@ -1,5 +1,13 @@
 package io.jenkins.plugins.analysis.warnings.tasks;
 
+import org.junit.jupiter.api.Test;
+
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.IssueBuilder;
+import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.analysis.Severity;
+import edu.hm.hafner.util.ResourceTest;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.StringReader;
@@ -10,14 +18,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.junit.jupiter.api.Test;
-
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.IssueBuilder;
-import edu.hm.hafner.analysis.Report;
-import edu.hm.hafner.analysis.Severity;
-import edu.hm.hafner.util.ResourceTest;
 
 import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.CaseMode;
 import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.MatcherMode;
@@ -419,4 +419,3 @@ class TaskScannerTest extends ResourceTest {
         assertThat(report.getSizeOf(Severity.WARNING_LOW)).isEqualTo(expectedSizeLow);
     }
 }
-

@@ -1,5 +1,7 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import java.io.Serial;
+
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
@@ -14,6 +16,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
  * @author Jeroen Jans
  */
 public class PhpStan extends AnalysisModelParser {
+    @Serial
     private static final long serialVersionUID = 2699509705079011738L;
 
     private static final String ID = "phpstan";

@@ -1,14 +1,15 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.io.Serializable;
-import java.nio.charset.Charset;
-
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.VisibleForTesting;
+
+import java.io.Serial;
+import java.io.Serializable;
+import java.nio.charset.Charset;
 
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -36,6 +37,7 @@ import io.jenkins.plugins.util.ValidationUtilities;
  * @see AnalysisModelParser
  */
 public abstract class Tool extends AbstractDescribableImpl<Tool> implements Serializable {
+    @Serial
     private static final long serialVersionUID = 3305739700153168629L;
     private static final ValidationUtilities VALIDATION_UTILITIES = new ValidationUtilities();
 

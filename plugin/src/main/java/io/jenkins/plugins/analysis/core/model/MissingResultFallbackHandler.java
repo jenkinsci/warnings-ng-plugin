@@ -1,11 +1,11 @@
 package io.jenkins.plugins.analysis.core.model;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-import edu.umd.cs.findbugs.annotations.NonNull;
 
 import hudson.Extension;
 import hudson.model.Action;

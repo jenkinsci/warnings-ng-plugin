@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.util.Optional;
-
 import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.Test;
 
@@ -9,6 +7,8 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
+
+import java.util.Optional;
 
 import hudson.model.Run;
 
@@ -33,7 +33,7 @@ class DeltaReportTest {
         when(history.getBuild()).thenReturn(Optional.empty());
         Report report = new Report();
 
-        DeltaReport deltaReport = new DeltaReport(report,  0);
+        DeltaReport deltaReport = new DeltaReport(report, 0);
         assertThat(deltaReport)
                 .isEmpty()
                 .hasNoAllIssues()
@@ -101,7 +101,7 @@ class DeltaReportTest {
                 .setFixedSize(1)
                 .build();
 
-        DeltaReport deltaReport = new DeltaReport(report,  run, 0, referenceIssues);
+        DeltaReport deltaReport = new DeltaReport(report, run, 0, referenceIssues);
         IssuesStatistics issuesStatistics = deltaReport.getStatistics();
         IssuesStatisticsAssert.assertThat(issuesStatistics)
                 .isNotNull().usingRecursiveComparison()

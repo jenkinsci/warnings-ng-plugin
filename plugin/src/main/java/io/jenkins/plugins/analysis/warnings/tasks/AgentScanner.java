@@ -1,16 +1,17 @@
 package io.jenkins.plugins.analysis.warnings.tasks;
 
-import java.io.File;
-import java.nio.charset.Charset;
-import java.nio.file.Path;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.Report;
+
+import java.io.File;
+import java.io.Serial;
+import java.nio.charset.Charset;
+import java.nio.file.Path;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import hudson.remoting.VirtualChannel;
 import jenkins.MasterToSlaveFileCallable;
@@ -25,6 +26,7 @@ import io.jenkins.plugins.util.ValidationUtilities;
  * tasks.
  */
 class AgentScanner extends MasterToSlaveFileCallable<Report> {
+    @Serial
     private static final long serialVersionUID = -4417487030800559491L;
 
     private final String highTasks;
@@ -147,8 +149,8 @@ class AgentScanner extends MasterToSlaveFileCallable<Report> {
         if (excludePattern != null ? !excludePattern.equals(that.excludePattern) : that.excludePattern != null) {
             return false;
         }
-        return sourceCodeEncoding != null ?
-                sourceCodeEncoding.equals(that.sourceCodeEncoding) : that.sourceCodeEncoding == null;
+        return sourceCodeEncoding != null
+                ? sourceCodeEncoding.equals(that.sourceCodeEncoding) : that.sourceCodeEncoding == null;
     }
 
     @Override @SuppressWarnings("all")

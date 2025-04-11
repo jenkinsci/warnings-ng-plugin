@@ -56,4 +56,3 @@ class DynamicLineParserTest extends AbstractParserTest {
         }
     }
 }
-

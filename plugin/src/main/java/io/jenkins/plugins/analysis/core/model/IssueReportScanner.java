@@ -1,15 +1,16 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.nio.charset.Charset;
-import java.nio.file.Path;
-import java.util.Optional;
-
 import edu.hm.hafner.analysis.FileReaderFactory;
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.FilteredLog;
+
+import java.io.Serial;
+import java.nio.charset.Charset;
+import java.nio.file.Path;
+import java.util.Optional;
 
 import io.jenkins.plugins.util.AgentFileVisitor;
 
@@ -21,6 +22,7 @@ import io.jenkins.plugins.util.AgentFileVisitor;
  * @author Ullrich Hafner
  */
 public class IssueReportScanner extends AgentFileVisitor<Report> {
+    @Serial
     private static final long serialVersionUID = 1743707071107346225L;
 
     private final IssueParser parser;

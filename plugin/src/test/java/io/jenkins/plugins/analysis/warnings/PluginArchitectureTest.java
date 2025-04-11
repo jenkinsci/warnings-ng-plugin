@@ -25,7 +25,7 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.*;
  */
 @SuppressWarnings("hideutilityclassconstructor")
 @AnalyzeClasses(packages = "io.jenkins.plugins.analysis")
-class PluginArchitectureTest {
+final class PluginArchitectureTest {
     @ArchTest
     static final ArchRule NO_EXCEPTIONS_WITH_NO_ARG_CONSTRUCTOR = noClasses()
             .that().haveSimpleNameNotContaining("Benchmark")
@@ -94,5 +94,8 @@ class PluginArchitectureTest {
         private boolean isPermittedException(final JavaClass owner) {
             return allowedExceptions.stream().anyMatch(owner::isAssignableTo);
         }
+    }
+
+    private PluginArchitectureTest() {
     }
 }

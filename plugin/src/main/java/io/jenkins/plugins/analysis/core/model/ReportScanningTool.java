@@ -1,9 +1,5 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.IssueParser;
@@ -13,6 +9,11 @@ import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.Ensure;
 import edu.hm.hafner.util.FilteredLog;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
+
+import java.io.IOException;
+import java.io.Serial;
+import java.nio.charset.Charset;
+import java.util.List;
 
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -45,12 +46,13 @@ import static io.jenkins.plugins.analysis.core.util.ConsoleLogHandler.*;
  * @author Ullrich Hafner
  */
 public abstract class ReportScanningTool extends Tool {
+    @Serial
     private static final long serialVersionUID = 2250515287336975478L;
     private static final ValidationUtilities VALIDATION_UTILITIES = new ValidationUtilities();
 
     private String pattern = StringUtils.EMPTY;
     private String reportEncoding = StringUtils.EMPTY;
-    private boolean skipSymbolicLinks = false;
+    private boolean skipSymbolicLinks;
     private int linesLookAhead = 3;
 
     /**

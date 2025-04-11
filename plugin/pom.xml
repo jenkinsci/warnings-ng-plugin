@@ -85,12 +85,10 @@
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>jsoup</artifactId>
       <!-- TODO: remove the version when a matching BOM is available -->
-      <version>1.19.1-36.v63b_c859911d0</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>analysis-model-api</artifactId>
-      <version>${analysis-model-api.version}</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
@@ -415,7 +413,6 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>ansicolor</artifactId>
-      <version>1.0.6</version>
       <scope>test</scope>
     </dependency>
 
@@ -519,7 +516,6 @@
         <plugin>
           <groupId>org.jacoco</groupId>
           <artifactId>jacoco-maven-plugin</artifactId>
-          <version>${jacoco-maven-plugin.version}</version>
           <configuration>
             <excludes combine.children="append">
               <exclude>**/JenkinsFacade.*</exclude>
@@ -543,6 +539,7 @@
         </configuration>
       </plugin>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
         <executions>
           <execution>

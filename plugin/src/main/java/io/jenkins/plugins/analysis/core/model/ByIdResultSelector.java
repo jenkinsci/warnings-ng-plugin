@@ -39,4 +39,3 @@ public class ByIdResultSelector implements ResultSelector {
         return String.format("%s with ID %s", ResultAction.class.getName(), id);
     }
 }
-

@@ -1,14 +1,18 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import java.io.Serial;
+
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
+
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
 * Provides parser for vale reports.
 */
 public class Vale extends AnalysisModelParser {
+    @Serial
     private static final long serialVersionUID = -251368548183118686L;
     private static final String ID = "vale";
 

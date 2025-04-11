@@ -1,10 +1,5 @@
 package io.jenkins.plugins.analysis.warnings.tasks;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
-import java.nio.charset.Charset;
-
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Issue;
@@ -12,6 +7,12 @@ import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.Report;
 import edu.umd.cs.findbugs.annotations.NonNull;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.Serial;
+import java.io.StringReader;
+import java.nio.charset.Charset;
 
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -44,6 +45,7 @@ import io.jenkins.plugins.util.ValidationUtilities;
  */
 @SuppressWarnings({"PMD.DataClass", "PMD.ExcessiveImports"})
 public class OpenTasks extends Tool {
+    @Serial
     private static final long serialVersionUID = 4692318309214830824L;
 
     private static final String ID = "open-tasks";

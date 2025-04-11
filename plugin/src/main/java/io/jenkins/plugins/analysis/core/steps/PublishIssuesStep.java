@@ -1,11 +1,5 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.impl.factory.Sets;
 
@@ -14,6 +8,13 @@ import edu.hm.hafner.util.FilteredLog;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+import java.io.IOException;
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -49,6 +50,7 @@ import io.jenkins.plugins.util.ValidationUtilities;
  */
 @SuppressWarnings({"InstanceVariableMayNotBeInitialized", "PMD.ExcessiveImports", "PMD.ExcessivePublicCount", "PMD.DataClass", "PMD.GodClass", "PMD.TooManyFields"})
 public class PublishIssuesStep extends Step implements Serializable {
+    @Serial
     private static final long serialVersionUID = -1833335402353771148L;
     private static final ValidationUtilities VALIDATION_UTILITIES = new ValidationUtilities();
 
@@ -56,14 +58,14 @@ public class PublishIssuesStep extends Step implements Serializable {
 
     private String sourceCodeEncoding = StringUtils.EMPTY;
 
-    private boolean ignoreQualityGate = false; // by default, a successful quality gate is mandatory
-    private boolean failOnError = false; // by default, it should not fail on error
+    private boolean ignoreQualityGate; // by default, a successful quality gate is mandatory
+    private boolean failOnError; // by default, it should not fail on error
 
     private boolean skipDeltaCalculation; // @since 11.5.0: by default, delta computation is enabled
     private boolean skipPublishingChecks; // by default, warnings should be published to SCM platforms
     private ChecksAnnotationScope checksAnnotationScope = ChecksAnnotationScope.NEW; // @since 11.0.0
 
-    private boolean quiet = false; // by default, logger content goes to loghandler output
+    private boolean quiet; // by default, logger content goes to loghandler output
 
     private int healthy;
     private int unhealthy;
@@ -405,6 +407,7 @@ public class PublishIssuesStep extends Step implements Serializable {
      */
     @SuppressFBWarnings(value = "THROWS", justification = "false positive")
     static class Execution extends AnalysisExecution<ResultAction> {
+        @Serial
         private static final long serialVersionUID = 6438321240776419897L;
 
         private final PublishIssuesStep step;

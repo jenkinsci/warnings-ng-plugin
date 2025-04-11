@@ -1,17 +1,5 @@
 package io.jenkins.plugins.analysis.warnings.axivion;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.InvalidPathException;
-import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.utils.URIBuilder;
@@ -28,6 +16,19 @@ import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+import java.io.IOException;
+import java.io.Serial;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -57,6 +58,7 @@ import io.jenkins.plugins.util.LogHandler;
 /** Provides a parser and customized messages for the Axivion Suite. */
 @SuppressWarnings({"PMD.ExcessiveImports", "PMD.DataClass", "PMD.CouplingBetweenObjects", "ClassFanOutComplexity"})
 public final class AxivionSuite extends Tool {
+    @Serial
     private static final long serialVersionUID = 967222727302169818L;
     private static final String ID = "axivion-suite";
     private static final String NAME = "Axivion Suite";

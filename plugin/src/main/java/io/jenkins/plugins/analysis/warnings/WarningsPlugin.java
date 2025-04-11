@@ -1,5 +1,7 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import java.io.Serial;
+
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
@@ -14,6 +16,7 @@ import static j2html.TagCreator.*;
  * @author Ullrich Hafner
  */
 public class WarningsPlugin extends AnalysisModelParser {
+    @Serial
     private static final long serialVersionUID = 8110398783405047555L;
     private static final String ID = "issues";
 

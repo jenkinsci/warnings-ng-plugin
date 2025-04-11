@@ -1,14 +1,15 @@
 package io.jenkins.plugins.analysis.core.util;
 
-import java.io.File;
-import java.io.IOException;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.selectors.TypeSelector;
 import org.apache.tools.ant.types.selectors.TypeSelector.FileType;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.Serial;
 
 import hudson.remoting.VirtualChannel;
 import jenkins.MasterToSlaveFileCallable;
@@ -19,6 +20,7 @@ import jenkins.MasterToSlaveFileCallable;
  * @author Ullrich Hafner
  */
 public class FileFinder extends MasterToSlaveFileCallable<String[]> {
+    @Serial
     private static final long serialVersionUID = 2970029366847565970L;
 
     private final String includesPattern;

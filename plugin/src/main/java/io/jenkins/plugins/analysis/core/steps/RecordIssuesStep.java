@@ -74,7 +74,7 @@ public class RecordIssuesStep extends Step implements Serializable {
     private Set<SourceCodeDirectory> sourceDirectories = new HashSet<>(); // @since 9.11.0
     private SourceCodeRetention sourceCodeRetention = SourceCodeRetention.EVERY_BUILD;
 
-    private boolean ignoreQualityGate = false; // by default, a successful quality gate is mandatory;
+    private boolean ignoreQualityGate; // by default, a successful quality gate is mandatory;
 
     private int healthy;
     private int unhealthy;
@@ -103,7 +103,7 @@ public class RecordIssuesStep extends Step implements Serializable {
     private boolean failOnError;
     private String scm = StringUtils.EMPTY;
 
-    private boolean quiet = false;
+    private boolean quiet;
 
     /**
      * Creates a new instance of {@link RecordIssuesStep}.
@@ -626,6 +626,7 @@ public class RecordIssuesStep extends Step implements Serializable {
      */
     @SuppressFBWarnings(value = "THROWS", justification = "false positive")
     static class Execution extends AnalysisExecution<List<AnalysisResult>> {
+        @Serial
         private static final long serialVersionUID = -2840020502160375407L;
 
         private final RecordIssuesStep step;

@@ -1,13 +1,13 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.echarts.BuildResult;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
+
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import hudson.model.Run;
 
@@ -156,4 +156,3 @@ public class AnalysisHistory implements History {
         }
     }
 }
-

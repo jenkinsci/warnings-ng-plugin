@@ -1,14 +1,14 @@
 package io.jenkins.plugins.analysis.core.portlets;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import edu.hm.hafner.echarts.BuildResult;
 import edu.hm.hafner.echarts.ChartModelConfiguration;
 import edu.hm.hafner.echarts.ChartModelConfiguration.AxisType;
 import edu.hm.hafner.echarts.JacksonFacade;
 import edu.umd.cs.findbugs.annotations.NonNull;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -33,7 +33,7 @@ import static io.jenkins.plugins.analysis.core.model.ToolSelection.*;
 @SuppressWarnings("PMD.DataClass")
 public class IssuesChartPortlet extends DashboardPortlet {
     private boolean hideCleanJobs;
-    private boolean selectTools = false;
+    private boolean selectTools;
     private List<ToolSelection> tools = new ArrayList<>();
 
     private List<Job<?, ?>> jobs = new ArrayList<>();
