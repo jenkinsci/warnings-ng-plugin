@@ -9,6 +9,7 @@ import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 /**
  * Creates a model for a trend chart of a given number of static analysis build results.
  */
+@FunctionalInterface
 public interface TrendChart {
     /**
      * Creates the chart for the specified results.
