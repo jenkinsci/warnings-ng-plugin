@@ -1,13 +1,13 @@
 package io.jenkins.plugins.analysis.core.util;
 
-import java.nio.charset.Charset;
-import java.util.Set;
-import java.util.regex.Pattern;
-
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.VisibleForTesting;
+
+import java.nio.charset.Charset;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
@@ -52,7 +52,7 @@ public class ModelValidation {
      * @return a model with all available severity filters
      */
     public ListBoxModel getAllSeverityFilters() {
-        ListBoxModel options = new ListBoxModel();
+        var options = new ListBoxModel();
         options.add(Messages.SeverityFilter_Error(), Severity.ERROR.getName());
         options.add(Messages.SeverityFilter_High(), Severity.WARNING_HIGH.getName());
         options.add(Messages.SeverityFilter_Normal(), Severity.WARNING_NORMAL.getName());
@@ -66,7 +66,7 @@ public class ModelValidation {
      * @return a model with all available aggregation trend chart positions
      */
     public ListBoxModel getAllTrendChartTypes() {
-        ListBoxModel options = new ListBoxModel();
+        var options = new ListBoxModel();
         options.add(Messages.AggregationChart_AGGREGATION_TOOLS(), TrendChartType.AGGREGATION_TOOLS.name());
         options.add(Messages.AggregationChart_TOOLS_AGGREGATION(), TrendChartType.TOOLS_AGGREGATION.name());
         options.add(Messages.AggregationChart_TOOLS_ONLY(), TrendChartType.TOOLS_ONLY.name());
@@ -81,7 +81,7 @@ public class ModelValidation {
      * @return the model with the possible reference jobs
      */
     public ComboBoxModel getAllJobs() {
-        ComboBoxModel model = new ComboBoxModel(jenkins.getAllJobNames());
+        var model = new ComboBoxModel(jenkins.getAllJobNames());
         model.add(0, NO_REFERENCE_JOB); // make sure that no input is valid
         return model;
     }

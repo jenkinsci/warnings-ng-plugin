@@ -38,7 +38,7 @@ class JobActionTest {
 
         Job<?, ?> job = mock(Job.class);
 
-        JobAction action = createJobAction(job, labelProvider);
+        var action = createJobAction(job, labelProvider);
         assertThat(action.getDisplayName()).isEqualTo(LINK_NAME);
         assertThat(action.getTrendName()).isEqualTo(TREND_NAME);
         assertThat(action.getId()).isEqualTo(ID);
@@ -57,7 +57,7 @@ class JobActionTest {
         when(labelProvider.getSmallIconUrl()).thenReturn(ICON);
 
         Job<?, ?> job = mock(Job.class);
-        JobAction action = createJobAction(job, labelProvider);
+        var action = createJobAction(job, labelProvider);
         assertThat(action.getIconFileName()).isEqualTo(ICON); // a JobAction should always show an icon
 
         Run<?, ?> reference = createValidReferenceBuild(0);
@@ -79,7 +79,7 @@ class JobActionTest {
         verify(response).sendRedirect2("../0/" + ANALYSIS_ID);
 
         var url = "something";
-        JobAction hiddenAction = new JobAction(job, labelProvider, 1, TrendChartType.NONE, url);
+        var hiddenAction = new JobAction(job, labelProvider, 1, TrendChartType.NONE, url);
         assertThat(hiddenAction.isTrendVisible()).isFalse();
         assertThat(hiddenAction.getUrlName()).isEqualTo(url);
     }
@@ -88,7 +88,7 @@ class JobActionTest {
     void shouldRedirect() throws IOException {
         StaticAnalysisLabelProvider labelProvider = mock(StaticAnalysisLabelProvider.class);
         Job<?, ?> job = mock(Job.class);
-        JobAction action = createJobAction(job, labelProvider);
+        var action = createJobAction(job, labelProvider);
 
         StaplerRequest2 request = mock(StaplerRequest2.class);
         action.doIndex(request, mock(StaplerResponse2.class));

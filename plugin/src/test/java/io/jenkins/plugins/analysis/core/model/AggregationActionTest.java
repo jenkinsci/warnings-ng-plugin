@@ -1,18 +1,17 @@
 package io.jenkins.plugins.analysis.core.model;
 
+import org.eclipse.collections.impl.factory.Lists;
+import org.junit.jupiter.api.Test;
+
+import edu.hm.hafner.analysis.Severity;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.collections.impl.factory.Lists;
-import org.junit.jupiter.api.Test;
-
-import edu.hm.hafner.analysis.Severity;
-
 import hudson.model.Action;
-import hudson.model.Api;
 import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.restapi.AggregationApi;
@@ -32,7 +31,7 @@ class AggregationActionTest {
 
     @Test
     void shouldNotReturnIconFileName() {
-        AggregationAction action = new AggregationAction();
+        var action = new AggregationAction();
 
         assertThat(action.getIconFileName()).isNull();
         assertThat(action.getDisplayName()).isEqualTo(Messages.Aggregation_Name());
@@ -41,7 +40,7 @@ class AggregationActionTest {
 
     @Test
     void shouldNeverReturnMultipleProjectActions() {
-        AggregationAction action = new AggregationAction();
+        var action = new AggregationAction();
         action.onLoad(mock(Run.class));
 
         Collection<? extends Action> projectActions = action.getProjectActions();
@@ -55,10 +54,10 @@ class AggregationActionTest {
         Run<?, ?> owner = mock(Run.class);
         when(owner.getActions(any())).thenReturn(Collections.emptyList());
 
-        AggregationAction action = new AggregationAction();
+        var action = new AggregationAction();
         action.onAttached(owner);
 
-        Api api = action.getApi();
+        var api = action.getApi();
         assertThat(api.bean).isInstanceOf(AggregationApi.class);
     }
 
@@ -70,11 +69,11 @@ class AggregationActionTest {
                 createAction(JobStubs.CHECK_STYLE_NAME, JobStubs.CHECK_STYLE_NAME, SIZE, Severity.WARNING_HIGH)
         );
         when(owner.getActions(any())).thenAnswer(i -> actions);
-        AggregationAction action = new AggregationAction();
+        var action = new AggregationAction();
         action.onLoad(owner);
 
-        Api api = action.getApi();
-        AggregationApi aggregationApi = (AggregationApi) api.bean;
+        var api = action.getApi();
+        var aggregationApi = (AggregationApi) api.bean;
 
         assertThat(aggregationApi.getTools()).hasSize(2);
 

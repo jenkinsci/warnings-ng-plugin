@@ -1,16 +1,16 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.entry;
-import static org.assertj.core.api.Assertions.assertThat;
+import java.util.ArrayList;
+import java.util.List;
+
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
 /**
  * Tests the class {@link AnnotatedReport}.
@@ -29,7 +29,7 @@ class AnnotatedReportTest {
 
     @Test
     void shouldCreateEmptyReport() {
-        AnnotatedReport report = new AnnotatedReport(ID);
+        var report = new AnnotatedReport(ID);
 
         assertThat(report.getId()).isEqualTo(ID);
         assertThat(report.size()).isZero();
@@ -37,18 +37,18 @@ class AnnotatedReportTest {
 
     @Test
     void constructAnnotatedReportWithOneReport() {
-        AnnotatedReport sut = new AnnotatedReport(ID, REPORT1);
+        var sut = new AnnotatedReport(ID, REPORT1);
 
         assertThat(sut.getId()).isEqualTo(ID);
         assertThat(sut.size()).isEqualTo(1);
-        assertThat(sut.getReport()).contains(ISSUE1);
+        Assertions.assertThat(sut.getReport()).contains(ISSUE1);
         assertThat(sut.getSizeOfOrigin()).containsExactly(entry(ID, 1));
     }
 
     @Test
     void constructAnnotatedReportFromEmptyListOfAnnotatedReports() {
         List<AnnotatedReport> reports = new ArrayList<>();
-        AnnotatedReport sut = new AnnotatedReport(ID, reports);
+        var sut = new AnnotatedReport(ID, reports);
 
         assertThat(sut.size()).isZero();
         assertThat(sut.getSizeOfOrigin()).isEmpty();
@@ -56,7 +56,7 @@ class AnnotatedReportTest {
 
     @Test
     void addTwoReportsWithoutActualIdToAnEmptyAnnotatedReport() {
-        AnnotatedReport sut = new AnnotatedReport("sut");
+        var sut = new AnnotatedReport("sut");
         sut.add(new AnnotatedReport("report-1", REPORT1));
         sut.add(new AnnotatedReport("report-2", REPORT2));
 
@@ -66,7 +66,7 @@ class AnnotatedReportTest {
 
     @Test
     void addTwoReportsWithActualIdToAnEmptyAnnotatedReport() {
-        AnnotatedReport sut = new AnnotatedReport("sut");
+        var sut = new AnnotatedReport("sut");
         sut.add(new AnnotatedReport("r1", REPORT1), "report-1");
         sut.add(new AnnotatedReport("r1", REPORT2), "report-2");
 
@@ -80,7 +80,7 @@ class AnnotatedReportTest {
         annotatedReports.add(new AnnotatedReport("report-1", REPORT1));
         annotatedReports.add(new AnnotatedReport("report-2", REPORT2));
 
-        AnnotatedReport sut = new AnnotatedReport("sut", annotatedReports);
+        var sut = new AnnotatedReport("sut", annotatedReports);
 
         assertThat(sut.getSizeOfOrigin()).containsOnly(entry("report-1", 1), entry("report-2", 2));
         assertThreeIssuesOfReport(sut);
@@ -92,7 +92,7 @@ class AnnotatedReportTest {
         annotatedReports.add(new AnnotatedReport("report-1", REPORT1));
         annotatedReports.add(new AnnotatedReport("report-2", REPORT2));
 
-        AnnotatedReport sut = new AnnotatedReport("sut");
+        var sut = new AnnotatedReport("sut");
         sut.addAll(annotatedReports);
 
         assertThat(sut.getSizeOfOrigin()).containsOnly(entry("report-1", 1), entry("report-2", 2));
@@ -101,7 +101,7 @@ class AnnotatedReportTest {
 
     @Test
     void logInfoAtAnnotatedReport() {
-        AnnotatedReport sut = new AnnotatedReport("sut");
+        var sut = new AnnotatedReport("sut");
 
         sut.logInfo("info");
 

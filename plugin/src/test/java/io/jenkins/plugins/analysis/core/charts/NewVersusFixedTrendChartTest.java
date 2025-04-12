@@ -1,14 +1,13 @@
 package io.jenkins.plugins.analysis.core.charts;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.echarts.BuildResult;
 import edu.hm.hafner.echarts.ChartModelConfiguration;
 import edu.hm.hafner.echarts.LineSeries;
-import edu.hm.hafner.echarts.LinesChartModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.echarts.JenkinsPalette;
@@ -24,13 +23,13 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 class NewVersusFixedTrendChartTest {
     @Test
     void shouldCreateLinesChartModel() {
-        NewVersusFixedTrendChart chart = new NewVersusFixedTrendChart();
+        var chart = new NewVersusFixedTrendChart();
 
         List<BuildResult<AnalysisBuildResult>> results = new ArrayList<>();
         results.add(createResultWithNewAndFixedIssues(2, 20, 21));
         results.add(createResultWithNewAndFixedIssues(1, 10, 11));
 
-        LinesChartModel model = chart.create(results, new ChartModelConfiguration());
+        var model = chart.create(results, new ChartModelConfiguration());
 
         verifySeries(model.getSeries().get(0), JenkinsPalette.RED, "New", 10, 20);
         verifySeries(model.getSeries().get(1), JenkinsPalette.GREEN, "Fixed", 11, 21);

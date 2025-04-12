@@ -7,9 +7,6 @@ import org.junit.jupiter.api.Test;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 
-import io.jenkins.plugins.analysis.core.model.IssuesModel.IssuesRow;
-import io.jenkins.plugins.util.JenkinsFacade;
-
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 import static org.mockito.Mockito.*;
@@ -24,17 +21,17 @@ class IssuesModelTest extends AbstractDetailsModelTest {
 
     @Test
     void shouldConvertIssuesToArrayWithAllColumns() {
-        Report report = new Report();
-        Issue issue = createIssue(1);
+        var report = new Report();
+        var issue = createIssue(1);
         report.add(issue);
         report.add(createIssue(2));
 
-        IssuesModel model = createModel(report);
+        var model = createModel(report);
 
-        String columnDefinitions = model.getColumnsDefinition();
+        var columnDefinitions = model.getColumnsDefinition();
         assertThatJson(columnDefinitions).isArray().hasSize(8);
 
-        String[] columns = {"description", "fileName", "packageName", "category", "type", "severity", "age", "message" };
+        String[] columns = {"description", "fileName", "packageName", "category", "type", "severity", "age", "message"};
         for (int column = 0; column < columns.length; column++) {
             verifyColumnProperty(model, column, columns[column]);
         }
@@ -42,7 +39,7 @@ class IssuesModelTest extends AbstractDetailsModelTest {
 
         assertThat(model.getRows()).hasSize(2);
 
-        IssuesRow actualRow = model.getRow(issue);
+        var actualRow = model.getRow(issue);
         assertThat(actualRow).hasDescription(EXPECTED_DESCRIPTION)
                 .hasAge("1")
                 .hasPackageName(PACKAGE_NAME)
@@ -59,7 +56,7 @@ class IssuesModelTest extends AbstractDetailsModelTest {
         Report report = mock(Report.class);
         when(report.iterator()).thenReturn(issues.iterator());
 
-        DetailsTableModel model = createModel(report);
+        var model = createModel(report);
         assertThat(getLabels(model))
                 .containsExactly("Details", "File", "Severity", "Age", "Hiddendetails");
         assertThat(model.getRows()).hasSize(1);
@@ -78,10 +75,9 @@ class IssuesModelTest extends AbstractDetailsModelTest {
     }
 
     private IssuesModel createModel(final Report report) {
-        JenkinsFacade jenkinsFacade = createJenkinsFacade();
+        var jenkinsFacade = createJenkinsFacade();
 
         return new IssuesModel(report, createFileNameRenderer(), createAgeBuilder(), issue -> DESCRIPTION,
                 jenkinsFacade);
     }
 }
-

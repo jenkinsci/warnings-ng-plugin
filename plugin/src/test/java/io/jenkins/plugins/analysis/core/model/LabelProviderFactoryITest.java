@@ -1,12 +1,12 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.util.Optional;
-
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.TestExtension;
 
 import edu.hm.hafner.analysis.IssueParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
+
+import java.util.Optional;
 
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory.StaticAnalysisToolFactory;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
@@ -31,20 +31,20 @@ class LabelProviderFactoryITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldUseNameOfStaticAnalysisToolIfParameterNameIsBlank() {
-        LabelProviderFactory factory = new LabelProviderFactory();
+        var factory = new LabelProviderFactory();
 
         String[] ids = {ANNOTATED_ID, PROVIDER_ID};
         String[] names = {"", null};
 
         for (String name : names) {
             for (String id : ids) {
-                StaticAnalysisLabelProvider registered = factory.create(id, name);
+                var registered = factory.create(id, name);
                 assertThat(registered).as("Tool %s and name '%s'", id, name).hasId(id);
                 assertThat(registered).as("Tool %s and name '%s'", id, name).hasName(id);
             }
         }
 
-        StaticAnalysisLabelProvider notRegistered = factory.create(UNDEFINED_ID, "");
+        var notRegistered = factory.create(UNDEFINED_ID, "");
         assertThat(notRegistered).hasId(UNDEFINED_ID);
         assertThat(notRegistered).hasName(new StaticAnalysisLabelProvider(UNDEFINED_ID).getDefaultName());
     }
@@ -54,12 +54,12 @@ class LabelProviderFactoryITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldParameterNameIfNotBlank() {
-        LabelProviderFactory factory = new LabelProviderFactory();
+        var factory = new LabelProviderFactory();
 
         String[] ids = {ANNOTATED_ID, PROVIDER_ID, UNDEFINED_ID};
 
         for (String id : ids) {
-            StaticAnalysisLabelProvider registered = factory.create(id, TOOL_NAME);
+            var registered = factory.create(id, TOOL_NAME);
             assertThat(registered).as("Tool %s and name '%s'", id, TOOL_NAME).hasId(id);
             assertThat(registered).as("Tool %s and name '%s'", id, TOOL_NAME).hasName(TOOL_NAME);
         }

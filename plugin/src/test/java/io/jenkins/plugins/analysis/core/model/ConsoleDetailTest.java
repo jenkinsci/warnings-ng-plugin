@@ -1,12 +1,12 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Stream;
-
 import org.junit.jupiter.api.Test;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
 
 import hudson.model.Run;
 
@@ -33,7 +33,7 @@ class ConsoleDetailTest {
     @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE", justification = "https://github.com/spotbugs/spotbugs/issues/756")
     void shouldEscapeEntities() {
         try (Stream<String> lines = Stream.of("<b>CheckStyle</b> <script>execute</script>")) {
-            ConsoleDetail consoleDetail = new ConsoleDetail(mock(Run.class), lines, 1, 2);
+            var consoleDetail = new ConsoleDetail(mock(Run.class), lines, 1, 2);
 
             assertThat(consoleDetail.getSourceCode())
                     .doesNotContain("<b>CheckStyle</b> <script>execute</script>")
@@ -43,7 +43,7 @@ class ConsoleDetailTest {
 
     @Test
     void shouldShowLinesOfConsoleLogStartAtBeginning() {
-        ConsoleDetail consoleDetail = new ConsoleDetail(mock(Run.class), createLines(1, 20), 1, 2);
+        var consoleDetail = new ConsoleDetail(mock(Run.class), createLines(1, 20), 1, 2);
 
         assertThat(consoleDetail.getSourceCode()).contains("#FCAF3E\">1</td>");
         assertThat(consoleDetail.getSourceCode()).contains("#FCAF3E\">2</td>");
@@ -54,7 +54,7 @@ class ConsoleDetailTest {
 
     @Test
     void shouldShowLinesOfConsoleLogStartAt10() {
-        ConsoleDetail consoleDetail = new ConsoleDetail(mock(Run.class), createLines(1, 30), 11, 11);
+        var consoleDetail = new ConsoleDetail(mock(Run.class), createLines(1, 30), 11, 11);
 
         assertThat(consoleDetail.getSourceCode()).contains("<td >1</td>");
         assertThat(consoleDetail.getSourceCode()).contains("<td >10</td>");
@@ -66,7 +66,7 @@ class ConsoleDetailTest {
 
     @Test
     void shouldShowLinesOfConsoleEndAtHighlighting() {
-        ConsoleDetail consoleDetail = new ConsoleDetail(mock(Run.class), createLines(1, 10), 5, 10);
+        var consoleDetail = new ConsoleDetail(mock(Run.class), createLines(1, 10), 5, 10);
 
         assertThat(consoleDetail.getSourceCode()).contains("<td >1</td>");
         assertThat(consoleDetail.getSourceCode()).contains("<td >4</td>");

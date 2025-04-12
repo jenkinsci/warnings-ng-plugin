@@ -18,7 +18,7 @@ class TabLabelProviderTest {
         Issue issue = mock(Issue.class);
         when(issue.getFileName()).thenReturn(fileName);
 
-        Report report = new Report();
+        var report = new Report();
         report.add(issue);
 
         return new TabLabelProvider(report);
@@ -26,56 +26,56 @@ class TabLabelProviderTest {
 
     @Test
     void shouldReturnPackageNameJava() {
-        TabLabelProvider tabLabelProvider = createTabLabelProvider("Testfile.java");
+        var tabLabelProvider = createTabLabelProvider("Testfile.java");
 
         assertThat(tabLabelProvider).hasPackageName(Messages.Tab_Package());
     }
 
     @Test
     void shouldReturnPackageNamePython() {
-        TabLabelProvider tabLabelProvider = createTabLabelProvider("Testfile.py");
+        var tabLabelProvider = createTabLabelProvider("Testfile.py");
 
         assertThat(tabLabelProvider).hasPackageName(Messages.Tab_Package());
     }
 
     @Test
     void shouldReturnPackageNameCS() {
-        TabLabelProvider tabLabelProvider = createTabLabelProvider("Testfile.cs");
+        var tabLabelProvider = createTabLabelProvider("Testfile.cs");
 
         assertThat(tabLabelProvider).hasPackageName(Messages.Tab_Namespace());
     }
 
     @Test
     void shouldReturnPackageNameFallback() {
-        TabLabelProvider tabLabelProvider = createTabLabelProvider("Test.file");
+        var tabLabelProvider = createTabLabelProvider("Test.file");
 
         assertThat(tabLabelProvider).hasPackageName(Messages.Tab_Folder());
     }
 
     @Test
     void shouldReturnPackagesJava() {
-        TabLabelProvider tabLabelProvider = createTabLabelProvider("Testfile.java");
+        var tabLabelProvider = createTabLabelProvider("Testfile.java");
 
         assertThat(tabLabelProvider).hasPackages(Messages.Tab_Packages());
     }
 
     @Test
     void shouldReturnPackagesPython() {
-        TabLabelProvider tabLabelProvider = createTabLabelProvider("Testfile.py");
+        var tabLabelProvider = createTabLabelProvider("Testfile.py");
 
         assertThat(tabLabelProvider).hasPackages(Messages.Tab_Packages());
     }
 
     @Test
     void shouldReturnPackagesCS() {
-        TabLabelProvider tabLabelProvider = createTabLabelProvider("Testfile.cs");
+        var tabLabelProvider = createTabLabelProvider("Testfile.cs");
 
         assertThat(tabLabelProvider).hasPackages(Messages.Tab_Namespaces());
     }
 
     @Test
     void shouldReturnPackagesFallback() {
-        TabLabelProvider tabLabelProvider = createTabLabelProvider("Test.file");
+        var tabLabelProvider = createTabLabelProvider("Test.file");
 
         assertThat(tabLabelProvider).hasPackages(Messages.Tab_Folders());
     }

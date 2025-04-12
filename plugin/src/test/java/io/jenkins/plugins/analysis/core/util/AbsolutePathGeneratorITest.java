@@ -1,21 +1,19 @@
 package io.jenkins.plugins.analysis.core.util;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Locale;
-
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junitpioneer.jupiter.Issue;
-import org.jvnet.hudson.test.JenkinsRule;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Locale;
 
 import hudson.FilePath;
 import hudson.model.FreeStyleProject;
 import hudson.model.Slave;
 import hudson.slaves.DumbSlave;
 
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.Java;
 
@@ -42,19 +40,19 @@ class AbsolutePathGeneratorITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldMapIssueToAffectedFileIfPathIsInWrongCase() {
         assumeThat(isWindows()).as("Running not on Windows").isTrue();
 
-        Slave agent = createAgentWithWrongWorkspaceFolder();
-        FreeStyleProject project = createJobForAgent(agent);
+        var agent = createAgentWithWrongWorkspaceFolder();
+        var project = createJobForAgent(agent);
 
-        FilePath folder = createFolder(agent, project);
+        var folder = createFolder(agent, project);
         createFileInAgentWorkspace(agent, project, "Folder/Test.java", SOURCE_CODE);
         createFileInAgentWorkspace(agent, project, "warnings.txt",
                 "[javac] " + getAbsolutePathInLowerCase(folder) + ":1: warning: Test Warning for Jenkins");
 
-        Java javaJob = new Java();
+        var javaJob = new Java();
         javaJob.setPattern("warnings.txt");
         enableWarnings(project, javaJob);
 
-        AnalysisResult result = scheduleSuccessfulBuild(project);
+        var result = scheduleSuccessfulBuild(project);
         assertThat(result).hasTotalSize(1);
 
         assertThat(result).hasInfoMessages("-> resolved paths in source directory (1 found, 0 not found)");
@@ -63,7 +61,7 @@ class AbsolutePathGeneratorITest extends IntegrationTestWithJenkinsPerSuite {
 
     private FreeStyleProject createJobForAgent(final Slave agent) {
         try {
-            FreeStyleProject project = createFreeStyleProject();
+            var project = createFreeStyleProject();
             project.setAssignedNode(agent);
             return project;
         }
@@ -75,10 +73,10 @@ class AbsolutePathGeneratorITest extends IntegrationTestWithJenkinsPerSuite {
     @SuppressWarnings("checkstyle:IllegalCatch")
     private Slave createAgentWithWrongWorkspaceFolder() {
         try {
-            JenkinsRule jenkinsRule = getJenkins();
+            var jenkinsRule = getJenkins();
             int size = jenkinsRule.jenkins.getNodes().size();
 
-            DumbSlave slave = new DumbSlave("slave" + size,
+            var slave = new DumbSlave("slave" + size,
                     agentWorkspace.getPath().toLowerCase(Locale.ENGLISH),
                     jenkinsRule.createComputerLauncher(null));
             slave.setLabelString("agent");
@@ -94,7 +92,7 @@ class AbsolutePathGeneratorITest extends IntegrationTestWithJenkinsPerSuite {
 
     private FilePath createFolder(final Slave agent, final FreeStyleProject project) {
         try {
-            FilePath folder = getAgentWorkspace(agent, project).child("Folder");
+            var folder = getAgentWorkspace(agent, project).child("Folder");
             folder.mkdirs();
             return folder;
         }

@@ -1,13 +1,13 @@
 package io.jenkins.plugins.analysis.core.model;
 
+import org.apache.commons.lang3.StringUtils;
+
+import edu.hm.hafner.util.VisibleForTesting;
+
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
-
-import edu.hm.hafner.util.VisibleForTesting;
 
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -114,7 +114,7 @@ public class ToolSelection extends AbstractDescribableImpl<ToolSelection> {
          */
         @POST
         public ComboBoxModel doFillIdItems(@AncestorInPath final BuildableItem project) {
-            ComboBoxModel model = new ComboBoxModel();
+            var model = new ComboBoxModel();
             if (jenkinsFacade.hasPermission(Item.CONFIGURE, project)) {
                 model.addAll(collectAvailableIds());
             }

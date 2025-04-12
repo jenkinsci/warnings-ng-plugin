@@ -5,8 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner.ThresholdValidation;
+
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 
 /**
  * Tests the class {@link ThresholdValidation}.
@@ -21,7 +22,7 @@ class DryThresholdValidationTest {
             " 1,  2"})
     @DisplayName("OK: high > normal")
     void shouldValidateSuccessfullyIfHighIsLargerThanNormal(final int normal, final int high) {
-        ThresholdValidation validation = new ThresholdValidation();
+        var validation = new ThresholdValidation();
 
         assertThat(validation.validateNormal(high, normal)).isOk();
         assertThat(validation.validateHigh(high, normal)).isOk();
@@ -35,7 +36,7 @@ class DryThresholdValidationTest {
             "-1, 50"})
     @DisplayName("ERROR: high <= normal")
     void shouldReportErrorIfHighIsLessOrEqualThanNormal(final int normal, final int high) {
-        ThresholdValidation validation = new ThresholdValidation();
+        var validation = new ThresholdValidation();
 
         assertThat(validation.validateNormal(high, normal)).isError();
         assertThat(validation.validateHigh(high, normal)).isError();
@@ -46,7 +47,7 @@ class DryThresholdValidationTest {
      */
     @Test
     void shouldReturnCorrectValuesEvenOnInvalidInput() {
-        ThresholdValidation validation = new ThresholdValidation();
+        var validation = new ThresholdValidation();
 
         assertThat(validation.getNormalThreshold(1, 2)).isEqualTo(1);
         assertThat(validation.getNormalThreshold(1, 20)).isEqualTo(1);
@@ -75,4 +76,3 @@ class DryThresholdValidationTest {
                 .isEqualTo(ThresholdValidation.DEFAULT_HIGH_THRESHOLD);
     }
 }
-

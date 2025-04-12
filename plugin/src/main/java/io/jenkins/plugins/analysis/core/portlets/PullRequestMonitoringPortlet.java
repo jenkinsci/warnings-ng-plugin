@@ -1,11 +1,5 @@
 package io.jenkins.plugins.analysis.core.portlets;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import com.google.gson.JsonObject;
 
 import edu.hm.hafner.analysis.Severity;
@@ -13,6 +7,12 @@ import edu.hm.hafner.echarts.JacksonFacade;
 import edu.hm.hafner.echarts.Palette;
 import edu.hm.hafner.echarts.PieChartModel;
 import edu.hm.hafner.echarts.PieData;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 import hudson.Extension;
@@ -92,11 +92,11 @@ public class PullRequestMonitoringPortlet extends MonitorPortlet {
      *          the data as json string.
      */
     public String getWarningsModel() {
-        JsonObject sunburstData = new JsonObject();
+        var sunburstData = new JsonObject();
         sunburstData.addProperty("fixed", result.getFixedIssues().getSize());
         sunburstData.addProperty("outstanding", result.getOutstandingIssues().getSize());
 
-        JsonObject newIssues = new JsonObject();
+        var newIssues = new JsonObject();
         newIssues.addProperty("total", result.getNewIssues().getSize());
         newIssues.addProperty("low", result.getNewIssues().getSizeOf(Severity.WARNING_LOW));
         newIssues.addProperty("normal", result.getNewIssues().getSizeOf(Severity.WARNING_NORMAL));
@@ -116,7 +116,7 @@ public class PullRequestMonitoringPortlet extends MonitorPortlet {
      */
     @SuppressWarnings("unused") // used by jelly view
     public String getNoNewWarningsModel() {
-        PieChartModel model = new PieChartModel();
+        var model = new PieChartModel();
         model.add(new PieData("outstanding", result.getOutstandingIssues().getSize()), Palette.YELLOW);
         model.add(new PieData("fixed", result.getFixedIssues().getSize()), Palette.GREEN);
         return new JacksonFacade().toJson(model);

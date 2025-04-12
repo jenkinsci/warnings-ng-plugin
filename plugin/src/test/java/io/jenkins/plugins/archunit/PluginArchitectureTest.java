@@ -1,7 +1,6 @@
-package io.jenkins.plugins.analysis.warnings;
+package io.jenkins.plugins.archunit;
 
 import com.tngtech.archunit.base.DescribedPredicate;
-import com.tngtech.archunit.core.domain.AccessTarget.ConstructorCallTarget;
 import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.core.domain.JavaConstructorCall;
 import com.tngtech.archunit.junit.AnalyzeClasses;
@@ -25,7 +24,11 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.*;
  */
 @SuppressWarnings("hideutilityclassconstructor")
 @AnalyzeClasses(packages = "io.jenkins.plugins.analysis")
-class PluginArchitectureTest {
+final class PluginArchitectureTest {
+    private PluginArchitectureTest() {
+        // prevents instantiation
+    }
+
     @ArchTest
     static final ArchRule NO_EXCEPTIONS_WITH_NO_ARG_CONSTRUCTOR = noClasses()
             .that().haveSimpleNameNotContaining("Benchmark")
@@ -83,7 +86,7 @@ class PluginArchitectureTest {
 
         @Override
         public boolean test(final JavaConstructorCall javaConstructorCall) {
-            ConstructorCallTarget target = javaConstructorCall.getTarget();
+            var target = javaConstructorCall.getTarget();
             if (!target.getRawParameterTypes().isEmpty()) {
                 return false;
             }

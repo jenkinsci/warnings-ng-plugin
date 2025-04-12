@@ -1,8 +1,5 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Issue;
@@ -12,6 +9,8 @@ import edu.hm.hafner.analysis.util.IntegerParser;
 
 import j2html.tags.DomContentJoiner;
 import j2html.tags.UnescapedText;
+import java.util.ArrayList;
+import java.util.List;
 
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
@@ -73,7 +72,7 @@ public abstract class DetailsTableModel extends TableModel {
 
     @Override
     public TableConfiguration getTableConfiguration() {
-        TableConfiguration tableConfiguration = new TableConfiguration();
+        var tableConfiguration = new TableConfiguration();
         tableConfiguration.responsive();
         return tableConfiguration;
     }
@@ -206,7 +205,7 @@ public abstract class DetailsTableModel extends TableModel {
 
         private DetailedCell<String> createFileName(final FileNameRenderer fileNameRenderer, final Issue issue) {
             return new DetailedCell<>(fileNameRenderer.renderAffectedFileLink(issue),
-                    String.format("%s:%07d", issue.getFileName(), issue.getLineStart()));
+                    "%s:%07d".formatted(issue.getFileName(), issue.getLineStart()));
         }
 
         /**
@@ -242,7 +241,7 @@ public abstract class DetailsTableModel extends TableModel {
          * @return the formatted column
          */
         protected final String formatSeverity(final Severity severity) {
-            return String.format("<a href=\"%s\">%s</a>",
+            return "<a href=\"%s\">%s</a>".formatted(
                     severity.getName(), LocalizedSeverity.getLocalizedString(severity));
         }
 
@@ -258,11 +257,11 @@ public abstract class DetailsTableModel extends TableModel {
          * @return the formatted column
          */
         protected final String formatProperty(final String property, final String value) {
-            String renderedValue = render(value);
+            var renderedValue = render(value);
             if (StringUtils.isBlank(value)) {
                 renderedValue = "-";
             }
-            return String.format("<a href=\"%s.%d/\">%s</a>", property, value.hashCode(), renderedValue);
+            return "<a href=\"%s.%d/\">%s</a>".formatted(property, value.hashCode(), renderedValue);
         }
 
         /**

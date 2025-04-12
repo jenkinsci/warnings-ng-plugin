@@ -20,13 +20,13 @@ public class NewVersusFixedTrendChart implements TrendChart {
     @Override
     public LinesChartModel create(final Iterable<? extends BuildResult<AnalysisBuildResult>> results,
             final ChartModelConfiguration configuration) {
-        NewVersusFixedSeriesBuilder builder = new NewVersusFixedSeriesBuilder();
-        LinesDataSet dataSet = builder.createDataSet(configuration, results);
-        LinesChartModel model = new LinesChartModel(dataSet);
+        var builder = new NewVersusFixedSeriesBuilder();
+        var dataSet = builder.createDataSet(configuration, results);
+        var model = new LinesChartModel(dataSet);
 
-        LineSeries newSeries = getSeries(dataSet, Messages.New_Warnings_Short(), JenkinsPalette.RED,
+        var newSeries = getSeries(dataSet, Messages.New_Warnings_Short(), JenkinsPalette.RED,
                 NewVersusFixedSeriesBuilder.NEW);
-        LineSeries fixedSeries = getSeries(dataSet, Messages.Fixed_Warnings_Short(), JenkinsPalette.GREEN,
+        var fixedSeries = getSeries(dataSet, Messages.Fixed_Warnings_Short(), JenkinsPalette.GREEN,
                 NewVersusFixedSeriesBuilder.FIXED);
 
         model.addSeries(newSeries, fixedSeries);
@@ -36,7 +36,7 @@ public class NewVersusFixedTrendChart implements TrendChart {
 
     private LineSeries getSeries(final LinesDataSet dataSet,
             final String name, final JenkinsPalette color, final String dataSetId) {
-        LineSeries newSeries = new LineSeries(name, color.normal(), StackedMode.SEPARATE_LINES, FilledMode.FILLED);
+        var newSeries = new LineSeries(name, color.normal(), StackedMode.SEPARATE_LINES, FilledMode.FILLED);
         newSeries.addAll(dataSet.getSeries(dataSetId));
         return newSeries;
     }

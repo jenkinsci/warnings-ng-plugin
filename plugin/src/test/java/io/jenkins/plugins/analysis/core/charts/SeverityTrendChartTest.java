@@ -1,8 +1,5 @@
 package io.jenkins.plugins.analysis.core.charts;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Severity;
@@ -11,7 +8,9 @@ import edu.hm.hafner.echarts.BuildResult;
 import edu.hm.hafner.echarts.ChartModelConfiguration;
 import edu.hm.hafner.echarts.ChartModelConfiguration.AxisType;
 import edu.hm.hafner.echarts.LineSeries;
-import edu.hm.hafner.echarts.LinesChartModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
@@ -29,7 +28,7 @@ import static org.mockito.Mockito.*;
 class SeverityTrendChartTest {
     @Test
     void shouldCreatePriorityChartWithDifferentDisplayNames() {
-        SeverityTrendChart chart = new SeverityTrendChart();
+        var chart = new SeverityTrendChart();
 
         List<BuildResult<AnalysisBuildResult>> compositeResults = new ArrayList<>();
         var first = createAnalysisBuildResult(0, 2, 4, 6);
@@ -41,7 +40,7 @@ class SeverityTrendChartTest {
                 createAnalysisBuildResult(3, 1, 2, 3),
                 createAnalysisBuildResult(1, 11, 12, 13)))));
 
-        LinesChartModel model = chart.create(compositeResults, new ChartModelConfiguration());
+        var model = chart.create(compositeResults, new ChartModelConfiguration());
 
         verifySeries(model.getSeries().get(0), Severity.WARNING_LOW, 16, 22);
         verifySeries(model.getSeries().get(1), Severity.WARNING_NORMAL, 14, 18);
@@ -58,7 +57,7 @@ class SeverityTrendChartTest {
 
     @Test
     void shouldCreatePriorityChartWithZeroWarningsAndErrors() {
-        SeverityTrendChart chart = new SeverityTrendChart();
+        var chart = new SeverityTrendChart();
 
         List<BuildResult<AnalysisBuildResult>> results = new ArrayList<>();
         results.add(createResult(4, 0, 0, 0, 0));
@@ -66,7 +65,7 @@ class SeverityTrendChartTest {
         results.add(createResult(2, 2, 2, 4, 6));
         results.add(createResult(1, 3, 1, 2, 3));
 
-        LinesChartModel model = chart.create(results, new ChartModelConfiguration());
+        var model = chart.create(results, new ChartModelConfiguration());
 
         verifySeries(model.getSeries().get(0), Severity.WARNING_LOW, 3, 6, 0, 0);
         verifySeries(model.getSeries().get(1), Severity.WARNING_NORMAL, 2, 4, 0, 0);
@@ -83,7 +82,7 @@ class SeverityTrendChartTest {
 
     @Test
     void shouldHaveNotMoreValuesThatAllowed() {
-        SeverityTrendChart chart = new SeverityTrendChart();
+        var chart = new SeverityTrendChart();
 
         ChartModelConfiguration configuration = mock(ChartModelConfiguration.class);
         when(configuration.getBuildCount()).thenReturn(3);
@@ -96,7 +95,7 @@ class SeverityTrendChartTest {
         results.add(createResult(2, 2000, 200, 20, 2));
         results.add(createResult(1, 1000, 100, 10, 1));
 
-        LinesChartModel model = chart.create(results, configuration);
+        var model = chart.create(results, configuration);
 
         verifySeries(model.getSeries().get(3), Severity.ERROR, 2000, 3000, 4000);
         verifySeries(model.getSeries().get(2), Severity.WARNING_HIGH, 200, 300, 400);
@@ -113,13 +112,13 @@ class SeverityTrendChartTest {
 
     @Test
     void shouldCreatePriorityChartWithoutErrors() {
-        SeverityTrendChart chart = new SeverityTrendChart();
+        var chart = new SeverityTrendChart();
 
         List<BuildResult<AnalysisBuildResult>> results = new ArrayList<>();
         results.add(createResult(2, 0, 2, 4, 6));
         results.add(createResult(1, 0, 1, 2, 3));
 
-        LinesChartModel model = chart.create(results, new ChartModelConfiguration());
+        var model = chart.create(results, new ChartModelConfiguration());
 
         verifySeries(model.getSeries().get(0), Severity.WARNING_LOW, 3, 6);
         verifySeries(model.getSeries().get(1), Severity.WARNING_NORMAL, 2, 4);
@@ -136,13 +135,13 @@ class SeverityTrendChartTest {
 
     @Test
     void shouldCreatePriorityChartWithErrors() {
-        SeverityTrendChart chart = new SeverityTrendChart();
+        var chart = new SeverityTrendChart();
 
         List<BuildResult<AnalysisBuildResult>> results = new ArrayList<>();
         results.add(createResult(2, 8, 2, 4, 6));
         results.add(createResult(1, 5, 1, 2, 3));
 
-        LinesChartModel model = chart.create(results, new ChartModelConfiguration());
+        var model = chart.create(results, new ChartModelConfiguration());
 
         verifySeries(model.getSeries().get(0), Severity.WARNING_LOW, 3, 6);
         verifySeries(model.getSeries().get(1), Severity.WARNING_NORMAL, 2, 4);

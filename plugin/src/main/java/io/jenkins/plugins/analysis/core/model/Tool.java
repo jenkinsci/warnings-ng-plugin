@@ -1,14 +1,15 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.io.Serializable;
-import java.nio.charset.Charset;
-
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.VisibleForTesting;
+
+import java.io.Serial;
+import java.io.Serializable;
+import java.nio.charset.Charset;
 
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -36,6 +37,7 @@ import io.jenkins.plugins.util.ValidationUtilities;
  * @see AnalysisModelParser
  */
 public abstract class Tool extends AbstractDescribableImpl<Tool> implements Serializable {
+    @Serial
     private static final long serialVersionUID = 3305739700153168629L;
     private static final ValidationUtilities VALIDATION_UTILITIES = new ValidationUtilities();
 
@@ -155,7 +157,7 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
      * @return the label provider
      */
     public StaticAnalysisLabelProvider getLabelProvider() {
-        StaticAnalysisLabelProvider labelProvider = getDescriptor().getLabelProvider();
+        var labelProvider = getDescriptor().getLabelProvider();
         if (StringUtils.isNotBlank(name)) {
             labelProvider.setName(name);
         }
@@ -246,10 +248,10 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
          * @return the name of this tool, or "undefined" if no symbol has been defined
          */
         public String getSymbolName() {
-            Symbol annotation = getClass().getAnnotation(Symbol.class);
+            var annotation = getClass().getAnnotation(Symbol.class);
 
             if (annotation != null) {
-                String[] symbols = annotation.value();
+                var symbols = annotation.value();
                 if (symbols.length > 0) {
                     return symbols[0];
                 }

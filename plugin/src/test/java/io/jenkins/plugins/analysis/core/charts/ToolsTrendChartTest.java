@@ -1,9 +1,5 @@
 package io.jenkins.plugins.analysis.core.charts;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-
 import org.eclipse.collections.impl.factory.Maps;
 import org.junit.jupiter.api.Test;
 
@@ -11,8 +7,11 @@ import edu.hm.hafner.echarts.Build;
 import edu.hm.hafner.echarts.BuildResult;
 import edu.hm.hafner.echarts.ChartModelConfiguration;
 import edu.hm.hafner.echarts.LineSeries;
-import edu.hm.hafner.echarts.LinesChartModel;
 import edu.hm.hafner.echarts.Palette;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 
@@ -32,7 +31,7 @@ class ToolsTrendChartTest {
 
     @Test
     void shouldCreateToolsChartForMultipleActions() {
-        ToolsTrendChart chart = new ToolsTrendChart();
+        var chart = new ToolsTrendChart();
 
         List<BuildResult<AnalysisBuildResult>> compositeResults = new ArrayList<>();
         compositeResults.add(new BuildResult<>(new Build(1), new CompositeBuildResult(List.of(
@@ -40,7 +39,7 @@ class ToolsTrendChartTest {
         compositeResults.add(new BuildResult<>(new Build(2), new CompositeBuildResult(List.of(
                 createAnalysisBuildResult(CHECK_STYLE, 2), createAnalysisBuildResult(SPOT_BUGS, 4)))));
 
-        LinesChartModel model = chart.create(compositeResults, new ChartModelConfiguration());
+        var model = chart.create(compositeResults, new ChartModelConfiguration());
 
         verifySeries(model.getSeries().get(0), CHECK_STYLE, 1, 2);
         verifySeries(model.getSeries().get(1), SPOT_BUGS, 3, 4);
@@ -72,7 +71,7 @@ class ToolsTrendChartTest {
      */
     @Test
     void shouldCreateLineChartWithDuplicateColors() {
-        ToolsTrendChart chart = new ToolsTrendChart();
+        var chart = new ToolsTrendChart();
         int availableColors = Palette.values().length;
 
         List<BuildResult<AnalysisBuildResult>> results = new ArrayList<>();
@@ -80,7 +79,7 @@ class ToolsTrendChartTest {
             results.add(createResult(i, Integer.toString(i), 1));
         }
 
-        LinesChartModel model = chart.create(results, new ChartModelConfiguration());
+        var model = chart.create(results, new ChartModelConfiguration());
 
         List<String> lineColors = new ArrayList<>();
         for (LineSeries lineSeries : model.getSeries()) {

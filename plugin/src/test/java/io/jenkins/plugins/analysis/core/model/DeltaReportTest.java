@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.util.Optional;
-
 import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.Test;
 
@@ -10,9 +8,10 @@ import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 
+import java.util.Optional;
+
 import hudson.model.Run;
 
-import io.jenkins.plugins.analysis.core.util.IssuesStatistics;
 import io.jenkins.plugins.analysis.core.util.IssuesStatisticsAssert;
 import io.jenkins.plugins.analysis.core.util.IssuesStatisticsBuilder;
 
@@ -31,9 +30,9 @@ class DeltaReportTest {
     void shouldHaveEmptyReports() {
         History history = mock(History.class);
         when(history.getBuild()).thenReturn(Optional.empty());
-        Report report = new Report();
+        var report = new Report();
 
-        DeltaReport deltaReport = new DeltaReport(report,  0);
+        var deltaReport = new DeltaReport(report, 0);
         assertThat(deltaReport)
                 .isEmpty()
                 .hasNoAllIssues()
@@ -48,19 +47,19 @@ class DeltaReportTest {
         Run<?, ?> run = mock(Run.class);
         when(run.getExternalizableId()).thenReturn(REFERENCE_BUILD_ID);
 
-        Issue issue = getIssue("issue");
-        Issue fixedIssue = getIssue("fixedIssue");
-        Issue newIssue = getIssue("newIssue");
+        var issue = getIssue("issue");
+        var fixedIssue = getIssue("fixedIssue");
+        var newIssue = getIssue("newIssue");
 
-        Report referenceIssues = new Report();
+        var referenceIssues = new Report();
         referenceIssues.add(issue);
         referenceIssues.add(fixedIssue);
 
-        Report report = new Report();
+        var report = new Report();
         report.add(issue);
         report.add(newIssue);
 
-        DeltaReport deltaReport = new DeltaReport(report, run, 0, referenceIssues);
+        var deltaReport = new DeltaReport(report, run, 0, referenceIssues);
         assertThat(deltaReport)
                 .hasAllIssues(issue, newIssue)
                 .hasOutstandingIssues(issue)
@@ -77,22 +76,22 @@ class DeltaReportTest {
         History history = mock(History.class);
         when(history.getBuild()).thenReturn(Optional.of(run));
 
-        Issue issue = getIssue("issue");
-        Issue fixedIssue = getIssue("fixedIssue");
-        Issue newIssue = getIssue("newIssue");
-        Issue error = getIssueWithSeverity("error", Severity.ERROR);
+        var issue = getIssue("issue");
+        var fixedIssue = getIssue("fixedIssue");
+        var newIssue = getIssue("newIssue");
+        var error = getIssueWithSeverity("error", Severity.ERROR);
 
-        Report referenceIssues = new Report();
+        var referenceIssues = new Report();
         referenceIssues.add(issue);
         referenceIssues.add(fixedIssue);
         when(history.getIssues()).thenReturn(referenceIssues);
 
-        Report report = new Report();
+        var report = new Report();
         report.add(issue);
         report.add(newIssue);
         report.add(error);
 
-        IssuesStatistics compareIssuesStatistics = new IssuesStatisticsBuilder()
+        var compareIssuesStatistics = new IssuesStatisticsBuilder()
                 .setTotalNormalSize(2)
                 .setTotalErrorSize(1)
                 .setNewNormalSize(1)
@@ -101,8 +100,8 @@ class DeltaReportTest {
                 .setFixedSize(1)
                 .build();
 
-        DeltaReport deltaReport = new DeltaReport(report,  run, 0, referenceIssues);
-        IssuesStatistics issuesStatistics = deltaReport.getStatistics();
+        var deltaReport = new DeltaReport(report, run, 0, referenceIssues);
+        var issuesStatistics = deltaReport.getStatistics();
         IssuesStatisticsAssert.assertThat(issuesStatistics)
                 .isNotNull().usingRecursiveComparison()
                 .isEqualTo(compareIssuesStatistics);

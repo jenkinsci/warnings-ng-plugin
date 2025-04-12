@@ -179,7 +179,7 @@ public class JobAction implements Action, AsyncConfigurableTrendChart {
     public void doIndex(final StaplerRequest2 request, final StaplerResponse2 response) throws IOException {
         Optional<ResultAction> action = getLatestAction();
         if (action.isPresent()) {
-            response.sendRedirect2(String.format("../%d/%s", action.get().getOwner().getNumber(),
+            response.sendRedirect2("../%d/%s".formatted(action.get().getOwner().getNumber(),
                     getId()));
         }
     }
@@ -205,7 +205,7 @@ public class JobAction implements Action, AsyncConfigurableTrendChart {
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
     public String getConfigurableBuildTrendModel(final String configuration) {
-        String chartType = JACKSON_FACADE.getString(configuration, "chartType", "severity");
+        var chartType = JACKSON_FACADE.getString(configuration, "chartType", "severity");
 
         return new JacksonFacade().toJson(selectChart(chartType).create(
                 createBuildHistory(), ChartModelConfiguration.fromJson(configuration)));
@@ -251,7 +251,7 @@ public class JobAction implements Action, AsyncConfigurableTrendChart {
      */
     @SuppressWarnings("unused") // Called by jelly view
     public boolean isTrendEmpty() {
-        History results = createBuildHistory();
+        var results = createBuildHistory();
         for (BuildResult<AnalysisBuildResult> result : results) {
             if (result.getResult().getTotalSize() > 0) {
                 return false;
@@ -262,6 +262,6 @@ public class JobAction implements Action, AsyncConfigurableTrendChart {
 
     @Override
     public String toString() {
-        return String.format("%s (%s)", getClass().getName(), labelProvider.getName());
+        return "%s (%s)".formatted(getClass().getName(), labelProvider.getName());
     }
 }

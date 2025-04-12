@@ -21,7 +21,7 @@ public class ModifiedCodePieChart {
      * @return the chart model
      */
     public PieChartModel create(final Report issues) {
-        PieChartModel model = new PieChartModel(Messages.NewVersusFixed_Name());
+        var model = new PieChartModel(Messages.NewVersusFixed_Name());
 
         var totals = issues.size();
         var modified = issues.getInModifiedCode().size();

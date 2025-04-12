@@ -99,9 +99,9 @@ public class IssuesRecorder extends Recorder {
     private Set<SourceCodeDirectory> sourceDirectories = new HashSet<>(); // @since 9.11.0
     private SourceCodeRetention sourceCodeRetention = SourceCodeRetention.EVERY_BUILD;
 
-    private boolean ignoreQualityGate = false; // by default, a successful quality gate is mandatory;
+    private boolean ignoreQualityGate; // by default, a successful quality gate is mandatory;
 
-    private boolean failOnError = false;
+    private boolean failOnError;
 
     private int healthy;
     private int unhealthy;
@@ -112,7 +112,7 @@ public class IssuesRecorder extends Recorder {
     private boolean isEnabledForFailure;
     private boolean isAggregatingResults;
 
-    private boolean quiet = false;
+    private boolean quiet;
 
     private boolean isBlameDisabled;
     private boolean skipPublishingChecks; // by default, checks will be published
@@ -643,7 +643,7 @@ public class IssuesRecorder extends Recorder {
     @Override
     public boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener)
             throws InterruptedException, IOException {
-        FilePath workspace = build.getWorkspace();
+        var workspace = build.getWorkspace();
         if (workspace == null) {
             throw new IOException("No workspace found for " + build);
         }
@@ -655,10 +655,10 @@ public class IssuesRecorder extends Recorder {
 
     List<AnalysisResult> perform(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
             final ResultHandler resultHandler) throws InterruptedException, IOException {
-        LogHandler logHandler = new LogHandler(listener, DEFAULT_ID);
+        var logHandler = new LogHandler(listener, DEFAULT_ID);
         logHandler.setQuiet(quiet);
 
-        Result overallResult = run.getResult();
+        var overallResult = run.getResult();
         if (isEnabledForFailure || overallResult == null || overallResult.isBetterOrEqualTo(Result.UNSTABLE)) {
             return record(run, workspace, listener, resultHandler, logHandler);
         }
@@ -677,13 +677,13 @@ public class IssuesRecorder extends Recorder {
 
         List<AnalysisResult> results = new ArrayList<>();
         if (analysisTools.size() == 1) {
-            Tool tool = analysisTools.get(0);
+            var tool = analysisTools.get(0);
 
             var customId = StringUtils.defaultIfBlank(getId(), tool.getActualId());
             var customName = StringUtils.defaultIfBlank(getName(), tool.getActualName());
             var customIcon = StringUtils.defaultIfBlank(getIcon(), tool.getIcon());
 
-            AnnotatedReport report = new AnnotatedReport(customId);
+            var report = new AnnotatedReport(customId);
             report.add(scanWithTool(run, workspace, listener, tool), tool.getActualId());
 
             results.add(publishResult(run, workspace, listener, customName,
@@ -698,7 +698,7 @@ public class IssuesRecorder extends Recorder {
         }
         else {
             if (isAggregatingResults) {
-                AnnotatedReport report = new AnnotatedReport(StringUtils.defaultIfBlank(getId(), DEFAULT_ID));
+                var report = new AnnotatedReport(StringUtils.defaultIfBlank(getId(), DEFAULT_ID));
                 for (Tool tool : analysisTools) {
                     report.add(scanWithTool(run, workspace, listener, tool), tool.getActualId());
                 }
@@ -708,7 +708,7 @@ public class IssuesRecorder extends Recorder {
             }
             else {
                 for (Tool tool : analysisTools) {
-                    AnnotatedReport report = new AnnotatedReport(tool.getActualId());
+                    var report = new AnnotatedReport(tool.getActualId());
                     report.add(scanWithTool(run, workspace, listener, tool));
 
                     results.add(publishResult(run, workspace, listener, tool.getActualName(),
@@ -754,7 +754,7 @@ public class IssuesRecorder extends Recorder {
 
     private AnnotatedReport scanWithTool(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
             final Tool tool) throws IOException, InterruptedException {
-        IssuesScanner issuesScanner = new IssuesScanner(tool, getFilters(), getSourceCodeCharset(),
+        var issuesScanner = new IssuesScanner(tool, getFilters(), getSourceCodeCharset(),
                 workspace, getSourceCodePaths(), getSourceCodeRetention(),
                 run, new FilePath(run.getRootDir()), listener,
                 scm, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED,
@@ -813,13 +813,13 @@ public class IssuesRecorder extends Recorder {
                 ? new NullDeltaCalculator()
                 : DeltaCalculatorFactory.findDeltaCalculator(scm, run, workspace, listener, new FilteredLog());
 
-        IssuesPublisher publisher = new IssuesPublisher(run, annotatedReport, deltaCalculator,
+        var publisher = new IssuesPublisher(run, annotatedReport, deltaCalculator,
                 new HealthDescriptor(healthy, unhealthy, minimumSeverity), qualityGates,
                 customName, customIcon, ignoreQualityGate, getSourceCodeCharset(), logHandler, resultHandler, failOnError);
-        ResultAction action = publisher.attachAction(trendChartType);
+        var action = publisher.attachAction(trendChartType);
 
         if (!skipPublishingChecks) {
-            WarningChecksPublisher checksPublisher = new WarningChecksPublisher(action, listener, checksInfo);
+            var checksPublisher = new WarningChecksPublisher(action, listener, checksInfo);
             checksPublisher.publishChecks(getChecksAnnotationScope());
         }
 

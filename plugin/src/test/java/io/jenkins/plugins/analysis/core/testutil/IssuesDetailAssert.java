@@ -1,10 +1,11 @@
 package io.jenkins.plugins.analysis.core.testutil;
 
-import java.util.Objects;
-
 import org.assertj.core.api.AbstractAssert;
 
 import edu.hm.hafner.analysis.Report;
+
+import java.util.Objects;
+
 import io.jenkins.plugins.analysis.core.model.IssuesDetail;
 
 /**
@@ -57,7 +58,7 @@ public class IssuesDetailAssert extends AbstractAssert<IssuesDetailAssert, Issue
         }
         return this;
     }
-    
+
     /**
      * Verifies that the actual new issues of the {@link IssuesDetail} instance are equal to the expected ones.
      *
@@ -76,7 +77,7 @@ public class IssuesDetailAssert extends AbstractAssert<IssuesDetailAssert, Issue
         }
         return this;
     }
-    
+
     /**
      * Verifies that the actual fixed issues of the {@link IssuesDetail} instance are equal to the expected ones.
      *
@@ -95,7 +96,7 @@ public class IssuesDetailAssert extends AbstractAssert<IssuesDetailAssert, Issue
         }
         return this;
     }
-    
+
     /**
      * Verifies that the actual outstanding issues of the {@link IssuesDetail} instance are equal to the expected ones.
      *

@@ -1,17 +1,17 @@
 package io.jenkins.plugins.analysis.warnings.tasks;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
-import java.nio.charset.Charset;
-
 import org.apache.commons.lang3.StringUtils;
 
-import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.Report;
 import edu.umd.cs.findbugs.annotations.NonNull;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.Serial;
+import java.io.StringReader;
+import java.nio.charset.Charset;
 
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -44,6 +44,7 @@ import io.jenkins.plugins.util.ValidationUtilities;
  */
 @SuppressWarnings({"PMD.DataClass", "PMD.ExcessiveImports"})
 public class OpenTasks extends Tool {
+    @Serial
     private static final long serialVersionUID = 4692318309214830824L;
 
     private static final String ID = "open-tasks";
@@ -160,7 +161,7 @@ public class OpenTasks extends Tool {
     public Report scan(final Run<?, ?> run, final FilePath workspace, final Charset sourceCodeEncoding,
             final LogHandler logger) {
         try {
-            Report openTasks = workspace.act(new AgentScanner(highTags, normalTags, lowTags,
+            var openTasks = workspace.act(new AgentScanner(highTags, normalTags, lowTags,
                     ignoreCase ? CaseMode.IGNORE_CASE : CaseMode.CASE_SENSITIVE,
                     isRegularExpression ? MatcherMode.REGEXP_MATCH : MatcherMode.STRING_MATCH,
                     includePattern, excludePattern, sourceCodeEncoding.name()));
@@ -169,7 +170,7 @@ public class OpenTasks extends Tool {
             return openTasks;
         }
         catch (IOException e) {
-            Report report = new Report();
+            var report = new Report();
             report.logException(e, "Exception while reading the source code files:");
             return report;
         }
@@ -299,8 +300,8 @@ public class OpenTasks extends Tool {
                 return FormValidation.ok();
             }
 
-            TaskScannerBuilder builder = new TaskScannerBuilder();
-            TaskScanner scanner = builder.setHighTasks(high)
+            var builder = new TaskScannerBuilder();
+            var scanner = builder.setHighTasks(high)
                     .setNormalTasks(normal)
                     .setLowTasks(low)
                     .setCaseMode(ignoreCase ? CaseMode.IGNORE_CASE : CaseMode.CASE_SENSITIVE)
@@ -312,7 +313,7 @@ public class OpenTasks extends Tool {
 
             try (var reader = new BufferedReader(new StringReader(example)); var issueBuilder = new IssueBuilder()) {
                 issueBuilder.setFileName("UI example");
-                Report tasks = scanner.scanTasks(reader.lines().iterator(), issueBuilder);
+                var tasks = scanner.scanTasks(reader.lines().iterator(), issueBuilder);
                 if (tasks.isEmpty()) {
                     return FormValidation.warning(Messages.OpenTasks_Validation_NoTask());
                 }
@@ -320,7 +321,7 @@ public class OpenTasks extends Tool {
                     return FormValidation.warning(Messages.OpenTasks_Validation_MultipleTasks(tasks.size()));
                 }
                 else {
-                    Issue task = tasks.get(0);
+                    var task = tasks.get(0);
                     return FormValidation.ok(Messages.OpenTasks_Validation_OneTask(task.getType(), task.getMessage()));
                 }
             }

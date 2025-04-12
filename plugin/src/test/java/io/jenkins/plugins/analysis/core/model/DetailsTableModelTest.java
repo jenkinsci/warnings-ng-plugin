@@ -18,19 +18,19 @@ class DetailsTableModelTest extends AbstractDetailsModelTest {
     @Test
     @org.junitpioneer.jupiter.Issue("JENKINS-64051")
     void shouldNotRemoveWhitespace() {
-        try (IssueBuilder builder = new IssueBuilder()) {
+        try (var builder = new IssueBuilder()) {
             builder.setMessage("project: Defaults to NumberGroupSeparator on .NET Core except on Windows.");
-            TableRow model = createRow(builder.build());
+            var model = createRow(builder.build());
 
-            String actualColumn = model.getDescription();
+            var actualColumn = model.getDescription();
             assertThat(actualColumn).contains("NumberGroupSeparator on .NET Core except");
         }
     }
 
     @Test
     void shouldCreateSortableFileName() {
-        Issue issue = createIssue(1);
-        TableRow model = createRow(issue);
+        var issue = createIssue(1);
+        var model = createRow(issue);
 
         assertThatDetailedColumnContains(model.getFileName(),
                 createExpectedFileName(issue), "/path/to/file-1:0000015");
@@ -38,10 +38,10 @@ class DetailsTableModelTest extends AbstractDetailsModelTest {
 
     @Test
     void shouldReturnClickableProperties() {
-        try (IssueBuilder builder = new IssueBuilder()) {
+        try (var builder = new IssueBuilder()) {
             builder.setCategory("");
-            Issue issue = builder.build();
-            TableRow model = createRow(issue);
+            var issue = builder.build();
+            var model = createRow(issue);
             assertThat(model.formatProperty("category", issue.getCategory()))
                     .isEqualTo("<a href=\"category.0/\">-</a>");
         }

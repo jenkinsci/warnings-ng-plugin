@@ -1,16 +1,5 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
-import java.lang.reflect.InvocationTargetException;
-import java.nio.charset.Charset;
-import java.util.NoSuchElementException;
-import java.util.Set;
-import java.util.UUID;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
-
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -20,6 +9,16 @@ import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.Charset;
+import java.util.NoSuchElementException;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import hudson.model.Run;
 
@@ -91,7 +90,7 @@ public class DetailFactory {
             final Report allIssues, final Report newIssues,
             final Report outstandingIssues, final Report fixedIssues,
             final Charset sourceEncoding, final IssuesDetail parent) {
-        StaticAnalysisLabelProvider labelProvider = parent.getLabelProvider();
+        var labelProvider = parent.getLabelProvider();
 
         if (link.contains(LINK_SEPARATOR)) {
             return createFilteredView(link, owner,
@@ -109,33 +108,33 @@ public class DetailFactory {
     private Object createFilteredView(final String link, final Run<?, ?> owner, final AnalysisResult result,
             final Report allIssues, final Report newIssues, final Report outstandingIssues, final Report fixedIssues,
             final Charset sourceEncoding, final IssuesDetail parent, final StaticAnalysisLabelProvider labelProvider) {
-        String plainLink = removePropertyPrefix(link);
+        var plainLink = removePropertyPrefix(link);
         if (link.startsWith("source.")) {
-            Issue issue = allIssues.findById(UUID.fromString(plainLink));
+            var issue = allIssues.findById(UUID.fromString(plainLink));
             if (ConsoleLogHandler.isInConsoleLog(issue.getFileName())) {
                 try (Stream<String> consoleLog = buildFolder.readConsoleLog(owner)) {
                     return new ConsoleDetail(owner, consoleLog, issue.getLineStart(), issue.getLineEnd());
                 }
             }
             else {
-                Marker marker = asMarker(issue, labelProvider.getSourceCodeDescription(owner, issue), labelProvider.getSmallIconUrl());
-                try (Reader affectedFile = buildFolder.readFile(owner, issue.getFileName(), sourceEncoding)) {
+                var marker = asMarker(issue, labelProvider.getSourceCodeDescription(owner, issue), labelProvider.getSmallIconUrl());
+                try (var affectedFile = buildFolder.readFile(owner, issue.getFileName(), sourceEncoding)) {
                     return new SourceCodeViewModel(owner, issue.getBaseName(), affectedFile, marker);
                 }
                 catch (IOException e) {
-                    try (StringReader fallback = new StringReader(
-                            String.format("%s%n%s", ExceptionUtils.getMessage(e), ExceptionUtils.getStackTrace(e)))) {
+                    try (var fallback = new StringReader(
+                            "%s%n%s".formatted(ExceptionUtils.getMessage(e), ExceptionUtils.getStackTrace(e)))) {
                         return new SourceCodeViewModel(owner, issue.getBaseName(), fallback, marker);
                     }
                 }
             }
         }
 
-        String url = parent.getUrl() + "/" + plainLink;
+        var url = parent.getUrl() + "/" + plainLink;
         String property = StringUtils.substringBefore(link, ".");
         Predicate<Issue> filter = createPropertyFilter(plainLink, property);
-        Report selectedIssues = allIssues.filter(filter);
-        String displayName = getDisplayNameOfDetails(property, selectedIssues, plainLink,
+        var selectedIssues = allIssues.filter(filter);
+        var displayName = getDisplayNameOfDetails(property, selectedIssues, plainLink,
                 result.getSizePerOrigin().keySet());
         return new IssuesDetail(owner, result,
                 selectedIssues, newIssues.filter(filter), outstandingIssues.filter(filter),
@@ -159,7 +158,7 @@ public class DetailFactory {
     private Object createNewDetailView(final String link, final Run<?, ?> owner, final AnalysisResult result,
             final Report allIssues, final Report newIssues, final Report outstandingIssues, final Report fixedIssues,
             final Charset sourceEncoding, final IssuesDetail parent, final StaticAnalysisLabelProvider labelProvider) {
-        String url = parent.getUrl() + "/" + link;
+        var url = parent.getUrl() + "/" + link;
 
         if ("all".equalsIgnoreCase(link)) {
             return new IssuesDetail(owner, result, allIssues, newIssues, outstandingIssues, fixedIssues,
@@ -201,7 +200,7 @@ public class DetailFactory {
                         labelProvider, sourceEncoding);
             }
         }
-        throw new NoSuchElementException(String.format("There is no URL mapping for %s and %s", parent.getUrl(), link));
+        throw new NoSuchElementException("There is no URL mapping for %s and %s".formatted(parent.getUrl(), link));
     }
 
     private Report filterModified(final Report report) {
@@ -222,7 +221,7 @@ public class DetailFactory {
     private String getDisplayNameOfDetails(final String property, final Report selectedIssues,
             final String originHash, final Set<String> origins) {
         if (ORIGIN_PROPERTY.equals(property)) {
-            LabelProviderFactory factory = createFactory();
+            var factory = createFactory();
             for (String origin : origins) {
                 if (String.valueOf(origin.hashCode()).equals(originHash)) {
                     return factory.create(origin).getName();

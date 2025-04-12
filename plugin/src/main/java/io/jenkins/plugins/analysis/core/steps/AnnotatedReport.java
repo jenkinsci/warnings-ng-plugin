@@ -1,16 +1,17 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.google.errorprone.annotations.FormatMethod;
 
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.Ensure;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
+
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
 
@@ -25,6 +26,7 @@ import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
  * @author Ullrich Hafner
  */
 public class AnnotatedReport implements Serializable {
+    @Serial
     private static final long serialVersionUID = -4797152016409014028L;
 
     private final String id;

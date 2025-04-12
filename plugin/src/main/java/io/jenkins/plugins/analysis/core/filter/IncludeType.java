@@ -5,6 +5,8 @@ import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+import java.io.Serial;
+
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
@@ -17,6 +19,7 @@ import io.jenkins.plugins.util.JenkinsFacade;
  * @author Ullrich Hafner
  */
 public class IncludeType extends RegexpFilter {
+    @Serial
     private static final long serialVersionUID = -4251535355471690174L;
 
     /**

@@ -1,14 +1,14 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Issue;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
@@ -44,7 +44,7 @@ class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     @org.junitpioneer.jupiter.Issue("JENKINS-58538")
     void shouldShowFolderDistributionRatherThanPackageDistribution() {
-        FreeStyleProject project = createFreeStyleProject();
+        var project = createFreeStyleProject();
 
         createFileInWorkspace(project, "java-issues.txt",
                 createJavaWarning("one/SampleClassWithoutPackage.java", 1)
@@ -78,7 +78,7 @@ class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldShowNamespacesAndPackagesAltogetherForJavaAndCSharpInTheHtmlOutput() {
-        ResultAction result = buildProject(PACKAGE_WITH_FILES_CSHARP + "eclipseForCSharpVariousClasses.txt",
+        var result = buildProject(PACKAGE_WITH_FILES_CSHARP + "eclipseForCSharpVariousClasses.txt",
                 PACKAGE_WITH_FILES_JAVA + "eclipseForJavaVariousClasses.txt",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithPackage.java",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithoutPackage.java",
@@ -103,7 +103,7 @@ class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldShowPackagesForJavaOnly() {
-        ResultAction details = buildProject(PACKAGE_WITH_FILES_JAVA + "eclipseForJavaVariousClasses.txt",
+        var details = buildProject(PACKAGE_WITH_FILES_JAVA + "eclipseForJavaVariousClasses.txt",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithPackage.java",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithoutPackage.java",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithUnconventionalPackageNaming.java",
@@ -120,7 +120,7 @@ class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldShowNamespacesForCSharpOnlyInTheHtmlOutput() {
-        ResultAction details = buildProject(PACKAGE_WITH_FILES_CSHARP + "eclipseForCSharpVariousClasses.txt",
+        var details = buildProject(PACKAGE_WITH_FILES_CSHARP + "eclipseForCSharpVariousClasses.txt",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNamespace.cs",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNamespaceBetweenCode.cs",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNestedAndNormalNamespace.cs",
@@ -199,7 +199,7 @@ class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldDetectVariousNamespacesAndPackagesForCombinedJavaAndCSharpFiles() {
-        ResultAction action = buildProject(PACKAGE_WITH_FILES_JAVA + "eclipseForJavaVariousClasses.txt",
+        var action = buildProject(PACKAGE_WITH_FILES_JAVA + "eclipseForJavaVariousClasses.txt",
                 PACKAGE_WITH_FILES_CSHARP + "eclipseForCSharpVariousClasses.txt",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithPackage.java",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithoutPackage.java",
@@ -210,7 +210,7 @@ class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNestedAndNormalNamespace.cs",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithoutNamespace.cs"
         );
-        AnalysisResult result = action.getResult();
+        var result = action.getResult();
 
         assertThat(result.getIssues()).hasSize(10);
         assertThat(result.getIssues().getPackages())
@@ -219,13 +219,13 @@ class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
 
         Map<String, Long> totalByPackageName = collectPackageNames(result);
         assertThat(totalByPackageName).hasSize(5);
-        assertThat(totalByPackageName.get("edu.hm.hafner.analysis._123.int.naming.structure")).isEqualTo(1L);
-        assertThat(totalByPackageName.get("SampleClassWithNamespace")).isEqualTo(1L);
-        assertThat(totalByPackageName.get("NestedNamespace")).isEqualTo(1L);
-        assertThat(totalByPackageName.get("SampleClassWithNestedAndNormalNamespace")).isEqualTo(1L);
-        assertThat(totalByPackageName.get("-")).isEqualTo(6L);
+        assertThat(totalByPackageName).containsEntry("edu.hm.hafner.analysis._123.int.naming.structure", 1L);
+        assertThat(totalByPackageName).containsEntry("SampleClassWithNamespace", 1L);
+        assertThat(totalByPackageName).containsEntry("NestedNamespace", 1L);
+        assertThat(totalByPackageName).containsEntry("SampleClassWithNestedAndNormalNamespace", 1L);
+        assertThat(totalByPackageName).containsEntry("-", 6L);
 
-        String logOutput = getConsoleLog(result);
+        var logOutput = getConsoleLog(result);
         assertThat(logOutput).contains(DEFAULT_DEBUG_LOG_LINE);
         assertThat(logOutput).contains(returnExpectedNumberOfResolvedPackageNames(10));
     }
@@ -236,12 +236,12 @@ class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldRunTwoIndependentBuildsWithTwoDifferentParsersAndCheckForCorrectPackageHandling() {
-        FreeStyleProject jobWithFindBugsParser = createJobWithWorkspaceFiles(
+        var jobWithFindBugsParser = createJobWithWorkspaceFiles(
                 PACKAGE_FILE_PATH + "various/findbugs-packages.xml");
         enableGenericWarnings(jobWithFindBugsParser, new FindBugs());
-        AnalysisResult resultWithFindBugsParser = scheduleBuildAndAssertStatus(jobWithFindBugsParser, Result.SUCCESS);
+        var resultWithFindBugsParser = scheduleBuildAndAssertStatus(jobWithFindBugsParser, Result.SUCCESS);
 
-        ResultAction action = buildProject(
+        var action = buildProject(
                 PACKAGE_WITH_FILES_JAVA + "eclipseForJavaVariousClasses.txt",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithPackage.java",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithoutPackage.java",
@@ -257,27 +257,25 @@ class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
 
         Map<String, Long> findBugsTotalByPackageName = collectPackageNames(resultWithFindBugsParser);
         assertThat(findBugsTotalByPackageName).hasSize(3);
-        assertThat(findBugsTotalByPackageName.get("edu.hm.hafner.analysis.123")).isEqualTo(1L);
-        assertThat(findBugsTotalByPackageName.get("edu.hm.hafner.analysis._test")).isEqualTo(1L);
-        assertThat(findBugsTotalByPackageName.get("edu.hm.hafner.analysis.int.naming.structure"))
-                .isEqualTo(1L);
+        assertThat(findBugsTotalByPackageName).containsEntry("edu.hm.hafner.analysis.123", 1L);
+        assertThat(findBugsTotalByPackageName).containsEntry("edu.hm.hafner.analysis._test", 1L);
+        assertThat(findBugsTotalByPackageName).containsEntry("edu.hm.hafner.analysis.int.naming.structure", 1L);
 
-        String findBugsConsoleLog = getConsoleLog(resultWithFindBugsParser);
+        var findBugsConsoleLog = getConsoleLog(resultWithFindBugsParser);
         assertThat(findBugsConsoleLog).contains(DEFAULT_DEBUG_LOG_LINE);
         assertThat(findBugsConsoleLog).contains("-> all affected files already have a valid package name");
 
-        AnalysisResult resultWithEclipseParser = action.getResult();
+        var resultWithEclipseParser = action.getResult();
         assertThat(resultWithEclipseParser.getIssues()).hasSize(6);
         assertThat(resultWithEclipseParser.getIssues().getPackages())
                 .containsExactly("edu.hm.hafner.analysis._123.int.naming.structure", "-");
 
         Map<String, Long> eclipseTotalByPackageName = collectPackageNames(resultWithEclipseParser);
         assertThat(eclipseTotalByPackageName).hasSize(2);
-        assertThat(eclipseTotalByPackageName.get("edu.hm.hafner.analysis._123.int.naming.structure"))
-                .isEqualTo(1L);
-        assertThat(eclipseTotalByPackageName.get("-")).isEqualTo(5L);
+        assertThat(eclipseTotalByPackageName).containsEntry("edu.hm.hafner.analysis._123.int.naming.structure", 1L);
+        assertThat(eclipseTotalByPackageName).containsEntry("-", 5L);
 
-        String eclipseConsoleLog = getConsoleLog(resultWithEclipseParser);
+        var eclipseConsoleLog = getConsoleLog(resultWithEclipseParser);
         assertThat(eclipseConsoleLog).contains(DEFAULT_DEBUG_LOG_LINE);
         assertThat(eclipseConsoleLog).contains(returnExpectedNumberOfResolvedPackageNames(6));
     }
@@ -287,15 +285,15 @@ class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldDetectVariousNamespacesForCSharpFiles() {
-        ResultAction action = buildProject(
+        var action = buildProject(
                 PACKAGE_WITH_FILES_CSHARP + "eclipseForCSharpVariousClasses.txt",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNamespace.cs",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNamespaceBetweenCode.cs",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNestedAndNormalNamespace.cs",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithoutNamespace.cs");
 
-        String logOutput = getConsoleLog(action.getOwner());
-        AnalysisResult result = action.getResult();
+        var logOutput = getConsoleLog(action.getOwner());
+        var result = action.getResult();
         Map<String, Long> collect = collectPackageNames(result);
 
         assertThat(result.getIssues()).hasSize(6);
@@ -303,17 +301,17 @@ class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
                 .containsExactly("SampleClassWithNamespace", "NestedNamespace",
                         "SampleClassWithNestedAndNormalNamespace", "-");
         assertThat(collect).hasSize(4);
-        assertThat(collect.get("SampleClassWithNamespace")).isEqualTo(1L);
-        assertThat(collect.get("NestedNamespace")).isEqualTo(1L);
-        assertThat(collect.get("SampleClassWithNestedAndNormalNamespace")).isEqualTo(1L);
-        assertThat(collect.get("-")).isEqualTo(3L);
+        assertThat(collect).containsEntry("SampleClassWithNamespace", 1L);
+        assertThat(collect).containsEntry("NestedNamespace", 1L);
+        assertThat(collect).containsEntry("SampleClassWithNestedAndNormalNamespace", 1L);
+        assertThat(collect).containsEntry("-", 3L);
         assertThat(logOutput).contains(DEFAULT_DEBUG_LOG_LINE);
         assertThat(logOutput).contains(returnExpectedNumberOfResolvedPackageNames(6));
     }
 
     @Test
     void shouldDetectVariousPackagesForJavaFiles() {
-        ResultAction action = buildProject(
+        var action = buildProject(
                 PACKAGE_WITH_FILES_JAVA + "eclipseForJavaVariousClasses.txt",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithPackage.java",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithoutPackage.java",
@@ -322,24 +320,24 @@ class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
 
         );
 
-        AnalysisResult result = action.getResult();
+        var result = action.getResult();
         assertThat(result.getIssues()).hasSize(6);
         assertThat(result.getIssues().getPackages()).containsExactly(
                 "edu.hm.hafner.analysis._123.int.naming.structure", "-");
 
         Map<String, Long> totalByPackageName = collectPackageNames(result);
         assertThat(totalByPackageName).hasSize(2);
-        assertThat(totalByPackageName.get("edu.hm.hafner.analysis._123.int.naming.structure")).isEqualTo(1L);
-        assertThat(totalByPackageName.get("-")).isEqualTo(5L);
+        assertThat(totalByPackageName).containsEntry("edu.hm.hafner.analysis._123.int.naming.structure", 1L);
+        assertThat(totalByPackageName).containsEntry("-", 5L);
 
-        String consoleLog = getConsoleLog(result);
+        var consoleLog = getConsoleLog(result);
         assertThat(consoleLog).contains(DEFAULT_DEBUG_LOG_LINE);
         assertThat(consoleLog).contains(returnExpectedNumberOfResolvedPackageNames(6));
     }
 
     @Test
     void shouldSkipPackageDetection() {
-        FreeStyleProject project = createJobWithWorkspaceFiles(
+        var project = createJobWithWorkspaceFiles(
                 PACKAGE_WITH_FILES_JAVA + "eclipseForJavaVariousClasses.txt",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithPackage.java",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithoutPackage.java",
@@ -349,13 +347,13 @@ class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
         recorder.setSkipPostProcessing(true);
 
         Run<?, ?> build = buildSuccessfully(project);
-        ResultAction action = getResultAction(build);
+        var action = getResultAction(build);
 
-        AnalysisResult result = action.getResult();
+        var result = action.getResult();
         assertThat(result.getIssues()).hasSize(6);
         assertThat(result.getIssues().getPackages()).containsExactly("-");
 
-        String consoleLog = getConsoleLog(result);
+        var consoleLog = getConsoleLog(result);
         assertThat(consoleLog).doesNotContain(DEFAULT_DEBUG_LOG_LINE);
         assertThat(consoleLog).contains("Skipping detection of missing package and module names");
     }
@@ -374,7 +372,7 @@ class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private ResultAction buildProject(final String... files) {
-        FreeStyleProject project = createJobWithWorkspaceFiles(files);
+        var project = createJobWithWorkspaceFiles(files);
         enableGenericWarnings(project, new Eclipse());
         Run<?, ?> build = buildSuccessfully(project);
         return getResultAction(build);
@@ -390,7 +388,7 @@ class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      * @return the created job
      */
     private FreeStyleProject createJobWithWorkspaceFiles(final String... fileNames) {
-        FreeStyleProject job = createFreeStyleProject();
+        var job = createFreeStyleProject();
         copyMultipleFilesToWorkspaceWithSuffix(job, fileNames);
         return job;
     }

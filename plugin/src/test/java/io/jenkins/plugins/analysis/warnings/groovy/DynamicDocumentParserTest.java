@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
-import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.analysis.assertions.Assertions;
@@ -39,7 +38,7 @@ class DynamicDocumentParserTest extends AbstractParserTest {
     @Override
     protected void assertThatIssuesArePresent(final Report report, final SoftAssertions softly) {
         Assertions.assertThat(report).hasSize(8);
-        Issue annotation = report.get(0);
+        var annotation = report.get(0);
         softly.assertThat(annotation)
                 .hasSeverity(Severity.WARNING_NORMAL)
                 .hasLineStart(3)

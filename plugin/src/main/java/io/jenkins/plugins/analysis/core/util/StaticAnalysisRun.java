@@ -1,8 +1,8 @@
 package io.jenkins.plugins.analysis.core.util;
 
-import java.util.Optional;
-
 import org.eclipse.collections.api.list.ImmutableList;
+
+import java.util.Optional;
 
 import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
 import hudson.model.Run;

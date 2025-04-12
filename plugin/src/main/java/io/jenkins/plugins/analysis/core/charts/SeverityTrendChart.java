@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.core.charts;
 
-import java.util.List;
-
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.echarts.BuildResult;
 import edu.hm.hafner.echarts.ChartModelConfiguration;
@@ -10,6 +8,8 @@ import edu.hm.hafner.echarts.LineSeries.FilledMode;
 import edu.hm.hafner.echarts.LineSeries.StackedMode;
 import edu.hm.hafner.echarts.LinesChartModel;
 import edu.hm.hafner.echarts.LinesDataSet;
+
+import java.util.List;
 
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
@@ -23,8 +23,8 @@ public class SeverityTrendChart implements TrendChart {
     @Override
     public LinesChartModel create(final Iterable<? extends BuildResult<AnalysisBuildResult>> results,
             final ChartModelConfiguration configuration) {
-        SeveritySeriesBuilder builder = new SeveritySeriesBuilder();
-        LinesDataSet dataSet = builder.createDataSet(configuration, results);
+        var builder = new SeveritySeriesBuilder();
+        var dataSet = builder.createDataSet(configuration, results);
 
         return createChartFromDataSet(dataSet);
     }
@@ -41,21 +41,21 @@ public class SeverityTrendChart implements TrendChart {
      */
     public LinesChartModel aggregate(final List<Iterable<? extends BuildResult<AnalysisBuildResult>>> results,
             final ChartModelConfiguration configuration) {
-        SeveritySeriesBuilder builder = new SeveritySeriesBuilder();
-        LinesDataSet dataSet = builder.createAggregatedDataSet(configuration, results);
+        var builder = new SeveritySeriesBuilder();
+        var dataSet = builder.createAggregatedDataSet(configuration, results);
 
         return createChartFromDataSet(dataSet);
     }
 
     private LinesChartModel createChartFromDataSet(final LinesDataSet dataSet) {
-        LinesChartModel model = new LinesChartModel(dataSet);
+        var model = new LinesChartModel(dataSet);
 
         Severity[] visibleSeverities
                 = {Severity.WARNING_LOW, Severity.WARNING_NORMAL, Severity.WARNING_HIGH, Severity.ERROR};
         for (Severity severity : visibleSeverities) {
             List<Integer> values = dataSet.getSeries(severity.getName());
             if (values.stream().anyMatch(integer -> integer > 0)) {
-                LineSeries series = createSeries(severity);
+                var series = createSeries(severity);
                 series.addAll(values);
                 model.addSeries(series);
             }

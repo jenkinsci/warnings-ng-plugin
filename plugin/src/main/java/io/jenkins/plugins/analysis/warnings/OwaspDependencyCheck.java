@@ -1,5 +1,7 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import java.io.Serial;
+
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
@@ -10,6 +12,7 @@ import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
  * Provides parser for OWASP dependency check reports.
  */
 public class OwaspDependencyCheck extends AnalysisModelParser {
+    @Serial
     private static final long serialVersionUID = -7721519880683487886L;
 
     private static final String ID = "owasp-dependency-check";

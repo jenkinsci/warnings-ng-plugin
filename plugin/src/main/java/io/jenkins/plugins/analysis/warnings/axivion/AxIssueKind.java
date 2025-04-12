@@ -30,4 +30,3 @@ enum AxIssueKind {
         return transformation.transform(rawIssue);
     }
 }
-

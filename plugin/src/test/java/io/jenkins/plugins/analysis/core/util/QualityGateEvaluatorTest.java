@@ -1,18 +1,19 @@
 package io.jenkins.plugins.analysis.core.util;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Function;
-
 import org.junit.jupiter.api.Test;
 import org.junitpioneer.jupiter.DefaultLocale;
 
 import edu.hm.hafner.util.FilteredLog;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
+
 import io.jenkins.plugins.analysis.core.util.WarningsQualityGate.QualityGateType;
 import io.jenkins.plugins.util.NullResultHandler;
 import io.jenkins.plugins.util.QualityGate.QualityGateCriticality;
 import io.jenkins.plugins.util.QualityGateResult;
+import io.jenkins.plugins.util.QualityGateStatus;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
@@ -25,7 +26,7 @@ class QualityGateEvaluatorTest {
         var result = evaluate(List.of(), new IssuesStatisticsBuilder(), log);
 
         assertThat(result.getOverallStatus())
-                .isEqualTo(io.jenkins.plugins.util.QualityGateStatus.INACTIVE);
+                .isEqualTo(QualityGateStatus.INACTIVE);
         assertThat(log.getInfoMessages())
                 .containsExactly("No quality gates have been set - skipping");
     }
@@ -35,11 +36,11 @@ class QualityGateEvaluatorTest {
         List<WarningsQualityGate> qualityGates = new ArrayList<>();
         qualityGates.add(addQualityGate(1, QualityGateType.DELTA, QualityGateCriticality.UNSTABLE));
 
-        IssuesStatisticsBuilder builder = new IssuesStatisticsBuilder().setDeltaErrorSize(-1);
+        var builder = new IssuesStatisticsBuilder().setDeltaErrorSize(-1);
 
         var result = evaluate(qualityGates, builder, new FilteredLog());
 
-        assertThat(result.getOverallStatus()).isEqualTo(io.jenkins.plugins.util.QualityGateStatus.PASSED);
+        assertThat(result.getOverallStatus()).isEqualTo(QualityGateStatus.PASSED);
         assertThat(result.getMessages()).hasSize(1).first().asString()
                 .contains("≪Success≫", QualityGateType.DELTA.getDisplayName(), "Actual value: -1", "Quality gate: 1.00");
     }
@@ -49,17 +50,17 @@ class QualityGateEvaluatorTest {
         List<WarningsQualityGate> qualityGates = new ArrayList<>();
         qualityGates.add(addQualityGate(1, QualityGateType.TOTAL, QualityGateCriticality.UNSTABLE));
 
-        IssuesStatisticsBuilder builder = new IssuesStatisticsBuilder();
+        var builder = new IssuesStatisticsBuilder();
 
         var result = evaluate(qualityGates, builder, new FilteredLog());
-        assertThat(result.getOverallStatus()).isEqualTo(io.jenkins.plugins.util.QualityGateStatus.PASSED);
+        assertThat(result.getOverallStatus()).isEqualTo(QualityGateStatus.PASSED);
         assertThat(result.getMessages()).hasSize(1).first().asString()
                 .contains("≪Success≫", QualityGateType.TOTAL.getDisplayName(), "Actual value: 0", "Quality gate: 1.00");
 
         qualityGates.add(addQualityGate(1, QualityGateType.NEW, QualityGateCriticality.UNSTABLE));
 
         result = evaluate(qualityGates, builder, new FilteredLog());
-        assertThat(result.getOverallStatus()).isEqualTo(io.jenkins.plugins.util.QualityGateStatus.PASSED);
+        assertThat(result.getOverallStatus()).isEqualTo(QualityGateStatus.PASSED);
         assertThat(result.getMessages()).hasSize(2).first().asString()
                 .contains("≪Success≫", QualityGateType.TOTAL.getDisplayName(), "Actual value: 0", "Quality gate: 1.00");
         assertThat(result.getMessages()).hasSize(2).last().asString()
@@ -68,7 +69,7 @@ class QualityGateEvaluatorTest {
 
     @Test
     void shouldEvaluateAllProperties() {
-        IssuesStatisticsBuilder builder = new IssuesStatisticsBuilder();
+        var builder = new IssuesStatisticsBuilder();
 
         evaluateQualityGateFor(builder, builder::setTotalNormalSize, QualityGateType.TOTAL);
         evaluateQualityGateFor(builder, builder::setTotalErrorSize, QualityGateType.TOTAL_ERROR);
@@ -98,13 +99,13 @@ class QualityGateEvaluatorTest {
         qualityGates.add(addQualityGate(1, type, QualityGateCriticality.UNSTABLE));
 
         var result = evaluate(qualityGates, builder, new FilteredLog());
-        assertThat(result.getOverallStatus()).isEqualTo(io.jenkins.plugins.util.QualityGateStatus.PASSED);
+        assertThat(result.getOverallStatus()).isEqualTo(QualityGateStatus.PASSED);
         assertThat(result.getMessages()).hasSize(1).first().asString()
                 .contains("≪Success≫", type.getDisplayName(), "Actual value: 0", "Quality gate: 1.00");
 
         setter.apply(1);
         result = evaluate(qualityGates, builder, new FilteredLog());
-        assertThat(result.getOverallStatus()).isEqualTo(io.jenkins.plugins.util.QualityGateStatus.WARNING);
+        assertThat(result.getOverallStatus()).isEqualTo(QualityGateStatus.WARNING);
         assertThat(result.getMessages()).hasSize(1).first().asString()
                 .contains("≪Unstable≫", type.getDisplayName(), "Actual value: 1", "Quality gate: 1.00");
     }
@@ -114,12 +115,12 @@ class QualityGateEvaluatorTest {
         List<WarningsQualityGate> qualityGates = new ArrayList<>();
         qualityGates.add(addQualityGate(1, QualityGateType.TOTAL, QualityGateCriticality.UNSTABLE));
 
-        IssuesStatisticsBuilder builder = new IssuesStatisticsBuilder();
+        var builder = new IssuesStatisticsBuilder();
         builder.setTotalNormalSize(1);
 
         var result = evaluate(qualityGates, builder, new FilteredLog());
 
-        assertThat(result.getOverallStatus()).isEqualTo(io.jenkins.plugins.util.QualityGateStatus.WARNING);
+        assertThat(result.getOverallStatus()).isEqualTo(QualityGateStatus.WARNING);
         assertThat(result.getMessages()).hasSize(1).first().asString()
                 .contains("≪Unstable≫", QualityGateType.TOTAL.getDisplayName(), "Actual value: 1", "Quality gate: 1.00");
 
@@ -128,7 +129,7 @@ class QualityGateEvaluatorTest {
 
         result = evaluate(qualityGates, builder, new FilteredLog());
 
-        assertThat(result.getOverallStatus()).isEqualTo(io.jenkins.plugins.util.QualityGateStatus.WARNING);
+        assertThat(result.getOverallStatus()).isEqualTo(QualityGateStatus.WARNING);
         assertThat(result.getMessages()).hasSize(2).first().asString()
                 .contains("≪Unstable≫", QualityGateType.TOTAL.getDisplayName(), "Actual value: 1", "Quality gate: 1.00");
         assertThat(result.getMessages()).hasSize(2).last().asString()
@@ -150,11 +151,11 @@ class QualityGateEvaluatorTest {
         List<WarningsQualityGate> qualityGates = new ArrayList<>();
         qualityGates.add(addQualityGate(0, QualityGateType.TOTAL, QualityGateCriticality.UNSTABLE));
 
-        IssuesStatisticsBuilder builder = new IssuesStatisticsBuilder();
+        var builder = new IssuesStatisticsBuilder();
         builder.setTotalNormalSize(1);
 
         var result = evaluate(qualityGates, builder, new FilteredLog());
-        assertThat(result.getOverallStatus()).isEqualTo(io.jenkins.plugins.util.QualityGateStatus.INACTIVE);
+        assertThat(result.getOverallStatus()).isEqualTo(QualityGateStatus.INACTIVE);
         assertThat(result.getMessages()).hasSize(1).first().asString()
                 .contains("≪Not built≫", QualityGateType.TOTAL.getDisplayName(), "Actual value: Threshold too small: 0.0", "Quality gate: 0.00");
 
@@ -163,7 +164,7 @@ class QualityGateEvaluatorTest {
 
         result = evaluate(qualityGates, builder, new FilteredLog());
 
-        assertThat(result.getOverallStatus()).isEqualTo(io.jenkins.plugins.util.QualityGateStatus.INACTIVE);
+        assertThat(result.getOverallStatus()).isEqualTo(QualityGateStatus.INACTIVE);
         assertThat(result.getMessages()).hasSize(2).first().asString()
                 .contains("≪Not built≫", QualityGateType.TOTAL.getDisplayName(), "Actual value: Threshold too small: 0.0", "Quality gate: 0.00");
         assertThat(result.getMessages()).hasSize(2).last().asString()
@@ -176,11 +177,11 @@ class QualityGateEvaluatorTest {
         qualityGates.add(addQualityGate(1, QualityGateType.TOTAL, QualityGateCriticality.UNSTABLE));
         qualityGates.add(addQualityGate(2, QualityGateType.TOTAL, QualityGateCriticality.FAILURE));
 
-        IssuesStatisticsBuilder builder = new IssuesStatisticsBuilder();
+        var builder = new IssuesStatisticsBuilder();
         builder.setTotalNormalSize(1);
 
         var result = evaluate(qualityGates, builder, new FilteredLog());
-        assertThat(result.getOverallStatus()).isEqualTo(io.jenkins.plugins.util.QualityGateStatus.WARNING);
+        assertThat(result.getOverallStatus()).isEqualTo(QualityGateStatus.WARNING);
         assertThat(result.getMessages()).hasSize(2).first().asString()
                 .contains("≪Unstable≫", QualityGateType.TOTAL.getDisplayName(), "Actual value: 1", "Quality gate: 1.00");
         assertThat(result.getMessages()).hasSize(2).last().asString()
@@ -190,7 +191,7 @@ class QualityGateEvaluatorTest {
 
         result = evaluate(qualityGates, builder, new FilteredLog());
 
-        assertThat(result.getOverallStatus()).isEqualTo(io.jenkins.plugins.util.QualityGateStatus.FAILED);
+        assertThat(result.getOverallStatus()).isEqualTo(QualityGateStatus.FAILED);
         assertThat(result.getMessages()).hasSize(2).first().asString()
                 .contains("≪Unstable≫", QualityGateType.TOTAL.getDisplayName(), "Actual value: 2", "Quality gate: 1.00");
         assertThat(result.getMessages()).hasSize(2).last().asString()
@@ -203,12 +204,12 @@ class QualityGateEvaluatorTest {
         builder.setTotalNormalSize(1);
         result = evaluate(other, builder, new FilteredLog());
 
-        assertThat(result.getOverallStatus()).isEqualTo(io.jenkins.plugins.util.QualityGateStatus.WARNING);
+        assertThat(result.getOverallStatus()).isEqualTo(QualityGateStatus.WARNING);
 
         builder.setTotalNormalSize(2);
         result = evaluate(other, builder, new FilteredLog());
 
-        assertThat(result.getOverallStatus()).isEqualTo(io.jenkins.plugins.util.QualityGateStatus.FAILED);
+        assertThat(result.getOverallStatus()).isEqualTo(QualityGateStatus.FAILED);
     }
 
     private WarningsQualityGateEvaluator createEvaluator(

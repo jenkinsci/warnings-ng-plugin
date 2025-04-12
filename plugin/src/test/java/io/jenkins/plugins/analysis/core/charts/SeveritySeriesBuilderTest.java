@@ -1,15 +1,14 @@
 package io.jenkins.plugins.analysis.core.charts;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.echarts.BuildResult;
 import edu.hm.hafner.echarts.ChartModelConfiguration;
 import edu.hm.hafner.echarts.ChartModelConfiguration.AxisType;
-import edu.hm.hafner.echarts.LinesDataSet;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Set;
 
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 
@@ -27,9 +26,9 @@ class SeveritySeriesBuilderTest {
     /** Verifies that an empty list of builds produces no data. */
     @Test
     void shouldHaveEmptyDataSetForEmptyIterator() {
-        SeveritySeriesBuilder builder = new SeveritySeriesBuilder();
+        var builder = new SeveritySeriesBuilder();
 
-        LinesDataSet model = builder.createDataSet(createConfiguration(), new ArrayList<>());
+        var model = builder.createDataSet(createConfiguration(), new ArrayList<>());
 
         assertThat(model.getDomainAxisSize()).isEqualTo(0);
         assertThat(model.getDataSetIds()).isEmpty();
@@ -47,11 +46,11 @@ class SeveritySeriesBuilderTest {
      */
     @Test
     void shouldHaveThreeValuesForSingleBuild() {
-        SeveritySeriesBuilder builder = new SeveritySeriesBuilder();
+        var builder = new SeveritySeriesBuilder();
 
         BuildResult<AnalysisBuildResult> singleResult = createResult(1, 0, 1, 2, 3);
 
-        LinesDataSet dataSet = builder.createDataSet(createConfiguration(), Collections.singleton(singleResult));
+        var dataSet = builder.createDataSet(createConfiguration(), Set.of(singleResult));
 
         assertThat(dataSet.getDomainAxisSize()).isEqualTo(1);
         assertThat(dataSet.getDomainAxisLabels()).containsExactly("#1");
@@ -70,13 +69,13 @@ class SeveritySeriesBuilderTest {
      */
     @Test
     void shouldHaveNotMoreValuesThatAllowed() {
-        SeveritySeriesBuilder builder = new SeveritySeriesBuilder();
+        var builder = new SeveritySeriesBuilder();
 
-        ChartModelConfiguration configuration = createConfiguration();
+        var configuration = createConfiguration();
         when(configuration.getBuildCount()).thenReturn(3);
         when(configuration.isBuildCountDefined()).thenReturn(true);
 
-        LinesDataSet dataSet = builder.createDataSet(configuration, Arrays.asList(
+        var dataSet = builder.createDataSet(configuration, Arrays.asList(
                 createResult(4, 4000, 400, 40, 4),
                 createResult(3, 3000, 300, 30, 3),
                 createResult(2, 2000, 200, 20, 2),

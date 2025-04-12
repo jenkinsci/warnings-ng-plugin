@@ -1,9 +1,5 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.locks.ReentrantLock;
-
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.api.RichIterable;
 import org.eclipse.collections.api.multimap.MutableMultimap;
@@ -11,6 +7,10 @@ import org.eclipse.collections.impl.factory.Lists;
 import org.eclipse.collections.impl.factory.Multimaps;
 
 import edu.hm.hafner.util.VisibleForTesting;
+
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 import hudson.Launcher;
 import hudson.matrix.MatrixAggregator;
@@ -87,7 +87,7 @@ public class IssuesAggregator extends MatrixAggregator {
     @Override
     public boolean endBuild() {
         resultsPerTool.forEachKeyMultiValues((tool, reports) -> {
-            AnnotatedReport aggregatedReport = new AnnotatedReport(tool, reports);
+            var aggregatedReport = new AnnotatedReport(tool, reports);
             recorder.publishResult(build, build.getWorkspace(), listener, Messages.Tool_Default_Name(),
                     aggregatedReport, StringUtils.EMPTY, recorder.getIcon(), new RunResultHandler(build));
         });

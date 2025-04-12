@@ -1,12 +1,12 @@
 package io.jenkins.plugins.analysis.core.util;
 
-import java.util.Map;
-import java.util.NoSuchElementException;
-
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.SerializableTest;
+
+import java.util.Map;
+import java.util.NoSuchElementException;
 
 import io.jenkins.plugins.analysis.core.util.IssuesStatistics.StatisticProperties;
 
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 class IssuesStatisticsTest extends SerializableTest<IssuesStatistics> {
     @Test
     void shouldCreateStatistics() {
-        IssuesStatistics statistics = createSerializable();
+        var statistics = createSerializable();
 
         assertThat(StatisticProperties.TOTAL.get(statistics)).isEqualTo(1 + 2 + 3 + 4);
         assertThat(StatisticProperties.TOTAL_ERROR.get(statistics)).isEqualTo(1);
@@ -87,7 +87,7 @@ class IssuesStatisticsTest extends SerializableTest<IssuesStatistics> {
 
     @Test
     void shouldResetBuilder() {
-        IssuesStatisticsBuilder builder = createBuilder();
+        var builder = createBuilder();
 
         builder.clear();
 
@@ -105,7 +105,7 @@ class IssuesStatisticsTest extends SerializableTest<IssuesStatistics> {
 
     @Test
     void shouldRejectUnsupportedSeverities() {
-        IssuesStatistics statistics = createSerializable();
+        var statistics = createSerializable();
 
         assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(
                 () -> statistics.getNewSizeOf(null)).withMessageContaining("null");
@@ -119,7 +119,7 @@ class IssuesStatisticsTest extends SerializableTest<IssuesStatistics> {
     }
 
     private IssuesStatisticsBuilder createBuilder() {
-        IssuesStatisticsBuilder builder = new IssuesStatisticsBuilder();
+        var builder = new IssuesStatisticsBuilder();
 
         builder.setTotalErrorSize(1)
                 .setTotalHighSize(2)

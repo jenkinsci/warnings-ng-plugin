@@ -1,8 +1,5 @@
 package io.jenkins.plugins.analysis.core.model; // NOPMD
 
-import java.util.Optional;
-import java.util.stream.Stream;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -11,6 +8,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import edu.hm.hafner.echarts.BuildResult;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import hudson.model.Result;
 import hudson.model.Run;
@@ -67,7 +67,7 @@ class AnalysisHistoryTest {
         when(resultSelector.get(middle)).thenReturn(Optional.of(middleAction));
         when(resultSelector.get(first)).thenReturn(Optional.of(firstAction));
 
-        AnalysisHistory history = new AnalysisHistory(last, resultSelector);
+        var history = new AnalysisHistory(last, resultSelector);
 
         assertThat(history.iterator()).toIterable().extracting(BuildResult::getResult).containsExactly(lastResult, middleResult, firstResult);
         assertThat(history.hasMultipleResults()).isTrue();
@@ -83,7 +83,7 @@ class AnalysisHistoryTest {
         ResultSelector resultSelector = mock(ResultSelector.class);
         when(resultSelector.get(baseline)).thenReturn(Optional.empty());
 
-        AnalysisHistory history = new AnalysisHistory(baseline, resultSelector);
+        var history = new AnalysisHistory(baseline, resultSelector);
 
         assertThat(history.getBaselineResult()).isEmpty();
         assertThat(history.getResult()).isEmpty();
@@ -105,7 +105,7 @@ class AnalysisHistoryTest {
         when(baselineAction.getOwner()).thenAnswer(a -> baseline);
         when(resultSelector.get(baseline)).thenReturn(Optional.of(baselineAction));
 
-        AnalysisHistory history = new AnalysisHistory(baseline, resultSelector);
+        var history = new AnalysisHistory(baseline, resultSelector);
 
         assertThat(history.getBaselineResult()).contains(baselineResult);
         assertThat(history.getResult()).contains(baselineResult);
@@ -125,7 +125,7 @@ class AnalysisHistoryTest {
         ResultSelector resultSelector = mock(ResultSelector.class);
         Run<?, ?> baseline = createBuild(qualityGateStatus, jobStatus, resultSelector);
 
-        AnalysisHistory history = new AnalysisHistory(baseline, resultSelector);
+        var history = new AnalysisHistory(baseline, resultSelector);
 
         if (expectedResult == NONE) {
             assertThat(history.getResult()).isEmpty();

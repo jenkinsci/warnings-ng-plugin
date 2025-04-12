@@ -70,7 +70,7 @@ public class DeltaReport {
 
         allIssues = report;
         this.referenceIssues = referenceIssues;
-        IssueDifference difference = new IssueDifference(report, String.valueOf(currentBuildNumber), referenceIssues);
+        var difference = new IssueDifference(report, String.valueOf(currentBuildNumber), referenceIssues);
         outstandingIssues = difference.getOutstandingIssues();
         newIssues = difference.getNewIssues();
         fixedIssues = difference.getFixedIssues();
@@ -141,7 +141,7 @@ public class DeltaReport {
      * @return the issues statistics
      */
     public IssuesStatistics getStatistics() {
-        IssuesStatisticsBuilder builder = new IssuesStatisticsBuilder();
+        var builder = new IssuesStatisticsBuilder();
         builder.setTotalErrorSize(allIssues.getSizeOf(ERROR))
                 .setTotalHighSize(allIssues.getSizeOf(WARNING_HIGH))
                 .setTotalNormalSize(allIssues.getSizeOf(WARNING_NORMAL))

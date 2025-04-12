@@ -1,10 +1,10 @@
 package io.jenkins.plugins.analysis.core.charts;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Severity;
+
+import java.util.List;
 
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 
@@ -22,7 +22,7 @@ class CompositeBuildResultTest {
         AnalysisBuildResult first = createAnalysisBuildResult("first", 1);
         AnalysisBuildResult second = createAnalysisBuildResult("second", 2);
 
-        CompositeBuildResult run = new CompositeBuildResult(List.of());
+        var run = new CompositeBuildResult(List.of());
 
         assertThat(run.getSizePerOrigin()).isEmpty();
         assertThat(new CompositeBuildResult(List.of(first)).getSizePerOrigin()).containsExactly(entry("first", 1));
@@ -34,7 +34,7 @@ class CompositeBuildResultTest {
         AnalysisBuildResult first = createAnalysisBuildResult(1, 2, 3, 4);
         AnalysisBuildResult second = createAnalysisBuildResult(5, 6, 7, 8);
 
-        CompositeBuildResult run = new CompositeBuildResult(List.of());
+        var run = new CompositeBuildResult(List.of());
 
         assertThat(run).hasTotalSize(0);
         assertThat(new CompositeBuildResult(List.of(first))).hasTotalSize(10);
@@ -46,7 +46,7 @@ class CompositeBuildResultTest {
         AnalysisBuildResult first = createAnalysisBuildResultWithNewAndFixedIssues(0, 2);
         AnalysisBuildResult second = createAnalysisBuildResultWithNewAndFixedIssues(0, 3);
 
-        CompositeBuildResult run = new CompositeBuildResult(List.of());
+        var run = new CompositeBuildResult(List.of());
 
         assertThat(run).hasFixedSize(0);
         assertThat(new CompositeBuildResult(List.of(first))).hasFixedSize(2);
@@ -58,7 +58,7 @@ class CompositeBuildResultTest {
         AnalysisBuildResult first = createAnalysisBuildResultWithNew(0, 5, 2, 6);
         AnalysisBuildResult second = createAnalysisBuildResultWithNew(0, 4, 2, 7);
 
-        CompositeBuildResult run = new CompositeBuildResult(List.of());
+        var run = new CompositeBuildResult(List.of());
 
         assertThat(run).hasNewSize(0);
         assertThat(new CompositeBuildResult(List.of(first))).hasNewSize(13);
@@ -70,7 +70,7 @@ class CompositeBuildResultTest {
         AnalysisBuildResult first = createAnalysisBuildResult(7, 1, 2, 3);
         AnalysisBuildResult second = createAnalysisBuildResult(8, 4, 5, 6);
 
-        CompositeBuildResult run = new CompositeBuildResult(List.of());
+        var run = new CompositeBuildResult(List.of());
 
         assertThat(run.getTotalSizeOf(Severity.ERROR)).isEqualTo(0);
         assertThat(run.getTotalSizeOf(Severity.WARNING_HIGH)).isEqualTo(0);
@@ -95,7 +95,7 @@ class CompositeBuildResultTest {
         AnalysisBuildResult first = createAnalysisBuildResultWithNew(7, 2, 6, 2);
         AnalysisBuildResult second = createAnalysisBuildResultWithNew(8, 5, 2, 2);
 
-        CompositeBuildResult run = new CompositeBuildResult(List.of());
+        var run = new CompositeBuildResult(List.of());
 
         assertThat(run.getNewSizeOf(Severity.ERROR)).isEqualTo(0);
         assertThat(run.getNewSizeOf(Severity.WARNING_HIGH)).isEqualTo(0);

@@ -1,13 +1,11 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
-import java.io.IOException;
-import java.util.Collections;
-
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import org.jenkinsci.plugins.workflow.job.WorkflowJob;
-import hudson.model.FreeStyleProject;
+import java.io.IOException;
+import java.util.Collections;
+
 import hudson.plugins.git.BranchSpec;
 import hudson.plugins.git.GitSCM;
 import hudson.plugins.git.extensions.impl.RelativeTargetDirectory;
@@ -16,7 +14,6 @@ import jenkins.model.ParameterizedJobMixIn.ParameterizedJob;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.Java;
-import io.jenkins.plugins.forensics.blame.FileBlame;
 import io.jenkins.plugins.forensics.miner.RepositoryMinerStep;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
@@ -69,7 +66,7 @@ class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
 
     @Test
     void shouldSkipDeltaCalculation() {
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix();
+        var job = createPipelineWithWorkspaceFilesWithSuffix();
 
         createFileInWorkspace(job, "java-issues.txt",
                 createJavaWarning(MODIFIED_FILE, 111)
@@ -90,7 +87,7 @@ class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
 
         job.setDefinition(asStage(CHECKOUT_FORENSICS_API, "discoverReferenceBuild()", step));
 
-        AnalysisResult result = scheduleSuccessfulBuild(job);
+        var result = scheduleSuccessfulBuild(job);
         assertThat(getConsoleLog(result)).contains(
                 "Detect all issues that are part of modified code",
                 "No relevant modified code found",
@@ -125,11 +122,11 @@ class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldObtainBlamesAndForensicsInFreestyleJob() throws IOException {
-        FreeStyleProject job = createFreeStyleProject();
+        var job = createFreeStyleProject();
 
         createFileInWorkspace(job, "java-issues.txt", createJavaWarning(SCM_RESOLVER, AFFECTED_LINE));
 
-        GitSCM scm = new GitSCM(GitSCM.createRepoList(FORENSICS_API_PLUGIN, null),
+        var scm = new GitSCM(GitSCM.createRepoList(FORENSICS_API_PLUGIN, null),
                 Collections.singletonList(new BranchSpec(COMMIT)), null, null,
                 Collections.singletonList(new RelativeTargetDirectory("forensics-api")));
         job.setScm(scm);
@@ -140,7 +137,7 @@ class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private void runStepAndVerifyBlamesAndForensics(final String step) {
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix();
+        var job = createPipelineWithWorkspaceFilesWithSuffix();
 
         createFileInWorkspace(job, "java-issues.txt",
                 createJavaWarning(MODIFIED_FILE, 111)
@@ -174,12 +171,12 @@ class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private AnalysisResult verifyBlaming(final ParameterizedJob<?, ?> job) {
-        AnalysisResult result = scheduleSuccessfulBuild(job);
+        var result = scheduleSuccessfulBuild(job);
 
         assertThat(result).hasTotalSize(1).hasNewSize(0).hasFixedSize(0);
         assertThat(result.getBlames().contains(SCM_RESOLVER)).isTrue();
 
-        FileBlame blame = result.getBlames().getBlame(SCM_RESOLVER);
+        var blame = result.getBlames().getBlame(SCM_RESOLVER);
         assertThat(blame.getFileName()).isEqualTo(SCM_RESOLVER);
         assertThat(blame.getEmail(AFFECTED_LINE)).isEqualTo("ullrich.hafner@gmail.com");
         assertThat(blame.getCommit(AFFECTED_LINE)).isEqualTo("43dde5d4f7a06122216494a896c51830ed684572");
@@ -195,14 +192,14 @@ class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private AnalysisResult verifyBlamingWithModifiedFiles(final ParameterizedJob<?, ?> job) {
-        AnalysisResult result = scheduleSuccessfulBuild(job);
+        var result = scheduleSuccessfulBuild(job);
 
         assertThat(result).hasTotalSize(5).hasNewSize(3).hasFixedSize(0);
         assertThat(result.getTotals()).hasNewModifiedSize(2).hasTotalModifiedSize(3);
 
         assertThat(result.getBlames().contains(SCM_RESOLVER)).isTrue();
 
-        FileBlame blame = result.getBlames().getBlame(SCM_RESOLVER);
+        var blame = result.getBlames().getBlame(SCM_RESOLVER);
         assertThat(blame.getFileName()).isEqualTo(SCM_RESOLVER);
         assertThat(blame.getEmail(AFFECTED_LINE)).isEqualTo("ullrich.hafner@gmail.com");
         assertThat(blame.getCommit(AFFECTED_LINE)).isEqualTo("43dde5d4f7a06122216494a896c51830ed684572");
@@ -248,11 +245,11 @@ class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldSkipBlamesAndForensicsInFreestyleJob() throws IOException {
-        FreeStyleProject job = createFreeStyleProject();
+        var job = createFreeStyleProject();
 
         createFileInWorkspace(job, "java-issues.txt", createJavaWarning(SCM_RESOLVER, AFFECTED_LINE));
 
-        GitSCM scm = new GitSCM(GitSCM.createRepoList(FORENSICS_API_PLUGIN, null),
+        var scm = new GitSCM(GitSCM.createRepoList(FORENSICS_API_PLUGIN, null),
                 Collections.singletonList(new BranchSpec(COMMIT)), null, null,
                 Collections.singletonList(new RelativeTargetDirectory("forensics-api")));
         job.setScm(scm);
@@ -263,14 +260,14 @@ class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private void runStepAndVerifyScmSkipping(final String step) {
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix(JAVA_ONE_WARNING);
+        var job = createPipelineWithWorkspaceFilesWithSuffix(JAVA_ONE_WARNING);
         job.setDefinition(asStage(CHECKOUT_FORENSICS_API, MINE_REPOSITORY, step));
 
         verifySkippedScm(job);
     }
 
     private void verifySkippedScm(final ParameterizedJob<?, ?> job) {
-        AnalysisResult result = scheduleSuccessfulBuild(job);
+        var result = scheduleSuccessfulBuild(job);
 
         assertThat(result).hasTotalSize(1).hasNewSize(0).hasFixedSize(0);
 

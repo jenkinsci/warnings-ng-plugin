@@ -1,13 +1,12 @@
 package io.jenkins.plugins.analysis.core.charts;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
-import edu.hm.hafner.echarts.PieChartModel;
 import edu.hm.hafner.echarts.PieData;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -23,9 +22,9 @@ class SeverityPieChartTest {
      */
     @Test
     void shouldCreateChartFromEmptyReport() {
-        SeverityPieChart severityPieChart = new SeverityPieChart();
+        var severityPieChart = new SeverityPieChart();
 
-        PieChartModel pieChartModel = severityPieChart.create(createReport(0, 0, 0, 0));
+        var pieChartModel = severityPieChart.create(createReport(0, 0, 0, 0));
         List<PieData> data = pieChartModel.getData();
 
         assertThat(data.get(0)).isEqualTo(new PieData("High", 0));
@@ -38,9 +37,9 @@ class SeverityPieChartTest {
      */
     @Test
     void shouldCreateChartFromReportWithOneError() {
-        SeverityPieChart severityPieChart = new SeverityPieChart();
+        var severityPieChart = new SeverityPieChart();
 
-        PieChartModel pieChartModel = severityPieChart.create(createReport(1, 0, 0, 0));
+        var pieChartModel = severityPieChart.create(createReport(1, 0, 0, 0));
         List<PieData> data = pieChartModel.getData();
 
         assertThat(data.get(0)).isEqualTo(new PieData("Error", 1));
@@ -54,9 +53,9 @@ class SeverityPieChartTest {
      */
     @Test
     void shouldCreateChartFromSimpleReport() {
-        SeverityPieChart severityPieChart = new SeverityPieChart();
+        var severityPieChart = new SeverityPieChart();
 
-        PieChartModel pieChartModel = severityPieChart.create(createReport(1, 1, 1, 1));
+        var pieChartModel = severityPieChart.create(createReport(1, 1, 1, 1));
         List<PieData> data = pieChartModel.getData();
 
         assertThat(data.get(0)).isEqualTo(new PieData("Error", 1));

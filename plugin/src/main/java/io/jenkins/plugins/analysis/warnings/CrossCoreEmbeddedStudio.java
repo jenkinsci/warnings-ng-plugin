@@ -1,5 +1,7 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import java.io.Serial;
+
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
@@ -10,6 +12,7 @@ import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
  * A parser for CrossCore Embedded Studio (CCES) from Analog Devices.
  */
 public class CrossCoreEmbeddedStudio extends AnalysisModelParser {
+    @Serial
     private static final long serialVersionUID = 1814097426285660166L;
     private static final String ID = "crosscore-embedded-studio";
 

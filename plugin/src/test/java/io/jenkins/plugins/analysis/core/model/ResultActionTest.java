@@ -1,10 +1,10 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.nio.charset.StandardCharsets;
-
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Severity;
+
+import java.nio.charset.StandardCharsets;
 
 import hudson.model.Run;
 
@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 class ResultActionTest {
     @Test
     void shouldRestoreRun() {
-        ResultAction action = new ResultAction(null, mock(AnalysisResult.class),
+        var action = new ResultAction(null, mock(AnalysisResult.class),
                 new HealthDescriptor(0, 0, Severity.WARNING_HIGH), "ID", "Name",
                 "icon", StandardCharsets.UTF_8, TrendChartType.AGGREGATION_TOOLS);
 

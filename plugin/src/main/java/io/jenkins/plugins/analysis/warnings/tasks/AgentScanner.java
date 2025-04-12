@@ -1,16 +1,16 @@
 package io.jenkins.plugins.analysis.warnings.tasks;
 
-import java.io.File;
-import java.nio.charset.Charset;
-import java.nio.file.Path;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.Report;
+
+import java.io.File;
+import java.io.Serial;
+import java.nio.charset.Charset;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import hudson.remoting.VirtualChannel;
 import jenkins.MasterToSlaveFileCallable;
@@ -25,6 +25,7 @@ import io.jenkins.plugins.util.ValidationUtilities;
  * tasks.
  */
 class AgentScanner extends MasterToSlaveFileCallable<Report> {
+    @Serial
     private static final long serialVersionUID = -4417487030800559491L;
 
     private final String highTasks;
@@ -75,15 +76,15 @@ class AgentScanner extends MasterToSlaveFileCallable<Report> {
     @Override
     @SuppressWarnings("PMD.DoNotUseThreads")
     public Report invoke(final File workspace, final VirtualChannel channel) {
-        Report report = new Report();
+        var report = new Report();
         report.logInfo("Searching for files in workspace '%s' that match the include pattern '%s' and exclude pattern '%s'",
                 workspace, includePattern, excludePattern);
 
-        FileFinder fileFinder = new FileFinder(includePattern, excludePattern);
-        String[] fileNames = fileFinder.find(workspace);
+        var fileFinder = new FileFinder(includePattern, excludePattern);
+        var fileNames = fileFinder.find(workspace);
         report.logInfo("-> found %d files that will be scanned", fileNames.length);
-        Path root = workspace.toPath();
-        TaskScanner scanner = createTaskScanner();
+        var root = workspace.toPath();
+        var scanner = createTaskScanner();
         report.logInfo(scanner.getTaskTags());
         report.logInfo("Scanning all %d files for open tasks", fileNames.length);
         for (String fileName : fileNames) {
@@ -106,7 +107,7 @@ class AgentScanner extends MasterToSlaveFileCallable<Report> {
     }
 
     private TaskScanner createTaskScanner() {
-        TaskScannerBuilder builder = new TaskScannerBuilder();
+        var builder = new TaskScannerBuilder();
         builder.setHighTasks(highTasks)
                 .setNormalTasks(normalTasks)
                 .setLowTasks(lowTasks)
@@ -124,7 +125,7 @@ class AgentScanner extends MasterToSlaveFileCallable<Report> {
             return false;
         }
 
-        AgentScanner that = (AgentScanner) o;
+        var that = (AgentScanner) o;
 
         if (highTasks != null ? !highTasks.equals(that.highTasks) : that.highTasks != null) {
             return false;
@@ -147,8 +148,8 @@ class AgentScanner extends MasterToSlaveFileCallable<Report> {
         if (excludePattern != null ? !excludePattern.equals(that.excludePattern) : that.excludePattern != null) {
             return false;
         }
-        return sourceCodeEncoding != null ?
-                sourceCodeEncoding.equals(that.sourceCodeEncoding) : that.sourceCodeEncoding == null;
+        return sourceCodeEncoding != null
+                ? sourceCodeEncoding.equals(that.sourceCodeEncoding) : that.sourceCodeEncoding == null;
     }
 
     @Override @SuppressWarnings("all")

@@ -1,10 +1,10 @@
 package io.jenkins.plugins.analysis.core.restapi;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;

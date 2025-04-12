@@ -1,5 +1,11 @@
 package io.jenkins.plugins.analysis.core.portlets;
 
+import org.apache.commons.lang3.StringUtils;
+
+import edu.hm.hafner.util.Generated;
+import edu.hm.hafner.util.VisibleForTesting;
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -8,12 +14,6 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
-
-import edu.hm.hafner.util.Generated;
-import edu.hm.hafner.util.VisibleForTesting;
-import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -25,7 +25,6 @@ import hudson.plugins.view.dashboard.DashboardPortlet;
 
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.ToolSelection;
 
 import static io.jenkins.plugins.analysis.core.model.ToolSelection.*;
@@ -39,7 +38,7 @@ import static io.jenkins.plugins.analysis.core.model.ToolSelection.*;
 public class IssuesTablePortlet extends DashboardPortlet {
     private boolean hideCleanJobs;
     private boolean showIcons;
-    private boolean selectTools = false;
+    private boolean selectTools;
     private List<ToolSelection> tools = new ArrayList<>();
 
     private LabelProviderFactory labelProviderFactory = new LabelProviderFactory();
@@ -188,20 +187,20 @@ public class IssuesTablePortlet extends DashboardPortlet {
         }
 
         private Column createColumn(final ResultAction result, final LabelProviderFactory labelProviderFactory) {
-            StaticAnalysisLabelProvider labelProvider = labelProviderFactory.create(result.getId(), result.getName());
+            var labelProvider = labelProviderFactory.create(result.getId(), result.getName());
             return new Column(result.getId(), labelProvider.getName(), labelProvider.getLinkName(), labelProvider.getSmallIconUrl());
         }
 
         private void populateRows(final List<Job<?, ?>> visibleJobs) {
             for (Job<?, ?> job : visibleJobs) {
-                TableRow row = new TableRow(job);
+                var row = new TableRow(job);
                 for (Column column : columns) {
                     Run<?, ?> lastCompletedBuild = job.getLastCompletedBuild();
                     if (lastCompletedBuild == null) {
                         row.add(Result.EMPTY);
                     }
                     else {
-                        Result result = lastCompletedBuild.getActions(ResultAction.class)
+                        var result = lastCompletedBuild.getActions(ResultAction.class)
                                 .stream()
                                 .filter(action -> action.getId().equals(column.getId()))
                                 .findFirst()
@@ -278,7 +277,7 @@ public class IssuesTablePortlet extends DashboardPortlet {
             if (o == null || getClass() != o.getClass()) {
                 return false;
             }
-            Column column = (Column) o;
+            var column = (Column) o;
             return Objects.equals(id, column.id) && Objects.equals(name, column.name)
                     && Objects.equals(linkName, column.linkName) && Objects.equals(icon, column.icon);
         }

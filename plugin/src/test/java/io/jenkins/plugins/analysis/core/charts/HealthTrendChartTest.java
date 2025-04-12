@@ -1,14 +1,14 @@
 package io.jenkins.plugins.analysis.core.charts;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.echarts.BuildResult;
 import edu.hm.hafner.echarts.ChartModelConfiguration;
 import edu.hm.hafner.echarts.LinesChartModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
@@ -25,11 +25,11 @@ import static org.assertj.core.api.Assertions.*;
 class HealthTrendChartTest {
     @Test
     void shouldCreateHealthChart() {
-        HealthDescriptor healthDescriptor = new HealthDescriptor(5, 10, Severity.WARNING_NORMAL);
-        HealthTrendChart chart = new HealthTrendChart(healthDescriptor);
+        var healthDescriptor = new HealthDescriptor(5, 10, Severity.WARNING_NORMAL);
+        var chart = new HealthTrendChart(healthDescriptor);
 
         List<BuildResult<AnalysisBuildResult>> resultsCheckStyle = createBuildResults();
-        LinesChartModel model = chart.create(resultsCheckStyle, new ChartModelConfiguration());
+        var model = chart.create(resultsCheckStyle, new ChartModelConfiguration());
 
         assertThatJson(model).node("domainAxisLabels")
                 .isArray().containsExactly("#1", "#2", "#3", "#4");
@@ -46,11 +46,11 @@ class HealthTrendChartTest {
 
     @Test
     void shouldCreateFallbackChartIfHealthIsDisabled() {
-        HealthDescriptor healthDescriptor = new HealthDescriptor(-1, -1, Severity.WARNING_NORMAL);
-        HealthTrendChart chart = new HealthTrendChart(healthDescriptor);
+        var healthDescriptor = new HealthDescriptor(-1, -1, Severity.WARNING_NORMAL);
+        var chart = new HealthTrendChart(healthDescriptor);
 
         List<BuildResult<AnalysisBuildResult>> resultsCheckStyle = createBuildResults();
-        LinesChartModel model = chart.create(resultsCheckStyle, new ChartModelConfiguration());
+        var model = chart.create(resultsCheckStyle, new ChartModelConfiguration());
 
         assertThatJson(model).node("domainAxisLabels")
                 .isArray().containsExactly("#1", "#2", "#3", "#4");

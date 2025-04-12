@@ -1,11 +1,5 @@
 package io.jenkins.plugins.analysis.core.testutil;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-
 import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.Tag;
 
@@ -13,6 +7,12 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
@@ -98,8 +98,7 @@ public abstract class WarningsIntegrationTest extends IntegrationTest {
     }
 
     protected String createJavaWarning(final String fileName, final int lineNumber) {
-        return String.format(
-                "[WARNING] %s:[%d,42] [deprecation] path.AClass in path has been deprecated%n", fileName,
+        return "[WARNING] %s:[%d,42] [deprecation] path.AClass in path has been deprecated%n".formatted(fileName,
                 lineNumber);
     }
 
@@ -112,7 +111,7 @@ public abstract class WarningsIntegrationTest extends IntegrationTest {
      * @return the whole file name of the workspace file
      */
     protected String createWorkspaceFileName(final String fileNamePrefix) {
-        return String.format(FILE_NAME_PATTERN, FilenameUtils.getBaseName(fileNamePrefix));
+        return FILE_NAME_PATTERN.formatted(FilenameUtils.getBaseName(fileNamePrefix));
     }
 
     /**
@@ -162,8 +161,7 @@ public abstract class WarningsIntegrationTest extends IntegrationTest {
      */
     protected String createScanForIssuesStep(final AnalysisModelParser tool, final String issuesName,
             final String... arguments) {
-        return String.format(
-                "def %s = scanForIssues tool: %s(pattern:'**/*issues.txt', reportEncoding:'UTF-8')%s",
+        return "def %s = scanForIssues tool: %s(pattern:'**/*issues.txt', reportEncoding:'UTF-8')%s".formatted(
                 issuesName, tool.getSymbolName(), join(arguments));
     }
 
@@ -176,7 +174,7 @@ public abstract class WarningsIntegrationTest extends IntegrationTest {
      * @return the pipeline step
      */
     protected String createRecordIssuesStep(final AnalysisModelParser tool) {
-        return String.format("recordIssues(tools: [%s(pattern: '**/*issues.txt', reportEncoding:'UTF-8')])",
+        return "recordIssues(tools: [%s(pattern: '**/*issues.txt', reportEncoding:'UTF-8')])".formatted(
                 tool.getSymbolName());
     }
 
@@ -219,7 +217,7 @@ public abstract class WarningsIntegrationTest extends IntegrationTest {
      */
     @CanIgnoreReturnValue
     protected IssuesRecorder enableCheckStyleWarnings(final AbstractProject<?, ?> project) {
-        CheckStyle tool = new CheckStyle();
+        var tool = new CheckStyle();
         tool.setReportEncoding("UTF-8");
         return enableGenericWarnings(project, tool);
     }
@@ -258,7 +256,7 @@ public abstract class WarningsIntegrationTest extends IntegrationTest {
     protected IssuesRecorder enableWarnings(final AbstractProject<?, ?> job,
             final Consumer<IssuesRecorder> recorderConfiguration,
             final ReportScanningTool tool, final ReportScanningTool... additionalTools) {
-        IssuesRecorder recorder = enableWarnings(job, tool, additionalTools);
+        var recorder = enableWarnings(job, tool, additionalTools);
         recorderConfiguration.accept(recorder);
         return recorder;
     }
@@ -317,7 +315,7 @@ public abstract class WarningsIntegrationTest extends IntegrationTest {
     @CanIgnoreReturnValue
     protected IssuesRecorder enableWarnings(final AbstractProject<?, ?> job,
             final Tool tool, final Tool... additionalTools) {
-        IssuesRecorder publisher = new IssuesRecorder();
+        var publisher = new IssuesRecorder();
         publisher.setTools(tool, additionalTools);
         job.getPublishersList().add(publisher);
         return publisher;
@@ -346,8 +344,8 @@ public abstract class WarningsIntegrationTest extends IntegrationTest {
     protected IssuesRecorder getRecorder(final AbstractProject<?, ?> job) {
         DescribableList<Publisher, Descriptor<Publisher>> publishers = job.getPublishersList();
         for (Publisher publisher : publishers) {
-            if (publisher instanceof IssuesRecorder) {
-                return (IssuesRecorder) publisher;
+            if (publisher instanceof IssuesRecorder recorder) {
+                return recorder;
             }
         }
         throw new AssertionError("No instance of IssuesRecorder found for job " + job);
@@ -365,7 +363,7 @@ public abstract class WarningsIntegrationTest extends IntegrationTest {
     @SuppressWarnings("checkstyle:IllegalCatch")
     protected MatrixBuild buildSuccessfully(final MatrixProject project) {
         try {
-            MatrixBuild matrixBuild = project.scheduleBuild2(0).get();
+            var matrixBuild = project.scheduleBuild2(0).get();
             getJenkins().assertBuildStatus(Result.SUCCESS, matrixBuild);
             return matrixBuild;
         }
@@ -386,7 +384,7 @@ public abstract class WarningsIntegrationTest extends IntegrationTest {
     protected AnalysisResult scheduleSuccessfulBuild(final ParameterizedJob<?, ?> job) {
         Run<?, ?> run = buildSuccessfully(job);
 
-        ResultAction action = getResultAction(run);
+        var action = getResultAction(run);
         System.out.println("------------------------------------- Infos ------------------------------------");
         action.getResult().getInfoMessages().forEach(System.out::println);
         System.out.println("------------------------------------ Errors ------------------------------------");
@@ -428,7 +426,7 @@ public abstract class WarningsIntegrationTest extends IntegrationTest {
     protected AnalysisResult scheduleBuildAndAssertStatus(final ParameterizedJob<?, ?> job, final Result expectedResult,
             final Consumer<AnalysisResult> assertions) {
         Run<?, ?> build = buildWithResult(job, expectedResult);
-        AnalysisResult result = getAnalysisResult(build);
+        var result = getAnalysisResult(build);
         assertions.accept(result);
         return result;
     }
@@ -443,7 +441,7 @@ public abstract class WarningsIntegrationTest extends IntegrationTest {
      * @return the action of the specified build
      */
     protected ResultAction getResultAction(final Run<?, ?> build) {
-        ResultAction action = build.getAction(ResultAction.class);
+        var action = build.getAction(ResultAction.class);
         assertThat(action).as("No ResultAction found in run %s", build).isNotNull();
         return action;
     }
@@ -461,7 +459,7 @@ public abstract class WarningsIntegrationTest extends IntegrationTest {
         Run<?, ?> build = job.getLastCompletedBuild();
         assertThat(build).as("No completed build found for job %s", job).isNotNull();
 
-        ResultAction action = build.getAction(ResultAction.class);
+        var action = build.getAction(ResultAction.class);
         assertThat(action).as("No ResultAction found in run %s", build).isNotNull();
 
         return action;
@@ -483,7 +481,7 @@ public abstract class WarningsIntegrationTest extends IntegrationTest {
 
         assertThat(analysisResults).hasSize(1);
 
-        AnalysisResult result = analysisResults.get(0);
+        var result = analysisResults.get(0);
         System.out.println("----- Error Messages -----");
         result.getErrorMessages().forEach(System.out::println);
         System.out.println("----- Info Messages -----");
@@ -517,7 +515,7 @@ public abstract class WarningsIntegrationTest extends IntegrationTest {
      * @return the created job
      */
     protected FreeStyleProject createFreeStyleProjectWithWorkspaceFilesWithSuffix(final String... fileNames) {
-        FreeStyleProject job = createFreeStyleProject();
+        var job = createFreeStyleProject();
         copyMultipleFilesToWorkspaceWithSuffix(job, fileNames);
         return job;
     }
@@ -533,7 +531,7 @@ public abstract class WarningsIntegrationTest extends IntegrationTest {
      * @return the pipeline job
      */
     protected WorkflowJob createPipelineWithWorkspaceFilesWithSuffix(final String... fileNames) {
-        WorkflowJob job = createPipeline();
+        var job = createPipeline();
         copyMultipleFilesToWorkspaceWithSuffix(job, fileNames);
         return job;
     }
@@ -560,7 +558,7 @@ public abstract class WarningsIntegrationTest extends IntegrationTest {
     protected void setEnvironmentVariables(final Entry... vars) {
         try {
             getJenkins().getInstance().getNodeProperties().replaceBy(
-                    Collections.singleton(new EnvironmentVariablesNodeProperty(vars)));
+                    Set.of(new EnvironmentVariablesNodeProperty(vars)));
         }
         catch (IOException exception) {
             throw new AssertionError(exception);

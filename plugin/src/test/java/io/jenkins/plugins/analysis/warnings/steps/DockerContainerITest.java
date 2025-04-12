@@ -1,17 +1,14 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
-import java.io.IOException;
-
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import hudson.model.FreeStyleProject;
-import hudson.model.Node;
+import java.io.IOException;
+
 import hudson.tasks.Shell;
 
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.Gcc4;
 import io.jenkins.plugins.analysis.warnings.Java;
@@ -36,8 +33,8 @@ class DockerContainerITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldBuildMavenProjectOnAgent() throws IOException {
         assumeThat(isWindows()).as("Running on Windows").isFalse();
 
-        FreeStyleProject project = createFreeStyleProject();
-        Node node = createDockerAgent(AGENT_CONTAINER);
+        var project = createFreeStyleProject();
+        var node = createDockerAgent(AGENT_CONTAINER);
         project.setAssignedNode(node);
 
         createFileInAgentWorkspace(node, project, "src/main/java/Test.java", getSampleJavaFile());
@@ -45,7 +42,7 @@ class DockerContainerITest extends IntegrationTestWithJenkinsPerSuite {
         project.getBuildersList().add(new Shell("JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64 mvn compile"));
         enableWarnings(project, createTool(new Java(), EMPTY_PATTERN));
 
-        AnalysisResult result = scheduleSuccessfulBuild(project);
+        var result = scheduleSuccessfulBuild(project);
         assertThat(result).hasTotalSize(2);
     }
 
@@ -53,8 +50,8 @@ class DockerContainerITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldBuildMakefileOnAgent() throws IOException {
         assumeThat(isWindows()).as("Running on Windows").isFalse();
 
-        FreeStyleProject project = createFreeStyleProject();
-        Node node = createDockerAgent(AGENT_CONTAINER);
+        var project = createFreeStyleProject();
+        var node = createDockerAgent(AGENT_CONTAINER);
         project.setAssignedNode(node);
 
         createFileInAgentWorkspace(node, project, "test.cpp", getSampleCppFile());
@@ -62,7 +59,7 @@ class DockerContainerITest extends IntegrationTestWithJenkinsPerSuite {
         project.getBuildersList().add(new Shell("make"));
         enableWarnings(project, createTool(new Gcc4(), EMPTY_PATTERN));
 
-        AnalysisResult result = scheduleSuccessfulBuild(project);
+        var result = scheduleSuccessfulBuild(project);
         assertThat(result).hasTotalSize(1);
     }
 
@@ -72,31 +69,32 @@ class DockerContainerITest extends IntegrationTestWithJenkinsPerSuite {
      * @return A simple make file.
      */
     private String getSampleMavenFile() {
-        return "    <project>\n"
-                + "      <modelVersion>4.0.0</modelVersion>\n"
-                + "      <groupId>test</groupId>\n"
-                + "      <artifactId>testArtifact</artifactId>\n"
-                + "      <version>1</version>\n"
-                + "      <properties>\n"
-                + "         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>\n"
-                + "      </properties>\n"
-                + "      <build>\n"
-                + "         <sourceDirectory>src/main/java</sourceDirectory>\n"
-                + "         <plugins>\n"
-                + "           <plugin>\n"
-                + "               <groupId>org.apache.maven.plugins</groupId>\n"
-                + "               <artifactId>maven-compiler-plugin</artifactId>\n"
-                + "               <version>3.6.1</version>\n"
-                + "               <configuration>\n"
-                + "                   <source>1.8</source>\n"
-                + "                   <target>1.8</target>\n"
-                + "                   <compilerArgument>-Xlint:all</compilerArgument>\n"
-                + "                   <showWarnings>true</showWarnings>\n"
-                + "               </configuration>\n"
-                + "           </plugin>\n"
-                + "         </plugins>\n"
-                + "      </build>\n"
-                + "    </project>";
+        return """
+                <project>
+                  <modelVersion>4.0.0</modelVersion>
+                  <groupId>test</groupId>
+                  <artifactId>testArtifact</artifactId>
+                  <version>1</version>
+                  <properties>
+                     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+                  </properties>
+                  <build>
+                     <sourceDirectory>src/main/java</sourceDirectory>
+                     <plugins>
+                       <plugin>
+                           <groupId>org.apache.maven.plugins</groupId>
+                           <artifactId>maven-compiler-plugin</artifactId>
+                           <version>3.6.1</version>
+                           <configuration>
+                               <source>1.8</source>
+                               <target>1.8</target>
+                               <compilerArgument>-Xlint:all</compilerArgument>
+                               <showWarnings>true</showWarnings>
+                           </configuration>
+                       </plugin>
+                     </plugins>
+                  </build>
+                </project>""";
     }
 
     /**
@@ -105,11 +103,13 @@ class DockerContainerITest extends IntegrationTestWithJenkinsPerSuite {
      * @return A simple make file.
      */
     private String getSampleMakefileFile() {
-        return "prog: test.o\n"
-                + "\tgcc -o prog test.o\n"
-                + "\n"
-                + "test.o: test.cpp\n"
-                + "\tgcc -c -Wall -Wextra -O2 test.cpp\n";
+        return """
+                prog: test.o
+                    gcc -o prog test.o
+                
+                test.o: test.cpp
+                    gcc -c -Wall -Wextra -O2 test.cpp
+                """;
     }
 
     /**
@@ -118,13 +118,15 @@ class DockerContainerITest extends IntegrationTestWithJenkinsPerSuite {
      * @return A sample java file.
      */
     private String getSampleJavaFile() {
-        return "import java.util.ArrayList;\n"
-                + "public class Test {\n"
-                + "   public static void main(String[] args){\n"
-                + "      ArrayList<String> list = new ArrayList();\n"
-                + "      System.out.println(\"This is a test message\");\n"
-                + "   }\n"
-                + "}\n";
+        return """
+                import java.util.ArrayList;
+                public class Test {
+                   public static void main(String[] args){
+                      ArrayList<String> list = new ArrayList();
+                      System.out.println("This is a test message");
+                   }
+                }
+                """;
     }
 
     /**
@@ -133,10 +135,12 @@ class DockerContainerITest extends IntegrationTestWithJenkinsPerSuite {
      * @return A sample cpp file.
      */
     private String getSampleCppFile() {
-        return "int main()\n"
-                + "{\n"
-                + "    float f = 1;\n"
-                + "    return 0;\n"
-                + "}\n";
+        return """
+                int main()
+                {
+                    float f = 1;
+                    return 0;
+                }
+                """;
     }
 }

@@ -252,7 +252,7 @@ public class IssuesStatistics implements Serializable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        IssuesStatistics that = (IssuesStatistics) o;
+        var that = (IssuesStatistics) o;
         return totalErrorSize == that.totalErrorSize
                 && totalHighSize == that.totalHighSize
                 && totalNormalSize == that.totalNormalSize

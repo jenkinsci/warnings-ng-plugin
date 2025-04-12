@@ -1,27 +1,22 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
-import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.junit.jupiter.api.Test;
-import org.jvnet.hudson.test.JenkinsRule.JSONWebResponse;
-import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.xmlunit.assertj.XmlAssert;
 import org.xmlunit.builder.Input;
 
 import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 
-import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.restapi.AnalysisResultApi;
 import io.jenkins.plugins.analysis.core.restapi.ReportApi;
-import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Pmd;
@@ -29,7 +24,6 @@ import io.jenkins.plugins.analysis.warnings.SpotBugs;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 import static org.assertj.core.api.Assertions.*;
-import static org.xmlunit.assertj.XmlAssert.assertThat;
 
 /**
  * Integration tests of the remote API.
@@ -70,7 +64,7 @@ class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private void assertThatRemoteApiEquals(final Run<?, ?> build, final String url, final String expectedXml) {
-        assertThat(callXmlRemoteApi(build.getUrl() + url))
+        XmlAssert.assertThat(callXmlRemoteApi(build.getUrl() + url))
                 .and(Input.from(readAllBytes(FOLDER_PREFIX + expectedXml)))
                 .ignoreChildNodesOrder()
                 .normalizeWhitespace()
@@ -85,7 +79,7 @@ class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
     void assertXmlApiWithXPathNavigationMatchesExpected() {
         Run<?, ?> build = buildCheckStyleJob();
 
-        Document actualDocument = callXmlRemoteApi(build.getUrl() + "/checkstyle/api/xml?xpath=/*/qualityGates");
+        var actualDocument = callXmlRemoteApi(build.getUrl() + "/checkstyle/api/xml?xpath=/*/qualityGates");
 
         var documentElement = actualDocument.getDocumentElement();
         assertThat(documentElement.getTagName()).isEqualTo("qualityGates");
@@ -105,11 +99,11 @@ class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
     void assertXmlApiWithDepthContainsDeepElements() throws XPathExpressionException {
         Run<?, ?> build = buildCheckStyleJob();
 
-        Document actualDocument = callXmlRemoteApi(build.getUrl() + "/checkstyle/api/xml?depth=1");
+        var actualDocument = callXmlRemoteApi(build.getUrl() + "/checkstyle/api/xml?depth=1");
 
         // navigate to one deep level element that is not visible at depth 0
-        XPath xpath = XPathFactory.newInstance().newXPath();
-        Node deepLevelElement = (Node) xpath
+        var xpath = XPathFactory.newInstance().newXPath();
+        var deepLevelElement = (Node) xpath
                 .compile("//analysisResultApi//owner//result")
                 .evaluate(actualDocument, XPathConstants.NODE);
 
@@ -124,9 +118,9 @@ class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldFindNewCheckStyleWarnings() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle1.xml",
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle1.xml",
                 "checkstyle2.xml");
-        IssuesRecorder recorder = enableWarnings(project, createCheckstyle("**/checkstyle1*"));
+        var recorder = enableWarnings(project, createCheckstyle("**/checkstyle1*"));
         buildWithResult(project, Result.SUCCESS);
         recorder.setTools(createCheckstyle("**/checkstyle2*"));
         Run<?, ?> build = buildWithResult(project, Result.SUCCESS);
@@ -140,17 +134,17 @@ class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
     /** Verifies that the remote API for the tools aggregation correctly returns the summary. */
     @Test
     void shouldReturnAggregation() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle1.xml",
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle1.xml",
                 "checkstyle2.xml");
         enableWarnings(project, createCheckstyle("**/checkstyle1*"),
                 configurePattern(new Pmd()), configurePattern(new SpotBugs()));
         Run<?, ?> build = buildWithResult(project, Result.SUCCESS);
 
-        JSONWebResponse json = callJsonRemoteApi(build.getUrl() + "warnings-ng/api/json");
-        JSONObject result = json.getJSONObject();
+        var json = callJsonRemoteApi(build.getUrl() + "warnings-ng/api/json");
+        var result = json.getJSONObject();
 
         assertThatJson(result).node("tools").isArray().hasSize(3);
-        JSONArray tools = result.getJSONArray("tools");
+        var tools = result.getJSONArray("tools");
 
         assertThatToolsContains(tools, "checkstyle", "CheckStyle Warnings", 3);
         assertThatToolsContains(tools, "pmd", "PMD Warnings", 0);
@@ -174,13 +168,13 @@ class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private ReportScanningTool createCheckstyle(final String pattern) {
-        ReportScanningTool tool = createTool(new CheckStyle(), pattern);
+        var tool = createTool(new CheckStyle(), pattern);
         tool.setReportEncoding("UTF-8");
         return tool;
     }
 
     private Run<?, ?> buildCheckStyleJob() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(CHECKSTYLE_FILE);
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(CHECKSTYLE_FILE);
         enableCheckStyleWarnings(project);
         return scheduleBuildAndAssertStatus(project, Result.SUCCESS).getOwner();
     }

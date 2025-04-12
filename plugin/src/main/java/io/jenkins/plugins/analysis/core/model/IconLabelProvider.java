@@ -53,7 +53,7 @@ public class IconLabelProvider extends StaticAnalysisLabelProvider {
             final String iconName) {
         super(id, name, descriptionProvider);
 
-        String prefix = ICONS_URL + iconName;
+        var prefix = ICONS_URL + iconName;
         smallIconUrl = prefix + "-24x24.png";
         largeIconUrl = prefix + "-48x48.png";
     }

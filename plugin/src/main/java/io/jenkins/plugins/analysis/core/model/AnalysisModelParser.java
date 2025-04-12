@@ -8,12 +8,15 @@ import edu.hm.hafner.analysis.registry.ParserRegistry;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+import java.io.Serial;
+
 /**
  * Describes a static analysis tool from the analysis-model library.
  *
  * @author Ullrich Hafner
  */
 public abstract class AnalysisModelParser extends ReportScanningTool {
+    @Serial
     private static final long serialVersionUID = 3510579055771471269L;
 
     @Override

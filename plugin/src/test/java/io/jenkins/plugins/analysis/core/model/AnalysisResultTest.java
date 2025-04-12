@@ -1,11 +1,11 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.util.Collections;
-
 import org.junit.jupiter.api.Test;
 import org.junitpioneer.jupiter.Issue;
 
 import edu.hm.hafner.util.ResourceTest;
+
+import java.util.Collections;
 
 import hudson.model.Run;
 

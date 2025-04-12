@@ -1,5 +1,7 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import java.io.Serial;
+
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
@@ -14,6 +16,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
  * @author Gyanesha Prajjwal
  */
 public class JUnit extends AnalysisModelParser {
+    @Serial
     private static final long serialVersionUID = -5341616371387604827L;
     private static final String ID = "junit";
 

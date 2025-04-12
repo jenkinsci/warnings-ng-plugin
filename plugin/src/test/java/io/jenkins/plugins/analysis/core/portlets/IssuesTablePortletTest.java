@@ -1,10 +1,9 @@
 package io.jenkins.plugins.analysis.core.portlets;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
+import java.util.List;
 import nl.jqno.equalsverifier.EqualsVerifier;
 
 import hudson.model.Job;
@@ -18,7 +17,6 @@ import io.jenkins.plugins.analysis.core.portlets.IssuesTablePortlet.TableRow;
 
 import static io.jenkins.plugins.analysis.core.testutil.JobStubs.*;
 import static org.assertj.core.api.Assertions.*;
-import static org.assertj.core.util.Lists.list;
 import static org.mockito.Mockito.*;
 
 /**
@@ -41,7 +39,7 @@ class IssuesTablePortletTest {
     void shouldShowTableWithOneJob() {
         Job<?, ?> job = createJob(CHECK_STYLE_ID, CHECK_STYLE_NAME, 1);
 
-        PortletTableModel model = createModel(list(job));
+        var model = createModel(List.of(job));
 
         verifySingleTool(job, model, CHECK_STYLE_ID, CHECK_STYLE_NAME, 1);
     }
@@ -51,7 +49,7 @@ class IssuesTablePortletTest {
         Job<?, ?> firstRow = createJob(SPOT_BUGS_ID, SPOT_BUGS_NAME, 1);
         Job<?, ?> secondRow = createJob(SPOT_BUGS_ID, SPOT_BUGS_NAME, 2);
 
-        PortletTableModel model = createModel(list(firstRow, secondRow));
+        var model = createModel(List.of(firstRow, secondRow));
 
         assertThat(model.getColumns()).containsExactly(SPOT_BUGS_COLUMN);
 
@@ -68,7 +66,7 @@ class IssuesTablePortletTest {
                 createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 1),
                 createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 2));
 
-        PortletTableModel model = createModel(list(job));
+        var model = createModel(List.of(job));
 
         verifySpotBugsAndCheckStyle(job, model);
     }
@@ -79,7 +77,7 @@ class IssuesTablePortletTest {
         List<TableRow> rows = model.getRows();
         assertThat(rows).hasSize(1);
 
-        TableRow actualRow = rows.get(0);
+        var actualRow = rows.get(0);
         assertThat(actualRow.getJob()).isSameAs(job);
 
         List<Result> results = actualRow.getResults();
@@ -95,36 +93,36 @@ class IssuesTablePortletTest {
                 createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 1),
                 createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 2));
 
-        IssuesTablePortlet portlet = createPortlet();
+        var portlet = createPortlet();
         assertThat(portlet.getSelectTools()).isFalse();
         assertThat(portlet.getShowIcons()).isFalse();
         assertThat(portlet.getHideCleanJobs()).isFalse();
         assertThat(portlet.getTools()).isEmpty();
 
         portlet.setSelectTools(true);
-        portlet.setTools(list(createTool(SPOT_BUGS_ID), createTool(CHECK_STYLE_ID)));
+        portlet.setTools(List.of(createTool(SPOT_BUGS_ID), createTool(CHECK_STYLE_ID)));
 
         assertThat(portlet.getSelectTools()).isTrue();
         assertThat(portlet.getTools()).extracting(ToolSelection::getId).containsExactly(SPOT_BUGS_ID, CHECK_STYLE_ID);
 
-        List<Job<?, ?>> jobs = list(job);
+        List<Job<?, ?>> jobs = List.of(job);
         verifySpotBugsAndCheckStyle(job, portlet.getModel(jobs));
 
-        portlet.setTools(list(createTool(SPOT_BUGS_ID)));
+        portlet.setTools(List.of(createTool(SPOT_BUGS_ID)));
         verifySingleTool(job, portlet.getModel(jobs), SPOT_BUGS_ID, SPOT_BUGS_NAME, 1);
 
-        portlet.setTools(list(createTool(CHECK_STYLE_ID)));
+        portlet.setTools(List.of(createTool(CHECK_STYLE_ID)));
         verifySingleTool(job, portlet.getModel(jobs), CHECK_STYLE_ID, CHECK_STYLE_NAME, 2);
 
         portlet.setTools(Collections.emptyList());
 
-        PortletTableModel model = portlet.getModel(jobs);
+        var model = portlet.getModel(jobs);
         assertThat(model.getColumns()).isEmpty();
 
         List<TableRow> rows = model.getRows();
         assertThat(rows).hasSize(1);
 
-        TableRow actualRow = rows.get(0);
+        var actualRow = rows.get(0);
         assertThat(actualRow.getJob()).isSameAs(job);
         assertThat(actualRow.getResults()).isEmpty();
     }
@@ -142,7 +140,7 @@ class IssuesTablePortletTest {
 
     @Test
     void shouldShowIconsOfTools() {
-        IssuesTablePortlet portlet = createPortlet();
+        var portlet = createPortlet();
         portlet.setShowIcons(true);
 
         assertThat(portlet.getShowIcons()).isTrue();
@@ -151,7 +149,7 @@ class IssuesTablePortletTest {
                 createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 1),
                 createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 2));
 
-        PortletTableModel model = portlet.getModel(list(job));
+        var model = portlet.getModel(List.of(job));
 
         assertThat(model.getColumns()).containsExactly(CHECK_STYLE_COLUMN, SPOT_BUGS_COLUMN);
 
@@ -159,7 +157,7 @@ class IssuesTablePortletTest {
         assertThat(rows).hasSize(1);
         assertThat(model.size()).isEqualTo(1);
 
-        TableRow actualRow = rows.get(0);
+        var actualRow = rows.get(0);
         assertThat(actualRow.getJob()).isSameAs(job);
 
         List<Result> results = actualRow.getResults();
@@ -178,7 +176,7 @@ class IssuesTablePortletTest {
                 createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 3),
                 createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 4));
 
-        PortletTableModel model = createModel(list(first, second));
+        var model = createModel(List.of(first, second));
 
         assertThat(model.getColumns()).containsExactly(CHECK_STYLE_COLUMN, SPOT_BUGS_COLUMN);
 
@@ -186,7 +184,7 @@ class IssuesTablePortletTest {
         assertThat(rows).hasSize(2);
         assertThat(model.size()).isEqualTo(2);
 
-        TableRow firstRow = rows.get(0);
+        var firstRow = rows.get(0);
         assertThat(firstRow.getJob()).isSameAs(first);
 
         List<Result> firstRowResults = firstRow.getResults();
@@ -195,7 +193,7 @@ class IssuesTablePortletTest {
         verifyResult(firstRowResults.get(0), CHECK_STYLE_ID, 2);
         verifyResult(firstRowResults.get(1), SPOT_BUGS_ID, 1);
 
-        TableRow secondRow = rows.get(1);
+        var secondRow = rows.get(1);
         assertThat(secondRow.getJob()).isSameAs(second);
 
         List<Result> secondRowResults = secondRow.getResults();
@@ -207,7 +205,7 @@ class IssuesTablePortletTest {
 
     @Test
     void shouldFilterZeroIssuesJobs() {
-        IssuesTablePortlet portlet = createPortlet();
+        var portlet = createPortlet();
 
         portlet.setHideCleanJobs(true);
         assertThat(portlet.getHideCleanJobs()).isTrue();
@@ -219,12 +217,12 @@ class IssuesTablePortletTest {
                 createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 3),
                 createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 4));
 
-        PortletTableModel model = portlet.getModel(list(first, second));
+        var model = portlet.getModel(List.of(first, second));
 
         List<TableRow> rows = model.getRows();
         assertThat(rows).hasSize(1);
 
-        TableRow actualRow = rows.get(0);
+        var actualRow = rows.get(0);
         assertThat(actualRow.getJob()).isSameAs(second);
 
         List<Result> results = actualRow.getResults();
@@ -236,24 +234,24 @@ class IssuesTablePortletTest {
 
     @Test
     void shouldHandleJobsWithoutBuild() {
-        IssuesTablePortlet portlet = createPortlet();
+        var portlet = createPortlet();
 
         portlet.setHideCleanJobs(true);
         assertThat(portlet.getHideCleanJobs()).isTrue();
 
         Job<?, ?> first = mock(Job.class);
-        PortletTableModel model = portlet.getModel(list(first));
+        var model = portlet.getModel(List.of(first));
 
         List<TableRow> rows = model.getRows();
         assertThat(rows).hasSize(1);
 
-        TableRow actualRow = rows.get(0);
+        var actualRow = rows.get(0);
         assertThat(actualRow.getJob()).isSameAs(first);
     }
 
     @Test
     void shouldFilterNonActionJobs() {
-        IssuesTablePortlet portlet = createPortlet();
+        var portlet = createPortlet();
         portlet.setHideCleanJobs(true);
 
         Job<?, ?> first = createJobWithActions();
@@ -261,12 +259,12 @@ class IssuesTablePortletTest {
                 createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 3),
                 createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 4));
 
-        PortletTableModel model = portlet.getModel(list(first, second));
+        var model = portlet.getModel(List.of(first, second));
 
         List<TableRow> rows = model.getRows();
         assertThat(rows).hasSize(1);
 
-        TableRow actualRow = rows.get(0);
+        var actualRow = rows.get(0);
         assertThat(actualRow.getJob()).isSameAs(second);
 
         List<Result> results = actualRow.getResults();
@@ -283,14 +281,14 @@ class IssuesTablePortletTest {
         Job<?, ?> second = createJobWithActions(
                 createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 2));
 
-        PortletTableModel model = createModel(list(first, second));
+        var model = createModel(List.of(first, second));
 
         assertThat(model.getColumns()).containsExactly(CHECK_STYLE_COLUMN, SPOT_BUGS_COLUMN);
 
         List<TableRow> rows = model.getRows();
         assertThat(rows).hasSize(2);
 
-        TableRow firstRow = rows.get(0);
+        var firstRow = rows.get(0);
         assertThat(firstRow.getJob()).isSameAs(first);
 
         List<Result> firstRowResults = firstRow.getResults();
@@ -299,7 +297,7 @@ class IssuesTablePortletTest {
         assertThat(firstRowResults.get(0).getTotal()).isEmpty();
         verifyResult(firstRowResults.get(1), SPOT_BUGS_ID, 1);
 
-        TableRow secondRow = rows.get(1);
+        var secondRow = rows.get(1);
         assertThat(secondRow.getJob()).isSameAs(second);
 
         List<Result> secondRowResults = secondRow.getResults();
@@ -310,7 +308,7 @@ class IssuesTablePortletTest {
     }
 
     private PortletTableModel createModel(final List<Job<?, ?>> jobs) {
-        IssuesTablePortlet portlet = createPortlet();
+        var portlet = createPortlet();
 
         return portlet.getModel(jobs);
     }
@@ -332,7 +330,7 @@ class IssuesTablePortletTest {
     }
 
     private IssuesTablePortlet createPortlet() {
-        IssuesTablePortlet portlet = new IssuesTablePortlet("portlet");
+        var portlet = new IssuesTablePortlet("portlet");
 
         LabelProviderFactory factory = mock(LabelProviderFactory.class);
         registerTool(factory, CHECK_STYLE_ID, CHECK_STYLE_NAME);

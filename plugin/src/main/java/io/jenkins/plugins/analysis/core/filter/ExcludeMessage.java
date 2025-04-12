@@ -4,6 +4,8 @@ import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+import java.io.Serial;
+
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
@@ -14,6 +16,7 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class ExcludeMessage extends RegexpFilter {
+    @Serial
     private static final long serialVersionUID = 6248933081535800869L;
 
     /**

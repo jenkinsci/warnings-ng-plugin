@@ -8,7 +8,6 @@ import edu.hm.hafner.util.PathUtil;
 
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
@@ -27,23 +26,25 @@ class TimeStamperPluginITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldCorrectlyParseJavacErrors() {
-        WorkflowJob project = createPipeline();
+        var project = createPipeline();
 
         createFileInWorkspace(project, "Test.java", "public class Test {}");
 
-        project.setDefinition(createPipelineScript("node {\n"
-                + "    timestamps {\n"
-                + "        echo '[javac] Test.java:39: warning: Test Warning'\n"
-                + "        recordIssues tools: [java()], skipBlames: true\n"
-                + "    }\n"
-                + "}"));
+        project.setDefinition(createPipelineScript("""
+                node {
+                    timestamps {
+                        echo '[javac] Test.java:39: warning: Test Warning'
+                        recordIssues tools: [java()], skipBlames: true
+                    }
+                }\
+                """));
 
-        AnalysisResult result = scheduleSuccessfulBuild(project);
+        var result = scheduleSuccessfulBuild(project);
 
         assertThat(result).hasTotalSize(1);
         assertThat(result).hasNoErrorMessages();
 
-        Issue issue = result.getIssues().get(0);
+        var issue = result.getIssues().get(0);
         assertFileName(project, issue, "Test.java");
         assertThat(issue).hasLineStart(39);
         assertThat(issue).hasMessage("Test Warning");
@@ -66,27 +67,28 @@ class TimeStamperPluginITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test @org.junitpioneer.jupiter.Issue("JENKINS-56484")
     void shouldCorrectlyParseClangErrors() {
-        WorkflowJob project = createPipeline();
+        var project = createPipeline();
 
         createFileInWorkspace(project, "test.c", "int main(void) { }");
 
-        project.setDefinition(createPipelineScript("node {\n"
-                + "    timestamps {\n"
-                + "        echo 'test.c:1:2: error: This is an error.'\n"
-                + "        recordIssues tools: [clang(id: 'clang', name: 'clang')], skipBlames: true\n"
-                + "    }\n"
-                + "}"));
+        project.setDefinition(createPipelineScript("""
+                node {
+                    timestamps {
+                        echo 'test.c:1:2: error: This is an error.'
+                        recordIssues tools: [clang(id: 'clang', name: 'clang')], skipBlames: true
+                    }
+                }\
+                """));
 
-        AnalysisResult result = scheduleSuccessfulBuild(project);
+        var result = scheduleSuccessfulBuild(project);
 
         assertThat(result).hasTotalSize(1);
         assertThat(result).hasNoErrorMessages();
 
-        Issue issue = result.getIssues().get(0);
+        var issue = result.getIssues().get(0);
         assertFileName(project, issue, "test.c");
         assertThat(issue).hasLineStart(1);
         assertThat(issue).hasMessage("This is an error.");
         assertThat(issue).hasSeverity(Severity.WARNING_HIGH);
     }
 }
-

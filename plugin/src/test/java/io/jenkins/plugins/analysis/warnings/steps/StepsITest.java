@@ -8,13 +8,11 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.jvnet.hudson.test.TestExtension;
 
 import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -26,7 +24,6 @@ import org.kohsuke.stapler.HttpResponse;
 import org.jenkinsci.Symbol;
 import org.jenkinsci.plugins.workflow.actions.WarningAction;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
-import org.jenkinsci.plugins.workflow.graph.FlowNode;
 import org.jenkinsci.plugins.workflow.graphanalysis.DepthFirstScanner;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
@@ -79,19 +76,22 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
 
     @Test
     void shouldParseCheckstyleUsingTheParserRegistry() {
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("checkstyle1.xml", "checkstyle2.xml");
+        var job = createPipelineWithWorkspaceFilesWithSuffix("checkstyle1.xml", "checkstyle2.xml");
 
-        job.setDefinition(createPipelineScript("node {\n"
-                + "  stage ('Integration Test') {\n"
-                + "         recordIssues tool: analysisParser(analysisModelId: 'checkstyle', pattern: '**/"
-                + "checkstyle1" + "*')\n"
-                + "  }\n"
-                + "}"));
+        job.setDefinition(createPipelineScript("""
+                node {
+                  stage ('Integration Test') {
+                         recordIssues tool: analysisParser(analysisModelId: 'checkstyle', pattern: '**/\
+                checkstyle1\
+                *')
+                  }
+                }\
+                """));
 
-        AnalysisResult baseline = scheduleSuccessfulBuild(job);
+        var baseline = scheduleSuccessfulBuild(job);
         assertThat(baseline).hasTotalSize(3);
 
-        ResultAction action = getResultAction(job.getLastBuild());
+        var action = getResultAction(job.getLastBuild());
         assertThat(action.getDisplayName()).isEqualTo("CheckStyle Warnings");
     }
 
@@ -100,7 +100,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldWhitelistScannerApi() {
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("checkstyle1.xml", "checkstyle2.xml");
+        var job = createPipelineWithWorkspaceFilesWithSuffix("checkstyle1.xml", "checkstyle2.xml");
 
         configureScanner(job, "checkstyle1");
         Run<?, ?> baseline = buildSuccessfully(job);
@@ -120,7 +120,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     @org.junitpioneer.jupiter.Issue("JENKINS-63109")
     void shouldWhitelistRecorderApi() {
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("checkstyle1.xml", "checkstyle2.xml");
+        var job = createPipelineWithWorkspaceFilesWithSuffix("checkstyle1.xml", "checkstyle2.xml");
 
         configureRecorder(job, "checkstyle1");
         Run<?, ?> baseline = buildSuccessfully(job);
@@ -197,13 +197,16 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldSkipBlaming() {
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("checkstyle1.xml");
+        var job = createPipelineWithWorkspaceFilesWithSuffix("checkstyle1.xml");
 
-        job.setDefinition(createPipelineScript("node {\n"
-                + "  stage ('Integration Test') {\n"
-                + "         recordIssues skipBlames: true, tool: checkStyle(pattern: '**/checkstyle1" + "*')\n"
-                + "  }\n"
-                + "}"));
+        job.setDefinition(createPipelineScript("""
+                node {
+                  stage ('Integration Test') {
+                         recordIssues skipBlames: true, tool: checkStyle(pattern: '**/checkstyle1\
+                *')
+                  }
+                }\
+                """));
         Run<?, ?> baseline = buildSuccessfully(job);
         assertThat(getConsoleLog(baseline)).contains("Skipping SCM blames as requested");
     }
@@ -212,7 +215,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     @ValueSource(booleans = {true, false})
     @DisplayName("Verify quiet property for logger")
     void shouldToggleQuietStatusOfLogger(final boolean quiet) {
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("checkstyle1.xml");
+        var job = createPipelineWithWorkspaceFilesWithSuffix("checkstyle1.xml");
 
         job.setDefinition(createPipelineScript("node {\n"
                 + "  stage ('Integration Test') {\n"
@@ -222,8 +225,8 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
                 + "  }\n"
                 + "}"));
         Run<?, ?> baseline = buildSuccessfully(job);
-        String consoleLog = getConsoleLog(baseline);
-        String message = "[CheckStyle]";
+        var consoleLog = getConsoleLog(baseline);
+        var message = "[CheckStyle]";
         if (quiet) {
             assertThat(consoleLog).doesNotContain(message);
         }
@@ -237,7 +240,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldWhitelistPublisherApi() {
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("checkstyle1.xml", "checkstyle2.xml");
+        var job = createPipelineWithWorkspaceFilesWithSuffix("checkstyle1.xml", "checkstyle2.xml");
 
         configurePublisher(job, "checkstyle1", NO_QUALITY_GATE);
         Run<?, ?> baseline = buildSuccessfully(job);
@@ -271,7 +274,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private void configurePublisher(final WorkflowJob job, final String fileName, final String qualityGate) {
-        String qualityGateParameter = String.format("qualityGates: [%s]", qualityGate);
+        var qualityGateParameter = "qualityGates: [%s]".formatted(qualityGate);
         job.setDefinition(createPipelineScript("node {\n"
                 + "  stage ('Integration Test') {\n"
                 + "         discoverReferenceBuild()\n"
@@ -295,7 +298,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     /** Verifies that a {@link Tool} defines a {@link Symbol}. */
     @Test
     void shouldProvideSymbol() {
-        FindBugs findBugs = new FindBugs();
+        var findBugs = new FindBugs();
 
         assertThat(findBugs.getSymbolName()).isEqualTo("findBugs");
     }
@@ -305,7 +308,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldRunInDeclarativePipeline() {
-        WorkflowJob job = createPipeline();
+        var job = createPipeline();
 
         job.setDefinition(createPipelineScript("pipeline {\n"
                 + "    agent 'any'\n"
@@ -323,39 +326,39 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
                 + "    }\n"
                 + "}"));
 
-        AnalysisResult result = scheduleSuccessfulBuild(job);
+        var result = scheduleSuccessfulBuild(job);
 
         assertThat(result).hasTotalSize(1);
     }
 
     private String createShellStep(final String script) {
         if (isWindows()) {
-            return String.format("bat '%s'", script);
+            return "bat '%s'".formatted(script);
         }
         else {
-            return String.format("sh '%s'", script);
+            return "sh '%s'".formatted(script);
         }
     }
 
     private String createCatStep(final String arguments) {
         if (isWindows()) {
-            return String.format("bat 'type %s'", arguments);
+            return "bat 'type %s'".formatted(arguments);
         }
         else {
-            return String.format("sh 'cat %s'", arguments);
+            return "sh 'cat %s'".formatted(arguments);
         }
     }
 
     /** Runs the Clang parser on an output file that contains 1 issue. */
     @Test
     void shouldFindAllClangIssuesIfConsoleIsAnnotatedWithTimeStamps() {
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("issue56484.txt");
+        var job = createPipelineWithWorkspaceFilesWithSuffix("issue56484.txt");
         job.setDefinition(asStage(
                 createCatStep("*.txt"),
                 "def issues = scanForIssues tool: clang()",
                 PUBLISH_ISSUES_STEP));
 
-        AnalysisResult result = scheduleSuccessfulBuild(job);
+        var result = scheduleSuccessfulBuild(job);
 
         assertThat(result).hasTotalSize(1);
         assertThat(result.getIssues().get(0))
@@ -373,41 +376,43 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void issue64243() {
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("maven-console.txt");
+        var job = createPipelineWithWorkspaceFilesWithSuffix("maven-console.txt");
         job.setDefinition(
                 asStage("def issues = scanForIssues tool: mavenConsole(id: 'id', name: 'MavenConsoleFile', pattern: '*.txt')",
                         PUBLISH_ISSUES_STEP));
 
-        AnalysisResult result = scheduleSuccessfulBuild(job);
+        var result = scheduleSuccessfulBuild(job);
         assertThat(result).hasTotalSize(4);
     }
 
     /** Runs the Clang parser on an output file that contains 1 issue. */
     @Test
     void shouldFindAllGhsIssuesIfConsoleIsAnnotatedWithTimeStamps() {
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("issue59118.txt");
+        var job = createPipelineWithWorkspaceFilesWithSuffix("issue59118.txt");
         job.setDefinition(asStage(
                 createCatStep("*.txt"),
                 "def issues = scanForIssues tool: ghsMulti()",
                 PUBLISH_ISSUES_STEP));
 
-        AnalysisResult result = scheduleSuccessfulBuild(job);
+        var result = scheduleSuccessfulBuild(job);
 
         assertThat(result).hasTotalSize(2);
-        Report issues = result.getIssues();
+        var issues = result.getIssues();
         assertThat(issues.get(0))
                 .hasLineStart(19)
-                .hasMessage("operands of logical && or || must be primary expressions\n"
-                        + "\n"
-                        + "  #if !defined(_STDARG_H) && !defined(_STDIO_H) && !defined(_GHS_WCHAR_H)")
+                .hasMessage("""
+                        operands of logical && or || must be primary expressions
+                        
+                          #if !defined(_STDARG_H) && !defined(_STDIO_H) && !defined(_GHS_WCHAR_H)""")
                 .hasFileName("C:/Path/To/bar.h")
                 .hasCategory("#1729-D")
                 .hasSeverity(Severity.WARNING_NORMAL);
         assertThat(issues.get(1))
                 .hasLineStart(491)
-                .hasMessage("operands of logical && or || must be primary expressions\n"
-                        + "\n"
-                        + "                      if(t_deltaInterval != t_u4Interval && t_deltaInterval != 0)")
+                .hasMessage("""
+                        operands of logical && or || must be primary expressions
+                        
+                                              if(t_deltaInterval != t_u4Interval && t_deltaInterval != 0)""")
                 .hasFileName("../../../../Sources/Foo/Bar/Test.c")
                 .hasCategory("#1729-D")
                 .hasSeverity(Severity.WARNING_NORMAL);
@@ -420,12 +425,12 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldRemoveConsoleLogNotesBeforeRemovingColorCodes() {
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("ath-colored.log");
+        var job = createPipelineWithWorkspaceFilesWithSuffix("ath-colored.log");
         job.setDefinition(asStage(
                 createCatStep("*.txt"),
                 "recordIssues tool: mavenConsole()"));
 
-        AnalysisResult result = scheduleSuccessfulBuild(job);
+        var result = scheduleSuccessfulBuild(job);
 
         assertThat(result).hasTotalSize(4).hasTotalErrorsSize(2).hasTotalNormalPrioritySize(2);
         assertThat(result.getIssues().get(0))
@@ -447,13 +452,13 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the Clang parser on an output file that contains 1 issue. */
     @Test
     void shouldFindAllJavaIssuesIfConsoleIsAnnotatedWithTimeStamps() {
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("issue56484-maven.txt");
+        var job = createPipelineWithWorkspaceFilesWithSuffix("issue56484-maven.txt");
         job.setDefinition(asStage(
                 createCatStep("*.txt"),
                 "def issues = scanForIssues tool: java()",
                 PUBLISH_ISSUES_STEP));
 
-        AnalysisResult result = scheduleSuccessfulBuild(job);
+        var result = scheduleSuccessfulBuild(job);
 
         assertThat(result).hasTotalSize(6);
     }
@@ -472,18 +477,18 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private void assertThatConsoleNotesAreRemoved(final String fileName, final int expectedSize) {
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix(fileName);
+        var job = createPipelineWithWorkspaceFilesWithSuffix(fileName);
         job.setDefinition(asStage(
                 createCatStep("*.txt"),
                 "def issues = scanForIssues tool: eclipse()",
                 PUBLISH_ISSUES_STEP));
 
-        AnalysisResult result = scheduleSuccessfulBuild(job);
+        var result = scheduleSuccessfulBuild(job);
 
         assertThat(result.getTotalSize()).isEqualTo(expectedSize);
         assertThat(result.getIssues()).hasSize(expectedSize);
 
-        Report report = result.getIssues();
+        var report = result.getIssues();
         assertThat(report.filter(issue -> "eclipse".equals(issue.getOrigin()))).hasSize(expectedSize);
         for (Issue annotation : report) {
             assertThat(annotation.getMessage()).matches("[a-zA-Z].*");
@@ -501,24 +506,24 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the JavaDoc parser and uses a message filter to change the number of recorded warnings. */
     @Test
     void shouldFilterByMessage() {
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("javadoc.txt");
+        var job = createPipelineWithWorkspaceFilesWithSuffix("javadoc.txt");
         job.setDefinition(asStage(
                 "recordIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8'), "
                         + "filters:[includeMessage('.*@link.*'), excludeMessage('.*removeSpecChangeListener.*')]")); // 4 @link and one with removeSpecChangeListener
 
-        AnalysisResult result = scheduleSuccessfulBuild(job);
+        var result = scheduleSuccessfulBuild(job);
         assertThat(result.getIssues()).hasSize(3);
     }
 
     /** Verifies that the JavaDoc parser reports just an information message when reading an empty file. */
     @Test
     void javaDocShouldNotReportErrorOnEmptyFiles() {
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("emptyFile.txt");
+        var job = createPipelineWithWorkspaceFilesWithSuffix("emptyFile.txt");
 
         job.setDefinition(asStage(
                 "recordIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8')"));
 
-        AnalysisResult result = scheduleSuccessfulBuild(job);
+        var result = scheduleSuccessfulBuild(job);
         assertThat(result.getIssues()).hasSize(0);
         assertThat(result).hasInfoMessages(
                 "Skipping file 'emptyFile-issues.txt' because it's empty");
@@ -527,12 +532,12 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     /** Verifies that the CheckStyle parser reports an error when reading an empty XML file. */
     @Test
     void checkStyleShouldReportErrorOnEmptyFiles() {
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("emptyFile.txt");
+        var job = createPipelineWithWorkspaceFilesWithSuffix("emptyFile.txt");
 
         job.setDefinition(asStage(
                 "recordIssues tool: checkStyle(pattern:'**/*issues.txt', reportEncoding:'UTF-8')"));
 
-        AnalysisResult result = scheduleSuccessfulBuild(job);
+        var result = scheduleSuccessfulBuild(job);
         assertThat(result.getIssues()).hasSize(0);
         assertThat(result).hasErrorMessages("Skipping file 'emptyFile-issues.txt' because it's empty");
     }
@@ -540,7 +545,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the JavaDoc parser and enforces quality gates. */
     @Test
     void shouldEnforceQualityGate() {
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("javadoc.txt");
+        var job = createPipelineWithWorkspaceFilesWithSuffix("javadoc.txt");
 
         job.setDefinition(asStage(
                 "recordIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8'), "
@@ -567,7 +572,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     @org.junitpioneer.jupiter.Issue("JENKINS-58253")
     void shouldFailBuildWhenFailBuildOnErrorsIsSet() {
-        WorkflowJob job = createPipeline();
+        var job = createPipeline();
 
         job.setDefinition(asStage(
                 "recordIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8')"));
@@ -584,7 +589,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     @ValueSource(strings = {"javadoc.txt", "emptyFile.txt"})
     @org.junitpioneer.jupiter.Issue("JENKINS-75344")
     void shouldReportResultWithDifferentIdNameAndIconInStep(final String fileName) {
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix(fileName);
+        var job = createPipelineWithWorkspaceFilesWithSuffix(fileName);
 
         job.setDefinition(asStage(
                 "recordIssues id: 'custom-id', name: 'custom-name', icon: 'custom-icon', "
@@ -601,7 +606,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     @ValueSource(strings = {"javadoc.txt", "emptyFile.txt"})
     @org.junitpioneer.jupiter.Issue("JENKINS-75344")
     void shouldReportResultWithDifferentIdNameAndIconInTool(final String fileName) {
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix(fileName);
+        var job = createPipelineWithWorkspaceFilesWithSuffix(fileName);
 
         job.setDefinition(asStage(
                 "recordIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8',"
@@ -618,7 +623,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     @ValueSource(strings = {"javadoc.txt", "emptyFile.txt"})
     @org.junitpioneer.jupiter.Issue("JENKINS-75391")
     void shouldShowWarningWhenUsingIdForToolAndRecorder(final String fileName) {
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix(fileName);
+        var job = createPipelineWithWorkspaceFilesWithSuffix(fileName);
 
         job.setDefinition(asStage(
                 "recordIssues id: 'custom-id', name: 'custom-name', icon: 'custom-icon', "
@@ -670,7 +675,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
 
     private void publishResultsWithIdAndName(final String publishStep, final String expectedId,
             final String expectedName, final String expectedIcon) {
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("eclipse.txt", "javadoc.txt", "javac.txt");
+        var job = createPipelineWithWorkspaceFilesWithSuffix("eclipse.txt", "javadoc.txt", "javac.txt");
         job.setDefinition(asStage(createScanForIssuesStep(new Java(), "java"),
                 createScanForIssuesStep(new Eclipse(), "eclipse"),
                 createScanForIssuesStep(new JavaDoc(), "javadoc"),
@@ -678,7 +683,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
 
         Run<?, ?> run = buildSuccessfully(job);
 
-        ResultAction action = getResultAction(run);
+        var action = getResultAction(run);
         assertThat(action.getId()).isEqualTo(expectedId);
         assertThat(action.getDisplayName()).contains(expectedName);
         assertThat(action.getIconFileName()).contains(expectedIcon);
@@ -687,7 +692,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private void assertThatJavaIssuesArePublished(final AnalysisResult result) {
-        Report report = result.getIssues();
+        var report = result.getIssues();
         assertThat(report.filter(issue -> "eclipse".equals(issue.getOrigin()))).hasSize(
                 10); // maven eclipse detects to maven javac warnings
         assertThat(report.filter(issue -> "java".equals(issue.getOrigin()))).hasSize(2);
@@ -717,29 +722,30 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     @org.junitpioneer.jupiter.Issue("JENKINS-57638")
     void shouldUseCustomIdsForOriginSimpleStep() {
         verifyCustomIdsForOrigin(asStage(
-                "recordIssues(\n"
-                        + "                    aggregatingResults: true, \n"
-                        + "                    tools: [\n"
-                        + "                        java(pattern:'**/*issues.txt', reportEncoding:'UTF-8', id:'id1', name:'name1'),\n"
-                        + "                        javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8', id:'id2', name:'name2')\n"
-                        + "                    ]\n"
-                        + "                )"));
+                """
+                recordIssues(
+                                    aggregatingResults: true,\s
+                                    tools: [
+                                        java(pattern:'**/*issues.txt', reportEncoding:'UTF-8', id:'id1', name:'name1'),
+                                        javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8', id:'id2', name:'name2')
+                                    ]
+                                )"""));
     }
 
     private void verifyCustomIdsForOrigin(final CpsFlowDefinition stage) {
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("javadoc.txt", "javac.txt");
+        var job = createPipelineWithWorkspaceFilesWithSuffix("javadoc.txt", "javac.txt");
         job.setDefinition(stage);
         Run<?, ?> run = buildSuccessfully(job);
 
-        ResultAction action = getResultAction(run);
+        var action = getResultAction(run);
         assertThat(action.getId()).isEqualTo("analysis");
         assertThat(action.getDisplayName()).contains("Static Analysis");
 
-        AnalysisResult result = action.getResult();
+        var result = action.getResult();
         assertThat(result.getIssues()).hasSize(2 + 6);
         assertThat(result.getSizePerOrigin()).contains(entry("id1", 2), entry("id2", 6));
 
-        Report report = result.getIssues();
+        var report = result.getIssues();
         assertThat(report.filter(issue -> "id1".equals(issue.getOrigin()))).hasSize(2);
         assertThat(report.filter(issue -> "id2".equals(issue.getOrigin()))).hasSize(6);
         assertThat(report.getNameOfOrigin("id1")).isEqualTo("name1");
@@ -771,11 +777,11 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private void runEclipse(final String property) {
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("eclipse.txt");
+        var job = createPipelineWithWorkspaceFilesWithSuffix("eclipse.txt");
         job.setDefinition(asStage("recordIssues "
                 + property));
 
-        AnalysisResult result = scheduleSuccessfulBuild(job);
+        var result = scheduleSuccessfulBuild(job);
         assertThat(result.getIssues()).hasSize(8);
     }
 
@@ -785,17 +791,17 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldHaveActionWithIdAndNameWithEmptyResults() {
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("pep8Test.txt");
+        var job = createPipelineWithWorkspaceFilesWithSuffix("pep8Test.txt");
         job.setDefinition(asStage(createScanForIssuesStep(new Java(), "java"),
                 "publishIssues issues:[java]"));
 
         Run<?, ?> run = buildSuccessfully(job);
 
-        ResultAction action = getResultAction(run);
+        var action = getResultAction(run);
         assertThat(action.getId()).isEqualTo("java");
         assertThat(action.getDisplayName()).contains("Java");
 
-        AnalysisResult result = action.getResult();
+        var result = action.getResult();
         assertThat(result.getIssues()).isEmpty();
     }
 
@@ -805,14 +811,14 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldShowWarningsOfGroovyParserWhenScanningFileInWorkspace() {
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("pep8Test.txt");
+        var job = createPipelineWithWorkspaceFilesWithSuffix("pep8Test.txt");
         job.setDefinition(asStage(
                 "def groovy = scanForIssues "
                         + "tool: groovyScript(parserId: 'groovy-pep8', pattern:'**/*issues.txt', reportEncoding:'UTF-8')",
                 "publishIssues issues:[groovy]"));
 
         ParserConfiguration configuration = ParserConfiguration.getInstance();
-        String id = "groovy-pep8";
+        var id = "groovy-pep8";
         configuration.setParsers(Collections.singletonList(
                 new GroovyParser(id, "Groovy Pep8",
                         "(.*):(\\d+):(\\d+): (\\D\\d*) (.*)",
@@ -829,7 +835,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldShowWarningsOfGroovyParserWhenScanningConsoleLogWhenThatIsPermitted() throws IOException {
-        WorkflowJob job = createPipeline();
+        var job = createPipeline();
         ArrayList<String> stages = new ArrayList<>();
         catFileContentsByAddingEchosSteps(stages, "pep8Test.txt");
         stages.add("def groovy = scanForIssues "
@@ -839,7 +845,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
 
         ParserConfiguration configuration = ParserConfiguration.getInstance();
         configuration.setConsoleLogScanningPermitted(true);
-        String id = "groovy-pep8";
+        var id = "groovy-pep8";
         configuration.setParsers(Collections.singletonList(
                 new GroovyParser(id, "Groovy Pep8",
                         "(.*):(\\d+):(\\d+): (\\D\\d*) (.*)",
@@ -857,7 +863,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     void shouldShowWarningsOfGroovyParserWhenScanningConsoleLogWhenThatIsPermittedAndUsingAddParser()
             throws IOException {
-        WorkflowJob job = createPipeline();
+        var job = createPipeline();
         ArrayList<String> stages = new ArrayList<>();
         catFileContentsByAddingEchosSteps(stages, "pep8Test.txt");
         stages.add("def groovy = scanForIssues "
@@ -867,7 +873,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
 
         ParserConfiguration configuration = ParserConfiguration.getInstance();
         configuration.setConsoleLogScanningPermitted(true);
-        String id = "another-groovy-pep8";
+        var id = "another-groovy-pep8";
 
         configuration.addParser(new GroovyParser(id, "Another Groovy Pep8",
                 "(.*):(\\d+):(\\d+): (\\D\\d*) (.*)",
@@ -885,7 +891,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldFailUsingGroovyParserToScanConsoleLogWhenThatIsForbidden() throws IOException {
-        WorkflowJob job = createPipeline();
+        var job = createPipeline();
         ArrayList<String> stages = new ArrayList<>();
         catFileContentsByAddingEchosSteps(stages, "pep8Test.txt");
         stages.add("def groovy = scanForIssues "
@@ -895,7 +901,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
 
         ParserConfiguration configuration = ParserConfiguration.getInstance();
         configuration.setConsoleLogScanningPermitted(false);
-        String id = "groovy-pep8";
+        var id = "groovy-pep8";
         configuration.setParsers(Collections.singletonList(
                 new GroovyParser(id, "Groovy Pep8",
                         "(.*):(\\d+):(\\d+): (\\D\\d*) (.*)",
@@ -906,24 +912,24 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     private void testGroovyPep8JobIsSuccessful(final WorkflowJob job, final String id) {
         Run<?, ?> run = buildSuccessfully(job);
 
-        ResultAction action = getResultAction(run);
+        var action = getResultAction(run);
         assertThat(action.getId()).isEqualTo(id);
         assertThat(action.getDisplayName()).contains("Groovy Pep8");
 
-        AnalysisResult result = action.getResult();
+        var result = action.getResult();
         assertThat(result.getIssues()).hasSize(8);
         assertThat(result.getIssues().getPropertyCount(Issue::getOrigin)).containsOnly(entry(id, 8));
 
-        AnalysisResult second = scheduleSuccessfulBuild(job);
+        var second = scheduleSuccessfulBuild(job);
         assertThat(second).hasFixedSize(0).hasTotalSize(8).hasNewSize(0);
     }
 
     private void catFileContentsByAddingEchosSteps(final List<String> stagesToAddTo,
             final String nameOfReportFileToEcho) throws IOException {
-        Path reportFilePath = getResourceAsFile(nameOfReportFileToEcho);
+        var reportFilePath = getResourceAsFile(nameOfReportFileToEcho);
         List<String> reportFileContents = Files.readAllLines(reportFilePath);
         for (String reportFileLine : reportFileContents) {
-            String stage = "echo '" + reportFileLine.replace("'", "\\'") + "'";
+            var stage = "echo '" + reportFileLine.replace("'", "\\'") + "'";
             stagesToAddTo.add(stage);
         }
     }
@@ -965,7 +971,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         List<AnalysisResult> results = getAnalysisResults(runWith2GroovyParsers(true));
         assertThat(results).hasSize(1);
 
-        AnalysisResult result = results.get(0);
+        var result = results.get(0);
         assertThat(result.getId()).isEqualTo("analysis");
     }
 
@@ -977,7 +983,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldUseGroovyParserTwiceAndAggregateIntoSingleResultWithCustomizableIdAndName() {
         Run<?, ?> build = runWith2GroovyParsers(true,
                 "name: 'Custom Name'", "id: 'custom-id'", "icon: 'custom-icon.png'");
-        ResultAction action = getResultAction(build);
+        var action = getResultAction(build);
 
         assertThat(action.getId()).isEqualTo("custom-id");
         assertThat(action.getDisplayName()).isEqualTo("Custom Name Warnings");
@@ -991,14 +997,14 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     void shouldUseGroovyParserTwiceAndAggregateIntoSingleResultWithCustomizableName() {
         Run<?, ?> build = runWith2GroovyParsers(true, "name: 'Custom Name'");
-        ResultAction action = getResultAction(build);
+        var action = getResultAction(build);
 
         assertThat(action.getId()).isEqualTo("analysis");
         assertThat(action.getDisplayName()).isEqualTo("Custom Name Warnings");
     }
 
     private Run<?, ?> runWith2GroovyParsers(final boolean isAggregating, final String... arguments) {
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("pep8Test.txt");
+        var job = createPipelineWithWorkspaceFilesWithSuffix("pep8Test.txt");
         job.setDefinition(asStage(
                 "recordIssues aggregatingResults: " + isAggregating + ", tools: ["
                         + "groovyScript(parserId:'groovy-pep8', pattern: '**/*issues.txt', id: 'groovy-1'),"
@@ -1006,7 +1012,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
                         + "] " + join(arguments)));
 
         ParserConfiguration configuration = ParserConfiguration.getInstance();
-        String id = "groovy-pep8";
+        var id = "groovy-pep8";
         configuration.setParsers(Collections.singletonList(
                 new GroovyParser(id, "Groovy Pep8",
                         "(.*):(\\d+):(\\d+): (\\D\\d*) (.*)",
@@ -1020,7 +1026,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldApplyFileFilters() {
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("pmd-filtering.xml");
+        var job = createPipelineWithWorkspaceFilesWithSuffix("pmd-filtering.xml");
 
         setFilter(job, "includeFile('File.*.java')");
         assertThat(scheduleSuccessfulBuild(job).getTotalSize()).isEqualTo(16);
@@ -1048,15 +1054,15 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldCombineFilter() {
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("pmd-filtering.xml");
+        var job = createPipelineWithWorkspaceFilesWithSuffix("pmd-filtering.xml");
 
         setFilter(job, "includeFile('File1.java'), includeCategory('Category1')");
-        AnalysisResult result = scheduleSuccessfulBuild(job);
+        var result = scheduleSuccessfulBuild(job);
         assertThat(result.getTotalSize()).isEqualTo(8 + 4);
 
         setFilter(job,
                 "includeFile('File1.java'), excludeCategory('Category1'), excludeType('Type1'), excludeNamespace('.*package1') ");
-        AnalysisResult oneIssue = scheduleSuccessfulBuild(job);
+        var oneIssue = scheduleSuccessfulBuild(job);
         assertThat(oneIssue.getIssues().getFiles()).containsExactly("File1.java");
         assertThat(oneIssue.getIssues().getCategories()).containsExactly("Category2");
         assertThat(oneIssue.getIssues().getTypes()).containsExactly("Type2");
@@ -1066,7 +1072,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     private void verifyIncludeFile(final WorkflowJob job, final String fileName) {
         setFilter(job, "includeFile('" + fileName + "')");
 
-        AnalysisResult result = scheduleSuccessfulBuild(job);
+        var result = scheduleSuccessfulBuild(job);
 
         assertThat(result.getTotalSize()).isEqualTo(8);
         assertThat(result.getIssues().getFiles()).containsExactly(fileName);
@@ -1076,14 +1082,14 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
             final String expectedFileName) {
         setFilter(job, "excludeFile('" + excludedFileName + "')");
 
-        AnalysisResult result = scheduleSuccessfulBuild(job);
+        var result = scheduleSuccessfulBuild(job);
 
         assertThat(result.getTotalSize()).isEqualTo(8);
         assertThat(result.getIssues().getFiles()).containsExactly(expectedFileName);
     }
 
     private void setFilter(final WorkflowJob job, final String filters) {
-        String scanWithFilter = createScanForIssuesStep(new Pmd(), "issues", String.format("filters:[%s]", filters));
+        var scanWithFilter = createScanForIssuesStep(new Pmd(), "issues", "filters:[%s]".formatted(filters));
         job.setDefinition(asStage(scanWithFilter, "publishIssues issues:[issues]"));
     }
 
@@ -1096,14 +1102,14 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     @org.junitpioneer.jupiter.Issue("JENKINS-39203")
     void publishIssuesShouldMarkStepWithWarningAction() {
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("javac.txt");
+        var job = createPipelineWithWorkspaceFilesWithSuffix("javac.txt");
         job.setDefinition(asStage(createScanForIssuesStep(new Java(), "java"),
                 "publishIssues(issues:[java], qualityGates: [[threshold: 1, type: 'TOTAL', unstable: true]])"));
-        WorkflowRun run = (WorkflowRun) buildWithResult(job, Result.UNSTABLE);
-        FlowNode publishIssuesNode = new DepthFirstScanner().findFirstMatch(run.getExecution(),
+        var run = (WorkflowRun) buildWithResult(job, Result.UNSTABLE);
+        var publishIssuesNode = new DepthFirstScanner().findFirstMatch(run.getExecution(),
                 node -> "publishIssues".equals(Objects.requireNonNull(node).getDisplayFunctionName()));
         assertThat(publishIssuesNode).isNotNull();
-        WarningAction warningAction = publishIssuesNode.getPersistentAction(WarningAction.class);
+        var warningAction = publishIssuesNode.getPersistentAction(WarningAction.class);
         assertThat(warningAction).isNotNull();
         assertThat(warningAction.getMessage()).endsWith(
                 "Some quality gates have been missed: overall result is UNSTABLE");
@@ -1118,14 +1124,14 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     @org.junitpioneer.jupiter.Issue("JENKINS-39203")
     void recordIssuesShouldMarkStepWithWarningAction() {
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("javac.txt");
+        var job = createPipelineWithWorkspaceFilesWithSuffix("javac.txt");
         job.setDefinition(asStage("recordIssues(tool: java(pattern:'**/*issues.txt', reportEncoding:'UTF-8'),"
                 + "qualityGates: [[threshold: 1, type: 'TOTAL', unstable: true]])"));
-        WorkflowRun run = (WorkflowRun) buildWithResult(job, Result.UNSTABLE);
-        FlowNode publishIssuesNode = new DepthFirstScanner().findFirstMatch(run.getExecution(),
+        var run = (WorkflowRun) buildWithResult(job, Result.UNSTABLE);
+        var publishIssuesNode = new DepthFirstScanner().findFirstMatch(run.getExecution(),
                 node -> "recordIssues".equals(Objects.requireNonNull(node).getDisplayFunctionName()));
         assertThat(publishIssuesNode).isNotNull();
-        WarningAction warningAction = publishIssuesNode.getPersistentAction(WarningAction.class);
+        var warningAction = publishIssuesNode.getPersistentAction(WarningAction.class);
         assertThat(warningAction).isNotNull();
         assertThat(warningAction.getMessage()).endsWith(
                 "Some quality gates have been missed: overall result is UNSTABLE");
@@ -1140,28 +1146,28 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void showPreventXxeSecurity656() {
-        String oobInUserContentLink = getUrl("userContent/oob.xml");
-        String triggerLink = getUrl("triggerMe");
+        var oobInUserContentLink = getUrl("userContent/oob.xml");
+        var triggerLink = getUrl("triggerMe");
 
-        String xxeFileContent = toString("testXxe-xxe.xml");
-        String oobFileContent = toString("testXxe-oob.xml");
+        var xxeFileContent = toString("testXxe-xxe.xml");
+        var oobFileContent = toString("testXxe-oob.xml");
 
         write(oobFileContent.replace("$TARGET_URL$", triggerLink));
 
-        WorkflowJob job = createPipeline();
-        String adaptedXxeFileContent = xxeFileContent.replace("$OOB_LINK$", oobInUserContentLink);
+        var job = createPipeline();
+        var adaptedXxeFileContent = xxeFileContent.replace("$OOB_LINK$", oobInUserContentLink);
         createFileInWorkspace(job, "xxe.xml", adaptedXxeFileContent);
 
         List<AnalysisModelParser> tools = Lists.mutable.of(new CheckStyle(), new Pmd(), new FindBugs(), new JcReport());
         for (AnalysisModelParser tool : tools) {
             job.setDefinition(asStage(
-                    String.format("def issues = scanForIssues tool: %s(pattern:'xxe.xml')",
+                    "def issues = scanForIssues tool: %s(pattern:'xxe.xml')".formatted(
                             tool.getSymbolName()),
                     "publishIssues issues:[issues]"));
 
             scheduleSuccessfulBuild(job);
 
-            YouCannotTriggerMe urlHandler = getJenkins().jenkins.getExtensionList(UnprotectedRootAction.class)
+            var urlHandler = getJenkins().jenkins.getExtensionList(UnprotectedRootAction.class)
                     .get(YouCannotTriggerMe.class);
             assertThat(urlHandler).isNotNull();
 
@@ -1176,15 +1182,15 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldGenerateJsonDataModel() {
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("checkstyle1.xml");
+        var job = createPipelineWithWorkspaceFilesWithSuffix("checkstyle1.xml");
 
         configurePublisher(job, "checkstyle1", NO_QUALITY_GATE);
         Run<?, ?> baseline = buildSuccessfully(job);
 
-        ResultAction action = baseline.getAction(ResultAction.class);
-        PullRequestMonitoringPortlet portlet = new PullRequestMonitoringPortlet(action);
+        var action = baseline.getAction(ResultAction.class);
+        var portlet = new PullRequestMonitoringPortlet(action);
 
-        String model = portlet.getWarningsModel();
+        var model = portlet.getWarningsModel();
         assertThatJson(model).node("fixed").isEqualTo(0);
         assertThatJson(model).node("outstanding").isEqualTo(3);
         assertThatJson(model).node("new").node("total").isEqualTo(0);
@@ -1198,7 +1204,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
 
     private void write(final String adaptedOobFileContent) {
         try {
-            File userContentDir = new File(getJenkins().jenkins.getRootDir(), "userContent");
+            var userContentDir = new File(getJenkins().jenkins.getRootDir(), "userContent");
             Files.write(new File(userContentDir, "oob.xml").toPath(), adaptedOobFileContent.getBytes());
         }
         catch (IOException e) {
@@ -1222,7 +1228,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @TestExtension
     public static class YouCannotTriggerMe implements UnprotectedRootAction {
-        private int triggerCount = 0;
+        private int triggerCount;
 
         @Override
         public String getIconFileName() {

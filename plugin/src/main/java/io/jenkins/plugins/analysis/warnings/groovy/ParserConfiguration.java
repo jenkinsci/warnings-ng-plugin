@@ -1,11 +1,11 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
+import edu.hm.hafner.util.VisibleForTesting;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-
-import edu.hm.hafner.util.VisibleForTesting;
 
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
@@ -32,7 +32,7 @@ import io.jenkins.plugins.util.JenkinsFacade;
 @Symbol("warningsParsers")
 public class ParserConfiguration extends GlobalConfigurationItem {
     private List<GroovyParser> parsers = new ArrayList<>();
-    private boolean consoleLogScanningPermitted = false;
+    private boolean consoleLogScanningPermitted;
 
     /**
      * Creates the Groovy parser configuration for the warnings plugins.
@@ -94,11 +94,11 @@ public class ParserConfiguration extends GlobalConfigurationItem {
      */
     public void deleteParser(final String parserId) {
         if (contains(parserId)) {
-            GroovyParser parser = getParser(parserId);
+            var parser = getParser(parserId);
             this.parsers.remove(parser);
         }
         else {
-            throw new NoSuchElementException(String.format("No Groovy parser with ID '%s' found.", parserId));
+            throw new NoSuchElementException("No Groovy parser with ID '%s' found.".formatted(parserId));
         }
         save();
     }
@@ -110,9 +110,9 @@ public class ParserConfiguration extends GlobalConfigurationItem {
      *         the new Groovy parser to be added
      */
     public void addParser(final GroovyParser parser) {
-        String parserId = parser.getId();
+        var parserId = parser.getId();
         if (contains(parserId)) {
-            throw new IllegalArgumentException(String.format("ID '%s' already exists.", parserId));
+            throw new IllegalArgumentException("ID '%s' already exists.".formatted(parserId));
         }
         this.parsers.add(parser);
 
@@ -189,7 +189,7 @@ public class ParserConfiguration extends GlobalConfigurationItem {
                 return parser;
             }
         }
-        throw new NoSuchElementException(String.format("No Groovy parser with ID '%s' found.", id));
+        throw new NoSuchElementException("No Groovy parser with ID '%s' found.".formatted(id));
     }
 
     /**
@@ -216,7 +216,7 @@ public class ParserConfiguration extends GlobalConfigurationItem {
      * @return the model of the list box
      */
     public ListBoxModel asListBoxModel() {
-        ListBoxModel items = new ListBoxModel();
+        var items = new ListBoxModel();
         for (GroovyParser parser : parsers) {
             items.add(parser.getName(), parser.getId());
         }

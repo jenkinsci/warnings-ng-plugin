@@ -36,7 +36,6 @@ public class ByIdResultSelector implements ResultSelector {
 
     @Override
     public String toString() {
-        return String.format("%s with ID %s", ResultAction.class.getName(), id);
+        return "%s with ID %s".formatted(ResultAction.class.getName(), id);
     }
 }
-

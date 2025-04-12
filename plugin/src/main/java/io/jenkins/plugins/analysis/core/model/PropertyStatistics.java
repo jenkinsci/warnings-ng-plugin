@@ -1,15 +1,15 @@
 package io.jenkins.plugins.analysis.core.model;
 
+import org.apache.commons.lang3.StringUtils;
+
+import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.analysis.Severity;
+
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
-
-import org.apache.commons.lang3.StringUtils;
-
-import edu.hm.hafner.analysis.Report;
-import edu.hm.hafner.analysis.Severity;
 
 /**
  * Groups issue by a specified property, like package name or origin. Provides statistics for this property in order to
@@ -197,7 +197,7 @@ public class PropertyStatistics {
         if (issuesByProperty.containsKey(key)) {
             return issuesByProperty.get(key);
         }
-        throw new NoSuchElementException(String.format("There is no report for key '%s'", key));
+        throw new NoSuchElementException("There is no report for key '%s'".formatted(key));
     }
 
     private Optional<Report> getNewReportFor(final String key) {
@@ -207,4 +207,3 @@ public class PropertyStatistics {
         return Optional.empty();
     }
 }
-

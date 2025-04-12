@@ -1,5 +1,13 @@
 package io.jenkins.plugins.analysis.warnings.tasks;
 
+import org.apache.commons.lang3.StringUtils;
+
+import edu.hm.hafner.analysis.IssueBuilder;
+import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.analysis.Severity;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
@@ -12,18 +20,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Stream;
-
-import org.apache.commons.lang3.StringUtils;
-
-import edu.hm.hafner.analysis.IssueBuilder;
-import edu.hm.hafner.analysis.Report;
-import edu.hm.hafner.analysis.Severity;
-import edu.umd.cs.findbugs.annotations.CheckForNull;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 
@@ -97,10 +96,10 @@ class TaskScanner {
             return "No task tags have been defined. Configuration Error?\n";
         }
         else {
-            StringBuilder builder = new StringBuilder("Using the following tasks patterns:\n");
+            var builder = new StringBuilder("Using the following tasks patterns:\n");
             for (Severity severity : Severity.getPredefinedValues()) {
                 if (patterns.containsKey(severity)) {
-                    builder.append(String.format("-> %s: %s%n", LocalizedSeverity.getLocalizedString(severity),
+                    builder.append("-> %s: %s%n".formatted(LocalizedSeverity.getLocalizedString(severity),
                             patterns.get(severity)));
                 }
             }
@@ -146,9 +145,9 @@ class TaskScanner {
 
             List<String> regexps = new ArrayList<>();
             for (String tag : splitTags(tagIdentifiers)) {
-                String trimmed = tag.trim();
+                var trimmed = tag.trim();
                 if (StringUtils.isNotBlank(trimmed)) {
-                    StringBuilder actual = new StringBuilder();
+                    var actual = new StringBuilder();
                     if (Character.isLetterOrDigit(trimmed.charAt(0))) {
                         actual.append(WORD_BOUNDARY);
                     }
@@ -160,7 +159,7 @@ class TaskScanner {
                 }
             }
 
-            String regex = "^.*(" + StringUtils.join(regexps.iterator(), "|") + ")(.*)$";
+            var regex = "^.*(" + StringUtils.join(regexps.iterator(), "|") + ")(.*)$";
             if (caseMode == CaseMode.IGNORE_CASE) {
                 return Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
             }
@@ -170,7 +169,7 @@ class TaskScanner {
         }
         catch (PatternSyntaxException exception) {
             isPatternInvalid = true;
-            errors.append(String.format("Specified pattern is an invalid regular expression: '%s': '%s'",
+            errors.append("Specified pattern is an invalid regular expression: '%s': '%s'".formatted(
                     tagIdentifiers, exception.getMessage()));
 
             return INVALID;
@@ -179,7 +178,7 @@ class TaskScanner {
 
     private String[] splitTags(final String tagIdentifiers) {
         if (tagIdentifiers.indexOf(',') == -1) {
-            return new String[] {tagIdentifiers};
+            return new String[]{tagIdentifiers};
         }
         else {
             return StringUtils.split(tagIdentifiers, ",");
@@ -202,8 +201,8 @@ class TaskScanner {
             return scanTasks(lines.iterator(), new IssueBuilder().setFileName(file.toString()));
         }
         catch (IOException | UncheckedIOException exception) {
-            Report report = new Report();
-            Throwable cause = exception.getCause();
+            var report = new Report();
+            var cause = exception.getCause();
             if (cause instanceof MalformedInputException || cause instanceof UnmappableCharacterException) {
                 report.logError("Can't read source file '%s', defined encoding '%s' seems to be wrong",
                         file, charset);
@@ -227,17 +226,17 @@ class TaskScanner {
      * @return the open tasks
      */
     Report scanTasks(final Iterator<String> lines, final IssueBuilder builder) {
-        Report report = new Report();
+        var report = new Report();
 
         if (isPatternInvalid) {
             report.logError("%s", errors.toString());
             return report;
         }
 
-        IgnoreSection inIgnoreSection = new IgnoreSection();
+        var inIgnoreSection = new IgnoreSection();
 
         for (int lineNumber = 1; lines.hasNext(); lineNumber++) {
-            String line = lines.next();
+            var line = lines.next();
 
             if (inIgnoreSection.matches(line)) {
                 continue;
@@ -254,9 +253,9 @@ class TaskScanner {
 
     private void createTask(final IssueBuilder builder, final Report report, final int lineNumber, final String line,
             final Severity severity) {
-        Matcher matcher = patterns.get(severity).matcher(line);
+        var matcher = patterns.get(severity).matcher(line);
         if (matcher.matches() && matcher.groupCount() == 2) {
-            String message = StringUtils.defaultString(matcher.group(2)).trim();
+            var message = StringUtils.defaultString(matcher.group(2)).trim();
             builder.setMessage(StringUtils.removeStart(message, ":").trim());
 
             String tag = StringUtils.defaultString(matcher.group(1));
@@ -274,7 +273,7 @@ class TaskScanner {
         private static final String IGNORE_BEGIN = " task-scanner-ignore-begin";
         private static final String IGNORE_END = " task-scanner-ignore-end";
 
-        private boolean ignore = false;
+        private boolean ignore;
 
         public boolean matches(final String line) {
             if (line.contains(IGNORE_BEGIN)) {
@@ -288,4 +287,3 @@ class TaskScanner {
         }
     }
 }
-

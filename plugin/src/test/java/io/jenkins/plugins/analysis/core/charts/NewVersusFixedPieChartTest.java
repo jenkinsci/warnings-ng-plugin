@@ -3,7 +3,6 @@ package io.jenkins.plugins.analysis.core.charts;
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Report;
-import edu.hm.hafner.echarts.PieChartModel;
 import edu.hm.hafner.echarts.PieData;
 
 import static io.jenkins.plugins.analysis.core.charts.Messages.*;
@@ -18,9 +17,9 @@ import static org.mockito.Mockito.*;
 class NewVersusFixedPieChartTest {
     @Test
     void testCreate() {
-        NewVersusFixedPieChart chart = new NewVersusFixedPieChart();
+        var chart = new NewVersusFixedPieChart();
 
-        PieChartModel model = chart.create(createReportWithSize(2), createReportWithSize(3), createReportWithSize(4));
+        var model = chart.create(createReportWithSize(2), createReportWithSize(3), createReportWithSize(4));
 
         assertThat(model.getData()).map(PieData::getName).containsExactly(
                 New_Warnings_Short(), Outstanding_Warnings_Short(), Fixed_Warnings_Short());

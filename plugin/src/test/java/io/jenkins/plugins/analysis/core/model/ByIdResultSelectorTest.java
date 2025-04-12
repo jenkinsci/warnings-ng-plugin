@@ -1,14 +1,14 @@
 package io.jenkins.plugins.analysis.core.model;
 
+import org.junit.jupiter.api.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
+import hudson.model.Run;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
-
-import hudson.model.Run;
 
 /**
  * Tests the class {@link ByIdResultSelector}.
@@ -21,7 +21,7 @@ class ByIdResultSelectorTest {
      */
     @Test
     void shouldBeEmptyIfActionsAreEmpty() {
-        ByIdResultSelector selector = new ByIdResultSelector("1");
+        var selector = new ByIdResultSelector("1");
 
         Run<?, ?> run = createRunStub(new ArrayList<>());
 
@@ -34,7 +34,7 @@ class ByIdResultSelectorTest {
      */
     @Test
     void shouldBeEmptyIfActionsHasDifferentId() {
-        ByIdResultSelector selector = new ByIdResultSelector("1");
+        var selector = new ByIdResultSelector("1");
 
         List<ResultAction> resultActions = new ArrayList<>();
         resultActions.add(createResultActionStub("2"));
@@ -49,7 +49,7 @@ class ByIdResultSelectorTest {
      */
     @Test
     void shouldFindActionWithSameId() {
-        ByIdResultSelector selector = new ByIdResultSelector("1");
+        var selector = new ByIdResultSelector("1");
 
         List<ResultAction> resultActions = new ArrayList<>();
         resultActions.add(createResultActionStub("1"));
@@ -65,7 +65,7 @@ class ByIdResultSelectorTest {
      */
     @Test
     void shouldFindEmptyIfListContainsTwoDifferentIds() {
-        ByIdResultSelector selector = new ByIdResultSelector("1");
+        var selector = new ByIdResultSelector("1");
 
         List<ResultAction> resultActions = new ArrayList<>();
         resultActions.add(createResultActionStub("2"));
@@ -81,7 +81,7 @@ class ByIdResultSelectorTest {
      */
     @Test
     void shouldFindActionWithSameIdIfListContainsTwoDifferentIds() {
-        ByIdResultSelector selector = new ByIdResultSelector("1");
+        var selector = new ByIdResultSelector("1");
 
         List<ResultAction> resultActions = new ArrayList<>();
         resultActions.add(createResultActionStub("2"));
@@ -94,7 +94,7 @@ class ByIdResultSelectorTest {
 
     @Test
     void testToString() {
-        ByIdResultSelector selector = new ByIdResultSelector("1");
+        var selector = new ByIdResultSelector("1");
         assertThat(selector.toString()).isEqualTo("io.jenkins.plugins.analysis.core.model.ResultAction with ID 1");
     }
 

@@ -1,10 +1,10 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.util.Set;
-
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Report;
+
+import java.util.Set;
 
 /**
  * Provides localized labels for the different categories of issues.

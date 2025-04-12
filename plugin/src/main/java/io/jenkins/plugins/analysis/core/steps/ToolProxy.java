@@ -60,4 +60,3 @@ public class ToolProxy extends AbstractDescribableImpl<ToolProxy> {
         }
     }
 }
-

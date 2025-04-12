@@ -1,19 +1,17 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.Arrays;
-import java.util.stream.Stream;
-
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.ModuleDetectorRunner;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
+import java.util.stream.Stream;
+
 import hudson.FilePath;
-import hudson.model.FreeStyleProject;
 import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.model.ResultAction;
@@ -118,7 +116,7 @@ class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m3/META-INF/MANIFEST.MF",
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties"};
 
-        ResultAction result = createResult(
+        var result = createResult(
                 workspaceFiles.length - 1,
                 true,
                 workspaceFiles);
@@ -144,7 +142,7 @@ class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m3/META-INF/MANIFEST.MF",
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties"};
 
-        FreeStyleProject project = createFreeStyleProject();
+        var project = createFreeStyleProject();
         copyWorkspaceFiles(project, workspaceFiles, file -> file.replaceFirst("detectors/buildfiles/\\w*/", ""));
         var recorder = enableGenericWarnings(project, new Eclipse());
         recorder.setSkipPostProcessing(true);
@@ -153,7 +151,7 @@ class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
                 getJenkins().jenkins.getWorkspaceFor(project));
 
         Run<?, ?> build = buildSuccessfully(project);
-        ResultAction result = getResultAction(build);
+        var result = getResultAction(build);
         assertThat(result.getResult().getIssues().getModules()).containsExactly("-");
 
         assertThat(getConsoleLog(build)).doesNotContain("Resolving module names from module definitions (build.xml, pom.xml, or Manifest.mf files)");
@@ -170,7 +168,7 @@ class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
                 BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m1/pom.xml",
                 BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m2/pom.xml"};
 
-        ResultAction result = createResult(
+        var result = createResult(
                 workspaceFiles.length,
                 false,
                 workspaceFiles);
@@ -190,7 +188,7 @@ class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml",
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m1/build.xml"};
 
-        ResultAction result = createResult(workspaceFiles.length, false,
+        var result = createResult(workspaceFiles.length, false,
                 workspaceFiles);
 
         verifyModules(result,
@@ -210,7 +208,7 @@ class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m3/META-INF/MANIFEST.MF",
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties"};
 
-        ResultAction result = createResult(
+        var result = createResult(
                 workspaceFiles.length - 1,
                 false,
                 workspaceFiles);
@@ -239,7 +237,7 @@ class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m3/META-INF/MANIFEST.MF",
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties"};
 
-        ResultAction result = createResult(
+        var result = createResult(
                 workspaceFiles.length - 1,
                 true,
                 workspaceFiles);
@@ -264,7 +262,7 @@ class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
                 BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m4/pom.xml",
                 BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m5/pom.xml"};
 
-        ResultAction result = createResult(
+        var result = createResult(
                 workspaceFiles.length,
                 true,
                 workspaceFiles);
@@ -289,7 +287,7 @@ class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m3/build.xml"
         };
 
-        ResultAction result = createResult(
+        var result = createResult(
                 workspaceFiles.length,
                 true,
                 workspaceFiles);
@@ -312,7 +310,7 @@ class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m3/META-INF/MANIFEST.MF",
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties"};
 
-        ResultAction result = createResult(
+        var result = createResult(
                 workspaceFiles.length - 1,
                 true,
                 workspaceFiles);
@@ -373,9 +371,9 @@ class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private void verifyConsoleLog(final ResultAction result, final long modulesSize) {
-        String logOutput = getConsoleLog(result.getOwner());
+        var logOutput = getConsoleLog(result.getOwner());
         assertThat(logOutput).contains(DEFAULT_DEBUG_LOG_LINE);
-        assertThat(logOutput).contains(String.format("-> resolved module names for %s issues", modulesSize));
+        assertThat(logOutput).contains("-> resolved module names for %s issues".formatted(modulesSize));
     }
 
     /**
@@ -392,8 +390,8 @@ class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
     private void createEclipseWarningsReport(final int modulePaths,
             final boolean appendNonExistingFile, final FilePath workspace) {
         for (int i = 1; i <= modulePaths; i++) {
-            String directory = workspace + "/m" + i;
-            String affectedFile = directory + "/ClassWithWarnings.java";
+            var directory = workspace + "/m" + i;
+            var affectedFile = directory + "/ClassWithWarnings.java";
             writeEclipseWarning(workspace,
                     "[javac] 1. WARNING in " + affectedFile + " (at line 42)",
                     "[javac] \tSample Message",
@@ -415,9 +413,9 @@ class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
 
     private void createAffectedFile(final String directory, final String affectedFile) {
         try {
-            Path path = Paths.get(affectedFile);
+            Path path = Path.of(affectedFile);
             if (!Files.exists(path)) {
-                Path dirPath = Paths.get(directory);
+                Path dirPath = Path.of(directory);
                 Files.createDirectories(dirPath);
                 Files.createFile(path);
             }
@@ -429,7 +427,7 @@ class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
 
     private void writeEclipseWarning(final FilePath workspace, final String... lines) {
         try {
-            Files.write(Paths.get(workspace.child(REPORT_FILE_NAME).getRemote()), Arrays.asList(lines),
+            Files.write(Path.of(workspace.child(REPORT_FILE_NAME).getRemote()), Arrays.asList(lines),
                     StandardOpenOption.APPEND, StandardOpenOption.CREATE);
         }
         catch (IOException e) {
@@ -447,7 +445,7 @@ class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
 
     private ResultAction createResult(final int numberOfExpectedModules, final boolean appendNonExistingFile,
             final String... workspaceFiles) {
-        FreeStyleProject project = createFreeStyleProject();
+        var project = createFreeStyleProject();
         copyWorkspaceFiles(project, workspaceFiles, file -> file.replaceFirst("detectors/buildfiles/\\w*/", ""));
         enableGenericWarnings(project, new Eclipse());
 

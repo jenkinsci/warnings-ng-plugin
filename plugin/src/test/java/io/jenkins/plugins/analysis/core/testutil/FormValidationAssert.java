@@ -1,10 +1,10 @@
 package io.jenkins.plugins.analysis.core.testutil;
 
-import java.util.Objects;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.assertj.core.api.AbstractAssert;
+
+import java.util.Objects;
 
 import hudson.util.FormValidation;
 import hudson.util.FormValidation.Kind;
@@ -117,6 +117,5 @@ public class FormValidationAssert extends AbstractAssert<FormValidationAssert, F
         }
 
         return this;
-
     }
 }

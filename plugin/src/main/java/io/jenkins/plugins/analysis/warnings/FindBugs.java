@@ -2,6 +2,8 @@ package io.jenkins.plugins.analysis.warnings;
 
 import edu.hm.hafner.analysis.registry.ParserDescriptor.Option;
 
+import java.io.Serial;
+
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.jenkinsci.Symbol;
@@ -17,6 +19,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
  * @author Ullrich Hafner
  */
 public class FindBugs extends AnalysisModelParser {
+    @Serial
     private static final long serialVersionUID = 4692318309214830824L;
     private static final String ID = "findbugs";
 
@@ -31,7 +34,7 @@ public class FindBugs extends AnalysisModelParser {
 
     @Override
     protected Option[] configureOptions() {
-        return new Option[] {
+        return new Option[]{
                 new Option("SPOT_BUGS_CONFIDENCE", getUseRankAsPriority() ? "RANK" : "CONFIDENCE")};
     }
 

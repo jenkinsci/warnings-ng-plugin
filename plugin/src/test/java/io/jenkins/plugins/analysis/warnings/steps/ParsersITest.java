@@ -1,8 +1,5 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
-import java.util.Arrays;
-import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.Test;
 
 import com.parasoft.findings.jenkins.tool.ParasoftTool;
@@ -10,13 +7,12 @@ import com.parasoft.findings.jenkins.tool.ParasoftTool;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 
-import org.jenkinsci.plugins.workflow.job.WorkflowJob;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.*;
@@ -30,48 +26,49 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  */
 @SuppressWarnings({"PMD.CouplingBetweenObjects", "PMD.ExcessivePublicCount", "PMD.CyclomaticComplexity", "PMD.GodClass", "PMD.ExcessiveClassLength", "ClassDataAbstractionCoupling", "ClassFanOutComplexity"})
 class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
-    private static final String CODE_FRAGMENT = "<pre><code>#\n"
-            + "\n"
-            + "    ERROR HANDLING: N/A\n"
-            + "    #\n"
-            + "    REMARKS: N/A\n"
-            + "    #\n"
-            + "    ****************************** END HEADER *************************************\n"
-            + "    #\n"
-            + "\n"
-            + "    ***************************** BEGIN PDL ***************************************\n"
-            + "    #\n"
-            + "    ****************************** END PDL ****************************************\n"
-            + "    #\n"
-            + "\n"
-            + "    ***************************** BEGIN CODE **************************************\n"
-            + "    **\n"
-            + "    *******************************************************************************\n"
-            + "\n"
-            + "    *******************************************************************************\n"
-            + "    *******************************************************************************\n"
-            + "\n"
-            + "if [ $# -lt 3 ]\n"
-            + "then\n"
-            + "exit 1\n"
-            + "fi\n"
-            + "\n"
-            + "    *******************************************************************************\n"
-            + "    initialize local variables\n"
-            + "    shift input parameter (twice) to leave only files to copy\n"
-            + "    *******************************************************************************\n"
-            + "\n"
-            + "files&#61;&#34;&#34;\n"
-            + "shift\n"
-            + "shift\n"
-            + "\n"
-            + "    *******************************************************************************\n"
-            + "    *******************************************************************************\n"
-            + "\n"
-            + "for i in $*\n"
-            + "do\n"
-            + "files&#61;&#34;$files $directory/$i&#34;\n"
-            + "done</code></pre>";
+    private static final String CODE_FRAGMENT = """
+            <pre><code>#
+            
+                ERROR HANDLING: N/A
+                #
+                REMARKS: N/A
+                #
+                ****************************** END HEADER *************************************
+                #
+            
+                ***************************** BEGIN PDL ***************************************
+                #
+                ****************************** END PDL ****************************************
+                #
+            
+                ***************************** BEGIN CODE **************************************
+                **
+                *******************************************************************************
+            
+                *******************************************************************************
+                *******************************************************************************
+            
+            if [ $# -lt 3 ]
+            then
+            exit 1
+            fi
+            
+                *******************************************************************************
+                initialize local variables
+                shift input parameter (twice) to leave only files to copy
+                *******************************************************************************
+            
+            files&#61;&#34;&#34;
+            shift
+            shift
+            
+                *******************************************************************************
+                *******************************************************************************
+            
+            for i in $*
+            do
+            files&#61;&#34;$files $directory/$i&#34;
+            done</code></pre>""";
 
     /** Runs the Parasoft parser (part of the parasoft-findings plugin) on a file that contains 5 issues. */
     @Test
@@ -149,10 +146,10 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the CodeChecker parser on an output file that contains 3 issues. */
     @Test
     void shouldFindAllCodeCheckerIssues() {
-        String logFile = "CodeChecker_with_linux_paths.txt";
+        var logFile = "CodeChecker_with_linux_paths.txt";
         shouldFindIssuesOfTool(3, new CodeChecker(), logFile);
 
-        WorkflowJob job = createPipeline();
+        var job = createPipeline();
         copyMultipleFilesToWorkspace(job, logFile);
         job.setDefinition(asStage(String.format(
                 "recordIssues tool:analysisParser("
@@ -160,10 +157,10 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
                         + "reportEncoding:'UTF-8', "
                         + "analysisModelId:'code-checker')", logFile)));
 
-        AnalysisResult result = scheduleSuccessfulBuild(job);
+        var result = scheduleSuccessfulBuild(job);
 
         assertThat(result).hasTotalSize(3);
-        Report report = result.getIssues();
+        var report = result.getIssues();
         assertThat(report.filter(issue -> "code-checker".equals(issue.getOrigin()))).hasSize(3);
     }
 
@@ -226,16 +223,16 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the TagList parser on an output file that contains 6 issues. */
     @Test
     void shouldFindAllOpenTasks() {
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("file-with-tasks.txt");
+        var job = createPipelineWithWorkspaceFilesWithSuffix("file-with-tasks.txt");
         job.setDefinition(asStage(
                 "def issues = scanForIssues tool: "
                         + "taskScanner(includePattern:'**/*issues.txt', highTags:'FIXME', normalTags:'TODO')",
                 PUBLISH_ISSUES_STEP));
 
-        AnalysisResult result = scheduleSuccessfulBuild(job);
+        var result = scheduleSuccessfulBuild(job);
 
         assertThat(result.getTotalSize()).isEqualTo(2);
-        Report report = result.getIssues();
+        var report = result.getIssues();
         assertThat(report).hasSize(2);
         assertThatReportHasSeverities(report,
                 0, 1, 1, 0);
@@ -366,8 +363,8 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the CPD parser on an output file that contains 2 issues. */
     @Test
     void shouldFindAllCpdIssues() {
-        Report report = findReportWithoutAnsiColorPlugin(2, new Cpd(), "cpd.xml");
-        Report reportAnsi = findReportWithAnsiColorPlugin(2, new Cpd(), "cpd.xml");
+        var report = findReportWithoutAnsiColorPlugin(2, new Cpd(), "cpd.xml");
+        var reportAnsi = findReportWithAnsiColorPlugin(2, new Cpd(), "cpd.xml");
 
         assertThatDescriptionOfIssueIsSet(new Cpd(), report.get(0), CODE_FRAGMENT);
         assertThatDescriptionOfIssueIsSet(new Cpd(), reportAnsi.get(0), CODE_FRAGMENT);
@@ -384,8 +381,8 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the DupFinder parser on an output file that contains 2 issues. */
     @Test
     void shouldFindAllDupFinderIssues() {
-        Report report = findReportWithoutAnsiColorPlugin(2, new DupFinder(), "dupfinder.xml");
-        Report reportAnsi = findReportWithAnsiColorPlugin(2, new DupFinder(), "dupfinder.xml");
+        var report = findReportWithoutAnsiColorPlugin(2, new DupFinder(), "dupfinder.xml");
+        var reportAnsi = findReportWithAnsiColorPlugin(2, new DupFinder(), "dupfinder.xml");
 
         assertThatDescriptionOfIssueIsSet(new DupFinder(), report.get(0),
                 "<pre><code>if (items &#61;&#61; null) throw new ArgumentNullException(&#34;items&#34;);</code></pre>");
@@ -422,8 +419,8 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the PMD parser on an output file that contains 262 issues (PMD 6.1.0). */
     @Test
     void shouldFindAllPmdIssues() {
-        Report report = findReportWithoutAnsiColorPlugin(262, new Pmd(), "pmd-6.xml");
-        Report reportAnsi = findReportWithAnsiColorPlugin(262, new Pmd(), "pmd-6.xml");
+        var report = findReportWithoutAnsiColorPlugin(262, new Pmd(), "pmd-6.xml");
+        var reportAnsi = findReportWithAnsiColorPlugin(262, new Pmd(), "pmd-6.xml");
 
         assertThatDescriptionOfIssueIsSet(new Pmd(), report.get(0),
                 "A high number of imports can indicate a high degree of coupling within an object.");
@@ -440,15 +437,15 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the CheckStyle parser on an output file that contains 6 issues. */
     @Test
     void shouldFindAllCheckStyleIssues() {
-        Report report = findReportWithoutAnsiColorPlugin(6, new CheckStyle(), "checkstyle.xml");
-        Report reportAnsi = findReportWithAnsiColorPlugin(6, new CheckStyle(), "checkstyle.xml");
+        var report = findReportWithoutAnsiColorPlugin(6, new CheckStyle(), "checkstyle.xml");
+        var reportAnsi = findReportWithAnsiColorPlugin(6, new CheckStyle(), "checkstyle.xml");
 
         assertThatDescriptionOfIssueIsSet(new CheckStyle(), report.get(2),
                 "<p>Since Checkstyle 3.1</p><p>");
         assertThatDescriptionOfIssueIsSet(new CheckStyle(), reportAnsi.get(2),
                 "<p>Since Checkstyle 3.1</p><p>");
 
-        StaticAnalysisLabelProvider labelProvider = new CheckStyle().getLabelProvider();
+        var labelProvider = new CheckStyle().getLabelProvider();
         assertThat(labelProvider.getDescription(report.get(2)))
                 .contains("The check finds classes that are designed for extension (subclass creation).");
         assertThat(labelProvider.getDescription(reportAnsi.get(2)))
@@ -457,7 +454,7 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
 
     private void assertThatDescriptionOfIssueIsSet(final Tool tool, final Issue issue,
             final String expectedDescription) {
-        StaticAnalysisLabelProvider labelProvider = tool.getLabelProvider();
+        var labelProvider = tool.getLabelProvider();
         assertThat(issue).hasDescription("");
         assertThat(labelProvider.getDescription(issue)).contains(expectedDescription);
     }
@@ -465,102 +462,104 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the FindBugs parser on an output file that contains 2 issues. */
     @Test
     void shouldFindAllFindBugsIssues() {
-        Report report = findReportWithoutAnsiColorPlugin(2, new FindBugs(), "findbugs-native.xml");
-        Report reportAnsi = findReportWithAnsiColorPlugin(2, new FindBugs(), "findbugs-native.xml");
+        var report = findReportWithoutAnsiColorPlugin(2, new FindBugs(), "findbugs-native.xml");
+        var reportAnsi = findReportWithAnsiColorPlugin(2, new FindBugs(), "findbugs-native.xml");
 
         assertThatDescriptionOfIssueIsSet(new FindBugs(), report.get(0),
-                "<p> The fields of this class appear to be accessed inconsistently with respect\n"
-                        + "  to synchronization.&nbsp; This bug report indicates that the bug pattern detector\n"
-                        + "  judged that\n"
-                        + "  </p>\n"
-                        + "  <ul>\n"
-                        + "  <li> The class contains a mix of locked and unlocked accesses,</li>\n"
-                        + "  <li> The class is <b>not</b> annotated as javax.annotation.concurrent.NotThreadSafe,</li>\n"
-                        + "  <li> At least one locked access was performed by one of the class's own methods, and</li>\n"
-                        + "  <li> The number of unsynchronized field accesses (reads and writes) was no more than\n"
-                        + "       one third of all accesses, with writes being weighed twice as high as reads</li>\n"
-                        + "  </ul>\n"
-                        + "\n"
-                        + "  <p> A typical bug matching this bug pattern is forgetting to synchronize\n"
-                        + "  one of the methods in a class that is intended to be thread-safe.</p>\n"
-                        + "\n"
-                        + "  <p> You can select the nodes labeled \"Unsynchronized access\" to show the\n"
-                        + "  code locations where the detector believed that a field was accessed\n"
-                        + "  without synchronization.</p>\n"
-                        + "\n"
-                        + "  <p> Note that there are various sources of inaccuracy in this detector;\n"
-                        + "  for example, the detector cannot statically detect all situations in which\n"
-                        + "  a lock is held.&nbsp; Also, even when the detector is accurate in\n"
-                        + "  distinguishing locked vs. unlocked accesses, the code in question may still\n"
-                        + "  be correct.</p>");
+                """
+                <p> The fields of this class appear to be accessed inconsistently with respect
+                  to synchronization.&nbsp; This bug report indicates that the bug pattern detector
+                  judged that
+                  </p>
+                  <ul>
+                  <li> The class contains a mix of locked and unlocked accesses,</li>
+                  <li> The class is <b>not</b> annotated as javax.annotation.concurrent.NotThreadSafe,</li>
+                  <li> At least one locked access was performed by one of the class's own methods, and</li>
+                  <li> The number of unsynchronized field accesses (reads and writes) was no more than
+                       one third of all accesses, with writes being weighed twice as high as reads</li>
+                  </ul>
+                
+                  <p> A typical bug matching this bug pattern is forgetting to synchronize
+                  one of the methods in a class that is intended to be thread-safe.</p>
+                
+                  <p> You can select the nodes labeled "Unsynchronized access" to show the
+                  code locations where the detector believed that a field was accessed
+                  without synchronization.</p>
+                
+                  <p> Note that there are various sources of inaccuracy in this detector;
+                  for example, the detector cannot statically detect all situations in which
+                  a lock is held.&nbsp; Also, even when the detector is accurate in
+                  distinguishing locked vs. unlocked accesses, the code in question may still
+                  be correct.</p>""");
         assertThatDescriptionOfIssueIsSet(new FindBugs(), reportAnsi.get(0),
-                "<p> The fields of this class appear to be accessed inconsistently with respect\n"
-                        + "  to synchronization.&nbsp; This bug report indicates that the bug pattern detector\n"
-                        + "  judged that\n"
-                        + "  </p>\n"
-                        + "  <ul>\n"
-                        + "  <li> The class contains a mix of locked and unlocked accesses,</li>\n"
-                        + "  <li> The class is <b>not</b> annotated as javax.annotation.concurrent.NotThreadSafe,</li>\n"
-                        + "  <li> At least one locked access was performed by one of the class's own methods, and</li>\n"
-                        + "  <li> The number of unsynchronized field accesses (reads and writes) was no more than\n"
-                        + "       one third of all accesses, with writes being weighed twice as high as reads</li>\n"
-                        + "  </ul>\n"
-                        + "\n"
-                        + "  <p> A typical bug matching this bug pattern is forgetting to synchronize\n"
-                        + "  one of the methods in a class that is intended to be thread-safe.</p>\n"
-                        + "\n"
-                        + "  <p> You can select the nodes labeled \"Unsynchronized access\" to show the\n"
-                        + "  code locations where the detector believed that a field was accessed\n"
-                        + "  without synchronization.</p>\n"
-                        + "\n"
-                        + "  <p> Note that there are various sources of inaccuracy in this detector;\n"
-                        + "  for example, the detector cannot statically detect all situations in which\n"
-                        + "  a lock is held.&nbsp; Also, even when the detector is accurate in\n"
-                        + "  distinguishing locked vs. unlocked accesses, the code in question may still\n"
-                        + "  be correct.</p>");
+                """
+                <p> The fields of this class appear to be accessed inconsistently with respect
+                  to synchronization.&nbsp; This bug report indicates that the bug pattern detector
+                  judged that
+                  </p>
+                  <ul>
+                  <li> The class contains a mix of locked and unlocked accesses,</li>
+                  <li> The class is <b>not</b> annotated as javax.annotation.concurrent.NotThreadSafe,</li>
+                  <li> At least one locked access was performed by one of the class's own methods, and</li>
+                  <li> The number of unsynchronized field accesses (reads and writes) was no more than
+                       one third of all accesses, with writes being weighed twice as high as reads</li>
+                  </ul>
+                
+                  <p> A typical bug matching this bug pattern is forgetting to synchronize
+                  one of the methods in a class that is intended to be thread-safe.</p>
+                
+                  <p> You can select the nodes labeled "Unsynchronized access" to show the
+                  code locations where the detector believed that a field was accessed
+                  without synchronization.</p>
+                
+                  <p> Note that there are various sources of inaccuracy in this detector;
+                  for example, the detector cannot statically detect all situations in which
+                  a lock is held.&nbsp; Also, even when the detector is accurate in
+                  distinguishing locked vs. unlocked accesses, the code in question may still
+                  be correct.</p>""");
     }
 
     /** Runs the SpotBugs parser on an output file that contains 2 issues. */
     @Test
     void shouldFindAllSpotBugsIssues() {
-        String expectedDescription =
-                "<p>This code calls a method and ignores the return value. However our analysis shows that\n"
-                        + "the method (including its implementations in subclasses if any) does not produce any effect\n"
-                        + "other than return value. Thus this call can be removed.\n"
-                        + "</p>\n"
-                        + "<p>We are trying to reduce the false positives as much as possible, but in some cases this warning might be wrong.\n"
-                        + "Common false-positive cases include:</p>\n"
-                        + "<p>- The method is designed to be overridden and produce a side effect in other projects which are out of the scope of the analysis.</p>\n"
-                        + "<p>- The method is called to trigger the class loading which may have a side effect.</p>\n"
-                        + "<p>- The method is called just to get some exception.</p>\n"
-                        + "<p>If you feel that our assumption is incorrect, you can use a @CheckReturnValue annotation\n"
-                        + "to instruct SpotBugs that ignoring the return value of this method is acceptable.\n"
-                        + "</p>";
+        var expectedDescription = """
+                <p>This code calls a method and ignores the return value. However our analysis shows that
+                the method (including its implementations in subclasses if any) does not produce any effect
+                other than return value. Thus this call can be removed.
+                </p>
+                <p>We are trying to reduce the false positives as much as possible, but in some cases this warning might be wrong.
+                Common false-positive cases include:</p>
+                <p>- The method is designed to be overridden and produce a side effect in other projects which are out of the scope of the analysis.</p>
+                <p>- The method is called to trigger the class loading which may have a side effect.</p>
+                <p>- The method is called just to get some exception.</p>
+                <p>If you feel that our assumption is incorrect, you can use a @CheckReturnValue annotation
+                to instruct SpotBugs that ignoring the return value of this method is acceptable.
+                </p>""";
 
-        Report report = findReportWithoutAnsiColorPlugin(2, new SpotBugs(), "spotbugsXml.xml");
+        var report = findReportWithoutAnsiColorPlugin(2, new SpotBugs(), "spotbugsXml.xml");
         assertThatDescriptionOfIssueIsSet(new SpotBugs(), report.get(0), expectedDescription);
 
-        Report reportAnsi = findReportWithAnsiColorPlugin(2, new SpotBugs(), "spotbugsXml.xml");
+        var reportAnsi = findReportWithAnsiColorPlugin(2, new SpotBugs(), "spotbugsXml.xml");
         assertThatDescriptionOfIssueIsSet(new SpotBugs(), reportAnsi.get(0), expectedDescription);
     }
 
     /** Runs the SpotBugs parser on an output file that contains 2 issues. */
     @Test
     void shouldProvideMessagesAndDescriptionForSecurityIssuesWithSpotBugs() {
-        String expectedDescription =
-                "<p>A file is opened to read its content. The filename comes from an <b>input</b> parameter.\n"
-                        + "If an unfiltered parameter is passed to this file API, files from an arbitrary filesystem location could be read.</p>\n"
-                        + "<p>This rule identifies <b>potential</b> path traversal vulnerabilities. In many cases, the constructed file path cannot be controlled\n"
-                        + "by the user. If that is the case, the reported instance is a false positive.</p>";
+        var expectedDescription = """
+                <p>A file is opened to read its content. The filename comes from an <b>input</b> parameter.
+                If an unfiltered parameter is passed to this file API, files from an arbitrary filesystem location could be read.</p>
+                <p>This rule identifies <b>potential</b> path traversal vulnerabilities. In many cases, the constructed file path cannot be controlled
+                by the user. If that is the case, the reported instance is a false positive.</p>""";
 
-        Report report = findReportWithoutAnsiColorPlugin(1, new SpotBugs(), "issue55707.xml");
-        Issue issue = report.get(0);
+        var report = findReportWithoutAnsiColorPlugin(1, new SpotBugs(), "issue55707.xml");
+        var issue = report.get(0);
         assertThatDescriptionOfIssueIsSet(new SpotBugs(), issue, expectedDescription);
         assertThat(issue).hasMessage(
                 "java/nio/file/Paths.get(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path; reads a file whose location might be specified by user input");
 
-        Report reportAnsi = findReportWithAnsiColorPlugin(1, new SpotBugs(), "issue55707.xml");
-        Issue issueAnsi = reportAnsi.get(0);
+        var reportAnsi = findReportWithAnsiColorPlugin(1, new SpotBugs(), "issue55707.xml");
+        var issueAnsi = reportAnsi.get(0);
         assertThatDescriptionOfIssueIsSet(new SpotBugs(), issueAnsi, expectedDescription);
         assertThat(issueAnsi).hasMessage(
                 "java/nio/file/Paths.get(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path; reads a file whose location might be specified by user input");
@@ -827,8 +826,8 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the PyLint parser on output files that contains 6 + 19 issues. */
     @Test
     void shouldFindAllPyLintParserIssues() {
-        Report report = findReportWithoutAnsiColorPlugin(6 + 19, new PyLint(), "pyLint.txt", "pylint_parseable.txt");
-        Report reportAnsi = findReportWithAnsiColorPlugin(6 + 19, new PyLint(), "pyLint.txt",
+        var report = findReportWithoutAnsiColorPlugin(6 + 19, new PyLint(), "pyLint.txt", "pylint_parseable.txt");
+        var reportAnsi = findReportWithAnsiColorPlugin(6 + 19, new PyLint(), "pyLint.txt",
                 "pylint_parseable.txt");
 
         assertThatDescriptionOfIssueIsSet(new PyLint(), report.get(1),
@@ -1070,12 +1069,12 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
 
     private ResultAction shouldFindIssuesOfTool(final int expectedSizeOfIssues, final ReportScanningTool tool,
             final String... fileNames) {
-        String defaultPipelineDefinition = "recordIssues tool: %s(pattern:'**/%s', reportEncoding:'UTF-8')";
+        var defaultPipelineDefinition = "recordIssues tool: %s(pattern:'**/%s', reportEncoding:'UTF-8')";
 
         var action = findIssuesInPipeline(defaultPipelineDefinition,
                 expectedSizeOfIssues, tool, fileNames);
 
-        String ansiPipelineDefinition = "wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {\n"
+        var ansiPipelineDefinition = "wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {\n"
                 + "  " + defaultPipelineDefinition + "\n"
                 + "}";
 
@@ -1103,27 +1102,28 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
 
     private ResultAction findIssuesWithAnsiColorPlugin(final int expectedSizeOfIssues,
             final ReportScanningTool tool, final String... fileNames) {
-        String pipelineDefinition = "wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {\n"
-                + "  recordIssues tool: %s(pattern:'**/%s', reportEncoding:'UTF-8')\n"
-                + "}";
+        var pipelineDefinition = """
+                wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {
+                  recordIssues tool: %s(pattern:'**/%s', reportEncoding:'UTF-8')
+                }\
+                """;
         return findIssuesInPipeline(pipelineDefinition, expectedSizeOfIssues, tool, fileNames);
     }
 
     @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock", "PMD.LinguisticNaming"})
     private ResultAction findIssuesInPipeline(final String pipelineDefinition, final int expectedSizeOfIssues, final ReportScanningTool tool, final String... fileNames) {
         try {
-            WorkflowJob job = createPipeline();
+            var job = createPipeline();
             copyMultipleFilesToWorkspace(job, fileNames);
-            job.setDefinition(asStage(String.format(
-                    pipelineDefinition,
+            job.setDefinition(asStage(pipelineDefinition.formatted(
                     tool.getSymbolName(), createPatternFor(fileNames))));
 
-            AnalysisResult result = scheduleSuccessfulBuild(job);
+            var result = scheduleSuccessfulBuild(job);
 
             assertThat(result).hasTotalSize(expectedSizeOfIssues);
             assertThat(result.getIssues()).hasSize(expectedSizeOfIssues);
 
-            Report report = result.getIssues();
+            var report = result.getIssues();
 
             assertThat(report.filter(issue -> issue.getOrigin().equals(tool.getActualId())))
                     .hasSize(expectedSizeOfIssues);

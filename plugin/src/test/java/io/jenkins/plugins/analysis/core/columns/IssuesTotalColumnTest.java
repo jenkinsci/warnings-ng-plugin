@@ -1,10 +1,10 @@
 package io.jenkins.plugins.analysis.core.columns;
 
-import java.util.Arrays;
-import java.util.Collections;
-
 import org.junit.jupiter.api.Test;
 import org.junitpioneer.jupiter.Issue;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 import hudson.model.Job;
 
@@ -27,7 +27,7 @@ class IssuesTotalColumnTest {
 
     @Test
     void shouldShowNoResultIfBuild() {
-        IssuesTotalColumn column = createColumn();
+        var column = createColumn();
         column.setSelectTools(false);
 
         Job<?, ?> job = mock(Job.class);
@@ -42,7 +42,7 @@ class IssuesTotalColumnTest {
 
     @Test
     void shouldShowNoResultIfNoAction() {
-        IssuesTotalColumn column = createColumn();
+        var column = createColumn();
         column.setSelectTools(false);
 
         Job<?, ?> job = createJobWithActions();
@@ -57,7 +57,7 @@ class IssuesTotalColumnTest {
 
     @Test
     void shouldShowResultOfOneAction() {
-        IssuesTotalColumn column = createColumn();
+        var column = createColumn();
         column.setSelectTools(false);
 
         Job<?, ?> job = createJob(CHECK_STYLE_ID, CHECK_STYLE_NAME, 1);
@@ -69,7 +69,7 @@ class IssuesTotalColumnTest {
 
     @Test @Issue("JENKINS-57312, JENKINS-59591")
     void shouldShowResultAndDetailsInToolTipOfNewWarnings() {
-        IssuesTotalColumn column = createColumn();
+        var column = createColumn();
         column.setType(StatisticProperties.NEW);
         column.setSelectTools(false);
 
@@ -82,7 +82,7 @@ class IssuesTotalColumnTest {
                 createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 3, newSize, fixedSize));
 
         assertThat(column.getTotal(job)).isNotEmpty().hasValue(newSize);
-        String newIssuesUrl = "0/" + CHECK_STYLE_ID + "/new";
+        var newIssuesUrl = "0/" + CHECK_STYLE_ID + "/new";
         assertThat(column.getUrl(job)).isEqualTo(newIssuesUrl);
         assertThat(column.getDetails(job)).hasSize(1).element(0)
                 .as("Value of new column")
@@ -90,7 +90,7 @@ class IssuesTotalColumnTest {
 
         column.setType(StatisticProperties.FIXED);
         assertThat(column.getTotal(job)).isNotEmpty().hasValue(fixedSize);
-        String fixedIssuesUrl = "0/" + CHECK_STYLE_ID + "/fixed";
+        var fixedIssuesUrl = "0/" + CHECK_STYLE_ID + "/fixed";
         assertThat(column.getUrl(job)).isEqualTo(fixedIssuesUrl);
         assertThat(column.getDetails(job)).hasSize(1).element(0)
                 .as("Value of fixed column")
@@ -100,7 +100,7 @@ class IssuesTotalColumnTest {
 
     @Test
     void shouldShowTotalOfTwoActionsWhenSelectAllIsChecked() {
-        IssuesTotalColumn column = createColumn();
+        var column = createColumn();
         column.setSelectTools(false);
 
         verifySumOfChecksStyleAndSpotBugs(column);
@@ -108,7 +108,7 @@ class IssuesTotalColumnTest {
 
     @Test
     void shouldShowTotalOfTwoActionsWhenSelectingIndividually() {
-        IssuesTotalColumn column = createColumn();
+        var column = createColumn();
         column.setSelectTools(true);
         column.setTools(Arrays.asList(createTool(CHECK_STYLE_ID), createTool(SPOT_BUGS_ID)));
 
@@ -117,7 +117,7 @@ class IssuesTotalColumnTest {
 
     @Test
     void shouldShowTotalOfSelectedTool() {
-        IssuesTotalColumn column = createColumn();
+        var column = createColumn();
         column.setSelectTools(true);
         column.setTools(Collections.singletonList(createTool(CHECK_STYLE_ID)));
 
@@ -153,7 +153,7 @@ class IssuesTotalColumnTest {
 
     @Test
     void shouldLinkToAllWhenSelectingTotalIssues() {
-        IssuesTotalColumn column = createColumn();
+        var column = createColumn();
         column.setSelectTools(false);
 
         column.setType(StatisticProperties.TOTAL);
@@ -164,7 +164,7 @@ class IssuesTotalColumnTest {
 
     @Test
     void shouldLinkToNewWhenSelectingNewIssues() {
-        IssuesTotalColumn column = createColumn();
+        var column = createColumn();
         column.setSelectTools(false);
 
         column.setType(StatisticProperties.NEW);
@@ -175,7 +175,7 @@ class IssuesTotalColumnTest {
 
     @Test
     void shouldLinkToOverallWhenSelectingDeltaIssues() {
-        IssuesTotalColumn column = createColumn();
+        var column = createColumn();
         column.setSelectTools(false);
 
         column.setType(StatisticProperties.DELTA);
@@ -186,7 +186,7 @@ class IssuesTotalColumnTest {
 
     @Test
     void shouldLinkToFixedWhenSelectingFixedIssues() {
-        IssuesTotalColumn column = createColumn();
+        var column = createColumn();
         column.setSelectTools(false);
 
         column.setType(StatisticProperties.FIXED);
@@ -194,7 +194,7 @@ class IssuesTotalColumnTest {
     }
 
     private IssuesTotalColumn createColumn() {
-        IssuesTotalColumn column = new IssuesTotalColumn();
+        var column = new IssuesTotalColumn();
         column.setName(NAME);
         LabelProviderFactory labelProviderFactory = mock(LabelProviderFactory.class);
         registerTool(labelProviderFactory, CHECK_STYLE_ID, CHECK_STYLE_NAME);

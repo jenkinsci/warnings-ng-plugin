@@ -1,9 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.NoSuchElementException;
-
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.IssueParser;
@@ -11,6 +7,11 @@ import edu.hm.hafner.analysis.registry.ParserDescriptor;
 import edu.hm.hafner.analysis.registry.ParserRegistry;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.NonNull;
+
+import java.io.Serial;
+import java.util.Comparator;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.verb.POST;
@@ -31,6 +32,7 @@ import io.jenkins.plugins.util.JenkinsFacade;
  * @author Ullrich Hafner
  */
 public class RegisteredParser extends ReportScanningTool {
+    @Serial
     private static final long serialVersionUID = 22286587552212078L;
 
     private static final ParserRegistry REGISTRY = new ParserRegistry();
@@ -78,7 +80,7 @@ public class RegisteredParser extends ReportScanningTool {
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
-        ParserDescriptor descriptor = getParserDescriptor();
+        var descriptor = getParserDescriptor();
 
         return new StaticAnalysisLabelProvider(descriptor.getId(), getName(), descriptor::getDescription,
                 descriptor.getType());

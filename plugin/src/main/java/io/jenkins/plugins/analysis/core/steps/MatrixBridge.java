@@ -17,7 +17,7 @@ import hudson.model.BuildListener;
 public class MatrixBridge implements MatrixAggregatable {
     @Override
     public MatrixAggregator createAggregator(final MatrixBuild build, final Launcher launcher, final BuildListener listener) {
-        IssuesRecorder recorder = build.getParent().getPublishersList().get(IssuesRecorder.class);
+        var recorder = build.getParent().getPublishersList().get(IssuesRecorder.class);
         if (recorder == null) {
             return null;
         }

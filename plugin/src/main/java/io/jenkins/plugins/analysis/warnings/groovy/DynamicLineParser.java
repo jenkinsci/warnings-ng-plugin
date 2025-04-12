@@ -1,8 +1,5 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
-import java.util.Optional;
-import java.util.regex.Matcher;
-
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Issue;
@@ -13,12 +10,17 @@ import edu.hm.hafner.analysis.ReaderFactory;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.LookaheadStream;
 
+import java.io.Serial;
+import java.util.Optional;
+import java.util.regex.Matcher;
+
 /**
  * A line parser that uses a configurable regular expression and Groovy script to parse warnings.
  *
  * @author Ullrich Hafner
  */
 class DynamicLineParser extends LookaheadParser {
+    @Serial
     private static final long serialVersionUID = -4450779127190928924L;
 
     private final GroovyExpressionMatcher expressionMatcher;
@@ -51,4 +53,3 @@ class DynamicLineParser extends LookaheadParser {
         return expressionMatcher.createIssue(matcher, builder, lookahead.getLine(), fileName);
     }
 }
-

@@ -1,10 +1,11 @@
 package io.jenkins.plugins.analysis.core.steps;
 
+import edu.hm.hafner.util.Ensure;
+
 import java.io.IOException;
+import java.io.Serial;
 import java.nio.charset.Charset;
 import java.util.Optional;
-
-import edu.hm.hafner.util.Ensure;
 
 import org.jenkinsci.plugins.workflow.graph.FlowNode;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
@@ -28,6 +29,7 @@ import io.jenkins.plugins.util.ValidationUtilities;
  * @author Ullrich Hafner
  */
 abstract class AnalysisExecution<T> extends SynchronousNonBlockingStepExecution<T> {
+    @Serial
     private static final long serialVersionUID = -127479018279069250L;
 
     AnalysisExecution(final StepContext context) {
@@ -63,7 +65,7 @@ abstract class AnalysisExecution<T> extends SynchronousNonBlockingStepExecution<
      *         if the user canceled the run
      */
     protected Optional<VirtualChannel> getChannel() throws IOException, InterruptedException {
-        Computer computer = getContext().get(Computer.class);
+        var computer = getContext().get(Computer.class);
 
         if (computer == null) {
             return Optional.empty();
@@ -95,7 +97,7 @@ abstract class AnalysisExecution<T> extends SynchronousNonBlockingStepExecution<
      *         if the user canceled the execution
      */
     protected FilePath getWorkspace() throws IOException, InterruptedException {
-        FilePath workspace = getContext().get(FilePath.class);
+        var workspace = getContext().get(FilePath.class);
 
         if (workspace == null) {
             throw new IOException("No workspace available for " + this);
@@ -113,7 +115,7 @@ abstract class AnalysisExecution<T> extends SynchronousNonBlockingStepExecution<
      */
     protected TaskListener getTaskListener() throws InterruptedException {
         try {
-            TaskListener listener = getContext().get(TaskListener.class);
+            var listener = getContext().get(TaskListener.class);
             if (listener != null) {
                 return listener;
             }

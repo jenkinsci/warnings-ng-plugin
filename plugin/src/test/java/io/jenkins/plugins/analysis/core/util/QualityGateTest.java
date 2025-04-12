@@ -27,7 +27,7 @@ class QualityGateTest extends SerializableTest<WarningsQualityGate> {
         JenkinsFacade jenkinsFacade = mock(JenkinsFacade.class);
         when(jenkinsFacade.hasPermission(Item.CONFIGURE, (BuildableItem) null)).thenReturn(true);
 
-        WarningsQualityGateDescriptor descriptor = new WarningsQualityGateDescriptor(jenkinsFacade);
+        var descriptor = new WarningsQualityGateDescriptor(jenkinsFacade);
 
         assertThat(descriptor.doCheckThreshold(null, 0))
                 .isError()

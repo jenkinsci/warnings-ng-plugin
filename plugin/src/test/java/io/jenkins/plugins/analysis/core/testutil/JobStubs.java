@@ -214,7 +214,7 @@ public final class JobStubs {
      * @return the tool selection
      */
     public static ToolSelection createTool(final String id) {
-        ToolSelection toolSelection = new ToolSelection();
+        var toolSelection = new ToolSelection();
         toolSelection.setId(id);
         return toolSelection;
     }

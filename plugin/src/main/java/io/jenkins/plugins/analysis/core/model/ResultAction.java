@@ -13,7 +13,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.Set;
 
 import org.kohsuke.stapler.StaplerProxy;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
@@ -203,9 +203,8 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
 
     @Override
     public Collection<? extends Action> getProjectActions() {
-        return Collections.singleton(
-                new JobAction(owner.getParent(), getLabelProvider(), result.getSizePerOrigin().size(),
-                        trendChartType, getUrlName()));
+        return Set.of(new JobAction(owner.getParent(), getLabelProvider(), result.getSizePerOrigin().size(),
+                trendChartType, getUrlName()));
     }
 
     @Whitelisted
@@ -227,7 +226,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
             return false;
         }
 
-        ResultAction that = (ResultAction) o;
+        var that = (ResultAction) o;
 
         return id.equals(that.id);
     }
@@ -300,7 +299,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
 
     @Override
     public String toString() {
-        return String.format("%s for %s", getClass().getName(), getLabelProvider().getName());
+        return "%s for %s".formatted(getClass().getName(), getLabelProvider().getName());
     }
 
     /**

@@ -1,8 +1,8 @@
 package io.jenkins.plugins.analysis.core.restapi;
 
-import java.util.Map;
-
 import edu.hm.hafner.analysis.Severity;
+
+import java.util.Map;
 
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;

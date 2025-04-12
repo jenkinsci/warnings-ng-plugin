@@ -1,13 +1,11 @@
 package io.jenkins.plugins.analysis.warnings.axivion;
 
-import java.util.stream.StreamSupport;
-
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
+
+import java.util.stream.StreamSupport;
 
 /**
  * Is aware of how to parse json payloads according to different issue kinds.
@@ -31,7 +29,7 @@ class AxivionParser {
      */
     void parse(final Report report, final AxIssueKind kind, final JsonObject payload) {
         checkForDashboardErrors(report, kind, payload);
-        final JsonArray jsonArray = payload.getAsJsonArray("rows");
+        final var jsonArray = payload.getAsJsonArray("rows");
         if (jsonArray != null) {
             report.logInfo("Importing %s %s", jsonArray.size(), kind.plural());
             StreamSupport.stream(jsonArray.spliterator(), false)
@@ -45,9 +43,9 @@ class AxivionParser {
     }
 
     private void checkForDashboardErrors(final Report report, final AxIssueKind kind, final JsonObject payload) {
-        final JsonPrimitive version = payload.getAsJsonPrimitive("dashboardVersionNumber");
-        final JsonPrimitive errorType = payload.getAsJsonPrimitive("type");
-        final JsonPrimitive message = payload.getAsJsonPrimitive("message");
+        final var version = payload.getAsJsonPrimitive("dashboardVersionNumber");
+        final var errorType = payload.getAsJsonPrimitive("type");
+        final var message = payload.getAsJsonPrimitive("message");
         if (version != null && errorType != null && message != null) {
             report.logError("Dashboard '%s' threw '%s' with message '%s' ('%s').",
                     version, errorType, message, kind);

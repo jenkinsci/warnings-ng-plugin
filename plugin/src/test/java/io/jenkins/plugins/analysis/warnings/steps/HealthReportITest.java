@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Severity;
 
-import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.HealthReport;
 import hudson.model.Result;
@@ -34,7 +33,7 @@ class HealthReportITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldCreateEmptyHealthReportForBoundaryMismatch() {
-        HealthReport report = createHealthReportTestSetupEclipse(5, 2);
+        var report = createHealthReportTestSetupEclipse(5, 2);
         assertThat(report).isNull();
     }
 
@@ -44,7 +43,7 @@ class HealthReportITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldCreateEmptyHealthReportForEqualBoundaries() {
-        HealthReport report = createHealthReportTestSetupEclipse(15, 15);
+        var report = createHealthReportTestSetupEclipse(15, 15);
         assertThat(report).isNull();
     }
 
@@ -53,7 +52,7 @@ class HealthReportITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldCreate80plusHealthReport() {
-        HealthReport report = createHealthReportTestSetupEclipse(10, 15);
+        var report = createHealthReportTestSetupEclipse(10, 15);
         assertThat(report.getDescription()).isEqualTo("Eclipse ECJ: 8 warnings");
         assertThat(report.getIconClassName()).isEqualTo(H80PLUS);
     }
@@ -63,7 +62,7 @@ class HealthReportITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldCreate60To79HealthReport() {
-        HealthReport report = createHealthReportTestSetupEclipse(5, 15);
+        var report = createHealthReportTestSetupEclipse(5, 15);
         assertThat(report.getDescription()).isEqualTo("Eclipse ECJ: 8 warnings");
         assertThat(report.getIconClassName()).isEqualTo(H60TO79);
     }
@@ -73,7 +72,7 @@ class HealthReportITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldCreate40To59HealthReport() {
-        HealthReport report = createHealthReportTestSetupEclipse(1, 15);
+        var report = createHealthReportTestSetupEclipse(1, 15);
         assertThat(report.getDescription()).isEqualTo("Eclipse ECJ: 8 warnings");
         assertThat(report.getIconClassName()).isEqualTo(H40TO59);
     }
@@ -83,7 +82,7 @@ class HealthReportITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldCreate20To39HealthReport() {
-        HealthReport report = createHealthReportTestSetupEclipse(4, 10);
+        var report = createHealthReportTestSetupEclipse(4, 10);
         assertThat(report.getDescription()).isEqualTo("Eclipse ECJ: 8 warnings");
         assertThat(report.getIconClassName()).isEqualTo(H20TO39);
     }
@@ -93,7 +92,7 @@ class HealthReportITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldCreate00To19HealthReport() {
-        HealthReport report = createHealthReportTestSetupEclipse(1, 5);
+        var report = createHealthReportTestSetupEclipse(1, 5);
         assertThat(report.getDescription()).isEqualTo("Eclipse ECJ: 8 warnings");
         assertThat(report.getIconClassName()).isEqualTo(H00TO19);
     }
@@ -103,7 +102,7 @@ class HealthReportITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldCreateHealthReportWithHighPriority() {
-        HealthReport report = createHealthReportTestSetupCheckstyle(Severity.WARNING_HIGH);
+        var report = createHealthReportTestSetupCheckstyle(Severity.WARNING_HIGH);
         assertThat(report.getDescription()).isEqualTo("CheckStyle: 2 warnings");
         assertThat(report.getIconClassName()).isEqualTo(H80PLUS);
     }
@@ -113,7 +112,7 @@ class HealthReportITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldCreateHealthReportWithNormalPriority() {
-        HealthReport report = createHealthReportTestSetupCheckstyle(Severity.WARNING_NORMAL);
+        var report = createHealthReportTestSetupCheckstyle(Severity.WARNING_NORMAL);
         assertThat(report.getDescription()).isEqualTo("CheckStyle: 4 warnings");
         assertThat(report.getIconClassName()).isEqualTo(H80PLUS);
     }
@@ -123,7 +122,7 @@ class HealthReportITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldCreateHealthReportWithLowPriority() {
-        HealthReport report = createHealthReportTestSetupCheckstyle(Severity.WARNING_LOW);
+        var report = createHealthReportTestSetupCheckstyle(Severity.WARNING_LOW);
         assertThat(report.getDescription()).isEqualTo("CheckStyle: 6 warnings");
         assertThat(report.getIconClassName()).isEqualTo(H80PLUS);
     }
@@ -139,7 +138,7 @@ class HealthReportITest extends IntegrationTestWithJenkinsPerSuite {
      * @return a healthReport under test
      */
     private HealthReport createHealthReportTestSetupEclipse(final int health, final int unhealthy) {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("eclipse-healthReport.txt");
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("eclipse-healthReport.txt");
         enableGenericWarnings(project, publisher -> {
                     publisher.setHealthy(health);
                     publisher.setUnhealthy(unhealthy);
@@ -158,7 +157,7 @@ class HealthReportITest extends IntegrationTestWithJenkinsPerSuite {
      * @return a healthReport under test
      */
     private HealthReport createHealthReportTestSetupCheckstyle(final Severity minimumSeverity) {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle-healthReport.xml");
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle-healthReport.xml");
         enableGenericWarnings(project, publisher -> {
                     publisher.setHealthy(10);
                     publisher.setUnhealthy(15);
@@ -184,11 +183,11 @@ class HealthReportITest extends IntegrationTestWithJenkinsPerSuite {
     private HealthReport scheduleBuildToGetHealthReportAndAssertStatus(final FreeStyleProject job,
             final Result status) {
         try {
-            FreeStyleBuild build = getJenkins().assertBuildStatus(status, job.scheduleBuild2(0));
+            var build = getJenkins().assertBuildStatus(status, job.scheduleBuild2(0));
 
             getAnalysisResult(build);
 
-            ResultAction action = build.getAction(ResultAction.class);
+            var action = build.getAction(ResultAction.class);
 
             assertThat(action).isNotNull();
 

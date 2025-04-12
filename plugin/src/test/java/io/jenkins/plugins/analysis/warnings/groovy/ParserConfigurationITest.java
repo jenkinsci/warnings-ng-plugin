@@ -1,9 +1,9 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
+import org.junit.jupiter.api.Test;
+
 import java.util.Collections;
 import java.util.List;
-
-import org.junit.jupiter.api.Test;
 
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory.StaticAnalysisToolFactory;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
@@ -23,11 +23,11 @@ class ParserConfigurationITest extends IntegrationTestWithJenkinsPerSuite {
     /** Verifies that there is no parser defined and one factory. */
     @Test
     void shouldHaveNoParsersAndOneProviderConfiguredWhenCreated() {
-        ParserConfiguration configuration = getConfiguration();
+        var configuration = getConfiguration();
 
         assertThat(configuration.getParsers()).isEmpty();
 
-        StaticAnalysisToolFactory provider = getToolProvider();
+        var provider = getToolProvider();
 
         assertThat(provider.getLabelProvider(ID)).isEmpty();
     }
@@ -35,12 +35,12 @@ class ParserConfigurationITest extends IntegrationTestWithJenkinsPerSuite {
     /** Verifies that there is one parser defined and one factory. */
     @Test
     void shouldProvideOneParserForToolsRegistry() {
-        ParserConfiguration configuration = getConfiguration();
+        var configuration = getConfiguration();
         configuration.setParsers(Collections.singletonList(createParser()));
 
         assertThat(configuration.getParsers()).hasSize(1);
 
-        StaticAnalysisToolFactory provider = getToolProvider();
+        var provider = getToolProvider();
 
         assertThat(provider.getLabelProvider(ID)).isNotEmpty().hasValueSatisfying(
                 labelProvider -> {
@@ -55,7 +55,7 @@ class ParserConfigurationITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private StaticAnalysisToolFactory getToolProvider() {
-        JenkinsFacade jenkinsFacade = new JenkinsFacade();
+        var jenkinsFacade = new JenkinsFacade();
         List<StaticAnalysisToolFactory> providers = jenkinsFacade.getExtensionsFor(StaticAnalysisToolFactory.class);
         assertThat(providers).hasSize(1);
         return providers.get(0);

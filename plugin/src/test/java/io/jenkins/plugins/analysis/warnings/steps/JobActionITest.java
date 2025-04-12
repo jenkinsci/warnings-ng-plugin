@@ -5,16 +5,14 @@ import org.junitpioneer.jupiter.Issue;
 
 import java.util.List;
 
-import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.model.Actionable;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.model.AggregatedTrendAction;
-import io.jenkins.plugins.analysis.core.model.MissingResultFallbackHandler;
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.JobAction;
+import io.jenkins.plugins.analysis.core.model.MissingResultFallbackHandler;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
@@ -48,7 +46,7 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldShowTrendChart() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(ECLIPSE_LOG);
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(ECLIPSE_LOG);
         enableEclipseWarnings(project);
 
         Run<?, ?> build = buildWithResult(project, Result.SUCCESS);
@@ -74,7 +72,7 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     @Issue("JENKINS-75394")
     void shouldShowTrendChartWithCustomUrlAndIcon() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(ECLIPSE_LOG);
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(ECLIPSE_LOG);
         var tool = new Eclipse();
         var url = "custom-eclipse";
         tool.setId(url);
@@ -107,7 +105,7 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldShowTrendsAndAggregationFreestyle() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(ECLIPSE_LOG, CHECKSTYLE_XML);
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(ECLIPSE_LOG, CHECKSTYLE_XML);
         enableWarnings(project, createEclipse(), createCheckStyle());
 
         buildWithResult(project, Result.SUCCESS);
@@ -147,7 +145,7 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldShowTrendsAndAggregationPipeline() {
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix(ECLIPSE_LOG, CHECKSTYLE_XML);
+        var job = createPipelineWithWorkspaceFilesWithSuffix(ECLIPSE_LOG, CHECKSTYLE_XML);
         job.setDefinition(
                 asStage("def checkstyle = scanForIssues tool: checkStyle(pattern:'**/checkstyle.xml', reportEncoding:'UTF-8')",
                         "publishIssues issues:[checkstyle], trendChartType: 'TOOLS_AGGREGATION'",
@@ -205,7 +203,7 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private FreeStyleProject createAggregationJob(final TrendChartType chart) {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(ECLIPSE_LOG, CHECKSTYLE_XML);
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(ECLIPSE_LOG, CHECKSTYLE_XML);
         enableWarnings(project, r -> r.setTrendChartType(chart), createEclipse(), createCheckStyle());
 
         buildWithResult(project, Result.SUCCESS);
@@ -219,13 +217,13 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldHaveSidebarLinkEvenWhenLastActionHasNoResults() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(ECLIPSE_LOG);
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(ECLIPSE_LOG);
         enableWarnings(project, createTool(new Eclipse(), "**/no-valid-pattern"));
 
-        AnalysisResult emptyResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        var emptyResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         assertThat(emptyResult).hasTotalSize(0);
 
-        JobAction jobAction = project.getAction(JobAction.class);
+        var jobAction = project.getAction(JobAction.class);
         assertThat(jobAction).isNotNull();
     }
 
@@ -234,7 +232,7 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldAttachJobActionsWithoutRecordIssues() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(ECLIPSE_LOG);
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(ECLIPSE_LOG);
         enableEclipseWarnings(project);
 
         Run<?, ?> firstBuild = buildWithResult(project, Result.SUCCESS);
@@ -305,7 +303,7 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private void assertThatAggregationChartExists(final Actionable actionable, final boolean shouldChartBeVisible) {
-        AggregatedTrendAction aggregatedTrendAction = actionable.getAction(AggregatedTrendAction.class);
+        var aggregatedTrendAction = actionable.getAction(AggregatedTrendAction.class);
         assertThat(aggregatedTrendAction.getUrlName()).isEqualTo("warnings-aggregation");
         if (shouldChartBeVisible) {
             assertThatTrendChartIsVisible(aggregatedTrendAction);
@@ -326,13 +324,13 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
 
     private void assertActionProperties(final FreeStyleProject project, final Run<?, ?> build,
             final String urlName, final String iconName) {
-        JobAction jobAction = project.getAction(JobAction.class);
+        var jobAction = project.getAction(JobAction.class);
         assertThat(jobAction).isNotNull();
 
-        ResultAction resultAction = build.getAction(ResultAction.class);
+        var resultAction = build.getAction(ResultAction.class);
         assertThat(resultAction).isNotNull();
 
-        StaticAnalysisLabelProvider labelProvider = new Eclipse().getLabelProvider();
+        var labelProvider = new Eclipse().getLabelProvider();
         assertThat(jobAction.getDisplayName()).isEqualTo(labelProvider.getLinkName());
         assertThat(jobAction.getTrendName()).isEqualTo(labelProvider.getTrendName());
         assertThat(jobAction.getUrlName()).isEqualTo(urlName);

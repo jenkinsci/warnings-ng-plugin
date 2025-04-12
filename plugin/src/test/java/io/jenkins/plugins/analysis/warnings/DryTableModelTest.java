@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.util.Locale;
-
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.DuplicationGroup;
@@ -10,9 +8,10 @@ import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+import java.util.Locale;
+
 import io.jenkins.plugins.analysis.core.model.AbstractDetailsModelTest;
 import io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner.DryModel;
-import io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner.DryModel.DuplicationRow;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
@@ -28,17 +27,17 @@ class DryTableModelTest extends AbstractDetailsModelTest {
     @Test
     @SuppressFBWarnings("DMI")
     void shouldConvertIssueToArrayOfColumns() {
-        try (IssueBuilder builder = new IssueBuilder()) {
+        try (var builder = new IssueBuilder()) {
             Locale.setDefault(Locale.ENGLISH);
 
             builder.setReference("1");
-            DuplicationGroup group = new DuplicationGroup();
-            Issue issue = builder.setFileName("/path/to/file-1")
+            var group = new DuplicationGroup();
+            var issue = builder.setFileName("/path/to/file-1")
                     .setLineStart(10)
                     .setLineEnd(24)
                     .setAdditionalProperties(group)
                     .build();
-            Issue duplicate = builder.setFileName("/path/to/file-2")
+            var duplicate = builder.setFileName("/path/to/file-2")
                     .setLineStart(5)
                     .setLineEnd(19)
                     .setAdditionalProperties(group)
@@ -47,12 +46,12 @@ class DryTableModelTest extends AbstractDetailsModelTest {
             group.add(issue);
             group.add(duplicate);
 
-            Report report = new Report();
+            var report = new Report();
             report.add(issue).add(duplicate);
 
-            DryModel model = createModel(report);
+            var model = createModel(report);
 
-            String columnDefinitions = model.getColumnsDefinition();
+            var columnDefinitions = model.getColumnsDefinition();
             assertThatJson(columnDefinitions).isArray().hasSize(6);
 
             String[] columns = {"description", "fileName", "severity", "linesCount", "duplicatedIn", "age"};
@@ -64,7 +63,7 @@ class DryTableModelTest extends AbstractDetailsModelTest {
             assertThat(getLabels(model))
                     .containsExactly("Details", "File", "Severity", "#Lines", "Duplicated In", "Age");
 
-            DuplicationRow actualRow = model.getRow(issue);
+            var actualRow = model.getRow(issue);
             assertThat(actualRow)
                     .hasDescription("<div class=\"details-control\" data-description=\"" + DESCRIPTION + "\">"
                             + DETAILS_ICON + "</div>")
@@ -73,7 +72,7 @@ class DryTableModelTest extends AbstractDetailsModelTest {
                     getFileNameFor(issue, 1), "/path/to/file-1:0000010");
             assertThat(actualRow.getPackageName()).isEqualTo("<a href=\"packageName.45/\">-</a>");
             assertThat(actualRow.getDuplicatedIn()).isEqualTo(
-                    String.format("<ul><li>%s</li></ul>", getFileNameFor(duplicate, 2)));
+                    "<ul><li>%s</li></ul>".formatted(getFileNameFor(duplicate, 2)));
             assertThat(actualRow.getLinesCount()).isEqualTo("15");
             assertThat(actualRow.getSeverity()).isEqualTo("<a href=\"NORMAL\">Normal</a>");
         }
@@ -81,7 +80,7 @@ class DryTableModelTest extends AbstractDetailsModelTest {
 
     private String getFileNameFor(final Issue issue, final int index) {
         return String.format("<a href=\"source.%s/#%d\" data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" title=\"/path/to/file-"
-                        + index + "\">file-%d:%d</a>",  issue.getId().toString(),
+                        + index + "\">file-%d:%d</a>", issue.getId().toString(),
                 issue.getLineStart(), index, issue.getLineStart());
     }
 

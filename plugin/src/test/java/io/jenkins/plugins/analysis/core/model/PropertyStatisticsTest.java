@@ -1,8 +1,5 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.util.NoSuchElementException;
-import java.util.function.Function;
-
 import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.Test;
@@ -12,6 +9,9 @@ import com.google.errorprone.annotations.MustBeClosed;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
+
+import java.util.NoSuchElementException;
+import java.util.function.Function;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
@@ -25,7 +25,7 @@ class PropertyStatisticsTest {
 
     @Test
     void shouldHandleEmptyReport() {
-        PropertyStatistics statistics = createStatistics(new Report());
+        var statistics = createStatistics(new Report());
 
         assertThat(statistics)
                 .hasTotal(0)
@@ -54,11 +54,11 @@ class PropertyStatisticsTest {
 
     @Test
     void shouldHandleReportWithOneIssue() {
-        try (IssueBuilder builder = createBuilder()) {
-            Report issues = new Report();
+        try (var builder = createBuilder()) {
+            var issues = new Report();
             issues.add(builder.setCategory("error").build());
 
-            PropertyStatistics statistics = createStatistics(issues);
+            var statistics = createStatistics(issues);
 
             assertThat(statistics).hasTotal(1)
                     .hasTotalNewIssues(0)
@@ -88,12 +88,12 @@ class PropertyStatisticsTest {
      */
     @Test
     void shouldHandleReportWithTwoIssues() {
-        try (IssueBuilder builder = createBuilder()) {
-            Report issues = new Report();
+        try (var builder = createBuilder()) {
+            var issues = new Report();
             issues.add(builder.setCategory("errorA").build());
             issues.add(builder.setCategory("errorB").build());
 
-            PropertyStatistics statistics = createStatistics(issues);
+            var statistics = createStatistics(issues);
 
             assertThat(statistics).hasTotal(2)
                     .hasTotalNewIssues(0)
@@ -125,7 +125,7 @@ class PropertyStatisticsTest {
 
     @Test
     void shouldReturnToolTip() {
-        PropertyStatistics statistics = new PropertyStatistics(
+        var statistics = new PropertyStatistics(
                 new Report(), new Report(), "category",
                 string -> KEY.equals(string) ? KEY : "tooltip");
 
@@ -138,11 +138,11 @@ class PropertyStatisticsTest {
 
     @Test
     void shouldReplaceEmptyStringInDisplayName() {
-        try (IssueBuilder builder = createBuilder()) {
-            Report issues = new Report();
+        try (var builder = createBuilder()) {
+            var issues = new Report();
             issues.add(builder.setCategory("").build());
 
-            PropertyStatistics statistics = createStatistics(issues);
+            var statistics = createStatistics(issues);
 
             assertThat(statistics).hasTotal(1)
                     .hasTotalNewIssues(0)
@@ -164,11 +164,11 @@ class PropertyStatisticsTest {
 
     @Test
     void shouldReturnMaxWhenTwoIssuesHaveSameCategory() {
-        try (IssueBuilder builder = createBuilder()) {
-            Report issues = new Report();
+        try (var builder = createBuilder()) {
+            var issues = new Report();
             issues.add(builder.setCategory("ab").setPackageName("P1").build());
             issues.add(builder.setCategory("ab").setPackageName("P2").build());
-            PropertyStatistics statistics = createStatistics(issues);
+            var statistics = createStatistics(issues);
 
             verifyTwoIssuesWithSameCategory(statistics, 2);
         }
@@ -179,12 +179,12 @@ class PropertyStatisticsTest {
      */
     @Test
     void shouldReturnMaxValueDifferentCategories() {
-        try (IssueBuilder builder = createBuilder()) {
-            Report issues = new Report();
+        try (var builder = createBuilder()) {
+            var issues = new Report();
             issues.add(builder.setCategory("ab").setPackageName("P1").build());
             issues.add(builder.setCategory("ab").setPackageName("P2").build());
             issues.add(builder.setCategory("abc").setPackageName("P2").build());
-            PropertyStatistics statistics = createStatistics(issues);
+            var statistics = createStatistics(issues);
 
             verifyTwoIssuesWithSameCategory(statistics, 3);
             assertThat(statistics).hasKeys("ab", "abc");
@@ -217,11 +217,11 @@ class PropertyStatisticsTest {
 
     @Test
     void shouldReturnTwoNewIssues() {
-        try (IssueBuilder builder = new IssueBuilder()) {
-            Report issues = new Report();
+        try (var builder = new IssueBuilder()) {
+            var issues = new Report();
             issues.add(builder.setCategory(KEY).setOrigin("A").build());
             issues.add(builder.setCategory(KEY).setOrigin("B").build());
-            PropertyStatistics statistics = new PropertyStatistics(issues, issues, "category", Function.identity());
+            var statistics = new PropertyStatistics(issues, issues, "category", Function.identity());
 
             assertThat(statistics)
                     .hasTotal(2)

@@ -1,14 +1,14 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import java.nio.charset.Charset;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssuesInModifiedCodeMarker;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.FilteredLog;
+
+import java.nio.charset.Charset;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import hudson.model.Result;
 import hudson.model.Run;
@@ -90,10 +90,10 @@ class IssuesPublisher {
      * @return the created result action
      */
     ResultAction attachAction(final TrendChartType trendChartType) {
-        Report issues = report.getReport();
+        var issues = report.getReport();
         var deltaReport = computeDelta(issues);
 
-        QualityGateResult qualityGateResult = evaluateQualityGate(issues, deltaReport);
+        var qualityGateResult = evaluateQualityGate(issues, deltaReport);
         reportHealth(issues);
 
         issues.logInfo("Created analysis result for %d issues (found %d new issues, fixed %d issues)",
@@ -106,7 +106,7 @@ class IssuesPublisher {
         }
 
         if (trendChartType == TrendChartType.AGGREGATION_TOOLS) {
-            AggregationAction action = run.getAction(AggregationAction.class);
+            var action = run.getAction(AggregationAction.class);
             if (action == null) {
                 run.addAction(new AggregationAction());
             }
@@ -116,13 +116,13 @@ class IssuesPublisher {
         logger.logInfoMessages(issues.getInfoMessages());
         logger.logErrorMessages(issues.getErrorMessages());
 
-        AnalysisResult result = new AnalysisHistory(run, ensureThatIdIsUnique()).getResult()
+        var result = new AnalysisHistory(run, ensureThatIdIsUnique()).getResult()
                 .map(previous -> new AnalysisResult(run, getId(), deltaReport, report.getBlames(),
                         report.getStatistics(), qualityGateResult, report.getSizeOfOrigin(),
                         previous))
                 .orElseGet(() -> new AnalysisResult(run, getId(), deltaReport, report.getBlames(),
                         report.getStatistics(), qualityGateResult, report.getSizeOfOrigin()));
-        ResultAction action = new ResultAction(run, result, healthDescriptor, getId(), name, icon,
+        var action = new ResultAction(run, result, healthDescriptor, getId(), name, icon,
                 sourceCodeEncoding, trendChartType);
         run.addAction(action);
 
@@ -138,7 +138,7 @@ class IssuesPublisher {
     }
 
     private DeltaReport computeDelta(final Report issues) {
-        ResultSelector selector = ensureThatIdIsUnique();
+        var selector = ensureThatIdIsUnique();
         var possibleReferenceBuild = findReferenceBuild(selector, issues);
         if (possibleReferenceBuild.isPresent()) {
             Run<?, ?> build = possibleReferenceBuild.get();
@@ -190,11 +190,11 @@ class IssuesPublisher {
     }
 
     private ResultSelector ensureThatIdIsUnique() {
-        ResultSelector selector = new ByIdResultSelector(getId());
+        var selector = new ByIdResultSelector(getId());
         Optional<ResultAction> other = selector.get(run);
         if (other.isPresent()) {
             throw new IllegalStateException(
-                    String.format("ID %s is already used by another action: %s%n", getId(), other.get()));
+                    "ID %s is already used by another action: %s%n".formatted(getId(), other.get()));
         }
         return selector;
     }
@@ -222,7 +222,7 @@ class IssuesPublisher {
     }
 
     private Optional<Run<?, ?>> findReferenceBuild(final ResultSelector selector, final Report issues) {
-        FilteredLog log = new FilteredLog("Errors while resolving the reference build:");
+        var log = new FilteredLog("Errors while resolving the reference build:");
         var reference = new ReferenceFinder().findReference(run, log);
         issues.mergeLogMessages(log);
 
@@ -243,7 +243,7 @@ class IssuesPublisher {
                 var displayName = r.getFullDisplayName();
                 Optional<ResultAction> action = selector.get(r);
                 if (action.isPresent()) {
-                    ResultAction resultAction = action.get();
+                    var resultAction = action.get();
                     if (resultAction.isSuccessful()) {
                         issues.logInfo(
                                 "Quality gate successful for reference build '%s', using this build as reference",
@@ -278,7 +278,7 @@ class IssuesPublisher {
     }
 
     private Result getRequiredResult() {
-        ReferenceBuild action = run.getAction(ReferenceBuild.class);
+        var action = run.getAction(ReferenceBuild.class);
         if (action == null) {
             return Result.UNSTABLE;
         }

@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.*;
 class IssuesSizeTokenMacroTest {
     @Test
     void shouldReturnZeroIfNoActionPresent() {
-        IssuesSizeTokenMacro macro = new IssuesSizeTokenMacro();
+        var macro = new IssuesSizeTokenMacro();
 
         Run<?, ?> run = createBuildWithActions();
         assertThat(expandMacro(macro, run)).isEqualTo("0");
@@ -28,21 +28,21 @@ class IssuesSizeTokenMacroTest {
 
     @Test
     void shouldExpandTokenOfSingleAction() {
-        IssuesSizeTokenMacro macro = new IssuesSizeTokenMacro();
+        var macro = new IssuesSizeTokenMacro();
 
         Run<?, ?> run = createBuildWithActions(createAction("id", "name", 1));
         assertThat(expandMacro(macro, run)).isEqualTo("1");
 
         macro.setTool("id");
         assertThat(expandMacro(macro, run)).isEqualTo("1");
-        
+
         macro.setTool("other");
         assertThat(expandMacro(macro, run)).isEqualTo("0");
     }
 
     @Test
     void shouldExpandTokenOfTwoActions() {
-        IssuesSizeTokenMacro macro = new IssuesSizeTokenMacro();
+        var macro = new IssuesSizeTokenMacro();
 
         Run<?, ?> run = createBuildWithActions(
                 createAction("first", "first name", 1),
@@ -51,17 +51,17 @@ class IssuesSizeTokenMacroTest {
 
         macro.setTool("first");
         assertThat(expandMacro(macro, run)).isEqualTo("1");
-        
+
         macro.setTool("second");
         assertThat(expandMacro(macro, run)).isEqualTo("2");
-        
+
         macro.setTool("other");
         assertThat(expandMacro(macro, run)).isEqualTo("0");
     }
 
     @Test
     void shouldExpandTokenForNewAndFixedWarnings() {
-        IssuesSizeTokenMacro macro = new IssuesSizeTokenMacro();
+        var macro = new IssuesSizeTokenMacro();
 
         Run<?, ?> run = createBuildWithActions(
                 createAction("id", "name", 3, 2, 1));
@@ -77,7 +77,7 @@ class IssuesSizeTokenMacroTest {
 
     @Test
     void shouldThrowExceptionIfEnumDoesNotExist() {
-        IssuesSizeTokenMacro macro = new IssuesSizeTokenMacro();
+        var macro = new IssuesSizeTokenMacro();
 
         assertThatIllegalArgumentException().isThrownBy(
                 () -> macro.setType("wrong")).withMessageContaining("wrong");

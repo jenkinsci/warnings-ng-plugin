@@ -1,15 +1,15 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Map;
-
 import org.eclipse.collections.api.RichIterable;
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
+
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Map;
 
 import hudson.Launcher;
 import hudson.matrix.MatrixBuild;
@@ -38,10 +38,10 @@ class IssuesAggregatorTest {
 
     @Test
     void shouldHandleBuildWithoutActions() {
-        IssuesRecorder recorder = createRecorder();
-        IssuesAggregator aggregator = createIssueAggregator(recorder);
+        var recorder = createRecorder();
+        var aggregator = createIssueAggregator(recorder);
 
-        MatrixRun build = createBuild(AXIS_WINDOWS);
+        var build = createBuild(AXIS_WINDOWS);
 
         aggregator.endRun(build);
 
@@ -55,10 +55,10 @@ class IssuesAggregatorTest {
 
     @Test
     void shouldCollectSingleResultForSingleAxis() {
-        IssuesRecorder recorder = createRecorder();
-        IssuesAggregator aggregator = createIssueAggregator(recorder);
+        var recorder = createRecorder();
+        var aggregator = createIssueAggregator(recorder);
 
-        Issue warning = createIssue(PMD);
+        var warning = createIssue(PMD);
         aggregator.endRun(createBuild(AXIS_WINDOWS, createAction(warning)));
 
         assertThat(aggregator.getNames()).containsExactly(AXIS_WINDOWS);
@@ -76,12 +76,12 @@ class IssuesAggregatorTest {
 
     @Test @org.junitpioneer.jupiter.Issue("JENKINS-59178")
     void shouldCollectDifferentResultsForTwoAxes() {
-        IssuesRecorder recorder = createRecorder();
-        IssuesAggregator aggregator = createIssueAggregator(recorder);
+        var recorder = createRecorder();
+        var aggregator = createIssueAggregator(recorder);
 
-        Issue warning = createIssue(PMD);
+        var warning = createIssue(PMD);
         aggregator.endRun(createBuild(AXIS_WINDOWS, createAction(warning)));
-        Issue bug = createIssue(SPOTBUGS);
+        var bug = createIssue(SPOTBUGS);
         aggregator.endRun(createBuild(AXIS_UNIX, createAction(bug)));
 
         assertThat(aggregator.getNames()).containsExactly(AXIS_WINDOWS, AXIS_UNIX);
@@ -108,11 +108,11 @@ class IssuesAggregatorTest {
 
     @Test
     void shouldCollectMultipleToolsOneAxis() {
-        IssuesRecorder recorder = createRecorder();
-        IssuesAggregator aggregator = createIssueAggregator(recorder);
+        var recorder = createRecorder();
+        var aggregator = createIssueAggregator(recorder);
 
-        Issue warning = createIssue(PMD);
-        Issue bug = createIssue(SPOTBUGS);
+        var warning = createIssue(PMD);
+        var bug = createIssue(SPOTBUGS);
         aggregator.endRun(createBuild(AXIS_UNIX, createAction(warning), createAction(bug)));
 
         assertThat(aggregator.getNames()).containsExactly(AXIS_UNIX);
@@ -132,13 +132,13 @@ class IssuesAggregatorTest {
 
     @Test
     void shouldCollectOneToolMultipleAxes() {
-        IssuesRecorder recorder = createRecorder();
-        IssuesAggregator aggregator = createIssueAggregator(recorder);
+        var recorder = createRecorder();
+        var aggregator = createIssueAggregator(recorder);
 
-        Issue unixWarning = createIssue(PMD);
+        var unixWarning = createIssue(PMD);
         aggregator.endRun(createBuild(AXIS_UNIX, createAction(unixWarning)));
 
-        Issue windowsWarning = createIssue(PMD);
+        var windowsWarning = createIssue(PMD);
         aggregator.endRun(createBuild(AXIS_WINDOWS, createAction(windowsWarning)));
 
         assertThat(aggregator.getNames()).containsExactly(AXIS_UNIX, AXIS_WINDOWS);
@@ -176,7 +176,7 @@ class IssuesAggregatorTest {
     }
 
     private MatrixRun createBuild(final String axis, final ResultAction... actions) {
-        MatrixRun build = createBuild(axis);
+        var build = createBuild(axis);
         when(build.getActions(ResultAction.class)).thenReturn(Arrays.asList(actions));
         return build;
     }
@@ -187,7 +187,7 @@ class IssuesAggregatorTest {
         AnalysisResult result = mock(AnalysisResult.class);
         when(action.getResult()).thenReturn(result);
 
-        Report report = new Report();
+        var report = new Report();
         report.add(issue);
         when(result.getIssues()).thenReturn(report);
         when(result.getBlames()).thenReturn(new Blames());

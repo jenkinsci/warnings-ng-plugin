@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.util.Collection;
-
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
@@ -19,6 +17,8 @@ import edu.hm.hafner.util.Ensure;
 import edu.hm.hafner.util.LineRange;
 import edu.hm.hafner.util.LineRangeList;
 import edu.hm.hafner.util.TreeString;
+
+import java.util.Collection;
 
 import hudson.util.RobustCollectionConverter;
 import hudson.util.RobustReflectionConverter;
@@ -97,7 +97,7 @@ class ReportXmlStream extends AbstractXmlStream<Report> {
         @Override
         public void marshal(final Object source, final HierarchicalStreamWriter writer,
                 final MarshallingContext context) {
-            writer.setValue(source instanceof Severity ? ((Severity) source).getName() : null);
+            writer.setValue(source instanceof Severity s ? s.getName() : null);
         }
 
         @Override

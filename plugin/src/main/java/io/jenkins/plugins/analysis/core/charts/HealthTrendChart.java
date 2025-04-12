@@ -6,7 +6,6 @@ import edu.hm.hafner.echarts.LineSeries;
 import edu.hm.hafner.echarts.LineSeries.FilledMode;
 import edu.hm.hafner.echarts.LineSeries.StackedMode;
 import edu.hm.hafner.echarts.LinesChartModel;
-import edu.hm.hafner.echarts.LinesDataSet;
 
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
@@ -34,22 +33,22 @@ public class HealthTrendChart implements TrendChart {
     @Override
     public LinesChartModel create(final Iterable<? extends BuildResult<AnalysisBuildResult>> results,
             final ChartModelConfiguration configuration) {
-        HealthSeriesBuilder builder = new HealthSeriesBuilder(healthDescriptor);
-        LinesDataSet dataSet = builder.createDataSet(configuration, results);
+        var builder = new HealthSeriesBuilder(healthDescriptor);
+        var dataSet = builder.createDataSet(configuration, results);
 
-        LinesChartModel model = new LinesChartModel(dataSet);
+        var model = new LinesChartModel(dataSet);
 
         if (healthDescriptor.isEnabled()) {
-            LineSeries healthy = createSeries(Messages.Healthy_Name(), JenkinsPalette.GREEN);
+            var healthy = createSeries(Messages.Healthy_Name(), JenkinsPalette.GREEN);
             healthy.addAll(dataSet.getSeries(HealthSeriesBuilder.HEALTHY));
-            LineSeries intermediate = createSeries(Messages.Satisfactory_Name(), JenkinsPalette.YELLOW);
+            var intermediate = createSeries(Messages.Satisfactory_Name(), JenkinsPalette.YELLOW);
             intermediate.addAll(dataSet.getSeries(HealthSeriesBuilder.BETWEEN));
-            LineSeries unhealthy = createSeries(Messages.Unhealthy_Name(), JenkinsPalette.RED);
+            var unhealthy = createSeries(Messages.Unhealthy_Name(), JenkinsPalette.RED);
             unhealthy.addAll(dataSet.getSeries(HealthSeriesBuilder.UNHEALTHY));
             model.addSeries(healthy, intermediate, unhealthy);
         }
         else {
-            LineSeries total = new LineSeries(Messages.Total_Name(), JenkinsPalette.YELLOW.normal(),
+            var total = new LineSeries(Messages.Total_Name(), JenkinsPalette.YELLOW.normal(),
                     StackedMode.SEPARATE_LINES, FilledMode.LINES);
             total.addAll(dataSet.getSeries(HealthSeriesBuilder.TOTAL));
             model.addSeries(total);

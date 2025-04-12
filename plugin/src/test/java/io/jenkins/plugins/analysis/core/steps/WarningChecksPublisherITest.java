@@ -1,15 +1,15 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Consumer;
-
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.TestExtension;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Consumer;
 
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.model.AbstractProject;
@@ -30,12 +30,10 @@ import io.jenkins.plugins.checks.api.ChecksAnnotation.ChecksAnnotationLevel;
 import io.jenkins.plugins.checks.api.ChecksConclusion;
 import io.jenkins.plugins.checks.api.ChecksDetails;
 import io.jenkins.plugins.checks.api.ChecksDetails.ChecksDetailsBuilder;
-import io.jenkins.plugins.checks.api.ChecksOutput;
 import io.jenkins.plugins.checks.api.ChecksOutput.ChecksOutputBuilder;
 import io.jenkins.plugins.checks.api.ChecksPublisherFactory;
 import io.jenkins.plugins.checks.api.ChecksStatus;
 import io.jenkins.plugins.checks.util.CapturingChecksPublisher;
-import io.jenkins.plugins.checks.util.CapturingChecksPublisher.Factory;
 import io.jenkins.plugins.forensics.reference.SimpleReferenceRecorder;
 import io.jenkins.plugins.util.QualityGate.QualityGateCriticality;
 
@@ -56,8 +54,9 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
      * issues.
      */
     @Test
+    @SuppressWarnings("checkstyle:LambdaBodyLength")
     void shouldCreateChecksDetailsWithNewIssuesAsAnnotations() {
-        WorkflowJob project = createPipelineWithWorkspaceFilesWithSuffix(OLD_CHECKSTYLE_REPORT, NEW_CHECKSTYLE_REPORT);
+        var project = createPipelineWithWorkspaceFilesWithSuffix(OLD_CHECKSTYLE_REPORT, NEW_CHECKSTYLE_REPORT);
 
         configureScanner(project, "checkstyle", "");
 
@@ -72,7 +71,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
                 .hasTotalSize(6)
                 .hasNewSize(2);
 
-        WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(run), TaskListener.NULL, null);
+        var publisher = new WarningChecksPublisher(getResultAction(run), TaskListener.NULL, null);
         assertThat(publisher.extractChecksDetails(ChecksAnnotationScope.NEW))
                 .hasFieldOrPropertyWithValue("detailsURL", Optional.of(getResultAction(run).getAbsoluteUrl()))
                 .usingRecursiveComparison()
@@ -83,10 +82,12 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
                 .satisfies(
                         output -> {
                             assertThat(output.getSummary()).isPresent().get().asString()
-                                    .startsWith("|Total|New|Outstanding|Fixed|Trend\n"
-                                            + "|:-:|:-:|:-:|:-:|:-:\n"
-                                            + "|6|2|4|0|:-1:\n\n"
-                                            + "Reference build: <a href=\"http://localhost:")
+                                    .startsWith("""
+                                            |Total|New|Outstanding|Fixed|Trend
+                                            |:-:|:-:|:-:|:-:|:-:
+                                            |6|2|4|0|:-1:
+                                            
+                                            Reference build: <a href="http://localhost:""")
                                     .endsWith("#1</a>");
                             assertThat(output.getChecksAnnotations()).hasSize(2);
                         });
@@ -114,13 +115,13 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldConcludeChecksAsSuccessWhenQualityGateIsPassed() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
         enableAndConfigureCheckstyle(project,
                 recorder -> recorder.setQualityGates(List.of(
                         new WarningsQualityGate(10, QualityGateType.TOTAL, QualityGateCriticality.UNSTABLE))));
 
         Run<?, ?> build = buildSuccessfully(project);
-        WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(build), TaskListener.NULL, null);
+        var publisher = new WarningChecksPublisher(getResultAction(build), TaskListener.NULL, null);
 
         assertThat(publisher.extractChecksDetails(ChecksAnnotationScope.NEW).getConclusion())
                 .isEqualTo(ChecksConclusion.SUCCESS);
@@ -147,7 +148,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldParseHtmlMessage() {
-        FreeStyleProject project = getFreeStyleJob();
+        var project = getFreeStyleJob();
         enableWarnings(project, new PVSStudio());
 
         buildSuccessfully(project);
@@ -155,15 +156,16 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
         copySingleFileToWorkspace(project, "PVSReport.xml", "PVSReport.plog");
         Run<?, ?> run = buildSuccessfully(project);
 
-        WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(run), TaskListener.NULL, null);
-        ChecksDetails details = publisher.extractChecksDetails(ChecksAnnotationScope.NEW);
+        var publisher = new WarningChecksPublisher(getResultAction(run), TaskListener.NULL, null);
+        var details = publisher.extractChecksDetails(ChecksAnnotationScope.NEW);
 
         assertThat(details.getOutput().get().getChecksAnnotations())
                 .usingRecursiveFieldByFieldElementComparatorOnFields("message")
                 .containsOnly(new ChecksAnnotationBuilder()
-                        .withMessage("ERROR:\n"
-                                + "Some diagnostic messages may contain incorrect line number.\n"
-                                + "V002:https://pvs-studio.com/en/docs/warnings/v002/")
+                        .withMessage("""
+                                ERROR:
+                                Some diagnostic messages may contain incorrect line number.
+                                V002:https://pvs-studio.com/en/docs/warnings/v002/""")
                         .build());
     }
 
@@ -172,7 +174,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldReportNoIssuesInTitle() {
-        FreeStyleProject project = getFreeStyleJob();
+        var project = getFreeStyleJob();
         enableCheckStyleWarnings(project);
 
         Run<?, ?> run = buildSuccessfully(project);
@@ -193,7 +195,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldReportOnlyTotalIssuesInTitleWhenNoNewIssues() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(OLD_CHECKSTYLE_REPORT);
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(OLD_CHECKSTYLE_REPORT);
         enableCheckStyleWarnings(project);
 
         Run<?, ?> run = buildSuccessfully(project);
@@ -213,7 +215,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldReportOnlyNewIssuesInTitleWhenAllIssuesAreNew() {
-        FreeStyleProject project = getFreeStyleJob();
+        var project = getFreeStyleJob();
         enableCheckStyleWarnings(project);
 
         Run<?, ?> reference = buildSuccessfully(project);
@@ -239,7 +241,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldIgnoreColumnsWhenBuildMultipleLineAnnotation() {
-        FreeStyleProject project = getFreeStyleJob();
+        var project = getFreeStyleJob();
         var pmd = new Pmd();
         pmd.setPattern("**/pmd-report.xml");
         enableWarnings(project, pmd);
@@ -249,8 +251,8 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
         copySingleFileToWorkspace(project, "pmd-report.xml");
         Run<?, ?> run = buildSuccessfully(project);
 
-        WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(run), TaskListener.NULL, null);
-        ChecksDetails details = publisher.extractChecksDetails(ChecksAnnotationScope.NEW);
+        var publisher = new WarningChecksPublisher(getResultAction(run), TaskListener.NULL, null);
+        var details = publisher.extractChecksDetails(ChecksAnnotationScope.NEW);
 
         assertThat(details.getOutput().get().getChecksAnnotations().get(0))
                 .hasFieldOrPropertyWithValue("startLine", Optional.of(123))
@@ -264,7 +266,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldUseDefaultChecksNamePublishIssues() {
-        WorkflowJob project = createPipelineWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
+        var project = createPipelineWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
         project.setDefinition(asStage(createScanForIssuesStep(new CheckStyle()), PUBLISH_ISSUES_STEP));
         buildSuccessfully(project);
 
@@ -289,7 +291,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private void buildCheckForNewAndOutstandingWarnings(final ChecksAnnotationScope scope, final int expectedSize) {
-        WorkflowJob project = createPipelineWithWorkspaceFilesWithSuffix(OLD_CHECKSTYLE_REPORT, NEW_CHECKSTYLE_REPORT);
+        var project = createPipelineWithWorkspaceFilesWithSuffix(OLD_CHECKSTYLE_REPORT, NEW_CHECKSTYLE_REPORT);
         configureScanner(project, "checkstyle", ", checksAnnotationScope: '" + scope.name() + "'");
         buildSuccessfully(project);
         resetCapturedChecks();
@@ -301,7 +303,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
 
         assertThat(publishedChecks).hasSize(1);
 
-        ChecksDetails details = publishedChecks.get(0);
+        var details = publishedChecks.get(0);
         assertThat(details.getName()).contains("CheckStyle");
         assertThat(details.getOutput()).isPresent().hasValueSatisfying(
                 output -> {
@@ -315,7 +317,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldUseDefaultChecksNameRecordIssues() {
-        WorkflowJob project = createPipelineWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
+        var project = createPipelineWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
         project.setDefinition(asStage(createRecordIssuesStep(new CheckStyle())));
         buildSuccessfully(project);
 
@@ -323,7 +325,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
 
         assertThat(publishedChecks).hasSize(1);
 
-        ChecksDetails details = publishedChecks.get(0);
+        var details = publishedChecks.get(0);
         assertThat(details.getName()).contains("CheckStyle");
         assertThat(details.getOutput()).isPresent().hasValueSatisfying(
                 output -> assertThat(output.getTitle()).contains("No new issues, 6 total"));
@@ -334,7 +336,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldHonorWithChecksContextPublishIssues() {
-        WorkflowJob project = createPipelineWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
+        var project = createPipelineWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
         project.setDefinition(asStage("withChecks('Custom Checks Name') {", createScanForIssuesStep(new CheckStyle()),
                 PUBLISH_ISSUES_STEP, "}"));
         buildSuccessfully(project);
@@ -355,7 +357,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldHonorWithChecksContextRecordIssues() {
-        WorkflowJob project = createPipelineWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
+        var project = createPipelineWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
         project.setDefinition(
                 asStage("withChecks('Custom Checks Name') {", createRecordIssuesStep(new CheckStyle()), "}"));
         buildSuccessfully(project);
@@ -376,7 +378,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldFallbackToIssueCategory() {
-        FreeStyleProject project = getFreeStyleJob();
+        var project = getFreeStyleJob();
         enableWarnings(project, createTool(new MsBuild(), "msbuild.log"));
 
         buildSuccessfully(project);
@@ -384,8 +386,8 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
         copySingleFileToWorkspace(project, "msbuild.log");
         Run<?, ?> run = buildSuccessfully(project);
 
-        WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(run), TaskListener.NULL, null);
-        ChecksDetails details = publisher.extractChecksDetails(ChecksAnnotationScope.NEW);
+        var publisher = new WarningChecksPublisher(getResultAction(run), TaskListener.NULL, null);
+        var details = publisher.extractChecksDetails(ChecksAnnotationScope.NEW);
 
         assertThat(details.getOutput().get().getChecksAnnotations().get(0))
                 .hasFieldOrPropertyWithValue("title", Optional.of("C4101"));
@@ -398,18 +400,20 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private ChecksDetails createExpectedCheckStyleDetails() {
-        ChecksDetailsBuilder builder = new ChecksDetailsBuilder()
+        var builder = new ChecksDetailsBuilder()
                 .withName("CheckStyle")
                 .withStatus(ChecksStatus.COMPLETED)
                 .withConclusion(ChecksConclusion.SUCCESS);
 
-        ChecksOutput output = new ChecksOutputBuilder()
+        var output = new ChecksOutputBuilder()
                 .withTitle("2 new issues, 6 total")
                 .withSummary("") // summary value is checked directly since it is using a random port
-                .withText("## Severity distribution of new issues\n"
-                        + "|Error|Warning High|Warning Normal|Warning Low\n"
-                        + "|:-:|:-:|:-:|:-:\n"
-                        + "|2|0|0|0\n")
+                .withText("""
+                        ## Severity distribution of new issues
+                        |Error|Warning High|Warning Normal|Warning Low
+                        |:-:|:-:|:-:|:-:
+                        |2|0|0|0
+                        """)
                 .addAnnotation(new ChecksAnnotationBuilder()
                         .withPath("X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins"
                                 + "/tasks/parser/CsharpNamespaceDetector.java")
@@ -419,15 +423,16 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
                         .withLine(30)
                         .withStartColumn(21)
                         .withEndColumn(21)
-                        .withRawDetails(StringUtils.normalizeSpace("<p>Since Checkstyle 3.0</p><p>\n"
-                                + "Checks the placement of right curly braces (<code>'}'</code>)\n"
-                                + "for if-else, try-catch-finally blocks, while-loops, for-loops,\n"
-                                + "method definitions, class definitions, constructor definitions,\n"
-                                + "instance and static initialization blocks.\n"
-                                + "The policy to verify is specified using the property <code> option</code>.\n"
-                                + "For right curly brace of expression blocks please follow issue\n"
-                                + "<a href=\"https://github.com/checkstyle/checkstyle/issues/5945\">#5945</a>.\n"
-                                + "</p>"))
+                        .withRawDetails(StringUtils.normalizeSpace("""
+                                <p>Since Checkstyle 3.0</p><p>
+                                Checks the placement of right curly braces (<code>'}'</code>)
+                                for if-else, try-catch-finally blocks, while-loops, for-loops,
+                                method definitions, class definitions, constructor definitions,
+                                instance and static initialization blocks.
+                                The policy to verify is specified using the property <code> option</code>.
+                                For right curly brace of expression blocks please follow issue
+                                <a href="https://github.com/checkstyle/checkstyle/issues/5945">#5945</a>.
+                                </p>"""))
                         .build())
                 .addAnnotation(new ChecksAnnotationBuilder()
                         .withPath("X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins"
@@ -438,15 +443,16 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
                         .withLine(37)
                         .withStartColumn(9)
                         .withEndColumn(9)
-                        .withRawDetails(StringUtils.normalizeSpace("<p>Since Checkstyle 3.0</p><p>\n"
-                                + "Checks the placement of right curly braces (<code>'}'</code>)\n"
-                                + "for if-else, try-catch-finally blocks, while-loops, for-loops,\n"
-                                + "method definitions, class definitions, constructor definitions,\n"
-                                + "instance and static initialization blocks.\n"
-                                + "The policy to verify is specified using the property <code> option</code>.\n"
-                                + "For right curly brace of expression blocks please follow issue\n"
-                                + "<a href=\"https://github.com/checkstyle/checkstyle/issues/5945\">#5945</a>.\n"
-                                + "</p>"))
+                        .withRawDetails(StringUtils.normalizeSpace("""
+                                <p>Since Checkstyle 3.0</p><p>
+                                Checks the placement of right curly braces (<code>'}'</code>)
+                                for if-else, try-catch-finally blocks, while-loops, for-loops,
+                                method definitions, class definitions, constructor definitions,
+                                instance and static initialization blocks.
+                                The policy to verify is specified using the property <code> option</code>.
+                                For right curly brace of expression blocks please follow issue
+                                <a href="https://github.com/checkstyle/checkstyle/issues/5945">#5945</a>.
+                                </p>"""))
                         .build())
                 .build();
 
@@ -458,7 +464,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
     @CanIgnoreReturnValue
     private IssuesRecorder enableAndConfigureCheckstyle(final AbstractProject<?, ?> job,
             final Consumer<IssuesRecorder> configuration) {
-        IssuesRecorder item = new IssuesRecorder();
+        var item = new IssuesRecorder();
         item.setTools(createTool(new CheckStyle(), "**/*issues.txt"));
         job.getPublishersList().add(item);
         configuration.accept(item);
@@ -466,7 +472,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private void assertChecksConclusionIsFailureWithQualityGateResult(final QualityGateCriticality criticality) {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
         enableAndConfigureCheckstyle(project, recorder -> recorder.setQualityGates(List.of(
                         new WarningsQualityGate(1, QualityGateType.TOTAL, criticality))));
 
@@ -475,7 +481,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
                 .hasTotalSize(6)
                 .hasQualityGateStatus(criticality.getStatus());
 
-        WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(build), TaskListener.NULL, null);
+        var publisher = new WarningChecksPublisher(getResultAction(build), TaskListener.NULL, null);
         assertThat(publisher.extractChecksDetails(ChecksAnnotationScope.NEW).getConclusion())
                 .isEqualTo(ChecksConclusion.FAILURE);
     }
@@ -484,11 +490,11 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
         return getFactory().getPublishedChecks();
     }
 
-    private CapturingChecksPublisher.Factory getFactory()  {
+    private CapturingChecksPublisher.Factory getFactory() {
         return getJenkins().getInstance().getExtensionList(ChecksPublisherFactory.class)
                 .stream()
-                .filter(f -> f instanceof Factory)
-                .map(f -> (Factory) f)
+                .filter(CapturingChecksPublisher.Factory.class::isInstance)
+                .map(CapturingChecksPublisher.Factory.class::cast)
                 .findAny()
                 .orElseThrow(() -> new AssertionError("No CapturingChecksPublisher registered as @TestExtension?"));
     }

@@ -1,11 +1,11 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.VisibleForTesting;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
 import io.jenkins.plugins.datatables.TableColumn;
@@ -57,14 +57,14 @@ public class IssuesModel extends DetailsTableModel {
             columns.add(createPackageColumn());
         }
         if (getReport().hasCategories()) {
-            TableColumn category = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_Category())
+            var category = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_Category())
                     .withDataPropertyKey("category")
                     .withResponsivePriority(100)
                     .build();
             columns.add(category);
         }
         if (getReport().hasTypes()) {
-            TableColumn type = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_Type())
+            var type = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_Type())
                     .withDataPropertyKey("type")
                     .withResponsivePriority(1000)
                     .build();
@@ -78,7 +78,7 @@ public class IssuesModel extends DetailsTableModel {
 
     @Override
     public IssuesRow getRow(final Issue issue) {
-        IssuesRow row = new IssuesRow(getAgeBuilder(), getFileNameRenderer(), getDescriptionProvider(),
+        var row = new IssuesRow(getAgeBuilder(), getFileNameRenderer(), getDescriptionProvider(),
                 issue, getJenkinsFacade());
         row.setPackageName(issue);
         row.setCategory(issue);

@@ -1,9 +1,9 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
+import org.junit.jupiter.api.Test;
+
 import java.util.Collections;
 import java.util.List;
-
-import org.junit.jupiter.api.Test;
 
 import hudson.util.FormValidation;
 
@@ -22,7 +22,7 @@ class ParserConfigurationTest {
 
     @Test
     void shouldHaveNoParsersWhenCreated() {
-        ParserConfiguration configuration = new ParserConfiguration(mock(GlobalConfigurationFacade.class));
+        var configuration = new ParserConfiguration(mock(GlobalConfigurationFacade.class));
 
         assertThat(configuration.getParsers()).isEmpty();
     }
@@ -31,7 +31,7 @@ class ParserConfigurationTest {
     void shouldSaveConfigurationIfParsersAreSet() {
         GlobalConfigurationFacade facade = mock(GlobalConfigurationFacade.class);
 
-        ParserConfiguration configuration = new ParserConfiguration(facade);
+        var configuration = new ParserConfiguration(facade);
         configuration.setParsers(PARSERS);
 
         verify(facade).save();
@@ -42,7 +42,7 @@ class ParserConfigurationTest {
     void shouldHaveConsoleLogScanningPermittedSetToFalseWhenCreated() {
         GlobalConfigurationFacade facade = mock(GlobalConfigurationFacade.class);
 
-        ParserConfiguration configuration = new ParserConfiguration(facade);
+        var configuration = new ParserConfiguration(facade);
 
         assertThat(configuration.isConsoleLogScanningPermitted()).isEqualTo(false);
     }
@@ -51,7 +51,7 @@ class ParserConfigurationTest {
     void shouldSaveConfigurationIfConsoleLogScanningPermittedIsSet() {
         GlobalConfigurationFacade facade = mock(GlobalConfigurationFacade.class);
 
-        ParserConfiguration configuration = new ParserConfiguration(facade);
+        var configuration = new ParserConfiguration(facade);
         configuration.setConsoleLogScanningPermitted(true);
 
         verify(facade).save();
@@ -62,20 +62,20 @@ class ParserConfigurationTest {
     void shouldWarnUserIfConsoleLogScanningPermittedIsSet() {
         GlobalConfigurationFacade facade = mock(GlobalConfigurationFacade.class);
 
-        ParserConfiguration configuration = new ParserConfiguration(facade);
+        var configuration = new ParserConfiguration(facade);
 
-        final FormValidation actualFalse = configuration.doCheckConsoleLogScanningPermitted(false);
+        final var actualFalse = configuration.doCheckConsoleLogScanningPermitted(false);
         assertThat(actualFalse).isOk();
-        final FormValidation actualTrue = configuration.doCheckConsoleLogScanningPermitted(true);
+        final var actualTrue = configuration.doCheckConsoleLogScanningPermitted(true);
         assertThat(actualTrue.kind).isEqualTo(FormValidation.Kind.WARNING);
     }
 
     @Test
     void shouldSaveConfigurationIfParserIsAdded() {
         GlobalConfigurationFacade facade = mock(GlobalConfigurationFacade.class);
-        GroovyParser additionalParser = new GroovyParser("1", "", "", "", "");
+        var additionalParser = new GroovyParser("1", "", "", "", "");
 
-        ParserConfiguration configuration = new ParserConfiguration(facade);
+        var configuration = new ParserConfiguration(facade);
         configuration.addParser(additionalParser);
 
         verify(facade).save();
@@ -85,9 +85,9 @@ class ParserConfigurationTest {
     @Test
     void shouldThrowIfParserExists() {
         GlobalConfigurationFacade facade = mock(GlobalConfigurationFacade.class);
-        GroovyParser testParser = new GroovyParser("1", "", "", "", "");
+        var testParser = new GroovyParser("1", "", "", "", "");
 
-        ParserConfiguration configuration = new ParserConfiguration(facade);
+        var configuration = new ParserConfiguration(facade);
         configuration.addParser(testParser);
         verify(facade).save();
 
@@ -97,10 +97,10 @@ class ParserConfigurationTest {
     @Test
     void deleteShouldRemoveOnlySpecifiedParser() {
         GlobalConfigurationFacade facade = mock(GlobalConfigurationFacade.class);
-        GroovyParser firstTestParser = new GroovyParser("1", "", "", "", "");
-        GroovyParser secondTestParser = new GroovyParser("2", "", "", "", "");
+        var firstTestParser = new GroovyParser("1", "", "", "", "");
+        var secondTestParser = new GroovyParser("2", "", "", "", "");
 
-        ParserConfiguration configuration = new ParserConfiguration(facade);
+        var configuration = new ParserConfiguration(facade);
         configuration.addParser(firstTestParser);
         configuration.addParser(secondTestParser);
 
