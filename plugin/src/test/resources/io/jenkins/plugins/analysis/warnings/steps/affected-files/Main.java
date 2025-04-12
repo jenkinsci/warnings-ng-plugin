@@ -7,11 +7,11 @@ public class Main {
     public static void main(String... args) {
         int a=99;
         System.out.println("a");
-        if (true) {
+        if(true)
             System.out.println("b");
-        }
         else {
             System.out.println("c");
         }
+        return;
     }
 }
