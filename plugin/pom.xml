@@ -11,7 +11,7 @@
 
   <groupId>io.jenkins.plugins</groupId>
   <artifactId>warnings-ng</artifactId>
-  <version>12.5.0-SNAPSHOT</version>
+  <version>12.6.0-SNAPSHOT</version>
   <packaging>hpi</packaging>
   <name>Warnings Plugin</name>
 
@@ -85,6 +85,7 @@
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>jsoup</artifactId>
       <!-- TODO: remove the version when a matching BOM is available -->
+      <version>1.19.1-38.v216a_f3721b_3c</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>

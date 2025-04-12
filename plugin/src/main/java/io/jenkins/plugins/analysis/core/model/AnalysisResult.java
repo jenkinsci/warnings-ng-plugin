@@ -51,7 +51,7 @@ import io.jenkins.plugins.util.ValidationUtilities;
  * @author Ullrich Hafner
  */
 @SuppressFBWarnings(value = "SE, DESERIALIZATION_GADGET", justification = "transient fields are restored using a Jenkins callback (or are checked for null)")
-@SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveClassLength", "PMD.GodClass", "checkstyle:ClassFanOutComplexity", "checkstyle:ClassDataAbstractionCoupling"})
+@SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveClassLength", "PMD.GodClass", "PMD.CyclomaticComplexity", "checkstyle:ClassFanOutComplexity", "checkstyle:ClassDataAbstractionCoupling"})
 public class AnalysisResult implements Serializable, StaticAnalysisRun {
     @Serial
     private static final long serialVersionUID = 1110545450292087475L;
@@ -61,6 +61,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     private static final String NO_REFERENCE = StringUtils.EMPTY;
 
     private final String id;
+    private /* almost final */ String parserId;
 
     private IssuesStatistics totals;
 
@@ -229,8 +230,10 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
         this.owner = owner;
 
         Report allIssues = report.getAllIssues();
+
         new ValidationUtilities().ensureValidId(id);
         this.id = id;
+        this.parserId = allIssues.getParserId();
 
         totals = report.getStatistics();
         this.sizePerOrigin = new HashMap<>(sizePerOrigin);
@@ -267,12 +270,16 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      *
      * @return this
      */
+    @Serial
     protected Object readResolve() {
         if (qualityGateResult == null && qualityGateStatus != null) {
             qualityGateResult = new QualityGateResult(qualityGateStatus);
         }
         if (totals == null) {
             totals = new IssuesStatisticsBuilder().build();
+        }
+        if (parserId == null) {
+            parserId = id; // fallback for old data
         }
         return this;
     }
@@ -353,6 +360,10 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     @Override
     public String getId() {
         return id;
+    }
+
+    String getParserId() {
+        return parserId;
     }
 
     @Override

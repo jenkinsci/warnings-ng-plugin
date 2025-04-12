@@ -5,7 +5,7 @@
   <parent>
     <groupId>edu.hm.hafner</groupId>
     <artifactId>codingstyle-pom</artifactId>
-    <version>5.16.0</version>
+    <version>5.18.0</version>
     <relativePath />
   </parent>
 
@@ -16,8 +16,8 @@
   <name>UI Tests of Warnings Plugin</name>
 
   <properties>
-    <jenkins.version>2.502</jenkins.version>
-    <hpi-plugin.version>3.62</hpi-plugin.version>
+    <jenkins.version>2.505</jenkins.version>
+    <hpi-plugin.version>3.63</hpi-plugin.version>
     <json-smart.version>2.3</json-smart.version>
     <json-unit-assertj.version>4.1.0</json-unit-assertj.version>
     <module.name>${project.groupId}.warnings.ui.tests</module.name>
@@ -38,7 +38,7 @@
         <!-- ClassNotFoundException if omitted -->
         <groupId>io.netty</groupId>
         <artifactId>netty-bom</artifactId>
-        <version>4.1.119.Final</version>
+        <version>4.2.0.Final</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -49,7 +49,7 @@
     <dependency>
       <groupId>org.jenkins-ci</groupId>
       <artifactId>acceptance-test-harness</artifactId>
-      <version>6133.v358d9a_47674f</version>
+      <version>6180.v889d0fe56785</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
