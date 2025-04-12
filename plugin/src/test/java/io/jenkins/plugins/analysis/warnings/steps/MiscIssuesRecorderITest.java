@@ -1,20 +1,18 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
+import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Test;
+
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.Severity;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
-import org.junit.jupiter.api.Test;
-
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.Report;
-import edu.hm.hafner.analysis.Severity;
 
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
@@ -22,7 +20,6 @@ import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.filter.ExcludeFile;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.model.IssuesDetail;
 import io.jenkins.plugins.analysis.core.model.IssuesModel.IssuesRow;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
@@ -65,9 +62,9 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test @org.junitpioneer.jupiter.Issue("JENKINS-55514")
     void shouldMapSeverityFilterForFindBugs() {
-        FreeStyleProject project = createFreestyleJob("findbugs-severities.xml");
+        var project = createFreestyleJob("findbugs-severities.xml");
 
-        FindBugs findbugs = new FindBugs();
+        var findbugs = new FindBugs();
         findbugs.setUseRankAsPriority(true);
         enableGenericWarnings(project, findbugs);
 
@@ -88,10 +85,10 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldCreateEmptyResult() {
-        FreeStyleProject project = createFreeStyleProject();
+        var project = createFreeStyleProject();
         enableEclipseWarnings(project);
 
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(0);
         assertThat(result).hasErrorMessages("No files found for pattern '**/*issues.txt'. Configuration error?");
@@ -102,10 +99,10 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldCreateResultWithWarnings() {
-        FreeStyleProject project = createFreestyleJob("eclipse.txt");
+        var project = createFreestyleJob("eclipse.txt");
         enableEclipseWarnings(project);
 
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(8);
         assertThat(result).hasNewSize(0);
@@ -120,18 +117,18 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldScanForOpenTasks() {
-        FreeStyleProject project = createFreestyleJob("eclipse.txt");
-        OpenTasks tasks = new OpenTasks();
+        var project = createFreestyleJob("eclipse.txt");
+        var tasks = new OpenTasks();
         tasks.setIncludePattern("**/*.txt");
-        String tag = "WARNING";
+        var tag = "WARNING";
         tasks.setHighTags(tag);
         enableWarnings(project, tasks);
 
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(8);
 
-        Report report = result.getIssues();
+        var report = result.getIssues();
         for (Issue openTask : report) {
             assertThat(openTask).hasType(tag).hasSeverity(Severity.WARNING_HIGH);
             assertThat(openTask.getMessage()).startsWith("in C:\\Desenvolvimento\\Java");
@@ -217,7 +214,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         recorder.setName(CUSTOM_NAME);
         recorder.setIcon(CUSTOM_ICON);
 
-        ResultAction action = getResultAction(buildWithResult(project, Result.SUCCESS));
+        var action = getResultAction(buildWithResult(project, Result.SUCCESS));
         assertThat(action.getId()).isEqualTo(CUSTOM_ID);
         assertThat(action.getDisplayName()).startsWith(CUSTOM_NAME);
         assertThat(action.getIconFileName()).isEqualTo(CUSTOM_ICON);
@@ -271,7 +268,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
 
         assertThat(results).hasSize(1);
 
-        AnalysisResult result = results.get(0);
+        var result = results.get(0);
         assertThat(result.getSizePerOrigin()).containsExactly(entry(CHECKSTYLE, 6), entry("pmd", 4));
         assertThat(result).hasTotalSize(10);
         assertThat(result).hasId("analysis");
@@ -283,7 +280,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private List<AnalysisResult> runJobWithAggregation(final boolean isAggregationEnabled) {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle.xml",
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle.xml",
                 "pmd-warnings.xml");
         enableWarnings(project, recorder -> recorder.setAggregatingResults(isAggregationEnabled),
                 createTool(new CheckStyle(), "**/checkstyle-issues.txt"),
@@ -299,7 +296,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldHaveOriginsIfBuildContainsWarnings() {
-        FreeStyleProject project = createFreestyleJob("checkstyle.xml", "pmd-warnings.xml");
+        var project = createFreestyleJob("checkstyle.xml", "pmd-warnings.xml");
         enableWarnings(project,
                 recorder -> {
                     recorder.setAggregatingResults(true);
@@ -308,13 +305,13 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
                 createTool(new CheckStyle(), "**/checkstyle-issues.txt"),
                 createTool(new Pmd(), "**/pmd-warnings-issues.txt"));
 
-        AnalysisResult result = getAnalysisResult(buildWithResult(project, Result.SUCCESS));
+        var result = getAnalysisResult(buildWithResult(project, Result.SUCCESS));
         assertThat(result).hasTotalSize(0);
         assertThat(result.getSizePerOrigin()).containsExactly(entry(CHECKSTYLE, 0), entry("pmd", 0));
         assertThat(result).hasId("analysis");
         assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
 
-        PullRequestMonitoringPortlet portlet = new PullRequestMonitoringPortlet(getResultAction(project));
+        var portlet = new PullRequestMonitoringPortlet(getResultAction(project));
 
         assertThat(portlet.hasQualityGate()).isFalse();
         assertThat(portlet.isEmpty()).isTrue();
@@ -330,13 +327,13 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test @org.junitpioneer.jupiter.Issue("JENKINS-58056")
     void shouldFailBuildWhenFailBuildOnErrorsIsSet() {
-        FreeStyleProject job = createFreeStyleProject();
-        IssuesRecorder recorder = enableEclipseWarnings(job);
+        var job = createFreeStyleProject();
+        var recorder = enableEclipseWarnings(job);
         scheduleBuildAndAssertStatus(job, Result.SUCCESS);
 
         recorder.setFailOnError(true);
 
-        AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.FAILURE);
+        var result = scheduleBuildAndAssertStatus(job, Result.FAILURE);
         assertThat(result).hasErrorMessages("No files found for pattern '**/*issues.txt'. Configuration error?");
         assertThat(getConsoleLog(result)).contains("Failing build because analysis result contains errors");
     }
@@ -348,7 +345,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldThrowExceptionIfSameToolIsConfiguredTwice() {
         Run<?, ?> build = runJobWithCheckStyleTwice(false, Result.FAILURE);
 
-        AnalysisResult result = getAnalysisResult(build);
+        var result = getAnalysisResult(build);
         assertThat(getConsoleLog(result)).contains("ID checkstyle is already used by another action: "
                 + "io.jenkins.plugins.analysis.core.model.ResultAction for CheckStyle");
         assertThat(result).hasId(CHECKSTYLE);
@@ -361,9 +358,9 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldUseSameToolTwice() {
-        FreeStyleProject project = createFreestyleJob("checkstyle.xml", "checkstyle-twice.xml");
-        ReportScanningTool first = createTool(new CheckStyle(), "**/checkstyle-issues.txt");
-        ReportScanningTool second = createTool(new CheckStyle(), "**/checkstyle-twice-issues.txt");
+        var project = createFreestyleJob("checkstyle.xml", "checkstyle-twice.xml");
+        var first = createTool(new CheckStyle(), "**/checkstyle-issues.txt");
+        var second = createTool(new CheckStyle(), "**/checkstyle-twice-issues.txt");
         second.setId("second");
         enableWarnings(project, recorder -> recorder.setAggregatingResults(false), first, second);
 
@@ -384,7 +381,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldAggregateMultipleConfigurationsOfSameTool() {
         Run<?, ?> build = runJobWithCheckStyleTwice(true, Result.SUCCESS);
 
-        AnalysisResult result = getAnalysisResult(build);
+        var result = getAnalysisResult(build);
 
         assertThat(result).hasTotalSize(12);
         assertThat(result).hasId("analysis");
@@ -392,7 +389,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private Run<?, ?> runJobWithCheckStyleTwice(final boolean isAggregationEnabled, final Result result) {
-        FreeStyleProject project = createFreestyleJob("checkstyle.xml", "checkstyle-twice.xml");
+        var project = createFreestyleJob("checkstyle.xml", "checkstyle-twice.xml");
         enableWarnings(project, recorder -> recorder.setAggregatingResults(isAggregationEnabled),
                 createTool(new CheckStyle(), "**/checkstyle-issues.txt"),
                 createTool(new CheckStyle(), "**/checkstyle-twice-issues.txt"));
@@ -407,12 +404,12 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldCreateFixedWarnings() {
-        FreeStyleProject project = createFreestyleJob("eclipse_8_Warnings.txt", "eclipse_5_Warnings.txt");
+        var project = createFreestyleJob("eclipse_8_Warnings.txt", "eclipse_5_Warnings.txt");
 
-        IssuesRecorder recorder = enableGenericWarnings(project, createEclipse("eclipse_8_Warnings-issues.txt"));
+        var recorder = enableGenericWarnings(project, createEclipse("eclipse_8_Warnings-issues.txt"));
 
         // First build: baseline
-        AnalysisResult baselineResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        var baselineResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(baselineResult).hasNewSize(0);
         assertThat(baselineResult).hasFixedSize(0);
@@ -420,7 +417,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
 
         // Second build: actual result
         recorder.setTools(createEclipse("eclipse_5_Warnings-issues.txt"));
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasNewSize(0);
         assertThat(result).hasFixedSize(3);
@@ -428,9 +425,9 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(result).hasTotalSize(5);
         assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
 
-        PullRequestMonitoringPortlet portlet = createPortlet(project);
+        var portlet = createPortlet(project);
 
-        String successfulModel = portlet.getWarningsModel();
+        var successfulModel = portlet.getWarningsModel();
         assertThatJson(successfulModel).node("fixed").isEqualTo(3);
         assertThatJson(successfulModel).node("outstanding").isEqualTo(5);
         assertThatJson(successfulModel).node("new").node("total").isEqualTo(0);
@@ -452,7 +449,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
             final int expectedOutstandingWarnings, final int expectedFixedWarnings) {
         assertThat(portlet.hasNoNewWarnings()).isTrue();
 
-        String simpleModel = portlet.getNoNewWarningsModel();
+        var simpleModel = portlet.getNoNewWarningsModel();
         assertThatJson(simpleModel).node("data").isArray().hasSize(2);
         assertThatJson(simpleModel).node("data[0]").node("name").isEqualTo("outstanding");
         assertThatJson(simpleModel).node("data[0]").node("value").isEqualTo(expectedOutstandingWarnings);
@@ -461,7 +458,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private PullRequestMonitoringPortlet createPortlet(final FreeStyleProject project) {
-        PullRequestMonitoringPortlet portlet = new PullRequestMonitoringPortlet(getResultAction(project));
+        var portlet = new PullRequestMonitoringPortlet(getResultAction(project));
 
         assertThat(portlet.hasQualityGate()).isFalse();
         assertThat(portlet.getId()).endsWith("eclipse");
@@ -480,15 +477,15 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldCreateNewWarnings() {
-        FreeStyleProject project = createFreestyleJob("eclipse_5_Warnings.txt", "eclipse_8_Warnings.txt");
-        IssuesRecorder recorder = enableWarnings(project, createEclipse("eclipse_5_Warnings-issues.txt"));
+        var project = createFreestyleJob("eclipse_5_Warnings.txt", "eclipse_8_Warnings.txt");
+        var recorder = enableWarnings(project, createEclipse("eclipse_5_Warnings-issues.txt"));
 
         // First build: baseline
         scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         // Second build: actual result
         recorder.setTools(createEclipse("eclipse_8_Warnings-issues.txt"));
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasNewSize(3);
         assertThat(result).hasFixedSize(0);
@@ -496,10 +493,10 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(result).hasTotalSize(8);
         assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
 
-        PullRequestMonitoringPortlet portlet = createPortlet(project);
+        var portlet = createPortlet(project);
         assertThat(portlet.hasNoNewWarnings()).isFalse();
 
-        String successfulModel = portlet.getWarningsModel();
+        var successfulModel = portlet.getWarningsModel();
         assertThatJson(successfulModel).node("fixed").isEqualTo(0);
         assertThatJson(successfulModel).node("outstanding").isEqualTo(5);
         assertThatJson(successfulModel).node("new").node("total").isEqualTo(3);
@@ -516,16 +513,16 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldCreateNoFixedWarningsOrNewWarnings() {
-        FreeStyleProject project = createFreestyleJob("eclipse_8_Warnings.txt");
-        ReportScanningTool eclipse = createEclipse("eclipse_8_Warnings-issues.txt");
-        IssuesRecorder recorder = enableWarnings(project, eclipse);
+        var project = createFreestyleJob("eclipse_8_Warnings.txt");
+        var eclipse = createEclipse("eclipse_8_Warnings-issues.txt");
+        var recorder = enableWarnings(project, eclipse);
 
         // First build: baseline
         scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         // Second build: actual result
         recorder.setTools(eclipse);
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasNewSize(0);
         assertThat(result).hasFixedSize(0);
@@ -533,9 +530,9 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(result).hasTotalSize(8);
         assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
 
-        PullRequestMonitoringPortlet portlet = createPortlet(project);
+        var portlet = createPortlet(project);
 
-        String successfulModel = portlet.getWarningsModel();
+        var successfulModel = portlet.getWarningsModel();
         assertThatJson(successfulModel).node("fixed").isEqualTo(0);
         assertThatJson(successfulModel).node("outstanding").isEqualTo(8);
         assertThatJson(successfulModel).node("new").node("total").isEqualTo(0);
@@ -555,15 +552,15 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldCreateSomeNewWarningsAndSomeFixedWarnings() {
-        FreeStyleProject project = createFreestyleJob("eclipse_5_Warnings.txt", "eclipse_4_Warnings.txt");
-        IssuesRecorder recorder = enableWarnings(project, createEclipse("eclipse_5_Warnings-issues.txt"));
+        var project = createFreestyleJob("eclipse_5_Warnings.txt", "eclipse_4_Warnings.txt");
+        var recorder = enableWarnings(project, createEclipse("eclipse_5_Warnings-issues.txt"));
 
         // First build: baseline
         scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         // Second build: actual result
         recorder.setTools(createEclipse("eclipse_4_Warnings-issues.txt"));
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasNewSize(2);
         assertThat(result).hasFixedSize(3);
@@ -571,9 +568,9 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(result).hasTotalSize(4);
         assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
 
-        PullRequestMonitoringPortlet successPortlet = createPortlet(project);
+        var successPortlet = createPortlet(project);
 
-        String successfulModel = successPortlet.getWarningsModel();
+        var successfulModel = successPortlet.getWarningsModel();
         assertThatJson(successfulModel).node("fixed").isEqualTo(3);
         assertThatJson(successfulModel).node("outstanding").isEqualTo(2);
         assertThatJson(successfulModel).node("new").node("total").isEqualTo(2);
@@ -602,13 +599,13 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private void shouldFindNewCheckStyleWarnings(final Supplier<ReportScanningTool> tool) {
-        FreeStyleProject project = createFreestyleJob("checkstyle1.xml", "checkstyle2.xml");
+        var project = createFreestyleJob("checkstyle1.xml", "checkstyle2.xml");
 
         buildWithResult(project, Result.SUCCESS); // dummy build to ensure that the first CheckStyle build starts at #2
 
-        IssuesRecorder recorder = enableWarnings(project, createTool(tool.get(), "**/checkstyle1*"));
+        var recorder = enableWarnings(project, createTool(tool.get(), "**/checkstyle1*"));
 
-        AnalysisResult baseline = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        var baseline = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         assertThat(baseline).hasTotalSize(3);
         assertThat(baseline).hasNewSize(0);
         assertThat(baseline).hasFixedSize(0);
@@ -616,7 +613,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         verifyBaselineDetails(baseline);
 
         recorder.setTools(createTool(tool.get(), "**/checkstyle2*"));
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasNewSize(3);
         assertThat(result).hasFixedSize(2);
@@ -624,13 +621,13 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
 
         verifyDetails(result);
 
-        ResultAction resultAction = getResultAction(result.getOwner());
+        var resultAction = getResultAction(result.getOwner());
         assertThat(resultAction.getDisplayName()).isEqualTo("CheckStyle Warnings");
         assertThat(resultAction.getUrlName()).isEqualTo(CHECKSTYLE);
     }
 
     private void verifyDetails(final AnalysisResult result) {
-        Report issuesReport = result.getIssues();
+        var issuesReport = result.getIssues();
 
         assertThat(issuesReport.findByProperty(Issue.byCategory("Blocks"))).hasSize(2);
         assertThat(issuesReport.findByProperty(Issue.byCategory("Design"))).hasSize(1);
@@ -667,7 +664,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private void verifyBaselineDetails(final AnalysisResult baseline) {
-        Report issuesReport = baseline.getIssues();
+        var issuesReport = baseline.getIssues();
 
         assertThat(issuesReport.findByProperty(Issue.byCategory("Design"))).hasSize(2);
         assertThat(issuesReport.findByProperty(Issue.byCategory("Sizes"))).hasSize(1);
@@ -701,9 +698,9 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldParseCheckstyleReportEvenResultIsFailure() {
-        FreeStyleProject project = createCheckStyleProjectWithFailureStep(true);
+        var project = createCheckStyleProjectWithFailureStep(true);
 
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.FAILURE);
+        var result = scheduleBuildAndAssertStatus(project, Result.FAILURE);
 
         assertThat(result).hasTotalSize(6);
         assertThat(result).hasInfoMessages("-> resolved module names for 6 issues");
@@ -716,7 +713,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldNotRunWhenResultIsFailure() {
-        FreeStyleProject project = createCheckStyleProjectWithFailureStep(false);
+        var project = createCheckStyleProjectWithFailureStep(false);
 
         Run<?, ?> run = buildWithResult(project, Result.FAILURE);
         assertThat(getAnalysisResults(run)).isEmpty();
@@ -736,18 +733,17 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldResolveEnvVariablesInPattern() {
-        FreeStyleProject project = createJavaWarningsFreestyleProject("**/*.${FILE_EXT}");
+        var project = createJavaWarningsFreestyleProject("**/*.${FILE_EXT}");
 
         setEnvironmentVariables(env("FILE_EXT", "txt"));
 
         createFileWithJavaWarnings("javac.txt", project, 1, 2, 3);
         createFileWithJavaWarnings("javac.csv", project, 1, 2);
 
-        AnalysisResult analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        var analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(analysisResult).hasTotalSize(3);
-        assertThat(analysisResult.getInfoMessages()).contains(String.format(
-                "Searching for all files in '%s' that match the pattern '**/*.txt'", getWorkspace(project)));
+        assertThat(analysisResult.getInfoMessages()).contains("Searching for all files in '%s' that match the pattern '**/*.txt'".formatted(getWorkspace(project)));
         assertThat(analysisResult.getInfoMessages()).contains("-> found 1 file");
     }
 
@@ -757,7 +753,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldResolveNestedEnvVariablesInPattern() {
-        FreeStyleProject project = createJavaWarningsFreestyleProject("${FILE_PATTERN}");
+        var project = createJavaWarningsFreestyleProject("${FILE_PATTERN}");
 
         setEnvironmentVariables(
                 env("FILE_PATTERN", "${FILE_NAME}.${FILE_EXT}"),
@@ -770,11 +766,10 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         createFileWithJavaWarnings("D_tmp.csv", project, 21, 22, 23);
         createFileWithJavaWarnings("E_tmp.txt", project, 31, 32, 33);
 
-        AnalysisResult analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        var analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(analysisResult).hasTotalSize(4);
-        assertThat(analysisResult.getInfoMessages()).contains(String.format(
-                "Searching for all files in '%s' that match the pattern '*_javac.txt'", getWorkspace(project)));
+        assertThat(analysisResult.getInfoMessages()).contains("Searching for all files in '%s' that match the pattern '*_javac.txt'".formatted(getWorkspace(project)));
         assertThat(analysisResult.getInfoMessages()).contains("-> found 2 files");
     }
 
@@ -787,8 +782,8 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
      * @return The created Freestyle Project.
      */
     private FreeStyleProject createJavaWarningsFreestyleProject(final String pattern) {
-        FreeStyleProject project = createFreeStyleProject();
-        Java java = new Java();
+        var project = createFreeStyleProject();
+        var java = new Java();
         java.setPattern(pattern);
         enableWarnings(project, java);
         return project;
@@ -806,7 +801,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
      */
     private void createFileWithJavaWarnings(final String fileName, final FreeStyleProject project,
             final int... linesWithWarning) {
-        StringBuilder warningText = new StringBuilder();
+        var warningText = new StringBuilder();
         for (int lineNumber : linesWithWarning) {
             warningText.append(createJavaWarning("C:\\Path\\SourceFile.java", lineNumber)).append("\n");
         }
@@ -815,9 +810,9 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private void assertThatFailureFlagIsNotUsed(final boolean isEnabledForFailure) {
-        FreeStyleProject project = createCheckStyleProject(isEnabledForFailure);
+        var project = createCheckStyleProject(isEnabledForFailure);
 
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(6);
         assertThat(result).hasInfoMessages("-> resolved module names for 6 issues");
@@ -825,14 +820,14 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private FreeStyleProject createCheckStyleProject(final boolean isEnabledForFailure) {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle.xml");
-        IssuesRecorder recorder = enableCheckStyleWarnings(project);
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle.xml");
+        var recorder = enableCheckStyleWarnings(project);
         recorder.setEnabledForFailure(isEnabledForFailure);
         return project;
     }
 
     private FreeStyleProject createCheckStyleProjectWithFailureStep(final boolean isEnabledForFailure) {
-        FreeStyleProject project = createCheckStyleProject(isEnabledForFailure);
+        var project = createCheckStyleProject(isEnabledForFailure);
 
         addFailureStep(project);
 
@@ -850,7 +845,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private static String getTagValues(final String str) {
-        final Matcher matcher = TAG_REGEX.matcher(str);
+        final var matcher = TAG_REGEX.matcher(str);
         if (matcher.find()) {
             return matcher.group(1);
         }
@@ -858,7 +853,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private IssuesRow getIssuesModel(final AnalysisResult result, final int rowNumber) {
-        IssuesDetail issuesDetail = result.getOwner().getAction(ResultAction.class).getTarget();
+        var issuesDetail = result.getOwner().getAction(ResultAction.class).getTarget();
         return (IssuesRow) issuesDetail.getTableModel("issues").getRows().get(rowNumber);
     }
 }

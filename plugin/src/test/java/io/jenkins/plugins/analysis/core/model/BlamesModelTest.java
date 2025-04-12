@@ -2,10 +2,8 @@ package io.jenkins.plugins.analysis.core.model;
 
 import org.junit.jupiter.api.Test;
 
-import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 
-import io.jenkins.plugins.analysis.core.model.BlamesModel.BlamesRow;
 import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.forensics.blame.FileBlame;
 import io.jenkins.plugins.forensics.util.CommitDecorator.NullDecorator;
@@ -27,14 +25,14 @@ class BlamesModelTest extends AbstractDetailsModelTest {
 
     @Test
     void shouldConvertIssueToArrayWithAllColumnsAndRows() {
-        Report report = new Report();
+        var report = new Report();
         report.add(createIssue(1));
         report.add(createIssue(2));
         Blames blames = mock(Blames.class);
 
-        BlamesModel model = createModel(report, blames);
+        var model = createModel(report, blames);
 
-        String columnDefinitions = model.getColumnsDefinition();
+        var columnDefinitions = model.getColumnsDefinition();
         assertThatJson(columnDefinitions).isArray().hasSize(8);
 
         String[] columns = {"description", "fileName", "age", "author", "email", "commit", "addedAt", "message"};
@@ -51,8 +49,8 @@ class BlamesModelTest extends AbstractDetailsModelTest {
 
     @Test
     void shouldShowIssueWithBlames() {
-        Report report = new Report();
-        Issue issue = createIssue(1);
+        var report = new Report();
+        var issue = createIssue(1);
         report.add(issue);
 
         FileBlame blameRequest = mock(FileBlame.class);
@@ -65,9 +63,9 @@ class BlamesModelTest extends AbstractDetailsModelTest {
         when(blames.contains(issue.getFileName())).thenReturn(true);
         when(blames.getBlame(issue.getFileName())).thenReturn(blameRequest);
 
-        BlamesModel model = createModel(report, blames);
+        var model = createModel(report, blames);
 
-        BlamesRow actualRow = model.getRow(issue);
+        var actualRow = model.getRow(issue);
         assertThat(actualRow).hasDescription(EXPECTED_DESCRIPTION)
                 .hasAge("1")
                 .hasCommit(COMMIT)
@@ -80,15 +78,15 @@ class BlamesModelTest extends AbstractDetailsModelTest {
 
     @Test
     void shouldShowIssueWithoutBlames() {
-        Report report = new Report();
-        Issue issue = createIssue(1);
+        var report = new Report();
+        var issue = createIssue(1);
         report.add(issue);
 
         Blames blames = mock(Blames.class);
 
-        BlamesModel model = createModel(report, blames);
+        var model = createModel(report, blames);
 
-        BlamesRow actualRow = model.getRow(issue);
+        var actualRow = model.getRow(issue);
         assertThat(actualRow.getDescription()).isEqualTo(EXPECTED_DESCRIPTION);
 
         assertThat(actualRow).hasDescription(EXPECTED_DESCRIPTION)

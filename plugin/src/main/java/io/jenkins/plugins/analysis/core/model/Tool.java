@@ -157,7 +157,7 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
      * @return the label provider
      */
     public StaticAnalysisLabelProvider getLabelProvider() {
-        StaticAnalysisLabelProvider labelProvider = getDescriptor().getLabelProvider();
+        var labelProvider = getDescriptor().getLabelProvider();
         if (StringUtils.isNotBlank(name)) {
             labelProvider.setName(name);
         }
@@ -248,10 +248,10 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
          * @return the name of this tool, or "undefined" if no symbol has been defined
          */
         public String getSymbolName() {
-            Symbol annotation = getClass().getAnnotation(Symbol.class);
+            var annotation = getClass().getAnnotation(Symbol.class);
 
             if (annotation != null) {
-                String[] symbols = annotation.value();
+                var symbols = annotation.value();
                 if (symbols.length > 0) {
                     return symbols[0];
                 }

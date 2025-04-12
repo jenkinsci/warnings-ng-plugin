@@ -1,12 +1,12 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.util.Locale;
-
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junitpioneer.jupiter.Issue;
 
 import edu.hm.hafner.analysis.IssueBuilder;
+
+import java.util.Locale;
 
 import hudson.model.Job;
 import hudson.model.Run;
@@ -30,21 +30,21 @@ class StaticAnalysisLabelProviderTest {
 
     @Test
     void shouldShowDescriptionOfIssueByDefault() {
-        try (IssueBuilder issueBuilder = new IssueBuilder()) {
-            StaticAnalysisLabelProvider labelProvider = new StaticAnalysisLabelProvider("description", "-");
+        try (var issueBuilder = new IssueBuilder()) {
+            var labelProvider = new StaticAnalysisLabelProvider("description", "-");
 
-            String text = "Hello Description";
+            var text = "Hello Description";
             issueBuilder.setDescription(text);
             assertThat(labelProvider.getDescription(issueBuilder.build())).isEqualTo(text);
 
-            StaticAnalysisLabelProvider emptyDescription = new StaticAnalysisLabelProvider("description", "-", i -> "empty");
+            var emptyDescription = new StaticAnalysisLabelProvider("description", "-", i -> "empty");
             assertThat(emptyDescription.getDescription(issueBuilder.build())).isEqualTo("empty");
         }
     }
 
     @Test
     void shouldIgnoreUndefinedName() {
-        StaticAnalysisLabelProvider labelProvider = new StaticAnalysisLabelProvider("cpd", "-");
+        var labelProvider = new StaticAnalysisLabelProvider("cpd", "-");
 
         assertThat(labelProvider).hasId("cpd");
         assertThat(labelProvider).hasName(labelProvider.getDefaultName());
@@ -53,7 +53,7 @@ class StaticAnalysisLabelProviderTest {
 
     @Test @Issue("JENKINS-61834, JENKINS-67245")
     void shouldNotEscapeHtmlEntitiesAnymore() {
-        StaticAnalysisLabelProvider labelProvider = new StaticAnalysisLabelProvider(ID, "C++");
+        var labelProvider = new StaticAnalysisLabelProvider(ID, "C++");
 
         assertThat(labelProvider).hasId(ID);
         assertThat(labelProvider).hasName("C++");
@@ -63,7 +63,7 @@ class StaticAnalysisLabelProviderTest {
 
     @Test
     void shouldReturnIdAndNameOfConstructorParametersInAllDisplayProperties() {
-        StaticAnalysisLabelProvider labelProvider = new StaticAnalysisLabelProvider(ID, NAME);
+        var labelProvider = new StaticAnalysisLabelProvider(ID, NAME);
 
         assertThat(labelProvider).hasId(ID);
         assertThat(labelProvider).hasName(NAME);
@@ -78,17 +78,17 @@ class StaticAnalysisLabelProviderTest {
 
     @Test
     void shouldReturnIdAndDefaultNameIfNoNameIsGiven() {
-        StaticAnalysisLabelProvider emptyNameLabelProvider = new StaticAnalysisLabelProvider(ID, "");
+        var emptyNameLabelProvider = new StaticAnalysisLabelProvider(ID, "");
 
         assertThat(emptyNameLabelProvider).hasId(ID);
         assertThat(emptyNameLabelProvider).hasName(emptyNameLabelProvider.getDefaultName());
 
-        StaticAnalysisLabelProvider nullNameLabelProvider = new StaticAnalysisLabelProvider(ID, null);
+        var nullNameLabelProvider = new StaticAnalysisLabelProvider(ID, null);
 
         assertThat(nullNameLabelProvider).hasId(ID);
         assertThat(nullNameLabelProvider).hasName(nullNameLabelProvider.getDefaultName());
 
-        StaticAnalysisLabelProvider noNameLabelProvider = new StaticAnalysisLabelProvider(ID);
+        var noNameLabelProvider = new StaticAnalysisLabelProvider(ID);
 
         assertThat(noNameLabelProvider).hasId(ID);
         assertThat(noNameLabelProvider).hasName(noNameLabelProvider.getDefaultName());
@@ -101,7 +101,7 @@ class StaticAnalysisLabelProviderTest {
     class AgeBuilderTest {
         @Test
         void shouldCreateAgeLinkForFirstBuild() {
-            AgeBuilder builder = new DefaultAgeBuilder(1, "checkstyle/", createProject());
+            var builder = new DefaultAgeBuilder(1, "checkstyle/", createProject());
 
             assertThat(builder.apply(1)).isEqualTo("1");
         }
@@ -115,7 +115,7 @@ class StaticAnalysisLabelProviderTest {
 
         @Test
         void shouldCreateAgeLinkForPreviousBuilds() {
-            AgeBuilder builder = new DefaultAgeBuilder(10, "checkstyle/", createProject());
+            var builder = new DefaultAgeBuilder(10, "checkstyle/", createProject());
             assertThat(builder.apply(1))
                     .isEqualTo("<a href=\"../../1/checkstyle\">10</a>");
             assertThat(builder.apply(9))
@@ -126,7 +126,7 @@ class StaticAnalysisLabelProviderTest {
 
         @Test @Issue("JENKINS-65845")
         void shouldCreatePlainTextForDeletedBuilds() {
-            AgeBuilder builder = new DefaultAgeBuilder(10, "checkstyle/", mock(Job.class));
+            var builder = new DefaultAgeBuilder(10, "checkstyle/", mock(Job.class));
             assertThat(builder.apply(1)).isEqualTo("10");
             assertThat(builder.apply(9)).isEqualTo("2");
             assertThat(builder.apply(10)).isEqualTo("1");
@@ -134,7 +134,7 @@ class StaticAnalysisLabelProviderTest {
 
         @Test
         void shouldCreateAgeLinkForSubDetails() {
-            AgeBuilder builder = new DefaultAgeBuilder(10, "checkstyle/package.1234/", createProject());
+            var builder = new DefaultAgeBuilder(10, "checkstyle/package.1234/", createProject());
             assertThat(builder.apply(1))
                     .isEqualTo("<a href=\"../../../1/checkstyle\">10</a>");
             assertThat(builder.apply(9))
@@ -151,7 +151,7 @@ class StaticAnalysisLabelProviderTest {
     class CompositeLocalizableTest {
         @Test
         void shouldCreateComposedMessage() {
-            CompositeLocalizable localizable = new CompositeLocalizable("Static Analysis", Messages._Tool_NoIssues());
+            var localizable = new CompositeLocalizable("Static Analysis", Messages._Tool_NoIssues());
 
             assertThat(localizable).hasToString("Static Analysis: No warnings");
             assertThat(localizable.toString(Locale.ENGLISH)).isEqualTo("Static Analysis: No warnings");

@@ -1,9 +1,9 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.util.stream.Stream;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
+
+import java.util.stream.Stream;
 
 import hudson.console.ConsoleNote;
 import hudson.model.ModelObject;
@@ -51,7 +51,7 @@ public class ConsoleDetail implements ModelObject {
 
     @SuppressWarnings("PMD.ConsecutiveLiteralAppends")
     private void readConsole(final Stream<String> consoleLog) {
-        StringBuilder console = new StringBuilder(1024);
+        var console = new StringBuilder(1024);
 
         console.append("<table>\n");
         lineCount = 0;

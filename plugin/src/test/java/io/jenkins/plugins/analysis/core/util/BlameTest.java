@@ -23,7 +23,7 @@ class BlameTest {
 
     @Test
     void shouldCreateEmptyBlame() {
-        Blame blame = new Blame(new IssueBuilder().build(), new Blames());
+        var blame = new Blame(new IssueBuilder().build(), new Blames());
 
         assertThat(blame).hasAuthorName(Blame.UNDEFINED);
         assertThat(blame).hasCommit(Blame.UNDEFINED);
@@ -33,7 +33,7 @@ class BlameTest {
 
     @Test
     void shouldCreateBlameForIssue() {
-        Blame blame = new Blame(new IssueBuilder().build(), createBlames());
+        var blame = new Blame(new IssueBuilder().build(), createBlames());
 
         assertThat(blame).hasAuthorName(AUTHOR);
         assertThat(blame).hasCommit(COMMIT);

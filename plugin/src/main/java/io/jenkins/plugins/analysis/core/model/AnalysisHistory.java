@@ -104,7 +104,7 @@ public class AnalysisHistory implements History {
 
     @Override
     public String toString() {
-        return String.format("%s - %s", baseline.getFullDisplayName(), selector);
+        return "%s - %s".formatted(baseline.getFullDisplayName(), selector);
     }
 
     @Override

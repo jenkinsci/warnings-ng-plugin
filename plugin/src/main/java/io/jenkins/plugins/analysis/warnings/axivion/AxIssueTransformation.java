@@ -1,8 +1,8 @@
 package io.jenkins.plugins.analysis.warnings.axivion;
 
-import java.io.Serializable;
-
 import edu.hm.hafner.analysis.Issue;
+
+import java.io.Serializable;
 
 /**
  * Transformation function which converts Axivion-Dashboard violations to warnings-ng {@link Issue} ones.

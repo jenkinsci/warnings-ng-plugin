@@ -1,12 +1,12 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import hudson.model.Action;
 import hudson.model.Api;
@@ -65,7 +65,7 @@ public class AggregationAction implements RunAction2, LastBuildAction {
 
     @Override
     public Collection<? extends Action> getProjectActions() {
-        return Collections.singleton(new AggregatedTrendAction(owner.getParent()));
+        return Set.of(new AggregatedTrendAction(owner.getParent()));
     }
 
     private ToolApi createToolApi(final ResultAction result) {

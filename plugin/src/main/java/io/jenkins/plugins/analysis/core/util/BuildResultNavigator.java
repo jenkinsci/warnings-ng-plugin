@@ -55,7 +55,7 @@ public class BuildResultNavigator {
             final int selectedBuildNumber) {
         Run<?, ?> selectedBuild = currentBuild.getParent().getBuildByNumber(selectedBuildNumber);
         if (selectedBuild != null) {
-            String match = SLASH + currentBuild.getNumber() + SLASH + resultId;
+            var match = SLASH + currentBuild.getNumber() + SLASH + resultId;
             if (viewUrl.contains(match)) {
                 return Optional.of(viewUrl.replaceFirst(
                         match + ".*", SLASH + selectedBuildNumber + SLASH + resultId));

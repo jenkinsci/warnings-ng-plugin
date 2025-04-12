@@ -6,7 +6,6 @@ import edu.hm.hafner.echarts.LineSeries;
 import edu.hm.hafner.echarts.LineSeries.FilledMode;
 import edu.hm.hafner.echarts.LineSeries.StackedMode;
 import edu.hm.hafner.echarts.LinesChartModel;
-import edu.hm.hafner.echarts.LinesDataSet;
 
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.echarts.JenkinsPalette;
@@ -20,14 +19,14 @@ public class ToolsTrendChart implements TrendChart {
     @Override
     public LinesChartModel create(final Iterable<? extends BuildResult<AnalysisBuildResult>> results,
             final ChartModelConfiguration configuration) {
-        ToolSeriesBuilder builder = new ToolSeriesBuilder();
-        LinesDataSet lineModel = builder.createDataSet(configuration, results);
+        var builder = new ToolSeriesBuilder();
+        var lineModel = builder.createDataSet(configuration, results);
 
-        LinesChartModel model = new LinesChartModel(lineModel);
+        var model = new LinesChartModel(lineModel);
 
         int index = 0;
         for (String name : lineModel.getDataSetIds()) {
-            LineSeries lineSeries = new LineSeries(name, JenkinsPalette.chartColor(index++).normal(),
+            var lineSeries = new LineSeries(name, JenkinsPalette.chartColor(index++).normal(),
                     StackedMode.SEPARATE_LINES, FilledMode.LINES);
             lineSeries.addAll(lineModel.getSeries(name));
             model.addSeries(lineSeries);

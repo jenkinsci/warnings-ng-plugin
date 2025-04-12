@@ -1,19 +1,18 @@
 package io.jenkins.plugins.analysis.core.util;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.ResourceTest;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
 
 import hudson.FilePath;
 
@@ -42,13 +41,13 @@ class AffectedFilesResolverTest extends ResourceTest {
     @ValueSource(strings = {"/does/not/exist", "!<>$$&%/&(", "\0 Null-Byte"})
     @DisplayName("Should ignore illegal path names")
     void shouldReturnFallbackOnError(final String fileName) throws IOException, InterruptedException {
-        Report report = new Report().add(new IssueBuilder().setFileName(fileName).build());
+        var report = new Report().add(new IssueBuilder().setFileName(fileName).build());
 
         new AffectedFilesResolver().copyAffectedFilesToBuildFolder(report, WORKSPACE, Collections.emptySet(), BUILD_ROOT);
 
         assertThat(report.getErrorMessages()).isEmpty();
         assertThat(report.getInfoMessages()).hasSize(1);
-        String message = report.getInfoMessages().get(0);
+        var message = report.getInfoMessages().get(0);
         assertThat(message).contains("0 copied");
         assertThat(message).contains("0 not in workspace");
         assertThat(message).contains("1 not-found");
@@ -57,14 +56,14 @@ class AffectedFilesResolverTest extends ResourceTest {
 
     @Test
     void shouldDoNothingForEmptyReport() throws InterruptedException {
-        AffectedFilesResolver resolver = new AffectedFilesResolver();
+        var resolver = new AffectedFilesResolver();
 
-        Report report = new Report();
+        var report = new Report();
         resolver.copyAffectedFilesToBuildFolder(report, mock(RemoteFacade.class));
 
         assertThat(report.getErrorMessages()).isEmpty();
         assertThat(report.getInfoMessages()).hasSize(1);
-        String message = report.getInfoMessages().get(0);
+        var message = report.getInfoMessages().get(0);
         assertThat(message).contains("0 copied");
         assertThat(message).contains("0 not in workspace");
         assertThat(message).contains("0 not-found");
@@ -73,10 +72,10 @@ class AffectedFilesResolverTest extends ResourceTest {
 
     @Test
     void shouldCopyFile() throws InterruptedException {
-        AffectedFilesResolver resolver = new AffectedFilesResolver();
+        var resolver = new AffectedFilesResolver();
 
-        Report report = new Report();
-        Issue issue = new IssueBuilder().setFileName(FILE_NAME).build();
+        var report = new Report();
+        var issue = new IssueBuilder().setFileName(FILE_NAME).build();
         report.add(issue);
 
         RemoteFacade remoteFacade = mock(RemoteFacade.class);
@@ -87,7 +86,7 @@ class AffectedFilesResolverTest extends ResourceTest {
 
         assertThat(report.getErrorMessages()).isEmpty();
         assertThat(report.getInfoMessages()).hasSize(1);
-        String message = report.getInfoMessages().get(0);
+        var message = report.getInfoMessages().get(0);
         assertThat(message).contains("1 copied");
         assertThat(message).contains("0 not in workspace");
         assertThat(message).contains("0 not-found");
@@ -96,10 +95,10 @@ class AffectedFilesResolverTest extends ResourceTest {
 
     @Test
     void shouldReportCopyExceptions() throws InterruptedException, IOException {
-        AffectedFilesResolver resolver = new AffectedFilesResolver();
+        var resolver = new AffectedFilesResolver();
 
-        Report report = new Report();
-        Issue issue = new IssueBuilder().setFileName(FILE_NAME).build();
+        var report = new Report();
+        var issue = new IssueBuilder().setFileName(FILE_NAME).build();
         report.add(issue);
 
         RemoteFacade remoteFacade = mock(RemoteFacade.class);
@@ -114,7 +113,7 @@ class AffectedFilesResolverTest extends ResourceTest {
                 .contains("Can't copy some affected workspace files to Jenkins build folder:",
                         "- 'file.txt', IO exception has been thrown: java.io.IOException");
         assertThat(report.getInfoMessages()).hasSize(1);
-        String message = report.getInfoMessages().get(0);
+        var message = report.getInfoMessages().get(0);
         assertThat(message).contains("0 copied");
         assertThat(message).contains("0 not in workspace");
         assertThat(message).contains("0 not-found");
@@ -123,10 +122,10 @@ class AffectedFilesResolverTest extends ResourceTest {
 
     @Test
     void shouldSkipNonWorkspaceFile() throws InterruptedException {
-        AffectedFilesResolver resolver = new AffectedFilesResolver();
+        var resolver = new AffectedFilesResolver();
 
-        Report report = new Report();
-        Issue issue = new IssueBuilder().setFileName(FILE_NAME).build();
+        var report = new Report();
+        var issue = new IssueBuilder().setFileName(FILE_NAME).build();
         report.add(issue);
 
         RemoteFacade remoteFacade = mock(RemoteFacade.class);
@@ -137,7 +136,7 @@ class AffectedFilesResolverTest extends ResourceTest {
 
         assertThat(report.getErrorMessages()).isEmpty();
         assertThat(report.getInfoMessages()).hasSize(1);
-        String message = report.getInfoMessages().get(0);
+        var message = report.getInfoMessages().get(0);
         assertThat(message).contains("0 copied");
         assertThat(message).contains("1 not in workspace");
         assertThat(message).contains("0 not-found");
@@ -148,9 +147,9 @@ class AffectedFilesResolverTest extends ResourceTest {
     class RemoteFacadeTest {
         @Test
         void shouldFindFileInWorkspace() {
-            FilePath workspace = WORKSPACE;
-            FilePath sub = workspace.child("sub");
-            RemoteFacade remoteFacade = new RemoteFacade(sub, Collections.emptySet(), BUILD_ROOT);
+            var workspace = WORKSPACE;
+            var sub = workspace.child("sub");
+            var remoteFacade = new RemoteFacade(sub, Collections.emptySet(), BUILD_ROOT);
 
             assertThat(remoteFacade.isInWorkspace(sub.getRemote())).isTrue();
             assertThat(remoteFacade.isInWorkspace(sub.child(FILE_NAME).getRemote())).isTrue();

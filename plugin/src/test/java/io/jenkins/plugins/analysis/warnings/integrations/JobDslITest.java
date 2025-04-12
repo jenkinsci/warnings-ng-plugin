@@ -1,14 +1,11 @@
 package io.jenkins.plugins.analysis.warnings.integrations;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import hudson.model.Descriptor;
 import hudson.model.FreeStyleProject;
-import hudson.model.HealthReport;
-import hudson.model.TopLevelItem;
-import hudson.model.View;
 import hudson.tasks.Publisher;
 import hudson.util.DescribableList;
 import hudson.views.ListViewColumn;
@@ -42,7 +39,7 @@ class JobDslITest extends IntegrationTestWithJenkinsPerTest {
     void shouldCreateColumnFromYamlConfiguration() {
         configureJenkins("column-dsl.yaml");
 
-        View view = getJenkins().getInstance().getView("dsl-view");
+        var view = getJenkins().getInstance().getView("dsl-view");
 
         assertThat(view).isNotNull();
 
@@ -64,7 +61,7 @@ class JobDslITest extends IntegrationTestWithJenkinsPerTest {
     void shouldCreateFreestyleJobUsingJobDslAndVerifyIssueRecorderWithDefaultConfiguration() {
         configureJenkins("job-dsl-warnings-ng-default.yaml");
 
-        TopLevelItem project = getJenkins().jenkins.getItem("dsl-freestyle-job");
+        var project = getJenkins().jenkins.getItem("dsl-freestyle-job");
 
         assertThat(project).isNotNull();
         assertThat(project).isInstanceOf(FreeStyleProject.class);
@@ -72,13 +69,13 @@ class JobDslITest extends IntegrationTestWithJenkinsPerTest {
         var publishers = ((FreeStyleProject) project).getPublishersList();
         assertThat(publishers).hasSize(1);
 
-        Publisher publisher = publishers.get(0);
+        var publisher = publishers.get(0);
         assertThat(publisher).isInstanceOf(IssuesRecorder.class);
 
-        HealthReport healthReport = ((FreeStyleProject) project).getBuildHealth();
+        var healthReport = ((FreeStyleProject) project).getBuildHealth();
         assertThat(healthReport.getScore()).isEqualTo(100);
 
-        IssuesRecorder recorder = (IssuesRecorder) publisher;
+        var recorder = (IssuesRecorder) publisher;
 
         assertThat(recorder.getAggregatingResults()).isFalse();
         assertThat(recorder.getTrendChartType()).isEqualTo(TrendChartType.AGGREGATION_TOOLS);
@@ -106,7 +103,7 @@ class JobDslITest extends IntegrationTestWithJenkinsPerTest {
     void shouldCreateFreestyleJobUsingJobDslAndVerifyIssueRecorderWithValuesSet() {
         configureJenkins("job-dsl-warnings-ng.yaml");
 
-        TopLevelItem project = getJenkins().jenkins.getItem("dsl-freestyle-job");
+        var project = getJenkins().jenkins.getItem("dsl-freestyle-job");
 
         assertThat(project).isNotNull();
         assertThat(project).isInstanceOf(FreeStyleProject.class);
@@ -114,13 +111,13 @@ class JobDslITest extends IntegrationTestWithJenkinsPerTest {
         DescribableList<Publisher, Descriptor<Publisher>> publishers = ((FreeStyleProject) project).getPublishersList();
         assertThat(publishers).hasSize(1);
 
-        Publisher publisher = publishers.get(0);
+        var publisher = publishers.get(0);
         assertThat(publisher).isInstanceOf(IssuesRecorder.class);
 
-        HealthReport healthReport = ((FreeStyleProject) project).getBuildHealth();
+        var healthReport = ((FreeStyleProject) project).getBuildHealth();
         assertThat(healthReport.getScore()).isEqualTo(100);
 
-        IssuesRecorder recorder = (IssuesRecorder) publisher;
+        var recorder = (IssuesRecorder) publisher;
 
         assertThat(recorder.getAggregatingResults()).isTrue();
         assertThat(recorder.getTrendChartType()).isEqualTo(TrendChartType.NONE);

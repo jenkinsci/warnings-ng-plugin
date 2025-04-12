@@ -1,12 +1,11 @@
 package io.jenkins.plugins.analysis.warnings.integrations;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 import org.junitpioneer.jupiter.Issue;
 
+import java.util.List;
+
 import hudson.model.FreeStyleProject;
-import hudson.model.TopLevelItem;
 
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
@@ -37,7 +36,7 @@ class ConfigurationAsCodeITest extends IntegrationTestWithJenkinsPerTest {
         List<GroovyParser> parsers = ParserConfiguration.getInstance().getParsers();
         assertThat(parsers).hasSize(1);
 
-        GroovyParser parser = parsers.get(0);
+        var parser = parsers.get(0);
 
         assertThat(parser.getId()).isEqualTo("my-id");
         assertThat(parser.getName()).isEqualTo("my-name");
@@ -53,11 +52,11 @@ class ConfigurationAsCodeITest extends IntegrationTestWithJenkinsPerTest {
     void shouldFreestyleJobWithSpotBugsUsingJobDsl() {
         configureJenkins("job-dsl-spotbugs.yaml");
 
-        IssuesRecorder recorder = getIssuesRecorder();
+        var recorder = getIssuesRecorder();
         List<Tool> tools = recorder.getTools();
         assertThat(tools).hasSize(1);
 
-        Tool spotBugs = tools.get(0);
+        var spotBugs = tools.get(0);
         assertThat(spotBugs).isInstanceOf(SpotBugs.class);
         assertThat(spotBugs.getId()).isEqualTo("bugs");
         assertThat(spotBugs.getName()).isEqualTo("SpotBugs Warnungen");
@@ -70,11 +69,11 @@ class ConfigurationAsCodeITest extends IntegrationTestWithJenkinsPerTest {
     void shouldFreestyleJobWithTaskScannerUsingJobDsl() {
         configureJenkins("job-dsl-taskScanner.yaml");
 
-        IssuesRecorder recorder = getIssuesRecorder();
+        var recorder = getIssuesRecorder();
         List<Tool> tools = recorder.getTools();
         assertThat(tools).hasSize(1);
 
-        Tool actual = tools.get(0);
+        var actual = tools.get(0);
         assertThat(actual).isInstanceOfSatisfying(OpenTasks.class, t -> {
             assertThat(t.getId()).isEqualTo("taskScanner-id");
             assertThat(t.getName()).isEqualTo("taskScanner-name");
@@ -92,11 +91,11 @@ class ConfigurationAsCodeITest extends IntegrationTestWithJenkinsPerTest {
     void shouldCreateFreestyleJobUsingJobDsl() {
         configureJenkins("job-dsl-freestyle.yaml");
 
-        IssuesRecorder recorder = getIssuesRecorder();
+        var recorder = getIssuesRecorder();
         List<Tool> tools = recorder.getTools();
         assertThat(tools).hasSize(1);
 
-        Tool java = tools.get(0);
+        var java = tools.get(0);
         assertThat(java).isInstanceOf(Java.class);
         assertThat(java.getId()).isEqualTo("java-id");
         assertThat(java.getName()).isEqualTo("java-name");
@@ -107,7 +106,7 @@ class ConfigurationAsCodeITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     private FreeStyleProject getJob() {
-        TopLevelItem job = getJenkins().jenkins.getItem("freestyle-analysis-model");
+        var job = getJenkins().jenkins.getItem("freestyle-analysis-model");
 
         assertThat(job).isInstanceOf(FreeStyleProject.class);
 

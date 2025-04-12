@@ -199,7 +199,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
     @Override
     @Generated
     public String toString() {
-        return String.format("%s: %s", getId(), getName());
+        return "%s: %s".formatted(getId(), getName());
     }
 
     /**
@@ -359,7 +359,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
                 String backward = StringUtils.repeat("../", subDetailsCount + 2);
                 String detailsUrl = StringUtils.substringBefore(cleanUrl, "/");
 
-                String url = String.format("%s%d/%s", backward, referenceBuild, detailsUrl);
+                var url = "%s%d/%s".formatted(backward, referenceBuild, detailsUrl);
                 return a(computeAge(referenceBuild))
                         .withHref(StringUtils.stripEnd(url, "/")).render();
             }
@@ -388,7 +388,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
 
         @Override
         public String toString(final Locale locale) {
-            return String.format("%s: %s", prefix, suffix);
+            return "%s: %s".formatted(prefix, suffix);
         }
     }
 }

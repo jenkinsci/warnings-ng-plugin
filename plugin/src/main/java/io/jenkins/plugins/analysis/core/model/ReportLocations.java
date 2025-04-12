@@ -18,7 +18,7 @@ public class ReportLocations {
      * @return the affected file locations
      */
     public FileLocations toFileLocations(final Report report) {
-        FileLocations fileLocations = new FileLocations();
+        var fileLocations = new FileLocations();
         report.stream().forEach(i -> fileLocations.addLine(i.getFileName(), i.getLineStart()));
         return fileLocations;
     }

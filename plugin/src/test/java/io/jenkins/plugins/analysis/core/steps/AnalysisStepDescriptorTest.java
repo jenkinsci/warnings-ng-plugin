@@ -1,9 +1,9 @@
 package io.jenkins.plugins.analysis.core.steps;
 
+import org.junit.jupiter.api.Test;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import org.junit.jupiter.api.Test;
 
 import io.jenkins.plugins.analysis.core.steps.ScanForIssuesStep.Descriptor;
 
@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.*;
 class AnalysisStepDescriptorTest {
     @Test
     void shouldPrintArgumentsToString() {
-        Descriptor descriptor = new Descriptor();
+        var descriptor = new Descriptor();
 
         assertThat(descriptor.argumentsToString(new HashMap<>())).isEqualTo("{}");
 

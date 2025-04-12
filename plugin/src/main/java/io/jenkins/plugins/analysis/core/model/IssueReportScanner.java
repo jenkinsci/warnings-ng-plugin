@@ -51,7 +51,7 @@ public class IssueReportScanner extends AgentFileVisitor<Report> {
     @Override
     protected Optional<Report> processFile(final Path file, final Charset charset, final FilteredLog log) {
         try {
-            Report fileReport = parser.parse(new FileReaderFactory(file, charset));
+            var fileReport = parser.parse(new FileReaderFactory(file, charset));
 
             log.logInfo("Successfully parsed file %s", file);
             log.logInfo("-> found %s (skipped %s)",

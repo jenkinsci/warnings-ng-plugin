@@ -229,7 +229,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
             final boolean canSerialize) {
         this.owner = owner;
 
-        Report allIssues = report.getAllIssues();
+        var allIssues = report.getAllIssues();
 
         new ValidationUtilities().ensureValidId(id);
         this.id = id;
@@ -239,13 +239,13 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
         this.sizePerOrigin = new HashMap<>(sizePerOrigin);
         referenceBuildId = report.getReferenceBuildId();
 
-        Report outstandingIssues = report.getOutstandingIssues();
+        var outstandingIssues = report.getOutstandingIssues();
         outstandingIssuesReference = new WeakReference<>(outstandingIssues);
 
-        Report newIssues = report.getNewIssues();
+        var newIssues = report.getNewIssues();
         newIssuesReference = new WeakReference<>(newIssues);
 
-        Report fixedIssues = report.getFixedIssues();
+        var fixedIssues = report.getFixedIssues();
         fixedIssuesReference = new WeakReference<>(fixedIssues);
 
         List<String> aggregatedMessages = new ArrayList<>(allIssues.getInfoMessages());
@@ -295,7 +295,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
             if (blamesReference == null) {
                 return readBlames();
             }
-            Blames result = blamesReference.get();
+            var result = blamesReference.get();
             if (result == null) {
                 return readBlames();
             }
@@ -317,7 +317,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
             if (repositoryStatistics == null) {
                 return readStatistics();
             }
-            RepositoryStatistics result = repositoryStatistics.get();
+            var result = repositoryStatistics.get();
             if (result == null) {
                 return readStatistics();
             }
@@ -337,7 +337,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     }
 
     private Blames readBlames() {
-        Blames blames = new BlamesXmlStream().read(getBlamesPath());
+        var blames = new BlamesXmlStream().read(getBlamesPath());
         blamesReference = new WeakReference<>(blames);
         return blames;
     }
@@ -351,7 +351,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     }
 
     private RepositoryStatistics readStatistics() {
-        RepositoryStatistics statistics = new RepositoryStatisticsXmlStream().read(getStatisticsPath());
+        var statistics = new RepositoryStatisticsXmlStream().read(getStatisticsPath());
         repositoryStatistics = new WeakReference<>(statistics);
         return statistics;
     }
@@ -421,7 +421,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      */
     @Whitelisted
     public Report getIssues() {
-        Report merged = new Report();
+        var merged = new Report();
         merged.addAll(getNewIssues(), getOutstandingIssues());
         return merged;
     }
@@ -516,7 +516,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
             if (getter.apply(this) == null) {
                 return readIssues(setter, suffix);
             }
-            Report result = getter.apply(this).get();
+            var result = getter.apply(this).get();
             if (result == null) {
                 return readIssues(setter, suffix);
             }
@@ -529,7 +529,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
 
     private Report readIssues(final BiConsumer<AnalysisResult, WeakReference<Report>> setter,
             final String suffix) {
-        Report report = new ReportXmlStream().read(getReportPath(suffix));
+        var report = new ReportXmlStream().read(getReportPath(suffix));
         setter.accept(this, new WeakReference<>(report));
         return report;
     }

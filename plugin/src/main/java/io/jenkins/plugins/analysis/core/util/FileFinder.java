@@ -94,13 +94,13 @@ public class FileFinder extends MasterToSlaveFileCallable<String[]> {
      */
     public String[] find(final File workspace) {
         try {
-            FileSet fileSet = new FileSet();
-            Project antProject = new Project();
+            var fileSet = new FileSet();
+            var antProject = new Project();
             fileSet.setProject(antProject);
             fileSet.setDir(workspace);
             fileSet.setIncludes(includesPattern);
-            TypeSelector selector = new TypeSelector();
-            FileType fileType = new FileType();
+            var selector = new TypeSelector();
+            var fileType = new FileType();
             fileType.setValue(FileType.FILE);
             selector.setType(fileType);
             fileSet.addType(selector);

@@ -8,7 +8,6 @@ import com.cloudbees.plugins.credentials.CredentialsMatchers;
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
 import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
-import com.google.gson.JsonObject;
 
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.ParsingException;
@@ -25,7 +24,7 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.InvalidPathException;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -96,7 +95,7 @@ public final class AxivionSuite extends Tool {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        AxivionSuite that = (AxivionSuite) o;
+        var that = (AxivionSuite) o;
         return projectUrl.equals(that.projectUrl) && credentialsId.equals(that.credentialsId) && basedir.equals(
                 that.basedir) && namedFilter.equals(that.namedFilter)
                 && ignoreSuppressedOrJustified == that.ignoreSuppressedOrJustified;
@@ -130,7 +129,7 @@ public final class AxivionSuite extends Tool {
     @DataBoundSetter
     public void setProjectUrl(final String projectUrl) {
         try {
-            final URL url = new URL(projectUrl);
+            final var url = new URL(projectUrl);
             this.projectUrl = new URIBuilder()
                     .setCharset(StandardCharsets.UTF_8)
                     .setHost(url.getHost())
@@ -189,20 +188,20 @@ public final class AxivionSuite extends Tool {
     @Override
     public Report scan(final Run<?, ?> run, final FilePath workspace, final Charset sourceCodeEncoding,
             final LogHandler logger) throws ParsingException, ParsingCanceledException {
-        final UsernamePasswordCredentials httpClientCredentials = withValidCredentials(run.getParent());
-        final AxivionDashboard dashboard = new RemoteAxivionDashboard(projectUrl, httpClientCredentials, namedFilter);
-        final AxivionParser.Config config = new Config(projectUrl, expandBaseDir(run, basedir),
+        final var httpClientCredentials = withValidCredentials(run.getParent());
+        final var dashboard = new RemoteAxivionDashboard(projectUrl, httpClientCredentials, namedFilter);
+        final var config = new Config(projectUrl, expandBaseDir(run, basedir),
                 ignoreSuppressedOrJustified);
-        final AxivionParser parser = new AxivionParser(config);
+        final var parser = new AxivionParser(config);
 
-        final Report report = new Report(ID, NAME);
+        final var report = new Report(ID, NAME);
         report.logInfo("Axivion webservice: %s", projectUrl);
         report.logInfo("Local basedir: %s", basedir);
         report.logInfo("Named Filter: %s", namedFilter);
         report.logInfo("Ignore suppressed or justified: %s", ignoreSuppressedOrJustified);
 
         for (AxIssueKind kind : AxIssueKind.values()) {
-            final JsonObject payload = dashboard.getIssues(kind);
+            final var payload = dashboard.getIssues(kind);
             parser.parse(report, kind, payload);
         }
 
@@ -233,7 +232,7 @@ public final class AxivionSuite extends Tool {
     private static String expandBaseDir(final Run<?, ?> run, final String baseDir) {
         String expandedBasedir;
         try {
-            EnvironmentResolver environmentResolver = new EnvironmentResolver();
+            var environmentResolver = new EnvironmentResolver();
 
             expandedBasedir =
                     environmentResolver.expandEnvironmentVariables(
@@ -327,7 +326,7 @@ public final class AxivionSuite extends Tool {
             try {
                 if (!basedir.contains("$")) {
                     // path with a variable cannot be checked at this point
-                    Paths.get(basedir);
+                    Path.of(basedir);
                 }
                 return FormValidation.ok();
             }
@@ -390,7 +389,7 @@ public final class AxivionSuite extends Tool {
         @POST
         public ListBoxModel doFillCredentialsIdItems(
                 @AncestorInPath final Item item, @QueryParameter final String credentialsId) {
-            final StandardListBoxModel result = new StandardListBoxModel();
+            final var result = new StandardListBoxModel();
             if (item == null) {
                 if (!JENKINS.hasPermission(Jenkins.ADMINISTER)) {
                     return result.includeCurrentValue(credentialsId);

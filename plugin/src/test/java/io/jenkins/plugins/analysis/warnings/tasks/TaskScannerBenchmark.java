@@ -13,16 +13,13 @@ import org.openjdk.jmh.infra.Blackhole;
 import org.openjdk.jmh.profile.StackProfiler;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
-import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 import edu.hm.hafner.util.ResourceTest;
 
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.CaseMode;
 import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.MatcherMode;
@@ -42,7 +39,7 @@ public class TaskScannerBenchmark extends ResourceTest {
      */
     @Test
     public void benchmark() throws RunnerException {
-        Options opt = new OptionsBuilder()
+        var opt = new OptionsBuilder()
                 .include(getClass().getName() + ".*")
                 .addProfiler(StackProfiler.class)
                 .build();
@@ -96,11 +93,11 @@ public class TaskScannerBenchmark extends ResourceTest {
 
         private Path getResourceAsFile(final String fileName) {
             try {
-                URL resource = TaskScannerBenchmark.class.getResource(fileName);
+                var resource = TaskScannerBenchmark.class.getResource(fileName);
                 if (resource == null) {
                     throw new IllegalArgumentException("Could not find file " + fileName);
                 }
-                return Paths.get(resource.toURI());
+                return Path.of(resource.toURI());
             }
             catch (URISyntaxException exception) {
                 throw new AssertionError("Can't open file " + fileName, exception);

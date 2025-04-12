@@ -49,7 +49,7 @@ class FiltersITest extends IntegrationTestWithJenkinsPerSuite {
         Map<RegexpFilter, Integer[]> expectedLinesByFilter = setupModuleFilterForPmd();
 
         for (Entry<RegexpFilter, Integer[]> entry : expectedLinesByFilter.entrySet()) {
-            FreeStyleProject project = createFreeStyleProject();
+            var project = createFreeStyleProject();
             copyDirectoryToWorkspace(project, MODULE_FILTER);
             enableWarnings(project, recorder -> recorder.setFilters(toFilter(entry)),
                     createTool(new Pmd(), "**/pmd-report.xml"));
@@ -83,7 +83,7 @@ class FiltersITest extends IntegrationTestWithJenkinsPerSuite {
         Map<RegexpFilter, Integer[]> expectedLinesByFilter = setupCategoryFilterForCheckStyle();
 
         for (Entry<RegexpFilter, Integer[]> entry : expectedLinesByFilter.entrySet()) {
-            FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle-filtering.xml");
+            var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle-filtering.xml");
             enableGenericWarnings(project, recorder -> recorder.setFilters(toFilter(entry)), new CheckStyle());
 
             buildAndVerifyResults(project, entry.getValue());
@@ -124,7 +124,7 @@ class FiltersITest extends IntegrationTestWithJenkinsPerSuite {
         Map<RegexpFilter, Integer[]> typeFiltersWithResult = setupCategoryFilterForPmd();
 
         for (Entry<RegexpFilter, Integer[]> entry : typeFiltersWithResult.entrySet()) {
-            FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("pmd-warnings.xml");
+            var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("pmd-warnings.xml");
             enableGenericWarnings(project, recorder -> recorder.setFilters(toFilter(entry)), new Pmd());
 
             buildAndVerifyResults(project, entry.getValue());
@@ -164,7 +164,7 @@ class FiltersITest extends IntegrationTestWithJenkinsPerSuite {
      *         issue line numbers that are expected
      */
     private void buildAndVerifyResults(final FreeStyleProject project, final Integer... expectedLines) {
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(getLines(result)).containsOnly(expectedLines);
     }

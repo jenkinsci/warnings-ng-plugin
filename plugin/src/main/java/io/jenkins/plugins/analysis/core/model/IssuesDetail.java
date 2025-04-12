@@ -1,17 +1,5 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.InvalidPathException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.function.Function;
-
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Issue;
@@ -20,6 +8,17 @@ import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.echarts.BuildResult;
 import edu.hm.hafner.echarts.ChartModelConfiguration;
 import edu.hm.hafner.echarts.JacksonFacade;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.function.Function;
 
 import org.kohsuke.stapler.StaplerRequest2;
 import org.kohsuke.stapler.StaplerResponse2;
@@ -292,7 +291,7 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
      */
     @JavaScriptMethod
     public String getUrlForBuild(final String build, final String detailsUrl) {
-        AnalysisHistory history = createHistory();
+        var history = createHistory();
         for (BuildResult<AnalysisBuildResult> buildResult : history) {
             if (buildResult.getBuild().getDisplayName().equals(build)) {
                 return new BuildResultNavigator().getSameUrlForOtherBuild(owner, detailsUrl, getResult().getId(),
@@ -402,7 +401,7 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
     }
 
     private String createTrendAsJson(final TrendChart trendChart, final String configuration) {
-        History history = createHistory();
+        var history = createHistory();
 
         return new JacksonFacade().toJson(trendChart.create(history, ChartModelConfiguration.fromJson(configuration)));
     }
@@ -634,7 +633,7 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
         @Override
         public String apply(final String absolutePath) {
             try {
-                Path baseName = Paths.get(absolutePath).getFileName();
+                var baseName = Path.of(absolutePath).getFileName();
                 if (baseName == null) {
                     return absolutePath; // fallback
                 }

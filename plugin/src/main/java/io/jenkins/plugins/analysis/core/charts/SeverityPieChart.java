@@ -22,7 +22,7 @@ public class SeverityPieChart {
      * @return the chart model
      */
     public PieChartModel create(final Report report) {
-        PieChartModel model = new PieChartModel(Messages.Severities_Name());
+        var model = new PieChartModel(Messages.Severities_Name());
 
         for (Severity severity : Severity.getPredefinedValues()) {
             int total = report.getSizeOf(severity);

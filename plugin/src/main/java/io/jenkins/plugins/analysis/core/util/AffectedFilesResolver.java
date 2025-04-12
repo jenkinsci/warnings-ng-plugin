@@ -1,12 +1,5 @@
 package io.jenkins.plugins.analysis.core.util;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -15,6 +8,13 @@ import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.FilteredLog;
 import edu.hm.hafner.util.PathUtil;
 import edu.hm.hafner.util.VisibleForTesting;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import hudson.FilePath;
 import hudson.model.Run;
@@ -81,10 +81,10 @@ public class AffectedFilesResolver {
     private static InputStream extractFromZip(final Run<?, ?> build, final String fileName)
             throws IOException, InterruptedException {
         Path tempDir = Files.createTempDirectory(AFFECTED_FILES_FOLDER_NAME);
-        FilePath unzippedSourcesDir = new FilePath(tempDir.toFile());
+        var unzippedSourcesDir = new FilePath(tempDir.toFile());
         try {
             var zipFile = getZipFile(build, fileName);
-            FilePath inputZipFile = new FilePath(zipFile.toFile());
+            var inputZipFile = new FilePath(zipFile.toFile());
             inputZipFile.unzip(unzippedSourcesDir);
             StringUtils.removeEnd(zipFile.toString(), ZIP_EXTENSION);
             var sourceFile = tempDir.resolve(FilenameUtils.getName(fileName));
@@ -179,7 +179,7 @@ public class AffectedFilesResolver {
         int notFound = 0;
         int notInWorkspace = 0;
 
-        FilteredLog log = new FilteredLog("Can't copy some affected workspace files to Jenkins build folder:");
+        var log = new FilteredLog("Can't copy some affected workspace files to Jenkins build folder:");
 
         for (Issue issue : report) {
             if (!remoteFacade.existsInBuildFolder(issue.getFileName())) { // skip already processed files
@@ -249,7 +249,7 @@ public class AffectedFilesResolver {
          * @return {@code true} if the file is in the workspace, {@code false} otherwise
          */
         boolean isInWorkspace(final String fileName) {
-            String sourceFile = PATH_UTIL.getAbsolutePath(createFile(fileName).getRemote());
+            var sourceFile = PATH_UTIL.getAbsolutePath(createFile(fileName).getRemote());
 
             return PERMISSION_ENFORCER.isInWorkspace(sourceFile, workspace, permittedAbsolutePaths);
         }

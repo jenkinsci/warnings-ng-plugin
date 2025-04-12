@@ -437,9 +437,9 @@ public class PublishIssuesStep extends Step implements Serializable {
             if (step.reports.size() > 1) {
                 report = new AnnotatedReport(StringUtils.defaultIfEmpty(step.getId(), IssuesRecorder.DEFAULT_ID));
                 report.logInfo("Aggregating reports of:");
-                LabelProviderFactory factory = new LabelProviderFactory();
+                var factory = new LabelProviderFactory();
                 for (AnnotatedReport subReport : step.reports) {
-                    StaticAnalysisLabelProvider labelProvider = factory.create(subReport.getId());
+                    var labelProvider = factory.create(subReport.getId());
                     report.logInfo("-> %s", labelProvider.getToolTip(subReport.size()));
                 }
             }
@@ -453,15 +453,15 @@ public class PublishIssuesStep extends Step implements Serializable {
                     ? new DeltaCalculator.NullDeltaCalculator()
                     : DeltaCalculatorFactory.findDeltaCalculator(step.scm, getRun(), workspace, getTaskListener(), new FilteredLog());
 
-            IssuesPublisher publisher = new IssuesPublisher(getRun(), report,
+            var publisher = new IssuesPublisher(getRun(), report,
                     deltaCalculator, new HealthDescriptor(step.getHealthy(), step.getUnhealthy(),
                             step.getMinimumSeverityAsSeverity()), step.getQualityGates(),
                     StringUtils.defaultString(step.getName()), step.getIcon(), step.getIgnoreQualityGate(),
                     getCharset(step.getSourceCodeEncoding()), getLogger(report), createResultHandler(), step.getFailOnError());
-            ResultAction action = publisher.attachAction(step.getTrendChartType());
+            var action = publisher.attachAction(step.getTrendChartType());
 
             if (!step.isSkipPublishingChecks()) {
-                WarningChecksPublisher checksPublisher = new WarningChecksPublisher(action, getTaskListener(), getContext().get(ChecksInfo.class));
+                var checksPublisher = new WarningChecksPublisher(action, getTaskListener(), getContext().get(ChecksInfo.class));
                 checksPublisher.publishChecks(step.getChecksAnnotationScope());
             }
 
@@ -469,9 +469,9 @@ public class PublishIssuesStep extends Step implements Serializable {
         }
 
         private LogHandler getLogger(final AnnotatedReport annotatedReport) throws InterruptedException {
-            String toolName = new LabelProviderFactory().create(annotatedReport.getId(),
+            var toolName = new LabelProviderFactory().create(annotatedReport.getId(),
                     StringUtils.defaultString(step.getName())).getName();
-            LogHandler logHandler = new LogHandler(getTaskListener(), toolName);
+            var logHandler = new LogHandler(getTaskListener(), toolName);
             logHandler.setQuiet(step.isQuiet());
 
             var report = annotatedReport.getReport();

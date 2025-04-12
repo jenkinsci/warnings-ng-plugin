@@ -1,11 +1,8 @@
 package io.jenkins.plugins.analysis.warnings.tasks;
 
-import java.nio.file.Path;
-
 import org.junit.jupiter.api.Test;
 import org.junitpioneer.jupiter.Issue;
 
-import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.SerializableTest;
 
 import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.CaseMode;
@@ -38,8 +35,8 @@ class AgentScannerTest extends SerializableTest<AgentScanner> {
     }
 
     private void readUtf8File(final String fileName) {
-        Path path = getResourceAsFile(fileName);
-        Report report = createScanner(fileName).invoke(path.getParent().toFile(), null);
+        var path = getResourceAsFile(fileName);
+        var report = createScanner(fileName).invoke(path.getParent().toFile(), null);
 
         assertThat(report).hasSize(2);
     }

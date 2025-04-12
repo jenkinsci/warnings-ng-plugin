@@ -8,7 +8,6 @@ import edu.hm.hafner.analysis.ReaderFactory;
 import edu.hm.hafner.analysis.Report;
 
 import java.io.Serial;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -42,8 +41,8 @@ class DynamicDocumentParser extends IssueParser {
     @Override
     @SuppressWarnings("PMD.DoNotUseThreads")
     public Report parseReport(final ReaderFactory reader) throws ParsingException {
-        Report report = new Report();
-        Matcher matcher = pattern.matcher(reader.readString() + "\n");
+        var report = new Report();
+        var matcher = pattern.matcher(reader.readString() + "\n");
 
         while (matcher.find()) {
             expressionMatcher.createIssue(

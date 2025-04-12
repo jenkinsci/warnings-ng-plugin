@@ -638,7 +638,7 @@ public class RecordIssuesStep extends Step implements Serializable {
 
         @Override
         protected List<AnalysisResult> run() throws IOException, InterruptedException {
-            IssuesRecorder recorder = new IssuesRecorder();
+            var recorder = new IssuesRecorder();
             recorder.setTools(step.getTools());
             recorder.setSourceCodeRetention(step.getSourceCodeRetention());
             recorder.setSourceCodeEncoding(step.getSourceCodeEncoding());
@@ -665,7 +665,7 @@ public class RecordIssuesStep extends Step implements Serializable {
             recorder.setChecksInfo(getContext().get(ChecksInfo.class));
             recorder.setQuiet(step.isQuiet());
 
-            FilePath workspace = getWorkspace();
+            var workspace = getWorkspace();
             workspace.mkdirs();
 
             return recorder.perform(getRun(), workspace, getTaskListener(), createResultHandler());

@@ -1,16 +1,16 @@
 package io.jenkins.plugins.analysis.core.util;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.util.function.Function;
-import java.util.regex.Pattern;
-
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.errorprone.annotations.MustBeClosed;
 
 import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.ReaderFactory;
+
+import java.io.IOException;
+import java.io.Reader;
+import java.util.function.Function;
+import java.util.regex.Pattern;
 
 import hudson.console.ConsoleNote;
 import hudson.model.Run;

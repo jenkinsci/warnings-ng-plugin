@@ -1,8 +1,8 @@
 package io.jenkins.plugins.analysis.core.restapi;
 
-import java.util.List;
-
 import edu.umd.cs.findbugs.annotations.CheckForNull;
+
+import java.util.List;
 
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;

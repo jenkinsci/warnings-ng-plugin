@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
 class BuildResultNavigatorTest {
     @Test
     void shouldNavigateToTheSelectedBuild() {
-        BuildResultNavigator navigator = new BuildResultNavigator();
+        var navigator = new BuildResultNavigator();
 
         assertThat(navigator.getSameUrlForOtherBuild(createBuild(),
                 "http://localhost:8080/job/pipeline-analysis-model/30/spotbugs/something",
@@ -34,7 +34,7 @@ class BuildResultNavigatorTest {
 
     @Test
     void shouldSkipMissingBuild() {
-        BuildResultNavigator navigator = new BuildResultNavigator();
+        var navigator = new BuildResultNavigator();
 
         FreeStyleProject job = mock(FreeStyleProject.class);
         FreeStyleBuild currentBuild = mock(FreeStyleBuild.class);
@@ -49,7 +49,7 @@ class BuildResultNavigatorTest {
 
     @Test
     void shouldSkipBrokenNextBuildNumber() {
-        BuildResultNavigator navigator = new BuildResultNavigator();
+        var navigator = new BuildResultNavigator();
 
         assertThat(navigator.getSameUrlForOtherBuild(mock(FreeStyleBuild.class),
                 "http://localhost:8080/job/pipeline-analysis-model/30/spotbugs/something",
@@ -59,7 +59,7 @@ class BuildResultNavigatorTest {
 
     @Test
     void shouldSkipOtherUrl() {
-        BuildResultNavigator navigator = new BuildResultNavigator();
+        var navigator = new BuildResultNavigator();
 
         assertThat(navigator.getSameUrlForOtherBuild(createBuild(),
                 "http://localhost:8080/job/pipeline-analysis-model/",

@@ -9,8 +9,6 @@ import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.model.Run;
 
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.model.IssuesDetail;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.Cpd;
@@ -44,15 +42,15 @@ class DryITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldHaveDuplicateCodeWarnings() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(CPD_REPORT);
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(CPD_REPORT);
         enableGenericWarnings(project, new Cpd());
 
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         assertThat(result).hasTotalSize(20);
         assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
 
         Run<?, ?> build = result.getOwner();
-        TableModel table = getDryTableModel(build);
+        var table = getDryTableModel(build);
         assertThatColumnsAreCorrect(table.getColumns());
 
         table.getRows().stream()
@@ -66,13 +64,13 @@ class DryITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldConfigureSeverityThresholdTo2InJobConfigurationForCpd() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(CPD_REPORT);
-        Cpd cpd = new Cpd();
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(CPD_REPORT);
+        var cpd = new Cpd();
         cpd.setNormalThreshold(1);
         enableGenericWarnings(project, cpd);
 
         cpd.setHighThreshold(2);
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result.getTotalHighPrioritySize()).isEqualTo(14);
         assertThat(result.getTotalNormalPrioritySize()).isEqualTo(6);
@@ -80,7 +78,7 @@ class DryITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(result.getTotalErrorsSize()).isEqualTo(0);
 
         Run<?, ?> build = result.getOwner();
-        TableModel table = getDryTableModel(build);
+        var table = getDryTableModel(build);
         assertThatColumnsAreCorrect(table.getColumns());
 
         assertThatLineCountForSeverityIsCorrect(table.getRows(), "NORMAL", 1, 1);
@@ -93,13 +91,13 @@ class DryITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldConfigureSeverityThresholdTo5InJobConfigurationForCpd() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(CPD_REPORT);
-        Cpd cpd = new Cpd();
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(CPD_REPORT);
+        var cpd = new Cpd();
         cpd.setNormalThreshold(1);
         enableGenericWarnings(project, cpd);
 
         cpd.setHighThreshold(5);
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result.getTotalHighPrioritySize()).isEqualTo(5);
         assertThat(result.getTotalNormalPrioritySize()).isEqualTo(15);
@@ -107,7 +105,7 @@ class DryITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(result.getTotalErrorsSize()).isEqualTo(0);
 
         Run<?, ?> build = result.getOwner();
-        TableModel table = getDryTableModel(build);
+        var table = getDryTableModel(build);
         assertThatColumnsAreCorrect(table.getColumns());
 
         assertThatLineCountForSeverityIsCorrect(table.getRows(), "NORMAL", 1, 4);
@@ -120,12 +118,12 @@ class DryITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldConfigureSeverityNormalThresholdTo4InJobConfigurationForCpd() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(CPD_REPORT);
-        Cpd cpd = new Cpd();
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(CPD_REPORT);
+        var cpd = new Cpd();
         cpd.setNormalThreshold(4);
         enableGenericWarnings(project, cpd);
 
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result.getTotalHighPrioritySize()).isEqualTo(0);
         assertThat(result.getTotalNormalPrioritySize()).isEqualTo(5);
@@ -133,7 +131,7 @@ class DryITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(result.getTotalErrorsSize()).isEqualTo(0);
 
         Run<?, ?> build = result.getOwner();
-        TableModel table = getDryTableModel(build);
+        var table = getDryTableModel(build);
         assertThatColumnsAreCorrect(table.getColumns());
 
         assertThatLineCountForSeverityIsCorrect(table.getRows(), "NORMAL", 4, Integer.MAX_VALUE);
@@ -144,20 +142,20 @@ class DryITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldFilterIssuesBySeverity() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(CPD_REPORT);
-        Cpd cpd = new Cpd();
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(CPD_REPORT);
+        var cpd = new Cpd();
         cpd.setNormalThreshold(2);
         cpd.setHighThreshold(4);
         enableGenericWarnings(project, cpd);
 
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result.getTotalHighPrioritySize()).isEqualTo(5);
         assertThat(result.getTotalNormalPrioritySize()).isEqualTo(9);
         assertThat(result.getTotalLowPrioritySize()).isEqualTo(6);
 
         Run<?, ?> build = result.getOwner();
-        TableModel table = getDryTableModel(build);
+        var table = getDryTableModel(build);
         assertThatColumnsAreCorrect(table.getColumns());
 
         assertThatLineCountForSeverityIsCorrect(table.getRows(), "NORMAL", 2, 3);
@@ -169,8 +167,8 @@ class DryITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldDifferInAmountOfDuplicateWarningForPriorities() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(CPD_REPORT);
-        Cpd cpd = new Cpd();
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(CPD_REPORT);
+        var cpd = new Cpd();
         enableGenericWarnings(project, cpd);
 
         assertThatThresholdsAreEvaluated(25, 50, 20, 0, 0, cpd, project);
@@ -179,7 +177,7 @@ class DryITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private TableModel getDryTableModel(final Run<?, ?> build) {
-        IssuesDetail issuesDetail = build.getAction(ResultAction.class).getTarget();
+        var issuesDetail = build.getAction(ResultAction.class).getTarget();
         return issuesDetail.getTableModel("issues");
     }
 
@@ -222,7 +220,7 @@ class DryITest extends IntegrationTestWithJenkinsPerSuite {
         scanner.setNormalThreshold(normalThreshold);
         scanner.setHighThreshold(highThreshold);
 
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result.getTotalHighPrioritySize()).isEqualTo(high);
         assertThat(result.getTotalNormalPrioritySize()).isEqualTo(normal);

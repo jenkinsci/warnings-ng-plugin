@@ -6,8 +6,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.junitpioneer.jupiter.Issue;
 
-import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.SerializableTest;
 
 import java.io.IOException;
@@ -30,11 +28,13 @@ import static org.mockito.Mockito.*;
 class GroovyParserTest extends SerializableTest<GroovyParser> {
     private static final String SINGLE_LINE_EXAMPLE = "file/name/relative/unix:42:evil: this is a warning message";
     private static final String MULTI_LINE_EXAMPLE
-            = "    [javac] 1. WARNING in C:\\Desenvolvimento\\Java\\jfg\\src\\jfg\\AttributeException.java (at line 3)\n"
-            + "    [javac]     public class AttributeException extends RuntimeException\n"
-            + "    [javac]                  ^^^^^^^^^^^^^^^^^^\n"
-            + "    [javac] The serializable class AttributeException does not declare a static final serialVersionUID field of type long\n"
-            + "    [javac] ----------\n";
+            = """
+                [javac] 1. WARNING in C:\\Desenvolvimento\\Java\\jfg\\src\\jfg\\AttributeException.java (at line 3)
+                [javac]     public class AttributeException extends RuntimeException
+                [javac]                  ^^^^^^^^^^^^^^^^^^
+                [javac] The serializable class AttributeException does not declare a static final serialVersionUID field of type long
+                [javac] ----------
+            """;
     private static final String MULTI_LINE_REGEXP = "(WARNING|ERROR)\\s*in\\s*(.*)\\(at line\\s*(\\d+)\\).*"
             + "(?:\\r?\\n[^\\^]*)+(?:\\r?\\n.*[\\^]+.*)\\r?\\n(?:\\s*\\[.*\\]\\s*)?(.*)";
     private static final String SINGLE_LINE_REGEXP = "^\\s*(.*):(\\d+):(.*):\\s*(.*)$";
@@ -49,7 +49,7 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
     @Test
     void shouldShortenExample() {
         char[] example = new char[GroovyParser.MAX_EXAMPLE_SIZE * 2];
-        GroovyParser parser = createParser(SINGLE_LINE_REGEXP, OK_SCRIPT, new String(example));
+        var parser = createParser(SINGLE_LINE_REGEXP, OK_SCRIPT, new String(example));
 
         assertThat(parser.getExample()).hasSize(GroovyParser.MAX_EXAMPLE_SIZE);
     }
@@ -66,20 +66,20 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
     @ParameterizedTest(name = "{index}: Regular expression should be multiline \"{0}\"")
     @ValueSource(strings = {"\\n|\\r\\n", "\\r", "\\R"})
     void issue35262(final String regexp) throws IOException {
-        var multiLineRegexp = String.format("(make(?:(?!make)[\\s\\S])*?make-error:.*(?:%s?))", regexp);
-        String textToMatch = toString("issue35262.log");
-        String script = toString("issue35262.groovy");
+        var multiLineRegexp = "(make(?:(?!make)[\\s\\S])*?make-error:.*(?:%s?))".formatted(regexp);
+        var textToMatch = toString("issue35262.log");
+        var script = toString("issue35262.groovy");
 
-        GroovyParser parser = createParser(multiLineRegexp, script);
+        var parser = createParser(multiLineRegexp, script);
         assertThat(parser.hasMultiLineSupport()).as("Wrong multi line support guess").isTrue();
 
-        DescriptorImpl descriptor = createDescriptor();
+        var descriptor = createDescriptor();
         assertThat(descriptor.checkExample(textToMatch, multiLineRegexp, script)).isOk();
 
-        IssueParser instance = parser.createParser();
+        var instance = parser.createParser();
         Run<?, ?> run = mock(Run.class);
         when(run.getLogReader()).thenReturn(new StringReader(textToMatch));
-        Report warnings = instance.parse(new ConsoleLogReaderFactory(run));
+        var warnings = instance.parse(new ConsoleLogReaderFactory(run));
 
         assertThat(warnings).hasSize(1);
     }
@@ -94,7 +94,7 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
 
     private GroovyParser createParser(final String multiLineRegexp, final String script, final String example,
             final String name) {
-        GroovyParser parser = new GroovyParser("id", name, multiLineRegexp, script, example);
+        var parser = new GroovyParser("id", name, multiLineRegexp, script, example);
         parser.setJenkinsFacade(createJenkinsFacade());
         return parser;
     }
@@ -111,7 +111,7 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
 
     @Test
     void shouldThrowExceptionDueToMissingName() {
-        GroovyParser groovyParser = createParser(MULTI_LINE_REGEXP, OK_SCRIPT, "example", StringUtils.EMPTY);
+        var groovyParser = createParser(MULTI_LINE_REGEXP, OK_SCRIPT, "example", StringUtils.EMPTY);
         assertThat(groovyParser.isValid()).isFalse();
         assertThatIllegalArgumentException().isThrownBy(groovyParser::createParser)
                 .withMessageContaining("Name is not valid");
@@ -119,7 +119,7 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
 
     @Test
     void shouldThrowExceptionDueToBrokenScript() {
-        GroovyParser groovyParser = createParser(SINGLE_LINE_REGEXP, StringUtils.EMPTY);
+        var groovyParser = createParser(SINGLE_LINE_REGEXP, StringUtils.EMPTY);
         assertThat(groovyParser.isValid()).isFalse();
         assertThatIllegalArgumentException().isThrownBy(groovyParser::createParser)
                 .withMessageContaining("Script is not valid");
@@ -127,7 +127,7 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
 
     @Test
     void shouldThrowExceptionDueToBrokenRegExp() {
-        GroovyParser groovyParser = createParser("one brace (", OK_SCRIPT);
+        var groovyParser = createParser("one brace (", OK_SCRIPT);
         assertThat(groovyParser.isValid()).isFalse();
         assertThatIllegalArgumentException().isThrownBy(groovyParser::createParser)
                 .withMessageContaining("RegExp is not valid");
@@ -135,7 +135,7 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
 
     @Test
     void shouldDetectMultiLineRegularExpression() {
-        GroovyParser parser = createParser(MULTI_LINE_REGEXP);
+        var parser = createParser(MULTI_LINE_REGEXP);
         assertThat(parser.isValid()).isTrue();
 
         assertThat(parser.hasMultiLineSupport()).as("Wrong multi line support guess").isTrue();
@@ -144,7 +144,7 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
 
     @Test
     void shouldDetectSingleLineRegularExpression() {
-        GroovyParser parser = createParser(SINGLE_LINE_REGEXP);
+        var parser = createParser(SINGLE_LINE_REGEXP);
 
         assertThat(parser.hasMultiLineSupport()).as("Wrong single line support guess").isFalse();
         assertThat(parser.createParser()).isInstanceOf(DynamicLineParser.class);
@@ -152,7 +152,7 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
 
     @Test
     void shouldAcceptOnlyNonEmptyStringsAsName() {
-        DescriptorImpl descriptor = createDescriptor();
+        var descriptor = createDescriptor();
 
         assertThat(descriptor.checkName(null)).isError();
         assertThat(descriptor.checkName(StringUtils.EMPTY)).isError();
@@ -161,7 +161,7 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
 
     @Test
     void shouldRejectInvalidRegularExpressions() {
-        DescriptorImpl descriptor = createDescriptor();
+        var descriptor = createDescriptor();
 
         assertThat(descriptor.checkRegexp(null)).isError();
         assertThat(descriptor.checkRegexp(StringUtils.EMPTY)).isError();
@@ -173,7 +173,7 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
 
     @Test
     void shouldRejectInvalidScripts() {
-        DescriptorImpl descriptor = createDescriptor();
+        var descriptor = createDescriptor();
 
         assertThat(descriptor.checkScript(null)).isError();
         assertThat(descriptor.checkScript(StringUtils.EMPTY)).isError();
@@ -184,7 +184,7 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
 
     @Test
     void shouldFindOneIssueWithValidScriptAndRegularExpression() {
-        DescriptorImpl descriptor = createDescriptor();
+        var descriptor = createDescriptor();
 
         assertThat(descriptor.checkExample(SINGLE_LINE_EXAMPLE, SINGLE_LINE_REGEXP,
                 toString("parser.groovy"))).isOk();
@@ -192,7 +192,7 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
 
     @Test
     void shouldReportErrorWhenNoMatchesAreFoundInExample() {
-        DescriptorImpl descriptor = createDescriptor();
+        var descriptor = createDescriptor();
 
         assertThat(descriptor.checkExample("this is a warning message", SINGLE_LINE_REGEXP,
                 toString("parser.groovy"))).isError();
@@ -200,7 +200,7 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
 
     @Test
     void shouldReportErrorWhenRegularExpressionHasIllegalMatchAccess() {
-        DescriptorImpl descriptor = createDescriptor();
+        var descriptor = createDescriptor();
 
         assertThat(descriptor.checkExample(SINGLE_LINE_EXAMPLE, "^\\s*(.*):(\\d+):(.*)$",
                 toString("parser.groovy"))).isError();
@@ -208,7 +208,7 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
 
     @Test
     void shouldAcceptMultiLineRegularExpression() {
-        DescriptorImpl descriptor = createDescriptor();
+        var descriptor = createDescriptor();
 
         assertThat(descriptor.checkExample(MULTI_LINE_EXAMPLE, MULTI_LINE_REGEXP,
                 toString("multiline.groovy"))).isOk();

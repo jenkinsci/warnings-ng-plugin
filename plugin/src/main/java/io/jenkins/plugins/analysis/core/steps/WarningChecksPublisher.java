@@ -63,7 +63,7 @@ class WarningChecksPublisher {
         SKIP;
 
         static ListBoxModel fillItems() {
-            ListBoxModel items = new ListBoxModel();
+            var items = new ListBoxModel();
             items.add(Messages.ChecksAnnotationScope_ALL(), ALL.name());
             items.add(Messages.ChecksAnnotationScope_NEW(), NEW.name());
             items.add(Messages.ChecksAnnotationScope_MODIFIED(), MODIFIED.name());
@@ -101,16 +101,16 @@ class WarningChecksPublisher {
 
     @VisibleForTesting
     ChecksDetails extractChecksDetails(final ChecksAnnotationScope annotationScope) {
-        AnalysisResult result = action.getResult();
-        IssuesStatistics totals = result.getTotals();
+        var result = action.getResult();
+        var totals = result.getTotals();
 
-        StaticAnalysisLabelProvider labelProvider = action.getLabelProvider();
+        var labelProvider = action.getLabelProvider();
 
-        String checksName = Optional.ofNullable(checksInfo).map(ChecksInfo::getName)
+        var checksName = Optional.ofNullable(checksInfo).map(ChecksInfo::getName)
                 .filter(StringUtils::isNotEmpty)
                 .orElse(labelProvider.getName());
 
-        String summary = extractChecksSummary(totals) + "\n" + extractReferenceBuild(result);
+        var summary = extractChecksSummary(totals) + "\n" + extractReferenceBuild(result);
         return new ChecksDetailsBuilder()
                 .withName(checksName)
                 .withStatus(ChecksStatus.COMPLETED)
@@ -159,33 +159,33 @@ class WarningChecksPublisher {
             return "No issues";
         }
         else if (statistics.getNewSize() == 0) {
-            return String.format("No new issues, %d total", statistics.getTotalSize());
+            return "No new issues, %d total".formatted(statistics.getTotalSize());
         }
         else if (statistics.getNewSize() == statistics.getTotalSize()) {
             if (statistics.getNewSize() == 1) {
                 return "1 new issue";
             }
-            return String.format("%d new issues", statistics.getNewSize());
+            return "%d new issues".formatted(statistics.getNewSize());
         }
         else {
             if (statistics.getNewSize() == 1) {
-                return String.format("1 new issue, %d total", statistics.getTotalSize());
+                return "1 new issue, %d total".formatted(statistics.getTotalSize());
             }
-            return String.format("%d new issues, %d total", statistics.getNewSize(), statistics.getTotalSize());
+            return "%d new issues, %d total".formatted(statistics.getNewSize(), statistics.getTotalSize());
         }
     }
 
     private String formatColumns(final Object... columns) {
-        StringBuilder row = new StringBuilder();
+        var row = new StringBuilder();
         for (Object column : columns) {
-            row.append(String.format("|%s", column));
+            row.append("|%s".formatted(column));
         }
         row.append('\n');
         return row.toString();
     }
 
     private String extractChecksSummary(final IssuesStatistics statistics) {
-        String sizes = formatColumns(
+        var sizes = formatColumns(
                 statistics.getTotalSize(),
                 statistics.getNewSize(),
                 statistics.getTotalSize() - statistics.getNewSize(),
@@ -240,7 +240,7 @@ class WarningChecksPublisher {
         List<ChecksAnnotation> annotations = new ArrayList<>(issues.getSize());
 
         for (Issue issue : issues) {
-            ChecksAnnotationBuilder builder = new ChecksAnnotationBuilder()
+            var builder = new ChecksAnnotationBuilder()
                     .withPath(issue.getFileName())
                     .withTitle(getIssueTitle(issue))
                     .withAnnotationLevel(ChecksAnnotationLevel.WARNING)
@@ -282,7 +282,7 @@ class WarningChecksPublisher {
     }
 
     private static String getIssueTitle(final Issue issue) {
-        String title = issue.getType();
+        var title = issue.getType();
         if (StringUtils.isBlank(title) || UNDEFINED_ISSUE_STRING.equals(title)) {
             title = issue.getCategory();
         }

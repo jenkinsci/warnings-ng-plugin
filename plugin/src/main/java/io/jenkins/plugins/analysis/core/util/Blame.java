@@ -3,7 +3,6 @@ package io.jenkins.plugins.analysis.core.util;
 import edu.hm.hafner.analysis.Issue;
 
 import io.jenkins.plugins.forensics.blame.Blames;
-import io.jenkins.plugins.forensics.blame.FileBlame;
 
 /**
  * Enhances an issue with information about the author and the originating commit. If no such information is available,
@@ -31,7 +30,7 @@ public class Blame {
      */
     public Blame(final Issue issue, final Blames blames) {
         if (blames.contains(issue.getFileName())) {
-            FileBlame blameRequest = blames.getBlame(issue.getFileName());
+            var blameRequest = blames.getBlame(issue.getFileName());
             int line = issue.getLineStart();
             author = blameRequest.getName(line);
             email = blameRequest.getEmail(line);

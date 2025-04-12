@@ -1,10 +1,10 @@
 package io.jenkins.plugins.analysis.core.charts;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.echarts.SeriesBuilder;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 

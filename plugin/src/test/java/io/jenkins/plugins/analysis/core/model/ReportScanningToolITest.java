@@ -13,7 +13,7 @@ class ReportScanningToolITest extends IntegrationTestWithJenkinsPerSuite {
     /** Tests that the descriptor's canScanConsoleLog() method returns true by default. */
     @Test
     void descriptorMethodCanScanConsoleLogReturnsTrue() {
-        final ReportScanningTool.ReportScanningToolDescriptor descriptor = new ReportScanningTool.ReportScanningToolDescriptor(
+        final var descriptor = new ReportScanningTool.ReportScanningToolDescriptor(
                 "someId");
 
         assertThat(descriptor.canScanConsoleLog()).isTrue();
@@ -22,7 +22,7 @@ class ReportScanningToolITest extends IntegrationTestWithJenkinsPerSuite {
     /** Tests that, when the descriptor's canScanConsoleLog() method returns false and there's no default pattern, a null pattern is treated as an error. */
     @Test
     void descriptorMethodDoCheckPatternWhenCalledWithNoPatternReturnsErrorIfCanScanConsoleLogIsFalse() {
-        final ReportScanningTool.ReportScanningToolDescriptor descriptor = makeDescriptor(false, "");
+        final var descriptor = makeDescriptor(false, "");
         final String givenPattern = null;
 
         assertThat(descriptor.doCheckPattern(null, givenPattern)).isError();
@@ -31,8 +31,8 @@ class ReportScanningToolITest extends IntegrationTestWithJenkinsPerSuite {
     /** Tests that, when the descriptor's canScanConsoleLog() method returns false and there's no default pattern, an empty pattern is treated as an error. */
     @Test
     void descriptorMethodDoCheckPatternWhenCalledWithEmptyPatternReturnsErrorIfCanScanConsoleLogIsFalse() {
-        final ReportScanningTool.ReportScanningToolDescriptor descriptor = makeDescriptor(false, "");
-        final String givenPattern = " ";
+        final var descriptor = makeDescriptor(false, "");
+        final var givenPattern = " ";
 
         assertThat(descriptor.doCheckPattern(null, givenPattern)).isError();
     }
@@ -40,8 +40,8 @@ class ReportScanningToolITest extends IntegrationTestWithJenkinsPerSuite {
     /** Tests that, when the descriptor's canScanConsoleLog() method returns false and there's a default pattern, an empty pattern is valid. */
     @Test
     void descriptorMethodDoCheckPatternWhenCalledWithDefaultPatternReturnsOkIfCanScanConsoleLogIsFalse() {
-        final ReportScanningTool.ReportScanningToolDescriptor descriptor = makeDescriptor(false, "someDefaultPattern");
-        final String givenPattern = " ";
+        final var descriptor = makeDescriptor(false, "someDefaultPattern");
+        final var givenPattern = " ";
 
         assertThat(descriptor.doCheckPattern(null, givenPattern)).isOk();
     }
@@ -49,8 +49,8 @@ class ReportScanningToolITest extends IntegrationTestWithJenkinsPerSuite {
     /** Tests that, when the descriptor's canScanConsoleLog() method returns true, an empty pattern is valid. */
     @Test
     void descriptorMethodDoCheckPatternWhenCalledWithEmptyPatternReturnsOkIfCanScanConsoleLogIsTrue() {
-        final ReportScanningTool.ReportScanningToolDescriptor descriptor = makeDescriptor(true, "");
-        final String givenPattern = "";
+        final var descriptor = makeDescriptor(true, "");
+        final var givenPattern = "";
 
         assertThat(descriptor.doCheckPattern(null, givenPattern)).isOk();
     }

@@ -2,7 +2,6 @@ package io.jenkins.plugins.analysis.warnings.axivion;
 
 import org.junit.jupiter.api.Test;
 
-import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 
 import io.jenkins.plugins.analysis.warnings.axivion.AxivionParser.Config;
@@ -10,8 +9,7 @@ import io.jenkins.plugins.analysis.warnings.axivion.AxivionParser.Config;
 import static org.assertj.core.api.Assertions.*;
 
 /**
- * Checks whether the {@link AxivionParser} can parse all six supported issue kinds and transform them to Jenkins {@link
- * Issue}'s.
+ * Checks whether the {@link AxivionParser} can parse all six supported issue kinds and transform them to warnings.
  */
 class AxivionParserTest {
     private final AxivionParser parser = new AxivionParser(new Config("testUrl", "/root", true));
@@ -19,10 +17,10 @@ class AxivionParserTest {
 
     @Test
     void canParseStyleViolations() {
-        Report report = new Report();
+        var report = new Report();
 
         parser.parse(report, AxIssueKind.SV, dashboard.getIssues(AxIssueKind.SV));
-        Issue issue = report.get(0);
+        var issue = report.get(0);
 
         assertThat(issue.getType()).isEqualTo("MisraC++-7.1.1");
         assertThat(issue.getFileName()).isEqualTo("src/mainwindow.h");
@@ -40,10 +38,10 @@ class AxivionParserTest {
 
     @Test
     void canParseMetricViolations() {
-        Report report = new Report();
+        var report = new Report();
 
         parser.parse(report, AxIssueKind.MV, dashboard.getIssues(AxIssueKind.MV));
-        Issue issue = report.get(0);
+        var issue = report.get(0);
 
         assertThat(issue.getType()).isEqualTo("Maximum nesting");
         assertThat(issue.getFileName()).isEqualTo("src/mainwindow.cpp");
@@ -61,10 +59,10 @@ class AxivionParserTest {
 
     @Test
     void canParseDeadEntities() {
-        Report report = new Report();
+        var report = new Report();
 
         parser.parse(report, AxIssueKind.DE, dashboard.getIssues(AxIssueKind.DE));
-        Issue issue = report.get(0);
+        var issue = report.get(0);
 
         assertThat(issue.getType()).isEqualTo("Dead Entity");
         assertThat(issue.getFileName()).isEqualTo("src/pointmodel.cpp");
@@ -82,10 +80,10 @@ class AxivionParserTest {
 
     @Test
     void canParseArchitectureViolations() {
-        Report report = new Report();
+        var report = new Report();
 
         parser.parse(report, AxIssueKind.AV, dashboard.getIssues(AxIssueKind.AV));
-        Issue issue = report.get(0);
+        var issue = report.get(0);
 
         assertThat(issue.getType()).isEqualTo("Divergence");
         assertThat(issue.getFileName()).isEqualTo("projects/tools/gravis2/src/mainwindow.cpp");
@@ -103,10 +101,10 @@ class AxivionParserTest {
 
     @Test
     void canParseClones() {
-        Report report = new Report();
+        var report = new Report();
 
         parser.parse(report, AxIssueKind.CL, dashboard.getIssues(AxIssueKind.CL));
-        Issue issue = report.get(0);
+        var issue = report.get(0);
 
         assertThat(issue.getType()).isEqualTo("type 2");
         assertThat(issue.getFileName()).isEqualTo("projects/plugins/dg_scripting/generated/dg.cpp");
@@ -124,10 +122,10 @@ class AxivionParserTest {
 
     @Test
     void canParseCycles() {
-        Report report = new Report();
+        var report = new Report();
 
         parser.parse(report, AxIssueKind.CY, dashboard.getIssues(AxIssueKind.CY));
-        Issue issue = report.get(0);
+        var issue = report.get(0);
 
         assertThat(issue.getType()).isEqualTo("Cycle");
         assertThat(issue.getFileName()).isEqualTo("/usr/include/c++/4.9/bits/codecvt.h");
@@ -145,7 +143,7 @@ class AxivionParserTest {
 
     @Test
     void canParseMultipleViolationInRows() {
-        Report report = new Report();
+        var report = new Report();
         parser.parse(report, AxIssueKind.SV, dashboard.getIssuesFrom(
                 "/io/jenkins/plugins/analysis/warnings/axivion/multiple-violations.json"));
         assertThat(report).hasSize(3);
@@ -153,11 +151,11 @@ class AxivionParserTest {
 
     @Test
     void absenceTypeArchitectureViolationsMayNotHaveAPath() {
-        Report report = new Report();
+        var report = new Report();
 
         parser.parse(report, AxIssueKind.AV,
                 dashboard.getIssuesFrom("/io/jenkins/plugins/analysis/warnings/axivion/av_empty_paths.json"));
-        Issue issue = report.get(0);
+        var issue = report.get(0);
 
         assertThat(issue.getType()).isEqualTo("Absence");
         assertThat(issue.getFileName()).isEqualTo("-");
@@ -165,7 +163,7 @@ class AxivionParserTest {
 
     @Test
     void parserIsAwareOfDashboardErrors() {
-        Report report = new Report();
+        var report = new Report();
 
         parser.parse(report, AxIssueKind.SV, dashboard.getIssuesFrom(
                 "/io/jenkins/plugins/analysis/warnings/axivion/dashboard_error.json"));
@@ -176,7 +174,7 @@ class AxivionParserTest {
 
     @Test
     void parserIgnoresSuppressedOrJustifiedIssues() {
-        Report report = new Report();
+        var report = new Report();
 
         parser.parse(report, AxIssueKind.SV, dashboard.getIssuesFrom(
                 "/io/jenkins/plugins/analysis/warnings/axivion/sv_justified_and_suppressed.json"));

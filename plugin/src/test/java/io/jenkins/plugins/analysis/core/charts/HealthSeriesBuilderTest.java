@@ -1,15 +1,15 @@
 package io.jenkins.plugins.analysis.core.charts;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
-
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
@@ -94,7 +94,7 @@ class HealthSeriesBuilderTest {
     void testComputeSeries(
             final String name, final HealthDescriptor descriptor, final AnalysisResult run,
             final List<Integer> expectedSeries) {
-        HealthSeriesBuilder sut = new HealthSeriesBuilder(descriptor);
+        var sut = new HealthSeriesBuilder(descriptor);
 
         Map<String, Integer> series = sut.computeSeries(run);
         List<Integer> values = new ArrayList<>();

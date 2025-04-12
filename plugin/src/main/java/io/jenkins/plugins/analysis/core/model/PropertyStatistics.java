@@ -197,7 +197,7 @@ public class PropertyStatistics {
         if (issuesByProperty.containsKey(key)) {
             return issuesByProperty.get(key);
         }
-        throw new NoSuchElementException(String.format("There is no report for key '%s'", key));
+        throw new NoSuchElementException("There is no report for key '%s'".formatted(key));
     }
 
     private Optional<Report> getNewReportFor(final String key) {

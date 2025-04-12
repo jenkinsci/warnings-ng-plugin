@@ -1,8 +1,5 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.util.Locale;
-import java.util.stream.Stream;
-
 import org.apache.commons.text.StringEscapeUtils;
 import org.junit.jupiter.api.BeforeAll;
 
@@ -11,6 +8,9 @@ import com.google.errorprone.annotations.MustBeClosed;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Severity;
+
+import java.util.Locale;
+import java.util.stream.Stream;
 
 import hudson.model.Job;
 import hudson.model.Run;
@@ -51,7 +51,7 @@ public abstract class AbstractDetailsModelTest {
     }
 
     Issue createIssue(final int index) {
-        try (IssueBuilder builder = createBuilder()) {
+        try (var builder = createBuilder()) {
             builder.setFileName("/path/to/file-" + index)
                     .setPackageName("package-" + index)
                     .setCategory("category-" + index)
@@ -77,7 +77,7 @@ public abstract class AbstractDetailsModelTest {
      * @return the file name column
      */
     protected String createExpectedFileName(final Issue issue) {
-        return String.format("<a href=\"source.%s/#15\" data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" title=\"/path/to/file-1\">file-1:15</a>", issue.getId().toString());
+        return "<a href=\"source.%s/#15\" data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" title=\"/path/to/file-1\">file-1:15</a>".formatted(issue.getId().toString());
     }
 
     /**

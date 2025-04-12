@@ -1,18 +1,17 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.VisibleForTesting;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
 import io.jenkins.plugins.datatables.TableColumn;
 import io.jenkins.plugins.datatables.TableColumn.ColumnBuilder;
 import io.jenkins.plugins.datatables.TableColumn.ColumnCss;
 import io.jenkins.plugins.datatables.TableColumn.ColumnType;
-import io.jenkins.plugins.forensics.miner.FileStatistics;
 import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
 import io.jenkins.plugins.util.JenkinsFacade;
 
@@ -69,37 +68,37 @@ public class ForensicsModel extends DetailsTableModel {
         columns.add(createFileColumn());
         columns.add(createAgeColumn());
 
-        TableColumn authorsSize = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_AuthorsSize())
+        var authorsSize = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_AuthorsSize())
                 .withDataPropertyKey("authorsSize")
                 .withResponsivePriority(1)
                 .withType(ColumnType.NUMBER)
                 .build();
         columns.add(authorsSize);
-        TableColumn commitsSize = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_CommitsSize())
+        var commitsSize = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_CommitsSize())
                 .withDataPropertyKey("commitsSize")
                 .withResponsivePriority(1)
                 .withType(ColumnType.NUMBER)
                 .build();
         columns.add(commitsSize);
-        TableColumn modifiedAt = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_LastCommit())
+        var modifiedAt = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_LastCommit())
                 .withDataPropertyKey("modifiedAt")
                 .withResponsivePriority(50)
                 .withHeaderClass(ColumnCss.DATE)
                 .build();
         columns.add(modifiedAt);
-        TableColumn addedAt = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_AddedAt())
+        var addedAt = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_AddedAt())
                 .withDataPropertyKey("addedAt")
                 .withResponsivePriority(50)
                 .withHeaderClass(ColumnCss.DATE)
                 .build();
         columns.add(addedAt);
-        TableColumn linesOfCode = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_LOC())
+        var linesOfCode = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_LOC())
                 .withDataPropertyKey("linesOfCode")
                 .withResponsivePriority(25)
                 .withType(ColumnType.NUMBER)
                 .build();
         columns.add(linesOfCode);
-        TableColumn churn = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_Churn())
+        var churn = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_Churn())
                 .withDataPropertyKey("churn")
                 .withResponsivePriority(25)
                 .withType(ColumnType.NUMBER)
@@ -112,10 +111,10 @@ public class ForensicsModel extends DetailsTableModel {
 
     @Override
     public ForensicsRow getRow(final Issue issue) {
-        ForensicsRow row = new ForensicsRow(getAgeBuilder(), getFileNameRenderer(), getDescriptionProvider(),
+        var row = new ForensicsRow(getAgeBuilder(), getFileNameRenderer(), getDescriptionProvider(),
                 issue, getJenkinsFacade());
         if (statistics.contains(issue.getFileName())) {
-            FileStatistics result = statistics.get(issue.getFileName());
+            var result = statistics.get(issue.getFileName());
             row.setAuthorsSize(String.valueOf(result.getNumberOfAuthors()));
             row.setCommitsSize(String.valueOf(result.getNumberOfCommits()));
             row.setModifiedAt(result.getLastModificationTime());

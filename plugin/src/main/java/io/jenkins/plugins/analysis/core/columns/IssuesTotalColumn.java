@@ -30,7 +30,6 @@ import jenkins.model.Jenkins;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.ToolSelection;
 import io.jenkins.plugins.analysis.core.util.IssuesStatistics.StatisticProperties;
 import io.jenkins.plugins.util.JenkinsFacade;
@@ -211,17 +210,17 @@ public class IssuesTotalColumn extends ListViewColumn {
 
         String[] selectedIds = getIds(tools);
         if (selectedIds.length == 1 && selectTools) {
-            String selectedId = selectedIds[0];
+            var selectedId = selectedIds[0];
             if (actualIds.contains(selectedId)) {
                 //noinspection OptionalGetWithoutIsPresent
-                ResultAction result = actions.stream().filter(action -> action.getId().equals(selectedId))
+                var result = actions.stream().filter(action -> action.getId().equals(selectedId))
                         .findFirst().get(); // We are sure it contains the selected id
                 return type.getUrl(result.getOwner().getNumber() + "/" + result.getUrlName());
             }
         }
 
         if (actualIds.size() == 1) {
-            ResultAction result = actions.iterator().next();
+            var result = actions.iterator().next();
             return type.getUrl(result.getOwner().getNumber() + "/" + result.getUrlName());
         }
 
@@ -249,7 +248,7 @@ public class IssuesTotalColumn extends ListViewColumn {
          */
         @POST
         public ListBoxModel doFillTypeItems() {
-            ListBoxModel model = new ListBoxModel();
+            var model = new ListBoxModel();
 
             if (new JenkinsFacade().hasPermission(Jenkins.READ)) {
                 for (StatisticProperties qualityGateType : StatisticProperties.values()) {
@@ -279,7 +278,7 @@ public class IssuesTotalColumn extends ListViewColumn {
 
         AnalysisResultDescription(final ResultAction result, final LabelProviderFactory labelProviderFactory,
                 final StatisticProperties type) {
-            StaticAnalysisLabelProvider labelProvider = labelProviderFactory.create(result.getId(), result.getName());
+            var labelProvider = labelProviderFactory.create(result.getId(), result.getName());
             name = labelProvider.getLinkName();
             icon = labelProvider.getSmallIconUrl();
             total = type.getSizeGetter().apply(result.getResult().getTotals());
@@ -310,7 +309,7 @@ public class IssuesTotalColumn extends ListViewColumn {
             if (o == null || getClass() != o.getClass()) {
                 return false;
             }
-            AnalysisResultDescription that = (AnalysisResultDescription) o;
+            var that = (AnalysisResultDescription) o;
             return getTotal() == that.getTotal()
                     && Objects.equals(getIcon(), that.getIcon())
                     && Objects.equals(getName(), that.getName())

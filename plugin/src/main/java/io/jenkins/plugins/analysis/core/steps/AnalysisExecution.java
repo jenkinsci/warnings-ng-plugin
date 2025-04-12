@@ -65,7 +65,7 @@ abstract class AnalysisExecution<T> extends SynchronousNonBlockingStepExecution<
      *         if the user canceled the run
      */
     protected Optional<VirtualChannel> getChannel() throws IOException, InterruptedException {
-        Computer computer = getContext().get(Computer.class);
+        var computer = getContext().get(Computer.class);
 
         if (computer == null) {
             return Optional.empty();
@@ -97,7 +97,7 @@ abstract class AnalysisExecution<T> extends SynchronousNonBlockingStepExecution<
      *         if the user canceled the execution
      */
     protected FilePath getWorkspace() throws IOException, InterruptedException {
-        FilePath workspace = getContext().get(FilePath.class);
+        var workspace = getContext().get(FilePath.class);
 
         if (workspace == null) {
             throw new IOException("No workspace available for " + this);
@@ -115,7 +115,7 @@ abstract class AnalysisExecution<T> extends SynchronousNonBlockingStepExecution<
      */
     protected TaskListener getTaskListener() throws InterruptedException {
         try {
-            TaskListener listener = getContext().get(TaskListener.class);
+            var listener = getContext().get(TaskListener.class);
             if (listener != null) {
                 return listener;
             }

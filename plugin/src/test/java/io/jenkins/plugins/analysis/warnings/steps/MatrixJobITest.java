@@ -1,10 +1,10 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.junit.jupiter.api.Test;
 
 import hudson.matrix.AxisList;
 import hudson.matrix.MatrixBuild;
@@ -12,7 +12,6 @@ import hudson.matrix.MatrixProject;
 import hudson.matrix.MatrixRun;
 import hudson.matrix.TextAxis;
 
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.Gcc4;
 import io.jenkins.plugins.analysis.warnings.SpotBugs;
@@ -34,7 +33,7 @@ class MatrixJobITest extends IntegrationTestWithJenkinsPerSuite {
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     @Test
     void shouldCreateIndividualAxisResults() {
-        MatrixProject project = createProject(MatrixProject.class);
+        var project = createProject(MatrixProject.class);
         copySingleFileToWorkspace(project, "matrix-warnings-one.txt", "user_axis/one/issues.txt");
         copySingleFileToWorkspace(project, "matrix-warnings-two.txt", "user_axis/two/issues.txt");
         copySingleFileToWorkspace(project, "matrix-warnings-three.txt", "user_axis/three/issues.txt");
@@ -47,18 +46,18 @@ class MatrixJobITest extends IntegrationTestWithJenkinsPerSuite {
         warningsPerAxis.put("two", 6);
         warningsPerAxis.put("three", 2);
 
-        MatrixBuild build = buildSuccessfully(project);
+        var build = buildSuccessfully(project);
         for (MatrixRun run : build.getRuns()) {
             assertSuccessfulBuild(run);
 
-            AnalysisResult result = getAnalysisResult(run);
-            String currentAxis = getAxisName(run);
+            var result = getAnalysisResult(run);
+            var currentAxis = getAxisName(run);
 
             assertThat(result.getTotalSize())
                     .as("Result of axis " + currentAxis)
                     .isEqualTo(warningsPerAxis.get(currentAxis));
         }
-        AnalysisResult aggregation = getAnalysisResult(build);
+        var aggregation = getAnalysisResult(build);
         assertThat(aggregation.getTotalSize()).isEqualTo(12);
     }
 
@@ -69,7 +68,7 @@ class MatrixJobITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldReportNoNewWarningsForSameAxisResults() {
-        MatrixProject project = createProject(MatrixProject.class);
+        var project = createProject(MatrixProject.class);
 
         copySingleFileToWorkspace(project, "spotbugsXml.xml", "user_axis/JDK8/spotbugs-issues.txt");
         copySingleFileToWorkspace(project, "spotbugsXml.xml", "user_axis/JDK11/spotbugs-issues.txt");
@@ -78,7 +77,7 @@ class MatrixJobITest extends IntegrationTestWithJenkinsPerSuite {
 
         configureAxisLabels(project, "JDK8", "JDK11");
 
-        MatrixBuild build = buildSuccessfully(project);
+        var build = buildSuccessfully(project);
         verifyFirstBuild(build);
 
         verifySecondBuild(buildSuccessfully(project));
@@ -98,8 +97,8 @@ class MatrixJobITest extends IntegrationTestWithJenkinsPerSuite {
         for (MatrixRun run : build.getRuns()) {
             assertSuccessfulBuild(run);
 
-            AnalysisResult result = getAnalysisResult(run);
-            String currentAxis = getAxisName(run);
+            var result = getAnalysisResult(run);
+            var currentAxis = getAxisName(run);
 
             assertThat(result.getTotalSize())
                     .as("Result of axis " + currentAxis)

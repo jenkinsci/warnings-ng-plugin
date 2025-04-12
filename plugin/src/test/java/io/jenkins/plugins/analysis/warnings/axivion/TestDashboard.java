@@ -27,12 +27,12 @@ class TestDashboard implements AxivionDashboard {
     }
 
     JsonObject getIssuesFrom(final String resourcePath) {
-        final URL testCase = this.getClass().getResource(resourcePath);
+        final var testCase = this.getClass().getResource(resourcePath);
         return JsonParser.parseReader(new Resource(testCase).asReader()).getAsJsonObject();
     }
 
     private String resolveResourcePath(final AxIssueKind kind) {
-        String resource = "/io/jenkins/plugins/analysis/warnings/axivion/";
+        var resource = "/io/jenkins/plugins/analysis/warnings/axivion/";
         switch (kind) {
             case AV:
                 resource += "av.json";
@@ -74,7 +74,7 @@ class TestDashboard implements AxivionDashboard {
          * Gets just the file name portion without any paths, like "foo.txt"
          */
         public String getName() {
-            String s = url.toExternalForm();
+            var s = url.toExternalForm();
             return s.substring(s.lastIndexOf('/') + 1);
         }
 
@@ -95,7 +95,7 @@ class TestDashboard implements AxivionDashboard {
         }
 
         public byte[] asByteArray() throws IOException {
-            try (InputStream is = asInputStream()) {
+            try (var is = asInputStream()) {
                 return IOUtils.toByteArray(is);
             }
         }

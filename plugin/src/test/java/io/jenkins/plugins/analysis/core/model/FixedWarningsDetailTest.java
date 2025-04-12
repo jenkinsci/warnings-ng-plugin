@@ -1,14 +1,14 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.util.Optional;
-
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
+
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 import hudson.model.Run;
 
@@ -27,9 +27,9 @@ class FixedWarningsDetailTest {
 
     @Test
     void shouldDisplayFileOfFixedWarning() {
-        AnalysisResult result = createAnalysisResult();
+        var result = createAnalysisResult();
 
-        FixedWarningsDetail detail = new FixedWarningsDetail(mock(Run.class), result, new Report(),
+        var detail = new FixedWarningsDetail(mock(Run.class), result, new Report(),
                 "fixed", mock(StaticAnalysisLabelProvider.class), StandardCharsets.UTF_8);
 
         // No reference build yet
@@ -40,7 +40,7 @@ class FixedWarningsDetailTest {
         Run<?, ?> referenceBuild = createReferenceBuild();
         when(result.getReferenceBuild()).thenReturn(Optional.of(referenceBuild));
 
-        String expectedUrl = "/url/analysis";
+        var expectedUrl = "/url/analysis";
         assertThat(detail.getReferenceUrl()).isEqualTo(expectedUrl);
         assertThat(detail.canDisplayFile(createIssue("file.txt"))).isFalse();
 
@@ -49,7 +49,7 @@ class FixedWarningsDetailTest {
     }
 
     private Issue createIssue(final String fileName) {
-        try (IssueBuilder builder = new IssueBuilder()) {
+        try (var builder = new IssueBuilder()) {
             builder.setFileName(fileName);
             return builder.build();
         }

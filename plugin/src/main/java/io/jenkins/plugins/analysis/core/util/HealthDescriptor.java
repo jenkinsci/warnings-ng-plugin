@@ -82,6 +82,6 @@ public class HealthDescriptor implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("Healthy=%d, Unhealthy=%d, Minimum Severity=%s", healthy, unhealthy, minimumSeverity);
+        return "Healthy=%d, Unhealthy=%d, Minimum Severity=%s".formatted(healthy, unhealthy, minimumSeverity);
     }
 }

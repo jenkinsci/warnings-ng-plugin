@@ -1,17 +1,16 @@
 package io.jenkins.plugins.analysis.warnings.integrations;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.jenkins_ci.plugins.flexible_publish.ConditionalPublisher;
 import org.jenkins_ci.plugins.flexible_publish.FlexiblePublisher;
 import org.jenkins_ci.plugins.run_condition.BuildStepRunner.Run;
 import org.jenkins_ci.plugins.run_condition.core.AlwaysRun;
 import org.junit.jupiter.api.Test;
 
-import hudson.model.FreeStyleProject;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import hudson.model.Result;
 import hudson.tasks.BuildStep;
 
@@ -42,19 +41,19 @@ class FlexiblePublishITest extends IntegrationTestWithJenkinsPerSuite {
     /** Test that different tools can be configured with different settings. */
     @Test
     void shouldAnalyseTwoToolsWithDifferentSettings() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(CHECKSTYLE_WARNINGS,
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(CHECKSTYLE_WARNINGS,
                 JAVA_WARNINGS);
 
-        CheckStyle checkStyle = new CheckStyle();
+        var checkStyle = new CheckStyle();
         checkStyle.setPattern("**/checkstyle*");
-        IssuesRecorder checkStyleRecorder = new IssuesRecorder();
+        var checkStyleRecorder = new IssuesRecorder();
         checkStyleRecorder.setTools(checkStyle);
         checkStyleRecorder.setQualityGates(List.of(
                 new WarningsQualityGate(6, QualityGateType.TOTAL, QualityGateCriticality.FAILURE)));
 
-        Java java = new Java();
+        var java = new Java();
         java.setPattern("**/java*");
-        IssuesRecorder javaRecorder = new IssuesRecorder();
+        var javaRecorder = new IssuesRecorder();
         javaRecorder.setTools(java);
         javaRecorder.setEnabledForFailure(true);
         javaRecorder.setQualityGates(List.of(
@@ -68,12 +67,12 @@ class FlexiblePublishITest extends IntegrationTestWithJenkinsPerSuite {
         List<AnalysisResult> results = getAnalysisResults(buildWithResult(project, Result.FAILURE));
         assertThat(results).hasSize(2);
 
-        AnalysisResult checkStyleResult = results.get(0);
+        var checkStyleResult = results.get(0);
         assertThat(checkStyleResult).hasId(checkStyle.getActualId());
         assertThat(checkStyleResult).hasQualityGateStatus(QualityGateStatus.FAILED);
         assertThat(checkStyleResult).hasTotalSize(6);
 
-        AnalysisResult javaResult = results.get(1);
+        var javaResult = results.get(1);
         assertThat(javaResult).hasId(java.getActualId());
         assertThat(javaResult).hasQualityGateStatus(QualityGateStatus.WARNING);
         assertThat(javaResult).hasTotalSize(2);
@@ -95,7 +94,7 @@ class FlexiblePublishITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private List<RegexpFilter> createFileExcludeFilter(final String pattern) {
-        RegexpFilter filter = new ExcludeFile(pattern);
+        var filter = new ExcludeFile(pattern);
         List<RegexpFilter> filterList = new ArrayList<>();
         filterList.add(filter);
         return filterList;

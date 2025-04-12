@@ -36,7 +36,7 @@ class QualityGateEvaluatorTest {
         List<WarningsQualityGate> qualityGates = new ArrayList<>();
         qualityGates.add(addQualityGate(1, QualityGateType.DELTA, QualityGateCriticality.UNSTABLE));
 
-        IssuesStatisticsBuilder builder = new IssuesStatisticsBuilder().setDeltaErrorSize(-1);
+        var builder = new IssuesStatisticsBuilder().setDeltaErrorSize(-1);
 
         var result = evaluate(qualityGates, builder, new FilteredLog());
 
@@ -50,7 +50,7 @@ class QualityGateEvaluatorTest {
         List<WarningsQualityGate> qualityGates = new ArrayList<>();
         qualityGates.add(addQualityGate(1, QualityGateType.TOTAL, QualityGateCriticality.UNSTABLE));
 
-        IssuesStatisticsBuilder builder = new IssuesStatisticsBuilder();
+        var builder = new IssuesStatisticsBuilder();
 
         var result = evaluate(qualityGates, builder, new FilteredLog());
         assertThat(result.getOverallStatus()).isEqualTo(QualityGateStatus.PASSED);
@@ -69,7 +69,7 @@ class QualityGateEvaluatorTest {
 
     @Test
     void shouldEvaluateAllProperties() {
-        IssuesStatisticsBuilder builder = new IssuesStatisticsBuilder();
+        var builder = new IssuesStatisticsBuilder();
 
         evaluateQualityGateFor(builder, builder::setTotalNormalSize, QualityGateType.TOTAL);
         evaluateQualityGateFor(builder, builder::setTotalErrorSize, QualityGateType.TOTAL_ERROR);
@@ -115,7 +115,7 @@ class QualityGateEvaluatorTest {
         List<WarningsQualityGate> qualityGates = new ArrayList<>();
         qualityGates.add(addQualityGate(1, QualityGateType.TOTAL, QualityGateCriticality.UNSTABLE));
 
-        IssuesStatisticsBuilder builder = new IssuesStatisticsBuilder();
+        var builder = new IssuesStatisticsBuilder();
         builder.setTotalNormalSize(1);
 
         var result = evaluate(qualityGates, builder, new FilteredLog());
@@ -151,7 +151,7 @@ class QualityGateEvaluatorTest {
         List<WarningsQualityGate> qualityGates = new ArrayList<>();
         qualityGates.add(addQualityGate(0, QualityGateType.TOTAL, QualityGateCriticality.UNSTABLE));
 
-        IssuesStatisticsBuilder builder = new IssuesStatisticsBuilder();
+        var builder = new IssuesStatisticsBuilder();
         builder.setTotalNormalSize(1);
 
         var result = evaluate(qualityGates, builder, new FilteredLog());
@@ -177,7 +177,7 @@ class QualityGateEvaluatorTest {
         qualityGates.add(addQualityGate(1, QualityGateType.TOTAL, QualityGateCriticality.UNSTABLE));
         qualityGates.add(addQualityGate(2, QualityGateType.TOTAL, QualityGateCriticality.FAILURE));
 
-        IssuesStatisticsBuilder builder = new IssuesStatisticsBuilder();
+        var builder = new IssuesStatisticsBuilder();
         builder.setTotalNormalSize(1);
 
         var result = evaluate(qualityGates, builder, new FilteredLog());

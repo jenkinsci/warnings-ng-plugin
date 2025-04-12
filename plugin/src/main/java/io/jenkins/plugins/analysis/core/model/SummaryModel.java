@@ -1,12 +1,12 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import org.eclipse.collections.api.list.ImmutableList;
 
 import edu.hm.hafner.util.VisibleForTesting;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import hudson.model.Run;
 

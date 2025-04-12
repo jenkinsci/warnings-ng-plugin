@@ -1,7 +1,6 @@
 package io.jenkins.plugins.archunit;
 
 import com.tngtech.archunit.base.DescribedPredicate;
-import com.tngtech.archunit.core.domain.AccessTarget.ConstructorCallTarget;
 import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.core.domain.JavaConstructorCall;
 import com.tngtech.archunit.junit.AnalyzeClasses;
@@ -87,7 +86,7 @@ final class PluginArchitectureTest {
 
         @Override
         public boolean test(final JavaConstructorCall javaConstructorCall) {
-            ConstructorCallTarget target = javaConstructorCall.getTarget();
+            var target = javaConstructorCall.getTarget();
             if (!target.getRawParameterTypes().isEmpty()) {
                 return false;
             }

@@ -10,7 +10,6 @@ import edu.hm.hafner.util.VisibleForTesting;
 
 import j2html.tags.UnescapedText;
 import java.io.Serial;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -112,9 +111,9 @@ public abstract class DuplicateCodeScanner extends AnalysisModelParser {
 
         @Override
         public String getDescription(final Issue issue) {
-            Serializable properties = issue.getAdditionalProperties();
-            if (properties instanceof DuplicationGroup) {
-                return pre().with(new UnescapedText(getCodeFragment((DuplicationGroup) properties))).renderFormatted();
+            var properties = issue.getAdditionalProperties();
+            if (properties instanceof DuplicationGroup group) {
+                return pre().with(new UnescapedText(getCodeFragment(group))).renderFormatted();
             }
             else {
                 return super.getDescription(issue);
@@ -141,9 +140,9 @@ public abstract class DuplicateCodeScanner extends AnalysisModelParser {
         }
 
         static String formatTargets(final FileNameRenderer fileNameRenderer, final Issue issue, final String prefix) {
-            Serializable properties = issue.getAdditionalProperties();
-            if (properties instanceof DuplicationGroup) {
-                List<Issue> duplications = ((DuplicationGroup) properties).getDuplications();
+            var properties = issue.getAdditionalProperties();
+            if (properties instanceof DuplicationGroup group) {
+                List<Issue> duplications = group.getDuplications();
                 duplications.remove(issue); // do not show reference to this issue
 
                 return ul(
@@ -348,18 +347,18 @@ public abstract class DuplicateCodeScanner extends AnalysisModelParser {
             if (getReport().hasPackages()) {
                 columns.add(createPackageColumn());
             }
-            TableColumn severity = new ColumnBuilder().withHeaderLabel(Messages.DRY_Table_Column_Severity())
+            var severity = new ColumnBuilder().withHeaderLabel(Messages.DRY_Table_Column_Severity())
                     .withDataPropertyKey("severity")
                     .withResponsivePriority(100)
                     .build();
             columns.add(severity);
-            TableColumn linesCount = new ColumnBuilder().withHeaderLabel(Messages.DRY_Table_Column_LinesCount())
+            var linesCount = new ColumnBuilder().withHeaderLabel(Messages.DRY_Table_Column_LinesCount())
                     .withDataPropertyKey("linesCount")
                     .withResponsivePriority(5)
                     .withHeaderClass(ColumnCss.NUMBER)
                     .build();
             columns.add(linesCount);
-            TableColumn duplicatedIn = new ColumnBuilder().withHeaderLabel(Messages.DRY_Table_Column_DuplicatedIn())
+            var duplicatedIn = new ColumnBuilder().withHeaderLabel(Messages.DRY_Table_Column_DuplicatedIn())
                     .withDataPropertyKey("duplicatedIn")
                     .withResponsivePriority(50)
                     .build();
@@ -370,7 +369,7 @@ public abstract class DuplicateCodeScanner extends AnalysisModelParser {
 
         @Override
         public DuplicationRow getRow(final Issue issue) {
-            DuplicationRow row = new DuplicationRow(getAgeBuilder(), getFileNameRenderer(), getDescriptionProvider(),
+            var row = new DuplicationRow(getAgeBuilder(), getFileNameRenderer(), getDescriptionProvider(),
                     issue, getJenkinsFacade());
             row.setPackageName(issue);
             row.setSeverity(issue);

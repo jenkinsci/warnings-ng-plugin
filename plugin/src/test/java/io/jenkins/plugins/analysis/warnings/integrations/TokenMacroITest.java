@@ -22,16 +22,16 @@ class TokenMacroITest extends IntegrationTestWithJenkinsPerTest {
      */
     @Test
     void shouldExpandTokenMacro() {
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("checkstyle1.xml", "checkstyle2.xml");
+        var job = createPipelineWithWorkspaceFilesWithSuffix("checkstyle1.xml", "checkstyle2.xml");
 
         configureToken(job, "checkstyle1");
 
-        AnalysisResult baseline = scheduleBuildAndAssertStatus(job, Result.SUCCESS);
+        var baseline = scheduleBuildAndAssertStatus(job, Result.SUCCESS);
         verifyConsoleLog(baseline, 3, 0, 0);
 
         configureToken(job, "checkstyle2");
 
-        AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.SUCCESS);
+        var result = scheduleBuildAndAssertStatus(job, Result.SUCCESS);
 
         verifyConsoleLog(result, 4, 3, 2);
     }
@@ -41,25 +41,29 @@ class TokenMacroITest extends IntegrationTestWithJenkinsPerTest {
      */
     @Test
     void shouldExpandDifferentSeverities() {
-        WorkflowJob job = createPipelineWithWorkspaceFilesWithSuffix("all-severities.xml");
+        var job = createPipelineWithWorkspaceFilesWithSuffix("all-severities.xml");
 
-        job.setDefinition(createPipelineScript("node {\n"
-                + "  stage ('Integration Test') {\n"
-                + "         recordIssues tool: checkStyle(pattern: '**/" + "all-severities" + "*')\n"
-                + "         def total = tm('${ANALYSIS_ISSUES_COUNT}')\n"
-                + "         def error = tm('${ANALYSIS_ISSUES_COUNT, type=\"TOTAL_ERROR\"}')\n"
-                + "         def high = tm('${ANALYSIS_ISSUES_COUNT, type=\"TOTAL_HIGH\"}')\n"
-                + "         def normal = tm('${ANALYSIS_ISSUES_COUNT, type=\"TOTAL_NORMAL\"}')\n"
-                + "         def low = tm('${ANALYSIS_ISSUES_COUNT, type=\"TOTAL_LOW\"}')\n"
-                + "         echo '[total=' + total + ']' \n"
-                + "         echo '[error=' + error + ']' \n"
-                + "         echo '[high=' + high + ']' \n"
-                + "         echo '[normal=' + normal + ']' \n"
-                + "         echo '[low=' + low + ']' \n"
-                + "  }\n"
-                + "}"));
+        job.setDefinition(createPipelineScript("""
+                node {
+                  stage ('Integration Test') {
+                         recordIssues tool: checkStyle(pattern: '**/\
+                all-severities\
+                *')
+                         def total = tm('${ANALYSIS_ISSUES_COUNT}')
+                         def error = tm('${ANALYSIS_ISSUES_COUNT, type="TOTAL_ERROR"}')
+                         def high = tm('${ANALYSIS_ISSUES_COUNT, type="TOTAL_HIGH"}')
+                         def normal = tm('${ANALYSIS_ISSUES_COUNT, type="TOTAL_NORMAL"}')
+                         def low = tm('${ANALYSIS_ISSUES_COUNT, type="TOTAL_LOW"}')
+                         echo '[total=' + total + ']'\s
+                         echo '[error=' + error + ']'\s
+                         echo '[high=' + high + ']'\s
+                         echo '[normal=' + normal + ']'\s
+                         echo '[low=' + low + ']'\s
+                  }
+                }\
+                """));
 
-        AnalysisResult baseline = scheduleBuildAndAssertStatus(job, Result.SUCCESS);
+        var baseline = scheduleBuildAndAssertStatus(job, Result.SUCCESS);
 
         assertThat(baseline).hasTotalSize(3);
 

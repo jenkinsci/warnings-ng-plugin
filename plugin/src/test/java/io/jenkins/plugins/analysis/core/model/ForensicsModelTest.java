@@ -2,10 +2,8 @@ package io.jenkins.plugins.analysis.core.model;
 
 import org.junit.jupiter.api.Test;
 
-import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 
-import io.jenkins.plugins.analysis.core.model.ForensicsModel.ForensicsRow;
 import io.jenkins.plugins.forensics.miner.FileStatistics;
 import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
 
@@ -23,14 +21,14 @@ class ForensicsModelTest extends AbstractDetailsModelTest {
 
     @Test
     void shouldConvertIssueToArrayWithAllColumnsAndRows() {
-        Report report = new Report();
+        var report = new Report();
         report.add(createIssue(1));
         report.add(createIssue(2));
         RepositoryStatistics statistics = mock(RepositoryStatistics.class);
 
-        ForensicsModel model = createModel(report, statistics);
+        var model = createModel(report, statistics);
 
-        String columnDefinitions = model.getColumnsDefinition();
+        var columnDefinitions = model.getColumnsDefinition();
         assertThatJson(columnDefinitions).isArray().hasSize(10);
 
         String[] columns = {"description", "fileName", "age", "authorsSize",
@@ -49,8 +47,8 @@ class ForensicsModelTest extends AbstractDetailsModelTest {
 
     @Test
     void shouldShowIssueWithForensics() {
-        Report report = new Report();
-        Issue issue = createIssue(1);
+        var report = new Report();
+        var issue = createIssue(1);
         report.add(issue);
 
         RepositoryStatistics statistics = mock(RepositoryStatistics.class);
@@ -64,9 +62,9 @@ class ForensicsModelTest extends AbstractDetailsModelTest {
         when(statistics.get(FILE_NAME)).thenReturn(fileStatistics);
         when(statistics.contains(FILE_NAME)).thenReturn(true);
 
-        ForensicsModel model = createModel(report, statistics);
+        var model = createModel(report, statistics);
 
-        ForensicsRow actualRow = model.getRow(issue);
+        var actualRow = model.getRow(issue);
         assertThat(actualRow).hasDescription(EXPECTED_DESCRIPTION)
                 .hasAge("1")
                 .hasAuthorsSize("15")
@@ -80,15 +78,15 @@ class ForensicsModelTest extends AbstractDetailsModelTest {
 
     @Test
     void shouldShowIssueWithoutForensics() {
-        Report report = new Report();
-        Issue issue = createIssue(1);
+        var report = new Report();
+        var issue = createIssue(1);
         report.add(issue);
 
         RepositoryStatistics blames = mock(RepositoryStatistics.class);
 
-        ForensicsModel model = createModel(report, blames);
+        var model = createModel(report, blames);
 
-        ForensicsRow actualRow = model.getRow(issue);
+        var actualRow = model.getRow(issue);
         assertThat(actualRow).hasDescription(EXPECTED_DESCRIPTION)
                 .hasAge("1")
                 .hasAuthorsSize(ForensicsModel.UNDEFINED)

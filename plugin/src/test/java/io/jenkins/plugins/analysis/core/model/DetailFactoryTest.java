@@ -1,5 +1,13 @@
 package io.jenkins.plugins.analysis.core.model;
 
+import org.eclipse.collections.impl.factory.Lists;
+import org.junit.jupiter.api.Test;
+
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.IssueBuilder;
+import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.analysis.Severity;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.Charset;
@@ -10,14 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
-
-import org.eclipse.collections.impl.factory.Lists;
-import org.junit.jupiter.api.Test;
-
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.IssueBuilder;
-import edu.hm.hafner.analysis.Report;
-import edu.hm.hafner.analysis.Severity;
 
 import hudson.DescriptorExtensionList;
 import hudson.model.ModelObject;
@@ -64,9 +64,9 @@ class DetailFactoryTest {
 
     @Test
     void shouldCreateDetailsForEmpty() {
-        Report empty = new Report();
+        var empty = new Report();
 
-        IssuesDetail originDetails = createTrendDetails("origin.123", createResult(),
+        var originDetails = createTrendDetails("origin.123", createResult(),
                 empty, empty, empty, empty, createParent(),
                 IssuesDetail.class);
         assertThat(originDetails).hasIssues(empty);
@@ -74,7 +74,7 @@ class DetailFactoryTest {
         assertThat(originDetails).hasNewIssues(empty);
         assertThat(originDetails).hasOutstandingIssues(empty);
 
-        IssuesDetail fileDetails = createTrendDetails("file.123", createResult(),
+        var fileDetails = createTrendDetails("file.123", createResult(),
                 empty, empty, empty, empty, createParent(),
                 IssuesDetail.class);
         assertThat(fileDetails).hasIssues(empty);
@@ -85,15 +85,15 @@ class DetailFactoryTest {
 
     @Test
     void shouldCreateOrigin() {
-        AnalysisResult result = createResult();
+        var result = createResult();
         Map<String, Integer> sizes = new HashMap<>();
         sizes.put(TOOL_ID, 20);
         when(result.getSizePerOrigin()).thenReturn(sizes);
-        IssuesDetail details = createTrendDetails("origin." + TOOL_ID.hashCode(), result,
+        var details = createTrendDetails("origin." + TOOL_ID.hashCode(), result,
                 ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, createParent(),
                 IssuesDetail.class);
         assertThat(details).hasIssues(ALL_ISSUES);
-        IssuesDetail empty = createTrendDetails("origin.wrongID", result,
+        var empty = createTrendDetails("origin.wrongID", result,
                 ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, createParent(),
                 IssuesDetail.class);
         assertThat(empty.getIssues()).isEmpty();
@@ -101,7 +101,7 @@ class DetailFactoryTest {
 
     @Test
     void shouldReturnFixedWarningsDetailWhenCalledWithFixedLink() {
-        FixedWarningsDetail details = createTrendDetails("fixed", createResult(),
+        var details = createTrendDetails("fixed", createResult(),
                 ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, createParent(),
                 FixedWarningsDetail.class);
         assertThat(details).hasIssues(FIXED_ISSUES);
@@ -112,7 +112,7 @@ class DetailFactoryTest {
 
     @Test
     void shouldReturnAllIssues() {
-        IssuesDetail details = createTrendDetails("all", createResult(),
+        var details = createTrendDetails("all", createResult(),
                 ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, createParent(),
                 IssuesDetail.class);
         assertThat(details).hasIssues(ALL_ISSUES);
@@ -127,8 +127,8 @@ class DetailFactoryTest {
         when(jenkins.getDescriptorsFor(Tool.class)).thenReturn(
                 DescriptorExtensionList.createDescriptorList((Jenkins) null, Tool.class));
         BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
-        DetailFactory detailFactory = new DetailFactory(jenkins, buildFolder);
-        Object details = detailFactory.createTrendDetails("origin." + TOOL_ID.hashCode(), RUN,
+        var detailFactory = new DetailFactory(jenkins, buildFolder);
+        var details = detailFactory.createTrendDetails("origin." + TOOL_ID.hashCode(), RUN,
                 createResult(), ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent());
         assertThat(details).isInstanceOfSatisfying(IssuesDetail.class,
                 d -> assertThat(d.getDisplayName()).isEqualTo("Static Analysis"));
@@ -136,7 +136,7 @@ class DetailFactoryTest {
 
     @Test
     void shouldReturnIssuesDetailWithNewIssuesWhenCalledWithNewLink() {
-        IssuesDetail details = createTrendDetails("new", createResult(),
+        var details = createTrendDetails("new", createResult(),
                 ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, createParent(),
                 IssuesDetail.class);
         assertThat(details).hasIssues(NEW_ISSUES);
@@ -147,7 +147,7 @@ class DetailFactoryTest {
 
     @Test
     void shouldReturnIssuesDetailWithOutstandingIssuesWhenCalledWithOutstandingLink() {
-        IssuesDetail details = createTrendDetails("outstanding", createResult(),
+        var details = createTrendDetails("outstanding", createResult(),
                 ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, createParent(),
                 IssuesDetail.class);
         assertThat(details).hasIssues(OUTSTANDING_ISSUES);
@@ -158,7 +158,7 @@ class DetailFactoryTest {
 
     @Test
     void shouldReturnPriorityDetailWithHighPriorityIssuesWhenCalledWithHighLink() {
-        IssuesDetail details = createTrendDetails("HIGH", createResult(),
+        var details = createTrendDetails("HIGH", createResult(),
                 ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, createParent(),
                 IssuesDetail.class);
         assertThatPrioritiesAreFiltered(details, Severity.WARNING_HIGH);
@@ -167,7 +167,7 @@ class DetailFactoryTest {
 
     @Test
     void shouldReturnPriorityDetailWithNormalPriorityIssuesWhenCalledWithNormalLink() {
-        IssuesDetail details = createTrendDetails("NORMAL", createResult(),
+        var details = createTrendDetails("NORMAL", createResult(),
                 ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, createParent(),
                 IssuesDetail.class);
 
@@ -177,7 +177,7 @@ class DetailFactoryTest {
 
     @Test
     void shouldReturnPriorityDetailWithLowPriorityIssuesWhenCalledWithLowLink() {
-        IssuesDetail details = createTrendDetails("LOW", createResult(),
+        var details = createTrendDetails("LOW", createResult(),
                 ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, createParent(),
                 IssuesDetail.class);
 
@@ -194,7 +194,7 @@ class DetailFactoryTest {
 
     @Test
     void shouldReturnInfoErrorDetailWhenCalledWithInfoLink() {
-        MessagesViewModel details = createTrendDetails("info", createResult(),
+        var details = createTrendDetails("info", createResult(),
                 ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, createParent(),
                 MessagesViewModel.class);
         assertThat(details.getErrorMessages()).containsExactly(ERROR_MESSAGES);
@@ -206,22 +206,22 @@ class DetailFactoryTest {
         JenkinsFacade jenkins = mock(JenkinsFacade.class);
         BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
         when(buildFolder.readConsoleLog(any())).thenReturn(createLines());
-        String fileName = ConsoleLogHandler.JENKINS_CONSOLE_LOG_FILE_NAME_ID;
+        var fileName = ConsoleLogHandler.JENKINS_CONSOLE_LOG_FILE_NAME_ID;
 
-        Object details = createDetails(jenkins, buildFolder, fileName);
+        var details = createDetails(jenkins, buildFolder, fileName);
         assertThat(details).isInstanceOf(ConsoleDetail.class);
         assertThat(((ConsoleDetail) details).getSourceCode()).contains(AFFECTED_FILE_CONTENT);
     }
 
     private Object createDetails(final JenkinsFacade jenkins, final BuildFolderFacade buildFolder,
             final String fileName) {
-        try (IssueBuilder issueBuilder = new IssueBuilder()) {
-            DetailFactory detailFactory = new DetailFactory(jenkins, buildFolder);
+        try (var issueBuilder = new IssueBuilder()) {
+            var detailFactory = new DetailFactory(jenkins, buildFolder);
 
             issueBuilder.setFileName(fileName);
-            Issue issue = issueBuilder.build();
+            var issue = issueBuilder.build();
 
-            Report report = new Report();
+            var report = new Report();
             report.add(issue);
 
             return detailFactory.createTrendDetails("source." + issue.getId().toString(),
@@ -239,7 +239,7 @@ class DetailFactoryTest {
         BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
         when(buildFolder.readFile(any(), anyString(), any())).thenThrow(new IOException("file error"));
 
-        Object details = createDetails(jenkins, buildFolder, "a-file");
+        var details = createDetails(jenkins, buildFolder, "a-file");
 
         assertThat(details).isInstanceOfSatisfying(SourceCodeViewModel.class,
                 s -> assertThat(s.getSourceCode()).contains("IOException: file error"));
@@ -254,7 +254,7 @@ class DetailFactoryTest {
         BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
         when(buildFolder.readFile(any(), anyString(), any())).thenReturn(new StringReader(AFFECTED_FILE_CONTENT));
 
-        Object details = createDetails(jenkins, buildFolder, "a-file");
+        var details = createDetails(jenkins, buildFolder, "a-file");
 
         assertThat(details).isInstanceOfSatisfying(SourceCodeViewModel.class,
                 s -> assertThat(s.getSourceCode()).contains(AFFECTED_FILE_CONTENT));
@@ -266,14 +266,14 @@ class DetailFactoryTest {
      */
     @Test
     void shouldReturnIssueDetailFiltered() {
-        DetailFactory detailFactory = new DetailFactory();
+        var detailFactory = new DetailFactory();
         AnalysisResult result = mock(AnalysisResult.class);
 
-        Object details = detailFactory.createTrendDetails("category." + "CATEGORY2".hashCode(), RUN, result, ALL_ISSUES,
+        var details = detailFactory.createTrendDetails("category." + "CATEGORY2".hashCode(), RUN, result, ALL_ISSUES,
                 NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent());
         assertThat(details).isInstanceOf(IssuesDetail.class);
 
-        Report filtered = ((IssuesDetail) details).getIssues();
+        var filtered = ((IssuesDetail) details).getIssues();
         assertThat(filtered).hasSize(1);
         assertThat(filtered.get(0)).hasCategory("CATEGORY2").hasSeverity(Severity.WARNING_HIGH);
     }
@@ -286,8 +286,8 @@ class DetailFactoryTest {
             final IssuesDetail parent, final Class<T> actualType) {
         JenkinsFacade jenkins = mock(JenkinsFacade.class);
         when(jenkins.getDescriptorsFor(Tool.class)).thenReturn(DescriptorExtensionList.createDescriptorList((Jenkins) null, Tool.class));
-        DetailFactory detailFactory = new DetailFactory(jenkins, mock(BuildFolderFacade.class));
-        Object details = detailFactory.createTrendDetails(link, RUN,
+        var detailFactory = new DetailFactory(jenkins, mock(BuildFolderFacade.class));
+        var details = detailFactory.createTrendDetails(link, RUN,
                 result, allIssues, newIssues, outstandingIssues, fixedIssues, ENCODING, parent);
         assertThat(details).isInstanceOf(actualType);
         return actualType.cast(details);
@@ -342,8 +342,8 @@ class DetailFactoryTest {
     }
 
     private static Report createReportWith(final int high, final int normal, final int low, final String link) {
-        try (IssueBuilder builder = new IssueBuilder().setOrigin(TOOL_ID)) {
-            Report issues = new Report(TOOL_ID, "SpotBugs");
+        try (var builder = new IssueBuilder().setOrigin(TOOL_ID)) {
+            var issues = new Report(TOOL_ID, "SpotBugs");
             for (int i = 0; i < high; i++) {
                 issues.add(builder.setSeverity(Severity.WARNING_HIGH)
                         .setMessage(link + " - " + i)

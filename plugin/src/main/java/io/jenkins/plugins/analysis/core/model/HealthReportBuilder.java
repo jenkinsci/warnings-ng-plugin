@@ -1,10 +1,10 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.util.Map;
-
 import com.google.errorprone.annotations.CheckReturnValue;
 
 import edu.hm.hafner.analysis.Severity;
+
+import java.util.Map;
 
 import hudson.model.HealthReport;
 

@@ -29,7 +29,7 @@ final class DefaultTransformations {
     static Issue createAVIssue(final AxRawIssue rawIssue) {
         Validate.isTrue(rawIssue.getKind().equals(AxIssueKind.AV));
 
-        final JsonObject payload = rawIssue.getPayload();
+        final var payload = rawIssue.getPayload();
         final String description = createDescription(rawIssue, payload);
 
         try (var builder = new IssueBuilder()) {
@@ -99,16 +99,15 @@ final class DefaultTransformations {
     static Issue createCLIssue(final AxRawIssue rawIssue) {
         Validate.isTrue(rawIssue.getKind().equals(AxIssueKind.CL));
 
-        final JsonObject payload = rawIssue.getPayload();
-        final String cloneType = "type " + getInt(payload, "cloneType");
-        final String description =
-                "Left part of clone pair"
-                        + " of "
-                        + cloneType + " clone"
-                        + " of length "
-                        + getInt(payload, "leftLength")
-                        + "LOC"
-                        + createLink(rawIssue, getInt(payload, "id"));
+        final var payload = rawIssue.getPayload();
+        final var cloneType = "type " + getInt(payload, "cloneType");
+        final var description = "Left part of clone pair"
+                + " of "
+                + cloneType + " clone"
+                + " of length "
+                + getInt(payload, "leftLength")
+                + "LOC"
+                + createLink(rawIssue, getInt(payload, "id"));
         try (var builder = new IssueBuilder()) {
             return builder.setPathName(rawIssue.getProjectDir())
                     .setFileName(getString(payload, "leftPath"))
@@ -125,13 +124,12 @@ final class DefaultTransformations {
     }
 
     static Issue createCYIssue(final AxRawIssue rawIssue) {
-        final JsonObject payload = rawIssue.getPayload();
-        final String description =
-                "Source: "
-                        + getString(payload, "sourceEntity")
-                        + " Target: "
-                        + getString(payload, "targetEntity")
-                        + createLink(rawIssue, getInt(payload, "id"));
+        final var payload = rawIssue.getPayload();
+        final var description = "Source: "
+                + getString(payload, "sourceEntity")
+                + " Target: "
+                + getString(payload, "targetEntity")
+                + createLink(rawIssue, getInt(payload, "id"));
         try (var builder = new IssueBuilder()) {
             return builder.setPathName(rawIssue.getProjectDir())
                     .setFileName(getString(payload, "sourcePath"))
@@ -157,13 +155,12 @@ final class DefaultTransformations {
     static Issue createDEIssue(final AxRawIssue rawIssue) {
         Validate.isTrue(rawIssue.getKind().equals(AxIssueKind.DE));
 
-        final JsonObject payload = rawIssue.getPayload();
-        final String description =
-                getString(payload, "entityType")
-                        + "<i>"
-                        + getString(payload, "entity")
-                        + "</i>"
-                        + createLink(rawIssue, getInt(payload, "id"));
+        final var payload = rawIssue.getPayload();
+        final var description = getString(payload, "entityType")
+                + "<i>"
+                + getString(payload, "entity")
+                + "</i>"
+                + createLink(rawIssue, getInt(payload, "id"));
         try (var builder = new IssueBuilder()) {
             return builder.setPathName(rawIssue.getProjectDir())
                     .setFileName(getString(payload, "path"))
@@ -189,20 +186,19 @@ final class DefaultTransformations {
     static Issue createMVIssue(final AxRawIssue rawIssue) {
         Validate.isTrue(rawIssue.getKind().equals(AxIssueKind.MV));
 
-        final JsonObject payload = rawIssue.getPayload();
-        final String description =
-                getString(payload, "entityType")
-                        + " <i>"
-                        + getString(payload, "entity")
-                        + "</i>"
-                        + "<p>Val: <b>"
-                        + getInt(payload, "value")
-                        + "</b>"
-                        + "<br>Max: "
-                        + getInt(payload, "max")
-                        + "<br>Min: "
-                        + getInt(payload, "min")
-                        + createLink(rawIssue, getInt(payload, "id"));
+        final var payload = rawIssue.getPayload();
+        final var description = getString(payload, "entityType")
+                + " <i>"
+                + getString(payload, "entity")
+                + "</i>"
+                + "<p>Val: <b>"
+                + getInt(payload, "value")
+                + "</b>"
+                + "<br>Max: "
+                + getInt(payload, "max")
+                + "<br>Min: "
+                + getInt(payload, "min")
+                + createLink(rawIssue, getInt(payload, "id"));
         try (var builder = new IssueBuilder()) {
             return builder.setPathName(rawIssue.getProjectDir())
                     .setFileName(getString(payload, "path"))
@@ -228,13 +224,12 @@ final class DefaultTransformations {
     static Issue createSVIssue(final AxRawIssue rawIssue) {
         Validate.isTrue(rawIssue.getKind().equals(AxIssueKind.SV));
 
-        final JsonObject payload = rawIssue.getPayload();
-        final String description =
-                getString(payload, "message")
-                        + " <i>"
-                        + getString(payload, "entity")
-                        + "</i>"
-                        + createLink(rawIssue, getInt(payload, "id"));
+        final var payload = rawIssue.getPayload();
+        final var description = getString(payload, "message")
+                + " <i>"
+                + getString(payload, "entity")
+                + "</i>"
+                + createLink(rawIssue, getInt(payload, "id"));
         try (var builder = new IssueBuilder()) {
             return builder.setPathName(rawIssue.getProjectDir())
                     .setFileName(getString(payload, "path"))
@@ -291,12 +286,12 @@ final class DefaultTransformations {
     }
 
     private static String getString(final JsonObject payload, final String memberName) {
-        final JsonElement intermediate = payload.get(memberName);
+        final var intermediate = payload.get(memberName);
         return isJsonNull(intermediate) ? "" : intermediate.getAsString();
     }
 
     private static int getInt(final JsonObject payload, final String memberName) {
-        final JsonElement intermediate = payload.get(memberName);
+        final var intermediate = payload.get(memberName);
         return isJsonNull(intermediate) ? -1 : intermediate.getAsInt();
     }
 

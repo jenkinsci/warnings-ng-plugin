@@ -69,8 +69,8 @@ class GroovyExpressionMatcher implements Serializable {
      */
     @SuppressFBWarnings("GROOVY_SHELL")
     public Script compile() throws CompilationFailedException {
-        Binding binding = new Binding();
-        GroovyShell shell = new GroovyShell(GroovyExpressionMatcher.class.getClassLoader(), binding);
+        var binding = new Binding();
+        var shell = new GroovyShell(GroovyExpressionMatcher.class.getClassLoader(), binding);
         return shell.parse(script);
     }
 
@@ -91,13 +91,12 @@ class GroovyExpressionMatcher implements Serializable {
     @SuppressWarnings("all")
     public Optional<Issue> createIssue(final Matcher matcher, final IssueBuilder builder, final int lineNumber,
             final String fileName) {
-        Object result = run(matcher, builder, lineNumber, fileName);
-        if (result instanceof Optional) {
-            Optional<?> optional = (Optional) result;
+        var result = run(matcher, builder, lineNumber, fileName);
+        if (result instanceof Optional<?> optional) {
             if (optional.isPresent()) {
-                Object wrappedIssue = optional.get();
-                if (wrappedIssue instanceof Issue) {
-                    return Optional.of((Issue) wrappedIssue);
+                var wrappedIssue = optional.get();
+                if (wrappedIssue instanceof Issue issue) {
+                    return Optional.of(issue);
                 }
             }
         }
@@ -120,7 +119,7 @@ class GroovyExpressionMatcher implements Serializable {
      */
     public Object run(final Matcher matcher, final IssueBuilder builder, final int lineNumber, final String fileName) {
         if (compileScriptIfNotYetDone()) {
-            Binding binding = compiled.getBinding();
+            var binding = compiled.getBinding();
             binding.setVariable("matcher", matcher);
             binding.setVariable("builder", builder);
             binding.setVariable("lineNumber", lineNumber);

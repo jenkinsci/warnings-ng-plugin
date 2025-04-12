@@ -1,11 +1,10 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import java.io.Serial;
+
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
-
 import hudson.Extension;
-
-import java.io.Serial;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 

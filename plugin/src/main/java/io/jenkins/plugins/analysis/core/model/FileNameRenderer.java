@@ -110,7 +110,7 @@ public class FileNameRenderer {
      * @return the URL
      */
     public String getSourceCodeUrl(final Issue issue) {
-        return String.format("source.%s/#%d", issue.getId(), issue.getLineStart());
+        return "source.%s/#%d".formatted(issue.getId(), issue.getLineStart());
     }
 
     /**
@@ -122,7 +122,7 @@ public class FileNameRenderer {
      * @return the file name
      */
     public String getFileNameAtLine(final Issue issue) {
-        return String.format("%s:%d", getFileName(issue), issue.getLineStart());
+        return "%s:%d".formatted(getFileName(issue), issue.getLineStart());
     }
 
     /**

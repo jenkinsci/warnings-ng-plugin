@@ -99,37 +99,37 @@ public class RevApi extends AnalysisModelParser {
         public List<TableColumn> getColumns() {
             List<TableColumn> columns = new ArrayList<>();
             columns.add(createDetailsColumn());
-            TableColumn nameColumn = new ColumnBuilder().withHeaderLabel(Messages.RevApi_Table_Column_Name())
+            var nameColumn = new ColumnBuilder().withHeaderLabel(Messages.RevApi_Table_Column_Name())
                     .withDataPropertyKey("issueName")
                     .withResponsivePriority(100)
                     .build();
             columns.add(nameColumn);
 
-            TableColumn oldFileColumn = new ColumnBuilder().withHeaderLabel(Messages.RevApi_Table_Column_oldFile())
+            var oldFileColumn = new ColumnBuilder().withHeaderLabel(Messages.RevApi_Table_Column_oldFile())
                     .withDataPropertyKey("oldFile")
                     .withResponsivePriority(50)
                     .build();
             columns.add(oldFileColumn);
 
-            TableColumn newFileColumn = new ColumnBuilder().withHeaderLabel(Messages.RevApi_Table_Column_newFile())
+            var newFileColumn = new ColumnBuilder().withHeaderLabel(Messages.RevApi_Table_Column_newFile())
                     .withDataPropertyKey("newFile")
                     .withResponsivePriority(50)
                     .build();
             columns.add(newFileColumn);
 
-            TableColumn categoryColumn = new ColumnBuilder().withHeaderLabel(Messages.RevApi_Table_Column_category())
+            var categoryColumn = new ColumnBuilder().withHeaderLabel(Messages.RevApi_Table_Column_category())
                     .withDataPropertyKey("category")
                     .withResponsivePriority(50)
                     .build();
             columns.add(categoryColumn);
 
-            TableColumn binaryColumn = new ColumnBuilder().withHeaderLabel(Messages.RevApi_Table_Column_binary())
+            var binaryColumn = new ColumnBuilder().withHeaderLabel(Messages.RevApi_Table_Column_binary())
                     .withDataPropertyKey("binary")
                     .withResponsivePriority(30)
                     .build();
             columns.add(binaryColumn);
 
-            TableColumn sourceColumn = new ColumnBuilder().withHeaderLabel(Messages.RevApi_Table_Column_source())
+            var sourceColumn = new ColumnBuilder().withHeaderLabel(Messages.RevApi_Table_Column_source())
                     .withDataPropertyKey("source")
                     .withResponsivePriority(30)
                     .build();

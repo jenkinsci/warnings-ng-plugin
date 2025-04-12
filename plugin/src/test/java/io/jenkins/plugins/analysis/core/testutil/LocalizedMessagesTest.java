@@ -1,8 +1,8 @@
 package io.jenkins.plugins.analysis.core.testutil;
 
-import java.util.Locale;
-
 import org.junit.jupiter.api.BeforeAll;
+
+import java.util.Locale;
 
 /**
  * Base class for tests that verify localized messages. Sets the default locale to {@link Locale#ENGLISH} so that the

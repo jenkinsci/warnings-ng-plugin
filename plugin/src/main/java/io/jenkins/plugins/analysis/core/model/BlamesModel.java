@@ -1,11 +1,11 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.VisibleForTesting;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
 import io.jenkins.plugins.analysis.core.util.Blame;
@@ -67,22 +67,22 @@ public class BlamesModel extends DetailsTableModel {
         columns.add(createDetailsColumn());
         columns.add(createFileColumn());
         columns.add(createAgeColumn());
-        TableColumn author = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_Author())
+        var author = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_Author())
                 .withDataPropertyKey("author")
                 .withResponsivePriority(1)
                 .build();
         columns.add(author);
-        TableColumn email = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_Email())
+        var email = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_Email())
                 .withDataPropertyKey("email")
                 .withResponsivePriority(50)
                 .build();
         columns.add(email);
-        TableColumn commit = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_Commit())
+        var commit = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_Commit())
                 .withDataPropertyKey("commit")
                 .withResponsivePriority(10)
                 .build();
         columns.add(commit);
-        TableColumn addedAt = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_AddedAt())
+        var addedAt = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_AddedAt())
                 .withDataPropertyKey("addedAt")
                 .withResponsivePriority(25)
                 .withHeaderClass(ColumnCss.DATE)
@@ -95,7 +95,7 @@ public class BlamesModel extends DetailsTableModel {
 
     @Override
     protected BlamesRow getRow(final Issue issue) {
-        Blame blame = new Blame(issue, blames);
+        var blame = new Blame(issue, blames);
         return new BlamesRow(getAgeBuilder(), getFileNameRenderer(), getDescriptionProvider(),
                 issue, getJenkinsFacade(), blame, commitDecorator.asLink(blame.getCommit()));
     }

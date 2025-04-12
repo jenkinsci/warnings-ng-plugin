@@ -1,9 +1,9 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.util.NoSuchElementException;
-
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+
+import java.util.NoSuchElementException;
 
 import jenkins.model.Jenkins;
 
@@ -30,7 +30,7 @@ class RegisteredParserTest {
 
     @Test
     void shouldAllowChangingId() {
-        RegisteredParser parser = new RegisteredParser(CHECKSTYLE_ID);
+        var parser = new RegisteredParser(CHECKSTYLE_ID);
 
         JenkinsFacade jenkins = mock(JenkinsFacade.class);
         when(jenkins.getDescriptorOrDie(RegisteredParser.class)).thenReturn(new RegisteredParser.Descriptor());
@@ -46,11 +46,11 @@ class RegisteredParserTest {
         assertThat(parser.getLabelProvider()).hasId(CHECKSTYLE_ID);
         assertThat(parser.getLabelProvider()).hasName(CHECK_STYLE_NAME);
 
-        String customId = "customId";
+        var customId = "customId";
         parser.setId(customId);
-        String customName = "Custom Name";
+        var customName = "Custom Name";
         parser.setName(customName);
-        String customPattern = "Custom Pattern";
+        var customPattern = "Custom Pattern";
         parser.setPattern(customPattern);
 
         assertThat(parser)
@@ -71,7 +71,7 @@ class RegisteredParserTest {
             JenkinsFacade jenkins = mock(JenkinsFacade.class);
             when(jenkins.hasPermission(Jenkins.READ)).thenReturn(true);
 
-            Descriptor descriptor = new Descriptor(jenkins);
+            var descriptor = new Descriptor(jenkins);
             assertThat(descriptor.getId()).isEqualTo(Descriptor.ANALYSIS_MODEL_ID);
             assertThat(descriptor.doFillAnalysisModelIdItems()).extracting(o -> o.value).first().isEqualTo("acu-cobol");
 

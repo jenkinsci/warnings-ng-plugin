@@ -1,8 +1,8 @@
 package io.jenkins.plugins.analysis.core.charts;
 
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
+
+import java.util.Map;
 
 import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
 
@@ -24,11 +24,11 @@ class NewVersusFixedSeriesBuilderTest {
         when(run.getNewSize()).thenReturn(newSize);
         when(run.getFixedSize()).thenReturn(fixedSize);
 
-        NewVersusFixedSeriesBuilder builder = new NewVersusFixedSeriesBuilder();
+        var builder = new NewVersusFixedSeriesBuilder();
         Map<String, Integer> series = builder.computeSeries(run);
 
-        assertThat(series.size()).isEqualTo(2);
-        assertThat(series.get(NewVersusFixedSeriesBuilder.NEW)).isEqualTo(newSize);
-        assertThat(series.get(NewVersusFixedSeriesBuilder.FIXED)).isEqualTo(fixedSize);
+        assertThat(series).hasSize(2);
+        assertThat(series).containsEntry(NewVersusFixedSeriesBuilder.NEW, newSize);
+        assertThat(series).containsEntry(NewVersusFixedSeriesBuilder.FIXED, fixedSize);
     }
 }

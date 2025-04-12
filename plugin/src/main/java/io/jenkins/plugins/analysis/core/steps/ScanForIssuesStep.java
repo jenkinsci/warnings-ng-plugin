@@ -1,18 +1,18 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.impl.factory.Sets;
 
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -268,10 +268,10 @@ public class ScanForIssuesStep extends Step {
 
         @Override
         protected AnnotatedReport run() throws IOException, InterruptedException, IllegalStateException {
-            FilePath workspace = getWorkspace();
-            TaskListener listener = getTaskListener();
+            var workspace = getWorkspace();
+            var listener = getTaskListener();
 
-            IssuesScanner issuesScanner = new IssuesScanner(tool, filters,
+            var issuesScanner = new IssuesScanner(tool, filters,
                     getCharset(sourceCodeEncoding), workspace, sourceDirectories,
                     sourceCodeRetention, getRun(), new FilePath(getRun().getRootDir()), listener,
                     scm, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED,

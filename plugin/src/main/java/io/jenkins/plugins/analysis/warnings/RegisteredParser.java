@@ -80,7 +80,7 @@ public class RegisteredParser extends ReportScanningTool {
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
-        ParserDescriptor descriptor = getParserDescriptor();
+        var descriptor = getParserDescriptor();
 
         return new StaticAnalysisLabelProvider(descriptor.getId(), getName(), descriptor::getDescription,
                 descriptor.getType());

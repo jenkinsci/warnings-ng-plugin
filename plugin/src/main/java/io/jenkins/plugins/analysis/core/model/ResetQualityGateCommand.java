@@ -1,9 +1,9 @@
 package io.jenkins.plugins.analysis.core.model;
 
+import edu.hm.hafner.util.VisibleForTesting;
+
 import java.io.IOException;
 import java.util.List;
-
-import edu.hm.hafner.util.VisibleForTesting;
 
 import hudson.model.Item;
 import hudson.model.Run;

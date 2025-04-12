@@ -1,30 +1,25 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
+import org.junit.jupiter.api.Test;
+
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.Severity;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import org.junit.jupiter.api.Test;
-
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.Report;
-import edu.hm.hafner.analysis.Severity;
-
-import hudson.FilePath;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.model.IssuesDetail;
 import io.jenkins.plugins.analysis.core.model.IssuesModel.IssuesRow;
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
@@ -67,10 +62,10 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldShowNoLinkIfSourceCodeHasBeenDeleted() {
-        FreeStyleProject project = createEclipseProject();
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        var project = createEclipseProject();
+        var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        IssuesRow row = getIssuesModel(result, ROW_NUMBER_ACTUAL_AFFECTED_FILE);
+        var row = getIssuesModel(result, ROW_NUMBER_ACTUAL_AFFECTED_FILE);
         assertThat(row.getFileName().getDisplay()).contains("<a href=").contains("Main.java:3");
 
         deleteAffectedFilesInBuildFolder(result);
@@ -80,7 +75,7 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private FreeStyleProject createEclipseProject() {
-        FreeStyleProject project = getJobWithWorkspaceFiles();
+        var project = getJobWithWorkspaceFiles();
         enableEclipseWarnings(project);
         return project;
     }
@@ -90,7 +85,7 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private FreeStyleProject getJobWithWorkspaceFiles() {
-        FreeStyleProject job = createFreeStyleProject();
+        var job = createFreeStyleProject();
         copyMultipleFilesToWorkspace(job, ECLIPSE_REPORT, SOURCE_AFFECTED_FILE);
         return job;
     }
@@ -101,10 +96,10 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldShowNoLinkIfSourceCodeHasBeenMadeUnreadable() {
-        FreeStyleProject project = createEclipseProject();
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        var project = createEclipseProject();
+        var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        IssuesRow row = getIssuesModel(result, ROW_NUMBER_ACTUAL_AFFECTED_FILE);
+        var row = getIssuesModel(result, ROW_NUMBER_ACTUAL_AFFECTED_FILE);
         assertThat(row.getFileName().getDisplay()).contains("<a href=").contains("Main.java:3");
 
         makeAffectedFilesInBuildFolderUnreadable(result);
@@ -143,10 +138,10 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldRetrieveAffectedFilesInBuildFolder() {
-        FreeStyleProject project = createEclipseProject();
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        var project = createEclipseProject();
+        var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        Report issues = result.getIssues();
+        var issues = result.getIssues();
         issues.forEach(issue -> assertThatFileExistsInBuildFolder(issue, project, result.getOwner()));
     }
 
@@ -160,7 +155,7 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private Path getSourceInWorkspace(final FreeStyleProject project) {
-        return Paths.get(getSourceAbsolutePath(project));
+        return Path.of(getSourceAbsolutePath(project));
     }
 
     private String getSourceAbsolutePath(final FreeStyleProject project) {
@@ -168,7 +163,7 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private String getBaseName() {
-        return Paths.get(SOURCE_AFFECTED_FILE).getFileName().toString();
+        return Path.of(SOURCE_AFFECTED_FILE).getFileName().toString();
     }
 
     /**
@@ -176,13 +171,13 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldGetIoErrorBySearchingForAffectedFiles() {
-        FreeStyleProject project = createEclipseProject();
+        var project = createEclipseProject();
 
         makeFileUnreadable(getSourceAbsolutePath(project));
 
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        String consoleLog = getConsoleLog(result);
+        var consoleLog = getConsoleLog(result);
         assertThat(consoleLog).contains("0 copied");
         assertThat(consoleLog).contains("3 not-found", "1 with I/O error");
     }
@@ -192,7 +187,7 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldFindAffectedFilesWhereasThreeFilesAreNotFound() {
-        AnalysisResult result = buildEclipseProject(ECLIPSE_REPORT, SOURCE_AFFECTED_FILE);
+        var result = buildEclipseProject(ECLIPSE_REPORT, SOURCE_AFFECTED_FILE);
 
         assertThat(getConsoleLog(result)).contains("1 copied", "3 not-found", "0 with I/O error");
     }
@@ -202,7 +197,7 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldShowNoFilesOutsideWorkspace() {
-        FreeStyleProject job = createFreeStyleProject();
+        var job = createFreeStyleProject();
         prepareGccLog(job);
         enableWarnings(job, createTool(new Gcc4(), "**/gcc.log"));
 
@@ -215,11 +210,11 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     @org.junitpioneer.jupiter.Issue("JENKINS-55998")
     void shouldShowFileOutsideWorkspaceIfConfigured() {
-        FreeStyleProject job = createFreeStyleProject();
+        var job = createFreeStyleProject();
         prepareGccLog(job);
 
-        IssuesRecorder recorder = enableWarnings(job, createTool(new Gcc4(), "**/gcc.log"));
-        String buildsFolder = job.getRootDir().getAbsolutePath();
+        var recorder = enableWarnings(job, createTool(new Gcc4(), "**/gcc.log"));
+        var buildsFolder = job.getRootDir().getAbsolutePath();
         recorder.setSourceDirectories(Arrays.asList(new SourceCodeDirectory(buildsFolder), new SourceCodeDirectory("relative")));
 
         // First build: copying the affected file is forbidden
@@ -246,13 +241,13 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
 
     @Test
     void shouldDeleteSourceCodeFilesOfPreviousBuilds() {
-        FreeStyleProject job = createFreeStyleProject();
+        var job = createFreeStyleProject();
         prepareGccLog(job);
 
-        IssuesRecorder recorder = enableWarnings(job, createTool(new Gcc4(), "**/gcc.log"));
+        var recorder = enableWarnings(job, createTool(new Gcc4(), "**/gcc.log"));
         recorder.setSourceCodeRetention(SourceCodeRetention.LAST_BUILD);
 
-        String buildsFolder = job.getRootDir().getAbsolutePath();
+        var buildsFolder = job.getRootDir().getAbsolutePath();
 
         PrismConfiguration.getInstance().setSourceDirectories(
                 Collections.singletonList(new PermittedSourceCodeDirectory(buildsFolder)));
@@ -268,7 +263,7 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
 
     private Run<?, ?> buildAndVerifyFilesResolving(final FreeStyleProject job, final ColumnLink columnLink,
             final String... expectedResolveMessages) {
-        AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.SUCCESS);
+        var result = scheduleBuildAndAssertStatus(job, Result.SUCCESS);
         assertThat(getConsoleLog(result)).contains(expectedResolveMessages);
 
         verifyResolving(columnLink, result);
@@ -279,7 +274,7 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
     private void verifyResolving(final ColumnLink columnLink, final AnalysisResult result) {
         assertThat(result.getIssues()).hasSize(1);
 
-        IssuesRow firstRow = getIssuesModel(result, 0);
+        var firstRow = getIssuesModel(result, 0);
         assertThat(firstRow.getSeverity()).contains(Severity.WARNING_NORMAL.getName());
         if (columnLink == ColumnLink.SHOULD_HAVE_LINK) {
             assertThat(firstRow.getFileName().getDisplay()).startsWith("<a href=\"").contains("config.xml:451");
@@ -288,7 +283,7 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
             assertThat(firstRow.getFileName().getDisplay()).isEqualTo("config.xml:451");
         }
 
-        Issue issue = result.getIssues().get(0);
+        var issue = result.getIssues().get(0);
         assertThat(issue.getBaseName()).isEqualTo("config.xml");
         assertThat(issue.getLineStart()).isEqualTo(451);
         assertThat(issue.getMessage()).isEqualTo("foo defined but not used");
@@ -296,17 +291,17 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private IssuesRow getIssuesModel(final AnalysisResult result, final int rowNumber) {
-        IssuesDetail issuesDetail = result.getOwner().getAction(ResultAction.class).getTarget();
+        var issuesDetail = result.getOwner().getAction(ResultAction.class).getTarget();
         return (IssuesRow) issuesDetail.getTableModel("issues").getRows().get(rowNumber);
     }
 
     private void prepareGccLog(final FreeStyleProject job) {
         try {
-            FilePath workspace = getWorkspace(job);
+            var workspace = getWorkspace(job);
             workspace.mkdirs();
-            String logMessage = String.format("%s/config.xml:451: warning: foo defined but not used%n",
+            var logMessage = "%s/config.xml:451: warning: foo defined but not used%n".formatted(
                     job.getRootDir());
-            Files.write(Paths.get(workspace.child("gcc.log").getRemote()), logMessage.getBytes());
+            Files.write(Path.of(workspace.child("gcc.log").getRemote()), logMessage.getBytes());
         }
         catch (IOException | InterruptedException e) {
             throw new AssertionError(e);
@@ -315,7 +310,7 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
 
     @Test
     void shouldFindOneAffectedFile() {
-        AnalysisResult result = buildEclipseProject(ECLIPSE_REPORT_ONE_AFFECTED_AFFECTED_FILE, SOURCE_AFFECTED_FILE);
+        var result = buildEclipseProject(ECLIPSE_REPORT_ONE_AFFECTED_AFFECTED_FILE, SOURCE_AFFECTED_FILE);
 
         assertThat(getConsoleLog(result))
                 .contains(COPY_FILES, "1 copied", "0 not-found", "0 with I/O error");
@@ -323,12 +318,12 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
 
     @Test
     void shouldSkipStoringOfAffectedFiles() {
-        FreeStyleProject project = createFreeStyleProject();
+        var project = createFreeStyleProject();
         copyMultipleFilesToWorkspace(project, ECLIPSE_REPORT_ONE_AFFECTED_AFFECTED_FILE, SOURCE_AFFECTED_FILE);
         var recorder = enableEclipseWarnings(project);
         recorder.setSourceCodeRetention(SourceCodeRetention.NEVER);
 
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(getConsoleLog(result))
                 .doesNotContain(COPY_FILES, " copied", " not-found", " with I/O error");
@@ -336,12 +331,12 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
 
     @Test
     void shouldProduceDifferentFingerprints() {
-        FreeStyleProject project = createFreeStyleProject();
+        var project = createFreeStyleProject();
 
-        AnalysisResult firstBuildResult = configureBuildForFingerprintTests(project, INITIAL_JAVA_REPORT,
+        var firstBuildResult = configureBuildForFingerprintTests(project, INITIAL_JAVA_REPORT,
                 INITIAL_JAVA_FINGERPRINT_SOURCE_FILE, -1, false);
 
-        AnalysisResult secondBuildResult =  configureBuildForFingerprintTests(project, MODIFIED_JAVA_REPORT,
+        var secondBuildResult = configureBuildForFingerprintTests(project, MODIFIED_JAVA_REPORT,
                 MODIFIED_JAVA_FINGERPRINT_SOURCE_FILE, -1, true);
 
         assertThat(secondBuildResult.getNewIssues().size()).isEqualTo(1);
@@ -351,12 +346,12 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
 
     @Test
     void shouldProduceSameFingerprints() {
-        FreeStyleProject project = createFreeStyleProject();
+        var project = createFreeStyleProject();
 
-        AnalysisResult firstBuildResult = configureBuildForFingerprintTests(project, INITIAL_JAVA_REPORT,
+        var firstBuildResult = configureBuildForFingerprintTests(project, INITIAL_JAVA_REPORT,
                 INITIAL_JAVA_FINGERPRINT_SOURCE_FILE, 2, false);
 
-        AnalysisResult secondBuildResult =  configureBuildForFingerprintTests(project, MODIFIED_JAVA_REPORT,
+        var secondBuildResult = configureBuildForFingerprintTests(project, MODIFIED_JAVA_REPORT,
                 MODIFIED_JAVA_FINGERPRINT_SOURCE_FILE, 2, true);
 
         assertThat(secondBuildResult.getNewIssues().size()).isEqualTo(0);
@@ -369,7 +364,7 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
         copyFileToWorkspace(project, logFile, "log-java.txt");
         copyFileToWorkspace(project, srcFile, "FingerprintITest.java");
 
-        ReportScanningTool tool = createTool(new Java(), "**/*.txt");
+        var tool = createTool(new Java(), "**/*.txt");
 
         if (linesLookAhead != -1) {
             tool.setLinesLookAhead(linesLookAhead);
@@ -386,7 +381,7 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private AnalysisResult buildEclipseProject(final String... files) {
-        FreeStyleProject project = createFreeStyleProject();
+        var project = createFreeStyleProject();
         copyMultipleFilesToWorkspace(project, files);
         enableEclipseWarnings(project);
 

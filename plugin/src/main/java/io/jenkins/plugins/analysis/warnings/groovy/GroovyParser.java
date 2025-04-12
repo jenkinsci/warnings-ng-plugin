@@ -12,12 +12,10 @@ import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-import groovy.lang.Script;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -96,7 +94,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
      * @return {@code true} if this instance is valid, {@code false} otherwise
      */
     public boolean isValid() {
-        DescriptorImpl d = new DescriptorImpl(getJenkinsFacade());
+        var d = new DescriptorImpl(getJenkinsFacade());
 
         return d.checkScript(script).kind == Kind.OK
                 && d.checkRegexp(regexp).kind == Kind.OK
@@ -161,7 +159,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
             return false;
         }
 
-        GroovyParser that = (GroovyParser) o;
+        var that = (GroovyParser) o;
 
         if (!regexp.equals(that.regexp)) {
             return false;
@@ -184,19 +182,19 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
      *         if this parser configuration is not valid
      */
     public IssueParser createParser() {
-        DescriptorImpl descriptor = new DescriptorImpl(getJenkinsFacade());
+        var descriptor = new DescriptorImpl(getJenkinsFacade());
 
-        FormValidation nameCheck = descriptor.checkName(name);
+        var nameCheck = descriptor.checkName(name);
         if (nameCheck.kind == Kind.ERROR) {
             throw new IllegalArgumentException("Name is not valid: " + nameCheck.getMessage());
         }
 
-        FormValidation scriptCheck = descriptor.checkScript(script);
+        var scriptCheck = descriptor.checkScript(script);
         if (scriptCheck.kind == Kind.ERROR) {
             throw new IllegalArgumentException("Script is not valid: " + scriptCheck.getMessage());
         }
 
-        FormValidation regexpCheck = descriptor.checkRegexp(regexp);
+        var regexpCheck = descriptor.checkRegexp(regexp);
         if (regexpCheck.kind == Kind.ERROR) {
             throw new IllegalArgumentException("RegExp is not valid: " + regexpCheck.getMessage());
         }
@@ -355,8 +353,8 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
                     return FormValidation.error(Messages.GroovyParser_Error_Script_isEmpty());
                 }
 
-                GroovyExpressionMatcher matcher = new GroovyExpressionMatcher(script);
-                Script compiled = matcher.compile();
+                var matcher = new GroovyExpressionMatcher(script);
+                var compiled = matcher.compile();
                 Ensure.that(compiled).isNotNull();
 
                 return FormValidation.ok();
@@ -396,7 +394,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
 
         FormValidation checkExample(final String example, final String regexp, final String script) {
             if (StringUtils.isNotBlank(example) && StringUtils.isNotBlank(regexp) && StringUtils.isNotBlank(script)) {
-                FormValidation response = parseExample(script, example, regexp, containsNewline(regexp));
+                var response = parseExample(script, example, regexp, containsNewline(regexp));
                 if (example.length() <= MAX_EXAMPLE_SIZE) {
                     return response;
                 }
@@ -432,16 +430,16 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
             else {
                 pattern = Pattern.compile(regexp);
             }
-            Matcher matcher = pattern.matcher(example);
+            var matcher = pattern.matcher(example);
             try {
                 if (matcher.find()) {
-                    GroovyExpressionMatcher checker = new GroovyExpressionMatcher(script);
-                    Object result = checker.run(matcher, new IssueBuilder(), 0, "UI Example");
+                    var checker = new GroovyExpressionMatcher(script);
+                    var result = checker.run(matcher, new IssueBuilder(), 0, "UI Example");
                     Optional<?> optional = (Optional<?>) result;
                     if (optional.isPresent()) {
-                        Object wrappedIssue = optional.get();
-                        if (wrappedIssue instanceof Issue) {
-                            return createOkMessage((Issue) wrappedIssue);
+                        var wrappedIssue = optional.get();
+                        if (wrappedIssue instanceof Issue issue) {
+                            return createOkMessage(issue);
                         }
                     }
                     return FormValidation.error(Messages.GroovyParser_Error_Example_wrongReturnType(result));
@@ -457,7 +455,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
         }
 
         private FormValidation createOkMessage(final Issue issue) {
-            StringBuilder okMessage = new StringBuilder(Messages.GroovyParser_Error_Example_ok_title());
+            var okMessage = new StringBuilder(Messages.GroovyParser_Error_Example_ok_title());
             message(okMessage, Messages.GroovyParser_Error_Example_ok_file(issue.getFileName()));
             message(okMessage, Messages.GroovyParser_Error_Example_ok_line(issue.getLineStart()));
             message(okMessage, Messages.GroovyParser_Error_Example_ok_priority(issue.getSeverity()));

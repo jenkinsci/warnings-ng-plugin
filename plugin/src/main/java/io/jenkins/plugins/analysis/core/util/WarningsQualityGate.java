@@ -115,7 +115,7 @@ public class WarningsQualityGate extends QualityGate {
             return false;
         }
 
-        WarningsQualityGate that = (WarningsQualityGate) o;
+        var that = (WarningsQualityGate) o;
 
         return type == that.type;
     }
@@ -203,7 +203,7 @@ public class WarningsQualityGate extends QualityGate {
          */
         @POST
         public ListBoxModel doFillTypeItems() {
-            ListBoxModel model = new ListBoxModel();
+            var model = new ListBoxModel();
 
             if (jenkins.hasPermission(Jenkins.READ)) {
                 for (QualityGateType qualityGateType : QualityGateType.values()) {

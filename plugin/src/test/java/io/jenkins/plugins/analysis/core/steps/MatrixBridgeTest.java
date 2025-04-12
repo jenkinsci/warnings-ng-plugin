@@ -1,8 +1,8 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import java.util.Arrays;
-
 import org.junit.jupiter.api.Test;
+
+import java.util.Arrays;
 
 import hudson.Launcher;
 import hudson.matrix.MatrixAggregator;
@@ -24,21 +24,21 @@ import static org.mockito.Mockito.*;
 class MatrixBridgeTest {
     @Test
     void shouldNotAggregateIfNoPublisherRegistered() {
-        MatrixBuild build = createBuildWithPublishers();
+        var build = createBuildWithPublishers();
 
         assertThat(createAggregator(build)).isNull();
     }
 
     @Test
     void constructMatrixAggregatorWithRecorder() {
-        MatrixBuild build = createBuildWithPublishers(mock(IssuesRecorder.class));
+        var build = createBuildWithPublishers(mock(IssuesRecorder.class));
 
         assertThat(createAggregator(build)).isNotNull();
     }
 
     @Test
     void constructMatrixAggregatorWithRecorderAndSomethingElse() {
-        MatrixBuild build = createBuildWithPublishers(mock(Publisher.class), mock(IssuesRecorder.class));
+        var build = createBuildWithPublishers(mock(Publisher.class), mock(IssuesRecorder.class));
 
         assertThat(createAggregator(build)).isNotNull();
     }

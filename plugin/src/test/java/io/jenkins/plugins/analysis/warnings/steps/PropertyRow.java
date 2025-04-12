@@ -1,11 +1,10 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
-import io.jenkins.plugins.analysis.core.model.PropertyStatistics;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.*;
@@ -26,7 +25,7 @@ public class PropertyRow {
      * @return the rows
      */
     public static List<PropertyRow> getRows(final ResultAction result, final String property) {
-        PropertyStatistics details = result.getTarget().getDetails(property);
+        var details = result.getTarget().getDetails(property);
         return details.getKeys().stream()
                 .map(key -> new PropertyRow(
                         details.getDisplayName(key),
@@ -86,7 +85,7 @@ public class PropertyRow {
             return false;
         }
 
-        PropertyRow that = (PropertyRow) o;
+        var that = (PropertyRow) o;
 
         if (!ignorePercentage && !that.ignorePercentage) {
             if (percentage != that.percentage) {

@@ -1,17 +1,14 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
+import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.Issue;
+
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
-
-import org.jenkinsci.plugins.workflow.job.WorkflowJob;
-import org.junitpioneer.jupiter.Issue;
 import hudson.model.Run;
-import hudson.model.Slave;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.FileNameRenderer;
-import io.jenkins.plugins.analysis.core.model.IssuesDetail;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.steps.PublishIssuesStep;
 import io.jenkins.plugins.analysis.core.steps.ScanForIssuesStep;
@@ -39,18 +36,20 @@ class StepsOnAgentITest extends IntegrationTestWithJenkinsPerTest {
     @Test
     @Issue("JENKINS-56007")
     void shouldCopySourcesIfMasterAgentSecurityIsActive() {
-        Slave agent = createAgentWithEnabledSecurity("agent");
+        var agent = createAgentWithEnabledSecurity("agent");
 
-        WorkflowJob project = createPipeline();
+        var project = createPipeline();
 
         createFileInAgentWorkspace(agent, project, "Test.java", JAVA_CONTENT);
 
-        project.setDefinition(createPipelineScript("node('agent') {\n"
-                + "    echo '[javac] Test.java:39: warning: Test Warning'\n"
-                + "    recordIssues tool: java(), skipBlames: true\n"
-                + "}"));
+        project.setDefinition(createPipelineScript("""
+                node('agent') {
+                    echo '[javac] Test.java:39: warning: Test Warning'
+                    recordIssues tool: java(), skipBlames: true
+                }\
+                """));
 
-        AnalysisResult result = scheduleSuccessfulBuild(project);
+        var result = scheduleSuccessfulBuild(project);
         assertThat(result).hasNoErrorMessages();
         assertThat(result).hasTotalSize(1);
         assertThat(getConsoleLog(result)).contains("1 copied", "0 not in workspace", "0 not-found", "0 with I/O error");
@@ -60,10 +59,10 @@ class StepsOnAgentITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     private String getSourceCode(final AnalysisResult result, final int rowIndex) {
-        IssuesDetail target = result.getOwner().getAction(ResultAction.class).getTarget();
-        String sourceCodeUrl = new FileNameRenderer(result.getOwner()).getSourceCodeUrl(
+        var target = result.getOwner().getAction(ResultAction.class).getTarget();
+        var sourceCodeUrl = new FileNameRenderer(result.getOwner()).getSourceCodeUrl(
                 result.getIssues().get(rowIndex));
-        SourceCodeViewModel dynamic = (SourceCodeViewModel) target.getDynamic(
+        var dynamic = (SourceCodeViewModel) target.getDynamic(
                 sourceCodeUrl.replaceAll("/#.*", ""), null, null);
         return dynamic.getSourceCode();
     }
@@ -73,7 +72,7 @@ class StepsOnAgentITest extends IntegrationTestWithJenkinsPerTest {
      */
     @Test
     void shouldRecordOutputOfParallelSteps() {
-        WorkflowJob job = createPipeline();
+        var job = createPipeline();
 
         copySingleFileToAgentWorkspace(createAgent("node1"), job, "eclipse.txt", "issues.txt");
         copySingleFileToAgentWorkspace(createAgent("node2"), job, "eclipse.txt", "issues.txt");
@@ -106,18 +105,20 @@ class StepsOnAgentITest extends IntegrationTestWithJenkinsPerTest {
      **/
     @Test
     void shouldNotCopySourcesWhenSourceCodeRetentionIsNever() {
-        Slave agent = createAgentWithEnabledSecurity("agent");
+        var agent = createAgentWithEnabledSecurity("agent");
 
-        WorkflowJob project = createPipeline();
+        var project = createPipeline();
 
         createFileInAgentWorkspace(agent, project, "Test.java", JAVA_CONTENT);
 
-        project.setDefinition(createPipelineScript("node('agent') {\n"
-                + "    echo '[javac] Test.java:39: warning: Test Warning'\n"
-                + "    recordIssues tool: java(), sourceCodeRetention: 'NEVER'\n"
-                + "}"));
+        project.setDefinition(createPipelineScript("""
+                node('agent') {
+                    echo '[javac] Test.java:39: warning: Test Warning'
+                    recordIssues tool: java(), sourceCodeRetention: 'NEVER'
+                }\
+                """));
 
-        AnalysisResult result = scheduleSuccessfulBuild(project);
+        var result = scheduleSuccessfulBuild(project);
         assertThat(result).hasNoErrorMessages();
         assertThat(result).hasTotalSize(1);
         assertThat(getConsoleLog(result)).contains("Skipping copying of affected files");

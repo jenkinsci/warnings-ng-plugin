@@ -1,11 +1,10 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
-import java.util.Collections;
-
 import org.junit.jupiter.api.Test;
 import org.junitpioneer.jupiter.Issue;
 
-import io.jenkins.plugins.analysis.core.model.Tool;
+import java.util.Collections;
+
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
@@ -29,7 +28,7 @@ class GroovyScriptITest extends IntegrationTestWithJenkinsPerSuite {
     private void testDescriptorCanScanConsoleLog(final boolean expected) {
         // Given
         ParserConfiguration.getInstance().setConsoleLogScanningPermitted(expected);
-        final GroovyScript.Descriptor descriptor = new GroovyScript.Descriptor();
+        final var descriptor = new GroovyScript.Descriptor();
 
         // When
         final boolean actual = descriptor.canScanConsoleLog();
@@ -44,7 +43,7 @@ class GroovyScriptITest extends IntegrationTestWithJenkinsPerSuite {
     void setIdShouldThrowExceptionIfCustomIdHasInvalidPattern() {
         ParserConfiguration configuration = ParserConfiguration.getInstance();
         configuration.setParsers(Collections.singletonList(new GroovyParser("groovy", "", "", "", "")));
-        Tool groovyScript = new GroovyScript("groovy");
+        var groovyScript = new GroovyScript("groovy");
 
         assertThatIllegalArgumentException().isThrownBy(() -> groovyScript.setId("../../invalid-id"));
     }

@@ -1,19 +1,5 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.InvalidPathException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.errorprone.annotations.MustBeClosed;
@@ -29,8 +15,20 @@ import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 import edu.hm.hafner.util.FilteredLog;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import hudson.FilePath;
-import hudson.model.Computer;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
@@ -110,13 +108,13 @@ class IssuesScanner {
     }
 
     public AnnotatedReport scan() throws IOException, InterruptedException {
-        LogHandler logger = new LogHandler(listener, tool.getActualName());
+        var logger = new LogHandler(listener, tool.getActualName());
         logger.setQuiet(quiet);
-        Report report = tool.scan(run, workspace, sourceCodeEncoding, logger);
+        var report = tool.scan(run, workspace, sourceCodeEncoding, logger);
 
-        AnnotatedReport annotatedReport = postProcessReport(report);
+        var annotatedReport = postProcessReport(report);
 
-        RepositoryStatistics statistics = getRepositoryStatistics(annotatedReport.getReport());
+        var statistics = getRepositoryStatistics(annotatedReport.getReport());
         annotatedReport.addRepositoryStatistics(statistics);
 
         logger.logInfoMessages(annotatedReport.getReport().getInfoMessages());
@@ -126,9 +124,9 @@ class IssuesScanner {
     }
 
     private RepositoryStatistics getRepositoryStatistics(final Report report) {
-        MinerService minerService = new MinerService();
-        FilteredLog log = new FilteredLog("Errors while obtaining repository statistics");
-        RepositoryStatistics statistics = minerService.queryStatisticsFor(scm, run, report.getFiles(), log);
+        var minerService = new MinerService();
+        var log = new FilteredLog("Errors while obtaining repository statistics");
+        var statistics = minerService.queryStatisticsFor(scm, run, report.getFiles(), log);
         report.mergeLogMessages(log);
         return statistics;
     }
@@ -138,7 +136,7 @@ class IssuesScanner {
                 && report.isNotEmpty()) {
             report.logInfo("Post processing issues on '%s' with source code encoding '%s'",
                     getAgentName(), sourceCodeEncoding);
-            AnnotatedReport result = workspace.act(createPostProcessor(report));
+            var result = workspace.act(createPostProcessor(report));
             copyAffectedFiles(result.getReport(), createAffectedFilesFolder(result.getReport()));
             return result;
         }
@@ -150,8 +148,8 @@ class IssuesScanner {
 
     private ReportPostProcessor createPostProcessor(final Report report) {
         int linesLookAhead = -1;
-        if (tool instanceof ReportScanningTool) {
-            linesLookAhead = ((ReportScanningTool) tool).getLinesLookAhead();
+        if (tool instanceof ReportScanningTool scanningTool) {
+            linesLookAhead = scanningTool.getLinesLookAhead();
         }
         return new ReportPostProcessor(tool.getActualId(), report, sourceCodeEncoding.name(),
                 createBlamer(report), filters, getPermittedSourceDirectories(), sourceDirectories,
@@ -172,7 +170,7 @@ class IssuesScanner {
             return new NullBlamer();
         }
         else {
-            FilteredLog log = new FilteredLog("Errors while determining a supported blamer for "
+            var log = new FilteredLog("Errors while determining a supported blamer for "
                     + run.getFullDisplayName());
             report.logInfo("Creating SCM blamer to obtain author and commit information for affected files");
             if (!StringUtils.isBlank(scm)) {
@@ -205,7 +203,7 @@ class IssuesScanner {
     }
 
     private FilePath createAffectedFilesFolder(final Report report) throws InterruptedException {
-        FilePath buildDirectory = jenkinsRootDir.child(AFFECTED_FILES_FOLDER_NAME);
+        var buildDirectory = jenkinsRootDir.child(AFFECTED_FILES_FOLDER_NAME);
         try {
             buildDirectory.mkdirs();
         }
@@ -221,7 +219,7 @@ class IssuesScanner {
     }
 
     private String getComputerName() {
-        Computer computer = workspace.toComputer();
+        var computer = workspace.toComputer();
         if (computer != null) {
             return computer.getName();
         }
@@ -230,14 +228,14 @@ class IssuesScanner {
 
     private static Report filter(final Report report, final List<RegexpFilter> filters) {
         int actualFilterSize = 0;
-        IssueFilterBuilder builder = new IssueFilterBuilder();
+        var builder = new IssueFilterBuilder();
         for (RegexpFilter filter : filters) {
             if (StringUtils.isNotBlank(filter.getPattern())) {
                 filter.apply(builder);
                 actualFilterSize++;
             }
         }
-        Report filtered = report.filter(builder.build());
+        var filtered = report.filter(builder.build());
         if (actualFilterSize > 0) {
             filtered.logInfo(
                     "Applying %d filters on the set of %d issues (%d issues have been removed, %d issues will be published)",
@@ -300,7 +298,7 @@ class IssuesScanner {
 
             createFingerprints(filtered);
 
-            FileLocations fileLocations = new ReportLocations().toFileLocations(filtered);
+            var fileLocations = new ReportLocations().toFileLocations(filtered);
 
             return new AnnotatedReport(id, filtered, blame(filtered, fileLocations));
         }
@@ -309,18 +307,18 @@ class IssuesScanner {
             if (fileLocations.isEmpty()) {
                 return new Blames();
             }
-            FilteredLog log = new FilteredLog("Errors while extracting author and commit information from Git:");
-            Blames blames = blamer.blame(fileLocations, log);
+            var log = new FilteredLog("Errors while extracting author and commit information from Git:");
+            var blames = blamer.blame(fileLocations, log);
             filtered.mergeLogMessages(log);
             return blames;
         }
 
         private void resolvePaths(final File workspace, final Report report) {
             try {
-                FileNameResolver nameResolver = new FileNameResolver();
+                var nameResolver = new FileNameResolver();
                 report.logInfo("Resolving file names for all issues in workspace '%s'", workspace);
                 nameResolver.run(report, workspace.getAbsolutePath(), ConsoleLogHandler::isInConsoleLog);
-                FilteredLog errors = new FilteredLog("Source-Directories");
+                var errors = new FilteredLog("Source-Directories");
                 Set<String> filteredSourceDirectories = filterSourceDirectories(workspace, errors);
                 errors.getErrorMessages().forEach(report::logError);
                 for (String sourceDirectory : filteredSourceDirectories) {
@@ -334,7 +332,7 @@ class IssuesScanner {
         }
 
         private Set<String> filterSourceDirectories(final File workspace, final FilteredLog errors) {
-            SourceDirectoryFilter filter = new SourceDirectoryFilter();
+            var filter = new SourceDirectoryFilter();
             return filter.getPermittedSourceDirectories(
                     workspace.getAbsolutePath(), permittedSourceDirectories, requestedSourceDirectories, errors);
         }
@@ -356,7 +354,7 @@ class IssuesScanner {
             report.logInfo("Resolving package names (or namespaces) by parsing the affected files");
 
             try {
-                PackageNameResolver resolver = new PackageNameResolver();
+                var resolver = new PackageNameResolver();
                 resolver.run(report, getCharset());
             }
             catch (InvalidPathException exception) {
@@ -371,7 +369,7 @@ class IssuesScanner {
         private void createFingerprints(final Report report) {
             report.logInfo("Creating fingerprints for all affected code blocks to track issues over different builds");
 
-            FingerprintGenerator generator = new FingerprintGenerator();
+            var generator = new FingerprintGenerator();
             if (linesLookAhead < 0) {
                 // no-arg constructor defaults context lines to 3
                 generator.run(new FullTextFingerprint(), report, getCharset());
@@ -389,7 +387,7 @@ class IssuesScanner {
         @MustBeClosed
         @Override
         public InputStream open(final String fileName) throws IOException {
-            return Files.newInputStream(Paths.get(fileName));
+            return Files.newInputStream(Path.of(fileName));
         }
 
         @Override

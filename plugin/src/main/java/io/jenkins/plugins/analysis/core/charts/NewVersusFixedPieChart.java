@@ -25,7 +25,7 @@ public class NewVersusFixedPieChart {
      * @return the chart model
      */
     public PieChartModel create(final Report newIssues, final Report outstandingIssues, final Report fixedIssues) {
-        PieChartModel model = new PieChartModel(Messages.NewVersusFixed_Name());
+        var model = new PieChartModel(Messages.NewVersusFixed_Name());
 
         model.add(new PieData(Messages.New_Warnings_Short(), newIssues.size()), JenkinsPalette.RED.normal());
         model.add(new PieData(Messages.Outstanding_Warnings_Short(), outstandingIssues.size()), JenkinsPalette.YELLOW.normal());

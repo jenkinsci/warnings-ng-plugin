@@ -9,7 +9,6 @@ import edu.hm.hafner.analysis.Report;
 import java.io.File;
 import java.io.Serial;
 import java.nio.charset.Charset;
-import java.nio.file.Path;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -77,15 +76,15 @@ class AgentScanner extends MasterToSlaveFileCallable<Report> {
     @Override
     @SuppressWarnings("PMD.DoNotUseThreads")
     public Report invoke(final File workspace, final VirtualChannel channel) {
-        Report report = new Report();
+        var report = new Report();
         report.logInfo("Searching for files in workspace '%s' that match the include pattern '%s' and exclude pattern '%s'",
                 workspace, includePattern, excludePattern);
 
-        FileFinder fileFinder = new FileFinder(includePattern, excludePattern);
-        String[] fileNames = fileFinder.find(workspace);
+        var fileFinder = new FileFinder(includePattern, excludePattern);
+        var fileNames = fileFinder.find(workspace);
         report.logInfo("-> found %d files that will be scanned", fileNames.length);
-        Path root = workspace.toPath();
-        TaskScanner scanner = createTaskScanner();
+        var root = workspace.toPath();
+        var scanner = createTaskScanner();
         report.logInfo(scanner.getTaskTags());
         report.logInfo("Scanning all %d files for open tasks", fileNames.length);
         for (String fileName : fileNames) {
@@ -108,7 +107,7 @@ class AgentScanner extends MasterToSlaveFileCallable<Report> {
     }
 
     private TaskScanner createTaskScanner() {
-        TaskScannerBuilder builder = new TaskScannerBuilder();
+        var builder = new TaskScannerBuilder();
         builder.setHighTasks(highTasks)
                 .setNormalTasks(normalTasks)
                 .setLowTasks(lowTasks)
@@ -126,7 +125,7 @@ class AgentScanner extends MasterToSlaveFileCallable<Report> {
             return false;
         }
 
-        AgentScanner that = (AgentScanner) o;
+        var that = (AgentScanner) o;
 
         if (highTasks != null ? !highTasks.equals(that.highTasks) : that.highTasks != null) {
             return false;

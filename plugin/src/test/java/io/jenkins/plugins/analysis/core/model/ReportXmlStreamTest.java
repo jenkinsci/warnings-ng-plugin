@@ -7,8 +7,6 @@ import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.ResourceTest;
 
-import java.nio.file.Path;
-
 import static edu.hm.hafner.analysis.assertions.Assertions.*;
 
 /**
@@ -19,9 +17,9 @@ import static edu.hm.hafner.analysis.assertions.Assertions.*;
 class ReportXmlStreamTest extends ResourceTest {
     @Test @Issue("JENKINS-61293")
     void shouldMapDescriptionsToCorrectType() {
-        ReportXmlStream reportXmlStream = new ReportXmlStream();
+        var reportXmlStream = new ReportXmlStream();
 
-        Object restored = reportXmlStream.read(getResourceAsFile("npe.xml"));
+        var restored = reportXmlStream.read(getResourceAsFile("npe.xml"));
         assertThat(restored).isInstanceOfSatisfying(Report.class,
                 report ->
                     assertThat(report).hasSize(2));
@@ -29,11 +27,11 @@ class ReportXmlStreamTest extends ResourceTest {
 
     @Test
     void shouldReadIssues() {
-        ReportXmlStream reportXmlStream = new ReportXmlStream();
+        var reportXmlStream = new ReportXmlStream();
 
-        Object restored = reportXmlStream.read(getResourceAsFile("java-report.xml"));
+        var restored = reportXmlStream.read(getResourceAsFile("java-report.xml"));
 
-        Path saved = createTempFile();
+        var saved = createTempFile();
         assertThat(restored).isInstanceOfSatisfying(Report.class,
                 report -> {
                     assertThatReportIsCorrect(report);
@@ -41,18 +39,18 @@ class ReportXmlStreamTest extends ResourceTest {
                     reportXmlStream.write(saved, report);
                 });
 
-        Report newFormat = reportXmlStream.read(saved);
+        var newFormat = reportXmlStream.read(saved);
         assertThatReportIsCorrect(newFormat);
     }
 
     @Test
     void shouldStoreOriginFiles() {
-        ReportXmlStream reportXmlStream = new ReportXmlStream();
+        var reportXmlStream = new ReportXmlStream();
 
-        Report newIssues = reportXmlStream.read(getResourceAsFile("analysis-new-issues.xml"));
-        Report outstandingIssues = reportXmlStream.read(getResourceAsFile("analysis-outstanding-issues.xml"));
+        var newIssues = reportXmlStream.read(getResourceAsFile("analysis-new-issues.xml"));
+        var outstandingIssues = reportXmlStream.read(getResourceAsFile("analysis-outstanding-issues.xml"));
 
-        Report merged = new Report();
+        var merged = new Report();
         merged.addAll(newIssues, outstandingIssues);
 
         assertThat(newIssues).hasOriginReportFiles("/var/data/workspace/freestyle-analysis-model/target/test-classes/edu/hm/hafner/analysis/parser/spotbugsXml.xml",

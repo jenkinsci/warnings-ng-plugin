@@ -115,7 +115,7 @@ public class GroovyScript extends ReportScanningTool {
         @POST
         public ListBoxModel doFillParserIdItems(@AncestorInPath final BuildableItem project) {
             if (new JenkinsFacade().hasPermission(Item.CONFIGURE, project)) {
-                ListBoxModel options = ParserConfiguration.getInstance().asListBoxModel();
+                var options = ParserConfiguration.getInstance().asListBoxModel();
                 if (options.isEmpty()) {
                     return options.add(Messages.Warnings_Groovy_NoParsersDefined());
                 }

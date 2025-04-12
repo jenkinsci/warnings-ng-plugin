@@ -6,10 +6,8 @@ import org.jvnet.hudson.test.ToolInstallations;
 
 import edu.hm.hafner.analysis.Severity;
 
-import hudson.maven.MavenModuleSet;
 import hudson.model.Result;
 
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.MavenConsole;
@@ -27,12 +25,12 @@ class MavenIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldCreateResultWithWarnings() {
-        MavenModuleSet project = createMavenJob();
+        var project = createMavenJob();
         copySingleFileToWorkspace(project, "pom.xml");
         copyMultipleFilesToWorkspaceWithSuffix(project, "eclipse.txt");
         enableEclipseWarnings(project);
 
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(8);
         assertThat(result).hasNewSize(0);
@@ -46,13 +44,13 @@ class MavenIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldParseMavenError() {
-        MavenModuleSet project = createMavenJob();
+        var project = createMavenJob();
         copySingleFileToWorkspace(project, "pom-error.xml", "pom.xml");
 
-        IssuesRecorder recorder = enableWarnings(project, createTool(new MavenConsole(), ""));
+        var recorder = enableWarnings(project, createTool(new MavenConsole(), ""));
         recorder.setEnabledForFailure(true);
 
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.FAILURE);
+        var result = scheduleBuildAndAssertStatus(project, Result.FAILURE);
         assertThat(result).hasTotalSize(2).hasTotalErrorsSize(2);
         assertThat(result.getSizePerSeverity()).contains(entry(Severity.ERROR, 2));
     }

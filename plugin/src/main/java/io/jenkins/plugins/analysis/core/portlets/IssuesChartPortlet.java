@@ -125,7 +125,7 @@ public class IssuesChartPortlet extends DashboardPortlet {
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
     public String getBuildTrendModel() {
-        SeverityTrendChart severityChart = new SeverityTrendChart();
+        var severityChart = new SeverityTrendChart();
 
         List<Iterable<? extends BuildResult<AnalysisBuildResult>>> histories = jobs.stream()
                 .filter(job -> job.getLastCompletedBuild() != null)

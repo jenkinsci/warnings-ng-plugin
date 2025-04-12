@@ -1,23 +1,19 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
+import org.junit.jupiter.api.Test;
+import org.opentest4j.TestAbortedException;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
-import org.opentest4j.TestAbortedException;
-
-import hudson.FilePath;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.IssueReportScanner;
-import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.core.util.WarningsQualityGate;
 import io.jenkins.plugins.analysis.core.util.WarningsQualityGate.QualityGateType;
@@ -64,10 +60,10 @@ class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldReportErrorOnEmptyWorkspace() {
-        FreeStyleProject project = createFreeStyleProject();
+        var project = createFreeStyleProject();
         enableCheckStyleWarnings(project);
 
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(0);
         assertThat(result).hasErrorMessages("No files found for pattern '**/*issues.txt'. Configuration error?");
@@ -78,11 +74,11 @@ class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void cantReadFile() {
-        FreeStyleProject project = createCheckStyleJob(NON_READABLE_FILE_WORKSPACE);
+        var project = createCheckStyleJob(NON_READABLE_FILE_WORKSPACE);
 
         makeFileUnreadable(project);
 
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(0);
         assertThat(result).hasErrorMessages(
@@ -98,9 +94,9 @@ class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void fileLengthIsZero() {
-        FreeStyleProject project = createCheckStyleJob(ZERO_LENGTH_WORKSPACE);
+        var project = createCheckStyleJob(ZERO_LENGTH_WORKSPACE);
 
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(0);
         assertThat(result).hasErrorMessages("Skipping file 'zero_length_file.xml' because it's empty");
@@ -111,9 +107,9 @@ class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void filePatternDoesNotMatchAnyFile() {
-        FreeStyleProject project = createCheckStyleJob(NO_FILE_PATTERN_MATCH_WORKSPACE);
+        var project = createCheckStyleJob(NO_FILE_PATTERN_MATCH_WORKSPACE);
 
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(0);
         assertThat(result).hasErrorMessages("No files found for pattern '*.xml'. Configuration error?");
@@ -126,12 +122,12 @@ class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void findIssuesWithMultipleFiles() {
-        FreeStyleProject project = createJobWithWorkspaceFile(MULTIPLE_FILES_WORKSPACE);
-        IssuesRecorder recorder = enableWarnings(project, createTool(new CheckStyle(), "*.xml"));
+        var project = createJobWithWorkspaceFile(MULTIPLE_FILES_WORKSPACE);
+        var recorder = enableWarnings(project, createTool(new CheckStyle(), "*.xml"));
         recorder.setQualityGates(List.of(
                 new WarningsQualityGate(6, QualityGateType.TOTAL, QualityGateCriticality.FAILURE)));
 
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.FAILURE);
+        var result = scheduleBuildAndAssertStatus(project, Result.FAILURE);
 
         assertThat(result).hasTotalSize(6);
         assertThat(result).hasQualityGateStatus(QualityGateStatus.FAILED);
@@ -152,30 +148,30 @@ class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
     void findIssuesWithMultipleFilesReachableWithSymbolicLinks() {
         assumeThat(isWindows()).isFalse();
 
-        FreeStyleProject project = createJobWithWorkspaceFile(SYMLINKS_WORKSPACE);
+        var project = createJobWithWorkspaceFile(SYMLINKS_WORKSPACE);
 
-        FilePath workspace = getWorkspace(project);
-        Path path = Paths.get(workspace.getRemote());
-        Path realPath = path.resolve("actual_files");
+        var workspace = getWorkspace(project);
+        Path path = Path.of(workspace.getRemote());
+        var realPath = path.resolve("actual_files");
 
         assertThat(realPath.toFile().exists()).isTrue();
 
-        Path subdirPath = path.resolve("subdir");
+        var subdirPath = path.resolve("subdir");
         assertThat(subdirPath.toFile().mkdirs()).isTrue();
 
         createSymbolicLinkAssumingSupported(realPath, subdirPath.resolve("link_to_actual_files"));
 
-        IssuesRecorder recorder = enableWarnings(project, createTool(new CheckStyle(), false));
+        var recorder = enableWarnings(project, createTool(new CheckStyle(), false));
         recorder.setQualityGates(List.of(
                 new WarningsQualityGate(6, QualityGateType.TOTAL, QualityGateCriticality.FAILURE)));
 
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.FAILURE);
+        var result = scheduleBuildAndAssertStatus(project, Result.FAILURE);
 
         assertThat(result).hasTotalSize(6);
         assertThat(result).hasQualityGateStatus(QualityGateStatus.FAILED);
 
-        String checkstyleXml = project.getSomeWorkspace().getRemote() + File.separator
-                + Paths.get("subdir", "link_to_actual_files", "checkstyle.xml");
+        var checkstyleXml = project.getSomeWorkspace().getRemote() + File.separator
+                + Path.of("subdir", "link_to_actual_files", "checkstyle.xml");
 
         assertThat(result).hasInfoMessages(
                 "Successfully parsed file " + checkstyleXml,
@@ -192,24 +188,24 @@ class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
     void findNoIssuesWithMultipleFilesReachableWithSymlinksWithSkipSymbolicLinks() {
         assumeThat(isWindows()).isFalse();
 
-        FreeStyleProject project = createJobWithWorkspaceFile(SYMLINKS_WORKSPACE);
+        var project = createJobWithWorkspaceFile(SYMLINKS_WORKSPACE);
 
-        FilePath workspace = getWorkspace(project);
-        Path path = Paths.get(workspace.getRemote());
-        Path realPath = path.resolve("actual_files");
+        var workspace = getWorkspace(project);
+        Path path = Path.of(workspace.getRemote());
+        var realPath = path.resolve("actual_files");
 
         assertThat(realPath.toFile().exists()).isTrue();
 
-        Path subdirPath = path.resolve("subdir");
+        var subdirPath = path.resolve("subdir");
         assertThat(subdirPath.toFile().mkdirs()).isTrue();
 
         createSymbolicLinkAssumingSupported(realPath, subdirPath.resolve("link_to_actual_files"));
 
-        IssuesRecorder recorder = enableWarnings(project, createTool(new CheckStyle(), true));
+        var recorder = enableWarnings(project, createTool(new CheckStyle(), true));
         recorder.setQualityGates(List.of(
                 new WarningsQualityGate(6, QualityGateType.TOTAL, QualityGateCriticality.FAILURE)));
 
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(0);
         assertThat(result).hasInfoMessages(
@@ -241,9 +237,9 @@ class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void parseCheckstyleFileCorrectly() {
-        FreeStyleProject project = createCheckStyleJob(CHECKSTYLE_WORKSPACE);
+        var project = createCheckStyleJob(CHECKSTYLE_WORKSPACE);
 
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(6);
         assertThat(result).hasInfoMessages(
@@ -257,7 +253,7 @@ class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private FreeStyleProject createCheckStyleJob(final String workspaceFolder) {
-        FreeStyleProject project = createJobWithWorkspaceFile(workspaceFolder);
+        var project = createJobWithWorkspaceFile(workspaceFolder);
         enableWarnings(project, createTool(new CheckStyle(), "*.xml"));
         return project;
     }
@@ -272,7 +268,7 @@ class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
      */
     private FreeStyleProject createJobWithWorkspaceFile(final String importDirectory) {
         try {
-            FreeStyleProject job = getJenkins().createFreeStyleProject();
+            var job = getJenkins().createFreeStyleProject();
             copyDirectoryToWorkspace(job, importDirectory);
 
             return job;

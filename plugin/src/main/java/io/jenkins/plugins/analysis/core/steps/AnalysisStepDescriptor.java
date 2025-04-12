@@ -1,8 +1,8 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import java.util.Map;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
+
+import java.util.Map;
 
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.QueryParameter;
@@ -218,7 +218,7 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
 
     @Override
     public String argumentsToString(@NonNull final Map<String, Object> namedArgs) {
-        String formatted = super.argumentsToString(namedArgs);
+        var formatted = super.argumentsToString(namedArgs);
         if (formatted != null) {
             return formatted;
         }

@@ -7,7 +7,6 @@ import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.Ensure;
-import edu.hm.hafner.util.FilteredLog;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 import java.io.IOException;
@@ -154,13 +153,13 @@ public abstract class ReportScanningTool extends Tool {
     @Override
     public Report scan(final Run<?, ?> run, final FilePath workspace, final Charset sourceCodeEncoding,
             final LogHandler logger) {
-        Report report = scan(run, workspace, logger);
+        var report = scan(run, workspace, logger);
         report.setOrigin(getActualId(), getActualName());
         return report;
     }
 
     private Report scan(final Run<?, ?> run, final FilePath workspace, final LogHandler logger) {
-        String actualPattern = getActualPattern();
+        var actualPattern = getActualPattern();
         if (StringUtils.isBlank(actualPattern)) {
             return scanInConsoleLog(workspace, run, logger);
         }
@@ -177,7 +176,7 @@ public abstract class ReportScanningTool extends Tool {
     // FIXME: Pattern expansion will not work in pipelines since the run does not provide all available variables
     private String expandPattern(final Run<?, ?> run, final String actualPattern) {
         try {
-            EnvironmentResolver environmentResolver = new EnvironmentResolver();
+            var environmentResolver = new EnvironmentResolver();
 
             return environmentResolver.expandEnvironmentVariables(
                     run.getEnvironment(TaskListener.NULL), actualPattern);
@@ -192,7 +191,7 @@ public abstract class ReportScanningTool extends Tool {
             FileVisitorResult<Report> report = workspace.act(
                     new IssueReportScanner(expandedPattern, reportEncoding, followSymlinks(), createParser(), !isEmptyFileValid()));
 
-            FilteredLog log = report.getLog();
+            var log = report.getLog();
             logger.log(log);
 
             List<Report> results = report.getResults();
@@ -223,13 +222,13 @@ public abstract class ReportScanningTool extends Tool {
                 "Static analysis tool %s cannot scan console log output, please define a file pattern",
                 getActualName());
 
-        Report consoleReport = new Report();
+        var consoleReport = new Report();
         consoleReport.logInfo("Parsing console log (workspace: '%s')", workspace);
 
         logger.logInfoMessages(consoleReport.getInfoMessages());
         logger.logErrorMessages(consoleReport.getErrorMessages());
 
-        Report report = createParser().parse(new ConsoleLogReaderFactory(run));
+        var report = createParser().parse(new ConsoleLogReaderFactory(run));
 
         report.logInfo("Successfully parsed console log");
         report.logInfo("-> found %s (skipped %s)",
@@ -247,7 +246,7 @@ public abstract class ReportScanningTool extends Tool {
 
     @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
     private String plural(final int count, final String itemName) {
-        StringBuilder builder = new StringBuilder(itemName);
+        var builder = new StringBuilder(itemName);
         if (count != 1) {
             builder.append('s');
         }
