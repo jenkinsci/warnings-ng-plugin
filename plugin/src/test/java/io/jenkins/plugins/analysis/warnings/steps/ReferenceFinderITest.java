@@ -69,8 +69,8 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
 
         assertThat(getConsoleLog(result)).contains(
                 "[ReferenceFinder] Configured reference job: 'reference'",
-                        "[ReferenceFinder] Found last completed build '#1' of reference job 'reference'",
-                        "[ReferenceFinder] -> Build '#1' has a result SUCCESS",
+                "[ReferenceFinder] Found last completed build '#1' of reference job 'reference'",
+                "[ReferenceFinder] -> Build '#1' has a result SUCCESS",
                 "Obtaining reference build from reference recorder",
                 "-> Found 'reference #1'");
     }
@@ -207,7 +207,8 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     /**
-     * Checks if the reference is taken from the last successful build and therefore returns an unstable build in the end.
+     * Checks if the reference is taken from the last successful build and therefore returns an unstable build in the
+     * end.
      */
     @Test
     void shouldCreateUnstableResultWithIgnoredUnstableInBetween() {
@@ -348,7 +349,7 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
         // #1 SUCCESS
         FreeStyleProject project = createEmptyReferenceJob(JOB_NAME, "eclipse4Warnings.txt");
         IssuesRecorder issuesRecorder = enableWarnings(project, recorder ->
-            recorder.setEnabledForFailure(true));
+                recorder.setEnabledForFailure(true));
         Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(project, Result.SUCCESS,
                 analysisResult -> assertThat(analysisResult).hasTotalSize(4)
                         .hasNewSize(0)
@@ -383,7 +384,7 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
         // #1 SUCCESS
         FreeStyleProject project = createJob(JOB_NAME, "eclipse4Warnings.txt", Result.FAILURE, StringUtils.EMPTY);
         IssuesRecorder issuesRecorder = enableWarnings(project, recorder ->
-            recorder.setEnabledForFailure(true));
+                recorder.setEnabledForFailure(true));
         scheduleBuildAndAssertStatus(project, Result.SUCCESS,
                 analysisResult -> assertThat(analysisResult).hasTotalSize(4)
                         .hasNewSize(0)
@@ -486,8 +487,8 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     /**
-     * Checks if the reference is taken from the last successful build and therefore returns an unstable build in the end.
-     * Uses a different freestyle project for the reference.
+     * Checks if the reference is taken from the last successful build and therefore returns an unstable build in the
+     * end. Uses a different freestyle project for the reference.
      */
     @Test
     void shouldCreateUnstableResultWithIgnoredUnstableInBetweenWithReferenceBuild() {
@@ -567,8 +568,8 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     /**
-     * Checks if the reference ignores the result of the last build and therefore returns an unstable build in the end. Uses a
-     * different freestyle project for the reference.
+     * Checks if the reference ignores the result of the last build and therefore returns an unstable build in the end.
+     * Uses a different freestyle project for the reference.
      */
     @Test
     void shouldCreateUnstableResultWithNotIgnoredUnstableInBetweenWithReferenceBuild() {
@@ -700,7 +701,7 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
         // #1 SUCCESS
         FreeStyleProject reference = createEmptyReferenceJob(REFERENCE_JOB_NAME, "eclipse4Warnings.txt");
         IssuesRecorder issuesRecorder = enableWarnings(reference, recorder ->
-            recorder.setEnabledForFailure(true));
+                recorder.setEnabledForFailure(true));
         Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(reference, Result.SUCCESS,
                 analysisResult -> assertThat(analysisResult).hasTotalSize(4)
                         .hasNewSize(0)
@@ -740,7 +741,7 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
         // #1 SUCCESS
         FreeStyleProject reference = createEmptyReferenceJob(REFERENCE_JOB_NAME, "eclipse4Warnings.txt");
         IssuesRecorder issuesRecorder = enableWarnings(reference, recorder ->
-            recorder.setEnabledForFailure(true));
+                recorder.setEnabledForFailure(true));
         scheduleBuildAndAssertStatus(reference, Result.SUCCESS,
                 analysisResult -> assertThat(analysisResult).hasTotalSize(4)
                         .hasNewSize(0)
@@ -779,7 +780,8 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
     @Test
     void shouldCreateSuccessResultWithOverAllMustNotBeSuccessWithReferenceBuild() {
         // #1 SUCCESS
-        FreeStyleProject reference = createJob(REFERENCE_JOB_NAME, "eclipse2Warnings.txt", Result.FAILURE, StringUtils.EMPTY);
+        FreeStyleProject reference = createJob(REFERENCE_JOB_NAME, "eclipse2Warnings.txt", Result.FAILURE,
+                StringUtils.EMPTY);
         enableWarnings(reference, recorder -> {
             recorder.setEnabledForFailure(true);
             recorder.setQualityGates(List.of(

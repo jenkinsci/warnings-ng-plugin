@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.warnings;
+package io.jenkins.plugins.archunit;
 
 import com.tngtech.archunit.core.importer.ImportOption.DoNotIncludeTests;
 import com.tngtech.archunit.junit.AnalyzeClasses;
