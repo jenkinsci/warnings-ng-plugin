@@ -68,7 +68,7 @@ jobs:
                   {
                     "id": "junit",
                     "icon": "no_entry",
-                    "name": "Architecture tests",
+                    "name": "Architecture Tests",
                     "pattern": "**/target/surefire-reports/TEST*archunit*.xml"
                   }
                 ]
