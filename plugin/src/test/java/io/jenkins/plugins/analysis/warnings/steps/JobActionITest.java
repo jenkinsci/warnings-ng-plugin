@@ -24,6 +24,7 @@ import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.echarts.AsyncConfigurableTrendChart;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import static io.jenkins.plugins.analysis.core.model.MissingResultFallbackHandler.*;
 
 /**
  * Integration tests of the warnings plug-in in freestyle jobs. Tests the new recorder {@link IssuesRecorder}.
@@ -228,7 +229,7 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Verifies the behaviour of {@link MissingResultFallbackHandler}.
+     * Verifies the behavior of {@link MissingResultFallbackHandler}.
      */
     @Test
     void shouldAttachJobActionsWithoutRecordIssues() {
@@ -253,15 +254,23 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
 
         project.getPublishersList().clear();
 
-        Run<?, ?> thirdBuild = buildWithResult(project, Result.SUCCESS);
-        List<ResultAction> thirdBuildResultActions = thirdBuild.getActions(ResultAction.class);
-        assertThat(thirdBuildResultActions).isEmpty();
+        for (int i = 0; i < MAX_BUILDS_TO_CONSIDER; i++) {
+            Run<?, ?> empty = buildWithResult(project, Result.SUCCESS);
+            List<ResultAction> thirdBuildResultActions = empty.getActions(ResultAction.class);
+            assertThat(thirdBuildResultActions).isEmpty();
+        }
 
         List<JobAction> jobActionsAfterThirdBuild = project.getActions(JobAction.class);
-        assertThat(jobActionsAfterThirdBuild).isNotEmpty();
-        assertThat(jobActionsAfterSecondBuild.get(0).getId()).isEqualTo(jobActionsAfterThirdBuild.get(0).getId());
-        assertThat(jobActionsAfterSecondBuild.get(0).getUrlName()).isEqualTo(jobActionsAfterThirdBuild.get(0).getUrlName());
-        assertThatTrendChartIsVisible(jobActionsAfterThirdBuild.get(0));
+        assertThat(jobActionsAfterThirdBuild).isNotEmpty().hasSize(1).first().satisfies(
+                jobAction -> {
+                    assertThat(jobAction.getId()).isEqualTo(ECLIPSE_URL_NAME);
+                    assertThat(jobAction.getUrlName()).isEqualTo(ECLIPSE_URL_NAME);
+                    assertThatTrendChartIsVisible(jobAction);
+                }
+        );
+
+        buildWithResult(project, Result.SUCCESS); // now the limit of historical builds is reached
+        assertThat(project.getActions(JobAction.class)).isEmpty();
     }
 
     private void assertThatTrendChartIsVisible(final AsyncConfigurableTrendChart trendChart) {

@@ -15,12 +15,18 @@ import jenkins.model.TransientActionFactory;
 
 /**
  * Registers this class as a Jenkins extension that provides fallback for analysis builds.
- * This helps display warnings in the job view even when no analysis is present in the latest build.
+ * This helps display warnings in the job view even when no analysis is present in one of the latest builds.
  * The actions are rendered by finding the most recent build with valid {@link ResultAction} instances,
  * and then attaching the corresponding {@link JobAction} and {@link TransientProjectResultAction} to the job.
  */
 @Extension
 public final class MissingResultFallbackHandler extends TransientActionFactory<Job<?, ?>> {
+    /**
+     * The maximum number of builds to consider when looking for a valid {@link ResultAction}.
+     * This is set to a maximum of 5 to avoid performance issues with large job histories.
+     */
+    public static final int MAX_BUILDS_TO_CONSIDER = 5;
+
     @Override
     @SuppressWarnings("unchecked")
     public Class<Job<?, ?>> type() {
@@ -40,7 +46,10 @@ public final class MissingResultFallbackHandler extends TransientActionFactory<J
             return Collections.emptyList();
         }
 
-        for (Run<?, ?> previousBuild = currentBuild.getPreviousBuild(); previousBuild != null; previousBuild = previousBuild.getPreviousBuild()) {
+        int count = 0;
+        for (Run<?, ?> previousBuild = currentBuild.getPreviousBuild();
+                previousBuild != null && count < MAX_BUILDS_TO_CONSIDER;
+                previousBuild = previousBuild.getPreviousBuild(), count++) {
             List<ResultAction> resultActions = previousBuild.getActions(ResultAction.class);
 
             List<Action> actions = new ArrayList<>();
