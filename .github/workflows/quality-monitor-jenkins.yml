@@ -62,7 +62,7 @@ jobs:
                   {
                     "id": "junit",
                     "icon": "rocket",
-                    "name": "Integration tests",
+                    "name": "Integration Tests",
                     "pattern": "**/target/failsafe-reports/TEST*.xml"
                   },
                   {
