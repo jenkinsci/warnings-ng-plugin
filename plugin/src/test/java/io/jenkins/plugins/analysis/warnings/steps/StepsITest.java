@@ -836,7 +836,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     void shouldShowWarningsOfGroovyParserWhenScanningConsoleLogWhenThatIsPermitted() throws IOException {
         var job = createPipeline();
-        ArrayList<String> stages = new ArrayList<>();
+        List<String> stages = new ArrayList<>();
         catFileContentsByAddingEchosSteps(stages, "pep8Test.txt");
         stages.add("def groovy = scanForIssues "
                 + "tool: groovyScript(parserId: 'groovy-pep8', pattern:'', reportEncoding:'UTF-8')");
