@@ -112,6 +112,10 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     /** The result of the quality gate evaluation. */
     private QualityGateResult qualityGateResult;
 
+    static {
+        Run.XSTREAM2.alias("item", QualityGateResult.QualityGateResultItem.class);
+    }
+
     /**
      * Creates a new instance of {@link AnalysisResult}.
      *
