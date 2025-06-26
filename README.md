@@ -4,7 +4,6 @@
 [![Jenkins Plugin Installs](https://img.shields.io/jenkins/plugin/i/warnings-ng.svg?color=red)](https://plugins.jenkins.io/warnings-ng)
 [![Jenkins](https://ci.jenkins.io/job/Plugins/job/warnings-ng-plugin/job/main/badge/icon?subject=Jenkins%20CI)](https://ci.jenkins.io/job/Plugins/job/warnings-ng-plugin/job/main/)
 [![GitHub Actions](https://github.com/jenkinsci/warnings-ng-plugin/workflows/GitHub%20CI/badge.svg)](https://github.com/jenkinsci/warnings-ng-plugin/actions)
-[![Codecov](https://codecov.io/gh/jenkinsci/warnings-ng-plugin/branch/main/graph/badge.svg)](https://app.codecov.io/gh/jenkinsci/warnings-ng-plugin)
 
 The Jenkins Next Generation Warnings plugin collects compiler warnings or issues reported by static analysis tools and visualizes the results. It has built-in support for more than a hundred [report formats](SUPPORTED-FORMATS.md). 
 Among the problems it can detect:
