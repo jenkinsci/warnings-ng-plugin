@@ -70,6 +70,10 @@
               <j:set var="png" value="${null}"/>
               <j:set var="symbol" value="${it.labelProvider.largeIconUrl}"/>
             </j:when>
+            <j:when test="${it.labelProvider.largeIconUrl.startsWith('http')}">
+              <j:set var="png" value="${it.labelProvider.largeIconUrl}"/>
+              <j:set var="symbol" value="${null}"/>
+            </j:when>
             <j:otherwise>
               <j:set var="png" value="${resURL}/${it.labelProvider.largeIconUrl}"/>
               <j:set var="symbol" value="${null}"/>
