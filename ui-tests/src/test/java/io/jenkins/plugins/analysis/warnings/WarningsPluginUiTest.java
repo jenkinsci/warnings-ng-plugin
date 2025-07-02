@@ -49,7 +49,7 @@ import static io.jenkins.plugins.analysis.warnings.Assertions.*;
  * @author Veronika Zwickenpflug
  */
 @WithPlugins("warnings-ng")
-@SuppressWarnings({"checkstyle:ClassFanOutComplexity", "PMD.SystemPrintln", "PMD.ExcessiveImports"})
+@SuppressWarnings({"checkstyle:ClassFanOutComplexity", "PMD.SystemPrintln"})
 @SuppressFBWarnings("BC")
 public class WarningsPluginUiTest extends UiTest {
     private static final String SOURCE_VIEW_FOLDER = "/source-view/";
