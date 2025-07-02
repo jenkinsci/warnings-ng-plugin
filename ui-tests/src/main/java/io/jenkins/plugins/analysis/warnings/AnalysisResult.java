@@ -379,7 +379,6 @@ public class AnalysisResult extends PageObject {
          * @throws NoSuchElementException
          *         if the tab could not be found
          */
-        @SuppressWarnings("PMD.UnnecessaryFullyQualifiedName") // false positives
         static Tab valueWithHref(final String href) {
             for (Tab tab : values()) {
                 if (tab.contentId.equals(href.substring(1))) {
