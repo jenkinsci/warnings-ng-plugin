@@ -45,7 +45,7 @@ jobs:
         uses: jwalton/gh-find-current-pr@v1
         id: pr
       - name: Run Quality Monitor
-        uses: uhafner/quality-monitor@v2
+        uses: uhafner/quality-monitor@v3
         with:
           pr-number: ${{ steps.pr.outputs.number }}
           show-headers: true
