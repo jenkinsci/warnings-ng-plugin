@@ -25,12 +25,11 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  */
 class MatrixJobITest extends IntegrationTestWithJenkinsPerSuite {
     /**
-     * Build a matrix job with three configurations. For each configuration a different set of warnings will be parsed
-     * with the same parser (GCC). After the successful build the total number of warnings at the root level should be
+     * Build a matrix job with three configurations. For each configuration, a different set of warnings will be parsed
+     * with the same parser (GCC). After the successful build, the total number of warnings at the root level should be
      * set to 12 (sum of all three configurations). Moreover, for each configuration the total number of warnings is
      * also verified (4, 6, and 2 warnings).
      */
-    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     @Test
     void shouldCreateIndividualAxisResults() {
         var project = createProject(MatrixProject.class);

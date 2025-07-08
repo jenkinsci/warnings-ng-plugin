@@ -90,10 +90,9 @@ class ReportXmlStream extends AbstractXmlStream<Report> {
     }
 
     /**
-     * Default {@link Converter} implementation for XStream that does interning scoped to one unmarshalling.
+     * Default {@link Converter} implementation for XStream that maps {@link Severity} instances.
      */
     private static final class SeverityConverter implements Converter {
-        @SuppressWarnings("PMD.NullAssignment")
         @Override
         public void marshal(final Object source, final HierarchicalStreamWriter writer,
                 final MarshallingContext context) {

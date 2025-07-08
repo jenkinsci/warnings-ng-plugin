@@ -48,7 +48,7 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
  * @author Martin Weibel
  * @author Ullrich Hafner
  */
-@SuppressWarnings({"PMD.ExcessiveImports", "checkstyle:ClassFanOutComplexity"})
+@SuppressWarnings("checkstyle:ClassFanOutComplexity")
 class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     private static final Pattern TAG_REGEX = Pattern.compile(">(.+?)</", Pattern.DOTALL);
     private static final String CHECKSTYLE = "checkstyle";

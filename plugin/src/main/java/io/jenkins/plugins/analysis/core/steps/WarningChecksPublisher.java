@@ -47,7 +47,7 @@ import static j2html.TagCreator.*;
  *
  * @author Kezhi Xiong
  */
-@SuppressWarnings({"PMD.CouplingBetweenObjects", "PMD.ExcessiveImports"})
+@SuppressWarnings("PMD.CouplingBetweenObjects")
 class WarningChecksPublisher {
     /**
      * Defines the scope of SCM checks annotations.

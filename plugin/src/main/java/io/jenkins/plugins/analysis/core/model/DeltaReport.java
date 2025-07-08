@@ -19,8 +19,6 @@ import static edu.hm.hafner.analysis.Severity.*;
  */
 @SuppressWarnings("PMD.DataClass")
 public class DeltaReport {
-    private static final Report EMPTY_REPORT = new Report();
-
     private final Report allIssues;
     private final Report outstandingIssues;
     private final Report newIssues;

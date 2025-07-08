@@ -244,7 +244,6 @@ public abstract class ReportScanningTool extends Tool {
         return consoleReport;
     }
 
-    @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
     private String plural(final int count, final String itemName) {
         var builder = new StringBuilder(itemName);
         if (count != 1) {

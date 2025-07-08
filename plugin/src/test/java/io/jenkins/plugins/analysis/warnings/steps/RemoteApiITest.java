@@ -30,7 +30,6 @@ import static org.assertj.core.api.Assertions.*;
  *
  * @author Manuel Hampp
  */
-@SuppressWarnings("PMD.ExcessiveImports")
 class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String CHECKSTYLE_FILE = "checkstyle-filtering.xml";
     private static final String RESULT_REMOTE_API_EXPECTED_XML = "result.xml";

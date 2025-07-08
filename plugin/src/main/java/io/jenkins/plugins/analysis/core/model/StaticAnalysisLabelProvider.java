@@ -265,7 +265,6 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
         return new CompositeLocalizable(getName(), createToolTipSuffix(numberOfItems));
     }
 
-    @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
     private Localizable createToolTipSuffix(final int numberOfItems) {
         if (numberOfItems == 0) {
             return Messages._Tool_NoIssues();

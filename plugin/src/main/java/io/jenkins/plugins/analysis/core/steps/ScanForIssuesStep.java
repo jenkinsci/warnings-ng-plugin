@@ -35,7 +35,7 @@ import io.jenkins.plugins.prism.SourceCodeRetention;
 /**
  * Scan files or the console log for issues.
  */
-@SuppressWarnings({"InstanceVariableMayNotBeInitialized", "PMD.ExcessivePublicCount", "PMD.ExcessiveImports", "PMD.DataClass"})
+@SuppressWarnings({"InstanceVariableMayNotBeInitialized", "PMD.DataClass"})
 public class ScanForIssuesStep extends Step {
     private Tool tool;
 

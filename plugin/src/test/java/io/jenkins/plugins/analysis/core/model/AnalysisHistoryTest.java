@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.core.model; // NOPMD
+package io.jenkins.plugins.analysis.core.model;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings({"ParameterNumber", "PMD.UnusedPrivateMethod", "unchecked"})
+@SuppressWarnings("ParameterNumber")
 @SuppressFBWarnings("UPM")
 class AnalysisHistoryTest {
     /**

@@ -43,7 +43,7 @@ import static io.jenkins.plugins.analysis.core.model.ToolSelection.*;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings({"PMD.DataClass", "PMD.ExcessiveImports"})
+@SuppressWarnings("PMD.DataClass")
 public class IssuesTotalColumn extends ListViewColumn {
     private boolean selectTools;
     private List<ToolSelection> tools = new ArrayList<>();

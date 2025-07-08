@@ -43,7 +43,6 @@ import static org.assertj.core.api.Assertions.*;
  * @author Andreas Riepl
  * @author Oliver Scholz
  */
-@SuppressWarnings("PMD.ExcessiveImports")
 class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String FOLDER = "affected-files";
     private static final String SOURCE_AFFECTED_FILE = FOLDER + "/Main.java";

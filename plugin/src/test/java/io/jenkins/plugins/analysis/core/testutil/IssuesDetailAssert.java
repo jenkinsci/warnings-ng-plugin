@@ -13,7 +13,7 @@ import io.jenkins.plugins.analysis.core.model.IssuesDetail;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings({"NonBooleanMethodNameMayNotStartWithQuestion", "PMD.LinguisticNaming"})
+@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
 public class IssuesDetailAssert extends AbstractAssert<IssuesDetailAssert, IssuesDetail> {
     private static final String EXPECTED_BUT_WAS_MESSAGE = "%nExpecting %s of:%n <%s>%nto be:%n <%s>%nbut was:%n <%s>.";
 

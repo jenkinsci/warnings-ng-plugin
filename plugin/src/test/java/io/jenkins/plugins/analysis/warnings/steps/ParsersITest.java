@@ -24,7 +24,7 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings({"PMD.CouplingBetweenObjects", "PMD.ExcessivePublicCount", "PMD.CyclomaticComplexity", "PMD.GodClass", "PMD.ExcessiveClassLength", "ClassDataAbstractionCoupling", "ClassFanOutComplexity"})
+@SuppressWarnings({"ClassDataAbstractionCoupling", "ClassFanOutComplexity", "PMD.CyclomaticComplexity"})
 class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String CODE_FRAGMENT = """
             <pre><code>#
@@ -1110,7 +1110,7 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         return findIssuesInPipeline(pipelineDefinition, expectedSizeOfIssues, tool, fileNames);
     }
 
-    @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock", "PMD.LinguisticNaming"})
+    @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
     private ResultAction findIssuesInPipeline(final String pipelineDefinition, final int expectedSizeOfIssues, final ReportScanningTool tool, final String... fileNames) {
         try {
             var job = createPipeline();

@@ -61,7 +61,7 @@ import static io.jenkins.plugins.analysis.core.util.AffectedFilesResolver.*;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings({"PMD.CouplingBetweenObjects", "PMD.ExcessiveImports"})
+@SuppressWarnings("PMD.CouplingBetweenObjects")
 class IssuesScanner {
     private final FilePath workspace;
     private final Set<String> sourceDirectories;
