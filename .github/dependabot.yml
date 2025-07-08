@@ -14,9 +14,6 @@ updates:
       - dependency-name: org.eclipse.collections:eclipse-collections-api
         versions:
           - ">= 10.a"
-      - dependency-name: net.javacrumbs.json-unit:json-unit-assertj
-        versions:
-          - ">= 3.0.0"
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -31,3 +28,10 @@ updates:
       prefix: ""
     schedule:
       interval: "daily"
+    ignore:
+      - dependency-name: datatables.net-responsive
+        versions:
+          - "> 3.0.2"
+      - dependency-name: datatables.net-responsive-bs5
+        versions:
+          - "> 3.0.2"
