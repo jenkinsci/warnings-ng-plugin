@@ -30,7 +30,6 @@ import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.MatcherMode;
  * @author Oliver Scholz
  * @author Andreas Riepl
  */
-@SuppressWarnings("PMD.JUnit5TestShouldBePackagePrivate")
 @BenchmarkMode(Mode.AverageTime)
 @Fork(value = 1, warmups = 3)
 public class TaskScannerBenchmark extends ResourceTest {

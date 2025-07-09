@@ -40,7 +40,6 @@ import io.jenkins.plugins.util.ValidationUtilities;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings("PMD.ExcessiveImports")
 public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implements Serializable {
     @Serial
     private static final long serialVersionUID = 2447124045452896581L;

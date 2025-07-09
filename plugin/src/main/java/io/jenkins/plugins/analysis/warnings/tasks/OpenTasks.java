@@ -42,7 +42,7 @@ import io.jenkins.plugins.util.ValidationUtilities;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings({"PMD.DataClass", "PMD.ExcessiveImports"})
+@SuppressWarnings("PMD.DataClass")
 public class OpenTasks extends Tool {
     @Serial
     private static final long serialVersionUID = 4692318309214830824L;
@@ -287,7 +287,6 @@ public class OpenTasks extends Tool {
          *
          * @return validation result
          */
-        @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
         @POST
         public FormValidation doCheckExample(@AncestorInPath final BuildableItem project,
                 @QueryParameter final String example,

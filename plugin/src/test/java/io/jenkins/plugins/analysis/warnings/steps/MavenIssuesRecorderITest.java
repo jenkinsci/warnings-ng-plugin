@@ -59,7 +59,7 @@ class MavenIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
      * Ensures that Maven 3.5 is installed before a test will be executed.
      */
     @BeforeAll
-    @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock", "PMD.AvoidCatchingGenericException"})
+    @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
     public static void installMaven() {
         try {
             ToolInstallations.configureMaven35();

@@ -62,7 +62,7 @@ import io.jenkins.plugins.util.ValidationUtilities;
  * </li>
  * </ul>
  */
-@SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveImports", "PMD.TooManyFields", "PMD.DataClass", "PMD.CyclomaticComplexity", "PMD.ExcessiveClassLength", "PMD.GodClass"})
+@SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.TooManyFields", "PMD.GodClass"})
 public class RecordIssuesStep extends Step implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;

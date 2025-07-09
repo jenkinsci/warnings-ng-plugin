@@ -103,7 +103,6 @@ public class BlamesModel extends DetailsTableModel {
     /**
      * A table row that shows the source control blames.
      */
-    @SuppressWarnings("PMD.DataClass") // Used to automatically convert to JSON object
     public static class BlamesRow extends TableRow {
         private final Blame blame;
         private final String commit;

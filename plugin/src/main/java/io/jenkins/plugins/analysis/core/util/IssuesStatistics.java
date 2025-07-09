@@ -22,7 +22,6 @@ import org.jvnet.localizer.Localizable;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings("PMD.TooManyFields")
 public class IssuesStatistics implements Serializable {
     @Serial
     private static final long serialVersionUID = 2885481384170602793L;

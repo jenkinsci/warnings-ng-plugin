@@ -17,7 +17,6 @@ import io.jenkins.plugins.util.QualityGateStatus;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
-@SuppressWarnings("PMD.MoreThanOneLogger")
 @DefaultLocale("en")
 class QualityGateEvaluatorTest {
     @Test

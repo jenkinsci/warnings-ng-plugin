@@ -169,7 +169,6 @@ public abstract class DetailsTableModel extends TableModel {
     /**
      * Base class for table rows. Contains columns that should be used by all tables.
      */
-    @SuppressWarnings("PMD.DataClass") // Used to automatically convert to JSON object
     public static class TableRow {
         private static final Sanitizer SANITIZER = new Sanitizer();
 

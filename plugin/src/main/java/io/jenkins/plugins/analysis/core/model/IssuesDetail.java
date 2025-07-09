@@ -52,7 +52,7 @@ import io.jenkins.plugins.forensics.util.CommitDecoratorFactory;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings({"PMD.ExcessiveImports", "PMD.CouplingBetweenObjects", "PMD.GodClass", "ClassDataAbstractionCoupling", "ClassFanOutComplexity"})
+@SuppressWarnings({"PMD.CouplingBetweenObjects", "PMD.GodClass", "ClassDataAbstractionCoupling", "ClassFanOutComplexity"})
 public class IssuesDetail extends DefaultAsyncTableContentProvider implements ModelObject {
     private static final ResetQualityGateCommand RESET_QUALITY_GATE_COMMAND = new ResetQualityGateCommand();
     private static final JacksonFacade JACKSON_FACADE = new JacksonFacade();

@@ -85,7 +85,7 @@ public class DetailFactory {
      *
      * @return the dynamic result of this module detail view
      */
-    @SuppressWarnings({"PMD.CyclomaticComplexity", "checkstyle:ParameterNumber"})
+    @SuppressWarnings("checkstyle:ParameterNumber")
     Object createTrendDetails(final String link, final Run<?, ?> owner, final AnalysisResult result,
             final Report allIssues, final Report newIssues,
             final Report outstandingIssues, final Report fixedIssues,
@@ -153,7 +153,7 @@ public class DetailFactory {
                 .withColumnEnd(issue.getColumnEnd()).build();
     }
 
-    @SuppressWarnings({"checkstyle:ParameterNumber", "PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.AvoidLiteralsInIfCondition"})
+    @SuppressWarnings({"checkstyle:ParameterNumber", "PMD.CyclomaticComplexity", "PMD.AvoidLiteralsInIfCondition"})
     @SuppressFBWarnings("IMPROPER_UNICODE")
     private Object createNewDetailView(final String link, final Run<?, ?> owner, final AnalysisResult result,
             final Report allIssues, final Report newIssues, final Report outstandingIssues, final Report fixedIssues,
@@ -217,7 +217,6 @@ public class DetailFactory {
     }
 
     @SuppressFBWarnings(value = "UNSAFE_HASH_EQUALS", justification = "Hashcode is used as URL")
-    @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
     private String getDisplayNameOfDetails(final String property, final Report selectedIssues,
             final String originHash, final Set<String> origins) {
         if (ORIGIN_PROPERTY.equals(property)) {

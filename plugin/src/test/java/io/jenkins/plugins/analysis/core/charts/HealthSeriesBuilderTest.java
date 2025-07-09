@@ -28,7 +28,6 @@ class HealthSeriesBuilderTest {
     private static final int UNHEALTHY_THRESHOLD = 5;
 
     @SuppressFBWarnings("UPM")
-    @SuppressWarnings("PMD.UnusedPrivateMethod")
     private static Stream<Arguments> testData() {
         return Stream.of(
                 new TestArgumentsBuilder()
@@ -143,7 +142,6 @@ class HealthSeriesBuilderTest {
         private AnalysisResult run;
         private HealthDescriptor descriptor;
         private Iterable<Integer> series;
-
 
         /**
          * Set the tests name.

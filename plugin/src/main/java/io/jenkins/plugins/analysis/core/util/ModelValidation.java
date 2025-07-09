@@ -5,8 +5,6 @@ import org.apache.commons.lang3.StringUtils;
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.VisibleForTesting;
 
-import java.nio.charset.Charset;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import hudson.util.ComboBoxModel;
@@ -20,9 +18,7 @@ import io.jenkins.plugins.util.JenkinsFacade;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings("PMD.GodClass")
 public class ModelValidation {
-    private static final Set<String> ALL_CHARSETS = Charset.availableCharsets().keySet();
     private static final Pattern VALID_ID_PATTERN = Pattern.compile("\\p{Alnum}[\\p{Alnum}-_.]*");
 
     @VisibleForTesting

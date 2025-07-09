@@ -21,7 +21,6 @@ import hudson.model.Run;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings("PMD.ExcessiveImports")
 public class BuildFolderFacade implements Serializable {
     @Serial
     private static final long serialVersionUID = 1904631270145841113L;

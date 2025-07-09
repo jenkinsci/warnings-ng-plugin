@@ -48,7 +48,7 @@ import io.jenkins.plugins.util.ValidationUtilities;
  * Otherwise, a default ID is used to publish the results. In any case, the computed ID can be overwritten by specifying
  * an ID as step parameter.
  */
-@SuppressWarnings({"InstanceVariableMayNotBeInitialized", "PMD.ExcessiveImports", "PMD.ExcessivePublicCount", "PMD.DataClass", "PMD.GodClass", "PMD.TooManyFields"})
+@SuppressWarnings({"InstanceVariableMayNotBeInitialized", "PMD.DataClass", "PMD.TooManyFields"})
 public class PublishIssuesStep extends Step implements Serializable {
     @Serial
     private static final long serialVersionUID = -1833335402353771148L;
@@ -420,7 +420,6 @@ public class PublishIssuesStep extends Step implements Serializable {
          * @param step
          *         the actual step to execute
          */
-        @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
         Execution(@NonNull final StepContext context, final PublishIssuesStep step) {
             super(context);
 
