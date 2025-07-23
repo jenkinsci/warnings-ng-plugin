@@ -8,7 +8,7 @@ import hudson.Extension;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.model.SvgIconLabelProvider;
+import io.jenkins.plugins.analysis.core.model.SymbolIconLabelProvider;
 
 /**
  * Provides a parser and customized messages for Stylelint.
@@ -43,7 +43,7 @@ public class StyleLint extends AnalysisModelParser {
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new SvgIconLabelProvider(getId(), getDisplayName(), getDescriptionProvider(), "stylelint");
+            return new SymbolIconLabelProvider(getId(), getDisplayName(), getDescriptionProvider(), "symbol-stylelint plugin-warnings-ng");
         }
     }
 }
