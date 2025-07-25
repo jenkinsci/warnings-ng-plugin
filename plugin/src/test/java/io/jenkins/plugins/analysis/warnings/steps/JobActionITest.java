@@ -36,7 +36,7 @@ import static io.jenkins.plugins.analysis.core.model.MissingResultFallbackHandle
 class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String ECLIPSE = "Eclipse ECJ Warnings Trend";
     private static final String CHECKSTYLE = "CheckStyle Warnings Trend";
-    private static final String CHECKSTYLE_ICON = "plugin/warnings-ng/icons/checkstyle.svg";
+    private static final String CHECKSTYLE_ICON = "symbol-checkstyle plugin-warnings-ng";
     private static final String ECLIPSE_URL_NAME = "eclipse";
     private static final String ECLIPSE_LOG = "eclipse.txt";
     private static final String CHECKSTYLE_XML = "checkstyle.xml";

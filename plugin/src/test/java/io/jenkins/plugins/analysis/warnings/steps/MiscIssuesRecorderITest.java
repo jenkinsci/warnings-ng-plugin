@@ -55,7 +55,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String CUSTOM_ID = "custom-id";
     private static final String CUSTOM_NAME = "custom-name";
     private static final String CUSTOM_ICON = "custom.png";
-    private static final String CHECKSTYLE_ICON = "checkstyle.svg";
+    private static final String CHECKSTYLE_ICON = "symbol-checkstyle plugin-warnings-ng";
 
     /**
      * Verifies that {@link FindBugs} handles the different severity mapping modes.
