@@ -11,3 +11,4 @@ release.properties
 .DS_Store
 .idea
 /package-lock.json
+/plugin/work/

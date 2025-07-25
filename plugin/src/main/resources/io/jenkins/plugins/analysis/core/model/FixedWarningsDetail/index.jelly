@@ -1,5 +1,5 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:bs="/bootstrap5">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:bs="/bootstrap5" xmlns:l="/lib/layout">
 
   <st:header name="Content-Type" value="text/html;charset=UTF-8"/>
 
@@ -11,8 +11,7 @@
 
     <div class="fluid-container">
 
-      <bs:card title="${it.displayName}" fontAwesomeIcon="award">
-
+      <l:card title="${it.displayName}">
         <div class="table-responsive">
           <table class="table table-hover display" id="fixed">
             <thead>
@@ -52,8 +51,7 @@
             </tbody>
           </table>
         </div>
-
-      </bs:card>
+      </l:card>
 
     </div>
 

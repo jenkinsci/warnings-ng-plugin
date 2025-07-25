@@ -1,18 +1,15 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:issues="/issues">
 
-  <div class="row py-1 flex-nowrap">
-
-    <div class="col-xs-12 col-sm-6 col-md-5 col-lg-4 col-xl-4">
+  <div class="ng-cards">
+    <div class="ng-card__small">
       <issues:zero-issues/>
     </div>
-
-    <div class="col">
+    <div class="ng-card__large">
       <issues:history/>
     </div>
 
+    <issues:log-messages errors="${it.errorMessages}" messages="${it.infoMessages}"/>
   </div>
-
-  <issues:log-messages errors="${it.errorMessages}" messages="${it.infoMessages}"/>
 
 </j:jelly>
