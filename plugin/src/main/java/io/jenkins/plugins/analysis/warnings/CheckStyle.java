@@ -8,7 +8,7 @@ import hudson.Extension;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.model.SvgIconLabelProvider;
+import io.jenkins.plugins.analysis.core.model.SymbolIconLabelProvider;
 
 /**
  * Provides a parser and customized messages for CheckStyle.
@@ -43,7 +43,7 @@ public class CheckStyle extends AnalysisModelParser {
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new SvgIconLabelProvider(ID, getDisplayName(), getDescriptionProvider());
+            return new SymbolIconLabelProvider(ID, getDisplayName(), getDescriptionProvider(), "symbol-checkstyle plugin-warnings-ng");
         }
     }
 }
