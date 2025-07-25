@@ -39,19 +39,15 @@
     display: block;
     padding-top: 20px;
 }
-
-/* ------------------------------------------------------------------------------------------------------------------- */
-
-/* Font awesome icons */
-
-.no-issues-banner {
-    padding: 30px;
-    color: var(--success-color) !important;
-    height: 200px;
-    width: 200px;
+/* No issues card */
+.no-issues {
+    text-align: center;
+    svg {
+        height: 200px;
+        width: 200px;
+        color: var(--success-color);
+    }
 }
-
-/* ------------------------------------------------------------------------------------------------------------------- */
 
 /* Bar graph in table */
 .bar-graph {
@@ -96,4 +92,45 @@
 /* Mouse cursor pointer for clicking on doughnut charts */
 .graph-cursor-pointer {
     cursor: pointer;
+}
+
+/* ------------------------------------------------------------------------------------------------------------------- */
+/* Cards                                                                                                               */
+/* ------------------------------------------------------------------------------------------------------------------- */
+
+.ng-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 1rem;
+
+    .jenkins-card {
+        height: 100%;
+
+        pre {
+            margin-bottom: 0;
+        }
+    }
+}
+
+@media (max-width: 1200px) {
+    .ng-cards {
+        display: flex;
+        flex-direction: column;
+
+        .jenkins-card {
+            min-height: 220px;
+        }
+    }
+}
+
+.ng-card__small {
+    grid-column: span 1;
+}
+
+.ng-card__large {
+    grid-column: span 2;
+}
+
+.ng-card__x-large {
+    grid-column: span 3;
 }
