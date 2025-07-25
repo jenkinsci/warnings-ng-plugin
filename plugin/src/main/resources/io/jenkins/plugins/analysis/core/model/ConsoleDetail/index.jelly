@@ -1,11 +1,16 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:bs="/bootstrap5">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout">
   <st:header name="Content-Type" value="text/html;charset=UTF-8" />
 
-  <bs:page it="${it}">
-
-    <j:out value="${it.sourceCode}" />
-
-  </bs:page>
+  <l:layout title="${it.displayName}" norefresh="true" nogrid="true">
+    <st:include it="${it.owner}" page="sidepanel.jelly"/>
+    <l:main-panel>
+      <st:adjunct includes="io.jenkins.plugins.bootstrap5"/>
+      <l:app-bar title="${title}"/>
+      <div class="${class}">
+        <j:out value="${it.sourceCode}" />
+      </div>
+    </l:main-panel>
+  </l:layout>
 
 </j:jelly>

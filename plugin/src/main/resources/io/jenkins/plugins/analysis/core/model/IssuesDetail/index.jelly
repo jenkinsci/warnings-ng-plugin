@@ -1,33 +1,32 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:bs="/bootstrap5">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout">
 
   <st:header name="Content-Type" value="text/html;charset=UTF-8"/>
 
-  <bs:page it="${it}">
+  <l:layout title="${it.displayName}" norefresh="true" nogrid="true">
+    <st:include it="${it.owner}" page="sidepanel.jelly"/>
+    <l:main-panel>
+      <st:adjunct includes="io.jenkins.plugins.bootstrap5"/>
+      <l:app-bar title="${title}"/>
+      <div class="${class}">
+        <st:adjunct includes="io.jenkins.plugins.echarts"/>
+        <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
 
-    <st:adjunct includes="io.jenkins.plugins.echarts"/>
-    <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
+        <j:set var="i" value="${it.issues}"/>
 
-    <j:set var="i" value="${it.issues}"/>
+        <j:choose>
+          <j:when test="${i.isNotEmpty()}">
+            <st:include page="filled.jelly"/>
+          </j:when>
+          <j:otherwise>
+            <st:include page="empty.jelly"/>
+          </j:otherwise>
+        </j:choose>
 
-    <j:choose>
-      <j:when test="${i.isNotEmpty()}">
-
-        <st:include page="filled.jelly"/>
-
-      </j:when>
-      <j:otherwise>
-
-        <st:include page="empty.jelly"/>
-
-      </j:otherwise>
-
-    </j:choose>
-
-
-    <st:bind var="proxy" value="${it}" />
-    <st:adjunct includes="io.jenkins.plugins.analysis.core.model.IssuesDetail.issues-detail"/>
-
-  </bs:page>
+        <st:bind var="proxy" value="${it}" />
+        <st:adjunct includes="io.jenkins.plugins.analysis.core.model.IssuesDetail.issues-detail"/>
+      </div>
+    </l:main-panel>
+  </l:layout>
 
 </j:jelly>
