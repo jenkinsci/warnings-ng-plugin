@@ -45,7 +45,7 @@
   <properties>
     <module.name>${project.groupId}.warnings.ng</module.name>
 
-    <analysis-model-api.version>13.5.0</analysis-model-api.version>
+    <analysis-model-api.version>13.7.0</analysis-model-api.version>
     <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
     <pull-request-monitoring.version>335.v525cd64ec76b_</pull-request-monitoring.version>
 
