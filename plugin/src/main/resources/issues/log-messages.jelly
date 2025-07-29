@@ -15,7 +15,7 @@
       <l:card title="${%Error Messages}">
         <pre>
           <samp id="errors" class="log-output">
-            <j:forEach var="message" items="${it.errorMessages}">
+            <j:forEach var="message" items="${errors}">
               <div>
                 ${message}
               </div>
