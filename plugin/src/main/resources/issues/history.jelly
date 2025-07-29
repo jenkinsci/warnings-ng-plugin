@@ -1,12 +1,11 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:bs="/bootstrap5" xmlns:c="/charts">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:bs="/bootstrap5" xmlns:c="/charts" xmlns:l="/lib/layout">
 
   <st:documentation>
     Renders a chart with the build history in a bootstrap card.
   </st:documentation>
 
-  <bs:card title="${%History}" fontAwesomeIcon="chart-line">
-
+  <l:card title="${%History}">
     <bs:carousel id="trend-carousel">
       <div class="carousel-item active">
         <div id="severities-trend-chart" class="graph-cursor-pointer card-chart-carousel"/>
@@ -23,9 +22,7 @@
         </div>
       </j:if>
     </bs:carousel>
-
-  </bs:card>
-
+  </l:card>
   <c:chart-setup id="issues-history"/>
 
 </j:jelly>

@@ -1,19 +1,15 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:bs="/bootstrap5" xmlns:fa="/font-awesome" >
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:bs="/bootstrap5" xmlns:fa="/font-awesome" xmlns:l="/lib/layout" >
 
   <st:documentation>
     Renders a bootstrap card with a zero issues message.
   </st:documentation>
 
-  <bs:card title="${%Congratulations}" fontAwesomeIcon="trophy" class="h-100">
-
-    <div class="text-center">
-      <fa:svg-icon name="check-double" class="no-issues-banner"/>
+  <l:card title="${%Congratulations}">
+    <div class="no-issues">
+      <l:icon src="symbol-checkmark-done-outline plugin-ionicons-api" />
+      <h5>${%congratulations}</h5>
     </div>
-    <div class="text-center">
-      <h5 class="card-title">${%congratulations}</h5>
-    </div>
-
-  </bs:card>
+  </l:card>
 
 </j:jelly>
