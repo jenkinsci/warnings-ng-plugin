@@ -11,32 +11,32 @@
   </st:documentation>
 
   <j:if test="${size(errors) > 0}">
-    <div class="ng-card__x-large">
+    <div class="warnings-card__x-large">
       <l:card title="${%Error Messages}">
-        <pre>
-          <samp id="errors" class="log-output">
+        <div class="warnings-console-output">
+          <pre id="errors">
             <j:forEach var="message" items="${errors}">
               <div>
                 ${message}
               </div>
             </j:forEach>
-          </samp>
-        </pre>
+          </pre>
+        </div>
       </l:card>
     </div>
   </j:if>
 
-  <div class="ng-card__x-large">
+  <div class="warnings-card__x-large">
     <l:card title="${%Information Messages}">
-      <pre>
-        <samp id="info" class="log-output">
+      <div class="warnings-console-output">
+        <pre id="info">
           <j:forEach var="message" items="${messages}">
             <div>
               ${message}
             </div>
           </j:forEach>
-        </samp>
-      </pre>
+        </pre>
+      </div>
     </l:card>
   </div>
 

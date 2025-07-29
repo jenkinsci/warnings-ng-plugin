@@ -1,11 +1,11 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:issues="/issues">
 
-  <div class="ng-cards">
-    <div class="ng-card__small">
+  <div class="warnings-cards">
+    <div class="warnings-card__small">
       <issues:zero-issues/>
     </div>
-    <div class="ng-card__large">
+    <div class="warnings-card__large">
       <issues:history/>
     </div>
 
