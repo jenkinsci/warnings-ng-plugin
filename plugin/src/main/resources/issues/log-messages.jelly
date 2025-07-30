@@ -27,7 +27,7 @@
   </j:if>
 
   <div class="warnings-card__x-large">
-    <l:card title="${%Information Messages}">
+    <l:card title="${%Information Messages}" expandable="info">
       <div class="warnings-console-output">
         <pre id="info">
           <j:forEach var="message" items="${messages}">
