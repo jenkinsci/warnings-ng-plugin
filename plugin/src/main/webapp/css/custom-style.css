@@ -125,7 +125,7 @@
 }
 
 @media (width < 1000px) {
-    .jenkins-card__content .app-console-output-widget {
+    .jenkins-card__content .warnings-console-output {
         max-height: 300px;
     }
 }
