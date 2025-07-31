@@ -14,16 +14,16 @@ import hudson.model.Run;
 import jenkins.model.TransientActionFactory;
 
 /**
- * Registers this class as a Jenkins extension that provides fallback for analysis builds.
- * This helps display warnings in the job view even when no analysis is present in one of the latest builds.
- * The actions are rendered by finding the most recent build with valid {@link ResultAction} instances,
- * and then attaching the corresponding {@link JobAction} and {@link TransientProjectResultAction} to the job.
+ * Registers this class as a Jenkins extension that provides fallback for analysis builds. This helps display warnings
+ * in the job view even when no analysis is present in one of the latest builds. The actions are rendered by finding the
+ * most recent build with valid {@link ResultAction} instances, and then attaching the corresponding {@link JobAction}
+ * to the job.
  */
 @Extension
 public final class MissingResultFallbackHandler extends TransientActionFactory<Job<?, ?>> {
     /**
-     * The maximum number of builds to consider when looking for a valid {@link ResultAction}.
-     * This is set to a maximum of 5 to avoid performance issues with large job histories.
+     * The maximum number of builds to consider when looking for a valid {@link ResultAction}. This is set to a maximum
+     * of 5 to avoid performance issues with large job histories.
      */
     public static final int MAX_BUILDS_TO_CONSIDER = 5;
 
@@ -55,7 +55,6 @@ public final class MissingResultFallbackHandler extends TransientActionFactory<J
             List<Action> actions = new ArrayList<>();
             for (ResultAction action : resultActions) {
                 actions.addAll(action.getProjectActions());
-                actions.add(new TransientProjectResultAction(action));
             }
 
             if (!resultActions.isEmpty()) {
@@ -64,28 +63,5 @@ public final class MissingResultFallbackHandler extends TransientActionFactory<J
         }
 
         return Collections.emptyList();
-    }
-
-    /**
-     * A wrapper record for {@link ResultAction} that provides an absolute URL for the link on the side panel.
-     *
-     * @param resultAction
-     *          Valid Result Action
-     */
-    private record TransientProjectResultAction(ResultAction resultAction) implements Action {
-        @Override
-        public String getIconFileName() {
-            return resultAction.getIconFileName();
-        }
-
-        @Override
-        public String getDisplayName() {
-            return resultAction.getDisplayName();
-        }
-
-        @Override
-        public String getUrlName() {
-            return resultAction.getAbsoluteUrl();
-        }
     }
 }
