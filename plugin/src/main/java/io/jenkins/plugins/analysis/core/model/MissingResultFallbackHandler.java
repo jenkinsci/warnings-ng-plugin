@@ -55,6 +55,7 @@ public final class MissingResultFallbackHandler extends TransientActionFactory<J
             List<Action> actions = new ArrayList<>();
             for (ResultAction action : resultActions) {
                 actions.addAll(action.getProjectActions());
+                actions.add(new TransientProjectResultAction(action));
             }
 
             if (!resultActions.isEmpty()) {
@@ -63,5 +64,28 @@ public final class MissingResultFallbackHandler extends TransientActionFactory<J
         }
 
         return Collections.emptyList();
+    }
+
+    /**
+     * A wrapper record for {@link ResultAction} that provides an absolute URL for the link on the side panel.
+     *
+     * @param resultAction
+     *          Valid Result Action
+     */
+    private record TransientProjectResultAction(ResultAction resultAction) implements Action {
+        @Override
+        public String getIconFileName() {
+            return resultAction.getIconFileName();
+        }
+
+        @Override
+        public String getDisplayName() {
+            return resultAction.getDisplayName();
+        }
+
+        @Override
+        public String getUrlName() {
+            return resultAction.getAbsoluteUrl();
+        }
     }
 }
