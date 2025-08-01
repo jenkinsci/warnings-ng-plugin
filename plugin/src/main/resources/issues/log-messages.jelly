@@ -12,7 +12,7 @@
 
   <j:if test="${size(errors) > 0}">
     <div class="warnings-card__x-large">
-      <l:card title="${%Error Messages}">
+      <l:card title="${%Error Messages}" expandable="info">
         <div class="warnings-console-output">
           <pre id="errors">
             <j:forEach var="message" items="${errors}">
