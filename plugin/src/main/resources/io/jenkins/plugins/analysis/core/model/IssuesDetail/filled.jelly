@@ -65,17 +65,6 @@
 
         <div id="statistics">
 
-          <j:choose>
-            <j:when test="${it.labelProvider.largeIconUrl.startsWith('symbol')}">
-              <j:set var="png" value="${null}"/>
-              <j:set var="symbol" value="${it.labelProvider.largeIconUrl}"/>
-            </j:when>
-            <j:otherwise>
-              <j:set var="png" value="${resURL}/${it.labelProvider.largeIconUrl}"/>
-              <j:set var="symbol" value="${null}"/>
-            </j:otherwise>
-          </j:choose>
-
           <l:card title="${%Details}">
             <div class="tabBarFrame">
               <ul class="flex-wrap tabBar" role="tablist" id="tab-details">
