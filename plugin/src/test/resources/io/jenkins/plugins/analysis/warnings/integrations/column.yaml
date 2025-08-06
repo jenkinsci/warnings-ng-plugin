@@ -1,0 +1,5 @@
+appearance:
+  warnings:
+    enableColumnByDefault: false
+    defaultType: NEW
+    defaultName: "New Warnings"

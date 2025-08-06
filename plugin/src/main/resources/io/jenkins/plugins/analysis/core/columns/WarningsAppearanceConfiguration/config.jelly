@@ -1,0 +1,16 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+  <f:section title="${%Warnings Plugin}">
+    <f:entry title="${%title.defaultVisibility}" field="enableColumnByDefault">
+      <f:checkbox/>
+    </f:entry>
+
+    <f:entry title="${%title.defaultColumnName}" field="defaultName">
+      <f:textbox default="${%# Issues}"/>
+    </f:entry>
+
+    <f:entry title="${%title.defaultType}" field="defaultType">
+      <f:select/>
+    </f:entry>
+  </f:section>
+</j:jelly>

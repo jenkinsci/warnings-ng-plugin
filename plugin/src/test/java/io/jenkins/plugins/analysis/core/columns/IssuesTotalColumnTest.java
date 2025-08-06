@@ -6,12 +6,17 @@ import org.junitpioneer.jupiter.Issue;
 import java.util.Arrays;
 import java.util.Collections;
 
+import hudson.DescriptorExtensionList;
 import hudson.model.Job;
+import jenkins.model.GlobalConfiguration;
+import jenkins.model.Jenkins;
 
 import io.jenkins.plugins.analysis.core.columns.IssuesTotalColumn.AnalysisResultDescription;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.util.IssuesStatistics.StatisticProperties;
+import io.jenkins.plugins.util.GlobalConfigurationFacade;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 import static io.jenkins.plugins.analysis.core.testutil.JobStubs.*;
 import static org.assertj.core.api.Assertions.*;
@@ -194,7 +199,11 @@ class IssuesTotalColumnTest {
     }
 
     private IssuesTotalColumn createColumn() {
-        var column = new IssuesTotalColumn();
+        var jenkins = mock(JenkinsFacade.class);
+        var descriptorList = DescriptorExtensionList.createDescriptorList((Jenkins) null, GlobalConfiguration.class);
+        descriptorList.add(new WarningsAppearanceConfiguration(mock(GlobalConfigurationFacade.class), jenkins));
+        when(jenkins.getDescriptorsFor(GlobalConfiguration.class)).thenReturn(descriptorList);
+        var column = new IssuesTotalColumn(jenkins);
         column.setName(NAME);
         LabelProviderFactory labelProviderFactory = mock(LabelProviderFactory.class);
         registerTool(labelProviderFactory, CHECK_STYLE_ID, CHECK_STYLE_NAME);
