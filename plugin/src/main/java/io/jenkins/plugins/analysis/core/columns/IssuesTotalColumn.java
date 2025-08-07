@@ -25,6 +25,7 @@ import hudson.model.Run;
 import hudson.util.ListBoxModel;
 import hudson.views.ListViewColumn;
 import hudson.views.ListViewColumnDescriptor;
+import jenkins.model.GlobalConfiguration;
 import jenkins.model.Jenkins;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
@@ -50,13 +51,20 @@ public class IssuesTotalColumn extends ListViewColumn {
     private String name = "# Issues";
 
     private LabelProviderFactory labelProviderFactory = new LabelProviderFactory();
-    private StatisticProperties type = StatisticProperties.TOTAL;
+    private StatisticProperties type;
 
     /** Creates a new instance of {@link ToolSelection}. */
     @DataBoundConstructor
     public IssuesTotalColumn() {
+        this(new JenkinsFacade());
+    }
+
+    @VisibleForTesting
+    IssuesTotalColumn(final JenkinsFacade facade) {
         super();
-        // empty constructor required for stapler
+
+        name = getConfiguration(facade).getDefaultName();
+        type = getConfiguration(facade).getDefaultType();
     }
 
     /**
@@ -227,6 +235,11 @@ public class IssuesTotalColumn extends ListViewColumn {
         return StringUtils.EMPTY;
     }
 
+    private static WarningsAppearanceConfiguration getConfiguration(final JenkinsFacade jenkins) {
+        var configurations = jenkins.getDescriptorsFor(GlobalConfiguration.class);
+        return Objects.requireNonNull(configurations.get(WarningsAppearanceConfiguration.class));
+    }
+
     /**
      * Extension point registration.
      *
@@ -235,10 +248,32 @@ public class IssuesTotalColumn extends ListViewColumn {
     @Extension(optional = true)
     @Symbol("issueTotalsColumn")
     public static class IssuesTablePortletDescriptor extends ListViewColumnDescriptor {
+        private final JenkinsFacade jenkins;
+
+        /**
+         * Creates a new descriptor.
+         */
+        @SuppressWarnings("unused") // Required for Jenkins Extensions
+        public IssuesTablePortletDescriptor() {
+            this(new JenkinsFacade());
+        }
+
+        @VisibleForTesting
+        IssuesTablePortletDescriptor(final JenkinsFacade jenkins) {
+            super();
+
+            this.jenkins = jenkins;
+        }
+
         @NonNull
         @Override
         public String getDisplayName() {
             return Messages.IssuesTotalColumn_Name();
+        }
+
+        @Override
+        public boolean shownByDefault() {
+            return getConfiguration(jenkins).isEnableColumnByDefault();
         }
 
         /**

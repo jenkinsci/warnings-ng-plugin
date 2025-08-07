@@ -12,6 +12,7 @@ import hudson.views.ListViewColumn;
 
 import io.jenkins.plugins.analysis.core.columns.IssuesTotalColumn;
 import io.jenkins.plugins.analysis.core.columns.Messages;
+import io.jenkins.plugins.analysis.core.columns.WarningsAppearanceConfiguration;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
@@ -32,6 +33,19 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  * @author Lorenz Munsch
  */
 class JobDslITest extends IntegrationTestWithJenkinsPerTest {
+    /**
+     * Reads a YAML file with the coverage column configuration and verifies that the column has been configured.
+     */
+    @Test
+    void shouldImportWarningsAppearanceFromYaml() {
+        configureJenkins("column.yaml");
+
+        assertThat(WarningsAppearanceConfiguration.getInstance())
+                .isNotEnableColumnByDefault()
+                .hasDefaultType(StatisticProperties.NEW)
+                .hasDefaultName("New Warnings");
+    }
+
     /**
      * Creates a freestyle job from a YAML file and verifies that issue recorder finds warnings.
      */
