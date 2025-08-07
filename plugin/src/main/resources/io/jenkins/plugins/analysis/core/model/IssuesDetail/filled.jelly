@@ -1,7 +1,7 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:issues="/issues" xmlns:dt="/data-tables" xmlns:c="/charts" xmlns:bs="/bootstrap5" xmlns:l="/lib/layout">
 
-  <div class="row py-3 flex-nowrap">
+  <div class="row flex-nowrap">
 
     <!-- A carousel with all pie charts on small screens -->
     <div class="col-xs-12 col-sm-6 col-md-5 col-lg-4 col-xl-3 d-none d-block d-sm-block d-xxl-none">
@@ -55,7 +55,7 @@
 
   </div>
 
-  <div class="row py-3">
+  <div class="row py-2">
 
     <div class="col">
       <j:set var="l" value="${it.tabLabelProvider}"/>
