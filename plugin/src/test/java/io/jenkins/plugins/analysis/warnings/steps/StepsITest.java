@@ -329,6 +329,8 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         var result = scheduleSuccessfulBuild(job);
 
         assertThat(result).hasTotalSize(1);
+
+        assertThat(getConsoleLog(result)).containsOnlyOnce("[-ERROR-] Can't create fingerprints for some files");
     }
 
     private String createShellStep(final String script) {
@@ -447,6 +449,8 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
                 .hasSeverity(Severity.ERROR);
         assertThat(result.getIssues().get(3).getDescription())
                 .contains("Re-run Maven using the -X switch to enable full debug logging.");
+
+        assertThat(getConsoleLog(result)).containsOnlyOnce("-> found 4 issues (skipped 0 duplicates)");
     }
 
     /** Runs the Clang parser on an output file that contains 1 issue. */
@@ -461,6 +465,8 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         var result = scheduleSuccessfulBuild(job);
 
         assertThat(result).hasTotalSize(6);
+
+        assertThat(getConsoleLog(result)).containsOnlyOnce("Parsing console log");
     }
 
     /**

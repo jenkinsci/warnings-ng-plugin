@@ -4,6 +4,7 @@ import com.google.errorprone.annotations.FormatMethod;
 
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.Ensure;
+import edu.hm.hafner.util.FilteredLog;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 import java.io.Serial;
@@ -275,5 +276,19 @@ public class AnnotatedReport implements Serializable {
      */
     public void addRepositoryStatistics(final RepositoryStatistics statistics) {
         aggregatedRepositoryStatistics.addAll(statistics);
+    }
+
+    /**
+     * Returns a logger that contains all info and error messages of the aggregated report.
+     * Note that this logger will not automatically update itself when new messages that are
+     * added to the report afterward.
+     *
+     * @return the logger with all messages
+     */
+    public FilteredLog getLogger() {
+        var log = new FilteredLog();
+        aggregatedReport.getInfoMessages().forEach(log::logInfo);
+        aggregatedReport.getErrorMessages().forEach(log::logError);
+        return log;
     }
 }

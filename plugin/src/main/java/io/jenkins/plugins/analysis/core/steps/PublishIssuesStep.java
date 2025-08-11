@@ -470,7 +470,7 @@ public class PublishIssuesStep extends Step implements Serializable {
         private LogHandler getLogger(final AnnotatedReport annotatedReport) throws InterruptedException {
             var toolName = new LabelProviderFactory().create(annotatedReport.getId(),
                     StringUtils.defaultString(step.getName())).getName();
-            var logHandler = new LogHandler(getTaskListener(), toolName);
+            var logHandler = new LogHandler(getTaskListener(), toolName, annotatedReport.getLogger());
             logHandler.setQuiet(step.isQuiet());
 
             var report = annotatedReport.getReport();

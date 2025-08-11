@@ -802,7 +802,7 @@ public class IssuesRecorder extends Recorder {
     AnalysisResult publishResult(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
             final String loggerName, final AnnotatedReport annotatedReport, final String customName,
             final String customIcon, final ResultHandler resultHandler) {
-        var logHandler = new LogHandler(listener, loggerName);
+        var logHandler = new LogHandler(listener, loggerName, annotatedReport.getLogger());
         logHandler.setQuiet(quiet);
 
         var report = annotatedReport.getReport();
