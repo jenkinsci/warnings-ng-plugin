@@ -18,9 +18,9 @@ jobs:
     name: '${{ matrix.browser }} / ${{ matrix.test }}'
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         if: github.event_name == 'push'
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           ref: "${{ github.event.pull_request.merge_commit_sha }}"
         if: github.event_name == 'pull_request_target'

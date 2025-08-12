@@ -11,12 +11,12 @@ jobs:
 
     steps:
       - name: 'Checkout merge commit'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: "${{ github.event.pull_request.merge_commit_sha }}"
         if: github.event.pull_request.merge_commit_sha != ''
       - name: 'Checkout PR head commit'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: "${{ github.event.pull_request.head.sha }}"
         if: github.event.pull_request.merge_commit_sha == ''
