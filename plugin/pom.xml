@@ -1,29 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.jvnet.hudson.plugins</groupId>
-    <artifactId>analysis-pom</artifactId>
-    <version>10.14.0</version>
-    <relativePath />
+    <groupId>io.jenkins.plugins</groupId>
+    <artifactId>warnings-ng-parent</artifactId>
+    <version>${revision}.${changelist}</version>
   </parent>
 
-  <groupId>io.jenkins.plugins</groupId>
   <artifactId>warnings-ng</artifactId>
-  <version>12.11.0-SNAPSHOT</version>
   <packaging>hpi</packaging>
-  <name>Warnings Plugin</name>
 
-  <description>Collects compiler warnings or issues reported by static analysis
+  <name>Warnings Plugin</name>
+  <description>Jenkins plug-in that collects compiler warnings or issues reported by static analysis
     tools and visualizes the results. It has built-in support for more than one hundred static analysis tools
-    (including several compilers), see the list of supported report formats.</description>
+    (including several compilers), see the list of supported report formats.
+  </description>
   <url>https://github.com/jenkinsci/warnings-ng-plugin</url>
 
   <licenses>
     <license>
-      <name>MIT license</name>
-      <comments>All source code is under the MIT license.</comments>
+      <name>MIT License</name>
+      <url>https://opensource.org/licenses/MIT</url>
     </license>
   </licenses>
 
@@ -35,16 +34,8 @@
     </developer>
   </developers>
 
-  <scm>
-    <connection>scm:git:https://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
-    <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
-    <tag>v12.10.0</tag>
-    <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
-  </scm>
-
   <properties>
-    <module.name>${project.groupId}.warnings.ng</module.name>
-
+    <!-- Library Dependencies Versions -->
     <analysis-model-api.version>13.7.0</analysis-model-api.version>
     <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
     <pull-request-monitoring.version>335.v525cd64ec76b_</pull-request-monitoring.version>
@@ -63,7 +54,8 @@
     <!-- Maven Surefire ArgLine -->
     <argLine>-Djava.awt.headless=true -Xmx1024m -Djenkins.test.timeout=1000 --add-opens java.base/java.lang=ALL-UNNAMED
       --add-opens java.base/java.io=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens
-      java.base/java.util.concurrent=ALL-UNNAMED</argLine>
+      java.base/java.util.concurrent=ALL-UNNAMED
+    </argLine>
   </properties>
 
   <dependencies>

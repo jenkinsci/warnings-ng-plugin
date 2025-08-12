@@ -1,10 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.jvnet.hudson.plugins</groupId>
+    <artifactId>analysis-pom</artifactId>
+    <version>10.14.0</version>
+    <relativePath />
+  </parent>
 
   <groupId>io.jenkins.plugins</groupId>
   <artifactId>warnings-ng-parent</artifactId>
   <packaging>pom</packaging>
-  <version>UNVERSIONED</version>
+  <version>${revision}.${changelist}</version>
 
   <name>Aggregator for Warnings Plugin</name>
 
@@ -14,60 +22,31 @@
   </modules>
 
   <properties>
-    <java.version>1.8</java.version>
-    <hpi-plugin.version>3.66</hpi-plugin.version>
-    <scmTag>HEAD</scmTag>
+    <revision>12</revision>
+    <changelist>999999-SNAPSHOT</changelist>
 
-    <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
-    <maven-deploy-plugin.version>3.1.4</maven-deploy-plugin.version>
-    <maven.compiler.source>${java.version}</maven.compiler.source>
-    <maven.compiler.target>${java.version}</maven.compiler.target>
-  </properties>
+    <gitHubRepo>jenkinsci/warnings-ng-plugin</gitHubRepo>
+ </properties>
 
-  <scm child.scm.connection.inherit.append.path="false" child.scm.developerConnection.inherit.append.path="false" child.scm.url.inherit.append.path="false">
-    <connection>scm:git:https://github.com/jenkinsci/warnings-ng-plugin.git</connection>
-    <developerConnection>scm:git:git@github.com:jenkinsci/warnings-ng-plugin.git</developerConnection>
-    <url>https://github.com/jenkinsci/warnings-ng-plugin</url>
+  <scm child.scm.connection.inherit.append.path="false"
+       child.scm.developerConnection.inherit.append.path="false"
+       child.scm.url.inherit.append.path="false">
+    <connection>scm:git:https://github.com/${gitHubRepo}.git</connection>
+    <developerConnection>scm:git:git@github.com:${gitHubRepo}.git</developerConnection>
+    <url>https://github.com/${gitHubRepo}</url>
     <tag>${scmTag}</tag>
   </scm>
 
+  <repositories>
+    <repository>
+      <id>repo.jenkins-ci.org</id>
+      <url>https://repo.jenkins-ci.org/public/</url>
+    </repository>
+  </repositories>
   <pluginRepositories>
     <pluginRepository>
       <id>repo.jenkins-ci.org</id>
       <url>https://repo.jenkins-ci.org/public/</url>
     </pluginRepository>
   </pluginRepositories>
-
-  <build>
-    <plugins>
-      <!-- Do not deploy anything except for the plugin -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-deploy-plugin</artifactId>
-        <version>${maven-deploy-plugin.version}</version>
-        <configuration>
-          <skip>true</skip>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.jenkins-ci.tools</groupId>
-        <artifactId>maven-hpi-plugin</artifactId>
-        <version>${hpi-plugin.version}</version>
-      </plugin>
-    </plugins>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>${maven-compiler-plugin.version}</version>
-          <configuration>
-            <source>${java.version}</source>
-            <target>${java.version}</target>
-            <testSource>${java.version}</testSource>
-            <testTarget>${java.version}</testTarget>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
 </project>
