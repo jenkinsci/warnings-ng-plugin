@@ -50,6 +50,14 @@
       </plugins>
     </pluginManagement>
   </build>
+  <profiles>
+    <profile>
+      <id>quick-build</id>
+      <modules>
+        <module>plugin</module>
+      </modules>
+    </profile>
+  </profiles>
 
   <repositories>
     <repository>
