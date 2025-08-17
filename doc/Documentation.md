@@ -723,9 +723,7 @@ recordIssues skipBlames: true, tool: java(pattern: '*.log')
 :warning: This feature requires the installation of an additional plugin: 
 [Git Forensics Plugin](https://github.com/jenkinsci/git-forensics-plugin).
 
-If the Git Forensics plugin has been configured to mine the source code repository in the style of 
-[Code as a Crime Scene](https://www.adamtornhill.com/articles/crimescene/codeascrimescene.htm) 
-(Adam Tornhill, November 2013) then this information will be shown in an additional view side by side with the issues.
+If the Git Forensics plugin has been configured to mine the source code repository in the style of Code as a Crime Scene (Adam Tornhill, November 2013) then this information will be shown in an additional view side by side with the issues.
 In this *SCM Forensics* view all issues will be listed with the following properties of the affected files:
 - commits count
 - different authors count
