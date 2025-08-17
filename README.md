@@ -31,8 +31,7 @@ This code of this plugin is also available as a standalone GitHub or GitLab acti
 
 If you are using Git as a source code management system then the warnings plugin will optionally mine 
 the repository in the style of 
-[Code as a Crime Scene](https://www.adamtornhill.com/articles/crimescene/codeascrimescene.htm) 
-(Adam Tornhill, November 2013) to determine statistics of the affected files (i.e. the files with issues):
+Code as a Crime Scene (Adam Tornhill, November 2013) to determine statistics of the affected files (i.e. the files with issues):
 - commits count
 - different authors count
 - creation time
