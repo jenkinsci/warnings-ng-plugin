@@ -35,6 +35,8 @@
   </developers>
 
   <properties>
+    <maven.deploy.skip>false</maven.deploy.skip>
+
     <!-- Library Dependencies Versions -->
     <analysis-model-api.version>13.7.0</analysis-model-api.version>
     <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>

@@ -26,6 +26,7 @@
     <changelist>999999-SNAPSHOT</changelist>
 
     <gitHubRepo>jenkinsci/warnings-ng-plugin</gitHubRepo>
+    <maven.deploy.skip>true</maven.deploy.skip>
   </properties>
 
   <scm child.scm.connection.inherit.append.path="false"
@@ -37,17 +38,6 @@
     <tag>${scmTag}</tag>
   </scm>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-deploy-plugin</artifactId>
-        <configuration>
-          <skip>true</skip>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
   <profiles>
     <profile>
       <id>ci</id>
