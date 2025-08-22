@@ -8,7 +8,7 @@ import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
 
 import edu.hm.hafner.analysis.ParsingCanceledException;
-import edu.hm.hafner.util.ArchitectureRules;
+import edu.hm.hafner.archunit.ArchitectureRules;
 
 import java.util.Arrays;
 import java.util.List;
