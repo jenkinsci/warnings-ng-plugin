@@ -46,6 +46,13 @@
         <module>ui-tests</module>
       </modules>
     </profile>
+    <profile>
+      <id>ui-tests-locally</id>
+      <modules>
+        <module>plugin</module>
+        <module>ui-tests</module>
+      </modules>
+    </profile>
   </profiles>
 
   <repositories>
