@@ -34,7 +34,7 @@ jobs:
       - name: Set up Maven
         uses: stCarolas/setup-maven@v5
         with:
-          maven-version: 3.9.9
+          maven-version: 3.9.11
       - name: Build warnings plugin and download dependencies
         run: mvn -V --color always -ntp verify -Pskip --file plugin/pom.xml
       - name: Run UI tests ${{ matrix.test }} on ${{ matrix.browser }}
