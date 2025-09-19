@@ -14,7 +14,7 @@
 
     // null safe check
     ${propertyType} actual${Property} = actual.get${Property}();
-    if (!Objects.deepEquals(actual${Property}, ${property_safe})) {
+    if (!java.util.Objects.deepEquals(actual${Property}, ${property_safe})) {
       failWithMessage(assertjErrorMessage, actual, ${property_safe}, actual${Property});
     }
 
