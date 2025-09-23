@@ -12,6 +12,7 @@ import edu.hm.hafner.analysis.Severity;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -1211,7 +1212,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     private void write(final String adaptedOobFileContent) {
         try {
             var userContentDir = new File(getJenkins().jenkins.getRootDir(), "userContent");
-            Files.write(new File(userContentDir, "oob.xml").toPath(), adaptedOobFileContent.getBytes());
+            Files.write(new File(userContentDir, "oob.xml").toPath(), adaptedOobFileContent.getBytes(StandardCharsets.UTF_8));
         }
         catch (IOException e) {
             throw new AssertionError(e);

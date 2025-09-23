@@ -6,7 +6,7 @@ package ${package};
  */
 @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("NM")
 @edu.hm.hafner.util.Generated(value="assertj-assertions-generator")
-public class Assertions extends org.assertj.core.api.Assertions {
+public class Assertions extends edu.hm.hafner.analysis.assertions.Assertions {
 ${all_assertions_entry_points}
   /**
    * Creates a new <code>{@link Assertions}</code>.

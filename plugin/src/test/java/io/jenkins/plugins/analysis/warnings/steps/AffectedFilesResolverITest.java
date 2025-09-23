@@ -6,6 +6,7 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Severity;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -300,7 +301,7 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
             workspace.mkdirs();
             var logMessage = "%s/config.xml:451: warning: foo defined but not used%n".formatted(
                     job.getRootDir());
-            Files.write(Path.of(workspace.child("gcc.log").getRemote()), logMessage.getBytes());
+            Files.write(Path.of(workspace.child("gcc.log").getRemote()), logMessage.getBytes(StandardCharsets.UTF_8));
         }
         catch (IOException | InterruptedException e) {
             throw new AssertionError(e);
