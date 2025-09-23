@@ -80,7 +80,7 @@ public class AnalysisHistory implements History {
     }
 
     private static Optional<Run<?, ?>> getRunWithResult(
-            final @CheckForNull Run<?, ?> start, final ResultSelector selector) {
+            @CheckForNull final Run<?, ?> start, final ResultSelector selector) {
         for (Run<?, ?> run = start; run != null; run = run.getPreviousBuild()) {
             Optional<ResultAction> action = selector.get(run);
             if (action.isPresent()) {

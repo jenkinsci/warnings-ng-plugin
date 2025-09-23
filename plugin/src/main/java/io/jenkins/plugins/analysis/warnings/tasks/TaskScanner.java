@@ -73,8 +73,8 @@ class TaskScanner {
      * @param matcherMode
      *         if tag identifiers should be treated as regular expression
      */
-    TaskScanner(final @CheckForNull String highTags, final @CheckForNull String normalTags,
-            final @CheckForNull String lowTags,
+    TaskScanner(@CheckForNull final String highTags, @CheckForNull final String normalTags,
+            @CheckForNull final String lowTags,
             final CaseMode caseMode, final MatcherMode matcherMode) {
         isUppercase = caseMode == CaseMode.IGNORE_CASE;
         if (StringUtils.isNotBlank(highTags)) {

@@ -26,10 +26,11 @@ public class ToolsTrendChart implements TrendChart {
 
         int index = 0;
         for (String name : lineModel.getDataSetIds()) {
-            var lineSeries = new LineSeries(name, JenkinsPalette.chartColor(index++).normal(),
+            var lineSeries = new LineSeries(name, JenkinsPalette.chartColor(index).normal(),
                     StackedMode.SEPARATE_LINES, FilledMode.LINES);
             lineSeries.addAll(lineModel.getSeries(name));
             model.addSeries(lineSeries);
+            index++;
         }
 
         return model;
