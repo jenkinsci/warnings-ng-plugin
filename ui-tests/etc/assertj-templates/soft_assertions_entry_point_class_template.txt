@@ -4,6 +4,7 @@ package ${package};
  * Entry point for soft assertions of different data types.
  */
 @edu.hm.hafner.util.Generated(value="assertj-assertions-generator")
+@SuppressWarnings("rawtypes")
 public class SoftAssertions extends org.assertj.core.api.AutoCloseableSoftAssertions {
 ${all_assertions_entry_points}
 }
