@@ -5,6 +5,7 @@
    * @return this assertion object.
    * @throws AssertionError - if the actual ${class_to_assert}'s ${property} is not equal to the given one.${throws_javadoc}
    */
+  @SuppressWarnings("rawtypes")
   public ${self_type} has${Property}(${propertyType} ${property_safe}) ${throws}{
     // check that actual ${class_to_assert} we want to make assertions on is not null.
     isNotNull();
