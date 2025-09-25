@@ -40,7 +40,11 @@ jobs:
         env:
           BROWSER: chrome-container
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
-        run: mvn -V --color always -ntp clean verify -Pci -Powasp | tee maven.log
+        run: |
+          mvn -V --color always -ntp clean verify -Pci -Powasp | tee maven.log
+          if [ "${PIPESTATUS[0]}" != "0" ]; then
+             exit 1;
+          fi
       - name: Extract pull request number
         uses: jwalton/gh-find-current-pr@v1
         id: pr
