@@ -38,8 +38,7 @@
     <maven.deploy.skip>false</maven.deploy.skip>
 
     <!-- Library Dependencies Versions -->
-    <analysis-model-api.version>13.7.0</analysis-model-api.version>
-    <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
+    <analysis-model-tests.version>13.7.0</analysis-model-tests.version>
     <pull-request-monitoring.version>335.v525cd64ec76b_</pull-request-monitoring.version>
 
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
@@ -78,18 +77,14 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>jsoup</artifactId>
-      <!-- TODO: remove the version when a matching BOM is available -->
-      <version>1.21.1-52.v96e4041b_60fd</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>analysis-model-api</artifactId>
-      <version>${analysis-model-api.version}</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>plugin-util-api</artifactId>
-      <version>6.1167.v022176c7e0ca_</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
@@ -294,7 +289,6 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>plugin-util-api</artifactId>
-      <version>6.1167.v022176c7e0ca_</version>
       <classifier>tests</classifier>
       <scope>test</scope>
       <exclusions>
@@ -411,7 +405,6 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>ansicolor</artifactId>
-      <version>1.0.6</version>
       <scope>test</scope>
     </dependency>
 
