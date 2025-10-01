@@ -1067,6 +1067,14 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         shouldFindIssuesOfTool(12, new Vale(), "vale-report.json");
     }
 
+    /**
+     * Runs the NpmAudit parser on an output file that contains 14 issues.
+     */
+    @Test
+    void shouldFindAllNpmAuditIssues() {
+        shouldFindIssuesOfTool(14, new NpmAudit(), "npm-audit.json");
+    }
+
     private ResultAction shouldFindIssuesOfTool(final int expectedSizeOfIssues, final ReportScanningTool tool,
             final String... fileNames) {
         var defaultPipelineDefinition = "recordIssues tool: %s(pattern:'**/%s', reportEncoding:'UTF-8')";
