@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v5
-      - uses: umbrelladocs/action-linkspector@v1.3.7
+      - uses: umbrelladocs/action-linkspector@v1.4.0
         with:
           github_token: ${{ secrets.github_token }}
           reporter: github-pr-check
