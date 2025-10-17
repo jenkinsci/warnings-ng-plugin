@@ -1068,7 +1068,7 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Runs the NpmAudit parser on an output file that contains 14 issues.
+     * Runs the NpmAudit parser on an output file that contains 21 issues.
      */
     @Test
     void shouldFindAllNpmAuditIssues() {
