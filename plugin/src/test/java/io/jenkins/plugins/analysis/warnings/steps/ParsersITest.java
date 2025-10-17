@@ -1072,7 +1072,7 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldFindAllNpmAuditIssues() {
-        shouldFindIssuesOfTool(14, new NpmAudit(), "npm-audit.json");
+        shouldFindIssuesOfTool(21, new NpmAudit(), "npm-audit.json");
     }
 
     private ResultAction shouldFindIssuesOfTool(final int expectedSizeOfIssues, final ReportScanningTool tool,
