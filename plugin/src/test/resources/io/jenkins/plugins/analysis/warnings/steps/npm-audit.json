@@ -1,0 +1,554 @@
+{
+  "auditReportVersion": 2,
+  "vulnerabilities": {
+    "connect": {
+      "name": "connect",
+      "severity": "high",
+      "isDirect": true,
+      "via": [
+        {
+          "source": 1090838,
+          "name": "connect",
+          "dependency": "connect",
+          "title": "methodOverride Middleware Reflected Cross-Site Scripting in connect",
+          "url": "https://github.com/advisories/GHSA-3fw8-66wf-pr7m",
+          "severity": "low",
+          "cwe": [
+            "CWE-79"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": "<=2.8.0"
+        },
+        {
+          "source": 1092134,
+          "name": "connect",
+          "dependency": "connect",
+          "title": "Cross-Site Scripting in connect",
+          "url": "https://github.com/advisories/GHSA-rch9-xh7r-mqgw",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-79"
+          ],
+          "cvss": {
+            "score": 5.4,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:C/C:L/I:L/A:N"
+          },
+          "range": "<2.14.0"
+        },
+        {
+          "source": 1093045,
+          "name": "connect",
+          "dependency": "connect",
+          "title": "Node Connect Reflected Cross-Site Scripting in Sencha Labs Connect middleware",
+          "url": "https://github.com/advisories/GHSA-6w62-83g6-rfhj",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-79"
+          ],
+          "cvss": {
+            "score": 6.1,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N"
+          },
+          "range": "<2.8.2"
+        },
+        "cookie",
+        "cookie-signature",
+        "fresh",
+        "qs",
+        "send"
+      ],
+      "effects": [
+        "express"
+      ],
+      "range": "<=2.30.2",
+      "nodes": [
+        "node_modules/connect"
+      ],
+      "fixAvailable": {
+        "name": "express",
+        "version": "5.1.0",
+        "isSemVerMajor": true
+      }
+    },
+    "cookie": {
+      "name": "cookie",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1103907,
+          "name": "cookie",
+          "dependency": "cookie",
+          "title": "cookie accepts cookie name, path, and domain with out of bounds characters",
+          "url": "https://github.com/advisories/GHSA-pxg6-pf52-xh8x",
+          "severity": "low",
+          "cwe": [
+            "CWE-74"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": "<0.7.0"
+        }
+      ],
+      "effects": [
+        "connect",
+        "express"
+      ],
+      "range": "<0.7.0",
+      "nodes": [
+        "node_modules/cookie"
+      ],
+      "fixAvailable": {
+        "name": "express",
+        "version": "5.1.0",
+        "isSemVerMajor": true
+      }
+    },
+    "cookie-signature": {
+      "name": "cookie-signature",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1088307,
+          "name": "cookie-signature",
+          "dependency": "cookie-signature",
+          "title": "cookie-signature Timing Attack",
+          "url": "https://github.com/advisories/GHSA-92vm-wfm5-mxvv",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-362"
+          ],
+          "cvss": {
+            "score": 4.4,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:H/UI:N/S:U/C:H/I:N/A:N"
+          },
+          "range": "<1.0.4"
+        }
+      ],
+      "effects": [
+        "connect",
+        "express"
+      ],
+      "range": "<1.0.4",
+      "nodes": [
+        "node_modules/cookie-signature"
+      ],
+      "fixAvailable": {
+        "name": "express",
+        "version": "5.1.0",
+        "isSemVerMajor": true
+      }
+    },
+    "express": {
+      "name": "express",
+      "severity": "high",
+      "isDirect": true,
+      "via": [
+        {
+          "source": 1090965,
+          "name": "express",
+          "dependency": "express",
+          "title": "No Charset in Content-Type Header in express",
+          "url": "https://github.com/advisories/GHSA-gpvr-g6gh-9mc2",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-79"
+          ],
+          "cvss": {
+            "score": 6.1,
+            "vectorString": "CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N"
+          },
+          "range": "<3.11.0"
+        },
+        {
+          "source": 1096820,
+          "name": "express",
+          "dependency": "express",
+          "title": "Express.js Open Redirect in malformed URLs",
+          "url": "https://github.com/advisories/GHSA-rv95-896h-c2vc",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-601",
+            "CWE-1286"
+          ],
+          "cvss": {
+            "score": 6.1,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N"
+          },
+          "range": "<4.19.2"
+        },
+        {
+          "source": 1100530,
+          "name": "express",
+          "dependency": "express",
+          "title": "express vulnerable to XSS via response.redirect()",
+          "url": "https://github.com/advisories/GHSA-qw6h-vgh9-j6wx",
+          "severity": "low",
+          "cwe": [
+            "CWE-79"
+          ],
+          "cvss": {
+            "score": 5,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:L/I:L/A:L"
+          },
+          "range": "<4.20.0"
+        },
+        {
+          "source": 1101381,
+          "name": "express",
+          "dependency": "express",
+          "title": "Express ressource injection",
+          "url": "https://github.com/advisories/GHSA-cm5g-3pgc-8rg4",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-74"
+          ],
+          "cvss": {
+            "score": 4,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:C/C:L/I:N/A:N"
+          },
+          "range": "<=3.21.4"
+        },
+        "connect",
+        "cookie",
+        "cookie-signature",
+        "fresh",
+        "qs",
+        "send"
+      ],
+      "effects": [],
+      "range": "<=4.21.0 || 5.0.0-alpha.1 - 5.0.0",
+      "nodes": [
+        "node_modules/express"
+      ],
+      "fixAvailable": {
+        "name": "express",
+        "version": "5.1.0",
+        "isSemVerMajor": true
+      }
+    },
+    "fresh": {
+      "name": "fresh",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1093570,
+          "name": "fresh",
+          "dependency": "fresh",
+          "title": "Regular Expression Denial of Service in fresh",
+          "severity": "low",
+          "range": "<0.5.2"
+        }
+      ],
+      "effects": [
+        "connect",
+        "express",
+        "send"
+      ],
+      "range": "<0.5.2",
+      "nodes": [
+        "node_modules/connect/node_modules/fresh",
+        "node_modules/express/node_modules/fresh",
+        "node_modules/fresh"
+      ]
+    },
+    "mime": {
+      "name": "mime",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1093780,
+          "name": "mime",
+          "dependency": "mime",
+          "title": "mime Regular Expression Denial of Service when MIME lookup performed on untrusted user input",
+          "url": "https://github.com/advisories/GHSA-wrvr-8mpx-r7pp",
+          "severity": "high",
+          "cwe": [
+            "CWE-400"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": "<1.4.1"
+        }
+      ],
+      "effects": [
+        "send"
+      ],
+      "range": "<1.4.1",
+      "nodes": [
+        "node_modules/connect/node_modules/mime",
+        "node_modules/express/node_modules/mime",
+        "node_modules/mime"
+      ],
+      "fixAvailable": {
+        "name": "send",
+        "version": "1.2.0",
+        "isSemVerMajor": true
+      }
+    },
+    "qs": {
+      "name": "qs",
+      "severity": "high",
+      "isDirect": true,
+      "via": [
+        {
+          "source": 1087527,
+          "name": "qs",
+          "dependency": "qs",
+          "title": "Prototype Pollution Protection Bypass in qs",
+          "url": "https://github.com/advisories/GHSA-gqgv-6jq5-jjj9",
+          "severity": "high",
+          "cwe": [
+            "CWE-20"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": "<6.0.4"
+        },
+        {
+          "source": 1090967,
+          "name": "qs",
+          "dependency": "qs",
+          "title": "Denial-of-Service Extended Event Loop Blocking in qs",
+          "url": "https://github.com/advisories/GHSA-f9cm-p3w6-xvr3",
+          "severity": "high",
+          "cwe": [
+            "CWE-400"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": "<1.0.0"
+        },
+        {
+          "source": 1091683,
+          "name": "qs",
+          "dependency": "qs",
+          "title": "Denial-of-Service Memory Exhaustion in qs",
+          "url": "https://github.com/advisories/GHSA-jjv7-qpx3-h62q",
+          "severity": "high",
+          "cwe": [
+            "CWE-400"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": "<1.0.0"
+        },
+        {
+          "source": 1104115,
+          "name": "qs",
+          "dependency": "qs",
+          "title": "qs vulnerable to Prototype Pollution",
+          "url": "https://github.com/advisories/GHSA-hrpp-h998-j3pp",
+          "severity": "high",
+          "cwe": [
+            "CWE-1321"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": "<6.2.4"
+        }
+      ],
+      "effects": [
+        "connect",
+        "express"
+      ],
+      "range": "<=6.2.3",
+      "nodes": [
+        "node_modules/connect/node_modules/qs",
+        "node_modules/express/node_modules/qs",
+        "node_modules/qs"
+      ],
+      "fixAvailable": {
+        "name": "qs",
+        "version": "6.14.0",
+        "isSemVerMajor": true
+      }
+    },
+    "send": {
+      "name": "send",
+      "severity": "high",
+      "isDirect": true,
+      "via": [
+        {
+          "source": 1091007,
+          "name": "send",
+          "dependency": "send",
+          "title": "Directory Traversal in send",
+          "url": "https://github.com/advisories/GHSA-xwg4-93c6-3h42",
+          "severity": "low",
+          "cwe": [
+            "CWE-22"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": "<0.8.4"
+        },
+        {
+          "source": 1094854,
+          "name": "send",
+          "dependency": "send",
+          "title": "Root Path Disclosure in send",
+          "url": "https://github.com/advisories/GHSA-jgqf-hwc5-hh37",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-200"
+          ],
+          "cvss": {
+            "score": 5.3,
+            "vectorString": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N"
+          },
+          "range": "<0.11.1"
+        },
+        {
+          "source": 1100526,
+          "name": "send",
+          "dependency": "send",
+          "title": "send vulnerable to template injection that can lead to XSS",
+          "url": "https://github.com/advisories/GHSA-m6fv-jmcg-4jfg",
+          "severity": "low",
+          "cwe": [
+            "CWE-79"
+          ],
+          "cvss": {
+            "score": 5,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:L/I:L/A:L"
+          },
+          "range": "<0.19.0"
+        },
+        "fresh",
+        "mime"
+      ],
+      "effects": [
+        "connect",
+        "express"
+      ],
+      "range": "<=0.18.0",
+      "nodes": [
+        "node_modules/connect/node_modules/send",
+        "node_modules/express/node_modules/send",
+        "node_modules/send"
+      ],
+      "fixAvailable": {
+        "name": "send",
+        "version": "1.2.0",
+        "isSemVerMajor": true
+      }
+    },
+    "serialize-javascript": {
+      "name": "serialize-javascript",
+      "severity": "high",
+      "isDirect": true,
+      "via": [
+        {
+          "source": 1087544,
+          "name": "serialize-javascript",
+          "dependency": "serialize-javascript",
+          "title": "Cross-Site Scripting in serialize-javascript",
+          "url": "https://github.com/advisories/GHSA-h9rv-jmmf-4pgx",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-79"
+          ],
+          "cvss": {
+            "score": 4.2,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:N/I:L/A:L"
+          },
+          "range": "<2.1.1"
+        },
+        {
+          "source": 1095131,
+          "name": "serialize-javascript",
+          "dependency": "serialize-javascript",
+          "title": "Insecure serialization leading to RCE in serialize-javascript",
+          "url": "https://github.com/advisories/GHSA-hxcc-f52p-wc94",
+          "severity": "high",
+          "cwe": [
+            "CWE-502"
+          ],
+          "cvss": {
+            "score": 8.1,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H"
+          },
+          "range": "<3.1.0"
+        }
+      ],
+      "effects": [],
+      "range": "<=3.0.0",
+      "nodes": [
+        "node_modules/serialize-javascript"
+      ],
+      "fixAvailable": {
+        "name": "serialize-javascript",
+        "version": "6.0.2",
+        "isSemVerMajor": true
+      }
+    },
+    "ssri": {
+      "name": "ssri",
+      "severity": "critical",
+      "isDirect": true,
+      "via": [
+        {
+          "source": 1094077,
+          "name": "ssri",
+          "dependency": "ssri",
+          "title": "Regular Expression Denial of Service (ReDoS)",
+          "url": "https://github.com/advisories/GHSA-vx3p-948g-6vhq",
+          "severity": "critical",
+          "cwe": [
+            "CWE-400",
+            "CWE-243"
+          ],
+          "cvss": {
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": ">=5.2.2 <6.0.2"
+        }
+      ],
+      "effects": [],
+      "range": "5.2.2 - 6.0.1",
+      "nodes": [
+        "node_modules/ssri"
+      ],
+      "fixAvailable": true
+    }
+  },
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 1,
+      "moderate": 1,
+      "high": 8,
+      "critical": 1,
+      "total": 10
+    },
+    "dependencies": {
+      "prod": 27,
+      "dev": 6,
+      "optional": 0,
+      "peer": 0,
+      "peerOptional": 0,
+      "total": 32
+    }
+  }
+}
