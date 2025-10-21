@@ -25,8 +25,8 @@ THE SOFTWARE.
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout">
     <j:forEach var="item" items="${it.warningActions}">
-        <l:card title="${item.displayName}" expandable="${item.urlName}">
-            <a class="jenkins-card__teaser" href="${item.urlName}" tabindex="-1">
+        <l:card title="${item.displayName}" expandable="warnings/${item.urlName}">
+            <a class="jenkins-card__teaser" href="warnings/${item.urlName}" tabindex="-1">
                 <l:icon src="${item.iconFileName}" />
                 <div>
                     No issues reported

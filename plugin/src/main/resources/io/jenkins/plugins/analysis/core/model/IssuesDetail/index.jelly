@@ -1,33 +1,50 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:bs="/bootstrap5">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout">
+  <j:set var="item" value="${it}" />
+  <j:new var="it" className="io.jenkins.plugins.analysis.core.model.RunTab" useContextClassLoader="true">
+    <j:arg value="${it.owner}" />
+  </j:new>
 
-  <st:header name="Content-Type" value="text/html;charset=UTF-8"/>
+  <l:run-subpage>
+    <l:app-bar title="${it.displayName}" />
 
-  <bs:page it="${it}">
+    <div style="display: grid; grid-template-columns: 300px 1fr; gap: 1rem">
+      <div>
+        <l:tasks>
+          <j:forEach var="item" items="${it.warningActions}">
+            <l:task title="${item.displayName}"
+                    icon="${item.iconFileName}"
+                    href="${item.urlName}" />
+          </j:forEach>
+        </l:tasks>
+      </div>
 
-    <st:adjunct includes="io.jenkins.plugins.echarts"/>
-    <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
+      <div>
+        <j:set var="it" value="${item}" />
 
-    <j:set var="i" value="${it.issues}"/>
+        <st:adjunct includes="io.jenkins.plugins.echarts"/>
+        <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
 
-    <j:choose>
-      <j:when test="${i.isNotEmpty()}">
+        <j:set var="i" value="${it.issues}"/>
 
-        <st:include page="filled.jelly"/>
+        <j:choose>
+          <j:when test="${i.isNotEmpty()}">
 
-      </j:when>
-      <j:otherwise>
+            <st:include page="filled.jelly"/>
 
-        <st:include page="empty.jelly"/>
+          </j:when>
+          <j:otherwise>
 
-      </j:otherwise>
+            <st:include page="empty.jelly"/>
 
-    </j:choose>
+          </j:otherwise>
+
+        </j:choose>
 
 
-    <st:bind var="proxy" value="${it}" />
-    <st:adjunct includes="io.jenkins.plugins.analysis.core.model.IssuesDetail.issues-detail"/>
-
-  </bs:page>
-
+        <st:bind var="proxy" value="${it}" />
+        <st:adjunct includes="io.jenkins.plugins.analysis.core.model.IssuesDetail.issues-detail"/>
+      </div>
+    </div>
+  </l:run-subpage>
 </j:jelly>

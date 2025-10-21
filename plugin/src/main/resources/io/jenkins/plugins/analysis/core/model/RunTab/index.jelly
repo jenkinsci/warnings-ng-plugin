@@ -23,18 +23,7 @@ THE SOFTWARE.
 -->
 
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout">
-    <l:run-subpage>
-        <l:app-bar title="${it.displayName}" />
-
-        <div>
-            <l:tasks>
-                <j:forEach var="item" items="${it.warningActions}">
-                    <l:task title="${item.displayName}"
-                            icon="${item.iconFileName}"
-                            href="../${item.urlName}" />
-                </j:forEach>
-            </l:tasks>
-        </div>
-    </l:run-subpage>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
+  <j:set var="item" value="${it.warningActions[0]}" />
+  <st:include page="index.jelly" it="${item.target}" />
 </j:jelly>
