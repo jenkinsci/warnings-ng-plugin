@@ -1,0 +1,145 @@
+{
+  "tests": {
+    "name": "Tests",
+    "tools": [
+      {
+        "id": "junit",
+        "name": "Unit Tests",
+        "pattern": "**/target/surefire-reports/TEST*data*.xml"
+      },
+      {
+        "id": "junit",
+        "icon": "rocket",
+        "name": "Integration Tests",
+        "pattern": "**/target/failsafe-reports/TEST*.xml"
+      },
+      {
+        "id": "junit",
+        "icon": "no_entry",
+        "name": "Architecture Tests",
+        "pattern": "**/target/surefire-reports/TEST*archunit*.xml"
+      }
+    ]
+  },
+  "analysis": [
+    {
+      "name": "Style",
+      "id": "style",
+      "tools": [
+        {
+          "id": "checkstyle",
+          "pattern": "**/target/**checkstyle-result.xml"
+        },
+        {
+          "id": "pmd",
+          "pattern": "**/target/pmd-*/pmd.xml"
+        },
+        {
+          "id": "java",
+          "icon": "coffee",
+          "pattern": "**/maven.log"
+        }
+      ]
+    },
+    {
+      "name": "Bugs",
+      "id": "bugs",
+      "icon": "bug",
+      "tools": [
+        {
+          "id": "spotbugs",
+          "sourcePath": "src/main/java",
+          "pattern": "**/target/spotbugsXml.xml"
+        },
+        {
+          "id": "error-prone",
+          "pattern": "**/maven.log"
+        }
+      ]
+    },
+    {
+      "name": "API Problems",
+      "id": "api",
+      "icon": "no_entry_sign",
+      "tools": [
+        {
+          "id": "revapi",
+          "sourcePath": "src/main/java",
+          "pattern": "**/target/revapi-result.json"
+        }
+      ]
+    },
+    {
+      "name": "Vulnerabilities",
+      "id": "vulnerabilities",
+      "icon": "shield",
+      "tools": [
+        {
+          "icon": "shield",
+          "id": "owasp-dependency-check",
+          "icon": "shield",
+          "pattern": "**/target/dependency-check-report.json"
+        }
+      ]
+    }
+  ],
+  "coverage": [
+    {
+      "name": "Code Coverage",
+      "tools": [
+        {
+          "id": "jacoco",
+          "metric": "line",
+          "sourcePath": "src/main/java",
+          "pattern": "**/target/site/jacoco/jacoco.xml"
+        },
+        {
+          "id": "jacoco",
+          "metric": "branch",
+          "sourcePath": "src/main/java",
+          "pattern": "**/target/site/jacoco/jacoco.xml"
+        }
+      ]
+    }
+  ],
+  "metrics": {
+    "name": "Software Metrics",
+    "tools": [
+      {
+        "id": "metrics",
+        "pattern": "**/metrics/pmd.xml",
+        "metric": "CYCLOMATIC_COMPLEXITY"
+      },
+      {
+        "id": "metrics",
+        "pattern": "**/metrics/pmd.xml",
+        "metric": "COGNITIVE_COMPLEXITY"
+      },
+      {
+        "id": "metrics",
+        "pattern": "**/metrics/pmd.xml",
+        "metric": "NPATH_COMPLEXITY"
+      },
+      {
+        "id": "metrics",
+        "pattern": "**/metrics/pmd.xml",
+        "metric": "LOC"
+      },
+      {
+        "id": "metrics",
+        "pattern": "**/metrics/pmd.xml",
+        "metric": "NCSS"
+      },
+      {
+        "id": "metrics",
+        "pattern": "**/metrics/pmd.xml",
+        "metric": "COHESION"
+      },
+      {
+        "id": "metrics",
+        "pattern": "**/metrics/pmd.xml",
+        "metric": "WEIGHT_OF_CLASS"
+      }
+    ]
+  }
+}
