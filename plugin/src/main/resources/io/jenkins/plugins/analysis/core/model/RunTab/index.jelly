@@ -23,7 +23,40 @@ THE SOFTWARE.
 -->
 
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
-  <j:set var="item" value="${it.warningActions[0]}" />
-  <st:include page="index.jelly" it="${item.target}" />
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout">
+  <l:run-subpage>
+    <l:app-bar title="${it.displayName}" />
+
+    <div style="display: grid; grid-template-columns: 300px 1fr; gap: 1rem">
+      <div>
+        <l:tasks>
+          <j:forEach var="item" items="${it.warningActions}">
+            <l:task title="${item.displayName}"
+                    icon="${item.iconFileName}"
+                    href="${item.urlName}" />
+          </j:forEach>
+        </l:tasks>
+      </div>
+      <div>
+        <j:set var="it" value="${resultAction.target}" />
+
+        <st:adjunct includes="io.jenkins.plugins.echarts"/>
+        <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
+
+        <j:set var="i" value="${it.issues}"/>
+
+        <j:choose>
+          <j:when test="${i.isNotEmpty()}">
+            <st:include page="filled.jelly" it="${it}" />
+          </j:when>
+          <j:otherwise>
+            <st:include page="empty.jelly" it="${it}" />
+          </j:otherwise>
+        </j:choose>
+
+        <st:bind var="proxy" value="${it}" />
+        <st:adjunct includes="io.jenkins.plugins.analysis.core.model.IssuesDetail.issues-detail"/>
+      </div>
+    </div>
+  </l:run-subpage>
 </j:jelly>
