@@ -1,0 +1,32 @@
+{
+  "qualityGates": [
+    {
+      "metric": "tests-success-rate",
+      "name": "Tests Success Rate",
+      "threshold": 100.0,
+      "criticality": "FAILURE"
+    },
+    {
+      "metric": "line",
+      "threshold": 80.0,
+      "criticality": "UNSTABLE"
+    },
+    {
+      "metric": "branch",
+      "threshold": 80.0,
+      "criticality": "UNSTABLE"
+    },
+    {
+      "metric": "bugs",
+      "name": "Potential Bugs",
+      "threshold": 0.0,
+      "criticality": "FAILURE"
+    },
+    {
+      "metric": "style",
+      "name": "Style Violations",
+      "threshold": 0.0,
+      "criticality": "FAILURE"
+    }
+  ]
+}

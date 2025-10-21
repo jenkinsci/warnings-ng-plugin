@@ -1,0 +1,59 @@
+name: 'Quality Monitor Build'
+
+on:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: [ubuntu-latest]
+    name: Create quality reports
+
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v5
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: 21
+          check-latest: true
+          cache: 'maven'
+      - name: Set up Maven
+        uses: stCarolas/setup-maven@v5
+        with:
+          maven-version: 3.9.11
+      - name: Cache the NVD database
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository/org/owasp/dependency-check-data
+          key: dependency-check
+      - name: Check if quality monitor reports mutation coverage
+        run: |
+          FILE='.github/quality-monitor.json'
+          PATTERN='target/pit-reports/mutations.xml'
+          if [ -f "$FILE" ]; then
+            if grep -q "$PATTERN" "$FILE"; then
+              echo "PIT=-Ppit" >> "$GITHUB_ENV"
+            fi
+          fi
+      - name: Build with Maven
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+          OSS_INDEX_TOKEN: ${{ secrets.OSS_INDEX_TOKEN }}
+          PIT: ${{ env.PIT }}
+          BROWSER: chrome-container
+        run: |
+          mvn -V --color always -ntp clean verify $PIT -Pci -Powasp | tee maven.log
+          if [ "${PIPESTATUS[0]}" != "0" ]; then
+             exit 1;
+          fi
+          mv -fv maven.log target/maven.log
+      - name: Upload Quality Reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-reports
+          path: |
+            **/target/**/*.json
+            **/target/**/*.xml
+            **/target/**/*.log
+
