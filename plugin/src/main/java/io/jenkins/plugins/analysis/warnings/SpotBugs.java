@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.warnings;
 
 import java.io.Serial;
 
+import io.jenkins.plugins.analysis.core.model.SymbolIconLabelProvider;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
@@ -37,7 +38,7 @@ public class SpotBugs extends FindBugs {
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new SvgIconLabelProvider(getId(), getName(), getDescriptionProvider());
+            return new SymbolIconLabelProvider(getId(), getName(), getDescriptionProvider(), "symbol-spotbugs plugin-warnings-ng");
         }
     }
 }

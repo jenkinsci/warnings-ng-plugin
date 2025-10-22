@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.core.model;
 
 import hudson.model.Actionable;
 import jakarta.servlet.ServletException;
+import jenkins.management.Badge;
 import jenkins.model.Tab;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
@@ -10,8 +11,6 @@ import org.kohsuke.stapler.StaplerResponse2;
 
 import java.io.IOException;
 import java.util.List;
-
-import static jakarta.servlet.http.HttpServletResponse.SC_SERVICE_UNAVAILABLE;
 
 /**
  * TODO
@@ -39,6 +38,17 @@ public class RunTab extends Tab {
     @Override
     public String getUrlName() {
         return "warnings";
+    }
+
+    @Override
+    public Badge getBadge() {
+        var warningActionsCount = getWarningActions().stream().map(e -> e.getResult().getTotalSize()).reduce(0, Integer::sum);
+
+        if (warningActionsCount == 0) {
+            return null;
+        }
+
+        return new Badge(String.valueOf(warningActionsCount), warningActionsCount + " warnings", Badge.Severity.WARNING);
     }
 
     @Restricted(NoExternalUse.class)

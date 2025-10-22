@@ -28,12 +28,13 @@ THE SOFTWARE.
     <l:app-bar title="${it.displayName}" />
 
     <div style="display: grid; grid-template-columns: 300px 1fr; gap: 1rem">
-      <div>
+      <div id="side-panel" class="app-page-body__sidebar">
         <l:tasks>
           <j:forEach var="item" items="${it.warningActions}">
             <l:task title="${item.displayName}"
                     icon="${item.iconFileName}"
-                    href="${item.urlName}" />
+                    href="${item.urlName}"
+                    badge="${item.badge}" />
           </j:forEach>
         </l:tasks>
       </div>

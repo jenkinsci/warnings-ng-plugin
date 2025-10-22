@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.core.model;
 
+import jenkins.management.Badge;
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Issue;
@@ -442,5 +443,15 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
         public String getLargeIconUrl() {
             return icon;
         }
+    }
+
+    public Badge getBadge() {
+        var warningActionsCount = getResult().getTotalSize();
+
+        if (warningActionsCount == 0) {
+            return null;
+        }
+
+        return new Badge(String.valueOf(warningActionsCount), warningActionsCount + " warnings", Badge.Severity.WARNING);
     }
 }
