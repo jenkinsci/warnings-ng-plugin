@@ -5,7 +5,7 @@
       {
         "id": "junit",
         "name": "Unit Tests",
-        "pattern": "**/target/surefire-reports/TEST*data*.xml"
+        "pattern": "**/target/surefire-reports/TEST*warnings*.xml"
       },
       {
         "id": "junit",
