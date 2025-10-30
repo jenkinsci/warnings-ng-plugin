@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.core.model;
 
+import io.jenkins.plugins.analysis.warnings.Messages;
 import jenkins.management.Badge;
 import org.apache.commons.lang3.StringUtils;
 
@@ -16,6 +17,8 @@ import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Set;
 
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.DoNotUse;
 import org.kohsuke.stapler.StaplerProxy;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
@@ -352,8 +355,14 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
     }
 
     /**
-     * idk yet
+     * Displays a badge if there are issues.
+     *
+     * <p>
+     * Only for use in Jelly.
+     *
+     * @return the badge or {@code null} if there are no issues
      */
+    @Restricted(DoNotUse.class)
     public Badge getBadge() {
         var warningActionsCount = getResult().getTotalSize();
 
@@ -361,7 +370,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
             return null;
         }
 
-        return new Badge(String.valueOf(warningActionsCount), warningActionsCount + " warnings", Badge.Severity.WARNING);
+        return new Badge(String.valueOf(warningActionsCount), Messages.ResultAction_Badge(warningActionsCount), Badge.Severity.WARNING);
     }
 
     private static class CustomIconLabelProvider extends StaticAnalysisLabelProvider {

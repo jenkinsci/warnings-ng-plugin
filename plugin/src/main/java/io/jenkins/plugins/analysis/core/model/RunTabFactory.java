@@ -9,14 +9,22 @@ import jenkins.model.TransientActionFactory;
 import java.util.Collection;
 import java.util.Collections;
 
+/**
+ * Adds a Warnings tab to the run page.
+ */
 @Extension
 public class RunTabFactory extends TransientActionFactory<Run> {
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Class<Run> type() {
         return Run.class;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @NonNull
     @Override
     public Collection<? extends Tab> createFor(@NonNull final Run target) {
