@@ -25,10 +25,12 @@ THE SOFTWARE.
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout">
   <l:run-subpage>
+    <st:adjunct includes="io.jenkins.plugins.analysis.core.model.RunTab.styles"/>
+
     <l:app-bar title="${it.displayName}" />
 
-    <div style="display: grid; grid-template-columns: 300px 1fr; gap: 1rem">
-      <div id="side-panel" class="app-page-body__sidebar">
+    <div style="display: grid; grid-template-columns: 300px 1fr; gap: var(--section-padding)">
+      <div id="side-panel" class="app-page-body__sidebar wng-sidebar">
         <l:tasks>
           <j:forEach var="item" items="${it.warningActions}">
             <l:task title="${item.displayName}"

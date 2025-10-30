@@ -10,6 +10,7 @@ import org.kohsuke.stapler.StaplerRequest2;
 import org.kohsuke.stapler.StaplerResponse2;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -17,7 +18,7 @@ import java.util.List;
  */
 public class RunTab extends Tab {
 
-    public RunTab(Actionable object) {
+    public RunTab(final Actionable object) {
         super(object);
     }
 
@@ -53,15 +54,23 @@ public class RunTab extends Tab {
 
     @Restricted(NoExternalUse.class)
     public List<ResultAction> getWarningActions() {
-        return getObject().getActions(ResultAction.class);
+        return getObject()
+                .getActions(ResultAction.class)
+                .stream()
+                .sorted(Comparator
+                        .comparingInt((ResultAction a) -> a.getResult().getTotalSize())
+                        .reversed()
+                        .thenComparing(ResultAction::getDisplayName, String.CASE_INSENSITIVE_ORDER)
+                )
+                .toList();
     }
 
-    public void doIndex(StaplerRequest2 req, StaplerResponse2 rsp) throws IOException, ServletException {
+    public void doIndex(final StaplerRequest2 req, final StaplerResponse2 rsp) throws IOException, ServletException {
         req.setAttribute("resultAction", getWarningActions().get(0));
         req.getView(this, "index.jelly").forward(req, rsp);
     }
 
-    public void doDynamic(StaplerRequest2 req, StaplerResponse2 rsp) throws IOException, ServletException {
+    public void doDynamic(final StaplerRequest2 req, final StaplerResponse2 rsp) throws IOException, ServletException {
         String action = req.getRestOfPath().substring(1);
         ResultAction resultAction = null;
 

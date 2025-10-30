@@ -8,7 +8,6 @@ import org.jenkinsci.Symbol;
 import hudson.Extension;
 
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.model.SvgIconLabelProvider;
 
 /**
  * Provides a parser and customized messages for FindBugs.

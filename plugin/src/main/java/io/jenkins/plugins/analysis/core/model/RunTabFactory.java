@@ -5,7 +5,6 @@ import hudson.Extension;
 import hudson.model.Run;
 import jenkins.model.Tab;
 import jenkins.model.TransientActionFactory;
-import jenkins.model.experimentalflags.NewBuildPageUserExperimentalFlag;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -20,13 +19,7 @@ public class RunTabFactory extends TransientActionFactory<Run> {
 
     @NonNull
     @Override
-    public Collection<? extends Tab> createFor(@NonNull Run target) {
-        boolean isExperimentalUiEnabled = new NewBuildPageUserExperimentalFlag().getFlagValue();
-
-        if (!isExperimentalUiEnabled) {
-            return Collections.emptySet();
-        }
-
+    public Collection<? extends Tab> createFor(@NonNull final Run target) {
         return Collections.singleton(new RunTab(target));
     }
 }

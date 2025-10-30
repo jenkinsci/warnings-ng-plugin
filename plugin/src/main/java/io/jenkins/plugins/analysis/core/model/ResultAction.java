@@ -351,6 +351,19 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
         return "{}";
     }
 
+    /**
+     * idk yet
+     */
+    public Badge getBadge() {
+        var warningActionsCount = getResult().getTotalSize();
+
+        if (warningActionsCount == 0) {
+            return null;
+        }
+
+        return new Badge(String.valueOf(warningActionsCount), warningActionsCount + " warnings", Badge.Severity.WARNING);
+    }
+
     private static class CustomIconLabelProvider extends StaticAnalysisLabelProvider {
         @Override
         public DetailsTableModel getIssuesModel(final Run<?, ?> build, final String url, final Report report) {
@@ -443,15 +456,5 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
         public String getLargeIconUrl() {
             return icon;
         }
-    }
-
-    public Badge getBadge() {
-        var warningActionsCount = getResult().getTotalSize();
-
-        if (warningActionsCount == 0) {
-            return null;
-        }
-
-        return new Badge(String.valueOf(warningActionsCount), warningActionsCount + " warnings", Badge.Severity.WARNING);
     }
 }
