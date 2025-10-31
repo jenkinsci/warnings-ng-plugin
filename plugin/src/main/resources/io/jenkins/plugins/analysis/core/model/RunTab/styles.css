@@ -1,0 +1,7 @@
+.wng-sidebar {
+    width: unset !important;
+
+    #tasks {
+        margin: 0 !important;
+    }
+}
