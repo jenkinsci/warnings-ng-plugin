@@ -114,6 +114,7 @@ public class RunTab extends Tab {
             if (action.equals(urlName)) {
                 req.setAttribute("resultAction", action);
                 req.getView(this, "index.jelly").forward(req, rsp);
+                return;
             }
         }
 
