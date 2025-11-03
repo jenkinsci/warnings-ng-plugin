@@ -12,6 +12,7 @@ import org.kohsuke.stapler.StaplerResponse2;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * Defines the Warnings tab for a run.
@@ -81,7 +82,13 @@ public class RunTab extends Tab {
      * @throws ServletException if forwarding fails
      */
     public void doIndex(final StaplerRequest2 req, final StaplerResponse2 rsp) throws IOException, ServletException {
-        req.setAttribute("resultAction", getWarningActions().get(0));
+        var warningActions = getWarningActions();
+
+        if (warningActions.isEmpty()) {
+            throw new NoSuchElementException("No warnings found for " + getObject());
+        }
+
+        req.setAttribute("resultAction", warningActions.get(0));
         req.getView(this, "index.jelly").forward(req, rsp);
     }
 
@@ -101,20 +108,15 @@ public class RunTab extends Tab {
      */
     public void doDynamic(final StaplerRequest2 req, final StaplerResponse2 rsp) throws IOException, ServletException {
         String action = req.getRestOfPath().substring(1);
-        ResultAction resultAction = null;
 
         for (ResultAction ui : getWarningActions()) {
             String urlName = ui.getUrlName();
             if (action.equals(urlName)) {
-                resultAction = ui;
+                req.setAttribute("resultAction", action);
+                req.getView(this, "index.jelly").forward(req, rsp);
             }
         }
 
-        if (resultAction == null) {
-            return;
-        }
-
-        req.setAttribute("resultAction", resultAction);
-        req.getView(this, "index.jelly").forward(req, rsp);
+        throw new NoSuchElementException("No warnings found for " + getObject());
     }
 }
