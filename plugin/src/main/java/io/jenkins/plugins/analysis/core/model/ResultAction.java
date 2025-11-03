@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import io.jenkins.plugins.analysis.warnings.Messages;
 import jenkins.management.Badge;
 import org.apache.commons.lang3.StringUtils;
 

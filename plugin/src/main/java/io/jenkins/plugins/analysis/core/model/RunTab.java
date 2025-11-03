@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import hudson.model.Actionable;
-import io.jenkins.plugins.analysis.warnings.Messages;
 import jakarta.servlet.ServletException;
 import jenkins.management.Badge;
 import jenkins.model.Tab;
