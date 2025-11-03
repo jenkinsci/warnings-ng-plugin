@@ -112,7 +112,7 @@ public class RunTab extends Tab {
         for (ResultAction ui : getWarningActions()) {
             String urlName = ui.getUrlName();
             if (action.equals(urlName)) {
-                req.setAttribute("resultAction", action);
+                req.setAttribute("resultAction", ui);
                 req.getView(this, "index.jelly").forward(req, rsp);
                 return;
             }
