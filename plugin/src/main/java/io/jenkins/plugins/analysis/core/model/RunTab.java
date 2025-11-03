@@ -25,9 +25,6 @@ public class RunTab extends Tab {
         super(object);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getIconFileName() {
         if (getObject().getActions(ResultAction.class).isEmpty()) {
@@ -37,25 +34,16 @@ public class RunTab extends Tab {
         return "symbol-warning-outline plugin-ionicons-api";
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getDisplayName() {
         return "Warnings";
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getUrlName() {
         return "warnings";
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Badge getBadge() {
         var warningActionsCount = getWarningActions().stream().map(e -> e.getResult().getTotalSize()).reduce(0, Integer::sum);
@@ -117,7 +105,7 @@ public class RunTab extends Tab {
 
         for (ResultAction ui : getWarningActions()) {
             String urlName = ui.getUrlName();
-            if (urlName != null && urlName.equals(action)) {
+            if (action.equals(urlName)) {
                 resultAction = ui;
             }
         }
