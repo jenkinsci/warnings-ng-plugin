@@ -29,7 +29,7 @@ THE SOFTWARE.
 
     <l:app-bar title="${it.displayName}" />
 
-    <div style="display: grid; grid-template-columns: 300px 1fr; gap: var(--section-padding)">
+    <div class="wng-body">
       <div id="side-panel" class="app-page-body__sidebar wng-sidebar">
         <l:tasks>
           <j:forEach var="item" items="${it.warningActions}" indexVar="index">

@@ -1,4 +1,13 @@
+.wng-body {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: var(--section-padding);
+    align-items: start;
+}
+
 .wng-sidebar {
+    position: sticky;
+    top: calc(var(--header-height) + var(--section-padding));
     width: unset !important;
 
     #tasks {
