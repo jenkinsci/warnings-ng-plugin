@@ -56,4 +56,4 @@ jobs:
             **/target/**/*.json
             **/target/**/*.xml
             **/target/**/*.log
-
+            !**/target/tmp/**
