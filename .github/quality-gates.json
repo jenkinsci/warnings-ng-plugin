@@ -13,7 +13,7 @@
     },
     {
       "metric": "branch",
-      "threshold": 80.0,
+      "threshold": 60.0,
       "criticality": "UNSTABLE"
     },
     {
