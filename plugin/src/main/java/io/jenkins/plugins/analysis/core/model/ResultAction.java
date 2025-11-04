@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.core.model;
 
+import jenkins.management.Badge;
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Issue;
@@ -15,6 +16,8 @@ import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Set;
 
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.DoNotUse;
 import org.kohsuke.stapler.StaplerProxy;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
@@ -348,6 +351,25 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
     public String resetReference() {
         // Empty method as workaround for Stapler bug that does not find JavaScript proxy methods in target object IssueDetail
         return "{}";
+    }
+
+    /**
+     * Displays a badge if there are issues.
+     *
+     * <p>
+     * Only for use in Jelly.
+     *
+     * @return the badge or {@code null} if there are no issues
+     */
+    @Restricted(DoNotUse.class)
+    public Badge getBadge() {
+        var warningActionsCount = getResult().getTotalSize();
+
+        if (warningActionsCount == 0) {
+            return null;
+        }
+
+        return new Badge(String.valueOf(warningActionsCount), Messages.ResultAction_Badge(warningActionsCount), Badge.Severity.WARNING);
     }
 
     private static class CustomIconLabelProvider extends StaticAnalysisLabelProvider {
