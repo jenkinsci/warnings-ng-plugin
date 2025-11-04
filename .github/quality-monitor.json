@@ -33,11 +33,6 @@
         {
           "id": "pmd",
           "pattern": "**/target/pmd-*/pmd.xml"
-        },
-        {
-          "id": "java",
-          "icon": "coffee",
-          "pattern": "**/maven.log"
         }
       ]
     },
@@ -50,22 +45,6 @@
           "id": "spotbugs",
           "sourcePath": "src/main/java",
           "pattern": "**/target/spotbugsXml.xml"
-        },
-        {
-          "id": "error-prone",
-          "pattern": "**/maven.log"
-        }
-      ]
-    },
-    {
-      "name": "API Problems",
-      "id": "api",
-      "icon": "no_entry_sign",
-      "tools": [
-        {
-          "id": "revapi",
-          "sourcePath": "src/main/java",
-          "pattern": "**/target/revapi-result.json"
         }
       ]
     },
