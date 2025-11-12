@@ -232,7 +232,7 @@ class IssuesPublisher {
         return Optional.empty();
     }
 
-    @SuppressWarnings("PMD.CognitiveComplexity")
+    @SuppressWarnings({"PMD.CognitiveComplexity", "PMD.AvoidDeeplyNestedIfStmts"})
     private Optional<Run<?, ?>> refineReferenceBasedOnQualityGate(final ResultSelector selector, final Report issues,
             final Run<?, ?> reference) {
         boolean isSkipped = false;
