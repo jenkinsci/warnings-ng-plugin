@@ -172,7 +172,7 @@ public class AffectedFilesResolver {
     }
 
     @VisibleForTesting
-    @SuppressWarnings("PMD.CognitiveComplexity")
+    @SuppressWarnings({"PMD.CognitiveComplexity", "PMD.AvoidDeeplyNestedIfStmts"})
     void copyAffectedFilesToBuildFolder(final Report report, final RemoteFacade remoteFacade)
             throws InterruptedException {
         int copied = 0;
