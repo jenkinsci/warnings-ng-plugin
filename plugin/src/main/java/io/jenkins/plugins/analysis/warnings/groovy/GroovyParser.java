@@ -419,7 +419,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
          *
          * @return a result of {@link Kind#OK} if a warning has been found
          */
-        @SuppressWarnings("illegalcatch")
+        @SuppressWarnings({"illegalcatch", "PMD.AvoidDeeplyNestedIfStmts"})
         private FormValidation parseExample(final String script, final String example, final String regexp,
                 final boolean hasMultiLineSupport) {
             Pattern pattern;
