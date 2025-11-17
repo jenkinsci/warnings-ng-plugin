@@ -11,11 +11,11 @@ jobs:
     steps:
       - name: Checkout PR
         uses: actions/checkout@v5
-      - name: Set up JDK 21
+      - name: Set up JDK
         uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
-          java-version: 21
+          java-version: 25
           check-latest: true
           cache: 'maven'
       - name: Set up Maven
