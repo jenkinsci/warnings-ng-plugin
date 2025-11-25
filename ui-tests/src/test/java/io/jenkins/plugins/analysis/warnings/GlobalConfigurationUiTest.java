@@ -1,16 +1,16 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import org.junit.Test;
+import org.openqa.selenium.NoSuchElementException;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-import org.junit.Test;
-import org.openqa.selenium.NoSuchElementException;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import org.jenkinsci.test.acceptance.junit.WithPlugins;
 import org.jenkinsci.test.acceptance.po.Build;
@@ -67,7 +67,7 @@ public class GlobalConfigurationUiTest extends UiTest {
 
     private void addGccRecorder(final FreeStyleJob job, final String homeDir) {
         job.addPublisher(IssuesRecorder.class, recorder -> {
-            recorder.setTool("GNU C Compiler (gcc)", gcc -> gcc.setPattern("**/gcc.log"));
+            recorder.setTool("GNU C Compiler (GCC)", gcc -> gcc.setPattern("**/gcc.log"));
             recorder.setEnabledForFailure(true);
             recorder.setSourceCodeEncoding("UTF-8");
             recorder.addSourceDirectory(getJobDir(homeDir, job));
@@ -110,7 +110,7 @@ public class GlobalConfigurationUiTest extends UiTest {
 
         AnalysisSummary gcc = new AnalysisSummary(build, GCC_ID);
         assertThat(gcc)
-                .hasTitleText("GNU C Compiler (gcc): One warning")
+                .hasTitleText("GNU C Compiler (GCC): One warning")
                 .hasReferenceBuild(linkType == LinkType.SHOULD_HAVE_SOURCE_CODE_LINK ? 1 : 0)
                 .hasInfoType(linkType == LinkType.SHOULD_HAVE_SOURCE_CODE_LINK ? InfoType.INFO : InfoType.ERROR);
 
