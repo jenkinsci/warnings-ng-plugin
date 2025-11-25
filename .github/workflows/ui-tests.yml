@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-  pull_request_target:
+  pull_request:
 
 jobs:
   ui-tests:
@@ -19,11 +19,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
-        if: github.event_name == 'push'
-      - uses: actions/checkout@v6
-        with:
-          ref: "${{ github.event.pull_request.merge_commit_sha }}"
-        if: github.event_name == 'pull_request_target'
       - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
