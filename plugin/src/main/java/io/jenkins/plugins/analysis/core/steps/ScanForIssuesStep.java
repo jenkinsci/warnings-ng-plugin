@@ -49,6 +49,9 @@ public class ScanForIssuesStep extends Step {
     private List<RegexpFilter> filters = new ArrayList<>();
     private String scm = StringUtils.EMPTY;
 
+    private String sourcePathPrefix = StringUtils.EMPTY; // @since 10.7.0
+    private String targetPathPrefix = StringUtils.EMPTY; // @since 10.7.0
+
     /**
      * Creates a new instance of {@link ScanForIssuesStep}.
      */
@@ -222,6 +225,38 @@ public class ScanForIssuesStep extends Step {
         return sourceCodeRetention;
     }
 
+    /**
+     * Sets the source path prefix for path remapping. This is useful when the paths in the report are generated
+     * in a different environment (e.g., inside a Docker container).
+     *
+     * @param sourcePathPrefix
+     *         the path prefix to be replaced (e.g., path inside docker container)
+     */
+    @DataBoundSetter
+    public void setSourcePathPrefix(final String sourcePathPrefix) {
+        this.sourcePathPrefix = sourcePathPrefix;
+    }
+
+    public String getSourcePathPrefix() {
+        return sourcePathPrefix;
+    }
+
+    /**
+     * Sets the target path prefix for path remapping. This is useful when the paths in the report need to be
+     * remapped to the actual workspace paths.
+     *
+     * @param targetPathPrefix
+     *         the path prefix to replace with (e.g., path in Jenkins workspace)
+     */
+    @DataBoundSetter
+    public void setTargetPathPrefix(final String targetPathPrefix) {
+        this.targetPathPrefix = targetPathPrefix;
+    }
+
+    public String getTargetPathPrefix() {
+        return targetPathPrefix;
+    }
+
     @Override
     public StepExecution start(final StepContext context) {
         return new Execution(context, this);
@@ -243,6 +278,8 @@ public class ScanForIssuesStep extends Step {
         private final String scm;
         private final boolean quiet;
         private final SourceCodeRetention sourceCodeRetention;
+        private final String sourcePathPrefix;
+        private final String targetPathPrefix;
 
         /**
          * Creates a new instance of the step execution object.
@@ -264,6 +301,8 @@ public class ScanForIssuesStep extends Step {
             scm = step.getScm();
             skipPostProcessing = step.isSkipPostProcessing();
             quiet = step.isQuiet();
+            sourcePathPrefix = step.getSourcePathPrefix();
+            targetPathPrefix = step.getTargetPathPrefix();
         }
 
         @Override
@@ -276,7 +315,7 @@ public class ScanForIssuesStep extends Step {
                     sourceCodeRetention, getRun(), new FilePath(getRun().getRootDir()), listener,
                     scm, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED,
                     skipPostProcessing ? PostProcessingMode.DISABLED : PostProcessingMode.ENABLED,
-                    quiet);
+                    quiet, sourcePathPrefix, targetPathPrefix);
 
             return issuesScanner.scan();
         }
