@@ -135,6 +135,9 @@ public class IssuesRecorder extends Recorder {
 
     private String scm = StringUtils.EMPTY;
 
+    private String sourcePathPrefix = StringUtils.EMPTY; // @since 10.7.0
+    private String targetPathPrefix = StringUtils.EMPTY; // @since 10.7.0
+
     /**
      * Creates a new instance of {@link IssuesRecorder}.
      */
@@ -176,6 +179,12 @@ public class IssuesRecorder extends Recorder {
         }
         if (icon == null) {
             icon = StringUtils.EMPTY;
+        }
+        if (sourcePathPrefix == null) {
+            sourcePathPrefix = StringUtils.EMPTY;
+        }
+        if (targetPathPrefix == null) {
+            targetPathPrefix = StringUtils.EMPTY;
         }
         return this;
     }
@@ -382,6 +391,38 @@ public class IssuesRecorder extends Recorder {
 
     public SourceCodeRetention getSourceCodeRetention() {
         return sourceCodeRetention;
+    }
+
+    /**
+     * Sets the source path prefix for path remapping. This is useful when the paths in the report are generated
+     * in a different environment (e.g., inside a Docker container).
+     *
+     * @param sourcePathPrefix
+     *         the path prefix to be replaced (e.g., path inside docker container)
+     */
+    @DataBoundSetter
+    public void setSourcePathPrefix(final String sourcePathPrefix) {
+        this.sourcePathPrefix = sourcePathPrefix;
+    }
+
+    public String getSourcePathPrefix() {
+        return sourcePathPrefix;
+    }
+
+    /**
+     * Sets the target path prefix for path remapping. This is useful when the paths in the report need to be
+     * remapped to the actual workspace paths.
+     *
+     * @param targetPathPrefix
+     *         the path prefix to replace with (e.g., path in Jenkins workspace)
+     */
+    @DataBoundSetter
+    public void setTargetPathPrefix(final String targetPathPrefix) {
+        this.targetPathPrefix = targetPathPrefix;
+    }
+
+    public String getTargetPathPrefix() {
+        return targetPathPrefix;
     }
 
     /**
@@ -758,7 +799,8 @@ public class IssuesRecorder extends Recorder {
                 workspace, getSourceCodePaths(), getSourceCodeRetention(),
                 run, new FilePath(run.getRootDir()), listener,
                 scm, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED,
-                skipPostProcessing ? PostProcessingMode.DISABLED : PostProcessingMode.ENABLED, quiet);
+                skipPostProcessing ? PostProcessingMode.DISABLED : PostProcessingMode.ENABLED, quiet,
+                sourcePathPrefix, targetPathPrefix);
 
         return issuesScanner.scan();
     }
