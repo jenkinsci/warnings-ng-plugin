@@ -123,7 +123,7 @@ public class IssuesModel extends DetailsTableModel {
         }
 
         void setCategory(final Issue issue) {
-            category = formatProperty("category", issue.getCategory());
+            category = formatPropertyWithUrl("category", issue.getCategory(), issue);
         }
 
         void setType(final Issue issue) {

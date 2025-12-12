@@ -141,5 +141,20 @@ public abstract class AnalysisModelParser extends ReportScanningTool {
         public String getDescription(final Issue issue) {
             return parserDescriptor.getDescription(issue);
         }
+
+        @Override
+        public String getCategoryUrl(final Issue issue) {
+            // Extract URL from description if present
+            var description = issue.getDescription();
+            if (org.apache.commons.lang3.StringUtils.isNotBlank(description)) {
+                // Look for href="url" pattern in the description
+                var hrefPattern = java.util.regex.Pattern.compile("href=[\"']([^\"']+)[\"']");
+                var matcher = hrefPattern.matcher(description);
+                if (matcher.find()) {
+                    return matcher.group(1);
+                }
+            }
+            return "";
+        }
     }
 }

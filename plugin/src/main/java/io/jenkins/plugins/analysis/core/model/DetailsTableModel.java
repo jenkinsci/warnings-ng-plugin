@@ -177,6 +177,7 @@ public abstract class DetailsTableModel extends TableModel {
         private final DetailedCell<String> fileName;
         private final String age;
         private final JenkinsFacade jenkinsFacade;
+        private final DescriptionProvider descriptionProvider;
 
         /**
          * Creates a new {@link TableRow}.
@@ -196,6 +197,7 @@ public abstract class DetailsTableModel extends TableModel {
                 final DescriptionProvider descriptionProvider, final Issue issue,
                 final JenkinsFacade jenkinsFacade) {
             this.jenkinsFacade = jenkinsFacade;
+            this.descriptionProvider = descriptionProvider;
             message = render(issue.getMessage());
             description = formatDetails(issue, descriptionProvider.getDescription(issue));
             age = ageBuilder.apply(IntegerParser.parseInt(issue.getReference()));
@@ -260,6 +262,34 @@ public abstract class DetailsTableModel extends TableModel {
             if (StringUtils.isBlank(value)) {
                 renderedValue = "-";
             }
+            return "<a href=\"%s.%d/\">%s</a>".formatted(property, value.hashCode(), renderedValue);
+        }
+
+        /**
+         * Formats the text of the specified property column with an optional external documentation URL.
+         * If a documentation URL is available from the description provider, it creates an external link.
+         * Otherwise, it creates a link to the UI representation of the property.
+         *
+         * @param property
+         *         the property to format
+         * @param value
+         *         the value of the property
+         * @param issue
+         *         the issue to get the documentation URL for
+         *
+         * @return the formatted column
+         */
+        protected final String formatPropertyWithUrl(final String property, final String value, final Issue issue) {
+            var renderedValue = render(value);
+            if (StringUtils.isBlank(value)) {
+                renderedValue = "-";
+            }
+            
+            String categoryUrl = descriptionProvider.getCategoryUrl(issue);
+            if (StringUtils.isNotBlank(categoryUrl)) {
+                return "<a href=\"%s\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"View documentation\">%s</a>".formatted(categoryUrl, renderedValue);
+            }
+            
             return "<a href=\"%s.%d/\">%s</a>".formatted(property, value.hashCode(), renderedValue);
         }
 
