@@ -1233,10 +1233,12 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         
         // Verify that paths have been remapped and don't contain the Docker path
         for (Issue issue : result.getIssues()) {
-            assertThat(issue.getFileName())
+            String fileName = issue.getFileName().replaceFirst("^\\./", "");
+            
+            assertThat(fileName)
                     .as("Issue file name should not contain Docker path")
                     .doesNotContain("/docker/workspace");
-            assertThat(issue.getFileName())
+            assertThat(fileName)
                     .as("Issue file name should be relative")
                     .startsWith("src/");
         }
