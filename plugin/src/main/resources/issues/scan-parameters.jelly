@@ -24,6 +24,16 @@
     <f:select default="LAST_BUILD"/>
   </f:entry>
 
+  <i:hr title="${%Path Remapping}"/>
+
+  <f:entry title="${%title.sourcePathPrefix}" description="${%description.sourcePathPrefix}" field="sourcePathPrefix">
+    <f:textbox/>
+  </f:entry>
+
+  <f:entry title="${%title.targetPathPrefix}" description="${%description.targetPathPrefix}" field="targetPathPrefix">
+    <f:textbox/>
+  </f:entry>
+
   <i:hr title="${%Issue filters}"/>
 
   <f:entry title="${%Filters}" description="${%description.filter}">

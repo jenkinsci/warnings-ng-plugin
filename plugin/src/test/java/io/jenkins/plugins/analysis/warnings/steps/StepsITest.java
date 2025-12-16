@@ -1209,6 +1209,41 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(portlet.hasQualityGate()).isFalse();
     }
 
+    /**
+     * Verifies that path remapping works correctly when using sourcePathPrefix and targetPathPrefix.
+     * This is useful when analysis reports are generated inside Docker containers where paths differ
+     * from the Jenkins workspace paths.
+     */
+    @Test
+    @DisplayName("Should remap file paths from source to target prefix")
+    void shouldRemapFilePathsFromDockerToWorkspace() {
+        var job = createPipelineWithWorkspaceFilesWithSuffix("docker-paths.txt");
+        
+        job.setDefinition(asStage(
+                createScanForIssuesStep(new Java(), "issues",
+                        "sourcePathPrefix: '/docker/workspace'",
+                        "targetPathPrefix: '.'"),
+                "publishIssues issues:[issues]"));
+
+        var build = buildSuccessfully(job);
+        var action = getResultAction(build);
+        var result = action.getResult();
+
+        assertThat(result).hasTotalSize(2);
+        
+        // Verify that paths have been remapped and don't contain the Docker path
+        for (Issue issue : result.getIssues()) {
+            String fileName = issue.getFileName().replaceFirst("^\\./", "");
+            
+            assertThat(fileName)
+                    .as("Issue file name should not contain Docker path")
+                    .doesNotContain("/docker/workspace");
+            assertThat(fileName)
+                    .as("Issue file name should be relative")
+                    .startsWith("src/");
+        }
+    }
+
     private void write(final String adaptedOobFileContent) {
         try {
             var userContentDir = new File(getJenkins().jenkins.getRootDir(), "userContent");
