@@ -5,6 +5,7 @@ import org.eclipse.collections.impl.factory.Lists;
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
@@ -72,6 +73,56 @@ class IssuesModelTest extends AbstractDetailsModelTest {
         when(report.hasTypes()).thenReturn(true);
         assertThat(getLabels(model))
                 .containsExactly("Details", "File", "Package", "Category", "Type", "Severity", "Age", "Hiddendetails");
+    }
+
+    @Test
+    @org.junitpioneer.jupiter.Issue("JENKINS-76257")
+    void shouldFormatCategoryWithExternalDocumentationLink() {
+        var report = new Report();
+        try (var builder = new IssueBuilder()) {
+            builder.setFileName("/path/to/file-1")
+                    .setLineStart(15)
+                    .setMessage("message-1")
+                    .setCategory("google-explicit-constructor")
+                    .setDescription("See <a href=\"https://clang.llvm.org/extra/clang-tidy/checks/google/explicit-constructor.html\">Clang-Tidy documentation</a>.")
+                    .setPackageName("package-1")
+                    .setType("type-1");
+            var issue = builder.build();
+            report.add(issue);
+        }
+
+        var descriptionProvider = new DescriptionProvider() {
+            @Override
+            public String getDescription(final Issue issue) {
+                return issue.getDescription();
+            }
+
+            @Override
+            public String getCategoryUrl(final Issue issue) {
+                var description = issue.getDescription();
+                if (org.apache.commons.lang3.StringUtils.isNotBlank(description)) {
+                    var hrefPattern = java.util.regex.Pattern.compile("href=[\"']([^\"']+)[\"']");
+                    var matcher = hrefPattern.matcher(description);
+                    if (matcher.find()) {
+                        return matcher.group(1);
+                    }
+                }
+                return "";
+            }
+        };
+
+        var jenkinsFacade = createJenkinsFacade();
+        var model = new IssuesModel(report, createFileNameRenderer(), createAgeBuilder(), descriptionProvider,
+                jenkinsFacade);
+
+        assertThat(model.getRows()).hasSize(1);
+        var actualRow = model.getRow(report.iterator().next());
+        
+        assertThat(actualRow.getCategory())
+                .contains("https://clang.llvm.org/extra/clang-tidy/checks/google/explicit-constructor.html")
+                .contains("target=\"_blank\"")
+                .contains("rel=\"noopener noreferrer\"")
+                .contains("google-explicit-constructor");
     }
 
     private IssuesModel createModel(final Report report) {
