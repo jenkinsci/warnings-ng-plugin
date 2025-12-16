@@ -1222,7 +1222,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         job.setDefinition(asStage(
                 createScanForIssuesStep(new Java(), "issues",
                         ", sourcePathPrefix: '/docker/workspace'",
-                        ", targetPathPrefix: ''"),
+                        ", targetPathPrefix: '.'"),
                 "publishIssues issues:[issues]"));
 
         var build = buildSuccessfully(job);
