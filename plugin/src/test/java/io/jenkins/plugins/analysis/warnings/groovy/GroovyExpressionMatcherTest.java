@@ -73,4 +73,19 @@ class GroovyExpressionMatcherTest {
         var result = matcher.run(null, new IssueBuilder(), 15, FILE_NAME);
         assertThat(result).isEqualTo(new IssueBuilder().setLineStart(15).setFileName("File.txt").buildOptional());
     }
+
+    @Test
+    void shouldAutomaticallySetFileNameAndLineStartWhenNotSetByScript() {
+        // JENKINS-74818: Test that fileName and lineStart are automatically set when not explicitly set by the script
+        var matcher = new GroovyExpressionMatcher(
+                "return builder.setMessage('test message').buildOptional()");
+
+        var result = matcher.run(null, new IssueBuilder(), 42, "test.txt");
+        var expected = new IssueBuilder()
+                .setFileName("test.txt")
+                .setLineStart(42)
+                .setMessage("test message")
+                .buildOptional();
+        assertThat(result).isEqualTo(expected);
+    }
 }

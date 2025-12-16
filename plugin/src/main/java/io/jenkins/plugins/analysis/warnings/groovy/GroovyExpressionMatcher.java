@@ -119,6 +119,9 @@ class GroovyExpressionMatcher implements Serializable {
      */
     public Object run(final Matcher matcher, final IssueBuilder builder, final int lineNumber, final String fileName) {
         if (compileScriptIfNotYetDone()) {
+            builder.setFileName(fileName);
+            builder.setLineStart(lineNumber);
+            
             var binding = compiled.getBinding();
             binding.setVariable("matcher", matcher);
             binding.setVariable("builder", builder);
