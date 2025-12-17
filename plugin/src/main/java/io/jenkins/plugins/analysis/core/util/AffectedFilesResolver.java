@@ -186,9 +186,9 @@ public class AffectedFilesResolver {
 
         try {
             var result = remoteFacade.copyAllInBatch(report, log);
-            copied = result.copied;
-            notFound = result.notFound;
-            notInWorkspace = result.notInWorkspace;
+            copied = result.getCopied();
+            notFound = result.getNotFound();
+            notInWorkspace = result.getNotInWorkspace();
         }
         catch (IOException exception) {
             log.logError("Failed to copy files in batch: %s", exception.getMessage());
@@ -318,14 +318,26 @@ public class AffectedFilesResolver {
     static class CopyResult implements java.io.Serializable {
         private static final long serialVersionUID = 1L;
 
-        final int copied;
-        final int notFound;
-        final int notInWorkspace;
+        private final int copied;
+        private final int notFound;
+        private final int notInWorkspace;
 
         CopyResult(final int copied, final int notFound, final int notInWorkspace) {
             this.copied = copied;
             this.notFound = notFound;
             this.notInWorkspace = notInWorkspace;
+        }
+
+        int getCopied() {
+            return copied;
+        }
+
+        int getNotFound() {
+            return notFound;
+        }
+
+        int getNotInWorkspace() {
+            return notInWorkspace;
         }
     }
 
@@ -339,12 +351,13 @@ public class AffectedFilesResolver {
         private static final FilePermissionEnforcer PERMISSION_ENFORCER = new FilePermissionEnforcer();
 
         private final Report report;
-        private final Set<String> permittedAbsolutePaths;
+        private final transient Set<String> permittedAbsolutePaths;
         private final FilePath buildFolder;
         private final FilteredLog log;
 
         BatchFileCopier(final Report report, final Set<String> permittedAbsolutePaths,
                 final FilePath buildFolder, final FilteredLog log) {
+            super();
             this.report = report;
             this.permittedAbsolutePaths = permittedAbsolutePaths;
             this.buildFolder = buildFolder;
@@ -354,25 +367,24 @@ public class AffectedFilesResolver {
         @Override
         public CopyResult invoke(final java.io.File workspace, final hudson.remoting.VirtualChannel channel)
                 throws IOException, InterruptedException {
-            int copied = 0;
             int notFound = 0;
             int notInWorkspace = 0;
 
             var workspacePath = new FilePath(channel, workspace.getAbsolutePath());
 
             java.util.Map<String, FilePath> filesToCopy = new java.util.HashMap<>();
-            
+
             for (Issue issue : report) {
                 String fileName = issue.getFileName();
                 String absolutePath = issue.getAbsolutePath();
-                
+
                 var targetFile = buildFolder.child(getZipName(fileName));
                 if (targetFile.exists()) {
                     continue;
                 }
 
                 var sourceFile = new FilePath(channel, absolutePath);
-                
+
                 if (!sourceFile.exists()) {
                     notFound++;
                     continue;
@@ -396,28 +408,26 @@ public class AffectedFilesResolver {
                 return new CopyResult(0, notFound, notInWorkspace);
             }
 
+            int copied = 0;
             Path tempBatchZip = Files.createTempFile("batch-affected-files-", ".zip");
             try (var zipOut = new ZipOutputStream(Files.newOutputStream(tempBatchZip))) {
                 for (java.util.Map.Entry<String, FilePath> entry : filesToCopy.entrySet()) {
+                    Path tempIndividualZip = Files.createTempFile("temp-file-", ".zip");
                     try {
                         String entryName = getZipName(entry.getKey());
                         zipOut.putNextEntry(new ZipEntry(entryName));
-                        
-                        Path tempIndividualZip = Files.createTempFile("temp-file-", ".zip");
-                        try {
-                            var individualZipFile = new FilePath(tempIndividualZip.toFile());
-                            entry.getValue().zip(individualZipFile);
-                            Files.copy(tempIndividualZip, zipOut);
-                            zipOut.closeEntry();
-                            copied++;
-                        }
-                        finally {
-                            Files.deleteIfExists(tempIndividualZip);
-                        }
+                        var individualZipFile = new FilePath(tempIndividualZip.toFile());
+                        entry.getValue().zip(individualZipFile);
+                        Files.copy(tempIndividualZip, zipOut);
+                        zipOut.closeEntry();
+                        copied++;
                     }
                     catch (IOException exception) {
                         log.logError("- '%s', IO exception has been thrown: %s", 
                                 entry.getValue().getRemote(), exception.getMessage());
+                    }
+                    finally {
+                        Files.deleteIfExists(tempIndividualZip);
                     }
                 }
             }
