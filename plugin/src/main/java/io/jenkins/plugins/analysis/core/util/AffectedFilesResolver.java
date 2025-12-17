@@ -358,19 +358,19 @@ public class AffectedFilesResolver {
         private static final FilePermissionEnforcer PERMISSION_ENFORCER = new FilePermissionEnforcer();
 
         private final Report report;
-        private final transient Set<String> permittedAbsolutePaths;
+        private final java.util.HashSet<String> permittedAbsolutePaths;
         private final FilePath buildFolder;
         private final FilteredLog log;
-        private final Set<String> filesToSkip;
+        private final java.util.HashSet<String> filesToSkip;
 
         BatchFileCopier(final Report report, final Set<String> permittedAbsolutePaths,
                 final FilePath buildFolder, final FilteredLog log, final Set<String> filesToSkip) {
             super();
             this.report = report;
-            this.permittedAbsolutePaths = permittedAbsolutePaths;
+            this.permittedAbsolutePaths = new java.util.HashSet<>(permittedAbsolutePaths);
             this.buildFolder = buildFolder;
             this.log = log;
-            this.filesToSkip = filesToSkip;
+            this.filesToSkip = new java.util.HashSet<>(filesToSkip);
         }
 
         @Override
