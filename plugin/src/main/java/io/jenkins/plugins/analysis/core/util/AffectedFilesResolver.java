@@ -305,7 +305,6 @@ public class AffectedFilesResolver {
          */
         CopyResult copyAllInBatch(final Report report, final FilteredLog log)
                 throws IOException, InterruptedException {
-            // If workspace doesn't have a channel (e.g., in tests), fall back to throwing IOException
             if (workspace.getChannel() == null) {
                 throw new IOException("No channel available for batch copy");
             }
