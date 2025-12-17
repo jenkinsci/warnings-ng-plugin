@@ -15,9 +15,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import hudson.FilePath;
 import hudson.model.Run;
+import jenkins.MasterToSlaveFileCallable;
 
 import io.jenkins.plugins.prism.FilePermissionEnforcer;
 
@@ -181,25 +184,34 @@ public class AffectedFilesResolver {
 
         var log = new FilteredLog("Can't copy some affected workspace files to Jenkins build folder:");
 
-        for (Issue issue : report) {
-            if (!remoteFacade.existsInBuildFolder(issue.getFileName())) { // skip already processed files
-                if (remoteFacade.exists(issue.getAbsolutePath())) {
-                    if (remoteFacade.isInWorkspace(issue.getAbsolutePath())) {
-                        try {
-                            remoteFacade.copy(issue.getAbsolutePath(), issue.getFileName());
-                            copied++;
+        try {
+            var result = remoteFacade.copyAllInBatch(report, log);
+            copied = result.copied;
+            notFound = result.notFound;
+            notInWorkspace = result.notInWorkspace;
+        }
+        catch (IOException exception) {
+            log.logError("Failed to copy files in batch: %s", exception.getMessage());
+            for (Issue issue : report) {
+                if (!remoteFacade.existsInBuildFolder(issue.getFileName())) {
+                    if (remoteFacade.exists(issue.getAbsolutePath())) {
+                        if (remoteFacade.isInWorkspace(issue.getAbsolutePath())) {
+                            try {
+                                remoteFacade.copy(issue.getAbsolutePath(), issue.getFileName());
+                                copied++;
+                            }
+                            catch (IOException ioException) {
+                                log.logError("- '%s', IO exception has been thrown: %s", issue.getAbsolutePath(),
+                                        ioException);
+                            }
                         }
-                        catch (IOException exception) {
-                            log.logError("- '%s', IO exception has been thrown: %s", issue.getAbsolutePath(),
-                                    exception);
+                        else {
+                            notInWorkspace++;
                         }
                     }
                     else {
-                        notInWorkspace++;
+                        notFound++;
                     }
-                }
-                else {
-                    notFound++;
                 }
             }
         }
@@ -275,6 +287,158 @@ public class AffectedFilesResolver {
 
         private FilePath computeBuildFolderFileName(final String fileName) {
             return buildFolder.child(getZipName(fileName));
+        }
+
+        /**
+         * Copies all affected files in a single batch operation to minimize network round trips.
+         * This is significantly faster than copying files one by one when there's high latency between agent and controller.
+         *
+         * @param report
+         *         the report containing issues with file references
+         * @param log
+         *         the filtered log for error messages
+         * @return result containing counts of copied, not found, and not in workspace files
+         * @throws IOException
+         *          if the batch copy operation fails
+         * @throws InterruptedException
+         *          if the operation is interrupted
+         */
+        CopyResult copyAllInBatch(final Report report, final FilteredLog log)
+                throws IOException, InterruptedException {
+            // If workspace doesn't have a channel (e.g., in tests), fall back to throwing IOException
+            if (workspace.getChannel() == null) {
+                throw new IOException("No channel available for batch copy");
+            }
+            return workspace.act(new BatchFileCopier(report, permittedAbsolutePaths, buildFolder, log));
+        }
+    }
+
+    /**
+     * Result of a batch file copy operation.
+     */
+    static class CopyResult implements java.io.Serializable {
+        private static final long serialVersionUID = 1L;
+
+        final int copied;
+        final int notFound;
+        final int notInWorkspace;
+
+        CopyResult(final int copied, final int notFound, final int notInWorkspace) {
+            this.copied = copied;
+            this.notFound = notFound;
+            this.notInWorkspace = notInWorkspace;
+        }
+    }
+
+    /**
+     * Callable that runs on the agent to batch copy all affected files in a single operation.
+     * Creates one zip file containing all affected files and transfers it in a single network operation.
+     */
+    static class BatchFileCopier extends MasterToSlaveFileCallable<CopyResult> {
+        private static final long serialVersionUID = 1L;
+        private static final PathUtil PATH_UTIL = new PathUtil();
+        private static final FilePermissionEnforcer PERMISSION_ENFORCER = new FilePermissionEnforcer();
+
+        private final Report report;
+        private final Set<String> permittedAbsolutePaths;
+        private final FilePath buildFolder;
+        private final FilteredLog log;
+
+        BatchFileCopier(final Report report, final Set<String> permittedAbsolutePaths,
+                final FilePath buildFolder, final FilteredLog log) {
+            this.report = report;
+            this.permittedAbsolutePaths = permittedAbsolutePaths;
+            this.buildFolder = buildFolder;
+            this.log = log;
+        }
+
+        @Override
+        public CopyResult invoke(final java.io.File workspace, final hudson.remoting.VirtualChannel channel)
+                throws IOException, InterruptedException {
+            int copied = 0;
+            int notFound = 0;
+            int notInWorkspace = 0;
+
+            var workspacePath = new FilePath(channel, workspace.getAbsolutePath());
+
+            java.util.Map<String, FilePath> filesToCopy = new java.util.HashMap<>();
+            
+            for (Issue issue : report) {
+                String fileName = issue.getFileName();
+                String absolutePath = issue.getAbsolutePath();
+                
+                var targetFile = buildFolder.child(getZipName(fileName));
+                if (targetFile.exists()) {
+                    continue;
+                }
+
+                var sourceFile = new FilePath(channel, absolutePath);
+                
+                if (!sourceFile.exists()) {
+                    notFound++;
+                    continue;
+                }
+
+                var sourceFileAbsPath = PATH_UTIL.getAbsolutePath(sourceFile.getRemote());
+                if (!PERMISSION_ENFORCER.isInWorkspace(sourceFileAbsPath, workspacePath, permittedAbsolutePaths)) {
+                    notInWorkspace++;
+                    continue;
+                }
+
+                if (!sourceFile.toVirtualFile().canRead()) {
+                    log.logError("- '%s', cannot read file", absolutePath);
+                    continue;
+                }
+
+                filesToCopy.put(fileName, sourceFile);
+            }
+
+            if (filesToCopy.isEmpty()) {
+                return new CopyResult(0, notFound, notInWorkspace);
+            }
+
+            Path tempBatchZip = Files.createTempFile("batch-affected-files-", ".zip");
+            try (var zipOut = new ZipOutputStream(Files.newOutputStream(tempBatchZip))) {
+                for (java.util.Map.Entry<String, FilePath> entry : filesToCopy.entrySet()) {
+                    try {
+                        String entryName = getZipName(entry.getKey());
+                        zipOut.putNextEntry(new ZipEntry(entryName));
+                        
+                        Path tempIndividualZip = Files.createTempFile("temp-file-", ".zip");
+                        try {
+                            var individualZipFile = new FilePath(tempIndividualZip.toFile());
+                            entry.getValue().zip(individualZipFile);
+                            Files.copy(tempIndividualZip, zipOut);
+                            zipOut.closeEntry();
+                            copied++;
+                        }
+                        finally {
+                            Files.deleteIfExists(tempIndividualZip);
+                        }
+                    }
+                    catch (IOException exception) {
+                        log.logError("- '%s', IO exception has been thrown: %s", 
+                                entry.getValue().getRemote(), exception.getMessage());
+                    }
+                }
+            }
+
+            try {
+                var batchZipFile = new FilePath(tempBatchZip.toFile());
+                var tempBatchZipOnController = buildFolder.createTempFile("batch-", ".zip");
+                try {
+                    batchZipFile.copyTo(tempBatchZipOnController);
+                    tempBatchZipOnController.unzip(buildFolder);
+                }
+                finally {
+                    tempBatchZipOnController.delete();
+                }
+            }
+            finally {
+                Files.deleteIfExists(tempBatchZip);
+            }
+
+            return new CopyResult(copied, notFound, notInWorkspace);
         }
     }
 }
