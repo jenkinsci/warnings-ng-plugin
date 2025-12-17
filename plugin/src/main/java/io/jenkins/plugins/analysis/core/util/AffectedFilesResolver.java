@@ -308,7 +308,14 @@ public class AffectedFilesResolver {
             if (workspace.getChannel() == null) {
                 throw new IOException("No channel available for batch copy");
             }
-            return workspace.act(new BatchFileCopier(report, permittedAbsolutePaths, buildFolder, log));
+            // Check which files already exist in build folder on controller to avoid security violation
+            Set<String> filesToSkip = new java.util.HashSet<>();
+            for (Issue issue : report) {
+                if (buildFolder.child(getZipName(issue.getFileName())).exists()) {
+                    filesToSkip.add(issue.getFileName());
+                }
+            }
+            return workspace.act(new BatchFileCopier(report, permittedAbsolutePaths, buildFolder, log, filesToSkip));
         }
     }
 
@@ -354,14 +361,16 @@ public class AffectedFilesResolver {
         private final transient Set<String> permittedAbsolutePaths;
         private final FilePath buildFolder;
         private final FilteredLog log;
+        private final Set<String> filesToSkip;
 
         BatchFileCopier(final Report report, final Set<String> permittedAbsolutePaths,
-                final FilePath buildFolder, final FilteredLog log) {
+                final FilePath buildFolder, final FilteredLog log, final Set<String> filesToSkip) {
             super();
             this.report = report;
             this.permittedAbsolutePaths = permittedAbsolutePaths;
             this.buildFolder = buildFolder;
             this.log = log;
+            this.filesToSkip = filesToSkip;
         }
 
         @Override
@@ -378,8 +387,7 @@ public class AffectedFilesResolver {
                 String fileName = issue.getFileName();
                 String absolutePath = issue.getAbsolutePath();
 
-                var targetFile = buildFolder.child(getZipName(fileName));
-                if (targetFile.exists()) {
+                if (filesToSkip.contains(fileName)) {
                     continue;
                 }
 
