@@ -91,29 +91,9 @@ class IssuesModelTest extends AbstractDetailsModelTest {
             report.add(issue);
         }
 
-        var descriptionProvider = new DescriptionProvider() {
-            @Override
-            public String getDescription(final Issue issue) {
-                return issue.getDescription();
-            }
-
-            @Override
-            public String getCategoryUrl(final Issue issue) {
-                var description = issue.getDescription();
-                if (org.apache.commons.lang3.StringUtils.isNotBlank(description)) {
-                    var hrefPattern = java.util.regex.Pattern.compile("href=[\"']([^\"']+)[\"']");
-                    var matcher = hrefPattern.matcher(description);
-                    if (matcher.find()) {
-                        return matcher.group(1);
-                    }
-                }
-                return "";
-            }
-        };
-
         var jenkinsFacade = createJenkinsFacade();
-        var model = new IssuesModel(report, createFileNameRenderer(), createAgeBuilder(), descriptionProvider,
-                jenkinsFacade);
+        var model = new IssuesModel(report, createFileNameRenderer(), createAgeBuilder(), 
+                new TestDescriptionProvider(), jenkinsFacade);
 
         assertThat(model.getRows()).hasSize(1);
         var actualRow = model.getRow(report.iterator().next());

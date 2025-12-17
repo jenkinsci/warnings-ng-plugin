@@ -1,5 +1,8 @@
 package io.jenkins.plugins.analysis.core.model;
 
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.junit.jupiter.api.BeforeAll;
 
@@ -133,5 +136,29 @@ public abstract class AbstractDetailsModelTest {
     protected void verifyFileNameColumn(final String columnDefinitions) {
         assertThatJson(columnDefinitions).node("[1].render._").isEqualTo("display");
         assertThatJson(columnDefinitions).node("[1].render.sort").isEqualTo("sort");
+    }
+
+    /**
+     * Test implementation of DescriptionProvider that extracts URLs from issue descriptions.
+     */
+    protected static class TestDescriptionProvider implements DescriptionProvider {
+        private static final Pattern HREF_PATTERN = Pattern.compile("href=[\"']([^\"']+)[\"']");
+
+        @Override
+        public String getDescription(final Issue issue) {
+            return issue.getDescription();
+        }
+
+        @Override
+        public String getCategoryUrl(final Issue issue) {
+            var description = issue.getDescription();
+            if (StringUtils.isNotBlank(description)) {
+                var matcher = HREF_PATTERN.matcher(description);
+                if (matcher.find()) {
+                    return matcher.group(1);
+                }
+            }
+            return "";
+        }
     }
 }

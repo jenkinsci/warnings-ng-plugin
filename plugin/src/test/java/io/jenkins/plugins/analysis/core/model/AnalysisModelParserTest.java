@@ -88,6 +88,11 @@ class AnalysisModelParserTest {
 
     /**
      * Extracts URL from HTML description (simulates the logic from AnalysisModelParser).
+     *
+     * @param description
+     *         the issue description to extract URL from
+     *
+     * @return the extracted URL or empty string if no URL found
      */
     private String extractUrlFromDescription(final String description) {
         if (org.apache.commons.lang3.StringUtils.isNotBlank(description)) {
