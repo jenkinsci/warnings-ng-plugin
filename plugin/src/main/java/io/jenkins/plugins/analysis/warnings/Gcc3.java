@@ -33,5 +33,14 @@ public class Gcc3 extends AnalysisModelParser {
         public Descriptor() {
             super(ID);
         }
+
+        @Override
+        public String getHelp() {
+            return "<p>Parses warnings and errors from legacy GCC compilers (versions older than GCC 4). "
+                    + "This parser uses an older, simpler warning format.</p>"
+                    + "<p>For modern GCC versions (GCC 4 and newer, including GCC 5–15+), use the 'gcc' parser instead, "
+                    + "which supports the newer format with additional context like:</p>"
+                    + "<p><code>file.c:10:5: warning: unused variable 'x' [-Wunused-variable]</code></p>";
+        }
     }
 }
