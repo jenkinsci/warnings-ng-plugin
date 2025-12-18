@@ -151,7 +151,7 @@ public class PullRequestMonitoringPortlet extends MonitorPortlet {
      */
     @SuppressWarnings("unused") // used by jelly view
     public boolean hasQualityGate() {
-        return !result.getQualityGateStatus().equals(QualityGateStatus.INACTIVE);
+        return result.getQualityGateStatus() != QualityGateStatus.INACTIVE;
     }
 
     /**
