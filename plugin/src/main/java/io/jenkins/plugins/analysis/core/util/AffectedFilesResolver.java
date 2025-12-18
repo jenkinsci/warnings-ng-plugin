@@ -308,6 +308,9 @@ public class AffectedFilesResolver {
             if (workspace.getChannel() == null) {
                 throw new IOException("No channel available for batch copy");
             }
+            // Ensure buildFolder exists on controller before agent call
+            buildFolder.mkdirs();
+            
             // Check which files already exist in build folder on controller to avoid security violation
             Set<String> filesToSkip = new java.util.HashSet<>();
             for (Issue issue : report) {
@@ -442,7 +445,9 @@ public class AffectedFilesResolver {
 
             try {
                 var batchZipFile = new FilePath(tempBatchZip.toFile());
-                var tempBatchZipOnController = buildFolder.createTempFile("batch-", ".zip");
+                // Create a unique temp file name on controller using timestamp
+                var tempFileName = "batch-" + System.currentTimeMillis() + "-" + Thread.currentThread().getId() + ".zip";
+                var tempBatchZipOnController = buildFolder.child(tempFileName);
                 try {
                     batchZipFile.copyTo(tempBatchZipOnController);
                     tempBatchZipOnController.unzip(buildFolder);
