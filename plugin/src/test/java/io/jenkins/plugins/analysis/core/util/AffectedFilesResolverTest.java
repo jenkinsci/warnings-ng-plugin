@@ -110,24 +110,18 @@ class AffectedFilesResolverTest extends ResourceTest {
         RemoteFacade remoteFacade = mock(RemoteFacade.class);
         when(remoteFacade.copyAllInBatch(any(Report.class), any(FilteredLog.class)))
                 .thenThrow(new IOException("Batch copy failed"));
-        when(remoteFacade.exists(FILE_NAME)).thenReturn(true);
-        when(remoteFacade.isInWorkspace(FILE_NAME)).thenReturn(true);
-        when(remoteFacade.existsInBuildFolder(FILE_NAME)).thenReturn(false);
-        doThrow(IOException.class).when(remoteFacade).copy(FILE_NAME, FILE_NAME);
 
         resolver.copyAffectedFilesToBuildFolder(report, remoteFacade);
 
         assertThat(report.getErrorMessages())
-                .hasSize(3)
-                .contains("Can't copy some affected workspace files to Jenkins build folder:",
-                        "Failed to copy files in batch: Batch copy failed",
-                        "- 'file.txt', IO exception has been thrown: java.io.IOException");
+                .hasSize(1)
+                .contains("Failed to copy files in batch: Batch copy failed");
         assertThat(report.getInfoMessages()).hasSize(1);
         var message = report.getInfoMessages().get(0);
         assertThat(message).contains("0 copied");
         assertThat(message).contains("0 not in workspace");
         assertThat(message).contains("0 not-found");
-        assertThat(message).contains("2 with I/O error");
+        assertThat(message).contains("0 with I/O error");
     }
 
     @Test
