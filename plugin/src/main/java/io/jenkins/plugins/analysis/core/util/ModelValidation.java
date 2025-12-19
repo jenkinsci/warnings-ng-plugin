@@ -128,6 +128,9 @@ public class ModelValidation {
         if (healthy > 0 && unhealthy <= 0) {
             return FormValidation.ok();
         }
+        if (healthy == 0 && unhealthy > 0) {
+            return FormValidation.ok();
+        }
         return validateHealthReportConstraints(healthy, healthy, unhealthy);
     }
 
@@ -147,6 +150,9 @@ public class ModelValidation {
         }
         if (healthy > 0 && unhealthy == 0) {
             return FormValidation.error(Messages.FieldValidator_Error_ThresholdUnhealthyMissing());
+        }
+        if (healthy == 0 && unhealthy > 0) {
+            return FormValidation.ok();
         }
         return validateHealthReportConstraints(unhealthy, healthy, unhealthy);
     }

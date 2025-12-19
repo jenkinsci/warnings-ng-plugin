@@ -106,6 +106,12 @@ class ModelValidationTest {
         // Special case: both unset or both zero.
         assertThat(model.validateHealthy(0, 0)).isOk();
         assertThat(model.validateUnhealthy(0, 0)).isOk();
+
+        // Special case: healthy=0 with unhealthy>0 for boolean health reporting (JENKINS-56145)
+        assertThat(model.validateHealthy(0, 1)).isOk();
+        assertThat(model.validateUnhealthy(0, 1)).isOk();
+        assertThat(model.validateHealthy(0, 10)).isOk();
+        assertThat(model.validateUnhealthy(0, 10)).isOk();
     }
 
     @Test
@@ -116,10 +122,6 @@ class ModelValidationTest {
         assertThat(model.validateHealthy(-1, 0))
                 .isError().hasMessage(Messages.FieldValidator_Error_NegativeThreshold());
         assertThat(model.validateUnhealthy(-1, 0)).isOk();
-
-        assertThat(model.validateHealthy(0, 1))
-                .isError().hasMessage(Messages.FieldValidator_Error_NegativeThreshold());
-        assertThat(model.validateUnhealthy(0, 1)).isOk();
 
         assertThat(model.validateHealthy(1, 0)).isOk();
         assertThat(model.validateUnhealthy(1, 0))
