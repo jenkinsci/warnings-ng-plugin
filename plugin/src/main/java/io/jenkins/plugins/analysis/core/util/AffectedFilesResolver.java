@@ -460,37 +460,22 @@ public class AffectedFilesResolver {
             }
         }
 
-        private void transferBatchZipToController(final Path temporaryFolder) 
-                throws IOException, InterruptedException {
-            Path batchZipPath = temporaryFolder.getParent().resolve("batch-" + reportId + ".zip");
-            
-            try (ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(batchZipPath.toFile()))) {
-                for (File zipFile : Files.list(temporaryFolder)
-                        .map(Path::toFile)
-                        .filter(f -> f.getName().endsWith(".zip"))
-                        .toArray(File[]::new)) {
-                    ZipEntry entry = new ZipEntry(zipFile.getName());
-                    zipOut.putNextEntry(entry);
-                    Files.copy(zipFile.toPath(), zipOut);
-                    zipOut.closeEntry();
+        private void transferBatchZipToController(final Path temporaryFolder)
+        throws IOException, InterruptedException {
+
+            try (var zipFiles = Files.list(temporaryFolder)) {
+                for (File zipFile : zipFiles
+                    .map(Path::toFile)
+                    .filter(file -> file.getName().endsWith(".zip"))
+                    .toArray(File[]::new)) {
+
+            FilePath sourceZip = new FilePath(zipFile);
+            FilePath targetZip = buildFolder.child(zipFile.getName());
+
+                try (InputStream in = sourceZip.read()) {
+                targetZip.copyFrom(in);
                 }
             }
-            
-            var batchZipFile = new FilePath(batchZipPath.toFile());
-            try {
-                try (InputStream inputStream = batchZipFile.read()) {
-                    var tempBatchZipOnController = buildFolder.child("batch-" + reportId + ".zip");
-                    try {
-                        tempBatchZipOnController.copyFrom(inputStream);
-                        tempBatchZipOnController.unzip(buildFolder);
-                    }
-                    finally {
-                        tempBatchZipOnController.delete();
-                    }
-                }
-            }
-            finally {
-                batchZipFile.delete();
             }
         }
 
