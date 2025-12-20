@@ -10,13 +10,13 @@ import edu.hm.hafner.util.PathUtil;
 import edu.hm.hafner.util.VisibleForTesting;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serial;
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -293,7 +293,6 @@ public class AffectedFilesResolver {
             if (workspace.getChannel() == null) {
                 throw new IOException("No channel available for batch copy");
             }
-            // Ensure buildFolder exists on controller before agent call
             buildFolder.mkdirs();
             
             Set<String> filesToSkip = getFilesToSkip(report);
@@ -327,7 +326,7 @@ public class AffectedFilesResolver {
                 return buildFolder.child(getZipName(fileName)).exists();
             }
             catch (IOException | InterruptedException e) {
-                return false; // If we can't check, assume it doesn't exist and include it in the batch
+                return false; 
             }
         }
     }
@@ -424,22 +423,8 @@ public class AffectedFilesResolver {
             try {
                 Path temporaryFolder = Files.createTempDirectory("affected-files-");
                 try {
-                    int copied = filesToCopy.entrySet().parallelStream()
-                            .mapToInt(entry -> zipIndividualFile(entry.getKey(), entry.getValue(), 
-                                    temporaryFolder, log))
-                            .sum();
-
-                    var tempFolderPath = new FilePath(temporaryFolder.toFile());
-                    var tempBatchZipOnController = buildFolder.child("batch-" + reportId + ".zip");
-                    
-                    try {
-                        tempFolderPath.zip(tempBatchZipOnController);
-                        tempBatchZipOnController.unzip(buildFolder);
-                    }
-                    finally {
-                        tempBatchZipOnController.delete();
-                    }
-
+                    int copied = zipIndividualFilesInParallel(filesToCopy, temporaryFolder);
+                    transferBatchZipToController(temporaryFolder);
                     return new CopyResult(copied, notFound, notInWorkspace);
                 }
                 finally {
@@ -452,8 +437,15 @@ public class AffectedFilesResolver {
             }
         }
 
-        private int zipIndividualFile(final String fileName, final FilePath sourceFile, 
-                final Path temporaryFolder, final FilteredLog log) {
+        private int zipIndividualFilesInParallel(final Map<String, FilePath> filesToCopy, 
+                final Path temporaryFolder) {
+            return filesToCopy.entrySet().parallelStream()
+                    .mapToInt(entry -> zipSingleFile(entry.getKey(), entry.getValue(), temporaryFolder))
+                    .sum();
+        }
+
+        private int zipSingleFile(final String fileName, final FilePath sourceFile, 
+                final Path temporaryFolder) {
             try {
                 String zipName = getZipName(fileName);
                 Path zipPath = temporaryFolder.resolve(zipName);
@@ -468,17 +460,54 @@ public class AffectedFilesResolver {
             }
         }
 
+        private void transferBatchZipToController(final Path temporaryFolder) 
+                throws IOException, InterruptedException {
+            Path batchZipPath = temporaryFolder.getParent().resolve("batch-" + reportId + ".zip");
+            
+            try (ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(batchZipPath.toFile()))) {
+                for (File zipFile : Files.list(temporaryFolder)
+                        .map(Path::toFile)
+                        .filter(f -> f.getName().endsWith(".zip"))
+                        .toArray(File[]::new)) {
+                    ZipEntry entry = new ZipEntry(zipFile.getName());
+                    zipOut.putNextEntry(entry);
+                    Files.copy(zipFile.toPath(), zipOut);
+                    zipOut.closeEntry();
+                }
+            }
+            
+            var batchZipFile = new FilePath(batchZipPath.toFile());
+            try {
+                try (InputStream inputStream = batchZipFile.read()) {
+                    var tempBatchZipOnController = buildFolder.child("batch-" + reportId + ".zip");
+                    try {
+                        tempBatchZipOnController.copyFrom(inputStream);
+                        tempBatchZipOnController.unzip(buildFolder);
+                    }
+                    finally {
+                        tempBatchZipOnController.delete();
+                    }
+                }
+            }
+            finally {
+                batchZipFile.delete();
+            }
+        }
+
         private void deleteFolder(final File folder) {
-            if (folder.isDirectory()) {
-                File[] files = folder.listFiles();
-                if (files != null) {
-                    for (File file : files) {
-                        if (file.isDirectory()) {
-                            deleteFolder(file);
-                        }
-                        else {
-                            file.delete();
-                        }
+            if (!folder.isDirectory()) {
+                folder.delete();
+                return;
+            }
+            
+            File[] files = folder.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (file.isDirectory()) {
+                        deleteFolder(file);
+                    }
+                    else {
+                        file.delete();
                     }
                 }
             }
