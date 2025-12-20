@@ -10,7 +10,6 @@ import edu.hm.hafner.util.PathUtil;
 import edu.hm.hafner.util.VisibleForTesting;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serial;
@@ -21,8 +20,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import hudson.FilePath;
 import hudson.model.Run;
@@ -461,21 +458,20 @@ public class AffectedFilesResolver {
         }
 
         private void transferBatchZipToController(final Path temporaryFolder)
-        throws IOException, InterruptedException {
-
+                throws IOException, InterruptedException {
             try (var zipFiles = Files.list(temporaryFolder)) {
                 for (File zipFile : zipFiles
-                    .map(Path::toFile)
-                    .filter(file -> file.getName().endsWith(".zip"))
-                    .toArray(File[]::new)) {
+                        .map(Path::toFile)
+                        .filter(file -> file.getName().endsWith(".zip"))
+                        .toArray(File[]::new)) {
 
-            FilePath sourceZip = new FilePath(zipFile);
-            FilePath targetZip = buildFolder.child(zipFile.getName());
+                    FilePath sourceZip = new FilePath(zipFile);
+                    FilePath targetZip = buildFolder.child(zipFile.getName());
 
-                try (InputStream in = sourceZip.read()) {
-                targetZip.copyFrom(in);
+                    try (InputStream in = sourceZip.read()) {
+                        targetZip.copyFrom(in);
+                    }
                 }
-            }
             }
         }
 
@@ -531,9 +527,9 @@ public class AffectedFilesResolver {
         }
 
         private static class ValidationResult {
-            final String fileName;
-            final FilePath filePath;
-            final ValidationStatus status;
+            private final String fileName;
+            private final FilePath filePath;
+            private final ValidationStatus status;
 
             ValidationResult(final String fileName, final FilePath filePath, final ValidationStatus status) {
                 this.fileName = fileName;
