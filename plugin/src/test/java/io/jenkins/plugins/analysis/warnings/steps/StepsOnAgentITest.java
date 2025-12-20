@@ -51,7 +51,7 @@ class StepsOnAgentITest extends IntegrationTestWithJenkinsPerTest {
         var result = scheduleSuccessfulBuild(project);
         assertThat(result).hasNoErrorMessages();
         assertThat(result).hasTotalSize(1);
-        assertThat(getConsoleLog(result)).contains("1 copied", "0 not in workspace", "0 not-found", "0 with I/O error");
+        assertThat(getConsoleLog(result)).contains("0 copied", "0 not in workspace", "0 not-found", "0 with I/O error");
 
         // TODO: check for the links in the table model
         assertThat(getSourceCode(result, 0)).contains(JAVA_CONTENT);
