@@ -29,7 +29,8 @@ class StepsOnAgentITest extends IntegrationTestWithJenkinsPerTest {
     private static final String JAVA_ID = "java-1";
 
     /**
-     * Verifies that affected source files are copied to Jenkins build folder, even if the controller - agent security is
+     * Verifies that affected source files are copied to Jenkins build folder, even
+     * if the controller - agent security is
      * active, see JENKINS-56007 for details.
      */
     @Test
@@ -51,7 +52,7 @@ class StepsOnAgentITest extends IntegrationTestWithJenkinsPerTest {
         var result = scheduleSuccessfulBuild(project);
         assertThat(result).hasNoErrorMessages();
         assertThat(result).hasTotalSize(1);
-        assertThat(getConsoleLog(result)).contains("copied", "0 not in workspace", "0 not-found", "0 with I/O error");
+        assertThat(getConsoleLog(result)).contains("1 copied", "0 not in workspace", "0 not-found", "0 with I/O error");
 
         // TODO: check for the links in the table model
         assertThat(getSourceCode(result, 0)).contains(JAVA_CONTENT);
@@ -88,8 +89,7 @@ class StepsOnAgentITest extends IntegrationTestWithJenkinsPerTest {
         if (JAVA_ID.equals(actions.get(0).getId())) {
             first = actions.get(0);
             second = actions.get(1);
-        }
-        else {
+        } else {
             first = actions.get(1);
             second = actions.get(0);
         }

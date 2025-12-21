@@ -293,7 +293,7 @@ public class AffectedFilesResolver {
             buildFolder.mkdirs();
             
             Set<String> filesToSkip = getFilesToSkip(report);
-            return workspace.act(new BatchFileCopier(report, permittedAbsolutePaths, buildFolder, log, filesToSkip, report.getId()));
+            return workspace.act(new BatchFileCopier(report, permittedAbsolutePaths, buildFolder, log, filesToSkip));
         }
 
         /**
@@ -377,14 +377,14 @@ public class AffectedFilesResolver {
         private final String reportId;
 
         BatchFileCopier(final Report report, final Set<String> permittedAbsolutePaths,
-                final FilePath buildFolder, final FilteredLog log, final Set<String> filesToSkip, final String reportId) {
+                final FilePath buildFolder, final FilteredLog log, final Set<String> filesToSkip) {
             super();
             this.report = report;
             this.permittedAbsolutePaths = new HashSet<>(permittedAbsolutePaths);
             this.buildFolder = buildFolder;
             this.log = log;
             this.filesToSkip = new HashSet<>(filesToSkip);
-            this.reportId = reportId;
+            this.reportId = report.getId();
         }
 
         @Override
@@ -418,7 +418,7 @@ public class AffectedFilesResolver {
             }
 
             try {
-                Path temporaryFolder = Files.createTempDirectory("affected-files-");
+                Path temporaryFolder = Files.createTempDirectory("affected-files-" + reportId + "-");
                 try {
                     int copied = zipIndividualFilesInParallel(filesToCopy, temporaryFolder);
                     transferBatchZipToController(temporaryFolder);
@@ -464,7 +464,6 @@ public class AffectedFilesResolver {
                         .map(Path::toFile)
                         .filter(file -> file.getName().endsWith(".zip"))
                         .toArray(File[]::new)) {
-
                     FilePath sourceZip = new FilePath(zipFile);
                     FilePath targetZip = buildFolder.child(zipFile.getName());
 
@@ -498,9 +497,9 @@ public class AffectedFilesResolver {
         private ValidationResult validateIssueFile(final Issue issue, final VirtualChannel channel,
                 final FilePath workspacePath) {
             try {
-                var sourceFile = new FilePath(channel, issue.getAbsolutePath());
+                var sourceFile = findSourceFile(issue, channel, workspacePath);
 
-                if (!sourceFile.exists()) {
+                if (sourceFile == null) {
                     return new ValidationResult(issue.getFileName(), null, ValidationStatus.NOT_FOUND);
                 }
 
@@ -520,6 +519,19 @@ public class AffectedFilesResolver {
                 log.logError("- '%s', exception during validation: %s", issue.getAbsolutePath(), e.getMessage());
                 return new ValidationResult(issue.getFileName(), null, ValidationStatus.ERROR);
             }
+        }
+
+        private FilePath findSourceFile(final Issue issue, final VirtualChannel channel,
+                final FilePath workspacePath) throws IOException, InterruptedException {
+            var absolutePath = new FilePath(channel, issue.getAbsolutePath());
+            if (absolutePath.exists()) {
+                return absolutePath;
+            }
+            var relativePath = workspacePath.child(issue.getFileName());
+            if (relativePath.exists()) {
+                return relativePath;
+            }
+            return null;
         }
 
         private enum ValidationStatus {
