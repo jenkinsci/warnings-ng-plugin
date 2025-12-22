@@ -135,6 +135,10 @@ class ModelValidationTest {
         assertThat(model.validateHealthy(1, -1)).isOk();
         assertThat(model.validateUnhealthy(1, -1))
                 .isError().hasMessage(Messages.FieldValidator_Error_NegativeThreshold());
+
+        assertThat(model.validateHealthy(0, -1)).isOk();
+        assertThat(model.validateUnhealthy(0, -1))
+                .isError().hasMessage(Messages.FieldValidator_Error_NegativeThreshold());
     }
 
     @Test

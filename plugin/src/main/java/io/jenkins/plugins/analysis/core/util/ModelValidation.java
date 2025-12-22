@@ -125,7 +125,7 @@ public class ModelValidation {
      * @return the validation result
      */
     public FormValidation validateHealthy(final int healthy, final int unhealthy) {
-        if (healthy > 0 && unhealthy <= 0) {
+        if (healthy >= 0 && unhealthy <= 0) {
             return FormValidation.ok();
         }
         if (healthy == 0 && unhealthy > 0) {
