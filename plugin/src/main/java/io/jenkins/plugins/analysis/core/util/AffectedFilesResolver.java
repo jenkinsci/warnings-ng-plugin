@@ -523,7 +523,7 @@ public class AffectedFilesResolver {
 
         private FilePath findSourceFile(final Issue issue, final VirtualChannel channel,
                 final FilePath workspacePath) throws IOException, InterruptedException {
-            var absolutePath = new FilePath(channel, issue.getAbsolutePath());
+            var absolutePath = new FilePath(new File(issue.getAbsolutePath()));
             if (absolutePath.exists()) {
                 return absolutePath;
             }

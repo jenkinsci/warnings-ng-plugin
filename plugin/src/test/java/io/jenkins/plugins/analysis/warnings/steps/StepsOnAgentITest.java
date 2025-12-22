@@ -29,8 +29,7 @@ class StepsOnAgentITest extends IntegrationTestWithJenkinsPerTest {
     private static final String JAVA_ID = "java-1";
 
     /**
-     * Verifies that affected source files are copied to Jenkins build folder, even
-     * if the controller - agent security is
+     * Verifies that affected source files are copied to Jenkins build folder, even if the controller - agent security is
      * active, see JENKINS-56007 for details.
      */
     @Test
@@ -89,7 +88,8 @@ class StepsOnAgentITest extends IntegrationTestWithJenkinsPerTest {
         if (JAVA_ID.equals(actions.get(0).getId())) {
             first = actions.get(0);
             second = actions.get(1);
-        } else {
+        }
+        else {
             first = actions.get(1);
             second = actions.get(0);
         }
