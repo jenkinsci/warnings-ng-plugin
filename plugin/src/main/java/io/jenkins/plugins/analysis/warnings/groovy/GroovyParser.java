@@ -15,6 +15,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -160,17 +161,15 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
 
         var that = (GroovyParser) o;
 
-        if (!regexp.equals(that.regexp)) {
+        if (!Objects.equals(regexp, that.regexp)) {
             return false;
         }
-        return script.equals(that.script);
+        return Objects.equals(script, that.script);
     }
 
     @Override
     public int hashCode() {
-        int result = regexp.hashCode();
-        result = 31 * result + script.hashCode();
-        return result;
+        return Objects.hash(regexp, script);
     }
 
     /**
