@@ -137,7 +137,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      * @param sourceDirectories
      *         list of configured source directories
      * @param previousResult
-     *         the analysis result of the previous run
+     *         the analysis result of the previous run (null if there is no previous result)
      */
     @SuppressWarnings("checkstyle:ParameterNumber")
     public AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report, final Blames blames,
@@ -146,11 +146,11 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
         this(owner, id, report, blames, totals, qualityGateResult, sizePerOrigin, sourceDirectories, true);
 
         if (report.isEmpty()) {
-            if (previousResult.noIssuesSinceBuild == NO_BUILD) {
-                noIssuesSinceBuild = owner.getNumber();
+            if (previousResult != null && previousResult.noIssuesSinceBuild != NO_BUILD) {
+                noIssuesSinceBuild = previousResult.noIssuesSinceBuild;
             }
             else {
-                noIssuesSinceBuild = previousResult.noIssuesSinceBuild;
+                noIssuesSinceBuild = owner.getNumber();
             }
         }
         else {
@@ -159,7 +159,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
 
         var overallStatus = qualityGateResult.getOverallStatus();
         if (overallStatus == QualityGateStatus.PASSED) {
-            if (previousResult.getQualityGateResult().getOverallStatus() == QualityGateStatus.PASSED) {
+            if (previousResult != null && previousResult.getQualityGateResult().getOverallStatus() == QualityGateStatus.PASSED) {
                 successfulSinceBuild = previousResult.successfulSinceBuild;
             }
             else {
@@ -195,20 +195,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     public AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report, final Blames blames,
             final RepositoryStatistics totals, final QualityGateResult qualityGateResult,
             final Map<String, Integer> sizePerOrigin, final List<String> sourceDirectories) {
-        this(owner, id, report, blames, totals, qualityGateResult, sizePerOrigin, sourceDirectories, true);
-
-        if (report.isEmpty()) {
-            noIssuesSinceBuild = owner.getNumber();
-        }
-        else {
-            noIssuesSinceBuild = NO_BUILD;
-        }
-        if (qualityGateResult.getOverallStatus() == QualityGateStatus.PASSED) {
-            successfulSinceBuild = owner.getNumber();
-        }
-        else {
-            successfulSinceBuild = NO_BUILD;
-        }
+        this(owner, id, report, blames, totals, qualityGateResult, sizePerOrigin, sourceDirectories, null);
     }
 
     /**
