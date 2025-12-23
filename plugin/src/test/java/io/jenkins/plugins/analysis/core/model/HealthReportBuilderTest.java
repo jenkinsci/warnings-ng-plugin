@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.core.model;
 
 import org.eclipse.collections.impl.factory.Maps;
 import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.Issue;
 
 import edu.hm.hafner.analysis.Severity;
 
@@ -85,6 +86,32 @@ class HealthReportBuilderTest {
 
         var wrongBoundaryOrder = createHealthReport(15, 15, Severity.WARNING_NORMAL, 10, 20, 30, 0);
         assertThat(wrongBoundaryOrder).isNull();
+    }
+
+    /**
+     * Tests boolean health reporting with healthy=0 (JENKINS-56145).
+     * - 0 issues should result in 100% health
+     * - Any issues should result in 0% health
+     */
+    @Test
+    @Issue("JENKINS-56145")
+    void shouldTestBooleanHealthReporting() {
+        // healthy=0, unhealthy=1: boolean reporting
+        var reportZeroIssues = createValidHealthReport(0, 1, Severity.WARNING_HIGH, 0, 0, 0, 0);
+        assertThat(reportZeroIssues.getScore()).isEqualTo(100);
+
+        var reportOneIssue = createValidHealthReport(0, 1, Severity.WARNING_HIGH, 1, 0, 0, 1);
+        assertThat(reportOneIssue.getScore()).isEqualTo(0);
+
+        var reportMultipleIssues = createValidHealthReport(0, 1, Severity.WARNING_HIGH, 10, 20, 30, 10);
+        assertThat(reportMultipleIssues.getScore()).isEqualTo(0);
+
+        // healthy=0, unhealthy=10: boolean reporting (unhealthy value doesn't matter)
+        var reportZeroWithLargerUnhealthy = createValidHealthReport(0, 10, Severity.WARNING_NORMAL, 0, 0, 0, 0);
+        assertThat(reportZeroWithLargerUnhealthy.getScore()).isEqualTo(100);
+
+        var reportAnyWithLargerUnhealthy = createValidHealthReport(0, 10, Severity.WARNING_NORMAL, 5, 0, 0, 5);
+        assertThat(reportAnyWithLargerUnhealthy.getScore()).isEqualTo(0);
     }
 
     /**

@@ -77,7 +77,7 @@ public class HealthDescriptor implements Serializable {
      * @return {@code true} if health reporting is enabled, {@code false} otherwise
      */
     public boolean isValid() {
-        return healthy > 0 && unhealthy > healthy;
+        return (healthy > 0 && unhealthy > healthy) || (healthy == 0 && unhealthy > 0);
     }
 
     @Override
