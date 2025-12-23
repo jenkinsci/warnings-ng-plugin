@@ -38,6 +38,13 @@ public class IssueApi {
         this.sourceDirectories = new ArrayList<>(sourceDirectories);
     }
 
+    /**
+     * Returns the file name of the issue, relative to the configured source directory if applicable.
+     * If source directories are configured, attempts to make the path relative to one of them.
+     * Otherwise, returns the original file name.
+     *
+     * @return the file name, possibly relative to a source directory
+     */
     @Exported
     @Whitelisted
     public String getFileName() {

@@ -68,7 +68,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     private final Map<String, Integer> sizePerOrigin;
     private final List<String> errors;
     private final List<String> messages;
-    private final List<String> sourceDirectories; // @since 13.x.0
+    private final transient List<String> sourceDirectories; // @since 13.x.0
     /**
      * Reference run to compute the issues difference: since a run cannot be persisted directly, the IDs are only
      * stored.
@@ -191,6 +191,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      * @param sourceDirectories
      *         list of configured source directories
      */
+    @SuppressWarnings("checkstyle:ParameterNumber")
     public AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report, final Blames blames,
             final RepositoryStatistics totals, final QualityGateResult qualityGateResult,
             final Map<String, Integer> sizePerOrigin, final List<String> sourceDirectories) {
