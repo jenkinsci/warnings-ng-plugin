@@ -139,6 +139,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      * @param previousResult
      *         the analysis result of the previous run (null if there is no previous result)
      */
+    // CPD-OFF
     @SuppressWarnings("checkstyle:ParameterNumber")
     public AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report, final Blames blames,
             final RepositoryStatistics totals, final QualityGateResult qualityGateResult,
@@ -170,6 +171,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
             successfulSinceBuild = NO_BUILD;
         }
     }
+    // CPD-ON
 
     /**
      * Creates a new instance of {@link AnalysisResult}.
@@ -191,12 +193,14 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      * @param sourceDirectories
      *         list of configured source directories
      */
+    // CPD-OFF
     @SuppressWarnings("checkstyle:ParameterNumber")
     public AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report, final Blames blames,
             final RepositoryStatistics totals, final QualityGateResult qualityGateResult,
             final Map<String, Integer> sizePerOrigin, final List<String> sourceDirectories) {
         this(owner, id, report, blames, totals, qualityGateResult, sizePerOrigin, sourceDirectories, null);
     }
+    // CPD-ON
 
     /**
      * Creates a new instance of {@link AnalysisResult}.
