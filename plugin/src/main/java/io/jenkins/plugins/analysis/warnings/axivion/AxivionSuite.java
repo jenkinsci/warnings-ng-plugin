@@ -103,7 +103,7 @@ public final class AxivionSuite extends Tool {
 
     @Override
     public int hashCode() {
-        return Objects.hash(projectUrl, credentialsId, basedir, namedFilter);
+        return Objects.hash(projectUrl, credentialsId, basedir, namedFilter, ignoreSuppressedOrJustified);
     }
 
     public String getBasedir() {

@@ -142,10 +142,11 @@ class AgentScanner extends MasterToSlaveFileCallable<Report> {
         if (matcherMode != that.matcherMode) {
             return false;
         }
-        if (includePattern != null ? !includePattern.equals(that.includePattern) : that.includePattern != null) {
+        // includePattern and excludePattern are never null (initialized with StringUtils.defaultString)
+        if (!includePattern.equals(that.includePattern)) {
             return false;
         }
-        if (excludePattern != null ? !excludePattern.equals(that.excludePattern) : that.excludePattern != null) {
+        if (!excludePattern.equals(that.excludePattern)) {
             return false;
         }
         return sourceCodeEncoding != null
@@ -159,8 +160,9 @@ class AgentScanner extends MasterToSlaveFileCallable<Report> {
         result = 31 * result + (lowTasks != null ? lowTasks.hashCode() : 0);
         result = 31 * result + (caseMode != null ? caseMode.hashCode() : 0);
         result = 31 * result + (matcherMode != null ? matcherMode.hashCode() : 0);
-        result = 31 * result + (includePattern != null ? includePattern.hashCode() : 0);
-        result = 31 * result + (excludePattern != null ? excludePattern.hashCode() : 0);
+        // includePattern and excludePattern are never null (initialized with StringUtils.defaultString)
+        result = 31 * result + includePattern.hashCode();
+        result = 31 * result + excludePattern.hashCode();
         result = 31 * result + (sourceCodeEncoding != null ? sourceCodeEncoding.hashCode() : 0);
         return result;
     }
