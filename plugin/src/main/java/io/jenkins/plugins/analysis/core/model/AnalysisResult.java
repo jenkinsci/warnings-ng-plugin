@@ -68,6 +68,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     private final Map<String, Integer> sizePerOrigin;
     private final List<String> errors;
     private final List<String> messages;
+    private final List<String> sourceDirectories; // @since 13.x.0
     /**
      * Reference run to compute the issues difference: since a run cannot be persisted directly, the IDs are only
      * stored.
@@ -133,14 +134,16 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      *         the quality gate status
      * @param sizePerOrigin
      *         the number of issues per origin
+     * @param sourceDirectories
+     *         list of configured source directories
      * @param previousResult
      *         the analysis result of the previous run
      */
     @SuppressWarnings("checkstyle:ParameterNumber")
     public AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report, final Blames blames,
             final RepositoryStatistics totals, final QualityGateResult qualityGateResult,
-            final Map<String, Integer> sizePerOrigin, final AnalysisResult previousResult) {
-        this(owner, id, report, blames, totals, qualityGateResult, sizePerOrigin, true);
+            final Map<String, Integer> sizePerOrigin, final List<String> sourceDirectories, final AnalysisResult previousResult) {
+        this(owner, id, report, blames, totals, qualityGateResult, sizePerOrigin, sourceDirectories, true);
 
         if (report.isEmpty()) {
             if (previousResult.noIssuesSinceBuild == NO_BUILD) {
@@ -185,11 +188,13 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      *         the quality gate status
      * @param sizePerOrigin
      *         the number of issues per origin
+     * @param sourceDirectories
+     *         list of configured source directories
      */
     public AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report, final Blames blames,
             final RepositoryStatistics totals, final QualityGateResult qualityGateResult,
-            final Map<String, Integer> sizePerOrigin) {
-        this(owner, id, report, blames, totals, qualityGateResult, sizePerOrigin, true);
+            final Map<String, Integer> sizePerOrigin, final List<String> sourceDirectories) {
+        this(owner, id, report, blames, totals, qualityGateResult, sizePerOrigin, sourceDirectories, true);
 
         if (report.isEmpty()) {
             noIssuesSinceBuild = owner.getNumber();
@@ -222,6 +227,8 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      *         the quality gate status
      * @param sizePerOrigin
      *         the number of issues per origin
+     * @param sourceDirectories
+     *         list of configured source directories
      * @param canSerialize
      *         determines whether the result should be persisted in the build folder
      */
@@ -230,7 +237,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     protected AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report,
             final Blames blames, final RepositoryStatistics repositoryStatistics,
             final QualityGateResult qualityGateResult, final Map<String, Integer> sizePerOrigin,
-            final boolean canSerialize) {
+            final List<String> sourceDirectories, final boolean canSerialize) {
         this.owner = owner;
 
         var allIssues = report.getAllIssues();
@@ -241,6 +248,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
 
         totals = report.getStatistics();
         this.sizePerOrigin = new HashMap<>(sizePerOrigin);
+        this.sourceDirectories = new ArrayList<>(sourceDirectories);
         referenceBuildId = report.getReferenceBuildId();
 
         var outstandingIssues = report.getOutstandingIssues();
@@ -286,6 +294,18 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
             parserId = id; // fallback for old data
         }
         return this;
+    }
+
+    /**
+     * Returns the list of configured source directories.
+     *
+     * @return the source directories
+     */
+    public List<String> getSourceDirectories() {
+        if (sourceDirectories == null) {
+            return new ArrayList<>(); 
+        }
+        return new ArrayList<>(sourceDirectories);
     }
 
     /**

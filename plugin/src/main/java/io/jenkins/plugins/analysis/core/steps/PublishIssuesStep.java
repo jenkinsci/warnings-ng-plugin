@@ -456,7 +456,8 @@ public class PublishIssuesStep extends Step implements Serializable {
                     deltaCalculator, new HealthDescriptor(step.getHealthy(), step.getUnhealthy(),
                             step.getMinimumSeverityAsSeverity()), step.getQualityGates(),
                     StringUtils.defaultString(step.getName()), step.getIcon(), step.getIgnoreQualityGate(),
-                    getCharset(step.getSourceCodeEncoding()), getLogger(report), createResultHandler(), step.getFailOnError());
+                    getCharset(step.getSourceCodeEncoding()), getLogger(report), createResultHandler(), step.getFailOnError(),
+                    List.of());
             var action = publisher.attachAction(step.getTrendChartType());
 
             if (!step.isSkipPublishingChecks()) {
