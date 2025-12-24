@@ -43,7 +43,7 @@ import static io.jenkins.plugins.analysis.core.model.QualityGateEvaluationMode.*
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings({"checkstyle:ClassFanOutComplexity", "checkstyle:ClassDataAbstractionCoupling"})
+@SuppressWarnings({"checkstyle:ClassFanOutComplexity", "checkstyle:ClassDataAbstractionCoupling", "PMD.CouplingBetweenObjects"})
 class IssuesPublisher {
     private final AnnotatedReport report;
     private final Run<?, ?> run;
