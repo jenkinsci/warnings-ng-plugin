@@ -3,6 +3,7 @@ package io.jenkins.plugins.analysis.core.restapi;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,6 +22,7 @@ import io.jenkins.plugins.forensics.blame.Blames;
 public class ReportApi {
     private final Report report;
     private final Blames blames;
+    private final List<String> sourceDirectories;
 
     /**
      * Creates a new {@link ReportApi}.
@@ -29,10 +31,13 @@ public class ReportApi {
      *         the report to expose the properties from
      * @param blames
      *          the blames info for this report
+     * @param sourceDirectories
+     *          list of configured source directories
      */
-    public ReportApi(final Report report, final Blames blames) {
+    public ReportApi(final Report report, final Blames blames, final List<String> sourceDirectories) {
         this.report = report;
         this.blames = blames;
+        this.sourceDirectories = new ArrayList<>(sourceDirectories);
     }
 
     @Exported(inline = true)
@@ -45,7 +50,7 @@ public class ReportApi {
     }
 
     private IssueApi createIssueApi(final Issue issue) {
-        return new IssueApi(issue, new Blame(issue, blames));
+        return new IssueApi(issue, new Blame(issue, blames), sourceDirectories);
     }
 
     @Exported

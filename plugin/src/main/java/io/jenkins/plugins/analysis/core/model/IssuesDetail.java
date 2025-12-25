@@ -221,7 +221,7 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
         if (getUrl().endsWith(labelProvider.getId())) {
             return new Api(new AnalysisResultApi(result));
         }
-        return new Api(new ReportApi(getIssues(), result.getBlames()));
+        return new Api(new ReportApi(getIssues(), result.getBlames(), result.getSourceDirectories()));
     }
 
     // ------------------------------------ UI entry points for Stapler --------------------------------

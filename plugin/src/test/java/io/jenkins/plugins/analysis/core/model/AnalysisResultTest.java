@@ -6,6 +6,7 @@ import org.junitpioneer.jupiter.Issue;
 import edu.hm.hafner.util.ResourceTest;
 
 import java.util.Collections;
+import java.util.List;
 
 import hudson.model.Run;
 
@@ -29,6 +30,6 @@ class AnalysisResultTest extends ResourceTest {
                 .isThrownBy(
                         () -> new AnalysisResult(mock(Run.class), "../../invalid-id", mock(DeltaReport.class),
                                 new Blames(), new RepositoryStatistics(),
-                                new QualityGateResult(), Collections.emptyMap()));
+                                new QualityGateResult(), Collections.emptyMap(), List.of()));
     }
 }

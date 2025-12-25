@@ -2,6 +2,9 @@ package io.jenkins.plugins.analysis.core.restapi;
 
 import edu.hm.hafner.analysis.Issue;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
@@ -17,6 +20,7 @@ import io.jenkins.plugins.analysis.core.util.Blame;
 public class IssueApi {
     private final Issue issue;
     private final Blame blame;
+    private final List<String> sourceDirectories;
 
     /**
      * Creates a new {@link IssueApi}.
@@ -25,16 +29,46 @@ public class IssueApi {
      *         the issue to expose the properties from
      * @param blame
      *         the blame which contains this issue
+     * @param sourceDirectories
+     *         list of configured source directories
      */
-    public IssueApi(final Issue issue, final Blame blame) {
+    public IssueApi(final Issue issue, final Blame blame, final List<String> sourceDirectories) {
         this.issue = issue;
         this.blame = blame;
+        this.sourceDirectories = new ArrayList<>(sourceDirectories);
     }
 
+    /**
+     * Returns the file name of the issue, relative to the configured source directory if applicable.
+     * If source directories are configured, attempts to make the path relative to one of them.
+     * Otherwise, returns the original file name.
+     *
+     * @return the file name, possibly relative to a source directory
+     */
     @Exported
     @Whitelisted
     public String getFileName() {
-        return issue.getFileName();
+        String fileName = issue.getFileName();
+        
+        if (sourceDirectories.isEmpty()) {
+            return fileName;
+        }
+        
+        String normalizedFileName = fileName.replace("\\", "/");
+        
+        for (String sourceDir : sourceDirectories) {
+            String normalizedSourceDir = sourceDir.replace("\\", "/");
+            
+            if (!normalizedSourceDir.isEmpty() && !normalizedSourceDir.endsWith("/")) {
+                normalizedSourceDir += "/";
+            }
+            
+            if (normalizedFileName.startsWith(normalizedSourceDir)) {
+                return normalizedFileName.substring(normalizedSourceDir.length());
+            }
+        }
+        
+        return fileName;
     }
 
     @Exported
