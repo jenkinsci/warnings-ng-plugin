@@ -10,6 +10,8 @@ import edu.hm.hafner.util.PathUtil;
 import edu.hm.hafner.util.VisibleForTesting;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serial;
@@ -417,20 +419,14 @@ public class AffectedFilesResolver {
                 return new CopyResult(0, notFound, notInWorkspace);
             }
 
+            Path temporaryFolder = Files.createTempDirectory("affected-files-" + reportId + "-");
             try {
-                Path temporaryFolder = Files.createTempDirectory("affected-files-" + reportId + "-");
-                try {
-                    int copied = zipIndividualFilesInParallel(filesToCopy, temporaryFolder);
-                    transferBatchZipToController(temporaryFolder);
-                    return new CopyResult(copied, notFound, notInWorkspace);
-                }
-                finally {
-                    deleteFolder(temporaryFolder.toFile());
-                }
+                int copied = zipIndividualFilesInParallel(filesToCopy, temporaryFolder);
+                transferBatchZipToController(workspacePath, temporaryFolder);
+                return new CopyResult(copied, notFound, notInWorkspace);
             }
-            catch (IOException exception) {
-                log.logError("Failed to create temporary folder for batch copy: %s", exception.getMessage());
-                return new CopyResult(0, notFound, notInWorkspace);
+            finally {
+                deleteFolder(temporaryFolder.toFile());
             }
         }
 
@@ -457,20 +453,41 @@ public class AffectedFilesResolver {
             }
         }
 
-        private void transferBatchZipToController(final Path temporaryFolder)
+        private void transferBatchZipToController(final FilePath workspacePath, final Path temporaryFolder)
                 throws IOException, InterruptedException {
-            try (var zipFiles = Files.list(temporaryFolder)) {
-                for (File zipFile : zipFiles
-                        .map(Path::toFile)
-                        .filter(file -> file.getName().endsWith(".zip"))
-                        .toArray(File[]::new)) {
-                    FilePath sourceZip = new FilePath(zipFile);
-                    FilePath targetZip = buildFolder.child(zipFile.getName());
+            var batchZipPath = workspacePath.child("batch-" + reportId + ".zip");
+            try {
+                try (var zipFiles = Files.list(temporaryFolder);
+                     var fileOutputStream = new FileOutputStream(batchZipPath.getRemote());
+                     var zipOutputStream = new java.util.zip.ZipOutputStream(fileOutputStream)) {
 
-                    try (InputStream in = sourceZip.read()) {
-                        targetZip.copyFrom(in);
+                    for (File zipFile : zipFiles
+                            .map(Path::toFile)
+                            .filter(file -> file.getName().endsWith(".zip"))
+                            .toArray(File[]::new)) {
+                        var zipEntry = new java.util.zip.ZipEntry(zipFile.getName());
+                        zipOutputStream.putNextEntry(zipEntry);
+
+                        try (var fileInputStream = new FileInputStream(zipFile)) {
+                            fileInputStream.transferTo(zipOutputStream);
+                        }
+                        zipOutputStream.closeEntry();
                     }
                 }
+
+                try (InputStream inputStream = batchZipPath.read()) {
+                    var tempBatchZipOnController = buildFolder.child("batch-" + reportId + ".zip");
+                    try {
+                        tempBatchZipOnController.copyFrom(inputStream);
+                        tempBatchZipOnController.unzip(buildFolder);
+                    }
+                    finally {
+                        tempBatchZipOnController.delete();
+                    }
+                }
+            }
+            finally {
+                batchZipPath.delete();
             }
         }
 
