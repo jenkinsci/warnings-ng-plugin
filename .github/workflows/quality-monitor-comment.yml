@@ -30,7 +30,7 @@ jobs:
         with:
           ref: ${{ steps.pr.outputs.sha }}
       - name: Download PR Quality Reports from Quality Monitor Build workflow
-        uses: dawidd6/action-download-artifact@v11
+        uses: dawidd6/action-download-artifact@v12
         with:
           run_id: ${{ github.event.workflow_run.id }}
           name: quality-reports
