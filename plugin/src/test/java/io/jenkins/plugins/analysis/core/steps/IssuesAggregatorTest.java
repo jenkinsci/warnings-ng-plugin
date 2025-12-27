@@ -158,6 +158,35 @@ class IssuesAggregatorTest {
         verify(recorder).publishResult(any(), any(), any(), anyString(), any(), anyString(), anyString(), any());
     }
 
+    @Test @org.junitpioneer.jupiter.Issue("JENKINS-71571")
+    void shouldAggregateReportsConsistentlyRegardlessOfCompletionOrder() {
+        var recorder1 = createRecorder();
+        var aggregator1 = createIssueAggregator(recorder1);
+        
+        var issue1 = new IssueBuilder().setOrigin(PMD).setFileName("file1.java").setLineStart(1).build();
+        var issue2 = new IssueBuilder().setOrigin(PMD).setFileName("file2.java").setLineStart(2).build();
+        var issue3 = new IssueBuilder().setOrigin(PMD).setFileName("file3.java").setLineStart(3).build();
+        
+        aggregator1.endRun(createBuild("axis1", createAction(issue1)));
+        aggregator1.endRun(createBuild("axis2", createAction(issue2)));
+        aggregator1.endRun(createBuild("axis3", createAction(issue3)));
+        aggregator1.endBuild();
+        
+        var recorder2 = createRecorder();
+        var aggregator2 = createIssueAggregator(recorder2);
+        
+        aggregator2.endRun(createBuild("axis3", createAction(issue3)));
+        aggregator2.endRun(createBuild("axis1", createAction(issue1)));
+        aggregator2.endRun(createBuild("axis2", createAction(issue2)));
+        aggregator2.endBuild();
+        
+        verify(recorder1).publishResult(any(), any(), any(), anyString(), any(), anyString(), anyString(), any());
+        verify(recorder2).publishResult(any(), any(), any(), anyString(), any(), anyString(), anyString(), any());
+        
+        assertThat(aggregator1.getNames()).containsExactlyInAnyOrder("axis1", "axis2", "axis3");
+        assertThat(aggregator2.getNames()).containsExactlyInAnyOrder("axis1", "axis2", "axis3");
+    }
+
     private Issue createIssue(final String pmd) {
         return new IssueBuilder().setOrigin(pmd).build();
     }

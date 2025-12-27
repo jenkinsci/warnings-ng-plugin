@@ -8,6 +8,8 @@ import org.eclipse.collections.impl.factory.Multimaps;
 
 import edu.hm.hafner.util.VisibleForTesting;
 
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
@@ -31,6 +33,7 @@ import io.jenkins.plugins.util.RunResultHandler;
 public class IssuesAggregator extends MatrixAggregator {
     private final IssuesRecorder recorder;
     private final MutableMultimap<String, AnnotatedReport> resultsPerTool = Multimaps.mutable.list.empty();
+    private final Map<AnnotatedReport, String> reportToAxisName = new HashMap<>();
     private final List<String> names = Lists.mutable.empty();
 
     private final ReentrantLock aggregationTableLock = new ReentrantLock();
@@ -68,10 +71,13 @@ public class IssuesAggregator extends MatrixAggregator {
     public boolean endRun(final MatrixRun run) {
         aggregationTableLock.lock();
         try {
-            names.add(run.getParent().getName());
+            var axisName = run.getParent().getName();
+            names.add(axisName);
             List<ResultAction> actions = run.getActions(ResultAction.class);
             for (ResultAction action : actions) {
-                resultsPerTool.put(action.getId(), createReport(action.getId(), action.getResult()));
+                var report = createReport(action.getId(), action.getResult());
+                resultsPerTool.put(action.getId(), report);
+                reportToAxisName.put(report, axisName);
             }
         }
         finally {
@@ -87,7 +93,9 @@ public class IssuesAggregator extends MatrixAggregator {
     @Override
     public boolean endBuild() {
         resultsPerTool.forEachKeyMultiValues((tool, reports) -> {
-            var aggregatedReport = new AnnotatedReport(tool, reports);
+            var reportsList = Lists.mutable.withAll(reports);
+            reportsList.sortThis(Comparator.comparing(reportToAxisName::get));
+            var aggregatedReport = new AnnotatedReport(tool, reportsList);
             recorder.publishResult(build, build.getWorkspace(), listener, Messages.Tool_Default_Name(),
                     aggregatedReport, StringUtils.EMPTY, recorder.getIcon(), new RunResultHandler(build));
         });
