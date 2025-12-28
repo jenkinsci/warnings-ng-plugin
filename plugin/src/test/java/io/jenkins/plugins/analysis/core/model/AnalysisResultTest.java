@@ -6,7 +6,6 @@ import org.junitpioneer.jupiter.Issue;
 import edu.hm.hafner.util.ResourceTest;
 
 import java.util.Collections;
-import java.util.List;
 
 import hudson.model.Run;
 

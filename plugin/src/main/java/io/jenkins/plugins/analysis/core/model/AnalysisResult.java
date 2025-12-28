@@ -51,7 +51,7 @@ import io.jenkins.plugins.util.ValidationUtilities;
  * @author Ullrich Hafner
  */
 @SuppressFBWarnings(value = "SE, DESERIALIZATION_GADGET", justification = "transient fields are restored using a Jenkins callback (or are checked for null)")
-@SuppressWarnings({"PMD.GodClass", "PMD.CyclomaticComplexity", "checkstyle:ClassFanOutComplexity", "checkstyle:ClassDataAbstractionCoupling"})
+@SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveClassLength", "PMD.GodClass", "PMD.CyclomaticComplexity", "checkstyle:ClassFanOutComplexity", "checkstyle:ClassDataAbstractionCoupling"})
 public class AnalysisResult implements Serializable, StaticAnalysisRun {
     @Serial
     private static final long serialVersionUID = 1110545450292087475L;
@@ -112,10 +112,6 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     /** The result of the quality gate evaluation. */
     private QualityGateResult qualityGateResult;
 
-    static {
-        Run.XSTREAM2.alias("item", QualityGateResult.QualityGateResultItem.class);
-    }
-
     /**
      * Creates a new instance of {@link AnalysisResult}.
      *
@@ -134,9 +130,8 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      * @param sizePerOrigin
      *         the number of issues per origin
      * @param previousResult
-     *         the analysis result of the previous run (null if there is no previous result)
+     *         the analysis result of the previous run
      */
-    // CPD-OFF
     @SuppressWarnings("checkstyle:ParameterNumber")
     public AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report, final Blames blames,
             final RepositoryStatistics totals, final QualityGateResult qualityGateResult,
@@ -144,11 +139,11 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
         this(owner, id, report, blames, totals, qualityGateResult, sizePerOrigin, true);
 
         if (report.isEmpty()) {
-            if (previousResult != null && previousResult.noIssuesSinceBuild != NO_BUILD) {
-                noIssuesSinceBuild = previousResult.noIssuesSinceBuild;
+            if (previousResult.noIssuesSinceBuild == NO_BUILD) {
+                noIssuesSinceBuild = owner.getNumber();
             }
             else {
-                noIssuesSinceBuild = owner.getNumber();
+                noIssuesSinceBuild = previousResult.noIssuesSinceBuild;
             }
         }
         else {
@@ -157,7 +152,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
 
         var overallStatus = qualityGateResult.getOverallStatus();
         if (overallStatus == QualityGateStatus.PASSED) {
-            if (previousResult != null && previousResult.getQualityGateResult().getOverallStatus() == QualityGateStatus.PASSED) {
+            if (previousResult.getQualityGateResult().getOverallStatus() == QualityGateStatus.PASSED) {
                 successfulSinceBuild = previousResult.successfulSinceBuild;
             }
             else {
@@ -168,7 +163,6 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
             successfulSinceBuild = NO_BUILD;
         }
     }
-    // CPD-ON
 
     /**
      * Creates a new instance of {@link AnalysisResult}.
@@ -188,14 +182,24 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      * @param sizePerOrigin
      *         the number of issues per origin
      */
-    // CPD-OFF
-    @SuppressWarnings("checkstyle:ParameterNumber")
     public AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report, final Blames blames,
             final RepositoryStatistics totals, final QualityGateResult qualityGateResult,
             final Map<String, Integer> sizePerOrigin) {
-        this(owner, id, report, blames, totals, qualityGateResult, sizePerOrigin, null);
+        this(owner, id, report, blames, totals, qualityGateResult, sizePerOrigin, true);
+
+        if (report.isEmpty()) {
+            noIssuesSinceBuild = owner.getNumber();
+        }
+        else {
+            noIssuesSinceBuild = NO_BUILD;
+        }
+        if (qualityGateResult.getOverallStatus() == QualityGateStatus.PASSED) {
+            successfulSinceBuild = owner.getNumber();
+        }
+        else {
+            successfulSinceBuild = NO_BUILD;
+        }
     }
-    // CPD-ON
 
     /**
      * Creates a new instance of {@link AnalysisResult}.
@@ -278,18 +282,6 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
             parserId = id; // fallback for old data
         }
         return this;
-    }
-
-    /**
-     * Returns the list of configured source directories.
-     *
-     * @return the source directories
-     */
-    public List<String> getSourceDirectories() {
-        if (sourceDirectories == null) {
-            return new ArrayList<>(); 
-        }
-        return new ArrayList<>(sourceDirectories);
     }
 
     /**
