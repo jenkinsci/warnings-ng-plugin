@@ -6,7 +6,6 @@ import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.FilteredLog;
 
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -43,7 +42,7 @@ import static io.jenkins.plugins.analysis.core.model.QualityGateEvaluationMode.*
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings({"checkstyle:ClassFanOutComplexity", "checkstyle:ClassDataAbstractionCoupling", "PMD.CouplingBetweenObjects"})
+@SuppressWarnings({"checkstyle:ClassFanOutComplexity", "checkstyle:ClassDataAbstractionCoupling"})
 class IssuesPublisher {
     private final AnnotatedReport report;
     private final Run<?, ?> run;
@@ -119,7 +118,8 @@ class IssuesPublisher {
 
         var result = new AnalysisHistory(run, ensureThatIdIsUnique()).getResult()
                 .map(previous -> new AnalysisResult(run, getId(), deltaReport, report.getBlames(),
-                        report.getStatistics(), qualityGateResult, report.getSizeOfOrigin(), previous))
+                        report.getStatistics(), qualityGateResult, report.getSizeOfOrigin(),
+                        previous))
                 .orElseGet(() -> new AnalysisResult(run, getId(), deltaReport, report.getBlames(),
                         report.getStatistics(), qualityGateResult, report.getSizeOfOrigin()));
         var action = new ResultAction(run, result, healthDescriptor, getId(), name, icon,

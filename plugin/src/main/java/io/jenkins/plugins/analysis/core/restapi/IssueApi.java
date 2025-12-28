@@ -24,18 +24,13 @@ public class IssueApi {
      * @param issue
      *         the issue to expose the properties from
      * @param blame
-     *         the blame for the issue
+     *         the blame which contains this issue
      */
     public IssueApi(final Issue issue, final Blame blame) {
         this.issue = issue;
         this.blame = blame;
     }
 
-    /**
-     * Returns the file name of the issue.
-     *
-     * @return the file name
-     */
     @Exported
     @Whitelisted
     public String getFileName() {
