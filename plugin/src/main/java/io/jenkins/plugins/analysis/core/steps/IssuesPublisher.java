@@ -57,14 +57,12 @@ class IssuesPublisher {
     private final LogHandler logger;
     private final ResultHandler notifier;
     private final boolean failOnErrors;
-    private final List<String> sourceDirectories;
 
     @SuppressWarnings("ParameterNumber")
     IssuesPublisher(final Run<?, ?> run, final AnnotatedReport report, final DeltaCalculator deltaCalculator,
             final HealthDescriptor healthDescriptor, final List<WarningsQualityGate> qualityGates,
             final String name, final String icon, final boolean ignoreQualityGate, final Charset sourceCodeEncoding,
-            final LogHandler logger, final ResultHandler notifier, final boolean failOnErrors,
-            final List<String> sourceDirectories) {
+            final LogHandler logger, final ResultHandler notifier, final boolean failOnErrors) {
         this.report = report;
         this.run = run;
         this.deltaCalculator = deltaCalculator;
@@ -77,7 +75,6 @@ class IssuesPublisher {
         this.logger = logger;
         this.notifier = notifier;
         this.failOnErrors = failOnErrors;
-        this.sourceDirectories = new ArrayList<>(sourceDirectories);
     }
 
     private String getId() {
@@ -122,10 +119,9 @@ class IssuesPublisher {
 
         var result = new AnalysisHistory(run, ensureThatIdIsUnique()).getResult()
                 .map(previous -> new AnalysisResult(run, getId(), deltaReport, report.getBlames(),
-                        report.getStatistics(), qualityGateResult, report.getSizeOfOrigin(),
-                        sourceDirectories, previous))
+                        report.getStatistics(), qualityGateResult, report.getSizeOfOrigin(), previous))
                 .orElseGet(() -> new AnalysisResult(run, getId(), deltaReport, report.getBlames(),
-                        report.getStatistics(), qualityGateResult, report.getSizeOfOrigin(), sourceDirectories));
+                        report.getStatistics(), qualityGateResult, report.getSizeOfOrigin()));
         var action = new ResultAction(run, result, healthDescriptor, getId(), name, icon,
                 sourceCodeEncoding, trendChartType);
         run.addAction(action);

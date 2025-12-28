@@ -30,6 +30,6 @@ class AnalysisResultTest extends ResourceTest {
                 .isThrownBy(
                         () -> new AnalysisResult(mock(Run.class), "../../invalid-id", mock(DeltaReport.class),
                                 new Blames(), new RepositoryStatistics(),
-                                new QualityGateResult(), Collections.emptyMap(), List.of()));
+                                new QualityGateResult(), Collections.emptyMap()));
     }
 }

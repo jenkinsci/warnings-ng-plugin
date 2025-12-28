@@ -857,8 +857,7 @@ public class IssuesRecorder extends Recorder {
 
         var publisher = new IssuesPublisher(run, annotatedReport, deltaCalculator,
                 new HealthDescriptor(healthy, unhealthy, minimumSeverity), qualityGates,
-                customName, customIcon, ignoreQualityGate, getSourceCodeCharset(), logHandler, resultHandler, failOnError,
-                getSourceCodePaths().stream().toList());
+                customName, customIcon, ignoreQualityGate, getSourceCodeCharset(), logHandler, resultHandler, failOnError);
         var action = publisher.attachAction(trendChartType);
 
         if (!skipPublishingChecks) {

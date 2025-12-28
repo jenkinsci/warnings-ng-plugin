@@ -68,7 +68,6 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     private final Map<String, Integer> sizePerOrigin;
     private final List<String> errors;
     private final List<String> messages;
-    private final transient List<String> sourceDirectories; // @since 13.x.0
     /**
      * Reference run to compute the issues difference: since a run cannot be persisted directly, the IDs are only
      * stored.
@@ -134,8 +133,6 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      *         the quality gate status
      * @param sizePerOrigin
      *         the number of issues per origin
-     * @param sourceDirectories
-     *         list of configured source directories
      * @param previousResult
      *         the analysis result of the previous run (null if there is no previous result)
      */
@@ -143,8 +140,8 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     @SuppressWarnings("checkstyle:ParameterNumber")
     public AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report, final Blames blames,
             final RepositoryStatistics totals, final QualityGateResult qualityGateResult,
-            final Map<String, Integer> sizePerOrigin, final List<String> sourceDirectories, final AnalysisResult previousResult) {
-        this(owner, id, report, blames, totals, qualityGateResult, sizePerOrigin, sourceDirectories, true);
+            final Map<String, Integer> sizePerOrigin, final AnalysisResult previousResult) {
+        this(owner, id, report, blames, totals, qualityGateResult, sizePerOrigin, true);
 
         if (report.isEmpty()) {
             if (previousResult != null && previousResult.noIssuesSinceBuild != NO_BUILD) {
@@ -190,15 +187,13 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      *         the quality gate status
      * @param sizePerOrigin
      *         the number of issues per origin
-     * @param sourceDirectories
-     *         list of configured source directories
      */
     // CPD-OFF
     @SuppressWarnings("checkstyle:ParameterNumber")
     public AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report, final Blames blames,
             final RepositoryStatistics totals, final QualityGateResult qualityGateResult,
-            final Map<String, Integer> sizePerOrigin, final List<String> sourceDirectories) {
-        this(owner, id, report, blames, totals, qualityGateResult, sizePerOrigin, sourceDirectories, null);
+            final Map<String, Integer> sizePerOrigin) {
+        this(owner, id, report, blames, totals, qualityGateResult, sizePerOrigin, null);
     }
     // CPD-ON
 
@@ -219,8 +214,6 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      *         the quality gate status
      * @param sizePerOrigin
      *         the number of issues per origin
-     * @param sourceDirectories
-     *         list of configured source directories
      * @param canSerialize
      *         determines whether the result should be persisted in the build folder
      */
@@ -229,7 +222,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     protected AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report,
             final Blames blames, final RepositoryStatistics repositoryStatistics,
             final QualityGateResult qualityGateResult, final Map<String, Integer> sizePerOrigin,
-            final List<String> sourceDirectories, final boolean canSerialize) {
+            final boolean canSerialize) {
         this.owner = owner;
 
         var allIssues = report.getAllIssues();
@@ -240,7 +233,6 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
 
         totals = report.getStatistics();
         this.sizePerOrigin = new HashMap<>(sizePerOrigin);
-        this.sourceDirectories = new ArrayList<>(sourceDirectories);
         referenceBuildId = report.getReferenceBuildId();
 
         var outstandingIssues = report.getOutstandingIssues();
