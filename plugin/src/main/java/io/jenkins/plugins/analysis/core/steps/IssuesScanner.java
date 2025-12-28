@@ -7,6 +7,7 @@ import com.google.errorprone.annotations.MustBeClosed;
 import edu.hm.hafner.analysis.FileNameResolver;
 import edu.hm.hafner.analysis.FingerprintGenerator;
 import edu.hm.hafner.analysis.FullTextFingerprint;
+import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.ModuleDetectorRunner;
 import edu.hm.hafner.analysis.ModuleDetectorRunner.FileSystemFacade;
 import edu.hm.hafner.analysis.ModuleResolver;
@@ -294,16 +295,16 @@ class IssuesScanner {
 
         @Override
         public AnnotatedReport invoke(final File workspace, final VirtualChannel channel) {
-            resolvePaths(workspace, originalReport);
+            Report processedReport = resolvePaths(workspace, originalReport);
             if (postProcessingMode == PostProcessingMode.ENABLED) {
-                resolveModuleNames(originalReport, workspace);
-                resolvePackageNames(originalReport);
+                resolveModuleNames(processedReport, workspace);
+                resolvePackageNames(processedReport);
             }
             else {
-                originalReport.logInfo(SKIPPING_POST_PROCESSING);
+                processedReport.logInfo(SKIPPING_POST_PROCESSING);
             }
 
-            Report filtered = filter(originalReport, filters); // the filters may depend on the resolved paths
+            Report filtered = filter(processedReport, filters); // the filters may depend on the resolved paths
 
             createFingerprints(filtered);
 
@@ -322,7 +323,7 @@ class IssuesScanner {
             return blames;
         }
 
-        private void resolvePaths(final File workspace, final Report report) {
+        private Report resolvePaths(final File workspace, final Report report) {
             try {
                 var nameResolver = new FileNameResolver();
                 report.logInfo("Resolving file names for all issues in workspace '%s'", workspace);
@@ -336,9 +337,61 @@ class IssuesScanner {
                     nameResolver.run(report, sourceDirectory, ConsoleLogHandler::isInConsoleLog,
                             sourcePathPrefix, targetPathPrefix);
                 }
+                
+                if (!filteredSourceDirectories.isEmpty()) {
+                    return makePathsRelativeToSourceDirectories(report, filteredSourceDirectories);
+                }
+                return report;
             }
             catch (InvalidPathException exception) {
                 report.logException(exception, "Resolving of file names aborted");
+                return report;
+            }
+        }
+
+        /**
+         * Makes file paths in the report relative to the configured source directories.
+         * This addresses JENKINS-68856 by fixing paths in the model, not in the REST API layer.
+         *
+         * @param originalReport the report containing issues with file paths  
+         * @param sourceDirectories the configured source directories
+         * @return a new report with relative file paths
+         */
+        private Report makePathsRelativeToSourceDirectories(final Report originalReport, final Set<String> sourceDirectories) {
+            originalReport.logInfo("Making file paths relative to source directories in the model");
+            
+            try (var builder = new IssueBuilder()) {
+                var reportWithRelativePaths = new Report();
+                
+                for (var issue : originalReport) {
+                    String fileName = issue.getFileName();
+                    String normalizedFileName = fileName.replace("\\", "/");
+                    String relativePath = fileName; 
+                    
+                    for (String sourceDir : sourceDirectories) {
+                        String normalizedSourceDir = sourceDir.replace("\\", "/");
+                        
+                        if (!normalizedSourceDir.isEmpty() && !normalizedSourceDir.endsWith("/")) {
+                            normalizedSourceDir += "/";
+                        }
+                        
+                        if (normalizedFileName.startsWith(normalizedSourceDir)) {
+                            relativePath = normalizedFileName.substring(normalizedSourceDir.length());
+                            break;
+                        }
+                    }
+                    
+                    if (!relativePath.equals(fileName)) {
+                        reportWithRelativePaths.add(builder.copy(issue).setFileName(relativePath).build());
+                    } else {
+                        reportWithRelativePaths.add(issue);
+                    }
+                }
+                
+                reportWithRelativePaths.getInfoMessages().addAll(originalReport.getInfoMessages());
+                reportWithRelativePaths.getErrorMessages().addAll(originalReport.getErrorMessages());
+                
+                return reportWithRelativePaths;
             }
         }
 

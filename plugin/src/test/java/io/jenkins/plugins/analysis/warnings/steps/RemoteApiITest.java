@@ -63,6 +63,13 @@ class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that the Remote API returns file paths relative to the configured source directory.
      * This test addresses JENKINS-68856 where file paths should be relative to the sourceDirectory
      * when specified, rather than showing the full workspace path.
+     * 
+     * The test data in checkstyle-filtering.xml contains paths like:
+     * "X:\Build\Results\jobs\Maven\workspace\tasks\src\main\java\hudson\plugins\tasks\parser\CsharpNamespaceDetector.java"
+     * 
+     * When sourceDirectory is set to "tasks/src", the REST API should return:
+     * "main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java"
+     * (i.e., the path relative to the source directory, without the "tasks/src/" prefix)
      */
     @Test
     void shouldReturnRelativeFilePathsWhenSourceDirectoryIsConfigured() {
@@ -85,8 +92,8 @@ class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
             String fileName = issue.getString("fileName");
             
             assertThat(fileName)
-                    .as("File name at index %d should be relative to source directory, not include 'tasks/src/' prefix", i)
-                    .doesNotStartWith("tasks/src/");
+                    .as("File name at index %d should be relative to source directory (tasks/src), starting with 'main/'", i)
+                    .startsWith("main/");
         }
     }
 
