@@ -159,16 +159,6 @@ class IssuesAggregatorTest {
         verify(recorder).publishResult(any(), any(), any(), anyString(), any(), anyString(), anyString(), any());
     }
 
-    /**
-     * Verifies that matrix aggregation produces consistent results regardless of the order in which matrix runs complete.
-     * This is critical for correct reference build comparison and delta computation.
-     * 
-     * When matrix runs complete in different orders across builds, the aggregated report must still have issues
-     * in the same deterministic order. Otherwise, issue fingerprints differ, causing incorrect "new" vs "outstanding"
-     * classifications when comparing with reference builds.
-     * 
-     * @see <a href="https://issues.jenkins.io/browse/JENKINS-71571">JENKINS-71571</a>
-     */
     @Test @org.junitpioneer.jupiter.Issue("JENKINS-71571")
     void shouldAggregateReportsConsistentlyRegardlessOfCompletionOrder() {
         var recorder1 = createRecorder();
