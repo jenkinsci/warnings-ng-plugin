@@ -393,6 +393,10 @@ class IssuesScanner {
                 
                 reportWithRelativePaths.getInfoMessages().addAll(report.getInfoMessages());
                 reportWithRelativePaths.getErrorMessages().addAll(report.getErrorMessages());
+                
+                return reportWithRelativePaths;
+            }
+        }
 
         private Set<String> filterSourceDirectories(final File workspace, final FilteredLog errors) {
             var filter = new SourceDirectoryFilter();
