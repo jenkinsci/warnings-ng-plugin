@@ -148,7 +148,7 @@ class PathRelativeTest {
      * @param sourceDirectories the source directories to make paths relative to
      * @return a new report with relative paths
      */
-    private Report makePathsRelativeToSourceDirectories(Report originalReport, Set<String> sourceDirectories) {
+    private Report makePathsRelativeToSourceDirectories(final Report originalReport, final Set<String> sourceDirectories) {
         try (var builder = new IssueBuilder()) {
             var reportWithRelativePaths = new Report();
             
