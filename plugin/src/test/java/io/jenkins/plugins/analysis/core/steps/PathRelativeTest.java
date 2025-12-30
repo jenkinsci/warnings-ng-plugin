@@ -166,15 +166,15 @@ class PathRelativeTest {
                     
                     if (normalizedFileName.startsWith(normalizedSourceDir)) {
                         relativePath = normalizedFileName.substring(normalizedSourceDir.length());
-if (relativePath.equals(fileName)) {
-                reportWithRelativePaths.add(issue);
-            }
-            else {
-                reportWithRelativePaths.add(builder.copy(issue).setFileName(relativePath).build());
-                if (!relativePath.equals(fileName)) {
-                    reportWithRelativePaths.add(builder.copy(issue).setFileName(relativePath).build());
-                } else {
+                        break;
+                    }
+                }
+                
+                if (relativePath.equals(fileName)) {
                     reportWithRelativePaths.add(issue);
+                }
+                else {
+                    reportWithRelativePaths.add(builder.copy(issue).setFileName(relativePath).build());
                 }
             }
             
