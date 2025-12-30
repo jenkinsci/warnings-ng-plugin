@@ -1,0 +1,43 @@
+{
+  "qualityGates": [
+    {
+      "metric": "test-success-rate",
+      "name": "Overall Tests Success Rate",
+      "threshold": 100.0,
+      "criticality": "FAILURE"
+    },
+    {
+      "metric": "line",
+      "name": "Line Coverage in New Code",
+      "scope": "new",
+      "threshold": 90.0,
+      "criticality": "UNSTABLE"
+    },
+    {
+      "metric": "branch",
+      "name": "Branch Coverage in New Code",
+      "scope": "new",
+      "threshold": 90.0,
+      "criticality": "UNSTABLE"
+    },
+    {
+      "metric": "mutation",
+      "name": "Mutation Coverage in New Code",
+      "scope": "new",
+      "threshold": 90.0,
+      "criticality": "UNSTABLE"
+    },
+    {
+      "metric": "bugs",
+      "name": "Potential Bugs in Whole Project",
+      "threshold": 0.0,
+      "criticality": "FAILURE"
+    },
+    {
+      "metric": "style",
+      "name": "Style Violation in Whole Project",
+      "threshold": 0.0,
+      "criticality": "FAILURE"
+    }
+  ]
+}

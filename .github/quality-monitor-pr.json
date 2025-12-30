@@ -5,19 +5,13 @@
       {
         "id": "junit",
         "name": "Unit Tests",
-        "pattern": "**/target/surefire-reports/TEST*warnings*.xml"
-      },
-      {
-        "id": "junit",
-        "icon": "rocket",
-        "name": "Integration Tests",
-        "pattern": "**/target/failsafe-reports/TEST*.xml"
+        "pattern": "**/target/surefire-reports/TEST*.xml"
       },
       {
         "id": "junit",
         "icon": "no_entry",
         "name": "Architecture Tests",
-        "pattern": "**/target/surefire-reports/TEST*archunit*.xml"
+        "pattern": "**/target/archunit-reports/TEST*.xml"
       }
     ]
   },
@@ -33,6 +27,11 @@
         {
           "id": "pmd",
           "pattern": "**/target/pmd-*/pmd.xml"
+        },
+        {
+          "id": "java",
+          "icon": "coffee",
+          "pattern": "**/maven.log"
         }
       ]
     },
@@ -45,6 +44,22 @@
           "id": "spotbugs",
           "sourcePath": "src/main/java",
           "pattern": "**/target/spotbugsXml.xml"
+        },
+        {
+          "id": "error-prone",
+          "pattern": "**/maven.log"
+        }
+      ]
+    },
+    {
+      "name": "API Problems",
+      "id": "api",
+      "icon": "no_entry_sign",
+      "tools": [
+        {
+          "id": "revapi",
+          "sourcePath": "src/main/java",
+          "pattern": "**/target/revapi-result.json"
         }
       ]
     },
@@ -63,7 +78,40 @@
   ],
   "coverage": [
     {
-      "name": "Code Coverage",
+      "name": "Coverage for New Code",
+      "tools": [
+        {
+          "id": "jacoco",
+          "metric": "line",
+          "scope": "new",
+          "sourcePath": "src/main/java",
+          "pattern": "**/target/site/jacoco/jacoco.xml"
+        },
+        {
+          "id": "jacoco",
+          "metric": "branch",
+          "scope": "new",
+          "sourcePath": "src/main/java",
+          "pattern": "**/target/site/jacoco/jacoco.xml"
+        },
+        {
+          "id": "pit",
+          "scope": "new",
+          "metric": "mutation",
+          "sourcePath": "src/main/java",
+          "pattern": "**/target/pit-reports/mutations.xml"
+        },
+        {
+          "id": "pit",
+          "metric": "test-strength",
+          "scope": "new",
+          "sourcePath": "src/main/java",
+          "pattern": "**/target/pit-reports/mutations.xml"
+        }
+      ]
+    },
+    {
+      "name": "Coverage for Whole Project",
       "tools": [
         {
           "id": "jacoco",
@@ -76,6 +124,18 @@
           "metric": "branch",
           "sourcePath": "src/main/java",
           "pattern": "**/target/site/jacoco/jacoco.xml"
+        },
+        {
+          "id": "pit",
+          "metric": "mutation",
+          "sourcePath": "src/main/java",
+          "pattern": "**/target/pit-reports/mutations.xml"
+        },
+        {
+          "id": "pit",
+          "metric": "test-strength",
+          "sourcePath": "src/main/java",
+          "pattern": "**/target/pit-reports/mutations.xml"
         }
       ]
     }

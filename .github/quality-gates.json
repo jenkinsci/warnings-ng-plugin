@@ -8,11 +8,13 @@
     },
     {
       "metric": "line",
+      "name": "Line Coverage",
       "threshold": 80.0,
       "criticality": "UNSTABLE"
     },
     {
       "metric": "branch",
+      "name": "Branch Coverage",
       "threshold": 60.0,
       "criticality": "UNSTABLE"
     },
