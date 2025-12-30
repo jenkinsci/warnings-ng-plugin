@@ -113,6 +113,14 @@
               title="Reset quality gate so that next build will use this build as a reference.">Reset
             </button>
           </j:if>
+          <j:if test="${s.qualityGateReset}">
+            <li style="font-style: italic; color: #666;">
+              Quality gate reset by ${s.resetBy} on ${s.resetTimestamp}
+              <j:if test="${s.hasResetReason}">
+                <br/>Reason: ${s.resetReason}
+              </j:if>
+            </li>
+          </j:if>
         </j:if>
       </ul>
     </span>
