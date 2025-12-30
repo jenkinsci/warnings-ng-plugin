@@ -15,7 +15,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  * This test verifies JENKINS-68856: File paths should be relative to configured source directories.
  */
 class PathRelativeTest {
-    
     @Test
     void shouldMakePathsRelativeToSourceDirectory() {
         Report report = new Report();
@@ -144,6 +143,10 @@ class PathRelativeTest {
     /**
      * Replicates the logic from IssuesScanner.ReportPostProcessor.makePathsRelativeToSourceDirectories
      * for testing purposes.
+     *
+     * @param originalReport the report with original file paths
+     * @param sourceDirectories the source directories to make paths relative to
+     * @return a new report with relative paths
      */
     private Report makePathsRelativeToSourceDirectories(Report originalReport, Set<String> sourceDirectories) {
         try (var builder = new IssueBuilder()) {
@@ -163,10 +166,11 @@ class PathRelativeTest {
                     
                     if (normalizedFileName.startsWith(normalizedSourceDir)) {
                         relativePath = normalizedFileName.substring(normalizedSourceDir.length());
-                        break;
-                    }
-                }
-                
+if (relativePath.equals(fileName)) {
+                reportWithRelativePaths.add(issue);
+            }
+            else {
+                reportWithRelativePaths.add(builder.copy(issue).setFileName(relativePath).build());
                 if (!relativePath.equals(fileName)) {
                     reportWithRelativePaths.add(builder.copy(issue).setFileName(relativePath).build());
                 } else {

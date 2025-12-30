@@ -353,20 +353,20 @@ class IssuesScanner {
          * Makes file paths in the report relative to the configured source directories.
          * This addresses JENKINS-68856 by fixing paths in the model, not in the REST API layer.
          *
-         * @param originalReport the report containing issues with file paths  
+         * @param report the report containing issues with file paths  
          * @param sourceDirectories the configured source directories (absolute paths)
          * @return a new report with relative file paths
          */
-        private Report makePathsRelativeToSourceDirectories(final Report originalReport, final Set<String> sourceDirectories) {
-            originalReport.logInfo("Making file paths relative to source directories in the model");
+        private Report makePathsRelativeToSourceDirectories(final Report report, final Set<String> sourceDirectories) {
+            report.logInfo("Making file paths relative to source directories in the model");
             
             try (var builder = new IssueBuilder()) {
                 var reportWithRelativePaths = new Report();
                 
-                for (var issue : originalReport) {
+                for (var issue : report) {
                     String fileName = issue.getFileName();
                     String normalizedFileName = fileName.replace("\\", "/");
-                    String relativePath = null; 
+                    String relativePath = null;  
                     
                     for (String sourceDir : sourceDirectories) {
                         String normalizedSourceDir = sourceDir.replace("\\", "/");
@@ -377,7 +377,7 @@ class IssuesScanner {
                         
                         if (normalizedFileName.startsWith(normalizedSourceDir)) {
                             relativePath = normalizedFileName.substring(normalizedSourceDir.length());
-                            originalReport.logInfo("Transformed '%s' to relative path '%s' using source directory '%s'", 
+                            report.logInfo("Transformed '%s' to relative path '%s' using source directory '%s'", 
                                     fileName, relativePath, sourceDir);
                             break;
                         }
@@ -385,17 +385,14 @@ class IssuesScanner {
                     
                     if (relativePath != null) {
                         reportWithRelativePaths.add(builder.copy(issue).setFileName(relativePath).build());
-                    } else {
+                    }
+                    else {
                         reportWithRelativePaths.add(issue);
                     }
                 }
                 
-                reportWithRelativePaths.getInfoMessages().addAll(originalReport.getInfoMessages());
-                reportWithRelativePaths.getErrorMessages().addAll(originalReport.getErrorMessages());
-                
-                return reportWithRelativePaths;
-            }
-        }
+                reportWithRelativePaths.getInfoMessages().addAll(report.getInfoMessages());
+                reportWithRelativePaths.getErrorMessages().addAll(report.getErrorMessages());
 
         private Set<String> filterSourceDirectories(final File workspace, final FilteredLog errors) {
             var filter = new SourceDirectoryFilter();
