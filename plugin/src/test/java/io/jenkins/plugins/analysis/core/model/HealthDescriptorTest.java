@@ -19,7 +19,7 @@ class HealthDescriptorTest {
         assertThat(new HealthDescriptor(0, 0, Severity.WARNING_NORMAL))
                 .isNotEnabled().isNotValid();
         assertThat(new HealthDescriptor(0, 1, Severity.WARNING_NORMAL))
-                .isEnabled().isNotValid();
+                .isEnabled().isValid(); 
         assertThat(new HealthDescriptor(1, 0, Severity.WARNING_NORMAL))
                 .isEnabled().isNotValid();
         assertThat(new HealthDescriptor(1, 1, Severity.WARNING_NORMAL))

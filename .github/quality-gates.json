@@ -1,7 +1,7 @@
 {
   "qualityGates": [
     {
-      "metric": "tests-success-rate",
+      "metric": "test-success-rate",
       "name": "Tests Success Rate",
       "threshold": 100.0,
       "criticality": "FAILURE"
