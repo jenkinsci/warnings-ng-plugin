@@ -116,6 +116,51 @@ class MatrixJobITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(getAnalysisResult(build)).hasTotalSize(2).hasNewSize(0);
     }
 
+    /**
+     * Verifies that matrix builds produce consistent aggregated results regardless of axis execution order.
+     * This test ensures that the fix for JENKINS-71571 works correctly by demonstrating that multiple builds
+     * with different files produce the same total count, independent of the order in which axes complete.
+     *
+     * @see <a href="https://issues.jenkins-ci.org/browse/JENKINS-71571">Issue 71571</a>
+     */
+    @Test @org.junitpioneer.jupiter.Issue("JENKINS-71571")
+    void shouldProduceConsistentResultsIndependentOfAxisExecutionOrder() {
+        var project = createProject(MatrixProject.class);
+
+        copySingleFileToWorkspace(project, "matrix-warnings-one.txt", "user_axis/JDK8/issues.txt");
+        copySingleFileToWorkspace(project, "matrix-warnings-two.txt", "user_axis/JDK11/issues.txt");
+
+        enableGenericWarnings(project, new Gcc4());
+        configureAxisLabels(project, "JDK8", "JDK11");
+
+        var build1 = buildSuccessfully(project);
+        var result1 = getAnalysisResult(build1);
+        
+        var build2 = buildSuccessfully(project);
+        var result2 = getAnalysisResult(build2);
+        
+        var build3 = buildSuccessfully(project);
+        var result3 = getAnalysisResult(build3);
+
+        assertThat(result1.getTotalSize())
+                .as("First build total")
+                .isEqualTo(10);
+        assertThat(result2.getTotalSize())
+                .as("Second build total should match first")
+                .isEqualTo(10);
+        assertThat(result3.getTotalSize())
+                .as("Third build total should match first")
+                .isEqualTo(10);
+                
+        for (MatrixRun run : build1.getRuns()) {
+            var axis = getAxisName(run);
+            int expected = axis.equals("JDK8") ? 4 : 6;
+            assertThat(getAnalysisResult(run).getTotalSize())
+                    .as("Axis %s should have %d warnings", axis, expected)
+                    .isEqualTo(expected);
+        }
+    }
+
     private String getAxisName(final MatrixRun run) {
         return run.getBuildVariables().values().iterator().next();
     }
