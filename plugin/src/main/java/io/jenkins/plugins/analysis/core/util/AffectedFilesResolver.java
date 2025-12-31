@@ -10,8 +10,6 @@ import edu.hm.hafner.util.PathUtil;
 import edu.hm.hafner.util.VisibleForTesting;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serial;
@@ -457,37 +455,49 @@ public class AffectedFilesResolver {
                 throws IOException, InterruptedException {
             var batchZipPath = workspacePath.child("batch-" + reportId + ".zip");
             try {
-                try (var zipFiles = Files.list(temporaryFolder);
-                     var fileOutputStream = new FileOutputStream(batchZipPath.getRemote());
-                     var zipOutputStream = new java.util.zip.ZipOutputStream(fileOutputStream)) {
-
-                    for (File zipFile : zipFiles
-                            .map(Path::toFile)
-                            .filter(file -> file.getName().endsWith(".zip"))
-                            .toArray(File[]::new)) {
-                        var zipEntry = new java.util.zip.ZipEntry(zipFile.getName());
-                        zipOutputStream.putNextEntry(zipEntry);
-
-                        try (var fileInputStream = new FileInputStream(zipFile)) {
-                            fileInputStream.transferTo(zipOutputStream);
-                        }
-                        zipOutputStream.closeEntry();
-                    }
-                }
-
-                try (InputStream inputStream = batchZipPath.read()) {
-                    var tempBatchZipOnController = buildFolder.child("batch-" + reportId + ".zip");
-                    try {
-                        tempBatchZipOnController.copyFrom(inputStream);
-                        tempBatchZipOnController.unzip(buildFolder);
-                    }
-                    finally {
-                        tempBatchZipOnController.delete();
-                    }
-                }
+                createBatchZipOnAgent(temporaryFolder, batchZipPath);
+                extractBatchZipOnController(batchZipPath);
             }
             finally {
                 batchZipPath.delete();
+            }
+        }
+
+        private void createBatchZipOnAgent(final Path temporaryFolder, final FilePath batchZipPath)
+                throws IOException {
+            try (var zipFiles = Files.list(temporaryFolder);
+                    var zipOutputStream = new java.util.zip.ZipOutputStream(
+                            Files.newOutputStream(Path.of(batchZipPath.getRemote())))) {
+                for (File zipFile : zipFiles
+                        .map(Path::toFile)
+                        .filter(file -> file.getName().endsWith(".zip"))
+                        .toArray(File[]::new)) {
+                    addFileToZip(zipFile, zipOutputStream);
+                }
+            }
+        }
+
+        private void addFileToZip(final File zipFile, final java.util.zip.ZipOutputStream zipOutputStream)
+                throws IOException {
+            var zipEntry = new java.util.zip.ZipEntry(zipFile.getName());
+            zipOutputStream.putNextEntry(zipEntry);
+            try (var fileInputStream = Files.newInputStream(zipFile.toPath())) {
+                fileInputStream.transferTo(zipOutputStream);
+            }
+            zipOutputStream.closeEntry();
+        }
+
+        private void extractBatchZipOnController(final FilePath batchZipPath)
+                throws IOException, InterruptedException {
+            var tempBatchZipOnController = buildFolder.child("batch-" + reportId + ".zip");
+            try (InputStream inputStream = batchZipPath.read()) {
+                tempBatchZipOnController.copyFrom(inputStream);
+            }
+            try {
+                tempBatchZipOnController.unzip(buildFolder);
+            }
+            finally {
+                tempBatchZipOnController.delete();
             }
         }
 
