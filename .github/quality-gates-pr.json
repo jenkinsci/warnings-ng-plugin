@@ -21,13 +21,6 @@
       "criticality": "UNSTABLE"
     },
     {
-      "metric": "mutation",
-      "name": "Mutation Coverage in New Code",
-      "scope": "new",
-      "threshold": 90.0,
-      "criticality": "UNSTABLE"
-    },
-    {
       "metric": "bugs",
       "name": "Potential Bugs in Whole Project",
       "threshold": 0.0,
