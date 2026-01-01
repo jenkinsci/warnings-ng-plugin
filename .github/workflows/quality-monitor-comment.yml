@@ -13,24 +13,15 @@ permissions:
 
 jobs:
   comment:
-    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'pull_request' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && github.event.workflow_run.head_branch == 'main' }}
     runs-on: ubuntu-latest
-    name: Comment on PR
+    name: Comment main branch
 
     steps:
-      - name: Extract PR number and SHA
-        id: pr
-        run: |
-          pr_number='${{ github.event.workflow_run.pull_requests[0].number }}'
-            echo "number=$pr_number" >> "$GITHUB_OUTPUT"
-          sha='${{ github.event.workflow_run.head_sha }}'
-            echo "sha=$sha" >> "$GITHUB_OUTPUT"
-      - name: Checkout PR
+      - name: Checkout main branch
         uses: actions/checkout@v6
-        with:
-          ref: ${{ steps.pr.outputs.sha }}
-      - name: Download PR Quality Reports from Quality Monitor Build workflow
-        uses: dawidd6/action-download-artifact@v12
+      - name: Download Quality Reports from Quality Monitor Build workflow
+        uses: dawidd6/action-download-artifact@v11
         with:
           run_id: ${{ github.event.workflow_run.id }}
           name: quality-reports
@@ -43,10 +34,7 @@ jobs:
       - name: Run Quality Monitor and Comment on PR
         uses: uhafner/quality-monitor@main
         with:
-          sha: ${{ steps.pr.outputs.sha }}
           config: ${{ steps.quality-monitor.outputs.json }}
           quality-gates: ${{ steps.quality-gates.outputs.json }}
-          pr-number: ${{ steps.pr.outputs.number }}
-          comments-strategy: REMOVE
           show-headers: true
           title-metric: none

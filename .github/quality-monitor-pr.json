@@ -63,7 +63,26 @@
   ],
   "coverage": [
     {
-      "name": "Code Coverage",
+      "name": "Coverage for New Code",
+      "tools": [
+        {
+          "id": "jacoco",
+          "metric": "line",
+          "scope": "new",
+          "sourcePath": "src/main/java",
+          "pattern": "**/target/site/jacoco/jacoco.xml"
+        },
+        {
+          "id": "jacoco",
+          "metric": "branch",
+          "scope": "new",
+          "sourcePath": "src/main/java",
+          "pattern": "**/target/site/jacoco/jacoco.xml"
+        }
+      ]
+    },
+    {
+      "name": "Coverage for Whole Project",
       "tools": [
         {
           "id": "jacoco",
