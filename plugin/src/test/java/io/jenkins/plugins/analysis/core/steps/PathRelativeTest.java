@@ -141,49 +141,4 @@ class PathRelativeTest {
         assertThat(transformed.getCategory()).isEqualTo("TestCategory");
         assertThat(transformed.getSeverity()).isEqualTo(edu.hm.hafner.analysis.Severity.WARNING_HIGH);
     }
-    
-    /**
-     * Replicates the logic from IssuesScanner.ReportPostProcessor.makePathsRelativeToSourceDirectories
-     * for testing purposes.
-     *
-     * @param originalReport the report with original file paths
-     * @param sourceDirectories the source directories to make paths relative to
-     * @return a new report with relative paths
-     */
-    private Report makePathsRelativeToSourceDirectories(final Report originalReport, final Set<String> sourceDirectories) {
-        try (var builder = new IssueBuilder()) {
-            var reportWithRelativePaths = new Report();
-            
-            for (var issue : originalReport) {
-                String fileName = issue.getFileName();
-                String normalizedFileName = fileName.replace("\\", "/");
-                String relativePath = fileName;
-                
-                for (String sourceDir : sourceDirectories) {
-                    String normalizedSourceDir = sourceDir.replace("\\", "/");
-                    
-                    if (!normalizedSourceDir.isEmpty() && !normalizedSourceDir.endsWith("/")) {
-                        normalizedSourceDir += "/";
-                    }
-                    
-                    if (normalizedFileName.startsWith(normalizedSourceDir)) {
-                        relativePath = normalizedFileName.substring(normalizedSourceDir.length());
-                        break;
-                    }
-                }
-                
-                if (relativePath.equals(fileName)) {
-                    reportWithRelativePaths.add(issue);
-                }
-                else {
-                    reportWithRelativePaths.add(builder.copy(issue).setFileName(relativePath).build());
-                }
-            }
-            
-            reportWithRelativePaths.getInfoMessages().addAll(originalReport.getInfoMessages());
-            reportWithRelativePaths.getErrorMessages().addAll(originalReport.getErrorMessages());
-            
-            return reportWithRelativePaths;
-        }
-    }
 }
