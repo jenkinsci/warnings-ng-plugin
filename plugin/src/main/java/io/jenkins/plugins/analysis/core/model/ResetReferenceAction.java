@@ -78,14 +78,12 @@ public class ResetReferenceAction implements Action, Serializable {
      *
      * @return the user's full name, or the user ID if the full name is not available
      */
-    @SuppressWarnings("PMD.AvoidCatchingGenericException")
     public String getUserName() {
         try {
             User user = User.getById(userId, false);
             return user != null ? user.getFullName() : userId;
         }
-        catch (RuntimeException e) {
-            // Catching generic RuntimeException is intentional here to handle any Jenkins environment issues
+        catch (IllegalStateException e) {
             return userId;
         }
     }
