@@ -3,8 +3,10 @@ package io.jenkins.plugins.analysis.core.model;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 import java.io.Serializable;
-import java.text.DateFormat;
-import java.util.Date;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 
 import hudson.model.Action;
 import hudson.model.User;
@@ -76,12 +78,14 @@ public class ResetReferenceAction implements Action, Serializable {
      *
      * @return the user's full name, or the user ID if the full name is not available
      */
+    @SuppressWarnings("PMD.AvoidCatchingGenericException")
     public String getUserName() {
         try {
             User user = User.getById(userId, false);
             return user != null ? user.getFullName() : userId;
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
+            // Catching generic RuntimeException is intentional here to handle any Jenkins environment issues
             return userId;
         }
     }
@@ -101,7 +105,9 @@ public class ResetReferenceAction implements Action, Serializable {
      * @return the formatted date
      */
     public String getFormattedTimestamp() {
-        return DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(new Date(timestamp));
+        DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
+                .withZone(ZoneId.systemDefault());
+        return formatter.format(Instant.ofEpochMilli(timestamp));
     }
 
     /**

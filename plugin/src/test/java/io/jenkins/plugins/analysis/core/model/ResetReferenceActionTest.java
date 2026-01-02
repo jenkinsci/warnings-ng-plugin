@@ -34,7 +34,7 @@ class ResetReferenceActionTest {
 
     @Test
     void shouldStoreUserAndTimestampExplicitly() {
-        long timestamp = 1609459200000L; // 2021-01-01 00:00:00 GMT
+        long timestamp = 1_609_459_200_000L; // 2021-01-01 00:00:00 GMT
 
         ResetReferenceAction action = new ResetReferenceAction(TOOL_ID, USER_ID, timestamp, REASON);
 
@@ -70,7 +70,7 @@ class ResetReferenceActionTest {
 
     @Test
     void shouldFormatTimestampCorrectly() {
-        long timestamp = 1609459200000L; // 2021-01-01 00:00:00 GMT
+        long timestamp = 1_609_459_200_000L; // 2021-01-01 00:00:00 GMT
         ResetReferenceAction action = new ResetReferenceAction(TOOL_ID, USER_ID, timestamp, "");
 
         String formattedTimestamp = action.getFormattedTimestamp();
