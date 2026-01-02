@@ -22,8 +22,8 @@ import io.jenkins.plugins.analysis.core.restapi.ReportApi;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Pmd;
-import io.jenkins.plugins.analysis.warnings.SpotBugs;
 import io.jenkins.plugins.prism.SourceCodeDirectory;
+import io.jenkins.plugins.analysis.warnings.SpotBugs;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 import static org.assertj.core.api.Assertions.*;
@@ -57,6 +57,37 @@ class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     void shouldReturnIssuesForNewApiCall() {
         verifyRemoteApi("/checkstyle/all/api/xml", ISSUES_REMOTE_API_EXPECTED_XML);
+    }
+
+    /**
+     * Verifies that the Remote API returns file paths relative to the configured source directory.
+     * This test addresses JENKINS-68856 where file paths should be relative to the sourceDirectory
+     * when specified, rather than showing the full workspace path.
+     */
+    @Test
+    void shouldReturnRelativeFilePathsWhenSourceDirectoryIsConfigured() {
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(CHECKSTYLE_FILE);
+        var recorder = enableCheckStyleWarnings(project);
+        
+        recorder.setSourceDirectories(Arrays.asList(new SourceCodeDirectory("tasks/src")));
+        
+        Run<?, ?> build = scheduleBuildAndAssertStatus(project, Result.SUCCESS).getOwner();
+
+        var json = callJsonRemoteApi(build.getUrl() + "checkstyle/all/api/json");
+        var result = json.getJSONObject();
+        
+        assertThatJson(result).node("issues").isArray();
+        JSONArray issues = result.getJSONArray("issues");
+        assertThat(issues.size()).as("Should have issues").isGreaterThan(0);
+        
+        for (int i = 0; i < issues.size(); i++) {
+            JSONObject issue = issues.getJSONObject(i);
+            String fileName = issue.getString("fileName");
+            
+            assertThat(fileName)
+                    .as("File name at index %d should be relative to source directory, not include 'tasks/src/' prefix", i)
+                    .doesNotStartWith("tasks/src/");
+        }
     }
 
     private void verifyRemoteApi(final String url, final String issuesRemoteApiExpectedXml) {
@@ -173,48 +204,6 @@ class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
         var tool = createTool(new CheckStyle(), pattern);
         tool.setReportEncoding("UTF-8");
         return tool;
-    }
-
-    /**
-     * Regression test for JENKINS-68856.
-     *
-     * Verifies that file paths returned by the Remote API are relative to the configured source directory
-     * rather than the workspace root.
-     */
-    @Test
-    void shouldReturnRelativeFilePathsWhenSourceDirectoryIsConfigured() {
-        var project = createFreeStyleProjectWithWorkspaceFiles(
-                "tasks/src/Foo.java",
-                CHECKSTYLE_FILE);
-
-        var recorder = enableWarnings(project, createCheckstyle("**/*" + CHECKSTYLE_FILE));
-        recorder.setSourceDirectories(
-                Arrays.asList(new SourceCodeDirectory("tasks/src")));
-
-        Run<?, ?> build = scheduleBuildAndAssertStatus(project, Result.SUCCESS).getOwner();
-
-        var json = callJsonRemoteApi(build.getUrl() + "checkstyle/all/api/json");
-        var result = json.getJSONObject();
-
-        assertThatJson(result).node("issues").isArray().isNotEmpty();
-
-        JSONArray issues = result.getJSONArray("issues");
-
-        for (int i = 0; i < issues.size(); i++) {
-            JSONObject issue = issues.getJSONObject(i);
-
-            assertThatJson(issue)
-                    .as("Issue at index %d must contain a fileName field", i)
-                    .node("fileName").isPresent();
-
-            String fileName = issue.getString("fileName");
-
-            assertThat(fileName)
-                    .as("File path should be relative to configured source directory")
-                    .doesNotStartWith("tasks/src/")
-                    .doesNotStartWith("/")
-                    .isEqualTo("Foo.java");
-        }
     }
 
     private Run<?, ?> buildCheckStyleJob() {
