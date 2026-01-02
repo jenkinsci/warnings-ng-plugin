@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
+import java.util.Arrays;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
@@ -10,6 +11,7 @@ import org.xmlunit.assertj.XmlAssert;
 import org.xmlunit.builder.Input;
 
 import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 import hudson.model.Result;
 import hudson.model.Run;
@@ -21,6 +23,7 @@ import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSu
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Pmd;
 import io.jenkins.plugins.analysis.warnings.SpotBugs;
+import io.jenkins.plugins.prism.SourceCodeDirectory;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 import static org.assertj.core.api.Assertions.*;
@@ -170,6 +173,51 @@ class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
         var tool = createTool(new CheckStyle(), pattern);
         tool.setReportEncoding("UTF-8");
         return tool;
+    }
+
+    /**
+     * Regression test for JENKINS-68856.
+     *
+     * Verifies that file paths returned by the Remote API are relative to the configured source directory
+     * rather than the workspace root.
+     */
+    @Test
+    void shouldReturnRelativeFilePathsWhenSourceDirectoryIsConfigured() {
+        var project = createFreeStyleProjectWithWorkspaceFiles(
+                "tasks/src/Foo.java",
+                CHECKSTYLE_FILE);
+
+        var recorder = enableWarnings(project, createCheckstyle("**/*" + CHECKSTYLE_FILE));
+        recorder.setSourceDirectories(
+                Arrays.asList(new SourceCodeDirectory("tasks/src")));
+
+        Run<?, ?> build = scheduleBuildAndAssertStatus(project, Result.SUCCESS).getOwner();
+
+        var json = callJsonRemoteApi(build.getUrl() + "checkstyle/all/api/json");
+        var result = json.getJSONObject();
+
+        assertThatJson(result).node("issues").isArray();
+        JSONArray issues = result.getJSONArray("issues");
+
+        assertThat(issues)
+                .as("Remote API should return at least one issue")
+                .isNotEmpty();
+
+        for (int i = 0; i < issues.size(); i++) {
+            JSONObject issue = issues.getJSONObject(i);
+
+            assertThat(issue)
+                    .as("Issue at index %d must contain a fileName field", i)
+                    .containsKey("fileName");
+
+            String fileName = issue.getString("fileName");
+
+            assertThat(fileName)
+                    .as("File path should be relative to configured source directory")
+                    .doesNotStartWith("tasks/src/")
+                    .doesNotStartWith("/")
+                    .isEqualTo("Foo.java");
+        }
     }
 
     private Run<?, ?> buildCheckStyleJob() {

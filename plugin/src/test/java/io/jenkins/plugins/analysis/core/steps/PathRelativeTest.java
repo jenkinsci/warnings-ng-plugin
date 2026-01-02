@@ -13,6 +13,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Tests for relative path functionality in IssuesScanner.
  * This test verifies JENKINS-68856: File paths should be relative to configured source directories.
+ * 
+ *  @author Akash Manna
  */
 class PathRelativeTest {
     @Test
