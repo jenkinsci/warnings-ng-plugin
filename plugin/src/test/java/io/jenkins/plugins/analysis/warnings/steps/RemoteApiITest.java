@@ -196,19 +196,16 @@ class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
         var json = callJsonRemoteApi(build.getUrl() + "checkstyle/all/api/json");
         var result = json.getJSONObject();
 
-        assertThatJson(result).node("issues").isArray();
-        JSONArray issues = result.getJSONArray("issues");
+        assertThatJson(result).node("issues").isArray().isNotEmpty();
 
-        assertThat(issues)
-                .as("Remote API should return at least one issue")
-                .isNotEmpty();
+        JSONArray issues = result.getJSONArray("issues");
 
         for (int i = 0; i < issues.size(); i++) {
             JSONObject issue = issues.getJSONObject(i);
 
-            assertThat(issue)
+            assertThatJson(issue)
                     .as("Issue at index %d must contain a fileName field", i)
-                    .containsKey("fileName");
+                    .node("fileName").isPresent();
 
             String fileName = issue.getString("fileName");
 
