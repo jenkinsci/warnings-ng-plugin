@@ -27,7 +27,6 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -85,25 +84,6 @@ public final class AxivionSuite extends Tool {
     public AxivionSuite() {
         super();
         // empty constructor required for stapler
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        var that = (AxivionSuite) o;
-        return projectUrl.equals(that.projectUrl) && credentialsId.equals(that.credentialsId) && basedir.equals(
-                that.basedir) && namedFilter.equals(that.namedFilter)
-                && ignoreSuppressedOrJustified == that.ignoreSuppressedOrJustified;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(projectUrl, credentialsId, basedir, namedFilter, ignoreSuppressedOrJustified);
     }
 
     public String getBasedir() {
