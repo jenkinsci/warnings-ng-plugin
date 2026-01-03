@@ -12,7 +12,6 @@ import static org.assertj.core.api.Assertions.*;
 class ResetReferenceActionTest {
     private static final String TOOL_ID = "test-tool";
     private static final String USER_ID = "testuser";
-    private static final String REASON = "Testing quality gate reset";
 
     @Test
     void shouldStoreToolId() {
