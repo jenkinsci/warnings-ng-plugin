@@ -8,7 +8,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
-import edu.hm.hafner.util.FilteredLog;
 import edu.hm.hafner.util.ResourceTest;
 
 import java.io.File;
@@ -17,7 +16,6 @@ import java.util.Collections;
 
 import hudson.FilePath;
 
-import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver.CopyResult;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver.RemoteFacade;
 
 import static org.assertj.core.api.Assertions.*;
@@ -57,15 +55,11 @@ class AffectedFilesResolverTest extends ResourceTest {
     }
 
     @Test
-    void shouldDoNothingForEmptyReport() throws InterruptedException, IOException {
+    void shouldDoNothingForEmptyReport() throws InterruptedException {
         var resolver = new AffectedFilesResolver();
 
         var report = new Report();
-        RemoteFacade remoteFacade = mock(RemoteFacade.class);
-        when(remoteFacade.copyAllInBatch(any(Report.class), any(FilteredLog.class)))
-                .thenReturn(new CopyResult(0, 0, 0));
-
-        resolver.copyAffectedFilesToBuildFolder(report, remoteFacade);
+        resolver.copyAffectedFilesToBuildFolder(report, mock(RemoteFacade.class));
 
         assertThat(report.getErrorMessages()).isEmpty();
         assertThat(report.getInfoMessages()).hasSize(1);
@@ -77,7 +71,7 @@ class AffectedFilesResolverTest extends ResourceTest {
     }
 
     @Test
-    void shouldCopyFile() throws InterruptedException, IOException {
+    void shouldCopyFile() throws InterruptedException {
         var resolver = new AffectedFilesResolver();
 
         var report = new Report();
@@ -85,8 +79,8 @@ class AffectedFilesResolverTest extends ResourceTest {
         report.add(issue);
 
         RemoteFacade remoteFacade = mock(RemoteFacade.class);
-        when(remoteFacade.copyAllInBatch(any(Report.class), any(FilteredLog.class)))
-                .thenReturn(new CopyResult(1, 0, 0));
+        when(remoteFacade.exists(FILE_NAME)).thenReturn(true);
+        when(remoteFacade.isInWorkspace(FILE_NAME)).thenReturn(true);
 
         resolver.copyAffectedFilesToBuildFolder(report, remoteFacade);
 
@@ -108,24 +102,26 @@ class AffectedFilesResolverTest extends ResourceTest {
         report.add(issue);
 
         RemoteFacade remoteFacade = mock(RemoteFacade.class);
-        when(remoteFacade.copyAllInBatch(any(Report.class), any(FilteredLog.class)))
-                .thenThrow(new IOException("Batch copy failed"));
+        when(remoteFacade.exists(FILE_NAME)).thenReturn(true);
+        when(remoteFacade.isInWorkspace(FILE_NAME)).thenReturn(true);
+        doThrow(IOException.class).when(remoteFacade).copy(FILE_NAME, FILE_NAME);
 
         resolver.copyAffectedFilesToBuildFolder(report, remoteFacade);
 
         assertThat(report.getErrorMessages())
-                .hasSize(1)
-                .contains("Failed to copy files in batch: Batch copy failed");
+                .hasSize(2)
+                .contains("Can't copy some affected workspace files to Jenkins build folder:",
+                        "- 'file.txt', IO exception has been thrown: java.io.IOException");
         assertThat(report.getInfoMessages()).hasSize(1);
         var message = report.getInfoMessages().get(0);
         assertThat(message).contains("0 copied");
         assertThat(message).contains("0 not in workspace");
         assertThat(message).contains("0 not-found");
-        assertThat(message).contains("0 with I/O error");
+        assertThat(message).contains("1 with I/O error");
     }
 
     @Test
-    void shouldSkipNonWorkspaceFile() throws InterruptedException, IOException {
+    void shouldSkipNonWorkspaceFile() throws InterruptedException {
         var resolver = new AffectedFilesResolver();
 
         var report = new Report();
@@ -133,8 +129,8 @@ class AffectedFilesResolverTest extends ResourceTest {
         report.add(issue);
 
         RemoteFacade remoteFacade = mock(RemoteFacade.class);
-        when(remoteFacade.copyAllInBatch(any(Report.class), any(FilteredLog.class)))
-                .thenReturn(new CopyResult(0, 0, 1));
+        when(remoteFacade.exists(FILE_NAME)).thenReturn(true);
+        when(remoteFacade.isInWorkspace(FILE_NAME)).thenReturn(false);
 
         resolver.copyAffectedFilesToBuildFolder(report, remoteFacade);
 
