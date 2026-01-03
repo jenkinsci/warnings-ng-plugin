@@ -9,17 +9,23 @@ import edu.hm.hafner.util.FilteredLog;
 import edu.hm.hafner.util.PathUtil;
 import edu.hm.hafner.util.VisibleForTesting;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serial;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import hudson.FilePath;
 import hudson.model.Run;
+import hudson.remoting.VirtualChannel;
+import jenkins.MasterToSlaveFileCallable;
 
 import io.jenkins.plugins.prism.FilePermissionEnforcer;
+import io.jenkins.plugins.util.RemoteResultWrapper;
 
 /**
  * Copies all affected files that are referenced in at least one of the issues to Jenkins build folder. These files can
@@ -168,7 +174,69 @@ public class AffectedFilesResolver {
      */
     public void copyAffectedFilesToBuildFolder(final Report report, final FilePath workspace,
             final Set<String> permittedSourceDirectories, final FilePath buildFolder) throws InterruptedException {
-        copyAffectedFilesToBuildFolder(report, new RemoteFacade(workspace, permittedSourceDirectories, buildFolder));
+        Set<String> filesToCopy = collectFilesToCopy(report, buildFolder);
+        if (filesToCopy.isEmpty()) {
+            report.logInfo("-> 0 copied, 0 not in workspace, 0 not-found, 0 with I/O error");
+            return;
+        }
+
+        try {
+            var agentCopier = new AgentFilesCopier(filesToCopy, permittedSourceDirectories);
+            RemoteResultWrapper<CopyResult> result = workspace.act(agentCopier);
+            CopyResult copyResult = result.getResult();
+
+            result.getInfoMessages().forEach(report::logInfo);
+            result.getErrorMessages().forEach(report::logError);
+
+            copyZippedFilesToBuildFolder(workspace, buildFolder, report);
+
+            report.logInfo("-> %d copied, %d not in workspace, %d not-found, %d with I/O error",
+                    copyResult.copied(), copyResult.notInWorkspace(), copyResult.notFound(), copyResult.ioErrors());
+        }
+        catch (IOException exception) {
+            report.logException(exception, "Can't copy affected files from agent to build folder");
+        }
+    }
+
+    private Set<String> collectFilesToCopy(final Report report, final FilePath buildFolder) {
+        Set<String> filesToCopy = new HashSet<>();
+        for (Issue issue : report) {
+            String absolutePath = issue.getAbsolutePath();
+            if (StringUtils.isNotBlank(absolutePath)) {
+                try {
+                    if (!buildFolder.child(getZipName(issue.getFileName())).exists()) {
+                        filesToCopy.add(absolutePath + "::" + issue.getFileName());
+                    }
+                }
+                catch (IOException | InterruptedException ignore) {
+                    filesToCopy.add(absolutePath + "::" + issue.getFileName());
+                }
+            }
+        }
+        return filesToCopy;
+    }
+
+    /** Name of the staging folder on agent. */
+    private static final String STAGING_FOLDER_NAME = "affected-files-staging";
+
+    private void copyZippedFilesToBuildFolder(final FilePath workspace, final FilePath buildFolder,
+            final Report report) throws IOException, InterruptedException {
+        FilePath zipFile = workspace.child(AFFECTED_FILES_ZIP);
+        if (zipFile.exists()) {
+            report.logInfo("Copying zipped affected files from agent to build folder...");
+            FilePath parentFolder = buildFolder.getParent();
+            zipFile.copyTo(parentFolder.child(AFFECTED_FILES_ZIP));
+            report.logInfo("Extracting zipped files...");
+            parentFolder.child(AFFECTED_FILES_ZIP).unzip(parentFolder);
+            parentFolder.child(AFFECTED_FILES_ZIP).delete();
+            FilePath extractedStaging = parentFolder.child(STAGING_FOLDER_NAME);
+            for (FilePath file : extractedStaging.list()) {
+                file.copyTo(buildFolder.child(file.getName()));
+            }
+            extractedStaging.deleteRecursive();
+            zipFile.delete();
+            report.logInfo("Finished extracting source files");
+        }
     }
 
     @VisibleForTesting
@@ -208,6 +276,124 @@ public class AffectedFilesResolver {
         log.getErrorMessages().forEach(report::logError);
         report.logInfo("-> %d copied, %d not in workspace, %d not-found, %d with I/O error",
                 copied, notInWorkspace, notFound, log.size());
+    }
+
+    /** Name of the temporary zip file that holds all affected files. */
+    static final String AFFECTED_FILES_ZIP = "affected-files.zip";
+
+    /**
+     * Copies affected files on the agent. All files are zipped into a single archive to reduce network round-trips
+     * when copying from agent to controller (JENKINS-75697).
+     */
+    @SuppressWarnings("PMD.LooseCoupling")
+    static class AgentFilesCopier extends MasterToSlaveFileCallable<RemoteResultWrapper<CopyResult>> {
+        @Serial
+        private static final long serialVersionUID = 1L;
+        private static final PathUtil PATH_UTIL = new PathUtil();
+        private static final FilePermissionEnforcer PERMISSION_ENFORCER = new FilePermissionEnforcer();
+
+        private final HashSet<String> filesToCopy;
+        private final HashSet<String> permittedSourceDirectories;
+
+        AgentFilesCopier(final Set<String> filesToCopy, final Set<String> permittedSourceDirectories) {
+            super();
+            this.filesToCopy = new HashSet<>(filesToCopy);
+            this.permittedSourceDirectories = new HashSet<>(permittedSourceDirectories);
+        }
+
+        @Override
+        public RemoteResultWrapper<CopyResult> invoke(final File workspaceFile, final VirtualChannel channel)
+                throws InterruptedException {
+            var log = new FilteredLog("Can't copy some affected workspace files to Jenkins build folder:");
+            var workspace = new FilePath(workspaceFile);
+            Set<String> permittedPaths = getPermittedPaths(workspaceFile);
+
+            FilePath stagingFolder = workspace.child(STAGING_FOLDER_NAME);
+            int[] counters = {0, 0, 0, 0}; 
+
+            try {
+                stagingFolder.mkdirs();
+                processAllFiles(workspace, stagingFolder, permittedPaths, counters, log);
+                createArchiveIfNeeded(workspace, stagingFolder, counters[0], log);
+            }
+            catch (IOException exception) {
+                log.logException(exception, "Cannot create staging directory for affected files");
+            }
+            finally {
+                cleanupStagingFolder(stagingFolder);
+            }
+
+            var result = new RemoteResultWrapper<>(
+                    new CopyResult(counters[0], counters[1], counters[2], counters[3]),
+                    "Errors while copying affected files on agent:");
+            result.merge(log);
+            return result;
+        }
+
+        private void processAllFiles(final FilePath workspace, final FilePath stagingFolder,
+                final Set<String> permittedPaths, final int[] counters, final FilteredLog log)
+                throws InterruptedException {
+            for (String fileEntry : filesToCopy) {
+                String[] parts = fileEntry.split("::", 2);
+                processFile(stagingFolder, permittedPaths, parts[0], parts[1], counters, log, workspace);
+            }
+        }
+
+        @SuppressWarnings("checkstyle:ParameterNumber")
+        private void processFile(final FilePath stagingFolder, final Set<String> permittedPaths,
+                final String absolutePath, final String fileName, final int[] counters, final FilteredLog log,
+                final FilePath workspace) throws InterruptedException {
+            var filePath = new FilePath(new File(absolutePath));
+            try {
+                if (!filePath.exists()) {
+                    counters[1]++; 
+                    return;
+                }
+                String sourceFile = PATH_UTIL.getAbsolutePath(absolutePath);
+                if (!PERMISSION_ENFORCER.isInWorkspace(sourceFile, workspace, permittedPaths)) {
+                    counters[2]++; 
+                    return;
+                }
+                if (!filePath.toVirtualFile().canRead()) {
+                    log.logError("- '%s', can't read file", absolutePath);
+                    counters[3]++; 
+                    return;
+                }
+                String zipName = getZipName(fileName);
+                FilePath zipFilePath = stagingFolder.child(zipName);
+                filePath.zip(zipFilePath);
+                counters[0]++; 
+            }
+            catch (IOException exception) {
+                log.logError("- '%s', IO exception has been thrown: %s", absolutePath, exception);
+                counters[3]++; 
+            }
+        }
+
+        private void createArchiveIfNeeded(final FilePath workspace, final FilePath stagingFolder,
+                final int copied, final FilteredLog log) throws IOException, InterruptedException {
+            if (copied > 0) {
+                FilePath outputZip = workspace.child(AFFECTED_FILES_ZIP);
+                stagingFolder.zip(outputZip);
+                log.logInfo("Created archive with %d affected files", copied);
+            }
+        }
+
+        private void cleanupStagingFolder(final FilePath stagingFolder) {
+            try {
+                stagingFolder.deleteRecursive();
+            }
+            catch (IOException | InterruptedException ignored) {
+            }
+        }
+
+        private Set<String> getPermittedPaths(final File workspaceFile) {
+            Set<String> permitted = permittedSourceDirectories.stream()
+                    .map(PATH_UTIL::getAbsolutePath)
+                    .collect(Collectors.toSet());
+            permitted.add(PATH_UTIL.getAbsolutePath(workspaceFile.getAbsolutePath()));
+            return permitted;
+        }
     }
 
     static class RemoteFacade {
@@ -276,5 +462,22 @@ public class AffectedFilesResolver {
         private FilePath computeBuildFolderFileName(final String fileName) {
             return buildFolder.child(getZipName(fileName));
         }
+    }
+
+    /**
+     * Record type to hold the result of copying affected files.
+     *
+     * @param copied
+     *         the number of files that were successfully copied
+     * @param notFound
+     *         the number of files that could not be found
+     * @param notInWorkspace
+     *         the number of files outside the permitted workspace
+     * @param ioErrors
+     *         the number of files that encountered I/O errors
+     */
+    record CopyResult(int copied, int notFound, int notInWorkspace, int ioErrors) implements java.io.Serializable {
+        @Serial
+        private static final long serialVersionUID = 1L;
     }
 }
