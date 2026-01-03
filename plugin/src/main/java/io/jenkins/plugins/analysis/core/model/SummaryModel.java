@@ -184,6 +184,60 @@ public class SummaryModel {
     }
 
     /**
+     * Returns the reset reference action for the current build, if present.
+     *
+     * @return the reset reference action, or empty if not present
+     */
+    public Optional<ResetReferenceAction> getResetReferenceAction() {
+        Run<?, ?> owner = analysisResult.getOwner();
+        return owner.getActions(ResetReferenceAction.class).stream()
+                .filter(action -> action.getId().equals(analysisResult.getId()))
+                .findFirst();
+    }
+
+    /**
+     * Returns whether the quality gate was reset for this build.
+     *
+     * @return {@code true} if the quality gate was reset, {@code false} otherwise
+     */
+    public boolean isQualityGateReset() {
+        return getResetReferenceAction().isPresent();
+    }
+
+    /**
+     * Returns the name of the user who reset the quality gate, if available.
+     *
+     * @return the user name, or an empty string if not available
+     */
+    public String getResetBy() {
+        return getResetReferenceAction()
+                .map(ResetReferenceAction::getUserName)
+                .orElse("");
+    }
+
+    /**
+     * Returns the user ID of the user who reset the quality gate, if available.
+     *
+     * @return the user ID, or an empty string if not available
+     */
+    public String getResetUserId() {
+        return getResetReferenceAction()
+                .map(ResetReferenceAction::getUserId)
+                .orElse("");
+    }
+
+    /**
+     * Returns the formatted timestamp when the quality gate was reset, if available.
+     *
+     * @return the formatted timestamp, or an empty string if not available
+     */
+    public String getResetTimestamp() {
+        return getResetReferenceAction()
+                .map(ResetReferenceAction::getFormattedTimestamp)
+                .orElse("");
+    }
+
+    /**
      * Provides a way to stub the label provider factory during tests.
      */
     static class LabelProviderFactoryFacade {
