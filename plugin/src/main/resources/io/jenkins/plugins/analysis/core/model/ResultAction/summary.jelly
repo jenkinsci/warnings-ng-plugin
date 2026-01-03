@@ -114,11 +114,17 @@
             </button>
           </j:if>
           <j:if test="${s.qualityGateReset}">
-            <li style="font-style: italic; color: #666;">
-              Quality gate reset by ${s.resetBy} on ${s.resetTimestamp}
-              <j:if test="${s.hasResetReason}">
-                <br/>Reason: ${s.resetReason}
-              </j:if>
+            <li class="jenkins-!-color-grey jenkins-!-font-style-italic">
+              <st:nbsp/>Quality gate reset by 
+              <j:choose>
+                <j:when test="${s.resetUserId != null and s.resetUserId != 'anonymous'}">
+                  <a href="${rootURL}/user/${s.resetUserId}">${s.resetBy}</a>
+                </j:when>
+                <j:otherwise>
+                  ${s.resetBy}
+                </j:otherwise>
+              </j:choose>
+              <st:nbsp/>${s.resetTimestamp} ago
             </li>
           </j:if>
         </j:if>

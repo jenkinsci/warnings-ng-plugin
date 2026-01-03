@@ -2,29 +2,27 @@ package io.jenkins.plugins.analysis.core.model;
 
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 
+import java.io.Serial;
 import java.io.Serializable;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 
+import hudson.Util;
 import hudson.model.Action;
 import hudson.model.User;
 
 /**
  * Marker for a build to indicate that this build should serve as a new reference build for the quality gate evaluation
  * of the next build. This marker helps to reset the reference build computation to restart the new issue computation.
- * Additionally, this action stores information about who reset the quality gate, when it was reset, and optionally why.
+ * Additionally, this action stores information about who reset the quality gate and when it was reset.
  *
  * @author Ullrich Hafner
  */
 public class ResetReferenceAction implements Action, Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final String id;
     private final String userId;
     private final long timestamp;
-    private final String reason;
 
     /**
      * Creates a new action for the specified tool ID.
@@ -33,7 +31,7 @@ public class ResetReferenceAction implements Action, Serializable {
      *         the ID of the tool to reset the reference build
      */
     ResetReferenceAction(final String id) {
-        this(id, getCurrentUserId(), System.currentTimeMillis(), "");
+        this(id, getCurrentUserId(), System.currentTimeMillis());
     }
 
     /**
@@ -45,14 +43,11 @@ public class ResetReferenceAction implements Action, Serializable {
      *         the ID of the user who reset the quality gate
      * @param timestamp
      *         the timestamp when the quality gate was reset
-     * @param reason
-     *         the optional reason for resetting the quality gate
      */
-    ResetReferenceAction(final String id, final String userId, final long timestamp, final String reason) {
+    ResetReferenceAction(final String id, final String userId, final long timestamp) {
         this.id = id;
         this.userId = userId;
         this.timestamp = timestamp;
-        this.reason = reason == null ? "" : reason;
     }
 
     private static String getCurrentUserId() {
@@ -84,6 +79,8 @@ public class ResetReferenceAction implements Action, Serializable {
             return user != null ? user.getFullName() : userId;
         }
         catch (IllegalStateException e) {
+            // Can occur when Jenkins environment is not fully initialized (e.g., during unit tests)
+            // User.getById() throws IllegalStateException when User$AllUsers extension is not available
             return userId;
         }
     }
@@ -98,32 +95,12 @@ public class ResetReferenceAction implements Action, Serializable {
     }
 
     /**
-     * Returns a formatted date string for the reset timestamp.
+     * Returns a user-friendly relative time string for the reset timestamp.
      *
-     * @return the formatted date
+     * @return the relative time (e.g., "2 hours ago")
      */
     public String getFormattedTimestamp() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
-                .withZone(ZoneId.systemDefault());
-        return formatter.format(Instant.ofEpochMilli(timestamp));
-    }
-
-    /**
-     * Returns the optional reason for resetting the quality gate.
-     *
-     * @return the reason, or an empty string if no reason was provided
-     */
-    public String getReason() {
-        return reason;
-    }
-
-    /**
-     * Returns whether a reason was provided for the reset.
-     *
-     * @return {@code true} if a reason was provided, {@code false} otherwise
-     */
-    public boolean hasReason() {
-        return !reason.isEmpty();
+        return Util.getTimeSpanString(System.currentTimeMillis() - timestamp);
     }
 
     @CheckForNull

@@ -216,6 +216,17 @@ public class SummaryModel {
     }
 
     /**
+     * Returns the user ID of the user who reset the quality gate, if available.
+     *
+     * @return the user ID, or an empty string if not available
+     */
+    public String getResetUserId() {
+        return getResetReferenceAction()
+                .map(ResetReferenceAction::getUserId)
+                .orElse("");
+    }
+
+    /**
      * Returns the formatted timestamp when the quality gate was reset, if available.
      *
      * @return the formatted timestamp, or an empty string if not available
@@ -224,28 +235,6 @@ public class SummaryModel {
         return getResetReferenceAction()
                 .map(ResetReferenceAction::getFormattedTimestamp)
                 .orElse("");
-    }
-
-    /**
-     * Returns the reason for resetting the quality gate, if available.
-     *
-     * @return the reason, or an empty string if not available
-     */
-    public String getResetReason() {
-        return getResetReferenceAction()
-                .map(ResetReferenceAction::getReason)
-                .orElse("");
-    }
-
-    /**
-     * Returns whether a reason was provided for the quality gate reset.
-     *
-     * @return {@code true} if a reason was provided, {@code false} otherwise
-     */
-    public boolean hasResetReason() {
-        return getResetReferenceAction()
-                .map(ResetReferenceAction::hasReason)
-                .orElse(false);
     }
 
     /**

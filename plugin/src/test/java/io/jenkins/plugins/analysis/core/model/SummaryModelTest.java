@@ -205,7 +205,7 @@ class SummaryModelTest {
         Run<?, ?> build = analysisResult.getOwner();
         when(analysisResult.getId()).thenReturn(TOOL_ID);
 
-        ResetReferenceAction resetAction = new ResetReferenceAction(TOOL_ID, "testuser", System.currentTimeMillis(), "Test reason");
+        ResetReferenceAction resetAction = new ResetReferenceAction(TOOL_ID, "testuser", System.currentTimeMillis());
         when(build.getActions(ResetReferenceAction.class)).thenReturn(Lists.mutable.of(resetAction));
 
         var summary = createSummary(analysisResult);
@@ -213,8 +213,6 @@ class SummaryModelTest {
         assertThat(summary.isQualityGateReset()).isTrue();
         assertThat(summary.getResetBy()).isEqualTo("testuser");
         assertThat(summary.getResetTimestamp()).isNotEmpty();
-        assertThat(summary.getResetReason()).isEqualTo("Test reason");
-        assertThat(summary.hasResetReason()).isTrue();
     }
 
     @Test
@@ -232,8 +230,6 @@ class SummaryModelTest {
         assertThat(summary.isQualityGateReset()).isFalse();
         assertThat(summary.getResetBy()).isEmpty();
         assertThat(summary.getResetTimestamp()).isEmpty();
-        assertThat(summary.getResetReason()).isEmpty();
-        assertThat(summary.hasResetReason()).isFalse();
     }
 
     private SummaryModel createSummaryWithQualityGateReset(final AnalysisResult analysisResult) {
