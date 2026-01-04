@@ -1,6 +1,17 @@
 package io.jenkins.plugins.analysis.core.model;
 
+import java.io.IOException;
+import java.io.Serial;
+import java.nio.charset.Charset;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.apache.commons.lang3.StringUtils;
+import org.kohsuke.stapler.AncestorInPath;
+import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
 
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.ParsingCanceledException;
@@ -9,15 +20,6 @@ import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.Ensure;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 
-import java.io.IOException;
-import java.io.Serial;
-import java.nio.charset.Charset;
-import java.util.List;
-
-import org.kohsuke.stapler.AncestorInPath;
-import org.kohsuke.stapler.DataBoundSetter;
-import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.verb.POST;
 import hudson.FilePath;
 import hudson.model.AbstractProject;
 import hudson.model.BuildableItem;
@@ -26,6 +28,8 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
+import hudson.util.LogTaskListener;
+
 import jenkins.model.Jenkins;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser.AnalysisModelParserDescriptor;
@@ -59,7 +63,7 @@ public abstract class ReportScanningTool extends Tool {
      * scanned.
      *
      * @param pattern
-     *         the pattern to use
+     * the pattern to use
      */
     @DataBoundSetter
     public void setPattern(final String pattern) {
@@ -99,7 +103,7 @@ public abstract class ReportScanningTool extends Tool {
      * Specify if the file scanning step should skip the traversal of symbolic links.
      *
      * @param skipSymbolicLinks
-     *         if symbolic links should be skipped during directory scanning.
+     * if symbolic links should be skipped during directory scanning.
      */
     @DataBoundSetter
     public void setSkipSymbolicLinks(final boolean skipSymbolicLinks) {
@@ -123,7 +127,7 @@ public abstract class ReportScanningTool extends Tool {
      * Sets the encoding to use to read the log files that contain the warnings.
      *
      * @param reportEncoding
-     *         the encoding, e.g. "ISO-8859-1"
+     * the encoding, e.g. "ISO-8859-1"
      */
     @DataBoundSetter
     public void setReportEncoding(final String reportEncoding) {
@@ -139,7 +143,7 @@ public abstract class ReportScanningTool extends Tool {
      * Sets the context lines which is used in the fingerprinting process.
      *
      * @param linesLookAhead
-     *         the actual number of lines.
+     * the actual number of lines.
      */
     @DataBoundSetter
     public void setLinesLookAhead(final int linesLookAhead) {
@@ -174,12 +178,16 @@ public abstract class ReportScanningTool extends Tool {
     }
 
     // FIXME: Pattern expansion will not work in pipelines since the run does not provide all available variables
+    // RESOLUTION: We use a LogTaskListener instead of NULL to force Jenkins to retrieve the environment
     private String expandPattern(final Run<?, ?> run, final String actualPattern) {
         try {
             var environmentResolver = new EnvironmentResolver();
 
+            // Create a fallback listener that logs to the system log (Level.INFO)
+            TaskListener fallbackListener = new LogTaskListener(Logger.getLogger(ReportScanningTool.class.getName()), Level.INFO);
+
             return environmentResolver.expandEnvironmentVariables(
-                    run.getEnvironment(TaskListener.NULL), actualPattern);
+                    run.getEnvironment(fallbackListener), actualPattern);
         }
         catch (IOException | InterruptedException ignore) {
             return actualPattern; // fallback, no expansion
@@ -266,7 +274,7 @@ public abstract class ReportScanningTool extends Tool {
          * Creates a new instance of {@link ReportScanningToolDescriptor} with the given ID.
          *
          * @param id
-         *         the unique ID of the tool
+         * the unique ID of the tool
          */
         protected ReportScanningToolDescriptor(final String id) {
             super(id);
@@ -289,9 +297,9 @@ public abstract class ReportScanningTool extends Tool {
          * Performs on-the-fly validation of the character encoding.
          *
          * @param project
-         *         the project that is configured
+         * the project that is configured
          * @param reportEncoding
-         *         the character encoding
+         * the character encoding
          *
          * @return the validation result
          */
@@ -309,9 +317,9 @@ public abstract class ReportScanningTool extends Tool {
          * Performs on-the-fly validation on the ant pattern for input files.
          *
          * @param project
-         *         the project that is configured
+         * the project that is configured
          * @param pattern
-         *         the file pattern
+         * the file pattern
          *
          * @return the validation result
          */
