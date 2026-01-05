@@ -160,6 +160,10 @@ public class AffectedFilesResolver {
         return getTempName(fileName) + ZIP_EXTENSION;
     }
 
+    private static String getBatchZipFileName(final String reportId) {
+        return "batch-" + reportId + ZIP_EXTENSION;
+    }
+
     /**
      * Copies all files with issues from the workspace to the build folder.
      *
@@ -181,7 +185,6 @@ public class AffectedFilesResolver {
     }
 
     @VisibleForTesting
-    @SuppressWarnings({"PMD.CognitiveComplexity", "PMD.AvoidDeeplyNestedIfStmts"})
     void copyAffectedFilesToBuildFolder(final Report report, final RemoteFacade remoteFacade)
             throws InterruptedException {
         int copied = 0;
@@ -527,7 +530,7 @@ public class AffectedFilesResolver {
 
         private ValidationResult validateIssueFile(final Issue issue, final FilePath workspacePath) {
             try {
-            var sourceFile = findSourceFile(issue, workspacePath);
+                var sourceFile = findSourceFile(issue, workspacePath);
 
                 if (sourceFile == null) {
                     return new ValidationResult(issue.getFileName(), null, ValidationStatus.NOT_FOUND);
@@ -580,9 +583,5 @@ public class AffectedFilesResolver {
                 this.status = status;
             }
         }
-    }
-
-    private static String getBatchZipFileName(final String reportId) {
-        return "batch-" + reportId + ZIP_EXTENSION;
     }
 }
