@@ -20,6 +20,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import hudson.FilePath;
 import hudson.model.Run;
@@ -291,9 +293,33 @@ public class AffectedFilesResolver {
                 throw new IOException("No channel available for batch copy");
             }
             buildFolder.mkdirs();
-            
+
             Set<String> filesToSkip = getFilesToSkip(report);
-            return workspace.act(new BatchFileCopier(report, permittedAbsolutePaths, buildFolder, log, filesToSkip));
+
+            var copyResult = workspace.act(new BatchFileCopier(report, permittedAbsolutePaths, log, filesToSkip));
+            if (copyResult.getCopied() > 0) {
+                transferBatchZipToController(report.getId());
+            }
+            return copyResult;
+        }
+
+        private void transferBatchZipToController(final String reportId) throws IOException, InterruptedException {
+            var batchZipFileName = getBatchZipFileName(reportId);
+            var batchZipOnAgent = workspace.child(batchZipFileName);
+            var batchZipOnController = buildFolder.child(batchZipFileName);
+
+            try {
+                batchZipOnAgent.copyTo(batchZipOnController);
+                batchZipOnController.unzip(buildFolder);
+            }
+            finally {
+                try {
+                    batchZipOnController.delete();
+                }
+                finally {
+                    batchZipOnAgent.delete();
+                }
+            }
         }
 
         /**
@@ -322,8 +348,8 @@ public class AffectedFilesResolver {
             try {
                 return buildFolder.child(getZipName(fileName)).exists();
             }
-            catch (IOException | InterruptedException e) {
-                return false; 
+            catch (IOException | InterruptedException ignore) {
+                return false;
             }
         }
     }
@@ -371,17 +397,15 @@ public class AffectedFilesResolver {
 
         private final Report report;
         private final HashSet<String> permittedAbsolutePaths;
-        private final FilePath buildFolder;
         private final FilteredLog log;
         private final HashSet<String> filesToSkip;
         private final String reportId;
 
         BatchFileCopier(final Report report, final Set<String> permittedAbsolutePaths,
-                final FilePath buildFolder, final FilteredLog log, final Set<String> filesToSkip) {
+                final FilteredLog log, final Set<String> filesToSkip) {
             super();
             this.report = report;
             this.permittedAbsolutePaths = new HashSet<>(permittedAbsolutePaths);
-            this.buildFolder = buildFolder;
             this.log = log;
             this.filesToSkip = new HashSet<>(filesToSkip);
             this.reportId = report.getId();
@@ -390,12 +414,12 @@ public class AffectedFilesResolver {
         @Override
         public CopyResult invoke(final File workspace, final VirtualChannel channel)
                 throws IOException, InterruptedException {
-            var workspacePath = new FilePath(channel, workspace.getAbsolutePath());
+            var workspacePath = new FilePath(workspace);
 
             var validationResults = report.stream()
                     .parallel()
                     .filter(issue -> !filesToSkip.contains(issue.getFileName()))
-                    .map(issue -> validateIssueFile(issue, channel, workspacePath))
+                    .map(issue -> validateIssueFile(issue, workspacePath))
                     .toList();
 
             Map<String, FilePath> filesToCopy = validationResults.stream()
@@ -420,7 +444,7 @@ public class AffectedFilesResolver {
             Path temporaryFolder = Files.createTempDirectory("affected-files-" + reportId + "-");
             try {
                 int copied = zipIndividualFilesInParallel(filesToCopy, temporaryFolder);
-                transferBatchZipToController(workspacePath, temporaryFolder);
+                createBatchZipInWorkspace(workspacePath, temporaryFolder);
                 return new CopyResult(copied, notFound, notInWorkspace);
             }
             finally {
@@ -428,14 +452,14 @@ public class AffectedFilesResolver {
             }
         }
 
-        private int zipIndividualFilesInParallel(final Map<String, FilePath> filesToCopy, 
+        private int zipIndividualFilesInParallel(final Map<String, FilePath> filesToCopy,
                 final Path temporaryFolder) {
             return filesToCopy.entrySet().parallelStream()
                     .mapToInt(entry -> zipSingleFile(entry.getKey(), entry.getValue(), temporaryFolder))
                     .sum();
         }
 
-        private int zipSingleFile(final String fileName, final FilePath sourceFile, 
+        private int zipSingleFile(final String fileName, final FilePath sourceFile,
                 final Path temporaryFolder) {
             try {
                 String zipName = getZipName(fileName);
@@ -451,22 +475,16 @@ public class AffectedFilesResolver {
             }
         }
 
-        private void transferBatchZipToController(final FilePath workspacePath, final Path temporaryFolder)
-                throws IOException, InterruptedException {
-            var batchZipPath = workspacePath.child("batch-" + reportId + ".zip");
-            try {
-                createBatchZipOnAgent(temporaryFolder, batchZipPath);
-                extractBatchZipOnController(batchZipPath);
-            }
-            finally {
-                batchZipPath.delete();
-            }
+        private void createBatchZipInWorkspace(final FilePath workspacePath, final Path temporaryFolder)
+                throws IOException {
+            var batchZipPath = workspacePath.child(getBatchZipFileName(reportId));
+            createBatchZipOnAgent(temporaryFolder, batchZipPath);
         }
 
         private void createBatchZipOnAgent(final Path temporaryFolder, final FilePath batchZipPath)
                 throws IOException {
             try (var zipFiles = Files.list(temporaryFolder);
-                    var zipOutputStream = new java.util.zip.ZipOutputStream(
+                    var zipOutputStream = new ZipOutputStream(
                             Files.newOutputStream(Path.of(batchZipPath.getRemote())))) {
                 for (File zipFile : zipFiles
                         .map(Path::toFile)
@@ -477,9 +495,9 @@ public class AffectedFilesResolver {
             }
         }
 
-        private void addFileToZip(final File zipFile, final java.util.zip.ZipOutputStream zipOutputStream)
+        private void addFileToZip(final File zipFile, final ZipOutputStream zipOutputStream)
                 throws IOException {
-            var zipEntry = new java.util.zip.ZipEntry(zipFile.getName());
+            var zipEntry = new ZipEntry(zipFile.getName());
             zipOutputStream.putNextEntry(zipEntry);
             try (var fileInputStream = Files.newInputStream(zipFile.toPath())) {
                 fileInputStream.transferTo(zipOutputStream);
@@ -487,26 +505,12 @@ public class AffectedFilesResolver {
             zipOutputStream.closeEntry();
         }
 
-        private void extractBatchZipOnController(final FilePath batchZipPath)
-                throws IOException, InterruptedException {
-            var tempBatchZipOnController = buildFolder.child("batch-" + reportId + ".zip");
-            try (InputStream inputStream = batchZipPath.read()) {
-                tempBatchZipOnController.copyFrom(inputStream);
-            }
-            try {
-                tempBatchZipOnController.unzip(buildFolder);
-            }
-            finally {
-                tempBatchZipOnController.delete();
-            }
-        }
-
         private void deleteFolder(final File folder) {
             if (!folder.isDirectory()) {
                 folder.delete();
                 return;
             }
-            
+
             File[] files = folder.listFiles();
             if (files != null) {
                 for (File file : files) {
@@ -521,10 +525,9 @@ public class AffectedFilesResolver {
             folder.delete();
         }
 
-        private ValidationResult validateIssueFile(final Issue issue, final VirtualChannel channel,
-                final FilePath workspacePath) {
+        private ValidationResult validateIssueFile(final Issue issue, final FilePath workspacePath) {
             try {
-                var sourceFile = findSourceFile(issue, channel, workspacePath);
+            var sourceFile = findSourceFile(issue, workspacePath);
 
                 if (sourceFile == null) {
                     return new ValidationResult(issue.getFileName(), null, ValidationStatus.NOT_FOUND);
@@ -542,15 +545,16 @@ public class AffectedFilesResolver {
 
                 return new ValidationResult(issue.getFileName(), sourceFile, ValidationStatus.VALID);
             }
-            catch (IOException | InterruptedException e) {
-                log.logError("- '%s', exception during validation: %s", issue.getAbsolutePath(), e.getMessage());
+            catch (IOException | InterruptedException exception) {
+                log.logError("- '%s', exception during validation: %s", issue.getAbsolutePath(),
+                        exception.getMessage());
                 return new ValidationResult(issue.getFileName(), null, ValidationStatus.ERROR);
             }
         }
 
-        private FilePath findSourceFile(final Issue issue, final VirtualChannel channel,
-                final FilePath workspacePath) throws IOException, InterruptedException {
-            var absolutePath = new FilePath(channel, issue.getAbsolutePath());
+        private FilePath findSourceFile(final Issue issue, final FilePath workspacePath)
+                throws IOException, InterruptedException {
+            var absolutePath = new FilePath(new File(issue.getAbsolutePath()));
             if (absolutePath.exists()) {
                 return absolutePath;
             }
@@ -576,5 +580,9 @@ public class AffectedFilesResolver {
                 this.status = status;
             }
         }
+    }
+
+    private static String getBatchZipFileName(final String reportId) {
+        return "batch-" + reportId + ZIP_EXTENSION;
     }
 }
