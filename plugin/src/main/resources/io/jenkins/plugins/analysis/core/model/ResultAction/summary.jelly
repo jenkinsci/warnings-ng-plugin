@@ -114,7 +114,7 @@
             </button>
           </j:if>
           <j:if test="${s.qualityGateReset}">
-            <li class="jenkins-!-color-grey jenkins-!-font-style-italic">
+            <li>
               <st:nbsp/>Quality gate reset by 
               <j:choose>
                 <j:when test="${s.resetUserId != null and s.resetUserId != 'anonymous'}">
