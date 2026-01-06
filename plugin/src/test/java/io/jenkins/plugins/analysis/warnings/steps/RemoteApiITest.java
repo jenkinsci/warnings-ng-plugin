@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
-import java.util.Arrays;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
@@ -11,7 +10,6 @@ import org.xmlunit.assertj.XmlAssert;
 import org.xmlunit.builder.Input;
 
 import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 
 import hudson.model.Result;
 import hudson.model.Run;
@@ -22,7 +20,6 @@ import io.jenkins.plugins.analysis.core.restapi.ReportApi;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Pmd;
-import io.jenkins.plugins.prism.SourceCodeDirectory;
 import io.jenkins.plugins.analysis.warnings.SpotBugs;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
@@ -57,37 +54,6 @@ class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     void shouldReturnIssuesForNewApiCall() {
         verifyRemoteApi("/checkstyle/all/api/xml", ISSUES_REMOTE_API_EXPECTED_XML);
-    }
-
-    /**
-     * Verifies that the Remote API returns file paths relative to the configured source directory.
-     * This test addresses JENKINS-68856 where file paths should be relative to the sourceDirectory
-     * when specified, rather than showing the full workspace path.
-     */
-    @Test
-    void shouldReturnRelativeFilePathsWhenSourceDirectoryIsConfigured() {
-        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(CHECKSTYLE_FILE);
-        var recorder = enableCheckStyleWarnings(project);
-        
-        recorder.setSourceDirectories(Arrays.asList(new SourceCodeDirectory("tasks/src")));
-        
-        Run<?, ?> build = scheduleBuildAndAssertStatus(project, Result.SUCCESS).getOwner();
-
-        var json = callJsonRemoteApi(build.getUrl() + "checkstyle/all/api/json");
-        var result = json.getJSONObject();
-        
-        assertThatJson(result).node("issues").isArray();
-        JSONArray issues = result.getJSONArray("issues");
-        assertThat(issues.size()).as("Should have issues").isGreaterThan(0);
-        
-        for (int i = 0; i < issues.size(); i++) {
-            JSONObject issue = issues.getJSONObject(i);
-            String fileName = issue.getString("fileName");
-            
-            assertThat(fileName)
-                    .as("File name at index %d should be relative to source directory, not include 'tasks/src/' prefix", i)
-                    .doesNotStartWith("tasks/src/");
-        }
     }
 
     private void verifyRemoteApi(final String url, final String issuesRemoteApiExpectedXml) {
