@@ -38,7 +38,7 @@ public class WarningsPlugin extends AnalysisModelParser {
 
         @Override
         public boolean canScanConsoleLog() {
-            return true;
+            return false;
         }
 
         @Override
