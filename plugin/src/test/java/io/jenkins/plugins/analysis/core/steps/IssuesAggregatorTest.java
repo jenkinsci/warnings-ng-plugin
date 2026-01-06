@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.core.steps;
 
 import org.eclipse.collections.api.RichIterable;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
@@ -156,6 +157,46 @@ class IssuesAggregatorTest {
         aggregator.endBuild();
 
         verify(recorder).publishResult(any(), any(), any(), anyString(), any(), anyString(), anyString(), any());
+    }
+
+    @Test @org.junitpioneer.jupiter.Issue("JENKINS-71571")
+    void shouldAggregateReportsConsistentlyRegardlessOfCompletionOrder() {
+        var recorder1 = createRecorder();
+        var aggregator1 = createIssueAggregator(recorder1);
+        
+        var issue1 = new IssueBuilder().setOrigin(PMD).setFileName("file1.java").setLineStart(1).build();
+        var issue2 = new IssueBuilder().setOrigin(PMD).setFileName("file2.java").setLineStart(2).build();
+        var issue3 = new IssueBuilder().setOrigin(PMD).setFileName("file3.java").setLineStart(3).build();
+        
+        aggregator1.endRun(createBuild("axis1", createAction(issue1)));
+        aggregator1.endRun(createBuild("axis2", createAction(issue2)));
+        aggregator1.endRun(createBuild("axis3", createAction(issue3)));
+        aggregator1.endBuild();
+        
+        var recorder2 = createRecorder();
+        var aggregator2 = createIssueAggregator(recorder2);
+        
+        aggregator2.endRun(createBuild("axis3", createAction(issue3)));
+        aggregator2.endRun(createBuild("axis1", createAction(issue1)));
+        aggregator2.endRun(createBuild("axis2", createAction(issue2)));
+        aggregator2.endBuild();
+        
+        var reportCaptor1 = ArgumentCaptor.forClass(AnnotatedReport.class);
+        verify(recorder1).publishResult(any(), any(), any(), anyString(), reportCaptor1.capture(), anyString(), anyString(), any());
+        
+        var reportCaptor2 = ArgumentCaptor.forClass(AnnotatedReport.class);
+        verify(recorder2).publishResult(any(), any(), any(), anyString(), reportCaptor2.capture(), anyString(), anyString(), any());
+        
+        var report1 = reportCaptor1.getValue().getReport();
+        var report2 = reportCaptor2.getValue().getReport();
+        
+        assertThat(report1).hasSameElementsAs(report2);
+        assertThat(report1.stream().map(Issue::getFileName))
+                .as("First aggregator should have issues sorted by axis name")
+                .containsExactly("file1.java", "file2.java", "file3.java");
+        assertThat(report2.stream().map(Issue::getFileName))
+                .as("Second aggregator should have issues in same order despite different completion order")
+                .containsExactly("file1.java", "file2.java", "file3.java");
     }
 
     private Issue createIssue(final String pmd) {
