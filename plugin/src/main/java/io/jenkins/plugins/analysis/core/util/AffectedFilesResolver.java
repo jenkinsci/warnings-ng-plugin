@@ -18,6 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
@@ -187,26 +188,21 @@ public class AffectedFilesResolver {
     @VisibleForTesting
     void copyAffectedFilesToBuildFolder(final Report report, final RemoteFacade remoteFacade)
             throws InterruptedException {
-        int copied = 0;
-        int notFound = 0;
-        int notInWorkspace = 0;
-
         var log = new FilteredLog("Can't copy some affected workspace files to Jenkins build folder:");
 
         try {
             var result = remoteFacade.copyAllInBatch(report, log);
-            copied = result.getCopied();
-            notFound = result.getNotFound();
-            notInWorkspace = result.getNotInWorkspace();
 
             log.getInfoMessages().forEach(report::logInfo);
             log.getErrorMessages().forEach(report::logError);
+
+            report.logInfo("-> %d copied, %d not in workspace, %d not-found, %d with I/O error",
+                    result.getCopied(), result.getNotInWorkspace(), result.getNotFound(), log.size());
         }
         catch (IOException exception) {
             report.logError("Failed to copy files in batch: %s", exception.getMessage());
+            report.logInfo("-> 0 copied, 0 not in workspace, 0 not-found, 0 with I/O error");
         }
-        report.logInfo("-> %d copied, %d not in workspace, %d not-found, %d with I/O error",
-                copied, notInWorkspace, notFound, log.size());
     }
 
     static class RemoteFacade {
@@ -292,9 +288,6 @@ public class AffectedFilesResolver {
          */
         CopyResult copyAllInBatch(final Report report, final FilteredLog log)
                 throws IOException, InterruptedException {
-            if (workspace.getChannel() == null) {
-                throw new IOException("No channel available for batch copy");
-            }
             buildFolder.mkdirs();
 
             Set<String> filesToSkip = getFilesToSkip(report);
@@ -530,12 +523,13 @@ public class AffectedFilesResolver {
 
         private ValidationResult validateIssueFile(final Issue issue, final FilePath workspacePath) {
             try {
-                var sourceFile = findSourceFile(issue, workspacePath);
+                var sourceFileOptional = findSourceFile(issue, workspacePath);
 
-                if (sourceFile == null) {
+                if (sourceFileOptional.isEmpty()) {
                     return new ValidationResult(issue.getFileName(), null, ValidationStatus.NOT_FOUND);
                 }
 
+                var sourceFile = sourceFileOptional.get();
                 var sourceFileAbsPath = PATH_UTIL.getAbsolutePath(sourceFile.getRemote());
                 if (!PERMISSION_ENFORCER.isInWorkspace(sourceFileAbsPath, workspacePath, permittedAbsolutePaths)) {
                     return new ValidationResult(issue.getFileName(), null, ValidationStatus.NOT_IN_WORKSPACE);
@@ -555,17 +549,17 @@ public class AffectedFilesResolver {
             }
         }
 
-        private FilePath findSourceFile(final Issue issue, final FilePath workspacePath)
+        private Optional<FilePath> findSourceFile(final Issue issue, final FilePath workspacePath)
                 throws IOException, InterruptedException {
             var absolutePath = new FilePath(new File(issue.getAbsolutePath()));
             if (absolutePath.exists()) {
-                return absolutePath;
+                return Optional.of(absolutePath);
             }
             var relativePath = workspacePath.child(issue.getFileName());
             if (relativePath.exists()) {
-                return relativePath;
+                return Optional.of(relativePath);
             }
-            return null;
+            return Optional.empty();
         }
 
         private enum ValidationStatus {
