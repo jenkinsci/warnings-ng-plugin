@@ -115,7 +115,7 @@
           </j:if>
           <j:if test="${s.qualityGateReset}">
             <li>
-              <st:nbsp/>Quality gate reset by 
+              Quality gate reset by 
               <j:choose>
                 <j:when test="${s.resetUserId != null and s.resetUserId != 'anonymous'}">
                   <a href="${rootURL}/user/${s.resetUserId}">${s.resetBy}</a>
