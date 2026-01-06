@@ -113,6 +113,20 @@
               title="Reset quality gate so that next build will use this build as a reference.">Reset
             </button>
           </j:if>
+          <j:if test="${s.qualityGateReset}">
+            <li>
+              Quality gate reset by 
+              <j:choose>
+                <j:when test="${s.resetUserId != null and s.resetUserId != 'anonymous'}">
+                  <a href="${rootURL}/user/${s.resetUserId}">${s.resetBy}</a>
+                </j:when>
+                <j:otherwise>
+                  ${s.resetBy}
+                </j:otherwise>
+              </j:choose>
+              <st:nbsp/>${s.resetTimestamp} ago
+            </li>
+          </j:if>
         </j:if>
       </ul>
     </span>
