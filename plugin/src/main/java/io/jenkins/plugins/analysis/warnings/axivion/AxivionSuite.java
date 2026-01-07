@@ -100,6 +100,31 @@ public final class AxivionSuite extends Tool {
     }
 
     /**
+     * Encodes the URL path to handle special characters like whitespaces.
+     *
+     * @param urlString
+     *         the URL string to encode
+     *
+     * @return the encoded URL string
+     *
+     * @throws URISyntaxException
+     *         if the URL syntax is invalid
+     * @throws MalformedURLException
+     *         if the URL is malformed
+     */
+    private static String encodeProjectUrl(final String urlString) throws URISyntaxException, MalformedURLException {
+        final var url = new URL(urlString);
+        return new URIBuilder()
+                .setCharset(StandardCharsets.UTF_8)
+                .setHost(url.getHost())
+                .setPort(url.getPort())
+                .setPath(url.getPath())
+                .setScheme(url.getProtocol())
+                .build()
+                .toString();
+    }
+
+    /**
      * Stapler setter for the projectUrl field. Verifies the url and encodes the path part e.g. whitespaces in project
      * names. If the URL contains environment variables (e.g., ${VAR} or $VAR), they are preserved and will be
      * expanded at runtime.
@@ -115,15 +140,7 @@ public final class AxivionSuite extends Tool {
         }
         
         try {
-            final var url = new URL(projectUrl);
-            this.projectUrl = new URIBuilder()
-                    .setCharset(StandardCharsets.UTF_8)
-                    .setHost(url.getHost())
-                    .setPort(url.getPort())
-                    .setPath(url.getPath())
-                    .setScheme(url.getProtocol())
-                    .build()
-                    .toString();
+            this.projectUrl = encodeProjectUrl(projectUrl);
         }
         catch (URISyntaxException | MalformedURLException e) {
             throw new IllegalArgumentException("Not a valid project url.", e);
@@ -239,18 +256,10 @@ public final class AxivionSuite extends Tool {
                     run.getEnvironment(TaskListener.NULL), projectUrl);
             
             if (!expandedUrl.contains("$")) {
-                final var url = new URL(expandedUrl);
-                expandedUrl = new URIBuilder()
-                        .setCharset(StandardCharsets.UTF_8)
-                        .setHost(url.getHost())
-                        .setPort(url.getPort())
-                        .setPath(url.getPath())
-                        .setScheme(url.getProtocol())
-                        .build()
-                        .toString();
+                expandedUrl = encodeProjectUrl(expandedUrl);
             }
         }
-        catch (IOException | InterruptedException | URISyntaxException e) {
+        catch (IOException | InterruptedException | URISyntaxException | MalformedURLException e) {
             expandedUrl = projectUrl;
         }
         return expandedUrl;
