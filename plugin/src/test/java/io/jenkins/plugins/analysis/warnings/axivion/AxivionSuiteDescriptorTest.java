@@ -2,7 +2,6 @@ package io.jenkins.plugins.analysis.warnings.axivion;
 
 import org.junit.jupiter.api.Test;
 
-import hudson.model.FreeStyleProject;
 import hudson.util.FormValidation;
 
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
