@@ -259,7 +259,7 @@ public final class AxivionSuite extends Tool {
                 expandedUrl = encodeProjectUrl(expandedUrl);
             }
         }
-        catch (IOException | InterruptedException | URISyntaxException | MalformedURLException e) {
+        catch (IOException | InterruptedException | URISyntaxException e) {
             expandedUrl = projectUrl;
         }
         return expandedUrl;
