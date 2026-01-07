@@ -29,7 +29,10 @@ import hudson.model.TaskListener;
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 import hudson.util.LogTaskListener;
-
+import java.io.IOException;
+import hudson.util.StreamTaskListener; // <--- This is the key one
+import hudson.model.Run;
+import hudson.model.TaskListener;
 import jenkins.model.Jenkins;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser.AnalysisModelParserDescriptor;
@@ -175,25 +178,22 @@ public abstract class ReportScanningTool extends Tool {
 
             return scanInWorkspace(workspace, expandPattern(run, actualPattern), logger);
         }
-    }
-
-    // FIXME: Pattern expansion will not work in pipelines since the run does not provide all available variables
-    // RESOLUTION: We use a LogTaskListener instead of NULL to force Jenkins to retrieve the environment
+    }   
     private String expandPattern(final Run<?, ?> run, final String actualPattern) {
         try {
-            var environmentResolver = new EnvironmentResolver();
+            EnvironmentResolver environmentResolver = new EnvironmentResolver();
 
-            // Create a fallback listener that logs to the system log (Level.INFO)
-            TaskListener fallbackListener = new LogTaskListener(Logger.getLogger(ReportScanningTool.class.getName()), Level.INFO);
-
+            // use StreamTaskListener which outputs to the console (safer for tests)
             return environmentResolver.expandEnvironmentVariables(
-                    run.getEnvironment(fallbackListener), actualPattern);
+                    run.getEnvironment(StreamTaskListener.fromStdout()), 
+                    actualPattern);
         }
-        catch (IOException | InterruptedException ignore) {
-            return actualPattern; // fallback, no expansion
+        catch (IOException | InterruptedException e) {
+            // If this fails, we want to know why in the test logs!
+            e.printStackTrace(); 
+            return actualPattern;
         }
     }
-
     private Report scanInWorkspace(final FilePath workspace, final String expandedPattern, final LogHandler logger) {
         try {
             FileVisitorResult<Report> report = workspace.act(

@@ -3,6 +3,9 @@ package io.jenkins.plugins.analysis.warnings.steps;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 
+import hudson.slaves.DumbSlave;
+import org.jenkinsci.plugins.workflow.job.WorkflowJob;
+
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Severity;
 
@@ -855,5 +858,27 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     private IssuesRow getIssuesModel(final AnalysisResult result, final int rowNumber) {
         var issuesDetail = result.getOwner().getAction(ResultAction.class).getTarget();
         return (IssuesRow) issuesDetail.getTableModel("issues").getRows().get(rowNumber);
+    }
+    /**
+     * Verifies that environment variables are expanded correctly when running on an agent.
+     * Use a LogTaskListener instead of NULL to ensure the agent environment is retrieved.
+     */
+   @Test
+    public void shouldExpandEnvironmentVariablesOnAgent() throws Exception {
+        DumbSlave agent = getJenkins().createSlave();
+        WorkflowJob project = createPipeline();
+
+        project.setDefinition(asStage(
+                "node('" + agent.getNodeName() + "') {",
+                // FIX: Use Double Quotes (\") so Groovy creates 'issue-test0.txt'
+                "  writeFile file: \"issue-${JOB_NAME}.txt\", text: '[WARNING] Test.java:1: This is a test warning'",
+                
+                // We keep Single Quotes here because we want YOUR PLUGIN to do the expansion
+                "  recordIssues tool: java(pattern: '**/issue-${JOB_NAME}.txt'), skipPublishingChecks: true",
+                "}"));
+
+        AnalysisResult result = scheduleSuccessfulBuild(project);
+        
+        assertThat(result).hasTotalSize(1);
     }
 }
