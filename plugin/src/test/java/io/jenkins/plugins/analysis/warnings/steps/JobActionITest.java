@@ -273,6 +273,42 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(project.getActions(JobAction.class)).isEmpty();
     }
 
+    /**
+     * Verifies that {@link MissingResultFallbackHandler} does not create duplicate actions when build fails.
+     * This is a regression test for JENKINS-75748.
+     */
+    @Test
+    @Issue("JENKINS-75748")
+    void shouldNotCreateDuplicateActionsWhenBuildFails() {
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(ECLIPSE_LOG);
+        enableEclipseWarnings(project);
+
+        // First build succeeds with warnings
+        Run<?, ?> firstBuild = buildWithResult(project, Result.SUCCESS);
+        List<ResultAction> firstBuildResultActions = firstBuild.getActions(ResultAction.class);
+        assertThat(firstBuildResultActions).isNotEmpty();
+
+        List<JobAction> jobActionsAfterFirstBuild = project.getActions(JobAction.class);
+        assertThat(jobActionsAfterFirstBuild).hasSize(1);
+
+        // Second build: remove publisher and add a failing build step to simulate build failure before warnings
+        project.getPublishersList().clear();
+        addFailureStep(project);
+
+        Run<?, ?> secondBuild = buildWithResult(project, Result.FAILURE);
+        List<ResultAction> secondBuildResultActions = secondBuild.getActions(ResultAction.class);
+        assertThat(secondBuildResultActions).isEmpty();
+
+        // Verify that there is exactly one job action (no duplicates)
+        List<JobAction> jobActionsAfterSecondBuild = project.getActions(JobAction.class);
+        assertThat(jobActionsAfterSecondBuild).hasSize(1).first().satisfies(
+                jobAction -> {
+                    assertThat(jobAction.getId()).isEqualTo(ECLIPSE_URL_NAME);
+                    assertThat(jobAction.getUrlName()).isEqualTo(ECLIPSE_URL_NAME);
+                }
+        );
+    }
+
     private void assertThatTrendChartIsVisible(final AsyncConfigurableTrendChart trendChart) {
         assertThat(trendChart.isTrendVisible()).isTrue();
     }
