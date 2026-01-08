@@ -5,7 +5,9 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import hudson.Extension;
 import hudson.model.Action;
@@ -52,13 +54,21 @@ public final class MissingResultFallbackHandler extends TransientActionFactory<J
                 previousBuild = previousBuild.getPreviousBuild(), count++) {
             List<ResultAction> resultActions = previousBuild.getActions(ResultAction.class);
 
-            List<Action> actions = new ArrayList<>();
+            Map<String, Action> uniqueActions = new LinkedHashMap<>();
             for (ResultAction action : resultActions) {
-                actions.addAll(action.getProjectActions());
+                for (Action projectAction : action.getProjectActions()) {
+                    if (projectAction instanceof JobAction jobAction) {
+                        uniqueActions.putIfAbsent(jobAction.getUrlName(), projectAction);
+                    }
+                    else {
+                        uniqueActions.put(projectAction.getClass().getName() + System.identityHashCode(projectAction), 
+                                projectAction);
+                    }
+                }
             }
 
             if (!resultActions.isEmpty()) {
-                return actions;
+                return new ArrayList<>(uniqueActions.values());
             }
         }
 
