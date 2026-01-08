@@ -9,7 +9,7 @@
 
   <f:entry title="${%title.tool}">
     <div id="tools">
-      <f:repeatableProperty minimum="1" field="toolProxies" add="${%Add Tool}" header="Tool"/>
+      <f:repeatableProperty minimum="1" field="toolProxies" add="${%Add Tool}" header="${%Tool}"/>
     </div>
   </f:entry>
 
