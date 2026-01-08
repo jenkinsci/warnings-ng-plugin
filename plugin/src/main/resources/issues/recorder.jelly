@@ -7,7 +7,7 @@
 
   <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
 
-  <f:entry title="${%title.tool}>
+  <f:entry title="${%title.tool}">
     <div id="tools">
       <f:repeatableProperty minimum="1" field="toolProxies" add="${%Add Tool}" header="Tool"/>
     </div>
