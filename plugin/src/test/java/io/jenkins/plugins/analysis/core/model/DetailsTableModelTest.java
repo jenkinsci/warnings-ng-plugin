@@ -65,11 +65,8 @@ class DetailsTableModelTest extends AbstractDetailsModelTest {
             var actualColumn = model.getDescription();
             
             assertThat(actualColumn)
-                    .doesNotContain("<img src=x onerror")  
-                    .doesNotContain("<div>Description</div>")
-                    .contains("&amp;lt;img")
-                    .contains("&amp;lt;div&amp;gt;")
-                    .contains("Description");
+                    .doesNotContain("onerror=alert")  
+                    .contains("Description");  
         }
     }
 
@@ -85,6 +82,23 @@ class DetailsTableModelTest extends AbstractDetailsModelTest {
             
             assertThat(actualColumn).contains("&lt;").contains("&gt;");
             assertThat(actualMessage).contains("&lt;").contains("&gt;");
+        }
+    }
+
+    @Test
+    @org.junitpioneer.jupiter.Issue("JENKINS-62036")
+    void shouldEscapeHtmlEntitiesInMessage() {
+        try (var builder = new IssueBuilder()) {
+            builder.setMessage("File: mobiilirajapinta/json-nime&#228;misk&#228;yt&#228;nt&#246;.md");
+            var model = createRow(builder.build());
+
+            var actualMessage = model.getMessage();
+            
+            assertThat(actualMessage)
+                    .contains("&amp;#228;")  // &#228; should become &amp;#228;
+                    .contains("&amp;#246;")  // &#246; should become &amp;#246;
+                    .doesNotContain("ä")     // Should not be converted to actual character
+                    .doesNotContain("ö");    // Should not be converted to actual character
         }
     }
 

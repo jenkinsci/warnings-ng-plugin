@@ -223,12 +223,12 @@ public abstract class DetailsTableModel extends TableModel {
         private String formatDetails(final Issue issue, final String additionalDescription) {
             UnescapedText details;
             if (StringUtils.isBlank(issue.getMessage())) {
-                details = new UnescapedText(StringEscapeUtils.escapeHtml4(additionalDescription));
+                details = new UnescapedText(render(additionalDescription));
             }
             else {
                 details = DomContentJoiner.join(" ", false,
                         p(strong().with(new UnescapedText(StringEscapeUtils.escapeHtml4(issue.getMessage())))),
-                        StringEscapeUtils.escapeHtml4(additionalDescription));
+                        render(additionalDescription));
             }
             return TableColumn.renderDetailsColumn(details.render(), jenkinsFacade);
         }
