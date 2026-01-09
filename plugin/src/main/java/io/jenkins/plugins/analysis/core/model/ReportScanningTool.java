@@ -173,7 +173,9 @@ public abstract class ReportScanningTool extends Tool {
         }
     }
 
-    // FIXME: Pattern expansion will not work in pipelines since the run does not provide all available variables
+    // Note: Pattern expansion will not work in pipelines since the run does not provide all available variables.
+    // However, this is not a big issue since in pipelines the pattern expansion is already done by Jenkins'
+    // Groovy engine before passing the pattern to the step.
     private String expandPattern(final Run<?, ?> run, final String actualPattern) {
         try {
             var environmentResolver = new EnvironmentResolver();
