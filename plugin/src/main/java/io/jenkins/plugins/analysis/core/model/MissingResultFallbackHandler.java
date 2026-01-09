@@ -39,39 +39,54 @@ public final class MissingResultFallbackHandler extends TransientActionFactory<J
     @Override
     public Collection<? extends Action> createFor(@NonNull final Job<?, ?> target) {
         Run<?, ?> currentBuild = target.getLastBuild();
-        if (currentBuild == null || currentBuild.isBuilding()) {
+        if (shouldSkipFallback(currentBuild)) {
             return Collections.emptyList();
+        }
+
+        return findActionsInPreviousBuilds(currentBuild);
+    }
+
+    private boolean shouldSkipFallback(final Run<?, ?> currentBuild) {
+        if (currentBuild == null || currentBuild.isBuilding()) {
+            return true;
         }
 
         List<ResultAction> currentResultActions = currentBuild.getActions(ResultAction.class);
-        if (!currentResultActions.isEmpty()) {
-            return Collections.emptyList();
-        }
+        return !currentResultActions.isEmpty();
+    }
 
+    private Collection<? extends Action> findActionsInPreviousBuilds(final Run<?, ?> currentBuild) {
         int count = 0;
         for (Run<?, ?> previousBuild = currentBuild.getPreviousBuild();
                 previousBuild != null && count < MAX_BUILDS_TO_CONSIDER;
                 previousBuild = previousBuild.getPreviousBuild(), count++) {
             List<ResultAction> resultActions = previousBuild.getActions(ResultAction.class);
 
-            Map<String, Action> uniqueActions = new LinkedHashMap<>();
-            for (ResultAction action : resultActions) {
-                for (Action projectAction : action.getProjectActions()) {
-                    if (projectAction instanceof JobAction jobAction) {
-                        uniqueActions.putIfAbsent(jobAction.getUrlName(), projectAction);
-                    }
-                    else {
-                        uniqueActions.put(projectAction.getClass().getName() + System.identityHashCode(projectAction), 
-                                projectAction);
-                    }
-                }
-            }
-
             if (!resultActions.isEmpty()) {
-                return new ArrayList<>(uniqueActions.values());
+                return deduplicateActions(resultActions);
             }
         }
 
         return Collections.emptyList();
+    }
+
+    private Collection<? extends Action> deduplicateActions(final List<ResultAction> resultActions) {
+        Map<String, Action> uniqueActions = new LinkedHashMap<>();
+        for (ResultAction action : resultActions) {
+            addUniqueProjectActions(action, uniqueActions);
+        }
+        return new ArrayList<>(uniqueActions.values());
+    }
+
+    private void addUniqueProjectActions(final ResultAction action, final Map<String, Action> uniqueActions) {
+        for (Action projectAction : action.getProjectActions()) {
+            if (projectAction instanceof JobAction jobAction) {
+                uniqueActions.putIfAbsent(jobAction.getUrlName(), projectAction);
+            }
+            else {
+                String key = projectAction.getClass().getName() + System.identityHashCode(projectAction);
+                uniqueActions.put(key, projectAction);
+            }
+        }
     }
 }

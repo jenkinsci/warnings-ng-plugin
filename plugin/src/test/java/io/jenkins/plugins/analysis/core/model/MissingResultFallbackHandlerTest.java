@@ -35,25 +35,14 @@ class MissingResultFallbackHandlerTest {
     void shouldDeduplicateJobActionsFromMultipleResultActions() {
         var handler = new MissingResultFallbackHandler();
 
-        Job<?, ?> job = mock(Job.class);
-
-        Run<?, ?> currentBuild = mock(Run.class);
-        when(currentBuild.isBuilding()).thenReturn(false);
-        when(currentBuild.getActions(ResultAction.class)).thenReturn(new ArrayList<>());
-        when(job.getLastBuild()).thenAnswer(i -> currentBuild);
-
-        Run<?, ?> previousBuild = mock(Run.class);
+        TestSetup setup = createTestSetup();
 
         ResultAction action1 = createResultAction(CHECKSTYLE_ID, CHECKSTYLE_NAME);
-
         ResultAction action2 = createResultAction(CHECKSTYLE_ID, CHECKSTYLE_NAME);
 
-        List<ResultAction> resultActions = List.of(action1, action2);
-        when(previousBuild.getActions(ResultAction.class)).thenReturn(resultActions);
-        when(currentBuild.getPreviousBuild()).thenAnswer(i -> previousBuild);
-        when(previousBuild.getPreviousBuild()).thenAnswer(i -> null);
+        configurePreviousBuild(setup, List.of(action1, action2));
 
-        Collection<? extends Action> actions = handler.createFor(job);
+        Collection<? extends Action> actions = handler.createFor(setup.job);
 
         assertThat(actions).hasSize(1);
 
@@ -68,24 +57,14 @@ class MissingResultFallbackHandlerTest {
     void shouldNotDeduplicateJobActionsFromDifferentTools() {
         var handler = new MissingResultFallbackHandler();
 
-        Job<?, ?> job = mock(Job.class);
-
-        Run<?, ?> currentBuild = mock(Run.class);
-        when(currentBuild.isBuilding()).thenReturn(false);
-        when(currentBuild.getActions(ResultAction.class)).thenReturn(new ArrayList<>());
-        when(job.getLastBuild()).thenAnswer(i -> currentBuild);
-
-        Run<?, ?> previousBuild = mock(Run.class);
+        TestSetup setup = createTestSetup();
 
         ResultAction checkstyleAction = createResultAction(CHECKSTYLE_ID, CHECKSTYLE_NAME);
         ResultAction spotbugsAction = createResultAction(SPOTBUGS_ID, SPOTBUGS_NAME);
 
-        List<ResultAction> resultActions = List.of(checkstyleAction, spotbugsAction);
-        when(previousBuild.getActions(ResultAction.class)).thenReturn(resultActions);
-        when(currentBuild.getPreviousBuild()).thenAnswer(i -> previousBuild);
-        when(previousBuild.getPreviousBuild()).thenAnswer(i -> null);
+        configurePreviousBuild(setup, List.of(checkstyleAction, spotbugsAction));
 
-        Collection<? extends Action> actions = handler.createFor(job);
+        Collection<? extends Action> actions = handler.createFor(setup.job);
 
         assertThat(actions).hasSize(2);
 
@@ -133,6 +112,24 @@ class MissingResultFallbackHandlerTest {
         assertThat(actions).isEmpty();
     }
 
+    private TestSetup createTestSetup() {
+        Job<?, ?> job = mock(Job.class);
+        Run<?, ?> currentBuild = mock(Run.class);
+        Run<?, ?> previousBuild = mock(Run.class);
+
+        when(currentBuild.isBuilding()).thenReturn(false);
+        when(currentBuild.getActions(ResultAction.class)).thenReturn(new ArrayList<>());
+        when(job.getLastBuild()).thenAnswer(i -> currentBuild);
+        when(currentBuild.getPreviousBuild()).thenAnswer(i -> previousBuild);
+        when(previousBuild.getPreviousBuild()).thenAnswer(i -> null);
+
+        return new TestSetup(job, currentBuild, previousBuild);
+    }
+
+    private void configurePreviousBuild(final TestSetup setup, final List<ResultAction> resultActions) {
+        when(setup.previousBuild.getActions(ResultAction.class)).thenReturn(resultActions);
+    }
+
     /**
      * Creates a mock {@link ResultAction} that returns a {@link JobAction}.
      *
@@ -151,5 +148,11 @@ class MissingResultFallbackHandlerTest {
         doReturn(List.of(jobAction)).when(action).getProjectActions();
 
         return action;
+    }
+
+    /**
+     * Test setup holder for common test fixtures.
+     */
+    private record TestSetup(Job<?, ?> job, Run<?, ?> currentBuild, Run<?, ?> previousBuild) {
     }
 }
