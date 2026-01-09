@@ -152,6 +152,13 @@ class MissingResultFallbackHandlerTest {
 
     /**
      * Test setup holder for common test fixtures.
+     *
+     * @param job 
+     *         the mocked job under test
+     * @param currentBuild 
+     *         the current build of the job
+     * @param previousBuild 
+     *         the previous build used for fallback lookup
      */
     private record TestSetup(Job<?, ?> job, Run<?, ?> currentBuild, Run<?, ?> previousBuild) {
     }
