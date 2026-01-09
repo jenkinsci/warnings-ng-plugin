@@ -35,21 +35,18 @@ class MissingResultFallbackHandlerTest {
     void shouldDeduplicateJobActionsFromMultipleResultActions() {
         var handler = new MissingResultFallbackHandler();
 
-        @SuppressWarnings("unchecked")
         Job<?, ?> job = mock(Job.class);
 
-        @SuppressWarnings("unchecked")
         Run<?, ?> currentBuild = mock(Run.class);
         when(currentBuild.isBuilding()).thenReturn(false);
         when(currentBuild.getActions(ResultAction.class)).thenReturn(new ArrayList<>());
         when(job.getLastBuild()).thenAnswer(i -> currentBuild);
 
-        @SuppressWarnings("unchecked")
         Run<?, ?> previousBuild = mock(Run.class);
 
-        ResultAction action1 = createResultAction(CHECKSTYLE_ID, CHECKSTYLE_NAME, job);
+        ResultAction action1 = createResultAction(CHECKSTYLE_ID, CHECKSTYLE_NAME);
 
-        ResultAction action2 = createResultAction(CHECKSTYLE_ID, CHECKSTYLE_NAME, job);
+        ResultAction action2 = createResultAction(CHECKSTYLE_ID, CHECKSTYLE_NAME);
 
         List<ResultAction> resultActions = List.of(action1, action2);
         when(previousBuild.getActions(ResultAction.class)).thenReturn(resultActions);
@@ -71,20 +68,17 @@ class MissingResultFallbackHandlerTest {
     void shouldNotDeduplicateJobActionsFromDifferentTools() {
         var handler = new MissingResultFallbackHandler();
 
-        @SuppressWarnings("unchecked")
         Job<?, ?> job = mock(Job.class);
 
-        @SuppressWarnings("unchecked")
         Run<?, ?> currentBuild = mock(Run.class);
         when(currentBuild.isBuilding()).thenReturn(false);
         when(currentBuild.getActions(ResultAction.class)).thenReturn(new ArrayList<>());
         when(job.getLastBuild()).thenAnswer(i -> currentBuild);
 
-        @SuppressWarnings("unchecked")
         Run<?, ?> previousBuild = mock(Run.class);
 
-        ResultAction checkstyleAction = createResultAction(CHECKSTYLE_ID, CHECKSTYLE_NAME, job);
-        ResultAction spotbugsAction = createResultAction(SPOTBUGS_ID, SPOTBUGS_NAME, job);
+        ResultAction checkstyleAction = createResultAction(CHECKSTYLE_ID, CHECKSTYLE_NAME);
+        ResultAction spotbugsAction = createResultAction(SPOTBUGS_ID, SPOTBUGS_NAME);
 
         List<ResultAction> resultActions = List.of(checkstyleAction, spotbugsAction);
         when(previousBuild.getActions(ResultAction.class)).thenReturn(resultActions);
@@ -110,14 +104,12 @@ class MissingResultFallbackHandlerTest {
     void shouldReturnEmptyListWhenCurrentBuildHasResults() {
         var handler = new MissingResultFallbackHandler();
 
-        @SuppressWarnings("unchecked")
         Job<?, ?> job = mock(Job.class);
 
-        @SuppressWarnings("unchecked")
         Run<?, ?> currentBuild = mock(Run.class);
         when(currentBuild.isBuilding()).thenReturn(false);
 
-        ResultAction currentAction = createResultAction(CHECKSTYLE_ID, CHECKSTYLE_NAME, job);
+        ResultAction currentAction = createResultAction(CHECKSTYLE_ID, CHECKSTYLE_NAME);
         when(currentBuild.getActions(ResultAction.class)).thenReturn(List.of(currentAction));
         when(job.getLastBuild()).thenAnswer(i -> currentBuild);
 
@@ -133,7 +125,6 @@ class MissingResultFallbackHandlerTest {
     void shouldReturnEmptyListWhenNoBuildExists() {
         var handler = new MissingResultFallbackHandler();
 
-        @SuppressWarnings("unchecked")
         Job<?, ?> job = mock(Job.class);
         when(job.getLastBuild()).thenReturn(null);
 
@@ -147,10 +138,9 @@ class MissingResultFallbackHandlerTest {
      *
      * @param id   the ID of the tool
      * @param name the name of the tool
-     * @param job  the job to associate with
      * @return the mocked ResultAction
      */
-    private ResultAction createResultAction(final String id, final String name, final Job<?, ?> job) {
+    private ResultAction createResultAction(final String id, final String name) {
         ResultAction action = mock(ResultAction.class);
         when(action.getId()).thenReturn(id);
         when(action.getDisplayName()).thenReturn(name);
