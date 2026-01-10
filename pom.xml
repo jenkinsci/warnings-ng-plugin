@@ -26,6 +26,8 @@
     <changelist>999999-SNAPSHOT</changelist>
 
     <gitHubRepo>jenkinsci/warnings-ng-plugin</gitHubRepo>
+    <hpi.bundledArtifacts>eclipse-collections,eclipse-collections-api</hpi.bundledArtifacts>
+    <hpi.strictBundledArtifacts>true</hpi.strictBundledArtifacts>
     <maven.deploy.skip>true</maven.deploy.skip>
   </properties>
 
