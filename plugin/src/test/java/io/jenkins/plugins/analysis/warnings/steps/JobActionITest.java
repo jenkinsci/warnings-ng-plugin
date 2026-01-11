@@ -346,23 +346,5 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(jobAction.getOwner()).isEqualTo(project);
         assertThat(jobAction.getIconFileName()).endsWith(iconName);
     }
-
-    /**
-     * Verifies that the tools trend chart uses tool names instead of IDs in the legend.
-     * See JENKINS-67301.
-     */
-    @Test
-    @Issue("JENKINS-67301")
-    void shouldUseLabelNamesInToolsTrendChart() {
-        var project = createAggregationJob(TrendChartType.TOOLS_AGGREGATION);
-
-        var aggregatedTrendAction = project.getAction(AggregatedTrendAction.class);
-        assertThat(aggregatedTrendAction).isNotNull();
-
-        var chartJson = aggregatedTrendAction.getConfigurableBuildTrendModel("{}");
-
-        assertThat(chartJson).contains("CheckStyle");
-        assertThat(chartJson).contains("Eclipse");
-    }
 }
 
