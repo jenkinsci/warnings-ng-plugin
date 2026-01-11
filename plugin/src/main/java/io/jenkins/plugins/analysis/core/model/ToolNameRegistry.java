@@ -76,7 +76,8 @@ public class ToolNameRegistry {
             var labelProvider = new LabelProviderFactory().create(id);
             return StringEscapeUtils.escapeHtml4(labelProvider.getName());
         }
-        catch (RuntimeException ignored) {
+        catch (IllegalStateException ignored) {
+            // Jenkins instance might not be available (e.g., during testing)
             return StringEscapeUtils.escapeHtml4(id);
         }
     }
