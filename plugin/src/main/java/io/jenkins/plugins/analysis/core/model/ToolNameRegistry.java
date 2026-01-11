@@ -76,7 +76,7 @@ public class ToolNameRegistry {
             var labelProvider = new LabelProviderFactory().create(id);
             return StringEscapeUtils.escapeHtml4(labelProvider.getName());
         }
-        catch (Exception ignored) {
+        catch (RuntimeException ignored) {
             return StringEscapeUtils.escapeHtml4(id);
         }
     }
