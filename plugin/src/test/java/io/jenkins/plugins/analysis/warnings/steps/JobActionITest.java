@@ -347,4 +347,3 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(jobAction.getIconFileName()).endsWith(iconName);
     }
 }
-
