@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 import hudson.Extension;
 import hudson.model.Action;
@@ -39,6 +40,13 @@ public final class MissingResultFallbackHandler extends TransientActionFactory<J
      */
     public static final int MAX_BUILDS_TO_CONSIDER = 5;
 
+    /**
+     * Cache of JobActions per job to ensure idempotency across multiple createFor() calls.
+     * Uses WeakHashMap to allow garbage collection of jobs.
+     * Key: Job instance, Value: Map of urlName to JobAction.
+     */
+    private final Map<Job<?, ?>, Map<String, JobAction>> cache = new WeakHashMap<>();
+
     @Override
     @SuppressWarnings("unchecked")
     public Class<Job<?, ?>> type() {
@@ -50,17 +58,18 @@ public final class MissingResultFallbackHandler extends TransientActionFactory<J
     public Collection<? extends Action> createFor(@NonNull final Job<?, ?> target) {
         Run<?, ?> currentBuild = target.getLastBuild();
         if (currentBuild == null || currentBuild.isBuilding()) {
+            cache.remove(target);
             return Collections.emptyList();
         }
 
         if (!currentBuild.getActions(ResultAction.class).isEmpty()) {
+            cache.remove(target);
             return Collections.emptyList();
         }
 
-        List<JobAction> existingJobActions = target.getActions(JobAction.class);
-        Map<String, JobAction> existingByUrlName = new LinkedHashMap<>();
-        for (JobAction existingAction : existingJobActions) {
-            existingByUrlName.put(existingAction.getUrlName(), existingAction);
+        Map<String, JobAction> cachedActions = cache.get(target);
+        if (cachedActions != null) {
+            return new ArrayList<>(cachedActions.values());
         }
 
         Map<String, JobAction> uniqueActionsMap = new LinkedHashMap<>();
@@ -79,10 +88,7 @@ public final class MissingResultFallbackHandler extends TransientActionFactory<J
                 Collection<? extends Action> projectActions = resultAction.getProjectActions();
                 for (Action action : projectActions) {
                     if (action instanceof JobAction jobAction) {
-                        String urlName = jobAction.getUrlName();
-                        if (!existingByUrlName.containsKey(urlName)) {
-                            uniqueActionsMap.putIfAbsent(urlName, jobAction);
-                        }
+                        uniqueActionsMap.putIfAbsent(jobAction.getUrlName(), jobAction);
                     }
                 }
             }
@@ -90,6 +96,8 @@ public final class MissingResultFallbackHandler extends TransientActionFactory<J
             break;
         }
 
+        cache.put(target, uniqueActionsMap);
+        
         return new ArrayList<>(uniqueActionsMap.values());
     }
 }
