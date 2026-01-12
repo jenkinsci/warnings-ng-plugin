@@ -261,6 +261,23 @@ public class JobAction implements Action, AsyncConfigurableTrendChart {
     }
 
     @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        JobAction that = (JobAction) obj;
+        return owner.equals(that.owner) && urlName.equals(that.urlName);
+    }
+
+    @Override
+    public int hashCode() {
+        return 31 * owner.hashCode() + urlName.hashCode();
+    }
+
+    @Override
     public String toString() {
         return "%s (%s)".formatted(getClass().getName(), labelProvider.getName());
     }

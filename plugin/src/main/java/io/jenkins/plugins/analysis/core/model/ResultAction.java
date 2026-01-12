@@ -47,6 +47,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
     private static final long serialVersionUID = 6683647181785654908L;
 
     private transient Run<?, ?> owner;
+    private transient JobAction cachedJobAction; // Cache to prevent creating duplicate JobActions
 
     private final AnalysisResult result;
     private final HealthDescriptor healthDescriptor;
@@ -203,8 +204,11 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
 
     @Override
     public Collection<? extends Action> getProjectActions() {
-        return Set.of(new JobAction(owner.getParent(), getLabelProvider(), result.getSizePerOrigin().size(),
-                trendChartType, getUrlName()));
+        if (cachedJobAction == null) {
+            cachedJobAction = new JobAction(owner.getParent(), getLabelProvider(), result.getSizePerOrigin().size(),
+                    trendChartType, getUrlName());
+        }
+        return Set.of(cachedJobAction);
     }
 
     @Whitelisted
