@@ -57,7 +57,9 @@ public final class MissingResultFallbackHandler extends TransientActionFactory<J
             return Collections.emptyList();
         }
 
+        Map<String, Action> uniqueActionsMap = new LinkedHashMap<>();
         int count = 0;
+        
         for (Run<?, ?> previousBuild = currentBuild.getPreviousBuild();
                 previousBuild != null && count < MAX_BUILDS_TO_CONSIDER;
                 previousBuild = previousBuild.getPreviousBuild(), count++) {
@@ -67,20 +69,18 @@ public final class MissingResultFallbackHandler extends TransientActionFactory<J
                 continue;
             }
 
-            Map<String, Action> uniqueActionsMap = new LinkedHashMap<>();
             for (ResultAction resultAction : resultActions) {
-                for (Action action : resultAction.getProjectActions()) {
+                Collection<? extends Action> projectActions = resultAction.getProjectActions();
+                for (Action action : projectActions) {
                     if (action instanceof JobAction jobAction) {
-                        uniqueActionsMap.put(jobAction.getId(), jobAction);
+                        uniqueActionsMap.putIfAbsent(jobAction.getId(), jobAction);
                     }
                 }
             }
-
-            if (!uniqueActionsMap.isEmpty()) {
-                return new ArrayList<>(uniqueActionsMap.values());
-            }
+            
+            break;
         }
 
-        return Collections.emptyList();
+        return new ArrayList<>(uniqueActionsMap.values());
     }
 }
