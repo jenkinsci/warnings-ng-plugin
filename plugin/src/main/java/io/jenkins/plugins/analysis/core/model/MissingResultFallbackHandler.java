@@ -53,11 +53,13 @@ public final class MissingResultFallbackHandler extends TransientActionFactory<J
             return Collections.emptyList();
         }
 
+        // If the current build already has results, no fallback is required
         if (!currentBuild.getActions(ResultAction.class).isEmpty()) {
             return Collections.emptyList();
         }
 
-        Map<String, Action> uniqueActionsMap = new LinkedHashMap<>();
+        // Collect unique JobActions from the most recent build with results
+        Map<String, JobAction> uniqueActionsMap = new LinkedHashMap<>();
         int count = 0;
         
         for (Run<?, ?> previousBuild = currentBuild.getPreviousBuild();
@@ -69,15 +71,20 @@ public final class MissingResultFallbackHandler extends TransientActionFactory<J
                 continue;
             }
 
+            // Found a build with results - collect its JobActions
             for (ResultAction resultAction : resultActions) {
                 Collection<? extends Action> projectActions = resultAction.getProjectActions();
                 for (Action action : projectActions) {
                     if (action instanceof JobAction jobAction) {
-                        uniqueActionsMap.putIfAbsent(jobAction.getId(), jobAction);
+                        // Deduplicate by trend name (which represents the tool type)
+                        // Multiple ResultActions for the same tool should only create one JobAction
+                        String deduplicationKey = jobAction.getTrendName();
+                        uniqueActionsMap.putIfAbsent(deduplicationKey, jobAction);
                     }
                 }
             }
             
+            // Stop after processing the first build with results
             break;
         }
 
