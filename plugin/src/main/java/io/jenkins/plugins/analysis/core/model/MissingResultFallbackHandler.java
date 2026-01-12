@@ -5,7 +5,9 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import hudson.Extension;
 import hudson.model.Action;
@@ -27,6 +29,12 @@ public final class MissingResultFallbackHandler extends TransientActionFactory<J
      */
     public static final int MAX_BUILDS_TO_CONSIDER = 5;
 
+    /**
+     * ThreadLocal to prevent infinite recursion when checking for existing actions.
+     * Stores the set of Job instances currently being processed in this thread.
+     */
+    private static final ThreadLocal<Set<Job<?, ?>>> PROCESSING_JOBS = ThreadLocal.withInitial(HashSet::new);
+
     @Override
     @SuppressWarnings("unchecked")
     public Class<Job<?, ?>> type() {
@@ -36,6 +44,23 @@ public final class MissingResultFallbackHandler extends TransientActionFactory<J
     @NonNull
     @Override
     public Collection<? extends Action> createFor(@NonNull final Job<?, ?> target) {
+        Set<Job<?, ?>> processingJobs = PROCESSING_JOBS.get();
+        if (!processingJobs.add(target)) {
+            return Collections.emptyList();
+        }
+
+        try {
+            return createActionsForJob(target);
+        }
+        finally {
+            processingJobs.remove(target);
+            if (processingJobs.isEmpty()) {
+                PROCESSING_JOBS.remove();
+            }
+        }
+    }
+
+    private Collection<? extends Action> createActionsForJob(final Job<?, ?> target) {
         Run<?, ?> currentBuild = target.getLastBuild();
         if (currentBuild == null || currentBuild.isBuilding()) {
             return Collections.emptyList();
@@ -47,6 +72,10 @@ public final class MissingResultFallbackHandler extends TransientActionFactory<J
         }
 
         List<JobAction> existingJobActions = target.getActions(JobAction.class);
+        Set<String> existingIds = new HashSet<>();
+        for (JobAction existing : existingJobActions) {
+            existingIds.add(existing.getId());
+        }
 
         int count = 0;
         for (Run<?, ?> previousBuild = currentBuild.getPreviousBuild();
@@ -54,24 +83,21 @@ public final class MissingResultFallbackHandler extends TransientActionFactory<J
                 previousBuild = previousBuild.getPreviousBuild(), count++) {
             List<ResultAction> resultActions = previousBuild.getActions(ResultAction.class);
 
-            List<Action> actions = new ArrayList<>();
-            for (ResultAction action : resultActions) {
-                Collection<? extends Action> projectActions = action.getProjectActions();
-                for (Action projectAction : projectActions) {
-                    if (projectAction instanceof JobAction jobAction) {
-                        boolean alreadyExists = existingJobActions.stream()
-                                .anyMatch(existing -> existing.getId().equals(jobAction.getId()));
-                        if (!alreadyExists) {
-                            actions.add(jobAction);
+            if (!resultActions.isEmpty()) {
+                List<Action> actions = new ArrayList<>();
+                for (ResultAction action : resultActions) {
+                    Collection<? extends Action> projectActions = action.getProjectActions();
+                    for (Action projectAction : projectActions) {
+                        if (projectAction instanceof JobAction jobAction) {
+                            if (!existingIds.contains(jobAction.getId())) {
+                                actions.add(jobAction);
+                            }
+                        }
+                        else {
+                            actions.add(projectAction);
                         }
                     }
-                    else {
-                        actions.add(projectAction);
-                    }
                 }
-            }
-
-            if (!resultActions.isEmpty()) {
                 return actions;
             }
         }
