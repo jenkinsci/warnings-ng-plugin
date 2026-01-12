@@ -33,7 +33,6 @@ import jenkins.model.TransientActionFactory;
  */
 @Extension
 public final class MissingResultFallbackHandler extends TransientActionFactory<Job<?, ?>> {
-
     /**
      * The maximum number of builds to consider when looking for a valid {@link ResultAction}.
      * Limited to avoid performance issues on large job histories.
@@ -86,17 +85,9 @@ public final class MissingResultFallbackHandler extends TransientActionFactory<J
         }
 
         Map<String, JobAction> uniqueActionsMap = new LinkedHashMap<>();
-        int count = 0;
-        
-        for (Run<?, ?> previousBuild = currentBuild.getPreviousBuild();
-                previousBuild != null && count < MAX_BUILDS_TO_CONSIDER;
-                previousBuild = previousBuild.getPreviousBuild(), count++) {
-
+        Run<?, ?> previousBuild = currentBuild.getPreviousBuild();
+        if (previousBuild != null) {
             List<ResultAction> resultActions = previousBuild.getActions(ResultAction.class);
-            if (resultActions.isEmpty()) {
-                continue;
-            }
-
             for (ResultAction resultAction : resultActions) {
                 Collection<? extends Action> projectActions = resultAction.getProjectActions();
                 for (Action action : projectActions) {
@@ -105,8 +96,6 @@ public final class MissingResultFallbackHandler extends TransientActionFactory<J
                     }
                 }
             }
-            
-            break;
         }
 
         cache.put(target, new CacheEntry(currentBuild.getNumber(), uniqueActionsMap));
