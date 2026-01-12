@@ -53,12 +53,16 @@ public final class MissingResultFallbackHandler extends TransientActionFactory<J
             return Collections.emptyList();
         }
 
-        // If the current build already has results, no fallback is required
         if (!currentBuild.getActions(ResultAction.class).isEmpty()) {
             return Collections.emptyList();
         }
 
-        // Collect unique JobActions from the most recent build with results
+        List<JobAction> existingJobActions = target.getActions(JobAction.class);
+        Map<String, JobAction> existingByUrlName = new LinkedHashMap<>();
+        for (JobAction existingAction : existingJobActions) {
+            existingByUrlName.put(existingAction.getUrlName(), existingAction);
+        }
+
         Map<String, JobAction> uniqueActionsMap = new LinkedHashMap<>();
         int count = 0;
         
@@ -71,20 +75,18 @@ public final class MissingResultFallbackHandler extends TransientActionFactory<J
                 continue;
             }
 
-            // Found a build with results - collect its JobActions
             for (ResultAction resultAction : resultActions) {
                 Collection<? extends Action> projectActions = resultAction.getProjectActions();
                 for (Action action : projectActions) {
                     if (action instanceof JobAction jobAction) {
-                        // Deduplicate by trend name (which represents the tool type)
-                        // Multiple ResultActions for the same tool should only create one JobAction
-                        String deduplicationKey = jobAction.getTrendName();
-                        uniqueActionsMap.putIfAbsent(deduplicationKey, jobAction);
+                        String urlName = jobAction.getUrlName();
+                        if (!existingByUrlName.containsKey(urlName)) {
+                            uniqueActionsMap.putIfAbsent(urlName, jobAction);
+                        }
                     }
                 }
             }
             
-            // Stop after processing the first build with results
             break;
         }
 
