@@ -6,10 +6,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import hudson.Extension;
 import hudson.model.Action;
@@ -69,12 +67,18 @@ public final class MissingResultFallbackHandler extends TransientActionFactory<J
                 continue;
             }
 
-            Set<Action> uniqueActions = new LinkedHashSet<>();
+            Map<String, Action> uniqueActionsMap = new LinkedHashMap<>();
             for (ResultAction resultAction : resultActions) {
-                uniqueActions.addAll(resultAction.getProjectActions());
+                for (Action action : resultAction.getProjectActions()) {
+                    if (action instanceof JobAction jobAction) {
+                        uniqueActionsMap.put(jobAction.getId(), jobAction);
+                    }
+                }
             }
 
-            return new ArrayList<>(uniqueActions);
+            if (!uniqueActionsMap.isEmpty()) {
+                return new ArrayList<>(uniqueActionsMap.values());
+            }
         }
 
         return Collections.emptyList();
