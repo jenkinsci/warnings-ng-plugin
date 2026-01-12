@@ -43,9 +43,22 @@ public final class MissingResultFallbackHandler extends TransientActionFactory<J
     /**
      * Cache of JobActions per job to ensure idempotency across multiple createFor() calls.
      * Uses WeakHashMap to allow garbage collection of jobs.
-     * Key: Job instance, Value: Map of urlName to JobAction.
+     * Key: Job instance, Value: CacheEntry with build number and actions.
      */
-    private final Map<Job<?, ?>, Map<String, JobAction>> cache = new WeakHashMap<>();
+    private final Map<Job<?, ?>, CacheEntry> cache = new WeakHashMap<>();
+
+    /**
+     * Cache entry that includes the build number to detect when cache should be invalidated.
+     */
+    private static final class CacheEntry {
+        private final int buildNumber;
+        private final Map<String, JobAction> actions;
+
+        CacheEntry(final int buildNumber, final Map<String, JobAction> actions) {
+            this.buildNumber = buildNumber;
+            this.actions = actions;
+        }
+    }
 
     @Override
     @SuppressWarnings("unchecked")
@@ -67,9 +80,9 @@ public final class MissingResultFallbackHandler extends TransientActionFactory<J
             return Collections.emptyList();
         }
 
-        Map<String, JobAction> cachedActions = cache.get(target);
-        if (cachedActions != null) {
-            return new ArrayList<>(cachedActions.values());
+        CacheEntry cachedEntry = cache.get(target);
+        if (cachedEntry != null && cachedEntry.buildNumber == currentBuild.getNumber()) {
+            return new ArrayList<>(cachedEntry.actions.values());
         }
 
         Map<String, JobAction> uniqueActionsMap = new LinkedHashMap<>();
@@ -96,7 +109,7 @@ public final class MissingResultFallbackHandler extends TransientActionFactory<J
             break;
         }
 
-        cache.put(target, uniqueActionsMap);
+        cache.put(target, new CacheEntry(currentBuild.getNumber(), uniqueActionsMap));
         
         return new ArrayList<>(uniqueActionsMap.values());
     }
