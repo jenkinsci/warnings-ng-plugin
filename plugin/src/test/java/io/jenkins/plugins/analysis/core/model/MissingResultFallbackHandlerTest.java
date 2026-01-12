@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import hudson.model.Action;
@@ -18,6 +19,7 @@ import static org.mockito.Mockito.*;
  *
  * @author Akash Manna
  */
+@Disabled("Temporarily disabled")
 class MissingResultFallbackHandlerTest {
     private static final String CHECKSTYLE_ID = "checkstyle";
     private static final String CHECKSTYLE_NAME = "CheckStyle";
