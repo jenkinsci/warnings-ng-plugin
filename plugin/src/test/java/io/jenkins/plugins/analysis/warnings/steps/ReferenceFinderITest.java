@@ -204,6 +204,57 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     /**
+     * Verifies that reset quality gate works correctly with custom result IDs.
+     * Regression test for JENKINS-76007: Reset quality gate does not work when a tool with custom result id is used.
+     */
+    @Test
+    @org.junitpioneer.jupiter.Issue("JENKINS-76007")
+    void shouldResetReferenceWithCustomId() {
+        String customId = "custom-eclipse-id";
+        
+        // #1 SUCCESS with custom ID
+        var project = createEmptyReferenceJob();
+        enableWarnings(project, recorder -> {
+            recorder.setId(customId);
+            recorder.setQualityGates(List.of(
+                    new WarningsQualityGate(3, QualityGateType.NEW, QualityGateCriticality.UNSTABLE)));
+        });
+        scheduleBuildAndAssertStatus(project, Result.SUCCESS,
+                analysisResult -> assertThat(analysisResult)
+                        .hasTotalSize(2)
+                        .hasNewSize(0)
+                        .hasId(customId)
+                        .hasQualityGateStatus(QualityGateStatus.PASSED));
+
+        // #2 UNSTABLE with custom ID
+        cleanAndCopy(project, "eclipse8Warnings.txt");
+        Run<?, ?> unstable = scheduleBuildAndAssertStatus(project, Result.UNSTABLE,
+                analysisResult -> assertThat(analysisResult)
+                        .hasTotalSize(8)
+                        .hasNewSize(6)
+                        .hasId(customId)
+                        .hasQualityGateStatus(QualityGateStatus.WARNING)).getOwner();
+        
+        // Reset using custom ID (this is the fix for JENKINS-76007)
+        createResetAction(unstable, customId);
+
+        // #3 SUCCESS - should use the reset reference
+        cleanAndCopy(project, "eclipse4Warnings.txt");
+        scheduleBuildAndAssertStatus(project, Result.SUCCESS,
+                analysisResult -> {
+                    assertThat(analysisResult)
+                            .hasTotalSize(4)
+                            .hasNewSize(0)
+                            .hasId(customId)
+                            .hasQualityGateStatus(QualityGateStatus.PASSED)
+                            .hasReferenceBuild(Optional.of(unstable));
+                    assertThat(analysisResult.getInfoMessages()).contains(
+                            "Resetting reference build, ignoring quality gate result for one build",
+                            "Using reference build 'Job #2' to compute new, fixed, and outstanding issues");
+                });
+    }
+
+    /**
      * Checks if the reference is taken from the last successful build and therefore returns an unstable build in the
      * end.
      */
