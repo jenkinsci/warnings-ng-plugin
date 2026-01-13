@@ -7,11 +7,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 
-import edu.hm.hafner.util.VisibleForTesting;
-
 import hudson.model.Run;
-
-import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
  * Registry that maps tool IDs to their human-readable names. This is used to display tool names instead of IDs in
@@ -21,7 +17,6 @@ import io.jenkins.plugins.util.JenkinsFacade;
  */
 public class ToolNameRegistry {
     private final Map<String, String> idToNameMap;
-    private final JenkinsFacade jenkins;
 
     /**
      * Creates an empty registry.
@@ -37,13 +32,7 @@ public class ToolNameRegistry {
      *         the mapping of tool IDs to names
      */
     public ToolNameRegistry(final Map<String, String> idToNameMap) {
-        this(idToNameMap, new JenkinsFacade());
-    }
-
-    @VisibleForTesting
-    ToolNameRegistry(final Map<String, String> idToNameMap, final JenkinsFacade jenkins) {
         this.idToNameMap = new HashMap<>(idToNameMap);
-        this.jenkins = jenkins;
     }
 
     /**
@@ -83,7 +72,7 @@ public class ToolNameRegistry {
         if (idToNameMap.containsKey(id)) {
             return idToNameMap.get(id);
         }
-        var labelProvider = new LabelProviderFactory(jenkins).create(id);
+        var labelProvider = new LabelProviderFactory().create(id);
         return StringEscapeUtils.escapeHtml4(labelProvider.getName());
     }
 
