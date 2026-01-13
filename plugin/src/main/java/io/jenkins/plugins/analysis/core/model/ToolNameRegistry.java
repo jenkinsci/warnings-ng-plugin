@@ -7,7 +7,11 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 
+import edu.hm.hafner.util.VisibleForTesting;
+
 import hudson.model.Run;
+
+import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
  * Registry that maps tool IDs to their human-readable names. This is used to display tool names instead of IDs in
@@ -17,6 +21,7 @@ import hudson.model.Run;
  */
 public class ToolNameRegistry {
     private final Map<String, String> idToNameMap;
+    private final JenkinsFacade jenkins;
 
     /**
      * Creates an empty registry.
@@ -32,17 +37,23 @@ public class ToolNameRegistry {
      *         the mapping of tool IDs to names
      */
     public ToolNameRegistry(final Map<String, String> idToNameMap) {
+        this(idToNameMap, new JenkinsFacade());
+    }
+
+    @VisibleForTesting
+    ToolNameRegistry(final Map<String, String> idToNameMap, final JenkinsFacade jenkins) {
         this.idToNameMap = new HashMap<>(idToNameMap);
+        this.jenkins = jenkins;
     }
 
     /**
      * Creates a registry from the {@link ResultAction}s of a build. Each action provides a tool ID and name, which
-     * are stored in the registry for later lookup.
+     * are stored in the registry for later lookup. Names are HTML-escaped at creation time.
      *
      * @param build
      *         the build that contains the result actions
      *
-     * @return a registry containing all tool IDs and names from the build
+     * @return a registry containing all tool IDs and HTML-escaped names from the build
      */
     public static ToolNameRegistry fromBuild(final Run<?, ?> build) {
         Map<String, String> mapping = new HashMap<>();
@@ -53,37 +64,31 @@ public class ToolNameRegistry {
             if (StringUtils.isBlank(name)) {
                 name = factory.create(id).getName();
             }
-            mapping.put(id, name);
+            mapping.put(id, StringEscapeUtils.escapeHtml4(name));
         }
         return new ToolNameRegistry(mapping);
     }
 
     /**
      * Returns the human-readable name for a tool ID. If the ID is not registered, attempts to look up the name from
-     * the {@link LabelProviderFactory}. If that also fails, returns the ID itself (properly escaped for safe HTML
-     * display).
+     * the {@link LabelProviderFactory}. If that also fails, returns the ID itself. Names returned are already
+     * HTML-escaped.
      *
      * @param id
      *         the tool ID
      *
-     * @return the human-readable name, or the escaped ID if no name is found
+     * @return the HTML-escaped human-readable name, or the escaped ID if no name is found
      */
     public String getName(final String id) {
         if (idToNameMap.containsKey(id)) {
-            return StringEscapeUtils.escapeHtml4(idToNameMap.get(id));
+            return idToNameMap.get(id);
         }
-        try {
-            var labelProvider = new LabelProviderFactory().create(id);
-            return StringEscapeUtils.escapeHtml4(labelProvider.getName());
-        }
-        catch (IllegalStateException ignored) {
-            // Jenkins instance might not be available (e.g., during testing)
-            return StringEscapeUtils.escapeHtml4(id);
-        }
+        var labelProvider = new LabelProviderFactory(jenkins).create(id);
+        return StringEscapeUtils.escapeHtml4(labelProvider.getName());
     }
 
     /**
-     * Registers a tool ID with its corresponding name.
+     * Registers a tool ID with its corresponding name. The name will be HTML-escaped before storing.
      *
      * @param id
      *         the tool ID
@@ -91,7 +96,7 @@ public class ToolNameRegistry {
      *         the human-readable name
      */
     public void register(final String id, final String name) {
-        idToNameMap.put(id, name);
+        idToNameMap.put(id, StringEscapeUtils.escapeHtml4(name));
     }
 
     /**
@@ -121,10 +126,6 @@ public class ToolNameRegistry {
      * @return an immutable map from tool IDs to HTML-escaped names
      */
     public Map<String, String> asMap() {
-        Map<String, String> escaped = new HashMap<>();
-        for (Map.Entry<String, String> entry : idToNameMap.entrySet()) {
-            escaped.put(entry.getKey(), StringEscapeUtils.escapeHtml4(entry.getValue()));
-        }
-        return Collections.unmodifiableMap(escaped);
+        return Collections.unmodifiableMap(idToNameMap);
     }
 }

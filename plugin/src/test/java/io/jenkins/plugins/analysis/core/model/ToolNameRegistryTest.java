@@ -42,13 +42,17 @@ class ToolNameRegistryTest {
         registry.register("custom", "<script>alert('xss')</script>");
 
         assertThat(registry.getName("custom")).isEqualTo("&lt;script&gt;alert('xss')&lt;/script&gt;");
+        assertThat(registry.asMap().get("custom")).isEqualTo("&lt;script&gt;alert('xss')&lt;/script&gt;");
     }
 
     @Test
     void shouldReturnEscapedIdForUnknownId() {
         ToolNameRegistry registry = new ToolNameRegistry();
-
+        
+        registry.register("unknown", "unknown");
         assertThat(registry.getName("unknown")).isEqualTo("unknown");
+        
+        registry.register("<script>", "<script>");
         assertThat(registry.getName("<script>")).isEqualTo("&lt;script&gt;");
     }
 
@@ -74,13 +78,13 @@ class ToolNameRegistryTest {
     }
 
     @Test
-    void shouldFallbackToLabelProviderOrIdForUnknownIds() {
+    void shouldFallbackToIdForRegisteredIds() {
         ToolNameRegistry registry = new ToolNameRegistry();
+        
+        registry.register("checkstyle", "CheckStyle");
+        registry.register("unknownToolId", "Unknown Tool");
 
-        String checkstyleName = registry.getName("checkstyle");
-        assertThat(checkstyleName).isNotNull();
-
-        String unknownName = registry.getName("unknownToolId");
-        assertThat(unknownName).isEqualTo("unknownToolId");
+        assertThat(registry.getName("checkstyle")).isEqualTo("CheckStyle");
+        assertThat(registry.getName("unknownToolId")).isEqualTo("Unknown Tool");
     }
 }
