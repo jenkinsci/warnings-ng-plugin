@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import io.jenkins.plugins.analysis.core.model.ToolNameRegistry;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 
 import static io.jenkins.plugins.analysis.core.charts.BuildResultStubs.*;
@@ -93,5 +94,42 @@ class ToolsTrendChartTest {
     private boolean hasDuplicates(final List<String> list) {
         int sizeWithoutDuplicate = new HashSet<>(list).size();
         return list.size() > sizeWithoutDuplicate;
+    }
+
+    @Test
+    void shouldUseToolNamesInsteadOfIds() {
+        ToolNameRegistry registry = new ToolNameRegistry();
+        registry.register(CHECK_STYLE, "CheckStyle Warnings");
+        registry.register(SPOT_BUGS, "SpotBugs Issues");
+
+        var chart = new ToolsTrendChart(registry.asMap());
+
+        List<BuildResult<AnalysisBuildResult>> compositeResults = new ArrayList<>();
+        compositeResults.add(new BuildResult<>(new Build(1), new CompositeBuildResult(List.of(
+                createAnalysisBuildResult(CHECK_STYLE, 1), createAnalysisBuildResult(SPOT_BUGS, 3)))));
+        compositeResults.add(new BuildResult<>(new Build(2), new CompositeBuildResult(List.of(
+                createAnalysisBuildResult(CHECK_STYLE, 2), createAnalysisBuildResult(SPOT_BUGS, 4)))));
+
+        var model = chart.create(compositeResults, new ChartModelConfiguration());
+
+        assertThatJson(model.getSeries().get(0)).node("name").isEqualTo("CheckStyle Warnings");
+        assertThatJson(model.getSeries().get(1)).node("name").isEqualTo("SpotBugs Issues");
+    }
+
+    @Test
+    void shouldEscapeHtmlInToolNames() {
+        ToolNameRegistry registry = new ToolNameRegistry();
+        registry.register("custom", "<script>alert('xss')</script>");
+
+        var chart = new ToolsTrendChart(registry.asMap());
+
+        List<BuildResult<AnalysisBuildResult>> results = new ArrayList<>();
+        results.add(new BuildResult<>(new Build(1), new CompositeBuildResult(List.of(
+                createAnalysisBuildResult("custom", 5)))));
+
+        var model = chart.create(results, new ChartModelConfiguration());
+
+        assertThatJson(model.getSeries().get(0)).node("name")
+                .isEqualTo("&lt;script&gt;alert('xss')&lt;/script&gt;");
     }
 }
