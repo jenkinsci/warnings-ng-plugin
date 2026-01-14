@@ -55,9 +55,6 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
     private /* almost final */ String icon;
     private final String charset;
     private /* almost final */ TrendChartType trendChartType;
-    
-    /** Cache of the JobAction to ensure same instance returned on multiple calls. */
-    private transient JobAction cachedJobAction;
 
     /**
      * Creates a new instance of {@link ResultAction}.
@@ -206,11 +203,8 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
 
     @Override
     public Collection<? extends Action> getProjectActions() {
-        if (cachedJobAction == null) {
-            cachedJobAction = new JobAction(owner.getParent(), getLabelProvider(),
-                    result.getSizePerOrigin().size(), trendChartType, getUrlName());
-        }
-        return Set.of(cachedJobAction);
+        return Set.of(new JobAction(owner.getParent(), getLabelProvider(), result.getSizePerOrigin().size(),
+                trendChartType, getUrlName()));
     }
 
     @Whitelisted
