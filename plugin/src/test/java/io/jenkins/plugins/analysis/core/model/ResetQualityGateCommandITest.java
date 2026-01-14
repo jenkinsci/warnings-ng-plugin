@@ -1,5 +1,7 @@
 package io.jenkins.plugins.analysis.core.model;
 
+import java.io.IOException;
+
 import org.junit.jupiter.api.Test;
 import org.junitpioneer.jupiter.Issue;
 
@@ -90,15 +92,15 @@ class ResetQualityGateCommandITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(command.hasConfigurePermission(build)).isTrue();
     }
 
-    private Folder createFolder(final String name) throws Exception {
+    private Folder createFolder(final String name) throws IOException {
         return getJenkins().jenkins.createProject(Folder.class, name);
     }
 
-    private Folder createFolderInFolder(final Folder parent, final String name) throws Exception {
+    private Folder createFolderInFolder(final Folder parent, final String name) throws IOException {
         return parent.createProject(Folder.class, name);
     }
 
-    private FreeStyleProject createJobInFolder(final Folder folder, final String jobName) throws Exception {
+    private FreeStyleProject createJobInFolder(final Folder folder, final String jobName) throws IOException {
         return folder.createProject(FreeStyleProject.class, jobName);
     }
 }

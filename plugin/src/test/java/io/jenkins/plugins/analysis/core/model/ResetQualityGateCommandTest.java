@@ -154,7 +154,7 @@ class ResetQualityGateCommandTest {
         JenkinsFacade jenkins = mock(JenkinsFacade.class);
         when(jenkins.hasPermission(eq(Item.CONFIGURE), any(Item.class))).then(invocation -> {
             Item item = invocation.getArgument(1);
-            return item == parent && hasRight;
+            return item.equals(parent) && hasRight;
         });
         return jenkins;
     }
