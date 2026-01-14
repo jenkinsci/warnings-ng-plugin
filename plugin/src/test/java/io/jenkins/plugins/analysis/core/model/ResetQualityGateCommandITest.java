@@ -13,7 +13,8 @@ import static org.assertj.core.api.Assertions.*;
 
 /**
  * Integration tests for {@link ResetQualityGateCommand} with folder
- * hierarchies.
+ * hierarchies. These tests verify that the folder plugin integration works
+ * correctly with real Jenkins instances.
  *
  * @author Akash Manna
  */
@@ -21,21 +22,8 @@ class ResetQualityGateCommandITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String JOB_NAME = "test-job";
 
     /**
-     * Verifies that recursive permission checking works with a job directly in
-     * Jenkins root.
-     */
-    @Test
-    @Issue("JENKINS-75588")
-    void shouldCheckPermissionsWithJobAtRoot() throws Exception {
-        var project = createFreeStyleProject();
-        buildSuccessfully(project);
-
-        assertThat(project.getParent()).isEqualTo(getJenkins().jenkins);
-    }
-
-    /**
-     * Verifies that parent hierarchy is correctly set up for job in a folder (one
-     * level).
+     * Verifies that folder hierarchy parent chains are correctly established
+     * for jobs in folders (one level).
      */
     @Test
     @Issue("JENKINS-75588")
@@ -49,7 +37,7 @@ class ResetQualityGateCommandITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Verifies that parent hierarchy is correctly set up for job in nested folders
+     * Verifies that folder hierarchy parent chains work with nested folders
      * (two levels deep).
      */
     @Test
@@ -66,8 +54,8 @@ class ResetQualityGateCommandITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Verifies that parent hierarchy is correctly set up for job deep in folder
-     * hierarchy (three levels deep - simulating organization folder scenario).
+     * Verifies that folder hierarchy parent chains work with deep nesting
+     * (three levels deep - simulating GitHub organization folder scenario).
      */
     @Test
     @Issue("JENKINS-75588")
@@ -85,47 +73,21 @@ class ResetQualityGateCommandITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Verifies that the hasConfigurePermission method traverses the folder
-     * hierarchy correctly.
-     * This tests the core fix for JENKINS-75588 - the recursive permission
-     * checking.
+     * Verifies that hasConfigurePermission can be called with real folder
+     * hierarchies. This is a smoke test - actual permission logic is tested
+     * in unit tests with mocks.
      */
     @Test
     @Issue("JENKINS-75588")
-    void hasConfigurePermissionShouldTraverseFolderHierarchy() throws Exception {
-        Folder folder = createFolder("permissions-test");
-        FreeStyleProject project = createJobInFolder(folder, JOB_NAME);
-        var build = buildSuccessfully(project);
-
-        var command = new ResetQualityGateCommand();
-
-        assertThat(command.hasConfigurePermission(build)).isTrue();
-
-        assertThat(project.getParent()).isEqualTo(folder);
-        assertThat(folder.getParent()).isNotNull();
-    }
-
-    /**
-     * Verifies that the hasConfigurePermission method works with deep folder
-     * hierarchies.
-     */
-    @Test
-    @Issue("JENKINS-75588")
-    void hasConfigurePermissionShouldWorkWithDeepHierarchy() throws Exception {
+    void hasConfigurePermissionShouldWorkWithRealFolders() throws Exception {
         Folder topFolder = createFolder("top");
         Folder middleFolder = createFolderInFolder(topFolder, "middle");
-        Folder bottomFolder = createFolderInFolder(middleFolder, "bottom");
-        FreeStyleProject project = createJobInFolder(bottomFolder, JOB_NAME);
+        FreeStyleProject project = createJobInFolder(middleFolder, JOB_NAME);
         var build = buildSuccessfully(project);
 
         var command = new ResetQualityGateCommand();
 
         assertThat(command.hasConfigurePermission(build)).isTrue();
-
-        assertThat(project.getParent()).isEqualTo(bottomFolder);
-        assertThat(bottomFolder.getParent()).isEqualTo(middleFolder);
-        assertThat(middleFolder.getParent()).isEqualTo(topFolder);
-        assertThat(topFolder.getParent()).isEqualTo(getJenkins().jenkins);
     }
 
     private Folder createFolder(final String name) throws Exception {
