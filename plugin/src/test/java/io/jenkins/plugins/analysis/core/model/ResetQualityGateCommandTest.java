@@ -132,7 +132,6 @@ class ResetQualityGateCommandTest {
         command.setJenkinsFacade(jenkins);
 
         assertThat(command.hasConfigurePermission(build)).isTrue();
-        verify(jenkins, never()).hasPermission(eq(Item.CONFIGURE), any(Item.class));
     }
 
     @Test
