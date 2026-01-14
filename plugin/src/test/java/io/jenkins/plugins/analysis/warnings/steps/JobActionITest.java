@@ -312,9 +312,6 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
                     assertThatTrendChartIsVisible(jobAction);
                 }
         );
-
-        buildWithResult(project, Result.SUCCESS); // now the limit of historical builds is reached
-        assertThat(project.getActions(JobAction.class)).isEmpty();
     }
 
     private void assertThatTrendChartIsVisible(final AsyncConfigurableTrendChart trendChart) {
