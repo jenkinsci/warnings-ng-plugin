@@ -41,14 +41,13 @@ public final class MissingResultFallbackHandler extends TransientActionFactory<J
             return Collections.emptyList();
         }
 
-        List<ResultAction> currentResultActions = currentBuild.getActions(ResultAction.class);
-        if (!currentResultActions.isEmpty()) {
+        if (hasResults(currentBuild)) {
             return Collections.emptyList();
         }
 
         Run<?, ?> previousSuccessfulBuild = currentBuild.getPreviousSuccessfulBuild();
         if (previousSuccessfulBuild != null) {
-            if (!previousSuccessfulBuild.getActions(ResultAction.class).isEmpty()) {
+            if (hasResults(previousSuccessfulBuild)) {
                 return Collections.emptyList();
             }
         }
@@ -70,5 +69,9 @@ public final class MissingResultFallbackHandler extends TransientActionFactory<J
         }
 
         return Collections.emptyList();
+    }
+
+    private boolean hasResults(final Run<?, ?> currentBuild) {
+        return !currentBuild.getActions(ResultAction.class).isEmpty();
     }
 }
