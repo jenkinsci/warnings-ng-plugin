@@ -14,9 +14,9 @@ import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSu
 import static org.assertj.core.api.Assertions.*;
 
 /**
- * Integration tests for {@link ResetQualityGateCommand} with folder
- * hierarchies. These tests verify that the folder plugin integration works
- * correctly with real Jenkins instances.
+ * Integration tests for {@link ResetQualityGateCommand} with folder hierarchies.
+ * Tests verify that permission checking correctly traverses the folder hierarchy
+ * in real Jenkins instances with the Folder plugin.
  *
  * @author Akash Manna
  */
@@ -24,67 +24,66 @@ class ResetQualityGateCommandITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String JOB_NAME = "test-job";
 
     /**
-     * Verifies that folder hierarchy parent chains are correctly established
-     * for jobs in folders (one level).
+     * Verifies that hasConfigurePermission returns true when user has permission
+     * with a simple job (no folders).
      */
     @Test
     @Issue("JENKINS-75588")
-    void shouldHaveCorrectParentChainWithOneFolder() throws Exception {
-        Folder folder = createFolder("test-folder-one");
+    void shouldAllowConfigureForSimpleJob() throws Exception {
+        FreeStyleProject project = createFreeStyleProject();
+        project.setDisplayName(JOB_NAME);
+        var build = buildSuccessfully(project);
+
+        var command = new ResetQualityGateCommand();
+
+        assertThat(command.hasConfigurePermission(build)).isTrue();
+    }
+
+    /**
+     * Verifies that hasConfigurePermission returns true when user has permission
+     * on a job in a single folder level.
+     */
+    @Test
+    @Issue("JENKINS-75588")
+    void shouldAllowConfigureForJobInFolder() throws Exception {
+        Folder folder = createFolder("test-folder");
         FreeStyleProject project = createJobInFolder(folder, JOB_NAME);
-        buildSuccessfully(project);
+        var build = buildSuccessfully(project);
 
-        assertThat(project.getParent()).isEqualTo(folder);
-        assertThat(folder.getParent()).isEqualTo(getJenkins().jenkins);
+        var command = new ResetQualityGateCommand();
+
+        assertThat(command.hasConfigurePermission(build)).isTrue();
     }
 
     /**
-     * Verifies that folder hierarchy parent chains work with nested folders
-     * (two levels deep).
+     * Verifies that hasConfigurePermission returns true when user has permission
+     * on a job in a two-level folder hierarchy.
      */
     @Test
     @Issue("JENKINS-75588")
-    void shouldHaveCorrectParentChainWithTwoFolders() throws Exception {
-        Folder parentFolder = createFolder("parent-two");
-        Folder childFolder = createFolderInFolder(parentFolder, "child-two");
+    void shouldAllowConfigureForJobInNestedFolders() throws Exception {
+        Folder parentFolder = createFolder("parent");
+        Folder childFolder = createFolderInFolder(parentFolder, "child");
         FreeStyleProject project = createJobInFolder(childFolder, JOB_NAME);
-        buildSuccessfully(project);
+        var build = buildSuccessfully(project);
 
-        assertThat(project.getParent()).isEqualTo(childFolder);
-        assertThat(childFolder.getParent()).isEqualTo(parentFolder);
-        assertThat(parentFolder.getParent()).isEqualTo(getJenkins().jenkins);
+        var command = new ResetQualityGateCommand();
+
+        assertThat(command.hasConfigurePermission(build)).isTrue();
     }
 
     /**
-     * Verifies that folder hierarchy parent chains work with deep nesting
-     * (three levels deep - simulating GitHub organization folder scenario).
+     * Verifies that hasConfigurePermission returns true when user has permission
+     * on a job in a three-level folder hierarchy (simulating GitHub organization
+     * folder scenario: org -> repo -> branch -> job).
      */
     @Test
     @Issue("JENKINS-75588")
-    void shouldHaveCorrectParentChainWithThreeFolders() throws Exception {
+    void shouldAllowConfigureForGitHubOrgFolderScenario() throws Exception {
         Folder orgFolder = createFolder("organization");
-        Folder projectFolder = createFolderInFolder(orgFolder, "project");
-        Folder branchFolder = createFolderInFolder(projectFolder, "branch");
+        Folder repoFolder = createFolderInFolder(orgFolder, "repository");
+        Folder branchFolder = createFolderInFolder(repoFolder, "branch");
         FreeStyleProject project = createJobInFolder(branchFolder, JOB_NAME);
-        buildSuccessfully(project);
-
-        assertThat(project.getParent()).isEqualTo(branchFolder);
-        assertThat(branchFolder.getParent()).isEqualTo(projectFolder);
-        assertThat(projectFolder.getParent()).isEqualTo(orgFolder);
-        assertThat(orgFolder.getParent()).isEqualTo(getJenkins().jenkins);
-    }
-
-    /**
-     * Verifies that hasConfigurePermission can be called with real folder
-     * hierarchies. This is a smoke test - actual permission logic is tested
-     * in unit tests with mocks.
-     */
-    @Test
-    @Issue("JENKINS-75588")
-    void hasConfigurePermissionShouldWorkWithRealFolders() throws Exception {
-        Folder topFolder = createFolder("top");
-        Folder middleFolder = createFolderInFolder(topFolder, "middle");
-        FreeStyleProject project = createJobInFolder(middleFolder, JOB_NAME);
         var build = buildSuccessfully(project);
 
         var command = new ResetQualityGateCommand();
