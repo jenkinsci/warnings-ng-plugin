@@ -35,7 +35,6 @@ public final class MissingResultFallbackHandler extends TransientActionFactory<J
 
     @NonNull
     @Override
-    @SuppressWarnings("PMD.CyclomaticComplexity")
     public Collection<? extends Action> createFor(@NonNull final Job<?, ?> target) {
         Run<?, ?> currentBuild = target.getLastBuild();
         if (currentBuild == null || currentBuild.isBuilding()) {
