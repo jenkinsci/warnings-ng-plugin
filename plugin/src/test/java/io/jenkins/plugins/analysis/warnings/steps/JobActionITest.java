@@ -273,6 +273,47 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(project.getActions(JobAction.class)).isEmpty();
     }
 
+    @Test
+    @Issue("JENKINS-75748")
+    void shouldAttachJobActionsWithoutRecordIssuesOnFailedBuildOnlyOnce() {
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(ECLIPSE_LOG);
+        enableEclipseWarnings(project);
+
+        Run<?, ?> firstBuild = buildWithResult(project, Result.SUCCESS);
+        List<ResultAction> firstBuildResultActions = firstBuild.getActions(ResultAction.class);
+        assertThat(firstBuildResultActions).isNotEmpty();
+
+        List<JobAction> jobActionsAfterFirstBuild = project.getActions(JobAction.class);
+        assertThat(jobActionsAfterFirstBuild).hasSize(1);
+        assertThatTrendChartIsHidden(jobActionsAfterFirstBuild.get(0));
+
+        Run<?, ?> secondBuild = buildWithResult(project, Result.SUCCESS);
+        List<ResultAction> secondBuildResultActions = secondBuild.getActions(ResultAction.class);
+        assertThat(secondBuildResultActions).isNotEmpty();
+
+        List<JobAction> jobActionsAfterSecondBuild = project.getActions(JobAction.class);
+        assertThat(jobActionsAfterSecondBuild).hasSize(1);
+        assertThatTrendChartIsVisible(jobActionsAfterSecondBuild.get(0));
+
+        project.getPublishersList().clear();
+        addFailureStep(project);
+
+        for (int i = 0; i < MAX_BUILDS_TO_CONSIDER; i++) {
+            Run<?, ?> empty = buildWithResult(project, Result.FAILURE);
+            List<ResultAction> thirdBuildResultActions = empty.getActions(ResultAction.class);
+            assertThat(thirdBuildResultActions).isEmpty();
+        }
+
+        List<JobAction> jobActionsAfterThirdBuild = project.getActions(JobAction.class);
+        assertThat(jobActionsAfterThirdBuild).isNotEmpty().hasSize(1).first().satisfies(
+                jobAction -> {
+                    assertThat(jobAction.getId()).isEqualTo(ECLIPSE_URL_NAME);
+                    assertThat(jobAction.getUrlName()).isEqualTo(ECLIPSE_URL_NAME);
+                    assertThatTrendChartIsVisible(jobAction);
+                }
+        );
+    }
+
     private void assertThatTrendChartIsVisible(final AsyncConfigurableTrendChart trendChart) {
         assertThat(trendChart.isTrendVisible()).isTrue();
     }
