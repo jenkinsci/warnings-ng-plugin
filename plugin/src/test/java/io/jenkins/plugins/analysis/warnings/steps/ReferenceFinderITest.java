@@ -15,6 +15,8 @@ import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisHistory;
 import io.jenkins.plugins.analysis.core.model.ResetQualityGateCommand;
+import io.jenkins.plugins.analysis.core.model.ResetReferenceAction;
+import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 import io.jenkins.plugins.analysis.core.util.WarningsQualityGate;
@@ -235,8 +237,16 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
                         .hasId(customId)
                         .hasQualityGateStatus(QualityGateStatus.WARNING)).getOwner();
         
-        // Reset using custom ID (this is the fix for JENKINS-76007)
-        createResetAction(unstable, customId);
+        var resultAction = unstable.getAction(ResultAction.class);
+        assertThat(resultAction).isNotNull();
+        var issuesDetail = resultAction.getTarget();
+        assertThat(issuesDetail).isNotNull();
+        
+        issuesDetail.resetReference();
+        
+        var resetActions = unstable.getActions(ResetReferenceAction.class);
+        assertThat(resetActions).hasSize(1);
+        assertThat(resetActions.get(0).getId()).isEqualTo(customId);
 
         // #3 SUCCESS - should use the reset reference
         cleanAndCopy(project, "eclipse4Warnings.txt");
