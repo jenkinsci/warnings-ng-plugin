@@ -46,12 +46,14 @@ public final class MissingResultFallbackHandler extends TransientActionFactory<J
         }
 
         Run<?, ?> previousSuccessfulBuild = currentBuild.getPreviousSuccessfulBuild();
-        if (previousSuccessfulBuild != null) {
-            if (hasResults(previousSuccessfulBuild)) {
-                return Collections.emptyList();
-            }
+        if (previousSuccessfulBuild != null && hasResults(previousSuccessfulBuild)) {
+            return Collections.emptyList();
         }
 
+        return selectActionFromHistoricalResults(currentBuild);
+    }
+
+    private List<Action> selectActionFromHistoricalResults(final Run<?, ?> currentBuild) {
         int count = 0;
         for (Run<?, ?> previousBuild = currentBuild.getPreviousBuild();
                 previousBuild != null && count < MAX_BUILDS_TO_CONSIDER;
