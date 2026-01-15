@@ -250,18 +250,16 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
 
         // #3 SUCCESS - should use the reset reference
         cleanAndCopy(project, "eclipse4Warnings.txt");
-        scheduleBuildAndAssertStatus(project, Result.SUCCESS,
-                analysisResult -> {
-                    assertThat(analysisResult)
-                            .hasTotalSize(4)
-                            .hasNewSize(0)
-                            .hasId(customId)
-                            .hasQualityGateStatus(QualityGateStatus.PASSED)
-                            .hasReferenceBuild(Optional.of(unstable));
-                    assertThat(analysisResult.getInfoMessages()).contains(
-                            "Resetting reference build, ignoring quality gate result for one build",
-                            "Using reference build 'Job #2' to compute new, fixed, and outstanding issues");
-                });
+        var resultWithReset = scheduleBuildAndAssertStatus(project, Result.SUCCESS,
+                analysisResult -> assertThat(analysisResult)
+                        .hasTotalSize(4)
+                        .hasNewSize(0)
+                        .hasId(customId)
+                        .hasQualityGateStatus(QualityGateStatus.PASSED)
+                        .hasReferenceBuild(Optional.of(unstable)));
+        assertThat(resultWithReset.getInfoMessages()).contains(
+                "Resetting reference build, ignoring quality gate result for one build",
+                "Using reference build 'Job #2' to compute new, fixed, and outstanding issues");
     }
 
     /**
