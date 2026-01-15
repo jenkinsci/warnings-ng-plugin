@@ -9,6 +9,7 @@ import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -280,7 +281,7 @@ public class AnnotatedReport implements Serializable {
     private RepositoryStatistics copyOf(final RepositoryStatistics statistics) {
         var copy = new RepositoryStatistics(statistics.getLatestCommitId());
         for (var fileStats : statistics.getFileStatistics()) {
-            copy.addAll(List.copyOf(fileStats.getCommits()));
+            copy.addAll(new ArrayList<>(fileStats.getCommits()));
         }
         return copy;
     }
