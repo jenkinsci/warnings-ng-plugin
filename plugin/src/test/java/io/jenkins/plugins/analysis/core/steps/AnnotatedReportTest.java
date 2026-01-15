@@ -1,16 +1,20 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.util.TreeString;
+import edu.hm.hafner.util.TreeStringBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import io.jenkins.plugins.forensics.miner.CommitDiffItem;
+import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
+
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Tests the class {@link AnnotatedReport}.
@@ -41,7 +45,7 @@ class AnnotatedReportTest {
 
         assertThat(sut.getId()).isEqualTo(ID);
         assertThat(sut.size()).isEqualTo(1);
-        Assertions.assertThat(sut.getReport()).contains(ISSUE1);
+        assertThat(sut.getReport()).contains(ISSUE1);
         assertThat(sut.getSizeOfOrigin()).containsExactly(entry(ID, 1));
     }
 
@@ -106,6 +110,50 @@ class AnnotatedReportTest {
         sut.logInfo("info");
 
         assertThat(sut.getReport().getInfoMessages()).containsExactly("info");
+    }
+
+    @Test
+    void shouldCreateDefensiveCopiesOfRepositoryStatisticsToAvoidConcurrentModification() {
+        var repositoryStatistics = createRepositoryStatisticsWithFileStatistics();
+        var originalReport = new AnnotatedReport("original", new Report(), new io.jenkins.plugins.forensics.blame.Blames(), repositoryStatistics);
+
+        var aggregatedReport = new AnnotatedReport("aggregated");
+        aggregatedReport.add(originalReport);
+
+        var aggregatedStats = aggregatedReport.getStatistics();
+        var originalStats = originalReport.getStatistics();
+
+        assertThat(aggregatedStats.size()).isEqualTo(originalStats.size());
+        assertThat(aggregatedStats.getFiles()).isEqualTo(originalStats.getFiles());
+
+        for (String fileName : originalStats.getFiles()) {
+            var originalFileStats = originalStats.get(fileName);
+            var aggregatedFileStats = aggregatedStats.get(fileName);
+            
+            assertThat(aggregatedFileStats.getCommits()).isEqualTo(originalFileStats.getCommits());
+            
+            assertThat(aggregatedFileStats.getCommits()).isNotSameAs(originalFileStats.getCommits());
+        }
+    }
+
+    private RepositoryStatistics createRepositoryStatisticsWithFileStatistics() {
+        var statistics = new RepositoryStatistics();
+        var treeStringBuilder = new TreeStringBuilder();
+        TreeString fileName = treeStringBuilder.intern("TestFile.java");
+        
+        var commit1 = new CommitDiffItem("commit1", "author1", 1234567890)
+                .addLines(10)
+                .deleteLines(5)
+                .setNewPath(fileName);
+        var commit2 = new CommitDiffItem("commit2", "author2", 1234567900)
+                .addLines(20)
+                .deleteLines(3)
+                .setNewPath(fileName);
+        
+        List<CommitDiffItem> commits = List.of(commit1, commit2);
+        statistics.addAll(commits);
+        
+        return statistics;
     }
 
     private void assertThreeIssuesOfReport(final AnnotatedReport sut) {
