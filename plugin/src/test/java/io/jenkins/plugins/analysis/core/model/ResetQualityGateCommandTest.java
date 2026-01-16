@@ -119,9 +119,43 @@ class ResetQualityGateCommandTest {
         assertThat(command.isEnabled(selectedBuild, ID)).isFalse();
     }
 
+    @Test
+    void hasConfigurePermissionShouldCheckBuildFirst() {
+        var command = new ResetQualityGateCommand();
+
+        FreeStyleProject job = mock(FreeStyleProject.class);
+        FreeStyleBuild build = mock(FreeStyleBuild.class);
+        when(build.hasPermission(Item.CONFIGURE)).thenReturn(true);
+        when(build.getParent()).thenReturn(job);
+
+        JenkinsFacade jenkins = mock(JenkinsFacade.class);
+        command.setJenkinsFacade(jenkins);
+
+        assertThat(command.hasConfigurePermission(build)).isTrue();
+    }
+
+    @Test
+    void hasConfigurePermissionShouldCheckParentIfBuildDoesNot() {
+        var command = new ResetQualityGateCommand();
+
+        FreeStyleProject job = mock(FreeStyleProject.class);
+        FreeStyleBuild build = mock(FreeStyleBuild.class);
+        when(build.hasPermission(Item.CONFIGURE)).thenReturn(false);
+        when(build.getParent()).thenReturn(job);
+
+        JenkinsFacade jenkins = mock(JenkinsFacade.class);
+        when(jenkins.hasPermission(eq(Item.CONFIGURE), any(Item.class))).thenReturn(true);
+        command.setJenkinsFacade(jenkins);
+
+        assertThat(command.hasConfigurePermission(build)).isTrue();
+    }
+
     private JenkinsFacade configureCorrectUserRights(final boolean hasRight, final FreeStyleProject parent) {
         JenkinsFacade jenkins = mock(JenkinsFacade.class);
-        when(jenkins.hasPermission(Item.CONFIGURE, parent)).thenReturn(hasRight);
+        when(jenkins.hasPermission(eq(Item.CONFIGURE), any(Item.class))).then(invocation -> {
+            Item item = invocation.getArgument(1);
+            return item.equals(parent) && hasRight;
+        });
         return jenkins;
     }
 
