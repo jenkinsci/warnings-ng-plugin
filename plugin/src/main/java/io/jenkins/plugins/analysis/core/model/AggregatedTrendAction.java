@@ -95,7 +95,8 @@ public class AggregatedTrendAction implements Action, AsyncConfigurableTrendChar
         if (lastBuild == null) {
             return new LinesChartModel();
         }
-        return new ToolsTrendChart().create(new CompositeBuildResultsIterable(lastBuild), configuration);
+        var nameRegistry = ToolNameRegistry.fromBuild(lastBuild);
+        return new ToolsTrendChart(nameRegistry.asMap()).create(new CompositeBuildResultsIterable(lastBuild), configuration);
     }
 
     @Override

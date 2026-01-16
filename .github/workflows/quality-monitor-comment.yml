@@ -32,7 +32,7 @@ jobs:
         id: quality-gates
         run: echo "json=$(jq -c . .github/quality-gates.json)" >> "$GITHUB_OUTPUT"
       - name: Run Quality Monitor and Comment on PR
-        uses: uhafner/quality-monitor@main
+        uses: uhafner/quality-monitor@v4
         with:
           config: ${{ steps.quality-monitor.outputs.json }}
           quality-gates: ${{ steps.quality-gates.outputs.json }}

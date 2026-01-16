@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
@@ -196,7 +197,7 @@ public abstract class DetailsTableModel extends TableModel {
                 final DescriptionProvider descriptionProvider, final Issue issue,
                 final JenkinsFacade jenkinsFacade) {
             this.jenkinsFacade = jenkinsFacade;
-            message = render(issue.getMessage());
+            message = StringEscapeUtils.escapeHtml4(issue.getMessage());
             description = formatDetails(issue, descriptionProvider.getDescription(issue));
             age = ageBuilder.apply(IntegerParser.parseInt(issue.getReference()));
             fileName = createFileName(fileNameRenderer, issue);
@@ -222,13 +223,14 @@ public abstract class DetailsTableModel extends TableModel {
         private String formatDetails(final Issue issue, final String additionalDescription) {
             UnescapedText details;
             if (StringUtils.isBlank(issue.getMessage())) {
-                details = new UnescapedText(additionalDescription);
+                details = new UnescapedText(render(additionalDescription));
             }
             else {
                 details = DomContentJoiner.join(" ", false,
-                        p(strong().with(new UnescapedText(issue.getMessage()))), additionalDescription);
+                        p(strong().with(new UnescapedText(StringEscapeUtils.escapeHtml4(issue.getMessage())))),
+                        render(additionalDescription));
             }
-            return TableColumn.renderDetailsColumn(render(details), jenkinsFacade);
+            return TableColumn.renderDetailsColumn(details.render(), jenkinsFacade);
         }
 
         /**
