@@ -15,6 +15,8 @@ import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisHistory;
 import io.jenkins.plugins.analysis.core.model.ResetQualityGateCommand;
+import io.jenkins.plugins.analysis.core.model.ResetReferenceAction;
+import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 import io.jenkins.plugins.analysis.core.util.WarningsQualityGate;
@@ -201,6 +203,63 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
     private void createResetAction(final Run<?, ?> unstable, final String id) {
         var resetCommand = new ResetQualityGateCommand();
         resetCommand.resetReferenceBuild(unstable, id);
+    }
+
+    /**
+     * Verifies that reset quality gate works correctly with custom result IDs.
+     * Regression test for JENKINS-76007: Reset quality gate does not work when a tool with custom result id is used.
+     */
+    @Test
+    @org.junitpioneer.jupiter.Issue("JENKINS-76007")
+    void shouldResetReferenceWithCustomId() {
+        String customId = "custom-eclipse-id";
+        
+        // #1 SUCCESS with custom ID
+        var project = createEmptyReferenceJob();
+        enableWarnings(project, recorder -> {
+            recorder.setId(customId);
+            recorder.setQualityGates(List.of(
+                    new WarningsQualityGate(3, QualityGateType.NEW, QualityGateCriticality.UNSTABLE)));
+        });
+        scheduleBuildAndAssertStatus(project, Result.SUCCESS,
+                analysisResult -> assertThat(analysisResult)
+                        .hasTotalSize(2)
+                        .hasNewSize(0)
+                        .hasId(customId)
+                        .hasQualityGateStatus(QualityGateStatus.PASSED));
+
+        // #2 UNSTABLE with custom ID
+        cleanAndCopy(project, "eclipse8Warnings.txt");
+        Run<?, ?> unstable = scheduleBuildAndAssertStatus(project, Result.UNSTABLE,
+                analysisResult -> assertThat(analysisResult)
+                        .hasTotalSize(8)
+                        .hasNewSize(6)
+                        .hasId(customId)
+                        .hasQualityGateStatus(QualityGateStatus.WARNING)).getOwner();
+        
+        var resultAction = unstable.getAction(ResultAction.class);
+        assertThat(resultAction).isNotNull();
+        var issuesDetail = resultAction.getTarget();
+        assertThat(issuesDetail).isNotNull();
+        
+        issuesDetail.resetReference();
+        
+        var resetActions = unstable.getActions(ResetReferenceAction.class);
+        assertThat(resetActions).hasSize(1);
+        assertThat(resetActions.get(0).getId()).isEqualTo(customId);
+
+        // #3 SUCCESS - should use the reset reference
+        cleanAndCopy(project, "eclipse4Warnings.txt");
+        var resultWithReset = scheduleBuildAndAssertStatus(project, Result.SUCCESS,
+                analysisResult -> assertThat(analysisResult)
+                        .hasTotalSize(4)
+                        .hasNewSize(0)
+                        .hasId(customId)
+                        .hasQualityGateStatus(QualityGateStatus.PASSED)
+                        .hasReferenceBuild(Optional.of(unstable)));
+        assertThat(resultWithReset.getInfoMessages()).contains(
+                "Resetting reference build, ignoring quality gate result for one build",
+                "Using reference build 'Job #2' to compute new, fixed, and outstanding issues");
     }
 
     /**

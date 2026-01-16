@@ -274,7 +274,7 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
     public String resetReference() {
-        RESET_QUALITY_GATE_COMMAND.execute(owner, labelProvider.getId());
+        RESET_QUALITY_GATE_COMMAND.execute(owner, result.getId());
 
         return "{}";
     }
