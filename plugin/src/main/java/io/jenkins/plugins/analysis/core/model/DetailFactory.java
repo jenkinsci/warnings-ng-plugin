@@ -20,6 +20,7 @@ import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import hudson.model.Item;
 import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
@@ -117,6 +118,10 @@ public class DetailFactory {
                 }
             }
             else {
+                if (!owner.hasPermission(Item.WORKSPACE)) {
+                    return new PermissionDeniedViewModel(owner, issue.getBaseName());
+                }
+
                 var marker = asMarker(issue, labelProvider.getSourceCodeDescription(owner, issue), labelProvider.getSmallIconUrl());
                 try (var affectedFile = buildFolder.readFile(owner, issue.getFileName(), sourceEncoding)) {
                     return new SourceCodeViewModel(owner, issue.getBaseName(), affectedFile, marker);
