@@ -20,7 +20,6 @@ import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
 import hudson.DescriptorExtensionList;
-import hudson.model.Item;
 import hudson.model.ModelObject;
 import hudson.model.Run;
 import jenkins.model.Jenkins;
@@ -43,8 +42,8 @@ import static org.mockito.Mockito.*;
 class DetailFactoryTest {
     private static final Charset ENCODING = StandardCharsets.UTF_8;
     private static final Run<?, ?> RUN = mock(Run.class);
-    private static final String[] ERROR_MESSAGES = {"error", "messages"};
-    private static final String[] LOG_MESSAGES = {"log", "messages"};
+    private static final String[] ERROR_MESSAGES = { "error", "messages" };
+    private static final String[] LOG_MESSAGES = { "log", "messages" };
 
     private static final Report NO_ISSUES = new Report();
     private static final Report ALL_ISSUES = createReportWith(3, 2, 1, "all");
@@ -58,9 +57,9 @@ class DetailFactoryTest {
     @Test
     void shouldThrowExceptionIfLinkIsNotFound() {
         assertThatExceptionOfType(NoSuchElementException.class)
-                .isThrownBy(() ->
-                        new DetailFactory().createTrendDetails("broken", RUN, createResult(), ALL_ISSUES, NEW_ISSUES,
-                                OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent()));
+                .isThrownBy(() -> new DetailFactory().createTrendDetails("broken", RUN, createResult(), ALL_ISSUES,
+                        NEW_ISSUES,
+                        OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent()));
     }
 
     @Test
@@ -225,11 +224,8 @@ class DetailFactoryTest {
             var report = new Report();
             report.add(issue);
 
-            Run<?, ?> run = mock(Run.class);
-            when(run.hasPermission(Item.WORKSPACE)).thenReturn(true);
-
             return detailFactory.createTrendDetails("source." + issue.getId().toString(),
-                    run, createResult(), report, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING,
+                    RUN, createResult(), report, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING,
                     createParent());
         }
     }
@@ -250,7 +246,7 @@ class DetailFactoryTest {
     }
 
     /**
-     * Checks that a  to a source, returns a SourceDetail-View.
+     * Checks that a to a source, returns a SourceDetail-View.
      */
     @Test
     void shouldReturnSourceDetailWhenCalledWithSourceLinkAndIssueNotInConsoleLog() throws IOException {
@@ -265,7 +261,8 @@ class DetailFactoryTest {
     }
 
     /**
-     * Checks that a link with a filter, that results to an non empty set, returns an IssueDetail-View that only
+     * Checks that a link with a filter, that results to an non empty set, returns
+     * an IssueDetail-View that only
      * contains filtered issues.
      */
     @Test
@@ -289,7 +286,8 @@ class DetailFactoryTest {
             final Report outstandingIssues, final Report fixedIssues,
             final IssuesDetail parent, final Class<T> actualType) {
         JenkinsFacade jenkins = mock(JenkinsFacade.class);
-        when(jenkins.getDescriptorsFor(Tool.class)).thenReturn(DescriptorExtensionList.createDescriptorList((Jenkins) null, Tool.class));
+        when(jenkins.getDescriptorsFor(Tool.class))
+                .thenReturn(DescriptorExtensionList.createDescriptorList((Jenkins) null, Tool.class));
         var detailFactory = new DetailFactory(jenkins, mock(BuildFolderFacade.class));
         var details = detailFactory.createTrendDetails(link, RUN,
                 result, allIssues, newIssues, outstandingIssues, fixedIssues, ENCODING, parent);
@@ -367,97 +365,6 @@ class DetailFactoryTest {
                         .build());
             }
             return issues;
-        }
-    }
-
-    /**
-     * Checks that a PermissionDeniedViewModel is returned when user does not have workspace permission.
-     */
-    @Test
-    void shouldReturnPermissionDeniedViewModelWhenUserHasNoWorkspacePermission() throws IOException {
-        JenkinsFacade jenkins = mock(JenkinsFacade.class);
-        BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
-        Run<?, ?> run = mock(Run.class);
-
-        when(run.hasPermission(Item.WORKSPACE)).thenReturn(false);
-        when(buildFolder.readFile(any(), anyString(), any())).thenReturn(new StringReader(AFFECTED_FILE_CONTENT));
-
-        try (var issueBuilder = new IssueBuilder()) {
-            var detailFactory = new DetailFactory(jenkins, buildFolder);
-
-            issueBuilder.setFileName("test-file.java");
-            var issue = issueBuilder.build();
-
-            var report = new Report();
-            report.add(issue);
-
-            var details = detailFactory.createTrendDetails("source." + issue.getId().toString(),
-                    run, createResult(), report, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING,
-                    createParent());
-
-            assertThat(details).isInstanceOf(PermissionDeniedViewModel.class);
-            assertThat(((PermissionDeniedViewModel) details).getFileName()).isEqualTo(issue.getBaseName());
-        }
-    }
-
-    /**
-     * Checks that a SourceCodeViewModel is returned when user has workspace permission.
-     */
-    @Test
-    void shouldReturnSourceCodeViewModelWhenUserHasWorkspacePermission() throws IOException {
-        JenkinsFacade jenkins = mock(JenkinsFacade.class);
-        BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
-        Run<?, ?> run = mock(Run.class);
-
-        when(run.hasPermission(Item.WORKSPACE)).thenReturn(true);
-        when(buildFolder.readFile(any(), anyString(), any())).thenReturn(new StringReader(AFFECTED_FILE_CONTENT));
-
-        try (var issueBuilder = new IssueBuilder()) {
-            var detailFactory = new DetailFactory(jenkins, buildFolder);
-
-            issueBuilder.setFileName("test-file.java");
-            var issue = issueBuilder.build();
-
-            var report = new Report();
-            report.add(issue);
-
-            var details = detailFactory.createTrendDetails("source." + issue.getId().toString(),
-                    run, createResult(), report, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING,
-                    createParent());
-
-            assertThat(details).isInstanceOfSatisfying(SourceCodeViewModel.class,
-                    s -> assertThat(s.getSourceCode()).contains(AFFECTED_FILE_CONTENT));
-        }
-    }
-
-    /**
-     * Checks that console log view is not affected by workspace permission (console logs don't require workspace permission).
-     */
-    @Test
-    void shouldShowConsoleLogEvenWithoutWorkspacePermission() {
-        JenkinsFacade jenkins = mock(JenkinsFacade.class);
-        BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
-        Run<?, ?> run = mock(Run.class);
-
-        when(run.hasPermission(Item.WORKSPACE)).thenReturn(false);
-        when(buildFolder.readConsoleLog(any())).thenReturn(Stream.of(AFFECTED_FILE_CONTENT));
-
-        String fileName = ConsoleLogHandler.JENKINS_CONSOLE_LOG_FILE_NAME_ID;
-        try (var issueBuilder = new IssueBuilder()) {
-            var detailFactory = new DetailFactory(jenkins, buildFolder);
-
-            issueBuilder.setFileName(fileName);
-            var issue = issueBuilder.build();
-
-            var report = new Report();
-            report.add(issue);
-
-            var details = detailFactory.createTrendDetails("source." + issue.getId().toString(),
-                    run, createResult(), report, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING,
-                    createParent());
-
-            assertThat(details).isInstanceOf(ConsoleDetail.class);
-            assertThat(((ConsoleDetail) details).getSourceCode()).contains(AFFECTED_FILE_CONTENT);
         }
     }
 }
