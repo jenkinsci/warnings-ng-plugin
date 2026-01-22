@@ -42,8 +42,8 @@ import static org.mockito.Mockito.*;
 class DetailFactoryTest {
     private static final Charset ENCODING = StandardCharsets.UTF_8;
     private static final Run<?, ?> RUN = mock(Run.class);
-    private static final String[] ERROR_MESSAGES = { "error", "messages" };
-    private static final String[] LOG_MESSAGES = { "log", "messages" };
+    private static final String[] ERROR_MESSAGES = {"error", "messages"};
+    private static final String[] LOG_MESSAGES = {"log", "messages"};
 
     private static final Report NO_ISSUES = new Report();
     private static final Report ALL_ISSUES = createReportWith(3, 2, 1, "all");
@@ -57,9 +57,9 @@ class DetailFactoryTest {
     @Test
     void shouldThrowExceptionIfLinkIsNotFound() {
         assertThatExceptionOfType(NoSuchElementException.class)
-                .isThrownBy(() -> new DetailFactory().createTrendDetails("broken", RUN, createResult(), ALL_ISSUES,
-                        NEW_ISSUES,
-                        OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent()));
+                .isThrownBy(() ->
+                        new DetailFactory().createTrendDetails("broken", RUN, createResult(), ALL_ISSUES, NEW_ISSUES,
+                                OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent()));
     }
 
     @Test
@@ -246,7 +246,7 @@ class DetailFactoryTest {
     }
 
     /**
-     * Checks that a to a source, returns a SourceDetail-View.
+     * Checks that a  to a source, returns a SourceDetail-View.
      */
     @Test
     void shouldReturnSourceDetailWhenCalledWithSourceLinkAndIssueNotInConsoleLog() throws IOException {
@@ -261,8 +261,7 @@ class DetailFactoryTest {
     }
 
     /**
-     * Checks that a link with a filter, that results to an non empty set, returns
-     * an IssueDetail-View that only
+     * Checks that a link with a filter, that results to an non empty set, returns an IssueDetail-View that only
      * contains filtered issues.
      */
     @Test
@@ -286,8 +285,7 @@ class DetailFactoryTest {
             final Report outstandingIssues, final Report fixedIssues,
             final IssuesDetail parent, final Class<T> actualType) {
         JenkinsFacade jenkins = mock(JenkinsFacade.class);
-        when(jenkins.getDescriptorsFor(Tool.class))
-                .thenReturn(DescriptorExtensionList.createDescriptorList((Jenkins) null, Tool.class));
+        when(jenkins.getDescriptorsFor(Tool.class)).thenReturn(DescriptorExtensionList.createDescriptorList((Jenkins) null, Tool.class));
         var detailFactory = new DetailFactory(jenkins, mock(BuildFolderFacade.class));
         var details = detailFactory.createTrendDetails(link, RUN,
                 result, allIssues, newIssues, outstandingIssues, fixedIssues, ENCODING, parent);
