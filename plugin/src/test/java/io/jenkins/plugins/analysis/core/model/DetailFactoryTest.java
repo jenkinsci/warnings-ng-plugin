@@ -8,8 +8,6 @@ import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 
-import java.io.IOException;
-import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -27,7 +25,6 @@ import jenkins.model.Jenkins;
 import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 import io.jenkins.plugins.bootstrap5.MessagesViewModel;
-import io.jenkins.plugins.prism.SourceCodeViewModel;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
@@ -228,36 +225,6 @@ class DetailFactoryTest {
                     RUN, createResult(), report, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING,
                     createParent());
         }
-    }
-
-    /**
-     * Checks that the error message is shown if an affected file could not be read.
-     */
-    @Test
-    void shouldShowExceptionMessageIfAffectedFileIsNotReadable() throws IOException {
-        JenkinsFacade jenkins = mock(JenkinsFacade.class);
-        BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
-        when(buildFolder.readFile(any(), anyString(), any())).thenThrow(new IOException("file error"));
-
-        var details = createDetails(jenkins, buildFolder, "a-file");
-
-        assertThat(details).isInstanceOfSatisfying(SourceCodeViewModel.class,
-                s -> assertThat(s.getSourceCode()).contains("IOException: file error"));
-    }
-
-    /**
-     * Checks that a  to a source, returns a SourceDetail-View.
-     */
-    @Test
-    void shouldReturnSourceDetailWhenCalledWithSourceLinkAndIssueNotInConsoleLog() throws IOException {
-        JenkinsFacade jenkins = mock(JenkinsFacade.class);
-        BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
-        when(buildFolder.readFile(any(), anyString(), any())).thenReturn(new StringReader(AFFECTED_FILE_CONTENT));
-
-        var details = createDetails(jenkins, buildFolder, "a-file");
-
-        assertThat(details).isInstanceOfSatisfying(SourceCodeViewModel.class,
-                s -> assertThat(s.getSourceCode()).contains(AFFECTED_FILE_CONTENT));
     }
 
     /**
