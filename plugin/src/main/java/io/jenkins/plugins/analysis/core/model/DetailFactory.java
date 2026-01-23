@@ -119,12 +119,12 @@ public class DetailFactory {
             else {
                 var marker = asMarker(issue, labelProvider.getSourceCodeDescription(owner, issue), labelProvider.getSmallIconUrl());
                 try (var affectedFile = buildFolder.readFile(owner, issue.getFileName(), sourceEncoding)) {
-                    return new SourceCodeViewModel(owner, issue.getBaseName(), affectedFile, marker);
+                    return SourceCodeViewModel.create(owner, issue.getBaseName(), affectedFile, marker);
                 }
                 catch (IOException e) {
                     try (var fallback = new StringReader(
                             "%s%n%s".formatted(ExceptionUtils.getMessage(e), ExceptionUtils.getStackTrace(e)))) {
-                        return new SourceCodeViewModel(owner, issue.getBaseName(), fallback, marker);
+                        return SourceCodeViewModel.create(owner, issue.getBaseName(), fallback, marker);
                     }
                 }
             }

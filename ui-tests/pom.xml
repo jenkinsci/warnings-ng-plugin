@@ -16,7 +16,7 @@
   <name>UI Tests of Warnings Plugin</name>
 
   <properties>
-    <jenkins.version>2.545</jenkins.version>
+    <jenkins.version>2.547</jenkins.version>
     <hpi-plugin.version>3.1795.v6fb_496fc129b_</hpi-plugin.version>
     <json-smart.version>2.3</json-smart.version>
     <json-unit-assertj.version>5.1.0</json-unit-assertj.version>
@@ -54,7 +54,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>2.20.1</version>
+      <version>2.21.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
