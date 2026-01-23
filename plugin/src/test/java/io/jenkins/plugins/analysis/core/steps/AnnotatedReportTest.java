@@ -141,11 +141,11 @@ class AnnotatedReportTest {
         var treeStringBuilder = new TreeStringBuilder();
         TreeString fileName = treeStringBuilder.intern("TestFile.java");
         
-        var commit1 = new CommitDiffItem("commit1", "author1", 1234567890)
+        var commit1 = new CommitDiffItem("commit1", "author1", 1_234_567_890)
                 .addLines(10)
                 .deleteLines(5)
                 .setNewPath(fileName);
-        var commit2 = new CommitDiffItem("commit2", "author2", 1234567900)
+        var commit2 = new CommitDiffItem("commit2", "author2", 1_234_567_900)
                 .addLines(20)
                 .deleteLines(3)
                 .setNewPath(fileName);
