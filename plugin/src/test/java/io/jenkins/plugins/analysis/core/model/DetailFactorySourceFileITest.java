@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.core.model;
 
+import org.eclipse.collections.impl.factory.Lists;
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.IssueBuilder;
@@ -39,11 +40,10 @@ class DetailFactorySourceFileITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldShowExceptionMessageIfAffectedFileIsNotReadable() throws IOException {
-        JenkinsFacade jenkins = mock(JenkinsFacade.class);
         BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
         when(buildFolder.readFile(any(), anyString(), any())).thenThrow(new IOException("file error"));
 
-        var details = createDetails(jenkins, buildFolder, "a-file");
+        var details = createDetails(buildFolder, "a-file");
 
         assertThat(details).isInstanceOfSatisfying(SourceCodeViewModel.class,
                 s -> assertThat(s.getSourceCode()).contains("IOException: file error"));
@@ -54,20 +54,19 @@ class DetailFactorySourceFileITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldReturnSourceDetailWhenCalledWithSourceLinkAndIssueNotInConsoleLog() throws IOException {
-        JenkinsFacade jenkins = mock(JenkinsFacade.class);
         BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
         when(buildFolder.readFile(any(), anyString(), any())).thenReturn(new StringReader(AFFECTED_FILE_CONTENT));
 
-        var details = createDetails(jenkins, buildFolder, "a-file");
+        var details = createDetails(buildFolder, "a-file");
 
         assertThat(details).isInstanceOfSatisfying(SourceCodeViewModel.class,
                 s -> assertThat(s.getSourceCode()).contains(AFFECTED_FILE_CONTENT));
     }
 
-    private Object createDetails(final JenkinsFacade jenkins, final BuildFolderFacade buildFolder,
+    private Object createDetails(final BuildFolderFacade buildFolder,
             final String fileName) {
         try (var issueBuilder = new IssueBuilder()) {
-            var detailFactory = new DetailFactory(jenkins, buildFolder);
+            var detailFactory = new DetailFactory(new JenkinsFacade(), buildFolder);
 
             issueBuilder.setFileName(fileName);
             var issue = issueBuilder.build();
@@ -87,8 +86,8 @@ class DetailFactorySourceFileITest extends IntegrationTestWithJenkinsPerSuite {
 
     private AnalysisResult createAnalysisResult() {
         AnalysisResult result = mock(AnalysisResult.class);
-        when(result.getErrorMessages()).thenReturn(org.eclipse.collections.impl.factory.Lists.immutable.empty());
-        when(result.getInfoMessages()).thenReturn(org.eclipse.collections.impl.factory.Lists.immutable.empty());
+        when(result.getErrorMessages()).thenReturn(Lists.immutable.empty());
+        when(result.getInfoMessages()).thenReturn(Lists.immutable.empty());
         return result;
     }
 
