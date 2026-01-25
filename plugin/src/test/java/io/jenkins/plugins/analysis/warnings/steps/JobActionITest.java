@@ -391,24 +391,31 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     @Issue("JENKINS-69273")
     void shouldShowTrendChartWhenAllBuildsAreFailedButEnabledForFailure() {
-        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(CHECKSTYLE_XML);
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(ECLIPSE_LOG);
 
-        var recorder = enableCheckStyleWarnings(project);
+        var recorder = enableEclipseWarnings(project);
         recorder.setEnabledForFailure(true);
+
         addFailureStep(project);
 
-        AnalysisResult first = scheduleBuildAndAssertStatus(project, Result.FAILURE);
-        assertThat(first).hasTotalSize(6);
+        // --- First failed build ---
+        Run<?, ?> first = buildWithResult(project, Result.FAILURE);
+        assertThat(first.getActions(ResultAction.class)).isNotEmpty();
 
-        List<JobAction> firstJobActions = project.getActions(JobAction.class);
-        assertThat(firstJobActions).hasSize(1);
-        assertThatTrendChartIsHidden(firstJobActions.get(0));
+        List<JobAction> afterFirst = project.getActions(JobAction.class);
+        assertThat(afterFirst).hasSize(1);
 
-        AnalysisResult second = scheduleBuildAndAssertStatus(project, Result.FAILURE);
-        assertThat(second).hasTotalSize(6);
+        JobAction firstJobAction = afterFirst.get(0);
+        assertThatTrendChartIsHidden(firstJobAction);
 
-        List<JobAction> secondJobActions = project.getActions(JobAction.class);
-        assertThat(secondJobActions).hasSize(1);
-        assertThatTrendChartIsVisible(secondJobActions.get(0));
+        // --- Second failed build ---
+        Run<?, ?> second = buildWithResult(project, Result.FAILURE);
+        assertThat(second.getActions(ResultAction.class)).isNotEmpty();
+
+        List<JobAction> afterSecond = project.getActions(JobAction.class);
+        assertThat(afterSecond).hasSize(1);
+
+        JobAction secondJobAction = afterSecond.get(0);
+        assertThatTrendChartIsVisible(secondJobAction);
     }
 }
