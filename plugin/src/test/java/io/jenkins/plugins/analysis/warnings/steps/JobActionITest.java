@@ -409,8 +409,11 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         Run<?, ?> second = buildWithResult(project, Result.FAILURE);
         assertThat(second.getActions(ResultAction.class)).isNotEmpty();
 
+        project = getJenkins().getInstance().getItemByFullName(project.getFullName(), FreeStyleProject.class);
+
         List<JobAction> afterSecond = project.getActions(JobAction.class);
-        assertThat(afterSecond).hasSize(1);
+        assertThat(afterSecond).as("JobAction must be attached after two failed builds when enabledForFailure=true")
+                .hasSize(1);
 
         JobAction jobAction = afterSecond.get(0);
         assertThatTrendChartIsVisible(jobAction);
