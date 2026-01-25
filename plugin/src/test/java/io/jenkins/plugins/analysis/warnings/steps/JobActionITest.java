@@ -391,23 +391,24 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     @Issue("JENKINS-69273")
     void shouldShowTrendChartWhenAllBuildsAreFailedButEnabledForFailure() {
-        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(ECLIPSE_LOG);
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(CHECKSTYLE_XML);
 
-        var recorder = enableEclipseWarnings(project);
+        var recorder = enableCheckStyleWarnings(project);
         recorder.setEnabledForFailure(true);
-
         addFailureStep(project);
 
-        Run<?, ?> first = buildWithResult(project, Result.FAILURE);
-        assertThat(first.getActions(ResultAction.class)).isNotEmpty();
+        AnalysisResult first = scheduleBuildAndAssertStatus(project, Result.FAILURE);
+        assertThat(first).hasTotalSize(6);
 
-        List<JobAction> afterFirst = project.getActions(JobAction.class);
-        assertThatTrendChartIsHidden(afterFirst.get(0)); 
+        List<JobAction> firstJobActions = project.getActions(JobAction.class);
+        assertThat(firstJobActions).hasSize(1);
+        assertThatTrendChartIsHidden(firstJobActions.get(0));
 
-        Run<?, ?> second = buildWithResult(project, Result.FAILURE);
-        assertThat(second.getActions(ResultAction.class)).isNotEmpty();
+        AnalysisResult second = scheduleBuildAndAssertStatus(project, Result.FAILURE);
+        assertThat(second).hasTotalSize(6);
 
-        List<JobAction> afterSecond = project.getActions(JobAction.class);
-        assertThatTrendChartIsVisible(afterSecond.get(0)); 
+        List<JobAction> secondJobActions = project.getActions(JobAction.class);
+        assertThat(secondJobActions).hasSize(1);
+        assertThatTrendChartIsVisible(secondJobActions.get(0));
     }
 }
