@@ -62,15 +62,15 @@ public class AggregatedTrendAction implements Action, AsyncConfigurableTrendChar
     }
 
     private Set<AnalysisHistory> createBuildHistory() {
-        Run<?, ?> lastFinishedRun = owner.getLastCompletedBuild();
-        if (lastFinishedRun == null) {
+        Run<?, ?> lastBuild = owner.getLastBuild();
+        if (lastBuild == null) {
             return new HashSet<>();
         }
         else {
             return owner.getActions(JobAction.class)
                     .stream()
                     .map(JobAction::getId)
-                    .map(id -> new AnalysisHistory(lastFinishedRun, new ByIdResultSelector(id)))
+                    .map(id -> new AnalysisHistory(lastBuild, new ByIdResultSelector(id)))
                     .collect(Collectors.toSet());
         }
     }

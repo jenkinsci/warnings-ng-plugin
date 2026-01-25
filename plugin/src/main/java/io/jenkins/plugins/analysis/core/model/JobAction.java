@@ -138,12 +138,12 @@ public class JobAction implements Action, AsyncConfigurableTrendChart {
      * @return the history
      */
     public History createBuildHistory() {
-        Run<?, ?> lastCompletedBuild = owner.getLastCompletedBuild();
-        if (lastCompletedBuild == null) {
+        Run<?, ?> lastBuild = owner.getLastBuild();
+        if (lastBuild == null) {
             return new NullAnalysisHistory();
         }
         else {
-            return new AnalysisHistory(lastCompletedBuild, new ByIdResultSelector(getId()));
+            return new AnalysisHistory(lastBuild, new ByIdResultSelector(getId()));
         }
     }
 

@@ -387,4 +387,27 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(jobAction.getOwner()).isEqualTo(project);
         assertThat(jobAction.getIconFileName()).endsWith(iconName);
     }
+
+    @Test
+    @Issue("JENKINS-69273")
+    void shouldShowTrendChartWhenAllBuildsAreFailedButEnabledForFailure() {
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(ECLIPSE_LOG);
+
+        var recorder = enableEclipseWarnings(project);
+        recorder.setEnabledForFailure(true);
+
+        addFailureStep(project);
+
+        Run<?, ?> first = buildWithResult(project, Result.FAILURE);
+        assertThat(first.getActions(ResultAction.class)).isNotEmpty();
+
+        List<JobAction> afterFirst = project.getActions(JobAction.class);
+        assertThatTrendChartIsHidden(afterFirst.get(0)); 
+
+        Run<?, ?> second = buildWithResult(project, Result.FAILURE);
+        assertThat(second.getActions(ResultAction.class)).isNotEmpty();
+
+        List<JobAction> afterSecond = project.getActions(JobAction.class);
+        assertThatTrendChartIsVisible(afterSecond.get(0)); 
+    }
 }
