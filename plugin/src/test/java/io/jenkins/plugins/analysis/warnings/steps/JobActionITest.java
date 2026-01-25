@@ -403,10 +403,7 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(first.getActions(ResultAction.class)).isNotEmpty();
 
         List<JobAction> afterFirst = project.getActions(JobAction.class);
-        assertThat(afterFirst).hasSize(1);
-
-        JobAction firstJobAction = afterFirst.get(0);
-        assertThatTrendChartIsHidden(firstJobAction);
+        assertThat(afterFirst).isEmpty(); // no history yet → no chart
 
         // --- Second failed build ---
         Run<?, ?> second = buildWithResult(project, Result.FAILURE);
@@ -415,7 +412,7 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         List<JobAction> afterSecond = project.getActions(JobAction.class);
         assertThat(afterSecond).hasSize(1);
 
-        JobAction secondJobAction = afterSecond.get(0);
-        assertThatTrendChartIsVisible(secondJobAction);
+        JobAction jobAction = afterSecond.get(0);
+        assertThatTrendChartIsVisible(jobAction);
     }
 }
