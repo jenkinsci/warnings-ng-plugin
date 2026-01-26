@@ -196,6 +196,42 @@ class SummaryModelTest {
         assertThat(summary).isResetQualityGateVisible();
     }
 
+    @Test
+    void shouldDetectResetQualityGateAction() {
+        var analysisResult = createAnalysisResult(
+                Maps.fixedSize.of(CHECK_STYLE_ID, 2), 0, 0,
+                EMPTY_ERRORS, 0);
+
+        Run<?, ?> build = analysisResult.getOwner();
+        when(analysisResult.getId()).thenReturn(TOOL_ID);
+
+        ResetReferenceAction resetAction = new ResetReferenceAction(TOOL_ID, "testuser", System.currentTimeMillis());
+        when(build.getActions(ResetReferenceAction.class)).thenReturn(Lists.mutable.of(resetAction));
+
+        var summary = createSummary(analysisResult);
+
+        assertThat(summary.isQualityGateReset()).isTrue();
+        assertThat(summary.getResetBy()).isEqualTo("testuser");
+        assertThat(summary.getResetTimestamp()).isNotEmpty();
+    }
+
+    @Test
+    void shouldHandleMissingResetAction() {
+        var analysisResult = createAnalysisResult(
+                Maps.fixedSize.of(CHECK_STYLE_ID, 2), 0, 0,
+                EMPTY_ERRORS, 0);
+
+        Run<?, ?> build = analysisResult.getOwner();
+        when(analysisResult.getId()).thenReturn(TOOL_ID);
+        when(build.getActions(ResetReferenceAction.class)).thenReturn(Lists.mutable.empty());
+
+        var summary = createSummary(analysisResult);
+
+        assertThat(summary.isQualityGateReset()).isFalse();
+        assertThat(summary.getResetBy()).isEmpty();
+        assertThat(summary.getResetTimestamp()).isEmpty();
+    }
+
     private SummaryModel createSummaryWithQualityGateReset(final AnalysisResult analysisResult) {
         var summary = createSummary(analysisResult);
         summary.setResetQualityGateCommand(createResetReferenceAction(true));

@@ -1,5 +1,7 @@
 <div>
     The unhealthy threshold defines the limit of warnings for an unhealthy result: A build is considered as unhealthy
-    (i.e. 0% health) when the number of issues is greater than the specified threshold. Values less or equal zero are ignored.
-    So if you want to have a build health of 0% starting with 10 issues, then set this field to 9.
+    (i.e. 0% health) when the number of issues is greater than the specified threshold.
+    If healthy is set to 0, this threshold is ignored and any issue count greater than 0 results in 0% health (boolean reporting).
+    For gradual health degradation, set this to the threshold where health should reach 0% (e.g., 9 for 0% health at 10+ issues).
+    Negative values are ignored.
 </div>

@@ -44,9 +44,9 @@
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
 
     <!-- Test Library Dependencies Versions -->
-    <xmlunit.version>2.10.4</xmlunit.version>
+    <xmlunit.version>2.11.0</xmlunit.version>
     <jmh.version>1.37</jmh.version>
-    <testcontainers.version>1.21.3</testcontainers.version>
+    <testcontainers.version>1.21.4</testcontainers.version>
 
     <!-- Jenkins Plug-in Dependencies Versions -->
     <flexible-publish.version>0.15.2</flexible-publish.version>
@@ -81,7 +81,7 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>analysis-model-api</artifactId>
-      <version>13.10.0-914.v0e7249a_76a_13</version>
+      <version>13.18.0-935.v784ca_107400a_</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
@@ -110,6 +110,7 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>prism-api</artifactId>
+      <version>1.30.0-701.vf8f8f1f3fd55</version>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>

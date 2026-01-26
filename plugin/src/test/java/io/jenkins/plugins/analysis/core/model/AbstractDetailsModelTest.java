@@ -43,7 +43,8 @@ public abstract class AbstractDetailsModelTest {
     static final String EXPECTED_DESCRIPTION = String.format(
             "<div class=\"details-control\" data-description=\"&lt;p&gt;&lt;strong&gt;%s&lt;/strong&gt;&lt;/p&gt; %s\">"
                     + DETAILS_ICON + "</div>",
-            StringEscapeUtils.escapeHtml4(MESSAGE), StringEscapeUtils.escapeHtml4(DESCRIPTION));
+            StringEscapeUtils.escapeHtml4(StringEscapeUtils.escapeHtml4(MESSAGE)),
+            StringEscapeUtils.escapeHtml4(DESCRIPTION));
 
     @MustBeClosed
     private IssueBuilder createBuilder() {

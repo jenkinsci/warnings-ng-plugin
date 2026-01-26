@@ -44,7 +44,11 @@ public class HealthReportBuilder {
         if (healthDescriptor.isValid()) {
             int percentage;
             int healthy = healthDescriptor.getHealthy();
-            if (relevantIssuesSize < healthy) {
+            if (healthy == 0) {
+                // Special case: healthy=0 means only 0 issues is 100% healthy
+                percentage = relevantIssuesSize == 0 ? 100 : 0;
+            }
+            else if (relevantIssuesSize < healthy) {
                 percentage = 100;
             }
             else {

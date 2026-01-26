@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.List;
 
 import hudson.model.Item;
+import hudson.model.ItemGroup;
 import hudson.model.Run;
 
 import io.jenkins.plugins.util.JenkinsFacade;
@@ -79,8 +80,7 @@ public class ResetQualityGateCommand {
      */
     @SuppressWarnings("PMD.SimplifyBooleanReturns")
     public boolean isEnabled(final Run<?, ?> selectedBuild, final String id) {
-        if (!selectedBuild.hasPermission(Item.CONFIGURE)
-                && !jenkinsFacade.hasPermission(Item.CONFIGURE, selectedBuild.getParent())) {
+        if (!hasConfigurePermission(selectedBuild)) {
             return false;
         }
 
@@ -99,5 +99,39 @@ public class ResetQualityGateCommand {
                 .findAny()
                 .filter(action -> !action.getResult().getQualityGateResult().isSuccessful())
                 .isPresent();
+    }
+
+    /**
+     * Checks if the current user has CONFIGURE permission on the build or anywhere in the parent hierarchy.
+     * This method recursively checks the parent chain to handle cases where jobs are nested in folders
+     * (e.g., GitHub Organization Folders).
+     *
+     * @param selectedBuild
+     *         the selected build to check permissions for
+     *
+     * @return {@code true} if the user has CONFIGURE permission, {@code false} otherwise
+     */
+    @VisibleForTesting
+    boolean hasConfigurePermission(final Run<?, ?> selectedBuild) {
+        if (selectedBuild.hasPermission(Item.CONFIGURE)) {
+            return true;
+        }
+
+        Object parent = selectedBuild.getParent();
+        while (parent instanceof Item) {
+            Item item = (Item) parent;
+            if (jenkinsFacade.hasPermission(Item.CONFIGURE, item)) {
+                return true;
+            }
+            ItemGroup<?> itemParent = item.getParent();
+            if (itemParent instanceof Item) {
+                parent = itemParent;
+            }
+            else {
+                break;
+            }
+        }
+
+        return false;
     }
 }

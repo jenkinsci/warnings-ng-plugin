@@ -10,19 +10,20 @@ jobs:
   build:
 
     strategy:
+      fail-fast: false
       matrix:
         platform: [ubuntu-latest, macos-latest, windows-latest]
-        jdk: [17, 21]
+        jdk: [21, 25]
 
     runs-on: ${{ matrix.platform }}
     name: on ${{ matrix.platform }} with JDK ${{ matrix.jdk }}
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Set up JDK ${{ matrix.jdk }}
         uses: actions/setup-java@v5
         with:
-          distribution: 'corretto'
+          distribution: 'temurin'
           java-version: '${{ matrix.jdk }}'
           check-latest: true
           cache: 'maven'

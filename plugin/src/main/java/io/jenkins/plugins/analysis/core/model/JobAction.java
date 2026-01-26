@@ -222,6 +222,10 @@ public class JobAction implements Action, AsyncConfigurableTrendChart {
             }
         }
         if (numberOfTools > 1) {
+            Run<?, ?> lastBuild = owner.getLastBuild();
+            if (lastBuild != null) {
+                return new ToolsTrendChart(ToolNameRegistry.fromBuild(lastBuild).asMap());
+            }
             return new ToolsTrendChart();
         }
         else {

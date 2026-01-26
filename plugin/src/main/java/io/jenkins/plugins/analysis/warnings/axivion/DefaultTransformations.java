@@ -27,7 +27,7 @@ final class DefaultTransformations {
      * @return the converted issue
      */
     static Issue createAVIssue(final AxRawIssue rawIssue) {
-        Validate.isTrue(rawIssue.getKind().equals(AxIssueKind.AV));
+        Validate.isTrue(rawIssue.getKind() == AxIssueKind.AV);
 
         final var payload = rawIssue.getPayload();
         final String description = createDescription(rawIssue, payload);
@@ -97,7 +97,7 @@ final class DefaultTransformations {
      * @return the converted issue
      */
     static Issue createCLIssue(final AxRawIssue rawIssue) {
-        Validate.isTrue(rawIssue.getKind().equals(AxIssueKind.CL));
+        Validate.isTrue(rawIssue.getKind() == AxIssueKind.CL);
 
         final var payload = rawIssue.getPayload();
         final var cloneType = "type " + getInt(payload, "cloneType");
@@ -153,7 +153,7 @@ final class DefaultTransformations {
      * @return the converted issue
      */
     static Issue createDEIssue(final AxRawIssue rawIssue) {
-        Validate.isTrue(rawIssue.getKind().equals(AxIssueKind.DE));
+        Validate.isTrue(rawIssue.getKind() == AxIssueKind.DE);
 
         final var payload = rawIssue.getPayload();
         final var description = getString(payload, "entityType")
@@ -184,7 +184,7 @@ final class DefaultTransformations {
      * @return the converted issue
      */
     static Issue createMVIssue(final AxRawIssue rawIssue) {
-        Validate.isTrue(rawIssue.getKind().equals(AxIssueKind.MV));
+        Validate.isTrue(rawIssue.getKind() == AxIssueKind.MV);
 
         final var payload = rawIssue.getPayload();
         final var description = getString(payload, "entityType")
@@ -222,7 +222,7 @@ final class DefaultTransformations {
      * @return the converted issue
      */
     static Issue createSVIssue(final AxRawIssue rawIssue) {
-        Validate.isTrue(rawIssue.getKind().equals(AxIssueKind.SV));
+        Validate.isTrue(rawIssue.getKind() == AxIssueKind.SV);
 
         final var payload = rawIssue.getPayload();
         final var description = getString(payload, "message")

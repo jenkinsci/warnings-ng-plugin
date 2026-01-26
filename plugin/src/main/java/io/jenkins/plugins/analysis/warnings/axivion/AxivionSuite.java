@@ -27,7 +27,6 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -87,25 +86,6 @@ public final class AxivionSuite extends Tool {
         // empty constructor required for stapler
     }
 
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        var that = (AxivionSuite) o;
-        return projectUrl.equals(that.projectUrl) && credentialsId.equals(that.credentialsId) && basedir.equals(
-                that.basedir) && namedFilter.equals(that.namedFilter)
-                && ignoreSuppressedOrJustified == that.ignoreSuppressedOrJustified;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(projectUrl, credentialsId, basedir, namedFilter);
-    }
-
     public String getBasedir() {
         return basedir;
     }
@@ -120,24 +100,47 @@ public final class AxivionSuite extends Tool {
     }
 
     /**
+     * Encodes the URL path to handle special characters like whitespaces.
+     *
+     * @param urlString
+     *         the URL string to encode
+     *
+     * @return the encoded URL string
+     *
+     * @throws URISyntaxException
+     *         if the URL syntax is invalid
+     * @throws MalformedURLException
+     *         if the URL is malformed
+     */
+    private static String encodeProjectUrl(final String urlString) throws URISyntaxException, MalformedURLException {
+        final var url = new URL(urlString);
+        return new URIBuilder()
+                .setCharset(StandardCharsets.UTF_8)
+                .setHost(url.getHost())
+                .setPort(url.getPort())
+                .setPath(url.getPath())
+                .setScheme(url.getProtocol())
+                .build()
+                .toString();
+    }
+
+    /**
      * Stapler setter for the projectUrl field. Verifies the url and encodes the path part e.g. whitespaces in project
-     * names.
+     * names. If the URL contains environment variables (e.g., ${VAR} or $VAR), they are preserved and will be
+     * expanded at runtime.
      *
      * @param projectUrl
-     *         url to an Axivion dashboard project
+     *         url to an Axivion dashboard project, may contain environment variables
      */
     @DataBoundSetter
     public void setProjectUrl(final String projectUrl) {
+        if (projectUrl.contains("$")) {
+            this.projectUrl = projectUrl;
+            return;
+        }
+        
         try {
-            final var url = new URL(projectUrl);
-            this.projectUrl = new URIBuilder()
-                    .setCharset(StandardCharsets.UTF_8)
-                    .setHost(url.getHost())
-                    .setPort(url.getPort())
-                    .setPath(url.getPath())
-                    .setScheme(url.getProtocol())
-                    .build()
-                    .toString();
+            this.projectUrl = encodeProjectUrl(projectUrl);
         }
         catch (URISyntaxException | MalformedURLException e) {
             throw new IllegalArgumentException("Not a valid project url.", e);
@@ -188,14 +191,15 @@ public final class AxivionSuite extends Tool {
     @Override
     public Report scan(final Run<?, ?> run, final FilePath workspace, final Charset sourceCodeEncoding,
             final LogHandler logger) throws ParsingException, ParsingCanceledException {
+        final var expandedProjectUrl = expandProjectUrl(run, projectUrl);
         final var httpClientCredentials = withValidCredentials(run.getParent());
-        final var dashboard = new RemoteAxivionDashboard(projectUrl, httpClientCredentials, namedFilter);
-        final var config = new Config(projectUrl, expandBaseDir(run, basedir),
+        final var dashboard = new RemoteAxivionDashboard(expandedProjectUrl, httpClientCredentials, namedFilter);
+        final var config = new Config(expandedProjectUrl, expandBaseDir(run, basedir),
                 ignoreSuppressedOrJustified);
         final var parser = new AxivionParser(config);
 
         final var report = new Report(ID, NAME);
-        report.logInfo("Axivion webservice: %s", projectUrl);
+        report.logInfo("Axivion webservice: %s (expanded from: %s)", expandedProjectUrl, projectUrl);
         report.logInfo("Local basedir: %s", basedir);
         report.logInfo("Named Filter: %s", namedFilter);
         report.logInfo("Ignore suppressed or justified: %s", ignoreSuppressedOrJustified);
@@ -244,6 +248,23 @@ public final class AxivionSuite extends Tool {
         return expandedBasedir;
     }
 
+    private static String expandProjectUrl(final Run<?, ?> run, final String projectUrl) {
+        String expandedUrl;
+        try {
+            var environmentResolver = new EnvironmentResolver();
+            expandedUrl = environmentResolver.expandEnvironmentVariables(
+                    run.getEnvironment(TaskListener.NULL), projectUrl);
+            
+            if (!expandedUrl.contains("$")) {
+                expandedUrl = encodeProjectUrl(expandedUrl);
+            }
+        }
+        catch (IOException | InterruptedException | URISyntaxException e) {
+            expandedUrl = projectUrl;
+        }
+        return expandedUrl;
+    }
+
     /** Provides the Axivion icons. */
     private static class LabelProvider extends IconLabelProvider {
         LabelProvider() {
@@ -279,19 +300,23 @@ public final class AxivionSuite extends Tool {
         }
 
         /**
-         * Dashboard project url must be a valid url.
+         * Dashboard project url must be a valid url or contain environment variables.
          *
          * @param project
          *         the project that is configured
          * @param projectUrl
-         *         url to a project inside an Axivion dashboard
+         *         url to a project inside an Axivion dashboard, may contain environment variables like ${VAR} or $VAR
          *
-         * @return {@link FormValidation#ok()} is a valid url
+         * @return {@link FormValidation#ok()} is a valid url or contains environment variables
          */
         @POST
         public FormValidation doCheckProjectUrl(@AncestorInPath final BuildableItem project,
                 @QueryParameter final String projectUrl) {
             if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
+                return FormValidation.ok();
+            }
+
+            if (projectUrl.contains("$")) {
                 return FormValidation.ok();
             }
 

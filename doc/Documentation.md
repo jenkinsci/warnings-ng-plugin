@@ -203,8 +203,10 @@ issues in a simple log file that contains single lines of JSON issues, see
 Here is an example step that can be used to parse the native JSON (or XML) format:
 
 ```groovy
-recordIssues(tool: issues())
+recordIssues(tool: issues(pattern: '**/issues.json'))
 ```
+
+Note: The native format parser requires a file pattern and cannot scan console log output directly.
 #### Deploying a new tool using a custom plugin
 
 The most flexible way is to define a new tool by writing a Java class that will be deployed in your own small 

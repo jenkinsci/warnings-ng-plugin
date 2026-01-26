@@ -76,6 +76,8 @@ class IssuesScanner {
     private final BlameMode blameMode;
     private final PostProcessingMode postProcessingMode;
     private final boolean quiet;
+    private final String sourcePathPrefix;
+    private final String targetPathPrefix;
 
     enum BlameMode {
         ENABLED, DISABLED
@@ -91,7 +93,7 @@ class IssuesScanner {
             final SourceCodeRetention sourceCodeRetention, final Run<?, ?> run,
             final FilePath jenkinsRootDir, final TaskListener listener,
             final String scm, final BlameMode blameMode, final PostProcessingMode postProcessingMode,
-            final boolean quiet) {
+            final boolean quiet, final String sourcePathPrefix, final String targetPathPrefix) {
         this.filters = new ArrayList<>(filters);
         this.sourceCodeEncoding = sourceCodeEncoding;
         this.tool = tool;
@@ -105,6 +107,8 @@ class IssuesScanner {
         this.blameMode = blameMode;
         this.postProcessingMode = postProcessingMode;
         this.quiet = quiet;
+        this.sourcePathPrefix = sourcePathPrefix;
+        this.targetPathPrefix = targetPathPrefix;
     }
 
     public AnnotatedReport scan() throws IOException, InterruptedException {
@@ -153,7 +157,7 @@ class IssuesScanner {
         }
         return new ReportPostProcessor(tool.getActualId(), report, sourceCodeEncoding.name(),
                 createBlamer(report), filters, getPermittedSourceDirectories(), sourceDirectories,
-                postProcessingMode, linesLookAhead);
+                postProcessingMode, linesLookAhead, sourcePathPrefix, targetPathPrefix);
     }
 
     private Set<String> getPermittedSourceDirectories() {
@@ -265,11 +269,14 @@ class IssuesScanner {
         private final PostProcessingMode postProcessingMode;
         private final List<RegexpFilter> filters;
         private final int linesLookAhead;
+        private final String sourcePathPrefix;
+        private final String targetPathPrefix;
 
         @SuppressWarnings("checkstyle:ParameterNumber")
         ReportPostProcessor(final String id, final Report report, final String sourceCodeEncoding,
                             final Blamer blamer, final List<RegexpFilter> filters, final Set<String> permittedSourceDirectories,
-                            final Set<String> requestedSourceDirectories, final PostProcessingMode postProcessingMode, final int linesLookAhead) {
+                            final Set<String> requestedSourceDirectories, final PostProcessingMode postProcessingMode, final int linesLookAhead,
+                            final String sourcePathPrefix, final String targetPathPrefix) {
             super();
 
             this.id = id;
@@ -281,6 +288,8 @@ class IssuesScanner {
             this.requestedSourceDirectories = requestedSourceDirectories;
             this.postProcessingMode = postProcessingMode;
             this.linesLookAhead = linesLookAhead;
+            this.sourcePathPrefix = sourcePathPrefix;
+            this.targetPathPrefix = targetPathPrefix;
         }
 
         @Override
@@ -317,13 +326,15 @@ class IssuesScanner {
             try {
                 var nameResolver = new FileNameResolver();
                 report.logInfo("Resolving file names for all issues in workspace '%s'", workspace);
-                nameResolver.run(report, workspace.getAbsolutePath(), ConsoleLogHandler::isInConsoleLog);
+                nameResolver.run(report, workspace.getAbsolutePath(), ConsoleLogHandler::isInConsoleLog,
+                        sourcePathPrefix, targetPathPrefix);
                 var errors = new FilteredLog("Source-Directories");
                 Set<String> filteredSourceDirectories = filterSourceDirectories(workspace, errors);
                 errors.getErrorMessages().forEach(report::logError);
                 for (String sourceDirectory : filteredSourceDirectories) {
                     report.logInfo("Resolving file names for all issues in source directory '%s'", sourceDirectory);
-                    nameResolver.run(report, sourceDirectory, ConsoleLogHandler::isInConsoleLog);
+                    nameResolver.run(report, sourceDirectory, ConsoleLogHandler::isInConsoleLog,
+                            sourcePathPrefix, targetPathPrefix);
                 }
             }
             catch (InvalidPathException exception) {

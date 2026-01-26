@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>11.2852.v88a_36fe3230d</version>
+    <version>11.2958.v63511c4c1160</version>
     <relativePath/>
   </parent>
 
@@ -27,6 +27,8 @@
     <jenkins.version>2.533</jenkins.version>
 
     <gitHubRepo>jenkinsci/warnings-ng-plugin</gitHubRepo>
+    <hpi.bundledArtifacts>eclipse-collections,eclipse-collections-api</hpi.bundledArtifacts>
+    <hpi.strictBundledArtifacts>true</hpi.strictBundledArtifacts>
     <maven.deploy.skip>true</maven.deploy.skip>
   </properties>
 

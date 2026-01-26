@@ -1,0 +1,2 @@
+[WARNING] /docker/workspace/src/main/java/com/example/MyClass.java:[15,10] [deprecation] someMethod() in com.example.OldApi has been deprecated
+[WARNING] /docker/workspace/src/test/java/com/example/MyTest.java:[20,5] [unchecked] unchecked conversion
