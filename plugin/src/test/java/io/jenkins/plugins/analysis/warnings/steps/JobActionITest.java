@@ -400,28 +400,35 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
 
         // First failed build with issues recorded
         Run<?, ?> first = buildWithResult(project, Result.FAILURE);
-        assertThat(first.getActions(ResultAction.class))
+        List<ResultAction> firstActions = first.getActions(ResultAction.class);
+        assertThat(firstActions)
                 .as("First FAILED build should have ResultAction when enabledForFailure=true")
                 .isNotEmpty();
 
-        // After first build, no trend chart yet (need at least 2 builds)
-        List<JobAction> jobActionsAfterFirst = project.getActions(JobAction.class);
-        if (!jobActionsAfterFirst.isEmpty()) {
-            assertThatTrendChartIsHidden(jobActionsAfterFirst.get(0));
-        }
+        // Get JobAction from ResultAction (not from project, as it's not persisted for FAILED builds)
+        ResultAction firstResultAction = firstActions.get(0);
+        JobAction firstJobAction = (JobAction) firstResultAction.getProjectActions().stream()
+                .filter(a -> a instanceof JobAction)
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("JobAction must be available from ResultAction"));
+
+        assertThatTrendChartIsHidden(firstJobAction);
 
         // Second failed build with issues recorded
         Run<?, ?> second = buildWithResult(project, Result.FAILURE);
-        assertThat(second.getActions(ResultAction.class))
+        List<ResultAction> secondActions = second.getActions(ResultAction.class);
+        assertThat(secondActions)
                 .as("Second FAILED build should have ResultAction when enabledForFailure=true")
                 .isNotEmpty();
 
-        // After second build, trend chart should be visible (this is what the fix enables)
-        List<JobAction> jobActionsAfterSecond = project.getActions(JobAction.class);
-        assertThat(jobActionsAfterSecond)
-                .as("JobAction should be available after two FAILED builds with enabledForFailure=true")
-                .isNotEmpty();
+        // Get JobAction from second build's ResultAction
+        ResultAction secondResultAction = secondActions.get(0);
+        JobAction secondJobAction = (JobAction) secondResultAction.getProjectActions().stream()
+                .filter(a -> a instanceof JobAction)
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("JobAction must be available from ResultAction"));
 
-        assertThatTrendChartIsVisible(jobActionsAfterSecond.get(0));
+        // After second build, trend chart should be visible (this is what the fix enables)
+        assertThatTrendChartIsVisible(secondJobAction);
     }
 }
