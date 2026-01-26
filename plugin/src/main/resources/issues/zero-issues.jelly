@@ -1,6 +1,5 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:bs="/bootstrap5" xmlns:fa="/font-awesome" xmlns:l="/lib/layout" >
-
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" >
   <st:documentation>
     Renders a bootstrap card with a zero issues message.
   </st:documentation>
@@ -9,8 +8,6 @@
     <div class="jenkins-card__teaser">
       <l:icon src="symbol-checkmark-done-outline plugin-ionicons-api" class="jenkins-!-success-color" />
       <div>${%noIssues}</div>
-      <div>No issues for 4 builds</div>
     </div>
   </l:card>
-
 </j:jelly>
