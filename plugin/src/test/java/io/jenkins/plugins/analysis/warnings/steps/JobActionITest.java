@@ -387,4 +387,43 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(jobAction.getOwner()).isEqualTo(project);
         assertThat(jobAction.getIconFileName()).endsWith(iconName);
     }
+
+    @Test
+    @Issue("JENKINS-69273")
+    void shouldShowTrendChartWhenAllBuildsAreFailedButEnabledForFailure() {
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(ECLIPSE_LOG);
+
+        var recorder = enableEclipseWarnings(project);
+        recorder.setEnabledForFailure(true);
+
+        addFailureStep(project);
+
+        Run<?, ?> first = buildWithResult(project, Result.FAILURE);
+        List<ResultAction> firstActions = first.getActions(ResultAction.class);
+        assertThat(firstActions)
+                .as("First FAILED build should have ResultAction when enabledForFailure=true")
+                .isNotEmpty();
+
+        ResultAction firstResultAction = firstActions.get(0);
+        JobAction firstJobAction = (JobAction) firstResultAction.getProjectActions().stream()
+                .filter(a -> a instanceof JobAction)
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("JobAction must be available from ResultAction"));
+
+        assertThatTrendChartIsHidden(firstJobAction);
+
+        Run<?, ?> second = buildWithResult(project, Result.FAILURE);
+        List<ResultAction> secondActions = second.getActions(ResultAction.class);
+        assertThat(secondActions)
+                .as("Second FAILED build should have ResultAction when enabledForFailure=true")
+                .isNotEmpty();
+
+        ResultAction secondResultAction = secondActions.get(0);
+        JobAction secondJobAction = (JobAction) secondResultAction.getProjectActions().stream()
+                .filter(a -> a instanceof JobAction)
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("JobAction must be available from ResultAction"));
+
+        assertThatTrendChartIsVisible(secondJobAction);
+    }
 }

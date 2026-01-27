@@ -61,7 +61,7 @@ class JobActionTest {
         assertThat(action.getIconFileName()).isEqualTo(ICON); // a JobAction should always show an icon
 
         Run<?, ?> reference = createValidReferenceBuild(0);
-        when(job.getLastCompletedBuild()).thenAnswer(i -> reference);
+        when(job.getLastBuild()).thenAnswer(i -> reference);
 
         assertThat(action.getIconFileName()).isEqualTo(ICON);
         assertThat(action.isTrendVisible()).isFalse();
