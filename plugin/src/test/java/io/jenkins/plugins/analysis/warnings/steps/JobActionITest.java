@@ -398,14 +398,12 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
 
         addFailureStep(project);
 
-        // First failed build with issues recorded
         Run<?, ?> first = buildWithResult(project, Result.FAILURE);
         List<ResultAction> firstActions = first.getActions(ResultAction.class);
         assertThat(firstActions)
                 .as("First FAILED build should have ResultAction when enabledForFailure=true")
                 .isNotEmpty();
 
-        // Get JobAction from ResultAction (not from project, as it's not persisted for FAILED builds)
         ResultAction firstResultAction = firstActions.get(0);
         JobAction firstJobAction = (JobAction) firstResultAction.getProjectActions().stream()
                 .filter(a -> a instanceof JobAction)
@@ -414,21 +412,18 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
 
         assertThatTrendChartIsHidden(firstJobAction);
 
-        // Second failed build with issues recorded
         Run<?, ?> second = buildWithResult(project, Result.FAILURE);
         List<ResultAction> secondActions = second.getActions(ResultAction.class);
         assertThat(secondActions)
                 .as("Second FAILED build should have ResultAction when enabledForFailure=true")
                 .isNotEmpty();
 
-        // Get JobAction from second build's ResultAction
         ResultAction secondResultAction = secondActions.get(0);
         JobAction secondJobAction = (JobAction) secondResultAction.getProjectActions().stream()
                 .filter(a -> a instanceof JobAction)
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("JobAction must be available from ResultAction"));
 
-        // After second build, trend chart should be visible (this is what the fix enables)
         assertThatTrendChartIsVisible(secondJobAction);
     }
 }
