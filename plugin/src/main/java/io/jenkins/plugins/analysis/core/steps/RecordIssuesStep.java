@@ -101,6 +101,7 @@ public class RecordIssuesStep extends Step implements Serializable {
     private TrendChartType trendChartType = TrendChartType.AGGREGATION_TOOLS;
 
     private boolean failOnError;
+    private boolean stopBuild; // @since 12.999999-SNAPSHOT: by default, pipeline execution will not be stopped
     private String scm = StringUtils.EMPTY;
 
     private boolean quiet;
@@ -545,6 +546,25 @@ public class RecordIssuesStep extends Step implements Serializable {
         return failOnError;
     }
 
+    /**
+     * If {@code true}, then the pipeline execution will be stopped (by throwing an {@code AbortException}) when the
+     * quality gate is not passed. This is useful to prevent subsequent stages from executing when quality criteria are
+     * not met. Note that the warning results are still published before the exception is thrown.
+     *
+     * @param stopBuild
+     *         if {@code true} then the build will be aborted when quality gates fail
+     */
+    @DataBoundSetter
+    @SuppressWarnings("unused") // Used by Stapler
+    public void setStopBuild(final boolean stopBuild) {
+        this.stopBuild = stopBuild;
+    }
+
+    @SuppressWarnings({"PMD.BooleanGetMethodName", "WeakerAccess"})
+    public boolean getStopBuild() {
+        return stopBuild;
+    }
+
     public int getHealthy() {
         return healthy;
     }
@@ -660,6 +680,7 @@ public class RecordIssuesStep extends Step implements Serializable {
             recorder.setIcon(step.getIcon());
             recorder.setQualityGates(step.getQualityGates());
             recorder.setFailOnError(step.getFailOnError());
+            recorder.setStopBuild(step.getStopBuild());
             recorder.setTrendChartType(step.getTrendChartType());
             recorder.setSourceDirectories(step.getAllSourceDirectories());
             recorder.setChecksInfo(getContext().get(ChecksInfo.class));

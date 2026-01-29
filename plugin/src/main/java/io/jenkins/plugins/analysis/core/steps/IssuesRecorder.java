@@ -102,6 +102,7 @@ public class IssuesRecorder extends Recorder {
     private boolean ignoreQualityGate; // by default, a successful quality gate is mandatory;
 
     private boolean failOnError;
+    private boolean stopBuild; // @since 12.999999-SNAPSHOT: by default, pipeline execution will not be stopped
 
     private int healthy;
     private int unhealthy;
@@ -562,6 +563,25 @@ public class IssuesRecorder extends Recorder {
     }
 
     /**
+     * If {@code true}, then the pipeline execution will be stopped (by throwing an {@code AbortException}) when the
+     * quality gate is not passed. This is useful to prevent subsequent stages from executing when quality criteria are
+     * not met. Note that the warning results are still published before the exception is thrown.
+     *
+     * @param stopBuild
+     *         if {@code true} then the build will be aborted when quality gates fail
+     */
+    @DataBoundSetter
+    @SuppressWarnings("unused") // Used by Stapler
+    public void setStopBuild(final boolean stopBuild) {
+        this.stopBuild = stopBuild;
+    }
+
+    @SuppressWarnings({"PMD.BooleanGetMethodName", "unused"})
+    public boolean getStopBuild() {
+        return stopBuild;
+    }
+
+    /**
      * Returns whether recording should be enabled for failed builds as well.
      *
      * @return {@code true}  if recording should be enabled for failed builds as well, {@code false} if recording is
@@ -857,7 +877,7 @@ public class IssuesRecorder extends Recorder {
 
         var publisher = new IssuesPublisher(run, annotatedReport, deltaCalculator,
                 new HealthDescriptor(healthy, unhealthy, minimumSeverity), qualityGates,
-                customName, customIcon, ignoreQualityGate, getSourceCodeCharset(), logHandler, resultHandler, failOnError);
+                customName, customIcon, ignoreQualityGate, getSourceCodeCharset(), logHandler, resultHandler, failOnError, stopBuild);
         var action = publisher.attachAction(trendChartType);
 
         if (!skipPublishingChecks) {

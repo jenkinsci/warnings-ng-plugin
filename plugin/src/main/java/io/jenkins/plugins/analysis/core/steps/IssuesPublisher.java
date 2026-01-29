@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import hudson.AbortException;
 import hudson.model.Result;
 import hudson.model.Run;
 
@@ -56,12 +57,13 @@ class IssuesPublisher {
     private final LogHandler logger;
     private final ResultHandler notifier;
     private final boolean failOnErrors;
+    private final boolean stopBuild;
 
     @SuppressWarnings("ParameterNumber")
     IssuesPublisher(final Run<?, ?> run, final AnnotatedReport report, final DeltaCalculator deltaCalculator,
             final HealthDescriptor healthDescriptor, final List<WarningsQualityGate> qualityGates,
             final String name, final String icon, final boolean ignoreQualityGate, final Charset sourceCodeEncoding,
-            final LogHandler logger, final ResultHandler notifier, final boolean failOnErrors) {
+            final LogHandler logger, final ResultHandler notifier, final boolean failOnErrors, final boolean stopBuild) {
         this.report = report;
         this.run = run;
         this.deltaCalculator = deltaCalculator;
@@ -74,6 +76,7 @@ class IssuesPublisher {
         this.logger = logger;
         this.notifier = notifier;
         this.failOnErrors = failOnErrors;
+        this.stopBuild = stopBuild;
     }
 
     private String getId() {
@@ -88,8 +91,10 @@ class IssuesPublisher {
      *         the chart to show
      *
      * @return the created result action
+     * @throws AbortException
+     *         if the quality gate is not passed and stopBuild is enabled
      */
-    ResultAction attachAction(final TrendChartType trendChartType) {
+    ResultAction attachAction(final TrendChartType trendChartType) throws AbortException {
         var issues = report.getReport();
         var deltaReport = computeDelta(issues);
 
@@ -128,6 +133,11 @@ class IssuesPublisher {
 
         if (trendChartType == TrendChartType.TOOLS_AGGREGATION || trendChartType == TrendChartType.AGGREGATION_ONLY) {
             run.addOrReplaceAction(new AggregationAction());
+        }
+
+        if (stopBuild && !qualityGateResult.isSuccessful()) {
+            issues.logInfo("Stopping pipeline execution because quality gate has been missed and stopBuild is enabled");
+            throw new AbortException("Stopping build because quality gate has been missed");
         }
 
         return action;
