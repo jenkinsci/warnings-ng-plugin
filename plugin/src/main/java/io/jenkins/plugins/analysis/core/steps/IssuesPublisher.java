@@ -33,6 +33,7 @@ import io.jenkins.plugins.forensics.reference.ReferenceBuild;
 import io.jenkins.plugins.forensics.reference.ReferenceFinder;
 import io.jenkins.plugins.util.LogHandler;
 import io.jenkins.plugins.util.QualityGateResult;
+import io.jenkins.plugins.util.QualityGateStatus;
 import io.jenkins.plugins.util.ResultHandler;
 
 import static io.jenkins.plugins.analysis.core.model.QualityGateEvaluationMode.*;
@@ -137,7 +138,11 @@ class IssuesPublisher {
 
         if (stopBuild && !qualityGateResult.isSuccessful()) {
             issues.logInfo("Stopping pipeline execution because quality gate has been missed and stopBuild is enabled");
-            throw new AbortException("Stopping build because quality gate has been missed");
+            
+            var status = qualityGateResult.getOverallStatus();
+            if (status == QualityGateStatus.FAILED || status == QualityGateStatus.ERROR) {
+                throw new AbortException("Stopping build because quality gate has been missed");
+            }
         }
 
         return action;
