@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
+import hudson.AbortException;
 import hudson.Launcher;
 import hudson.matrix.MatrixAggregator;
 import hudson.matrix.MatrixBuild;
@@ -92,13 +93,28 @@ public class IssuesAggregator extends MatrixAggregator {
 
     @Override
     public boolean endBuild() {
-        resultsPerTool.forEachKeyMultiValues((tool, reports) -> {
-            var reportsList = Lists.mutable.withAll(reports);
-            reportsList.sortThis(Comparator.comparing(reportToAxisName::get));
-            var aggregatedReport = new AnnotatedReport(tool, reportsList);
-            recorder.publishResult(build, build.getWorkspace(), listener, Messages.Tool_Default_Name(),
-                    aggregatedReport, StringUtils.EMPTY, recorder.getIcon(), new RunResultHandler(build));
-        });
+        try {
+            resultsPerTool.forEachKeyMultiValues((tool, reports) -> {
+                var reportsList = Lists.mutable.withAll(reports);
+                reportsList.sortThis(Comparator.comparing(reportToAxisName::get));
+                var aggregatedReport = new AnnotatedReport(tool, reportsList);
+                try {
+                    recorder.publishResult(build, build.getWorkspace(), listener, Messages.Tool_Default_Name(),
+                            aggregatedReport, StringUtils.EMPTY, recorder.getIcon(), new RunResultHandler(build));
+                }
+                catch (AbortException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        }
+        catch (RuntimeException e) {
+            if (e.getCause() instanceof AbortException) {
+                listener.getLogger().println(e.getCause().getMessage());
+                build.setResult(hudson.model.Result.FAILURE);
+                return false;
+            }
+            throw e;
+        }
         return true;
     }
 }

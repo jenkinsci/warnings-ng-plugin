@@ -22,6 +22,7 @@ import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.verb.POST;
 import org.jenkinsci.Symbol;
+import hudson.AbortException;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -859,11 +860,13 @@ public class IssuesRecorder extends Recorder {
      *         the status handler to use
      *
      * @return the created results
+     * @throws AbortException
+     *         if the build should be stopped due to quality gate failure
      */
     @SuppressWarnings("checkstyle:ParameterNumber")
     AnalysisResult publishResult(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
             final String loggerName, final AnnotatedReport annotatedReport, final String customName,
-            final String customIcon, final ResultHandler resultHandler) {
+            final String customIcon, final ResultHandler resultHandler) throws AbortException {
         var logHandler = new LogHandler(listener, loggerName, annotatedReport.getLogger());
         logHandler.setQuiet(quiet);
 
