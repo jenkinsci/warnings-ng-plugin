@@ -8,7 +8,6 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
 import hudson.model.AbstractProject;
@@ -388,7 +387,7 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     @Issue("JENKINS-72575")
-    void shouldStopBuildWhenQualityGateFailsAndStopBuildIsEnabled() throws InterruptedException, ExecutionException {
+    void shouldStopBuildWhenQualityGateFailsAndStopBuildIsEnabled() throws Exception {
         var project = createJobWithReferenceFinder();
         enableAndConfigureCheckstyle(project, recorder -> {
             recorder.setQualityGates(List.of(
@@ -446,7 +445,7 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     @Issue("JENKINS-72575")
-    void shouldStopBuildWhenUnstableQualityGateFailsAndStopBuildIsEnabled() throws InterruptedException, ExecutionException {
+    void shouldStopBuildWhenUnstableQualityGateFailsAndStopBuildIsEnabled() throws Exception {
         var project = createJobWithReferenceFinder();
         enableAndConfigureCheckstyle(project, recorder -> {
             recorder.setQualityGates(List.of(
@@ -464,8 +463,9 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(action.getResult().getQualityGateResult().getOverallStatus()).isEqualTo(QualityGateStatus.WARNING);
     }
 
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException") // Jenkins test harness throws Exception
     private Run<?, ?> scheduleBuildWithCustomAssert(final AbstractProject<?, ?> job, final Result expectedResult)
-            throws InterruptedException, ExecutionException {
+            throws Exception {
         return getJenkins().assertBuildStatus(expectedResult, job.scheduleBuild2(0));
     }
 
