@@ -8,6 +8,7 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
 import hudson.model.AbstractProject;
@@ -387,7 +388,7 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     @Issue("JENKINS-72575")
-    void shouldStopBuildWhenQualityGateFailsAndStopBuildIsEnabled() throws Exception {
+    void shouldStopBuildWhenQualityGateFailsAndStopBuildIsEnabled() throws InterruptedException, ExecutionException {
         var project = createJobWithReferenceFinder();
         enableAndConfigureCheckstyle(project, recorder -> {
             recorder.setQualityGates(List.of(
@@ -445,7 +446,7 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     @Issue("JENKINS-72575")
-    void shouldStopBuildWhenUnstableQualityGateFailsAndStopBuildIsEnabled() throws Exception {
+    void shouldStopBuildWhenUnstableQualityGateFailsAndStopBuildIsEnabled() throws InterruptedException, ExecutionException {
         var project = createJobWithReferenceFinder();
         enableAndConfigureCheckstyle(project, recorder -> {
             recorder.setQualityGates(List.of(
@@ -464,7 +465,7 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private Run<?, ?> scheduleBuildWithCustomAssert(final AbstractProject<?, ?> job, final Result expectedResult)
-            throws Exception {
+            throws InterruptedException, ExecutionException {
         return getJenkins().assertBuildStatus(expectedResult, job.scheduleBuild2(0));
     }
 
