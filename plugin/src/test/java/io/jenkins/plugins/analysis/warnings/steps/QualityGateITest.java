@@ -387,7 +387,7 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     @Issue("JENKINS-72575")
-    void shouldStopBuildWhenQualityGateFailsAndStopBuildIsEnabled() {
+    void shouldStopBuildWhenQualityGateFailsAndStopBuildIsEnabled() throws Exception {
         var project = createJobWithReferenceFinder();
         enableAndConfigureCheckstyle(project, recorder -> {
             recorder.setQualityGates(List.of(
@@ -445,7 +445,7 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     @Issue("JENKINS-72575")
-    void shouldStopBuildWhenUnstableQualityGateFailsAndStopBuildIsEnabled() {
+    void shouldStopBuildWhenUnstableQualityGateFailsAndStopBuildIsEnabled() throws Exception {
         var project = createJobWithReferenceFinder();
         enableAndConfigureCheckstyle(project, recorder -> {
             recorder.setQualityGates(List.of(
