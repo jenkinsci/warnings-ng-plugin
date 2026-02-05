@@ -93,27 +93,21 @@ public class IssuesAggregator extends MatrixAggregator {
 
     @Override
     public boolean endBuild() {
-        try {
-            resultsPerTool.forEachKeyMultiValues((tool, reports) -> {
-                var reportsList = Lists.mutable.withAll(reports);
-                reportsList.sortThis(Comparator.comparing(reportToAxisName::get));
-                var aggregatedReport = new AnnotatedReport(tool, reportsList);
-                try {
-                    recorder.publishResult(build, build.getWorkspace(), listener, Messages.Tool_Default_Name(),
-                            aggregatedReport, StringUtils.EMPTY, recorder.getIcon(), new RunResultHandler(build));
-                }
-                catch (AbortException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-        }
-        catch (RuntimeException e) {
-            if (e.getCause() instanceof AbortException) {
-                listener.getLogger().println(e.getCause().getMessage());
+        for (var tool : resultsPerTool.keySet()) {
+            var reports = resultsPerTool.get(tool);
+            var reportsList = Lists.mutable.withAll(reports);
+            reportsList.sortThis(Comparator.comparing(reportToAxisName::get));
+            var aggregatedReport = new AnnotatedReport(tool, reportsList);
+            
+            try {
+                recorder.publishResult(build, build.getWorkspace(), listener, Messages.Tool_Default_Name(),
+                        aggregatedReport, StringUtils.EMPTY, recorder.getIcon(), new RunResultHandler(build));
+            }
+            catch (AbortException e) {
+                listener.getLogger().println(e.getMessage());
                 build.setResult(hudson.model.Result.FAILURE);
                 return false;
             }
-            throw e;
         }
         return true;
     }

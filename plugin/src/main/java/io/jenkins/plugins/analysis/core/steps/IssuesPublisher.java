@@ -136,6 +136,13 @@ class IssuesPublisher {
             run.addOrReplaceAction(new AggregationAction());
         }
 
+        stopBuildIfQualityGateFailed(issues, qualityGateResult);
+
+        return action;
+    }
+
+    private void stopBuildIfQualityGateFailed(final Report issues, final QualityGateResult qualityGateResult)
+            throws AbortException {
         if (stopBuild && !qualityGateResult.isSuccessful()) {
             issues.logInfo("Stopping pipeline execution because quality gate has been missed and stopBuild is enabled");
             
@@ -144,8 +151,6 @@ class IssuesPublisher {
                 throw new AbortException("Stopping build because quality gate has been missed");
             }
         }
-
-        return action;
     }
 
     private long count(final Report issues) {
