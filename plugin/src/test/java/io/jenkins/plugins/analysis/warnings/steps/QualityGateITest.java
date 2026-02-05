@@ -9,7 +9,6 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.concurrent.ExecutionException;
 
 import hudson.model.AbstractProject;
 import hudson.model.FreeStyleProject;
@@ -464,13 +463,9 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(action.getResult().getQualityGateResult().getOverallStatus()).isEqualTo(QualityGateStatus.WARNING);
     }
 
-    private Run<?, ?> scheduleBuildWithCustomAssert(final AbstractProject<?, ?> job, final Result expectedResult) {
-        try {
-            return getJenkins().assertBuildStatus(expectedResult, job.scheduleBuild2(0));
-        }
-        catch (InterruptedException | ExecutionException e) {
-            throw new AssertionError("Failed to schedule build", e);
-        }
+    private Run<?, ?> scheduleBuildWithCustomAssert(final AbstractProject<?, ?> job, final Result expectedResult)
+            throws Exception {
+        return getJenkins().assertBuildStatus(expectedResult, job.scheduleBuild2(0));
     }
 
     /**
