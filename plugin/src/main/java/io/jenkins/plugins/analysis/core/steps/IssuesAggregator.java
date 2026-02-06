@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
+import hudson.AbortException;
 import hudson.Launcher;
 import hudson.matrix.MatrixAggregator;
 import hudson.matrix.MatrixBuild;
@@ -92,13 +93,22 @@ public class IssuesAggregator extends MatrixAggregator {
 
     @Override
     public boolean endBuild() {
-        resultsPerTool.forEachKeyMultiValues((tool, reports) -> {
+        for (var tool : resultsPerTool.keySet()) {
+            var reports = resultsPerTool.get(tool);
             var reportsList = Lists.mutable.withAll(reports);
             reportsList.sortThis(Comparator.comparing(reportToAxisName::get));
             var aggregatedReport = new AnnotatedReport(tool, reportsList);
-            recorder.publishResult(build, build.getWorkspace(), listener, Messages.Tool_Default_Name(),
-                    aggregatedReport, StringUtils.EMPTY, recorder.getIcon(), new RunResultHandler(build));
-        });
+            
+            try {
+                recorder.publishResult(build, build.getWorkspace(), listener, Messages.Tool_Default_Name(),
+                        aggregatedReport, StringUtils.EMPTY, recorder.getIcon(), new RunResultHandler(build));
+            }
+            catch (AbortException e) {
+                listener.getLogger().println(e.getMessage());
+                build.setResult(hudson.model.Result.FAILURE);
+                return false;
+            }
+        }
         return true;
     }
 }

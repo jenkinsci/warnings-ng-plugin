@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 
+import hudson.AbortException;
 import hudson.Launcher;
 import hudson.matrix.MatrixBuild;
 import hudson.matrix.MatrixConfiguration;
@@ -38,7 +39,7 @@ class IssuesAggregatorTest {
     private static final String SPOTBUGS = "spotbugs";
 
     @Test
-    void shouldHandleBuildWithoutActions() {
+    void shouldHandleBuildWithoutActions() throws AbortException {
         var recorder = createRecorder();
         var aggregator = createIssueAggregator(recorder);
 
@@ -55,7 +56,7 @@ class IssuesAggregatorTest {
     }
 
     @Test
-    void shouldCollectSingleResultForSingleAxis() {
+    void shouldCollectSingleResultForSingleAxis() throws AbortException {
         var recorder = createRecorder();
         var aggregator = createIssueAggregator(recorder);
 
@@ -76,7 +77,7 @@ class IssuesAggregatorTest {
     }
 
     @Test @org.junitpioneer.jupiter.Issue("JENKINS-59178")
-    void shouldCollectDifferentResultsForTwoAxes() {
+    void shouldCollectDifferentResultsForTwoAxes() throws AbortException {
         var recorder = createRecorder();
         var aggregator = createIssueAggregator(recorder);
 
@@ -108,7 +109,7 @@ class IssuesAggregatorTest {
     }
 
     @Test
-    void shouldCollectMultipleToolsOneAxis() {
+    void shouldCollectMultipleToolsOneAxis() throws AbortException {
         var recorder = createRecorder();
         var aggregator = createIssueAggregator(recorder);
 
@@ -132,7 +133,7 @@ class IssuesAggregatorTest {
     }
 
     @Test
-    void shouldCollectOneToolMultipleAxes() {
+    void shouldCollectOneToolMultipleAxes() throws AbortException {
         var recorder = createRecorder();
         var aggregator = createIssueAggregator(recorder);
 
@@ -160,7 +161,7 @@ class IssuesAggregatorTest {
     }
 
     @Test @org.junitpioneer.jupiter.Issue("JENKINS-71571")
-    void shouldAggregateReportsConsistentlyRegardlessOfCompletionOrder() {
+    void shouldAggregateReportsConsistentlyRegardlessOfCompletionOrder() throws AbortException {
         var recorder1 = createRecorder();
         var aggregator1 = createIssueAggregator(recorder1);
         
