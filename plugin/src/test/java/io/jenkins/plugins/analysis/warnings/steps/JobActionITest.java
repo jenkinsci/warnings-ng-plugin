@@ -388,6 +388,21 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(jobAction.getIconFileName()).endsWith(iconName);
     }
 
+    private ResultAction getResultAction(final Run<?, ?> build) {
+        List<ResultAction> actions = build.getActions(ResultAction.class);
+        assertThat(actions)
+                .as("Build should have ResultAction when enabledForFailure=true")
+                .isNotEmpty();
+        return actions.get(0);
+    }
+
+    private JobAction getJobActionFromResultAction(final ResultAction resultAction) {
+        return (JobAction) resultAction.getProjectActions().stream()
+                .filter(a -> a instanceof JobAction)
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("JobAction must be available from ResultAction"));
+    }
+
     @Test
     @Issue("JENKINS-69273")
     void shouldShowTrendChartWhenAllBuildsAreFailedButEnabledForFailure() {
@@ -399,30 +414,14 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         addFailureStep(project);
 
         Run<?, ?> first = buildWithResult(project, Result.FAILURE);
-        List<ResultAction> firstActions = first.getActions(ResultAction.class);
-        assertThat(firstActions)
-                .as("First FAILED build should have ResultAction when enabledForFailure=true")
-                .isNotEmpty();
-
-        ResultAction firstResultAction = firstActions.get(0);
-        JobAction firstJobAction = (JobAction) firstResultAction.getProjectActions().stream()
-                .filter(a -> a instanceof JobAction)
-                .findFirst()
-                .orElseThrow(() -> new AssertionError("JobAction must be available from ResultAction"));
+        var firstResultAction = getResultAction(first);
+        JobAction firstJobAction = getJobActionFromResultAction(firstResultAction);
 
         assertThatTrendChartIsHidden(firstJobAction);
 
         Run<?, ?> second = buildWithResult(project, Result.FAILURE);
-        List<ResultAction> secondActions = second.getActions(ResultAction.class);
-        assertThat(secondActions)
-                .as("Second FAILED build should have ResultAction when enabledForFailure=true")
-                .isNotEmpty();
-
-        ResultAction secondResultAction = secondActions.get(0);
-        JobAction secondJobAction = (JobAction) secondResultAction.getProjectActions().stream()
-                .filter(a -> a instanceof JobAction)
-                .findFirst()
-                .orElseThrow(() -> new AssertionError("JobAction must be available from ResultAction"));
+        var secondResultAction = getResultAction(second);
+        JobAction secondJobAction = getJobActionFromResultAction(secondResultAction);
 
         assertThatTrendChartIsVisible(secondJobAction);
     }
