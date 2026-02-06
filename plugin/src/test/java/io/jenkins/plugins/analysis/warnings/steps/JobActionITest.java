@@ -388,14 +388,6 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(jobAction.getIconFileName()).endsWith(iconName);
     }
 
-    private ResultAction extractResultAction(final Run<?, ?> build) {
-        List<ResultAction> actions = build.getActions(ResultAction.class);
-        assertThat(actions)
-                .as("Build should have ResultAction when enabledForFailure=true")
-                .isNotEmpty();
-        return actions.get(0);
-    }
-
     private JobAction getJobActionFromResultAction(final ResultAction resultAction) {
         return (JobAction) resultAction.getProjectActions().stream()
                 .filter(a -> a instanceof JobAction)
@@ -414,13 +406,13 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         addFailureStep(project);
 
         Run<?, ?> first = buildWithResult(project, Result.FAILURE);
-        var firstResultAction = extractResultAction(first);
+        var firstResultAction = getResultAction(first);
         JobAction firstJobAction = getJobActionFromResultAction(firstResultAction);
 
         assertThatTrendChartIsHidden(firstJobAction);
 
         Run<?, ?> second = buildWithResult(project, Result.FAILURE);
-        var secondResultAction = extractResultAction(second);
+        var secondResultAction = getResultAction(second);
         JobAction secondJobAction = getJobActionFromResultAction(secondResultAction);
 
         assertThatTrendChartIsVisible(secondJobAction);
