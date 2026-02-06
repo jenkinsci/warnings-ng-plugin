@@ -387,4 +387,34 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(jobAction.getOwner()).isEqualTo(project);
         assertThat(jobAction.getIconFileName()).endsWith(iconName);
     }
+
+    private JobAction getJobActionFromResultAction(final ResultAction resultAction) {
+        return (JobAction) resultAction.getProjectActions().stream()
+                .filter(a -> a instanceof JobAction)
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("JobAction must be available from ResultAction"));
+    }
+
+    @Test
+    @Issue("JENKINS-69273")
+    void shouldShowTrendChartWhenAllBuildsAreFailedButEnabledForFailure() {
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(ECLIPSE_LOG);
+
+        var recorder = enableEclipseWarnings(project);
+        recorder.setEnabledForFailure(true);
+
+        addFailureStep(project);
+
+        Run<?, ?> first = buildWithResult(project, Result.FAILURE);
+        var firstResultAction = getResultAction(first);
+        JobAction firstJobAction = getJobActionFromResultAction(firstResultAction);
+
+        assertThatTrendChartIsHidden(firstJobAction);
+
+        Run<?, ?> second = buildWithResult(project, Result.FAILURE);
+        var secondResultAction = getResultAction(second);
+        JobAction secondJobAction = getJobActionFromResultAction(secondResultAction);
+
+        assertThatTrendChartIsVisible(secondJobAction);
+    }
 }
