@@ -24,6 +24,7 @@
   <properties>
     <revision>12</revision>
     <changelist>999999-SNAPSHOT</changelist>
+    <jenkins.version>2.541.1</jenkins.version>
 
     <gitHubRepo>jenkinsci/warnings-ng-plugin</gitHubRepo>
     <hpi.bundledArtifacts>eclipse-collections,eclipse-collections-api</hpi.bundledArtifacts>
