@@ -4,11 +4,12 @@ import hudson.model.Actionable;
 import jenkins.management.Badge;
 import jenkins.model.Tab;
 import jenkins.model.experimentalflags.BooleanUserExperimentalFlag;
-import jenkins.model.experimentalflags.NewBuildPageUserExperimentalFlag;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.HttpRedirect;
+import org.kohsuke.stapler.StaplerResponse2;
 
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -73,9 +74,12 @@ public class RunTab extends Tab {
     }
 
     /**
-     * Redirects to first warning action if new UI enabled
+     * Redirects to first warning action if new UI enabled.
+     * @param rsp the response to use for forwarding if the new UI is disabled.
+     * @return the highest priority warning action.
+     * @throws IOException If an input or output exception occurs.
      */
-    public HttpRedirect doIndex() {
+    public HttpRedirect doIndex(final StaplerResponse2 rsp) throws IOException {
         Boolean newUiEnabled = BooleanUserExperimentalFlag.
                 getFlagValueForCurrentUser("jenkins.model.experimentalflags.NewBuildPageUserExperimentalFlag");
 
@@ -83,13 +87,16 @@ public class RunTab extends Tab {
             return new HttpRedirect(getWarningActions().get(0).getUrlName());
         }
 
-        throw new RuntimeException("This page requires the new build page UI to be enabled");
+        rsp.sendError(404, "This page requires the new build page UI to be enabled");
+        return null;
     }
 
     /**
      * Renders a dynamic warning action of the Warnings tab.
+     * @param name the name of the warning action to render.
+     * @return the warning action.
      */
-    public ResultAction getDynamic(String name) {
+    public ResultAction getDynamic(final String name) {
         for (ResultAction ui : getWarningActions()) {
             String urlName = ui.getUrlName();
             if (name.equals(urlName)) {

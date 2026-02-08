@@ -83,7 +83,8 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
     private final HealthDescriptor healthDescriptor;
 
     /**
-     * RunSubpage calls `getObject` to retrieve the current run
+     * RunSubpage calls `getObject` to retrieve the current run.
+     * @return the current run.
      */
     @Restricted(NoExternalUse.class) // for Jelly
     public Run<?, ?> getObject() {
@@ -91,7 +92,8 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
     }
 
     /**
-     * We need access to RunTab to provide the sidepanel items
+     * We need access to RunTab to provide the sidepanel items.
+     * @return the RunTab.
      */
     @Restricted(NoExternalUse.class) // for Jelly
     public RunTab getTab() {
