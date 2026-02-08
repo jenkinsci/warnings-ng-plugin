@@ -21,7 +21,7 @@ jobs:
       - name: Checkout main branch
         uses: actions/checkout@v6
       - name: Download Quality Reports from Quality Monitor Build workflow
-        uses: dawidd6/action-download-artifact@v12
+        uses: dawidd6/action-download-artifact@v14
         with:
           run_id: ${{ github.event.workflow_run.id }}
           name: quality-reports
