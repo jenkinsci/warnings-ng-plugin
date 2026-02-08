@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.function.Function;
 
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.StaplerRequest2;
 import org.kohsuke.stapler.StaplerResponse2;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
@@ -79,6 +81,22 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
     private final AnalysisResult result;
 
     private final HealthDescriptor healthDescriptor;
+
+    /**
+     * RunSubpage calls `getObject` to retrieve the current run
+     */
+    @Restricted(NoExternalUse.class) // for Jelly
+    public Run<?, ?> getObject() {
+        return getOwner();
+    }
+
+    /**
+     * We need access to RunTab to provide the sidepanel items
+     */
+    @Restricted(NoExternalUse.class) // for Jelly
+    public RunTab getTab() {
+        return new RunTab(getObject());
+    }
 
     /**
      * Creates a new detail model with the corresponding view {@code IssuesDetail/index.jelly}.

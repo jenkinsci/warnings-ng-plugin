@@ -1,15 +1,14 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import hudson.model.Actionable;
-import jakarta.servlet.ServletException;
 import jenkins.management.Badge;
 import jenkins.model.Tab;
+import jenkins.model.experimentalflags.BooleanUserExperimentalFlag;
+import jenkins.model.experimentalflags.NewBuildPageUserExperimentalFlag;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
-import org.kohsuke.stapler.StaplerRequest2;
-import org.kohsuke.stapler.StaplerResponse2;
+import org.kohsuke.stapler.HttpRedirect;
 
-import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -74,47 +73,27 @@ public class RunTab extends Tab {
     }
 
     /**
-     * Renders the default view of the Warnings tab.
-     *
-     * @param req the incoming Stapler request
-     * @param rsp the HTTP response
-     * @throws IOException if an I/O error occurs during forwarding
-     * @throws ServletException if forwarding fails
+     * Redirects to first warning action if new UI enabled
      */
-    public void doIndex(final StaplerRequest2 req, final StaplerResponse2 rsp) throws IOException, ServletException {
-        var warningActions = getWarningActions();
+    public HttpRedirect doIndex() {
+        Boolean newUiEnabled = BooleanUserExperimentalFlag.
+                getFlagValueForCurrentUser("jenkins.model.experimentalflags.NewBuildPageUserExperimentalFlag");
 
-        if (warningActions.isEmpty()) {
-            throw new NoSuchElementException("No warnings found for " + getObject());
+        if (Boolean.TRUE.equals(newUiEnabled)) {
+            return new HttpRedirect(getWarningActions().get(0).getUrlName());
         }
 
-        req.setAttribute("resultAction", warningActions.get(0));
-        req.getView(this, "index.jelly").forward(req, rsp);
+        throw new RuntimeException("This page requires the new build page UI to be enabled");
     }
 
     /**
-     * Renders a dynamic subpage of the Warnings tab.
-     *
-     * <p>
-     * This method is bound to the remainder of the URL path after the tab's root.
-     * It looks up the {@link ResultAction} that matches the requested URL segment
-     * and, if found, forwards the request to {@code index.jelly} with that action
-     * as the backing model.
-     *
-     * @param req the incoming Stapler request
-     * @param rsp the HTTP response
-     * @throws IOException if an I/O error occurs during forwarding
-     * @throws ServletException if forwarding fails
+     * Renders a dynamic warning action of the Warnings tab.
      */
-    public void doDynamic(final StaplerRequest2 req, final StaplerResponse2 rsp) throws IOException, ServletException {
-        String action = req.getRestOfPath().substring(1);
-
+    public ResultAction getDynamic(String name) {
         for (ResultAction ui : getWarningActions()) {
             String urlName = ui.getUrlName();
-            if (action.equals(urlName)) {
-                req.setAttribute("resultAction", ui);
-                req.getView(this, "index.jelly").forward(req, rsp);
-                return;
+            if (name.equals(urlName)) {
+                return ui;
             }
         }
 
