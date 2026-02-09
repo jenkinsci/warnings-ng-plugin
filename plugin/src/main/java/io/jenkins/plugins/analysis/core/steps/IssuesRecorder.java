@@ -785,7 +785,7 @@ public class IssuesRecorder extends Recorder {
         
         // Check if build should be stopped after all results are published
         for (AnalysisResult result : results) {
-            stopBuildIfQualityGateFailedForResult(result, listener);
+            stopBuildIfQualityGateFailedForResult(result);
         }
         
         return results;
@@ -896,7 +896,7 @@ public class IssuesRecorder extends Recorder {
         return action.getResult();
     }
 
-    private void stopBuildIfQualityGateFailedForResult(final AnalysisResult result, final TaskListener listener)
+    private void stopBuildIfQualityGateFailedForResult(final AnalysisResult result)
             throws AbortException {
         if (!stopBuild) {
             return;
