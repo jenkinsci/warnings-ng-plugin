@@ -56,13 +56,12 @@ class IssuesPublisher {
     private final LogHandler logger;
     private final ResultHandler notifier;
     private final boolean failOnErrors;
-    private final boolean stopBuild;
 
     @SuppressWarnings("ParameterNumber")
     IssuesPublisher(final Run<?, ?> run, final AnnotatedReport report, final DeltaCalculator deltaCalculator,
             final HealthDescriptor healthDescriptor, final List<WarningsQualityGate> qualityGates,
             final String name, final String icon, final boolean ignoreQualityGate, final Charset sourceCodeEncoding,
-            final LogHandler logger, final ResultHandler notifier, final boolean failOnErrors, final boolean stopBuild) {
+            final LogHandler logger, final ResultHandler notifier, final boolean failOnErrors) {
         this.report = report;
         this.run = run;
         this.deltaCalculator = deltaCalculator;
@@ -75,7 +74,6 @@ class IssuesPublisher {
         this.logger = logger;
         this.notifier = notifier;
         this.failOnErrors = failOnErrors;
-        this.stopBuild = stopBuild;
     }
 
     private String getId() {
