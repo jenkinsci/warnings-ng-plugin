@@ -785,7 +785,9 @@ public class IssuesRecorder extends Recorder {
         
         // Check if build should be stopped after all results are published
         for (AnalysisResult result : results) {
-            stopBuildIfQualityGateFailedForResult(result);
+            if (shouldStopBuild(result)) {
+                throw new AbortException("Stopping build because quality gate has been missed");
+            }
         }
         
         return results;
@@ -896,10 +898,17 @@ public class IssuesRecorder extends Recorder {
         return action.getResult();
     }
 
-    private void stopBuildIfQualityGateFailedForResult(final AnalysisResult result)
-            throws AbortException {
+    /**
+     * Checks if the build should be stopped based on the quality gate result.
+     *
+     * @param result
+     *         the analysis result to check
+     *
+     * @return true if the build should be stopped, false otherwise
+     */
+    private boolean shouldStopBuild(final AnalysisResult result) {
         if (!stopBuild) {
-            return;
+            return false;
         }
 
         var qualityGateResult = result.getQualityGateResult();
@@ -908,10 +917,9 @@ public class IssuesRecorder extends Recorder {
             report.logInfo("Stopping pipeline execution because quality gate has been missed and stopBuild is enabled");
 
             var status = qualityGateResult.getOverallStatus();
-            if (status == QualityGateStatus.FAILED || status == QualityGateStatus.ERROR) {
-                throw new AbortException("Stopping build because quality gate has been missed");
-            }
+            return status == QualityGateStatus.FAILED || status == QualityGateStatus.ERROR;
         }
+        return false;
     }
 
     /**

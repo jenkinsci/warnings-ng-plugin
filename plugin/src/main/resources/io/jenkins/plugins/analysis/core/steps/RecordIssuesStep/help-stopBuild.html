@@ -1,0 +1,19 @@
+<div>
+  <p>
+    If this option is enabled, the build will be stopped (marked as FAILURE)
+    when a quality gate is missed with FAILED or ERROR status. This prevents the
+    pipeline from continuing when quality standards are not met.
+  </p>
+  <p>
+    When a quality gate fails with WARNING status, the build will be marked as
+    UNSTABLE but will continue to run (the pipeline will not be stopped). This
+    allows user to distinguish between critical failures that should stop the
+    build and non-critical warnings that should only mark the build as unstable.
+  </p>
+  <p>
+    By default, this option is disabled: quality gates will only mark the build
+    as UNSTABLE or FAILURE but will not stop the pipeline execution. Enable this
+    option when you want to enforce strict quality standards and prevent any
+    subsequent pipeline stages from running when quality gates are not met.
+  </p>
+</div>

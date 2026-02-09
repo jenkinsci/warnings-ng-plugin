@@ -486,14 +486,24 @@ public class PublishIssuesStep extends Step implements Serializable {
                 checksPublisher.publishChecks(step.getChecksAnnotationScope());
             }
 
-            stopBuildIfQualityGateFailed(action);
+            if (shouldStopBuild(action)) {
+                throw new AbortException("Stopping build because quality gate has been missed");
+            }
 
             return action;
         }
 
-        private void stopBuildIfQualityGateFailed(final ResultAction action) throws AbortException {
+        /**
+         * Checks if the build should be stopped based on the quality gate result.
+         *
+         * @param action
+         *         the result action to check
+         *
+         * @return true if the build should be stopped, false otherwise
+         */
+        private boolean shouldStopBuild(final ResultAction action) {
             if (!step.getStopBuild()) {
-                return;
+                return false;
             }
 
             var qualityGateResult = action.getResult().getQualityGateResult();
@@ -502,10 +512,9 @@ public class PublishIssuesStep extends Step implements Serializable {
                 report.logInfo("Stopping pipeline execution because quality gate has been missed and stopBuild is enabled");
 
                 var status = qualityGateResult.getOverallStatus();
-                if (status == QualityGateStatus.FAILED || status == QualityGateStatus.ERROR) {
-                    throw new AbortException("Stopping build because quality gate has been missed");
-                }
+                return status == QualityGateStatus.FAILED || status == QualityGateStatus.ERROR;
             }
+            return false;
         }
 
         private LogHandler getLogger(final AnnotatedReport annotatedReport) throws InterruptedException {
