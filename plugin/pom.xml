@@ -109,7 +109,7 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>prism-api</artifactId>
-      <version>1.30.0-703.v116fb_3b_5b_b_a_a_</version>
+      <version>1.30.0-715.vfa_a_793ea_966b_</version>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
