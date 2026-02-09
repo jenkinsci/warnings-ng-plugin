@@ -38,7 +38,7 @@
     <maven.deploy.skip>false</maven.deploy.skip>
 
     <!-- Library Dependencies Versions -->
-    <analysis-model-tests.version>13.10.0</analysis-model-tests.version>
+    <analysis-model-tests.version>13.18.0</analysis-model-tests.version>
     <pull-request-monitoring.version>335.v525cd64ec76b_</pull-request-monitoring.version>
 
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
