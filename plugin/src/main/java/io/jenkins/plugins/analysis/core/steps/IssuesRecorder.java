@@ -66,6 +66,7 @@ import io.jenkins.plugins.prism.SourceCodeDirectory;
 import io.jenkins.plugins.prism.SourceCodeRetention;
 import io.jenkins.plugins.util.JenkinsFacade;
 import io.jenkins.plugins.util.LogHandler;
+import io.jenkins.plugins.util.QualityGateStatus;
 import io.jenkins.plugins.util.ResultHandler;
 import io.jenkins.plugins.util.RunResultHandler;
 import io.jenkins.plugins.util.ValidationUtilities;
@@ -716,7 +717,7 @@ public class IssuesRecorder extends Recorder {
     }
 
     List<AnalysisResult> perform(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
-            final ResultHandler resultHandler) throws InterruptedException, IOException {
+            final ResultHandler resultHandler) throws InterruptedException, IOException, AbortException {
         var logHandler = new LogHandler(listener, DEFAULT_ID);
         logHandler.setQuiet(quiet);
 
@@ -732,7 +733,7 @@ public class IssuesRecorder extends Recorder {
 
     @SuppressWarnings("PMD.CognitiveComplexity")
     private List<AnalysisResult> record(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
-            final ResultHandler resultHandler, final LogHandler logHandler) throws IOException, InterruptedException {
+            final ResultHandler resultHandler, final LogHandler logHandler) throws IOException, InterruptedException, AbortException {
         if (analysisTools.isEmpty()) {
             throw new IllegalStateException("No tools configured to record issues");
         }
@@ -781,6 +782,12 @@ public class IssuesRecorder extends Recorder {
                 }
             }
         }
+        
+        // Check if build should be stopped after all results are published
+        for (AnalysisResult result : results) {
+            stopBuildIfQualityGateFailedForResult(result, listener);
+        }
+        
         return results;
     }
 
@@ -860,13 +867,11 @@ public class IssuesRecorder extends Recorder {
      *         the status handler to use
      *
      * @return the created results
-     * @throws AbortException
-     *         if the build should be stopped due to quality gate failure
      */
     @SuppressWarnings("checkstyle:ParameterNumber")
     AnalysisResult publishResult(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
             final String loggerName, final AnnotatedReport annotatedReport, final String customName,
-            final String customIcon, final ResultHandler resultHandler) throws AbortException {
+            final String customIcon, final ResultHandler resultHandler) {
         var logHandler = new LogHandler(listener, loggerName, annotatedReport.getLogger());
         logHandler.setQuiet(quiet);
 
@@ -889,6 +894,24 @@ public class IssuesRecorder extends Recorder {
         }
 
         return action.getResult();
+    }
+
+    private void stopBuildIfQualityGateFailedForResult(final AnalysisResult result, final TaskListener listener)
+            throws AbortException {
+        if (!stopBuild) {
+            return;
+        }
+
+        var qualityGateResult = result.getQualityGateResult();
+        if (!qualityGateResult.isSuccessful()) {
+            var report = result.getIssues();
+            report.logInfo("Stopping pipeline execution because quality gate has been missed and stopBuild is enabled");
+
+            var status = qualityGateResult.getOverallStatus();
+            if (status == QualityGateStatus.FAILED || status == QualityGateStatus.ERROR) {
+                throw new AbortException("Stopping build because quality gate has been missed");
+            }
+        }
     }
 
     /**

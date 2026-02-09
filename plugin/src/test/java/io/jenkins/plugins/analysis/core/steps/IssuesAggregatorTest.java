@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 
-import hudson.AbortException;
 import hudson.Launcher;
 import hudson.matrix.MatrixBuild;
 import hudson.matrix.MatrixConfiguration;
@@ -39,7 +38,7 @@ class IssuesAggregatorTest {
     private static final String SPOTBUGS = "spotbugs";
 
     @Test
-    void shouldHandleBuildWithoutActions() throws AbortException {
+    void shouldHandleBuildWithoutActions() {
         var recorder = createRecorder();
         var aggregator = createIssueAggregator(recorder);
 
@@ -56,7 +55,7 @@ class IssuesAggregatorTest {
     }
 
     @Test
-    void shouldCollectSingleResultForSingleAxis() throws AbortException {
+    void shouldCollectSingleResultForSingleAxis() {
         var recorder = createRecorder();
         var aggregator = createIssueAggregator(recorder);
 
@@ -77,7 +76,7 @@ class IssuesAggregatorTest {
     }
 
     @Test @org.junitpioneer.jupiter.Issue("JENKINS-59178")
-    void shouldCollectDifferentResultsForTwoAxes() throws AbortException {
+    void shouldCollectDifferentResultsForTwoAxes() {
         var recorder = createRecorder();
         var aggregator = createIssueAggregator(recorder);
 
@@ -109,7 +108,7 @@ class IssuesAggregatorTest {
     }
 
     @Test
-    void shouldCollectMultipleToolsOneAxis() throws AbortException {
+    void shouldCollectMultipleToolsOneAxis() {
         var recorder = createRecorder();
         var aggregator = createIssueAggregator(recorder);
 
@@ -133,7 +132,7 @@ class IssuesAggregatorTest {
     }
 
     @Test
-    void shouldCollectOneToolMultipleAxes() throws AbortException {
+    void shouldCollectOneToolMultipleAxes() {
         var recorder = createRecorder();
         var aggregator = createIssueAggregator(recorder);
 
@@ -161,7 +160,7 @@ class IssuesAggregatorTest {
     }
 
     @Test @org.junitpioneer.jupiter.Issue("JENKINS-71571")
-    void shouldAggregateReportsConsistentlyRegardlessOfCompletionOrder() throws AbortException {
+    void shouldAggregateReportsConsistentlyRegardlessOfCompletionOrder() {
         var recorder1 = createRecorder();
         var aggregator1 = createIssueAggregator(recorder1);
         

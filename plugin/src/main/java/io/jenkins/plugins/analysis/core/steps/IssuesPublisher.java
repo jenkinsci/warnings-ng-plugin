@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import hudson.AbortException;
 import hudson.model.Result;
 import hudson.model.Run;
 
@@ -33,7 +32,6 @@ import io.jenkins.plugins.forensics.reference.ReferenceBuild;
 import io.jenkins.plugins.forensics.reference.ReferenceFinder;
 import io.jenkins.plugins.util.LogHandler;
 import io.jenkins.plugins.util.QualityGateResult;
-import io.jenkins.plugins.util.QualityGateStatus;
 import io.jenkins.plugins.util.ResultHandler;
 
 import static io.jenkins.plugins.analysis.core.model.QualityGateEvaluationMode.*;
@@ -92,10 +90,8 @@ class IssuesPublisher {
      *         the chart to show
      *
      * @return the created result action
-     * @throws AbortException
-     *         if the quality gate is not passed and stopBuild is enabled
      */
-    ResultAction attachAction(final TrendChartType trendChartType) throws AbortException {
+    ResultAction attachAction(final TrendChartType trendChartType) {
         var issues = report.getReport();
         var deltaReport = computeDelta(issues);
 
@@ -136,21 +132,7 @@ class IssuesPublisher {
             run.addOrReplaceAction(new AggregationAction());
         }
 
-        stopBuildIfQualityGateFailed(issues, qualityGateResult);
-
         return action;
-    }
-
-    private void stopBuildIfQualityGateFailed(final Report issues, final QualityGateResult qualityGateResult)
-            throws AbortException {
-        if (stopBuild && !qualityGateResult.isSuccessful()) {
-            issues.logInfo("Stopping pipeline execution because quality gate has been missed and stopBuild is enabled");
-            
-            var status = qualityGateResult.getOverallStatus();
-            if (status == QualityGateStatus.FAILED || status == QualityGateStatus.ERROR) {
-                throw new AbortException("Stopping build because quality gate has been missed");
-            }
-        }
     }
 
     private long count(final Report issues) {

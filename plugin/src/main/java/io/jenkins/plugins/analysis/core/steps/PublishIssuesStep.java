@@ -22,6 +22,7 @@ import org.jenkinsci.plugins.workflow.graph.FlowNode;
 import org.jenkinsci.plugins.workflow.steps.Step;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.StepExecution;
+import hudson.AbortException;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.model.Action;
@@ -40,6 +41,7 @@ import io.jenkins.plugins.checks.steps.ChecksInfo;
 import io.jenkins.plugins.forensics.delta.DeltaCalculator;
 import io.jenkins.plugins.forensics.delta.DeltaCalculatorFactory;
 import io.jenkins.plugins.util.LogHandler;
+import io.jenkins.plugins.util.QualityGateStatus;
 import io.jenkins.plugins.util.ValidationUtilities;
 
 /**
@@ -484,7 +486,26 @@ public class PublishIssuesStep extends Step implements Serializable {
                 checksPublisher.publishChecks(step.getChecksAnnotationScope());
             }
 
+            stopBuildIfQualityGateFailed(action);
+
             return action;
+        }
+
+        private void stopBuildIfQualityGateFailed(final ResultAction action) throws AbortException {
+            if (!step.getStopBuild()) {
+                return;
+            }
+
+            var qualityGateResult = action.getResult().getQualityGateResult();
+            if (!qualityGateResult.isSuccessful()) {
+                var report = action.getResult().getIssues();
+                report.logInfo("Stopping pipeline execution because quality gate has been missed and stopBuild is enabled");
+
+                var status = qualityGateResult.getOverallStatus();
+                if (status == QualityGateStatus.FAILED || status == QualityGateStatus.ERROR) {
+                    throw new AbortException("Stopping build because quality gate has been missed");
+                }
+            }
         }
 
         private LogHandler getLogger(final AnnotatedReport annotatedReport) throws InterruptedException {
