@@ -9,6 +9,7 @@ import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -265,7 +266,24 @@ public class AnnotatedReport implements Serializable {
             final RepositoryStatistics statistics, final int size) {
         sizeOfOrigin.merge(actualId, size, Integer::sum);
         aggregatedBlames.addAll(blames);
-        aggregatedRepositoryStatistics.addAll(statistics);
+        aggregatedRepositoryStatistics.addAll(copyOf(statistics));
+    }
+
+    /**
+     * Creates a defensive copy of the repository statistics to avoid sharing mutable state that could
+     * lead to ConcurrentModificationException during pipeline serialization.
+     *
+     * @param statistics
+     *         the statistics to copy
+     * @return a defensive copy of the statistics
+     * @see <a href="https://github.com/jenkinsci/warnings-ng-plugin/issues/3072">JENKINS-67145</a>
+     */
+    private RepositoryStatistics copyOf(final RepositoryStatistics statistics) {
+        var copy = new RepositoryStatistics(statistics.getLatestCommitId());
+        for (var fileStats : statistics.getFileStatistics()) {
+            copy.addAll(new ArrayList<>(fileStats.getCommits()));
+        }
+        return copy;
     }
 
     /**
