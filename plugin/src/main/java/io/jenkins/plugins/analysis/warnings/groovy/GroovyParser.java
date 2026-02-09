@@ -461,6 +461,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
             message(okMessage, Messages.GroovyParser_Error_Example_ok_category(issue.getCategory()));
             message(okMessage, Messages.GroovyParser_Error_Example_ok_type(issue.getType()));
             message(okMessage, Messages.GroovyParser_Error_Example_ok_message(issue.getMessage()));
+            message(okMessage, Messages.GroovyParser_Error_Example_ok_description(issue.getDescription()));
             return FormValidation.ok(okMessage.toString());
         }
 

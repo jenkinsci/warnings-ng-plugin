@@ -207,6 +207,18 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
     }
 
     @Test
+    @Issue("JENKINS-3259")
+    void shouldShowDescriptionInPreview() {
+        var descriptor = createDescriptor();
+        var result = descriptor.checkExample(SINGLE_LINE_EXAMPLE, SINGLE_LINE_REGEXP,
+                toString("parser-with-description.groovy"));
+
+        assertThat(result).isOk();
+        assertThat(result.getMessage()).contains("description:");
+        assertThat(result.getMessage()).contains("Link to details");
+    }
+
+    @Test
     void shouldAcceptMultiLineRegularExpression() {
         var descriptor = createDescriptor();
 
