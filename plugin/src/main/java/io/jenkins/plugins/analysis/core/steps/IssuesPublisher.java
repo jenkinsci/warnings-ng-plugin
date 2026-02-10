@@ -239,7 +239,9 @@ class IssuesPublisher {
         var gateEvaluationMode = determineQualityGateEvaluationMode(issues);
         for (Run<?, ?> r = reference; r != null; r = r.getPreviousBuild()) {
             var result = r.getResult();
-            if (result != null && result.isBetterOrEqualTo(getRequiredResult())) {
+            boolean shouldConsiderBuild = result != null && (gateEvaluationMode == IGNORE_QUALITY_GATE 
+                    || result.isBetterOrEqualTo(getRequiredResult()));
+            if (shouldConsiderBuild) {
                 var displayName = r.getFullDisplayName();
                 Optional<ResultAction> action = selector.get(r);
                 if (action.isPresent()) {
