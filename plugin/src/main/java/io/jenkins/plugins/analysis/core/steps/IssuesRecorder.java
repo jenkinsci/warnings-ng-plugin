@@ -104,7 +104,7 @@ public class IssuesRecorder extends Recorder {
     private boolean ignoreQualityGate; // by default, a successful quality gate is mandatory;
 
     private boolean failOnError;
-    private boolean stopBuild; // @since 12.999999-SNAPSHOT: by default, pipeline execution will not be stopped
+    private boolean stopBuild; // @since 12.10010: by default, pipeline execution will not be stopped
 
     private int healthy;
     private int unhealthy;

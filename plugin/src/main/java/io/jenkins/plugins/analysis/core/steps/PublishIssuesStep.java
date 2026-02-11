@@ -61,7 +61,7 @@ public class PublishIssuesStep extends Step implements Serializable {
 
     private boolean ignoreQualityGate; // by default, a successful quality gate is mandatory
     private boolean failOnError; // by default, it should not fail on error
-    private boolean stopBuild; // @since 12.999999-SNAPSHOT: by default, pipeline execution will not be stopped
+    private boolean stopBuild; // @since 12.10010: by default, pipeline execution will not be stopped
 
     private boolean skipDeltaCalculation; // @since 11.5.0: by default, delta computation is enabled
     private boolean skipPublishingChecks; // by default, warnings should be published to SCM platforms

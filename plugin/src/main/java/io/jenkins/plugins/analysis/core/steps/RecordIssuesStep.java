@@ -101,7 +101,7 @@ public class RecordIssuesStep extends Step implements Serializable {
     private TrendChartType trendChartType = TrendChartType.AGGREGATION_TOOLS;
 
     private boolean failOnError;
-    private boolean stopBuild; // @since 12.999999-SNAPSHOT: by default, pipeline execution will not be stopped
+    private boolean stopBuild; // @since 12.10010: by default, pipeline execution will not be stopped
     private String scm = StringUtils.EMPTY;
 
     private boolean quiet;
