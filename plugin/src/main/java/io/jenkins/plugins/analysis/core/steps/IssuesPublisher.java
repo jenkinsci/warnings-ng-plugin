@@ -249,7 +249,7 @@ class IssuesPublisher {
     private Optional<Run<?, ?>> refineReferenceBasedOnQualityGate(final ResultSelector selector, final Report issues,
             final Run<?, ?> reference) {
         boolean isSkipped = false;
-        var gateEvaluationMode = determineQualityGateEvaluationMode(issues);
+        var gateEvaluationMode = determineQualityGateEvaluationMode();
         for (Run<?, ?> r = reference; r != null; r = r.getPreviousBuild()) {
             var result = r.getResult();
             boolean shouldConsiderBuild = result != null && (gateEvaluationMode == IGNORE_QUALITY_GATE 
@@ -300,7 +300,7 @@ class IssuesPublisher {
         return action.getRequiredResult();
     }
 
-    private QualityGateEvaluationMode determineQualityGateEvaluationMode(final Report filtered) {
+    private QualityGateEvaluationMode determineQualityGateEvaluationMode() {
         return qualityGateEvaluationMode;
     }
 }
