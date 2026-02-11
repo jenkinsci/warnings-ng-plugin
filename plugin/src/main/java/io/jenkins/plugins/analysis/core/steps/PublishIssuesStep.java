@@ -41,7 +41,6 @@ import io.jenkins.plugins.checks.steps.ChecksInfo;
 import io.jenkins.plugins.forensics.delta.DeltaCalculator;
 import io.jenkins.plugins.forensics.delta.DeltaCalculatorFactory;
 import io.jenkins.plugins.util.LogHandler;
-import io.jenkins.plugins.util.QualityGateStatus;
 import io.jenkins.plugins.util.ValidationUtilities;
 
 /**
@@ -474,11 +473,12 @@ public class PublishIssuesStep extends Step implements Serializable {
                     ? new DeltaCalculator.NullDeltaCalculator()
                     : DeltaCalculatorFactory.findDeltaCalculator(step.scm, getRun(), workspace, getTaskListener(), new FilteredLog());
 
+            var logHandler = getLogger(report);
             var publisher = new IssuesPublisher(getRun(), report,
                     deltaCalculator, new HealthDescriptor(step.getHealthy(), step.getUnhealthy(),
                             step.getMinimumSeverityAsSeverity()), step.getQualityGates(),
                     StringUtils.defaultString(step.getName()), step.getIcon(), step.getIgnoreQualityGate(),
-                    getCharset(step.getSourceCodeEncoding()), getLogger(report), createResultHandler(), step.getFailOnError());
+                    getCharset(step.getSourceCodeEncoding()), logHandler, createResultHandler(), step.getFailOnError());
             var action = publisher.attachAction(step.getTrendChartType());
 
             if (!step.isSkipPublishingChecks()) {
@@ -486,35 +486,12 @@ public class PublishIssuesStep extends Step implements Serializable {
                 checksPublisher.publishChecks(step.getChecksAnnotationScope());
             }
 
-            if (shouldStopBuild(action)) {
-                throw new AbortException("Stopping build because quality gate has been missed");
+            if (IssuesRecorder.shouldStopBuild(action.getResult(), step.getStopBuild(), logHandler)) {
+                throw new AbortException(
+                        "Stopping build because quality gate has been missed for '" + action.getDisplayName() + "'");
             }
 
             return action;
-        }
-
-        /**
-         * Checks if the build should be stopped based on the quality gate result.
-         *
-         * @param action
-         *         the result action to check
-         *
-         * @return true if the build should be stopped, false otherwise
-         */
-        private boolean shouldStopBuild(final ResultAction action) {
-            if (!step.getStopBuild()) {
-                return false;
-            }
-
-            var qualityGateResult = action.getResult().getQualityGateResult();
-            if (!qualityGateResult.isSuccessful()) {
-                var report = action.getResult().getIssues();
-                report.logInfo("Stopping pipeline execution because quality gate has been missed and stopBuild is enabled");
-
-                var status = qualityGateResult.getOverallStatus();
-                return status == QualityGateStatus.FAILED || status == QualityGateStatus.ERROR;
-            }
-            return false;
         }
 
         private LogHandler getLogger(final AnnotatedReport annotatedReport) throws InterruptedException {

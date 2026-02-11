@@ -398,12 +398,13 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
         scheduleBuildAndAssertStatus(project, Result.SUCCESS, QualityGateStatus.PASSED);
         copyMultipleFilesToWorkspaceWithSuffix(project, REPORT_FILE);
         
-        var build = scheduleBuildWithCustomAssert(project, Result.FAILURE);
+        var build = buildWithResult(project, Result.FAILURE);
         
         var action = build.getAction(ResultAction.class);
         assertThat(action).isNotNull();
         assertThat(action.getResult()).hasTotalSize(11);
         assertThat(action.getResult().getQualityGateResult().getOverallStatus()).isEqualTo(QualityGateStatus.FAILED);
+        assertThat(getConsoleLog(build)).contains("Stopping build execution because quality gate has been missed and stopBuild is enabled");
     }
 
     /**
@@ -456,17 +457,12 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
         scheduleBuildAndAssertStatus(project, Result.SUCCESS, QualityGateStatus.PASSED);
         copyMultipleFilesToWorkspaceWithSuffix(project, REPORT_FILE);
         
-        var build = scheduleBuildWithCustomAssert(project, Result.UNSTABLE);
+        var build = buildWithResult(project, Result.UNSTABLE);
         
         var action = build.getAction(ResultAction.class);
         assertThat(action).isNotNull();
         assertThat(action.getResult().getQualityGateResult().getOverallStatus()).isEqualTo(QualityGateStatus.WARNING);
-    }
-
-    @SuppressWarnings("PMD.SignatureDeclareThrowsException") // Jenkins test harness throws Exception
-    private Run<?, ?> scheduleBuildWithCustomAssert(final AbstractProject<?, ?> job, final Result expectedResult)
-            throws Exception {
-        return getJenkins().assertBuildStatus(expectedResult, job.scheduleBuild2(0));
+        assertThat(getConsoleLog(build)).contains("Stopping build execution because quality gate has been missed and stopBuild is enabled");
     }
 
     /**

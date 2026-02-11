@@ -717,7 +717,7 @@ public class IssuesRecorder extends Recorder {
     }
 
     List<AnalysisResult> perform(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
-            final ResultHandler resultHandler) throws InterruptedException, IOException, AbortException {
+            final ResultHandler resultHandler) throws InterruptedException, IOException {
         var logHandler = new LogHandler(listener, DEFAULT_ID);
         logHandler.setQuiet(quiet);
 
@@ -733,7 +733,7 @@ public class IssuesRecorder extends Recorder {
 
     @SuppressWarnings("PMD.CognitiveComplexity")
     private List<AnalysisResult> record(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
-            final ResultHandler resultHandler, final LogHandler logHandler) throws IOException, InterruptedException, AbortException {
+            final ResultHandler resultHandler, final LogHandler logHandler) throws IOException, InterruptedException {
         if (analysisTools.isEmpty()) {
             throw new IllegalStateException("No tools configured to record issues");
         }
@@ -783,10 +783,10 @@ public class IssuesRecorder extends Recorder {
             }
         }
         
-        // Check if build should be stopped after all results are published
         for (AnalysisResult result : results) {
-            if (shouldStopBuild(result)) {
-                throw new AbortException("Stopping build because quality gate has been missed");
+            if (shouldStopBuild(result, stopBuild, logHandler)) {
+                throw new AbortException(
+                        "Stopping build because quality gate has been missed for '" + result.getId() + "'");
             }
         }
         
@@ -903,18 +903,22 @@ public class IssuesRecorder extends Recorder {
      *
      * @param result
      *         the analysis result to check
+     * @param stopBuild
+     *         whether the stopBuild option is enabled
+     * @param logHandler
+     *         the log handler for writing messages
      *
-     * @return true if the build should be stopped, false otherwise
+     * @return {@code true} if the build should be stopped, {@code false} otherwise
      */
-    private boolean shouldStopBuild(final AnalysisResult result) {
+    static boolean shouldStopBuild(final AnalysisResult result, final boolean stopBuild, 
+            final LogHandler logHandler) {
         if (!stopBuild) {
             return false;
         }
 
         var qualityGateResult = result.getQualityGateResult();
         if (!qualityGateResult.isSuccessful()) {
-            var report = result.getIssues();
-            report.logInfo("Stopping pipeline execution because quality gate has been missed and stopBuild is enabled");
+            logHandler.log("Stopping build execution because quality gate has been missed and stopBuild is enabled");
 
             var status = qualityGateResult.getOverallStatus();
             return status == QualityGateStatus.FAILED || status == QualityGateStatus.ERROR;
