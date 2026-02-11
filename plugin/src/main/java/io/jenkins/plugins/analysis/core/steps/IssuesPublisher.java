@@ -222,6 +222,19 @@ class IssuesPublisher {
     }
 
     private Optional<Run<?, ?>> findReferenceBuild(final ResultSelector selector, final Report issues) {
+        Run<?, ?> previous = run.getPreviousCompletedBuild();
+        if (previous != null) {
+            List<ResetReferenceAction> actions = previous.getActions(ResetReferenceAction.class);
+            for (ResetReferenceAction action : actions) {
+                if (issues.getId().equals(action.getId())) {
+                    issues.logInfo("Resetting reference build, ignoring quality gate result for one build");
+                    issues.logInfo("Using reference build '%s' to compute new, fixed, and outstanding issues",
+                            previous.getFullDisplayName());
+                    return Optional.of(previous);
+                }
+            }
+        }
+        
         var log = new FilteredLog("Errors while resolving the reference build:");
         var reference = new ReferenceFinder().findReference(run, log);
         issues.mergeLogMessages(log);
@@ -288,17 +301,6 @@ class IssuesPublisher {
     }
 
     private QualityGateEvaluationMode determineQualityGateEvaluationMode(final Report filtered) {
-        Run<?, ?> previous = run.getPreviousCompletedBuild();
-        if (previous != null) {
-            List<ResetReferenceAction> actions = previous.getActions(ResetReferenceAction.class);
-            for (ResetReferenceAction action : actions) {
-                if (report.getId().equals(action.getId())) {
-                    filtered.logInfo("Resetting reference build, ignoring quality gate result for one build");
-
-                    return IGNORE_QUALITY_GATE;
-                }
-            }
-        }
         return qualityGateEvaluationMode;
     }
 }
