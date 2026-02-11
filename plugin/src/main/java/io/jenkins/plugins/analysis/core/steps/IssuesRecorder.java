@@ -22,6 +22,7 @@ import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.verb.POST;
 import org.jenkinsci.Symbol;
+import hudson.AbortException;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -65,6 +66,7 @@ import io.jenkins.plugins.prism.SourceCodeDirectory;
 import io.jenkins.plugins.prism.SourceCodeRetention;
 import io.jenkins.plugins.util.JenkinsFacade;
 import io.jenkins.plugins.util.LogHandler;
+import io.jenkins.plugins.util.QualityGateStatus;
 import io.jenkins.plugins.util.ResultHandler;
 import io.jenkins.plugins.util.RunResultHandler;
 import io.jenkins.plugins.util.ValidationUtilities;
@@ -102,6 +104,7 @@ public class IssuesRecorder extends Recorder {
     private boolean ignoreQualityGate; // by default, a successful quality gate is mandatory;
 
     private boolean failOnError;
+    private boolean stopBuild; // @since 12.10010: by default, pipeline execution will not be stopped
 
     private int healthy;
     private int unhealthy;
@@ -562,6 +565,25 @@ public class IssuesRecorder extends Recorder {
     }
 
     /**
+     * If {@code true}, then the pipeline execution will be stopped (by throwing an {@code AbortException}) when the
+     * quality gate is not passed. This is useful to prevent subsequent stages from executing when quality criteria are
+     * not met. Note that the warning results are still published before the exception is thrown.
+     *
+     * @param stopBuild
+     *         if {@code true} then the build will be aborted when quality gates fail
+     */
+    @DataBoundSetter
+    @SuppressWarnings("unused") // Used by Stapler
+    public void setStopBuild(final boolean stopBuild) {
+        this.stopBuild = stopBuild;
+    }
+
+    @SuppressWarnings({"PMD.BooleanGetMethodName", "unused"})
+    public boolean getStopBuild() {
+        return stopBuild;
+    }
+
+    /**
      * Returns whether recording should be enabled for failed builds as well.
      *
      * @return {@code true}  if recording should be enabled for failed builds as well, {@code false} if recording is
@@ -760,6 +782,14 @@ public class IssuesRecorder extends Recorder {
                 }
             }
         }
+        
+        for (AnalysisResult result : results) {
+            if (shouldStopBuild(result, stopBuild, logHandler)) {
+                throw new AbortException(
+                        "Stopping build because quality gate has been missed for '" + result.getId() + "'");
+            }
+        }
+        
         return results;
     }
 
@@ -866,6 +896,34 @@ public class IssuesRecorder extends Recorder {
         }
 
         return action.getResult();
+    }
+
+    /**
+     * Checks if the build should be stopped based on the quality gate result.
+     *
+     * @param result
+     *         the analysis result to check
+     * @param stopBuild
+     *         whether the stopBuild option is enabled
+     * @param logHandler
+     *         the log handler for writing messages
+     *
+     * @return {@code true} if the build should be stopped, {@code false} otherwise
+     */
+    static boolean shouldStopBuild(final AnalysisResult result, final boolean stopBuild, 
+            final LogHandler logHandler) {
+        if (!stopBuild) {
+            return false;
+        }
+
+        var qualityGateResult = result.getQualityGateResult();
+        if (!qualityGateResult.isSuccessful()) {
+            logHandler.log("Stopping build execution because quality gate has been missed and stopBuild is enabled");
+
+            var status = qualityGateResult.getOverallStatus();
+            return status == QualityGateStatus.FAILED || status == QualityGateStatus.ERROR;
+        }
+        return false;
     }
 
     /**

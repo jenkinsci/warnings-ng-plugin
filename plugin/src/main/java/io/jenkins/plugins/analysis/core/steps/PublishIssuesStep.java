@@ -22,6 +22,7 @@ import org.jenkinsci.plugins.workflow.graph.FlowNode;
 import org.jenkinsci.plugins.workflow.steps.Step;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.StepExecution;
+import hudson.AbortException;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.model.Action;
@@ -60,6 +61,7 @@ public class PublishIssuesStep extends Step implements Serializable {
 
     private boolean ignoreQualityGate; // by default, a successful quality gate is mandatory
     private boolean failOnError; // by default, it should not fail on error
+    private boolean stopBuild; // @since 12.10010: by default, pipeline execution will not be stopped
 
     private boolean skipDeltaCalculation; // @since 11.5.0: by default, delta computation is enabled
     private boolean skipPublishingChecks; // by default, warnings should be published to SCM platforms
@@ -187,6 +189,25 @@ public class PublishIssuesStep extends Step implements Serializable {
     @SuppressWarnings({"PMD.BooleanGetMethodName", "WeakerAccess"})
     public boolean getFailOnError() {
         return failOnError;
+    }
+
+    /**
+     * If {@code true}, then the pipeline execution will be stopped (by throwing an {@code AbortException}) when the
+     * quality gate is not passed. This is useful to prevent subsequent stages from executing when quality criteria are
+     * not met. Note that the warning results are still published before the exception is thrown.
+     *
+     * @param stopBuild
+     *         if {@code true} then the build will be aborted when quality gates fail
+     */
+    @DataBoundSetter
+    @SuppressWarnings("unused") // Used by Stapler
+    public void setStopBuild(final boolean stopBuild) {
+        this.stopBuild = stopBuild;
+    }
+
+    @SuppressWarnings({"PMD.BooleanGetMethodName", "WeakerAccess"})
+    public boolean getStopBuild() {
+        return stopBuild;
     }
 
     /**
@@ -452,16 +473,22 @@ public class PublishIssuesStep extends Step implements Serializable {
                     ? new DeltaCalculator.NullDeltaCalculator()
                     : DeltaCalculatorFactory.findDeltaCalculator(step.scm, getRun(), workspace, getTaskListener(), new FilteredLog());
 
+            var logHandler = getLogger(report);
             var publisher = new IssuesPublisher(getRun(), report,
                     deltaCalculator, new HealthDescriptor(step.getHealthy(), step.getUnhealthy(),
                             step.getMinimumSeverityAsSeverity()), step.getQualityGates(),
                     StringUtils.defaultString(step.getName()), step.getIcon(), step.getIgnoreQualityGate(),
-                    getCharset(step.getSourceCodeEncoding()), getLogger(report), createResultHandler(), step.getFailOnError());
+                    getCharset(step.getSourceCodeEncoding()), logHandler, createResultHandler(), step.getFailOnError());
             var action = publisher.attachAction(step.getTrendChartType());
 
             if (!step.isSkipPublishingChecks()) {
                 var checksPublisher = new WarningChecksPublisher(action, getTaskListener(), getContext().get(ChecksInfo.class));
                 checksPublisher.publishChecks(step.getChecksAnnotationScope());
+            }
+
+            if (IssuesRecorder.shouldStopBuild(action.getResult(), step.getStopBuild(), logHandler)) {
+                throw new AbortException(
+                        "Stopping build because quality gate has been missed for '" + action.getDisplayName() + "'");
             }
 
             return action;

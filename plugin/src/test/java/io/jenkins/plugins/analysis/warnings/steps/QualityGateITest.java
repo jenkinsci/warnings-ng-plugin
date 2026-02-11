@@ -383,6 +383,89 @@ class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
+     * Tests if the build stops execution when stopBuild is enabled and quality gate fails.
+     */
+    @Test
+    @Issue("JENKINS-72575")
+    void shouldStopBuildWhenQualityGateFailsAndStopBuildIsEnabled() throws Exception {
+        var project = createJobWithReferenceFinder();
+        enableAndConfigureCheckstyle(project, recorder -> {
+            recorder.setQualityGates(List.of(
+                    new WarningsQualityGate(1, QualityGateType.TOTAL_ERROR, QualityGateCriticality.FAILURE)));
+            recorder.setStopBuild(true);
+        });
+
+        scheduleBuildAndAssertStatus(project, Result.SUCCESS, QualityGateStatus.PASSED);
+        copyMultipleFilesToWorkspaceWithSuffix(project, REPORT_FILE);
+        
+        var build = buildWithResult(project, Result.FAILURE);
+        
+        var action = build.getAction(ResultAction.class);
+        assertThat(action).isNotNull();
+        assertThat(action.getResult()).hasTotalSize(11);
+        assertThat(action.getResult().getQualityGateResult().getOverallStatus()).isEqualTo(QualityGateStatus.FAILED);
+        assertThat(getConsoleLog(build)).contains("Stopping build execution because quality gate has been missed and stopBuild is enabled");
+    }
+
+    /**
+     * Tests if the build continues execution when stopBuild is disabled and quality gate fails.
+     */
+    @Test
+    @Issue("JENKINS-72575")
+    void shouldContinueBuildWhenQualityGateFailsAndStopBuildIsDisabled() {
+        var project = createJobWithReferenceFinder();
+        enableAndConfigureCheckstyle(project, recorder -> {
+            recorder.setQualityGates(List.of(
+                    new WarningsQualityGate(1, QualityGateType.TOTAL_ERROR, QualityGateCriticality.FAILURE)));
+            recorder.setStopBuild(false); 
+        });
+
+        runJobTwice(project, Result.FAILURE);
+    }
+
+    /**
+     * Tests if the build continues when stopBuild is enabled but quality gate passes.
+     */
+    @Test
+    @Issue("JENKINS-72575")
+    void shouldContinueBuildWhenQualityGatePassesAndStopBuildIsEnabled() {
+        var project = createJobWithReferenceFinder();
+        enableAndConfigureCheckstyle(project, recorder -> {
+            recorder.setQualityGates(List.of(
+                    new WarningsQualityGate(20, QualityGateType.TOTAL, QualityGateCriticality.FAILURE)));
+            recorder.setStopBuild(true);
+        });
+
+        scheduleBuildAndAssertStatus(project, Result.SUCCESS, QualityGateStatus.PASSED);
+        copyMultipleFilesToWorkspaceWithSuffix(project, REPORT_FILE);
+        scheduleBuildAndAssertStatus(project, Result.SUCCESS, QualityGateStatus.PASSED);
+    }
+
+    /**
+     * Tests if the build stops with UNSTABLE quality gate when stopBuild is enabled.
+     */
+    @Test
+    @Issue("JENKINS-72575")
+    void shouldStopBuildWhenUnstableQualityGateFailsAndStopBuildIsEnabled() throws Exception {
+        var project = createJobWithReferenceFinder();
+        enableAndConfigureCheckstyle(project, recorder -> {
+            recorder.setQualityGates(List.of(
+                    new WarningsQualityGate(1, QualityGateType.TOTAL_ERROR, QualityGateCriticality.UNSTABLE)));
+            recorder.setStopBuild(true);
+        });
+
+        scheduleBuildAndAssertStatus(project, Result.SUCCESS, QualityGateStatus.PASSED);
+        copyMultipleFilesToWorkspaceWithSuffix(project, REPORT_FILE);
+        
+        var build = buildWithResult(project, Result.UNSTABLE);
+        
+        var action = build.getAction(ResultAction.class);
+        assertThat(action).isNotNull();
+        assertThat(action.getResult().getQualityGateResult().getOverallStatus()).isEqualTo(QualityGateStatus.WARNING);
+        assertThat(getConsoleLog(build)).contains("Stopping build execution because quality gate has been missed and stopBuild is enabled");
+    }
+
+    /**
      * Runs the specified project two times in a row. During the first run, no warnings report file is in the workspace
      * so the build always will be successful. In the second run, the file 'checkstyle-quality-gate.xml' is copied to
      * the workspace so that the project will contain new warnings. (In the first run, new warnings are suppressed
