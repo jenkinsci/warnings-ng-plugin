@@ -226,7 +226,7 @@ class IssuesPublisher {
         if (previous != null) {
             List<ResetReferenceAction> actions = previous.getActions(ResetReferenceAction.class);
             for (ResetReferenceAction action : actions) {
-                if (issues.getId().equals(action.getId())) {
+                if (report.getId().equals(action.getId())) {
                     issues.logInfo("Resetting reference build, ignoring quality gate result for one build");
                     issues.logInfo("Using reference build '%s' to compute new, fixed, and outstanding issues",
                             previous.getFullDisplayName());
