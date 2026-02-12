@@ -16,7 +16,7 @@
   <name>UI Tests of Warnings Plugin</name>
 
   <properties>
-    <jenkins.version>2.549</jenkins.version>
+    <jenkins.version>2.550</jenkins.version>
     <hpi-plugin.version>3.1795.v6fb_496fc129b_</hpi-plugin.version>
     <json-smart.version>2.3</json-smart.version>
     <json-unit-assertj.version>5.1.0</json-unit-assertj.version>
@@ -49,7 +49,7 @@
     <dependency>
       <groupId>org.jenkins-ci</groupId>
       <artifactId>acceptance-test-harness</artifactId>
-      <version>6509.v07d7a_3818f74</version>
+      <version>6536.vedb_8c398315e</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
