@@ -263,6 +263,75 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     /**
+     * Verifies that reset quality gate works when builds are failing (not just unstable).
+     * Regression test for JENKINS-68832: Reset quality gate does not work when quality gate sets build to FAILURE.
+     */
+    @Test
+    @org.junitpioneer.jupiter.Issue("JENKINS-68832")
+    void shouldResetReferenceWithFailedBuilds() {
+        // #1 SUCCESS
+        var project = createEmptyReferenceJob();
+        enableWarnings(project, recorder -> {
+            recorder.setEnabledForFailure(true);
+            recorder.setQualityGates(List.of(
+                    new WarningsQualityGate(3, QualityGateType.NEW, QualityGateCriticality.FAILURE)));
+        });
+        scheduleBuildAndAssertStatus(project, Result.SUCCESS,
+                analysisResult -> assertThat(analysisResult)
+                        .hasTotalSize(2)
+                        .hasNewSize(0)
+                        .hasQualityGateStatus(QualityGateStatus.PASSED));
+
+        // #2 FAILURE (quality gate fails the build)
+        cleanAndCopy(project, "eclipse8Warnings.txt");
+        Run<?, ?> failedBuild = scheduleBuildAndAssertStatus(project, Result.FAILURE,
+                analysisResult -> assertThat(analysisResult)
+                        .hasTotalSize(8)
+                        .hasNewSize(6)
+                        .hasQualityGateStatus(QualityGateStatus.FAILED)).getOwner();
+        createResetAction(failedBuild, "eclipse");
+
+        // #3 SUCCESS - should use the failed build #2 as reference
+        cleanAndCopy(project, "eclipse4Warnings.txt");
+        scheduleBuildAndAssertStatus(project, Result.SUCCESS,
+                analysisResult -> {
+                    assertThat(analysisResult)
+                            .hasTotalSize(4)
+                            .hasNewSize(0)
+                            .hasQualityGateStatus(QualityGateStatus.PASSED)
+                            .hasReferenceBuild(Optional.of(failedBuild));
+                    assertThat(analysisResult.getInfoMessages()).contains(
+                            "Resetting reference build, ignoring quality gate result for one build",
+                            "Using reference build 'Job #2' to compute new, fixed, and outstanding issues");
+                });
+
+        // #4 SUCCESS - should use the previous successful build #3 as reference
+        cleanAndCopy(project, "eclipse2Warnings.txt");
+        Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(project, Result.SUCCESS,
+                analysisResult -> assertThat(analysisResult)
+                        .hasTotalSize(2)
+                        .hasNewSize(0)
+                        .hasQualityGateStatus(QualityGateStatus.PASSED)).getOwner();
+
+        // #5 FAILURE
+        cleanAndCopy(project, "eclipse8Warnings.txt");
+        scheduleBuildAndAssertStatus(project, Result.FAILURE,
+                analysisResult -> assertThat(analysisResult)
+                        .hasTotalSize(8)
+                        .hasNewSize(6)
+                        .hasQualityGateStatus(QualityGateStatus.FAILED));
+
+        // #6 SUCCESS - should use #4 as reference (skip failed #5)
+        cleanAndCopy(project, "eclipse4Warnings.txt");
+        scheduleBuildAndAssertStatus(project, Result.SUCCESS,
+                analysisResult -> assertThat(analysisResult)
+                        .hasTotalSize(4)
+                        .hasNewSize(2)
+                        .hasQualityGateStatus(QualityGateStatus.PASSED)
+                        .hasReferenceBuild(Optional.of(expectedReference)));
+    }
+
+    /**
      * Checks if the reference is taken from the last successful build and therefore returns an unstable build in the
      * end.
      */
