@@ -193,8 +193,8 @@ class IssuesPublisher {
         var selector = new ByIdResultSelector(getId());
         Optional<ResultAction> other = selector.get(run);
         if (other.isPresent()) {
-            throw new IllegalStateException(
-                    "ID %s is already used by another action: %s%n".formatted(getId(), other.get()));
+            report.logInfo("Removing existing result action with ID '%s' (might be caused by a restart)", getId());
+            run.removeAction(other.get());
         }
         return selector;
     }
