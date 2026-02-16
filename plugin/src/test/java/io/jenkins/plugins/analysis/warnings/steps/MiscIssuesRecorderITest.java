@@ -774,6 +774,73 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
+     * Tests that string interpolation works correctly in filter patterns. Users can use Groovy's string interpolation
+     * with double quotes to dynamically build filter patterns. This verifies JENKINS-55574.
+     */
+    @Test @org.junitpioneer.jupiter.Issue("JENKINS-55574")
+    void shouldSupportStringInterpolationInFilters() {
+        String filePrefix = "Csharp";
+        String filterPattern = ".*" + filePrefix + ".*";
+        
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle-filtering.xml");
+        enableGenericWarnings(project, 
+            recorder -> recorder.setFilters(Collections.singletonList(new ExcludeFile(filterPattern))), 
+            new CheckStyle());
+
+        var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        
+        assertThat(result).hasTotalSize(1);
+        assertThat(result.getIssues().stream()
+                .allMatch(issue -> !issue.getFileName().contains("Csharp")))
+                .isTrue();
+    }
+
+    /**
+     * Tests that Pattern.quote() can be used with string interpolation to match literal strings in filter patterns.
+     * This is useful when the interpolated value contains regex metacharacters that should be matched literally.
+     */
+    @Test @org.junitpioneer.jupiter.Issue("JENKINS-55574")
+    void shouldSupportPatternQuoteInFilterInterpolation() {
+        String archName = "bar";
+        String basePath = "foobar-" + archName;
+        String quotedPart = java.util.regex.Pattern.quote(basePath);
+        String filterPattern = ".*\\/" + quotedPart + "\\/.*";
+        
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle-filtering.xml");
+        enableGenericWarnings(project, 
+            recorder -> recorder.setFilters(Collections.singletonList(new ExcludeFile(filterPattern))), 
+            new CheckStyle());
+
+        var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        
+        assertThat(result).hasTotalSize(7);
+    }
+
+    /**
+     * Tests that multiple variables can be combined in filter patterns using string interpolation.
+     * This demonstrates a common use case where users want to build complex patterns from multiple parts.
+     */
+    @Test @org.junitpioneer.jupiter.Issue("JENKINS-55574")
+    void shouldSupportMultipleVariablesInFilterInterpolation() {
+        String packageName = "tasks";
+        String subPackage = "parser";
+        String className = "CsharpNamespaceDetector";
+        String filterPattern = ".*\\/" + packageName + "\\/" + subPackage + "\\/" + className + "\\.java";
+        
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle-filtering.xml");
+        enableGenericWarnings(project, 
+            recorder -> recorder.setFilters(Collections.singletonList(new ExcludeFile(filterPattern))), 
+            new CheckStyle());
+
+        var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        
+        assertThat(result).hasTotalSize(1);
+        assertThat(result.getIssues().stream()
+                .allMatch(issue -> !issue.getFileName().contains("parser/CsharpNamespaceDetector")))
+                .isTrue();
+    }
+
+    /**
      * Create a Freestyle Project with enabled Java warnings.
      *
      * @param pattern
