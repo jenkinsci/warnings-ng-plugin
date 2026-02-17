@@ -22,7 +22,6 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -33,7 +32,7 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import jenkins.MasterToSlaveFileCallable;
-
+import io.jenkins.plugins.analysis.core.filter.FilterConfig;
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.ReportLocations;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
@@ -70,7 +69,7 @@ class IssuesScanner {
     private final FilePath jenkinsRootDir;
     private final Charset sourceCodeEncoding;
     private final Tool tool;
-    private final List<RegexpFilter> filters;
+    private final FilterConfig filterConfig;
     private final TaskListener listener;
     private final String scm;
     private final BlameMode blameMode;
@@ -88,13 +87,14 @@ class IssuesScanner {
     }
 
     @SuppressWarnings("checkstyle:ParameterNumber")
-    IssuesScanner(final Tool tool, final List<RegexpFilter> filters, final Charset sourceCodeEncoding,
+    IssuesScanner(final Tool tool, final FilterConfig filterConfig,
+            final Charset sourceCodeEncoding,
             final FilePath workspace, final Set<String> sourceDirectories,
             final SourceCodeRetention sourceCodeRetention, final Run<?, ?> run,
             final FilePath jenkinsRootDir, final TaskListener listener,
             final String scm, final BlameMode blameMode, final PostProcessingMode postProcessingMode,
             final boolean quiet, final String sourcePathPrefix, final String targetPathPrefix) {
-        this.filters = new ArrayList<>(filters);
+        this.filterConfig = filterConfig;
         this.sourceCodeEncoding = sourceCodeEncoding;
         this.tool = tool;
         this.workspace = workspace;
@@ -146,7 +146,7 @@ class IssuesScanner {
         }
         else {
             report.logInfo("Skipping post processing");
-            return new AnnotatedReport(tool.getActualId(), filter(report, filters));
+            return new AnnotatedReport(tool.getActualId(), filter(report, filterConfig, workspace));
         }
     }
 
@@ -156,7 +156,7 @@ class IssuesScanner {
             linesLookAhead = scanningTool.getLinesLookAhead();
         }
         return new ReportPostProcessor(tool.getActualId(), report, sourceCodeEncoding.name(),
-                createBlamer(report), filters, getPermittedSourceDirectories(), sourceDirectories,
+                createBlamer(report), filterConfig, getPermittedSourceDirectories(), sourceDirectories,
                 postProcessingMode, linesLookAhead, sourcePathPrefix, targetPathPrefix);
     }
 
@@ -230,30 +230,42 @@ class IssuesScanner {
         return StringUtils.EMPTY;
     }
 
-    private static Report filter(final Report report, final List<RegexpFilter> filters) {
+    private static Report filter(final Report report, final FilterConfig filterConfig,
+            final FilePath workspace) {
         int actualFilterSize = 0;
         var builder = new IssueFilterBuilder();
-        for (RegexpFilter filter : filters) {
+        for (RegexpFilter filter : filterConfig.filters()) {
             if (StringUtils.isNotBlank(filter.getPattern())) {
                 filter.apply(builder);
                 actualFilterSize++;
             }
         }
+
         var filtered = report.filter(builder.build());
+        var result = filtered;
+
+        var fileNameFilter = filterConfig.readFileNameFilter(workspace);
+        if (fileNameFilter != null) {
+            result = filtered.filter(fileNameFilter);
+            actualFilterSize++;
+        }
+
         if (actualFilterSize > 0) {
             filtered.logInfo(
                     "Applying %d filters on the set of %d issues (%d issues have been removed, %d issues will be published)",
-                    filters.size(), report.size(), report.size() - filtered.size(), filtered.size());
+                    actualFilterSize, report.size(), report.size() - filtered.size(), result.size());
         }
         else {
-            filtered.logInfo("No filter has been set, publishing all %d issues", filtered.size());
+            filtered.logInfo("No filter has been set, publishing all %d issues", result.size());
         }
-        return filtered;
+        return result;
     }
 
     /**
-     * Post processes the report on the build agent. Assigns absolute paths, package names, and module names and
-     * computes fingerprints for each issue. Finally, for each file the SCM blames are computed.
+     * Post processes the report on the build agent. Assigns absolute paths, package
+     * names, and module names and
+     * computes fingerprints for each issue. Finally, for each file the SCM blames
+     * are computed.
      */
     @SuppressWarnings("checkstyle:ClassDataAbstractionCoupling")
     private static class ReportPostProcessor extends MasterToSlaveFileCallable<AnnotatedReport> {
@@ -270,23 +282,25 @@ class IssuesScanner {
         private final Set<String> requestedSourceDirectories;
         private final PostProcessingMode postProcessingMode;
         @SuppressWarnings("serial")
-        private final List<RegexpFilter> filters;
+        private final FilterConfig filterConfig;
         private final int linesLookAhead;
         private final String sourcePathPrefix;
         private final String targetPathPrefix;
 
         @SuppressWarnings("checkstyle:ParameterNumber")
         ReportPostProcessor(final String id, final Report report, final String sourceCodeEncoding,
-                            final Blamer blamer, final List<RegexpFilter> filters, final Set<String> permittedSourceDirectories,
-                            final Set<String> requestedSourceDirectories, final PostProcessingMode postProcessingMode, final int linesLookAhead,
-                            final String sourcePathPrefix, final String targetPathPrefix) {
+                final Blamer blamer, final FilterConfig filterConfig,
+                final Set<String> permittedSourceDirectories,
+                final Set<String> requestedSourceDirectories, final PostProcessingMode postProcessingMode,
+                final int linesLookAhead,
+                final String sourcePathPrefix, final String targetPathPrefix) {
             super();
 
             this.id = id;
             originalReport = report;
             this.sourceCodeEncoding = sourceCodeEncoding;
             this.blamer = blamer;
-            this.filters = filters;
+            this.filterConfig = filterConfig;
             this.permittedSourceDirectories = permittedSourceDirectories;
             this.requestedSourceDirectories = requestedSourceDirectories;
             this.postProcessingMode = postProcessingMode;
@@ -306,7 +320,7 @@ class IssuesScanner {
                 originalReport.logInfo(SKIPPING_POST_PROCESSING);
             }
 
-            Report filtered = filter(originalReport, filters); // the filters may depend on the resolved paths
+            Report filtered = filter(originalReport, filterConfig, new FilePath(workspace)); // the filters may depend on the resolved paths
 
             createFingerprints(filtered);
 
