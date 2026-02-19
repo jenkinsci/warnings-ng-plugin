@@ -783,9 +783,9 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         String filterPattern = ".*" + filePrefix + ".*";
         
         var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle-filtering.xml");
-        enableGenericWarnings(project, 
-            recorder -> recorder.setFilters(Collections.singletonList(new ExcludeFile(filterPattern))), 
-            new CheckStyle());
+        enableGenericWarnings(project,
+                recorder -> recorder.setFilters(Collections.singletonList(new ExcludeFile(filterPattern))),
+                new CheckStyle());
 
         var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         
@@ -803,13 +803,13 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldSupportPatternQuoteInFilterInterpolation() {
         String archName = "bar";
         String basePath = "foobar-" + archName;
-        String quotedPart = java.util.regex.Pattern.quote(basePath);
+        String quotedPart = Pattern.quote(basePath);
         String filterPattern = ".*\\/" + quotedPart + "\\/.*";
         
         var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle-filtering.xml");
-        enableGenericWarnings(project, 
-            recorder -> recorder.setFilters(Collections.singletonList(new ExcludeFile(filterPattern))), 
-            new CheckStyle());
+        enableGenericWarnings(project,
+                recorder -> recorder.setFilters(Collections.singletonList(new ExcludeFile(filterPattern))),
+                new CheckStyle());
 
         var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         
@@ -828,9 +828,9 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         String filterPattern = ".*\\/" + packageName + "\\/" + subPackage + "\\/" + className + "\\.java";
         
         var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle-filtering.xml");
-        enableGenericWarnings(project, 
-            recorder -> recorder.setFilters(Collections.singletonList(new ExcludeFile(filterPattern))), 
-            new CheckStyle());
+        enableGenericWarnings(project,
+                recorder -> recorder.setFilters(Collections.singletonList(new ExcludeFile(filterPattern))),
+                new CheckStyle());
 
         var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         
