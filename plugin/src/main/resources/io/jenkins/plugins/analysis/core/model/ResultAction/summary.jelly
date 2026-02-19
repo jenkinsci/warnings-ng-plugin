@@ -1,121 +1,124 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:t="/lib/hudson" xmlns:st="jelly:stapler"
-         xmlns:fa="/font-awesome" xmlns:c="/controls">
+         xmlns:fa="/font-awesome" xmlns:c="/controls" xmlns:l="/lib/layout">
+  <l:userExperimentalFlag var="newBuildPage" flagClassName="jenkins.model.experimentalflags.NewBuildPageUserExperimentalFlag" />
 
-  <st:once>
-    <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
-    <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/reset-quality-gate.js"/>
-  </st:once>
+  <j:if test="${!newBuildPage}">
+    <st:once>
+      <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
+      <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/reset-quality-gate.js"/>
+    </st:once>
 
-  <t:summary icon="${it.hasLargeImage() ? it.largeImageName : icon}">
-    <j:set var="s" value="${it.summaryModel}"/>
+    <t:summary icon="${it.hasLargeImage() ? it.largeImageName : icon}">
+      <j:set var="s" value="${it.summaryModel}"/>
 
-    <span id="${it.id}-summary">
-      <span id="${it.id}-title">
-        ${s.name}:
+      <span id="${it.id}-summary">
+        <span id="${it.id}-title">
+          ${s.name}:
+          <j:choose>
+            <j:when test="${s.totalSize != 0}">
+              <a href="${it.id}">${s.title}</a>
+            </j:when>
+            <j:otherwise>
+              ${s.title}
+            </j:otherwise>
+          </j:choose>
+          <j:if test="${s.analysesCount > 1}">
+            <st:nbsp/>(from ${s.analysesCount} analyses)
+          </j:if>
+        </span>
+
         <j:choose>
-          <j:when test="${s.totalSize != 0}">
-            <a href="${it.id}">${s.title}</a>
+          <j:when test="${size(s.errors) > 0}">
+            <fa:image-button label="${%Open log messages}" name="triangle-exclamation" tooltip="${%icon.error.tooltip}"
+                             url="${it.id}/info" class="fa-image-button-warning"/>
           </j:when>
           <j:otherwise>
-            ${s.title}
+            <fa:image-button label="${%Open error messages}" name="circle-info" tooltip="${%icon.info.tooltip}"
+                             url="${it.id}/info"/>
           </j:otherwise>
         </j:choose>
-        <j:if test="${s.analysesCount > 1}">
-          <st:nbsp/>(from ${s.analysesCount} analyses)
-        </j:if>
-      </span>
 
-      <j:choose>
-        <j:when test="${size(s.errors) > 0}">
-          <fa:image-button label="${%Open log messages}" name="triangle-exclamation" tooltip="${%icon.error.tooltip}"
-                           url="${it.id}/info" class="fa-image-button-warning"/>
-        </j:when>
-        <j:otherwise>
-          <fa:image-button label="${%Open error messages}" name="circle-info" tooltip="${%icon.info.tooltip}"
-                           url="${it.id}/info"/>
-        </j:otherwise>
-      </j:choose>
-
-      <ul id="${it.id}-details">
-        <j:if test="${size(s.tools) > 1}">
-          <li>
-            Static analysis results from:
-            <j:set var="i" value="0"/>
-            <j:forEach var="t" items="${s.tools}">
+        <ul id="${it.id}-details">
+          <j:if test="${size(s.tools) > 1}">
+            <li>
+              Static analysis results from:
+              <j:set var="i" value="0"/>
+              <j:forEach var="t" items="${s.tools}">
+                <j:choose>
+                  <j:when test="${s.totalSize(t.id) != 0}">
+                    <a href="${it.id}/origin.${t.id.hashCode()}">${t.name} (${s.totalSize(t.id)})</a>
+                  </j:when>
+                  <j:otherwise>
+                    ${t.name} (0)
+                  </j:otherwise>
+                </j:choose>
+                <j:set var="i" value="${i + 1}"/>
+                <j:if test="${i lt size(s.tools)}">,
+                  <st:nbsp/>
+                </j:if>
+              </j:forEach>
+            </li>
+          </j:if>
+          <j:if test="${s.zeroIssuesHighscore}">
+            <li>
+              ${s.zeroIssuesHighscoreMessage}
+              <t:buildLink job="${it.owner.parent}" number="${s.noIssuesSinceBuild}"/>
+            </li>
+          </j:if>
+          <j:if test="${s.fixedSize != 0}">
+            <li>
+              ${%Fixed issues}:
+              <a href="${it.id}/fixed">${s.fixedSize}</a>
+            </li>
+          </j:if>
+          <j:if test="${s.newSize != 0}">
+            <li>
+              ${%New issues}:
+              <a href="${it.id}/new">${s.newSize}</a>
+            </li>
+          </j:if>
+          <j:if test="${s.modifiedSize != 0}">
+            <li>
               <j:choose>
-                <j:when test="${s.totalSize(t.id) != 0}">
-                  <a href="${it.id}/origin.${t.id.hashCode()}">${t.name} (${s.totalSize(t.id)})</a>
+                <j:when test="${s.modifiedNewSize != 0 and s.modifiedOutstandingSize != 0}">
+                  ${%Issues in modified code}:
+                  <a href="${it.id}/modified">${s.modifiedSize}</a>
+                  (${%new}: ${s.modifiedNewSize}, ${%outstanding}: ${s.modifiedOutstandingSize})
+                </j:when>
+                <j:when test="${s.modifiedNewSize == 0}">
+                  ${%Outstanding issues in modified code}:
+                  <a href="${it.id}/modified">${s.modifiedSize}</a>
                 </j:when>
                 <j:otherwise>
-                  ${t.name} (0)
+                  ${%New issues in modified code}:
+                  <a href="${it.id}/modified">${s.modifiedSize}</a>
                 </j:otherwise>
               </j:choose>
-              <j:set var="i" value="${i + 1}"/>
-              <j:if test="${i lt size(s.tools)}">,
-                <st:nbsp/>
-              </j:if>
-            </j:forEach>
-          </li>
-        </j:if>
-        <j:if test="${s.zeroIssuesHighscore}">
-          <li>
-            ${s.zeroIssuesHighscoreMessage}
-            <t:buildLink job="${it.owner.parent}" number="${s.noIssuesSinceBuild}"/>
-          </li>
-        </j:if>
-        <j:if test="${s.fixedSize != 0}">
-          <li>
-            ${%Fixed issues}:
-            <a href="${it.id}/fixed">${s.fixedSize}</a>
-          </li>
-        </j:if>
-        <j:if test="${s.newSize != 0}">
-          <li>
-            ${%New issues}:
-            <a href="${it.id}/new">${s.newSize}</a>
-          </li>
-        </j:if>
-        <j:if test="${s.modifiedSize != 0}">
-          <li>
-            <j:choose>
-              <j:when test="${s.modifiedNewSize != 0 and s.modifiedOutstandingSize != 0}">
-                ${%Issues in modified code}:
-                <a href="${it.id}/modified">${s.modifiedSize}</a>
-                (${%new}: ${s.modifiedNewSize}, ${%outstanding}: ${s.modifiedOutstandingSize})
-              </j:when>
-              <j:when test="${s.modifiedNewSize == 0}">
-                ${%Outstanding issues in modified code}:
-                <a href="${it.id}/modified">${s.modifiedSize}</a>
-              </j:when>
-              <j:otherwise>
-                ${%New issues in modified code}:
-                <a href="${it.id}/modified">${s.modifiedSize}</a>
-              </j:otherwise>
-            </j:choose>
-          </li>
-        </j:if>
-        <j:if test="${s.referenceBuild.present}">
-          <j:set var="r" value="${s.referenceBuild.get()}"/>
-          <li>
-            Reference build:
-            <j:out value="${s.referenceBuildLink}"/>
-          </li>
-        </j:if>
-        <j:if test="${s.qualityGateStatus.name() != 'INACTIVE'}">
-          <c:qualityGate result="${it.qualityGateResult}"/>
-          <j:if test="${s.resetQualityGateVisible}">
-            <button 
-              id="${it.id}-reset-reference"
-              class="jenkins-button"
-              style="padding: 0.3em 0.5em; min-width: 0.20em; min-height: 0.20em"
-              type="button"
-              title="Reset quality gate so that next build will use this build as a reference.">Reset
-            </button>
+            </li>
+          </j:if>
+          <j:if test="${s.referenceBuild.present}">
+            <j:set var="r" value="${s.referenceBuild.get()}"/>
+            <li>
+              Reference build:
+              <j:out value="${s.referenceBuildLink}"/>
+            </li>
+          </j:if>
+          <j:if test="${s.qualityGateStatus.name() != 'INACTIVE'}">
+            <c:qualityGate result="${it.qualityGateResult}"/>
+            <j:if test="${s.resetQualityGateVisible}">
+              <button
+                      id="${it.id}-reset-reference"
+                      class="jenkins-button"
+                      style="padding: 0.3em 0.5em; min-width: 0.20em; min-height: 0.20em"
+                      type="button"
+                      title="Reset quality gate so that next build will use this build as a reference.">Reset
+              </button>
+            </j:if>
           </j:if>
           <j:if test="${s.qualityGateReset}">
             <li>
-              Quality gate reset by 
+              Quality gate reset by
               <j:choose>
                 <j:when test="${s.resetUserId != null and s.resetUserId != 'anonymous'}">
                   <a href="${rootURL}/user/${s.resetUserId}">${s.resetBy}</a>
@@ -127,18 +130,16 @@
               <st:nbsp/>${s.resetTimestamp} ago
             </li>
           </j:if>
-        </j:if>
-      </ul>
-    </span>
+        </ul>
+      </span>
+    </t:summary>
 
-  </t:summary>
-
-  <j:set var="proxyId" value="${h.generateId()}" />
-  <st:bind value="${it}" var="bindResetButtonProxy${proxyId}"/>
-  <span class="bind-reset-button-data-holder"
-        data-action-id="${it.id}"
-        data-proxy-name="bindResetButtonProxy${proxyId}"
-        style="display:none"/>
-  <st:adjunct includes="io.jenkins.plugins.analysis.core.model.ResultAction.bind-reset-button" />
-
+    <j:set var="proxyId" value="${h.generateId()}" />
+    <st:bind value="${it}" var="bindResetButtonProxy${proxyId}"/>
+    <span class="bind-reset-button-data-holder"
+          data-action-id="${it.id}"
+          data-proxy-name="bindResetButtonProxy${proxyId}"
+          style="display:none"/>
+    <st:adjunct includes="io.jenkins.plugins.analysis.core.model.ResultAction.bind-reset-button" />
+  </j:if>
 </j:jelly>
