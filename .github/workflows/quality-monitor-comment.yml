@@ -2,8 +2,8 @@ name: 'Quality Monitor Comment'
 
 on:
   workflow_run:
-    workflows: [ "Quality Monitor Build" ]
-    types: [ completed ]
+    workflows: ['Quality Monitor', 'Dependency Check']
+    types: [completed]
 
 permissions:
   actions: read
@@ -13,18 +13,40 @@ permissions:
 
 jobs:
   comment:
-    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && github.event.workflow_run.head_branch == 'main' }}
+    if: ${{ github.event.workflow_run.event == 'push' && github.event.workflow_run.head_branch == 'main' }}
     runs-on: ubuntu-latest
     name: Comment main branch
 
     steps:
       - name: Checkout main branch
         uses: actions/checkout@v6
-      - name: Download Quality Reports from Quality Monitor Build workflow
-        uses: dawidd6/action-download-artifact@v15
-        with:
-          run_id: ${{ github.event.workflow_run.id }}
-          name: quality-reports
+      - name: Install jq and unzip
+        run: sudo apt-get update && sudo apt-get install -y jq unzip
+      - name: Prepare environment
+        env:
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          REPO: ${{ github.repository }}
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "HEAD_SHA=$HEAD_SHA"
+          echo "REPO=$REPO"
+      - name: Fetch reports from dependency check and quality monitor workflows
+        env:
+          REPO: ${{ github.repository }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OTHER_WORKFLOWS: "quality-monitor-build.yml,dependency-check.yml"
+          ARTIFACT_NAMES: "quality-reports,dependency-report"
+          RETRIES: 30
+          SLEEP_SEC: 10
+        run: |
+          chmod +x ./.github/scripts/fetch-artifacts.sh
+          ./.github/scripts/fetch-artifacts.sh
+      - name: List downloaded reports
+        run: |
+          mkdir -p reports/target
+          mv artifacts/*/target/* reports/target
+          ls -la reports/target/* || true
       - name: Read Quality Monitor Configuration
         id: quality-monitor
         run: echo "json=$(jq -c . .github/quality-monitor.json)" >> "$GITHUB_OUTPUT"

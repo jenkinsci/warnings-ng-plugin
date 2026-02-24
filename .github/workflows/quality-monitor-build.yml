@@ -1,32 +1,30 @@
-name: 'Quality Monitor Build'
+name: 'Quality Monitor'
 
 on:
+  push:
+      branches:
+      - main
   pull_request:
 
 jobs:
   build:
     runs-on: [ubuntu-latest]
-    name: Create quality reports
+    name: Create reports
 
     steps:
-      - name: Checkout PR
+      - name: Checkout project
         uses: actions/checkout@v6
-      - name: Set up JDK 21
+      - name: Set up JDK
         uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
-          java-version: 21
+          java-version: 25
           check-latest: true
           cache: 'maven'
       - name: Set up Maven
         uses: stCarolas/setup-maven@v5
         with:
-          maven-version: 3.9.11
-      - name: Cache the NVD database
-        uses: actions/cache@v5
-        with:
-          path: ~/.m2/repository/org/owasp/dependency-check-data
-          key: dependency-check
+          maven-version: 3.9.12
       - name: Check if quality monitor reports mutation coverage
         run: |
           FILE='.github/quality-monitor.json'
@@ -38,12 +36,10 @@ jobs:
           fi
       - name: Build with Maven
         env:
-          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
-          OSS_INDEX_TOKEN: ${{ secrets.OSS_INDEX_TOKEN }}
           PIT: ${{ env.PIT }}
           BROWSER: chrome-container
         run: |
-          mvn -V --color always -ntp clean verify $PIT -Pci -Powasp | tee maven.log
+          mvn -V --color always -ntp clean verify $PIT -Pci | tee maven.log
           if [ "${PIPESTATUS[0]}" != "0" ]; then
              exit 1;
           fi
@@ -56,4 +52,4 @@ jobs:
             **/target/**/*.json
             **/target/**/*.xml
             **/target/**/*.log
-            !**/target/tmp/**
+
