@@ -8,7 +8,6 @@
       <td>
         <div id="${it.id}-issues-chart" class="graph-cursor-pointer"
              style="width: 100%; min-height: ${it.height}px; min-width: 500px; height: ${it.height}px;"/>
-
       </td>
     </tr>
   </dp:decorate>
@@ -19,6 +18,10 @@
   <f:invisibleEntry>
     <span class="issues-chart-portlet-data-holder" data-id="${it.id}" />
   </f:invisibleEntry>
-  <st:adjunct includes="io.jenkins.plugins.analysis.core.portlets.IssuesChartPortlet.render-trend-chart" />
 
+  <script>
+    (function(proxy, id) {
+      echartsJenkinsApi.renderTrendChart(id + '-issues-chart', 'false', proxy);
+    })(trendProxy, '${it.id}');
+  </script>
 </j:jelly>
