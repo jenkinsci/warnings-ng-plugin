@@ -45,7 +45,7 @@ jobs:
           fi
           mv -fv maven.log target/maven.log
       - name: Upload Quality Reports
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: quality-reports
           path: |
