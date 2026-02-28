@@ -252,11 +252,22 @@ class IssuesPublisher {
         var gateEvaluationMode = determineQualityGateEvaluationMode();
         for (Run<?, ?> r = reference; r != null; r = r.getPreviousBuild()) {
             var result = r.getResult();
-            boolean shouldConsiderBuild = result != null && (gateEvaluationMode == IGNORE_QUALITY_GATE 
-                    || result.isBetterOrEqualTo(getRequiredResult()));
+            if (result == null) {
+                continue;
+            }
+            
+            var displayName = r.getFullDisplayName();
+            Optional<ResultAction> action = selector.get(r);
+            
+            boolean buildFailedDueToQualityGate = result == Result.FAILURE 
+                    && action.isPresent() 
+                    && !action.get().isSuccessful();
+            
+            boolean shouldConsiderBuild = gateEvaluationMode == IGNORE_QUALITY_GATE 
+                    || result.isBetterOrEqualTo(getRequiredResult())
+                    || buildFailedDueToQualityGate;
+            
             if (shouldConsiderBuild) {
-                var displayName = r.getFullDisplayName();
-                Optional<ResultAction> action = selector.get(r);
                 if (action.isPresent()) {
                     var resultAction = action.get();
                     if (resultAction.isSuccessful()) {
@@ -268,6 +279,12 @@ class IssuesPublisher {
                     if (gateEvaluationMode == IGNORE_QUALITY_GATE) {
                         issues.logInfo(
                                 "Quality gate has been missed for reference build '%s', but is configured to be ignored",
+                                displayName);
+                        return Optional.of(r);
+                    }
+                    if (buildFailedDueToQualityGate) {
+                        issues.logInfo(
+                                "Quality gate failed for reference build '%s', but build failed only due to quality gate, using this build as reference",
                                 displayName);
                         return Optional.of(r);
                     }
