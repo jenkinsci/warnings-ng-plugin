@@ -32,6 +32,7 @@ import io.jenkins.plugins.forensics.reference.ReferenceBuild;
 import io.jenkins.plugins.forensics.reference.ReferenceFinder;
 import io.jenkins.plugins.util.LogHandler;
 import io.jenkins.plugins.util.QualityGateResult;
+import io.jenkins.plugins.util.QualityGateStatus;
 import io.jenkins.plugins.util.ResultHandler;
 
 import static io.jenkins.plugins.analysis.core.model.QualityGateEvaluationMode.*;
@@ -288,7 +289,9 @@ class IssuesPublisher {
     }
 
     private boolean isBuildFailedOnlyDueToQualityGate(final Result result, final Optional<ResultAction> action) {
-        return result == Result.FAILURE && action.isPresent() && !action.get().isSuccessful();
+        return result == Result.FAILURE 
+                && action.isPresent() 
+                && action.get().getResult().getQualityGateStatus() == QualityGateStatus.FAILED;
     }
 
     private Optional<Run<?, ?>> evaluateBuildCandidate(final Run<?, ?> run, final String displayName,
