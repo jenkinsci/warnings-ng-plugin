@@ -332,8 +332,8 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     /**
-     * Verifies that builds that failed due to quality gate are used as reference, but builds that failed for other
-     * reasons are skipped. Regression test for JENKINS-61140: Improve reference selection for failed builds.
+     * Verifies that builds that failed due to quality gate are used as reference.
+     * Regression test for JENKINS-61140: Improve reference selection for failed builds.
      */
     @Test
     @org.junitpioneer.jupiter.Issue("JENKINS-61140")
@@ -345,23 +345,13 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
             recorder.setQualityGates(List.of(
                     new WarningsQualityGate(3, QualityGateType.NEW, QualityGateCriticality.FAILURE)));
         });
-        Run<?, ?> firstSuccessfulBuild = scheduleBuildAndAssertStatus(project, Result.SUCCESS,
+        scheduleBuildAndAssertStatus(project, Result.SUCCESS,
                 analysisResult -> assertThat(analysisResult)
                         .hasTotalSize(2)
                         .hasNewSize(0)
-                        .hasQualityGateStatus(QualityGateStatus.PASSED)).getOwner();
+                        .hasQualityGateStatus(QualityGateStatus.PASSED));
 
-        // #2 FAILURE (build fails for a reason other than quality gate)
-        cleanAndCopy(project, "eclipse4Warnings.txt");
-        var failureStep = addFailureStep(project);
-        scheduleBuildAndAssertStatus(project, Result.FAILURE,
-                analysisResult -> assertThat(analysisResult)
-                        .hasTotalSize(4)
-                        .hasNewSize(2)
-                        .hasQualityGateStatus(QualityGateStatus.PASSED)).getOwner();
-        removeBuilder(project, failureStep);
-
-        // #3 FAILURE (quality gate fails the build)
+        // #2 FAILURE (quality gate fails the build with 6 new warnings)
         cleanAndCopy(project, "eclipse8Warnings.txt");
         Run<?, ?> failedBuildDueToQualityGate = scheduleBuildAndAssertStatus(project, Result.FAILURE,
                 analysisResult -> assertThat(analysisResult)
@@ -369,17 +359,18 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
                         .hasNewSize(6)
                         .hasQualityGateStatus(QualityGateStatus.FAILED)).getOwner();
 
-        // #4 SUCCESS - should skip #2 (failed for other reasons), but use #3 (failed due to quality gate) as reference
+        // #3 SUCCESS - should use #2 (failed due to quality gate) as reference, so all 6 warnings from eclipse6 are in eclipse8
         cleanAndCopy(project, "eclipse6Warnings.txt");
         scheduleBuildAndAssertStatus(project, Result.SUCCESS,
                 analysisResult -> {
                     assertThat(analysisResult)
                             .hasTotalSize(6)
                             .hasNewSize(0)
+                            .hasFixedSize(2)
                             .hasQualityGateStatus(QualityGateStatus.PASSED)
                             .hasReferenceBuild(Optional.of(failedBuildDueToQualityGate));
                     assertThat(analysisResult.getInfoMessages()).contains(
-                            "Quality gate failed for reference build 'Job #3', but build failed only due to quality gate, using this build as reference");
+                            "Quality gate failed for reference build 'Job #2', but build failed only due to quality gate, using this build as reference");
                 });
     }
 

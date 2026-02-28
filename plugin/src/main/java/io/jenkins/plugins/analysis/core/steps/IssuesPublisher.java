@@ -245,7 +245,7 @@ class IssuesPublisher {
         return Optional.empty();
     }
 
-    @SuppressWarnings({"PMD.CognitiveComplexity", "PMD.AvoidDeeplyNestedIfStmts"})
+    @SuppressWarnings({"PMD.CognitiveComplexity", "PMD.CyclomaticComplexity", "PMD.AvoidDeeplyNestedIfStmts"})
     private Optional<Run<?, ?>> refineReferenceBasedOnQualityGate(final ResultSelector selector, final Report issues,
             final Run<?, ?> reference) {
         boolean isSkipped = false;
@@ -259,54 +259,75 @@ class IssuesPublisher {
             var displayName = r.getFullDisplayName();
             Optional<ResultAction> action = selector.get(r);
             
-            boolean buildFailedDueToQualityGate = result == Result.FAILURE 
-                    && action.isPresent() 
-                    && !action.get().isSuccessful();
-            
-            boolean shouldConsiderBuild = gateEvaluationMode == IGNORE_QUALITY_GATE 
-                    || result.isBetterOrEqualTo(getRequiredResult())
-                    || buildFailedDueToQualityGate;
-            
-            if (shouldConsiderBuild) {
-                if (action.isPresent()) {
-                    var resultAction = action.get();
-                    if (resultAction.isSuccessful()) {
-                        issues.logInfo(
-                                "Quality gate successful for reference build '%s', using this build as reference",
-                                displayName);
-                        return Optional.of(r);
-                    }
-                    if (gateEvaluationMode == IGNORE_QUALITY_GATE) {
-                        issues.logInfo(
-                                "Quality gate has been missed for reference build '%s', but is configured to be ignored",
-                                displayName);
-                        return Optional.of(r);
-                    }
-                    if (buildFailedDueToQualityGate) {
-                        issues.logInfo(
-                                "Quality gate failed for reference build '%s', but build failed only due to quality gate, using this build as reference",
-                                displayName);
-                        return Optional.of(r);
-                    }
-                    if (!isSkipped) {
-                        issues.logInfo("Quality gate failed for reference build '%s', analyzing previous builds",
-                                displayName);
-                        isSkipped = true;
-                    }
+            if (shouldConsiderBuildForReference(result, action, gateEvaluationMode)) {
+                Optional<Run<?, ?>> candidate = evaluateBuildCandidate(r, displayName, action, 
+                        gateEvaluationMode, issues);
+                if (candidate.isPresent()) {
+                    return candidate;
                 }
-                else {
-                    if (!isSkipped) {
-                        issues.logInfo(
-                                "Reference build '%s' does not contain a result action, analyzing previous builds",
-                                displayName);
-                        isSkipped = true;
-                    }
+                if (!isSkipped) {
+                    logSkippedBuild(displayName, action, issues);
+                    isSkipped = true;
                 }
             }
         }
         issues.logInfo("No reference build with successful quality gate found, skipping delta computation");
 
         return Optional.empty();
+    }
+
+    private boolean shouldConsiderBuildForReference(final Result result, final Optional<ResultAction> action,
+            final QualityGateEvaluationMode gateEvaluationMode) {
+        if (gateEvaluationMode == IGNORE_QUALITY_GATE) {
+            return true;
+        }
+        if (result.isBetterOrEqualTo(getRequiredResult())) {
+            return true;
+        }
+        return isBuildFailedOnlyDueToQualityGate(result, action);
+    }
+
+    private boolean isBuildFailedOnlyDueToQualityGate(final Result result, final Optional<ResultAction> action) {
+        return result == Result.FAILURE && action.isPresent() && !action.get().isSuccessful();
+    }
+
+    private Optional<Run<?, ?>> evaluateBuildCandidate(final Run<?, ?> run, final String displayName,
+            final Optional<ResultAction> action, final QualityGateEvaluationMode gateEvaluationMode,
+            final Report issues) {
+        if (!action.isPresent()) {
+            return Optional.empty();
+        }
+
+        var resultAction = action.get();
+        if (resultAction.isSuccessful()) {
+            issues.logInfo(
+                    "Quality gate successful for reference build '%s', using this build as reference",
+                    displayName);
+            return Optional.of(run);
+        }
+        if (gateEvaluationMode == IGNORE_QUALITY_GATE) {
+            issues.logInfo(
+                    "Quality gate has been missed for reference build '%s', but is configured to be ignored",
+                    displayName);
+            return Optional.of(run);
+        }
+        if (isBuildFailedOnlyDueToQualityGate(run.getResult(), action)) {
+            issues.logInfo(
+                    "Quality gate failed for reference build '%s', but build failed only due to quality gate, using this build as reference",
+                    displayName);
+            return Optional.of(run);
+        }
+        return Optional.empty();
+    }
+
+    private void logSkippedBuild(final String displayName, final Optional<ResultAction> action, final Report issues) {
+        if (action.isPresent()) {
+            issues.logInfo("Quality gate failed for reference build '%s', analyzing previous builds", displayName);
+        }
+        else {
+            issues.logInfo("Reference build '%s' does not contain a result action, analyzing previous builds",
+                    displayName);
+        }
     }
 
     private Result getRequiredResult() {
