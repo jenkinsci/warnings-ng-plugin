@@ -326,7 +326,7 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
         scheduleBuildAndAssertStatus(project, Result.SUCCESS,
                 analysisResult -> assertThat(analysisResult)
                         .hasTotalSize(4)
-                        .hasNewSize(0)
+                        .hasNewSize(2)
                         .hasQualityGateStatus(QualityGateStatus.PASSED)
                         .hasReferenceBuild(Optional.of(failedBuildDueToQualityGate)));
     }
@@ -359,14 +359,14 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
                         .hasNewSize(6)
                         .hasQualityGateStatus(QualityGateStatus.FAILED)).getOwner();
 
-        // #3 SUCCESS - should use #2 (failed due to quality gate) as reference, so all 6 warnings from eclipse6 are in eclipse8
-        cleanAndCopy(project, "eclipse6Warnings.txt");
+        // #3 SUCCESS - should use #2 (failed due to quality gate) as reference, so 2 warnings from eclipse6 are new
+        cleanAndCopy(project, "eclipse4Warnings.txt");
         scheduleBuildAndAssertStatus(project, Result.SUCCESS,
                 analysisResult -> {
                     assertThat(analysisResult)
-                            .hasTotalSize(6)
-                            .hasNewSize(0)
-                            .hasFixedSize(2)
+                            .hasTotalSize(4)
+                            .hasNewSize(2)
+                            .hasFixedSize(4)
                             .hasQualityGateStatus(QualityGateStatus.PASSED)
                             .hasReferenceBuild(Optional.of(failedBuildDueToQualityGate));
                     assertThat(analysisResult.getInfoMessages()).contains(
