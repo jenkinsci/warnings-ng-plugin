@@ -1,74 +1,63 @@
 name: 'Quality Monitor Comment PR'
 
 on:
-  workflow_run:
-    workflows: ['Quality Monitor', 'Dependency Check']
-    types: [completed]
+  pull_request:
 
 permissions:
-  actions: read
   contents: read
+  actions: read
   pull-requests: write
   checks: write
 
 jobs:
   comment:
-    if: ${{ github.event.workflow_run.event == 'pull_request' }}
     runs-on: ubuntu-latest
     name: Comment on PR
 
     steps:
-      - name: Extract PR number and SHA
-        id: pr
-        run: |
-          pr_number='${{ github.event.workflow_run.pull_requests[0].number }}'
-          echo "number=$pr_number" >> "$GITHUB_OUTPUT"
-          sha='${{ github.event.workflow_run.head_sha }}'
-          echo "sha=$sha" >> "$GITHUB_OUTPUT"
       - name: Checkout PR
         uses: actions/checkout@v6
         with:
-          ref: ${{ steps.pr.outputs.sha }}
+          ref: ${{ github.event.pull_request.head.sha }}
+
       - name: Install jq and unzip
         run: sudo apt-get update && sudo apt-get install -y jq unzip
-      - name: Prepare environment
-        env:
-          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
-          REPO: ${{ github.repository }}
-          TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          echo "HEAD_SHA=$HEAD_SHA"
-          echo "REPO=$REPO"
+
       - name: Fetch reports from dependency check and quality monitor workflows
         env:
           REPO: ${{ github.repository }}
-          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OTHER_WORKFLOWS: "quality-monitor-build.yml,dependency-check.yml"
           ARTIFACT_NAMES: "quality-reports,dependency-report"
-          RETRIES: 30
+          ALLOWED_EVENTS: "pull_request,pull_request_target"
+          RETRIES: 60
           SLEEP_SEC: 10
         run: |
           chmod +x ./.github/scripts/fetch-artifacts.sh
           ./.github/scripts/fetch-artifacts.sh
+
       - name: List downloaded reports
         run: |
           mkdir -p reports/target
           mv artifacts/*/target/* reports/target
           ls -la reports/target/* || true
+
       - name: Read Quality Monitor Configuration
         id: quality-monitor
         run: echo "json=$(jq -c . .github/quality-monitor-pr.json)" >> "$GITHUB_OUTPUT"
+
       - name: Read Quality Gates Configuration
         id: quality-gates
         run: echo "json=$(jq -c . .github/quality-gates-pr.json)" >> "$GITHUB_OUTPUT"
+
       - name: Run Quality Monitor and Comment on PR
         uses: uhafner/quality-monitor@v4
         with:
-          sha: ${{ steps.pr.outputs.sha }}
+          sha: ${{ github.event.pull_request.head.sha }}
           config: ${{ steps.quality-monitor.outputs.json }}
           quality-gates: ${{ steps.quality-gates.outputs.json }}
-          pr-number: ${{ steps.pr.outputs.number }}
+          pr-number: ${{ github.event.pull_request.number }}
           comments-strategy: REMOVE
           show-headers: true
           title-metric: none

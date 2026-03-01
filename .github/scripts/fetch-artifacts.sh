@@ -10,6 +10,7 @@ set -euo pipefail
 # Optional:
 # RETRIES: number of polling attempts per workflow (default: 30)
 # SLEEP_SEC: seconds to wait between attempts (default: 10)
+# ALLOWED_EVENTS: comma-separated list of workflow run events to consider (default: pull_request,pull_request_target)
 
 IFS=',' read -r -a WORKFLOWS_ARR <<< "${OTHER_WORKFLOWS}"
 IFS=',' read -r -a ARTIFACTS_ARR <<< "${ARTIFACT_NAMES}"
@@ -19,6 +20,7 @@ TOKEN="${TOKEN}"
 API_BASE="https://api.github.com/repos/${REPO}"
 RETRIES=${RETRIES:-30}
 SLEEP_SEC=${SLEEP_SEC:-10}
+ALLOWED_EVENTS=${ALLOWED_EVENTS:-pull_request,pull_request_target}
 
 mkdir -p artifacts
 
@@ -40,13 +42,14 @@ for idx in "${!WORKFLOWS_ARR[@]}"; do
     attempt=$((attempt+1))
     echo "  attempt $attempt/$RETRIES"
 
-    # 1) Liste Runs für das Workflow (workflow id/name/file)
+    # 1) List workflow runs (workflow id/name/file)
     resp=$(curl -s -H "Authorization: Bearer ${TOKEN}" "${API_BASE}/actions/workflows/${wf}/runs?per_page=50")
 
-    # 2) Finde Run mit matching head_sha
-    run_id=$(echo "$resp" | jq -r --arg SHA "$SHA" '.workflow_runs[] | select(.head_sha==$SHA) | .id' | head -n1 || true)
-    run_status=$(echo "$resp" | jq -r --arg SHA "$SHA" '.workflow_runs[] | select(.head_sha==$SHA) | .status' | head -n1 || true)
-    run_conclusion=$(echo "$resp" | jq -r --arg SHA "$SHA" '.workflow_runs[] | select(.head_sha==$SHA) | .conclusion' | head -n1 || true)
+    # 2) Find run with matching head_sha (and allowed event types)
+    regex_events=$(echo "$ALLOWED_EVENTS" | tr ',' '|' | tr -d '[:space:]')
+    run_id=$(echo "$resp" | jq -r --arg SHA "$SHA" --arg RE "$regex_events" '.workflow_runs[] | select(.head_sha==$SHA and (.event|test($RE))) | .id' | head -n1 || true)
+    run_status=$(echo "$resp" | jq -r --arg SHA "$SHA" --arg RE "$regex_events" '.workflow_runs[] | select(.head_sha==$SHA and (.event|test($RE))) | .status' | head -n1 || true)
+    run_conclusion=$(echo "$resp" | jq -r --arg SHA "$SHA" --arg RE "$regex_events" '.workflow_runs[] | select(.head_sha==$SHA and (.event|test($RE))) | .conclusion' | head -n1 || true)
 
     if [ -n "${run_id}" ] && [ "${run_id}" != "null" ]; then
       echo "  Found run ${run_id} status=${run_status} conclusion=${run_conclusion}"
