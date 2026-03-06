@@ -23,6 +23,7 @@ public class NewVersusFixedTrendChart implements TrendChart {
         var builder = new NewVersusFixedSeriesBuilder();
         var dataSet = builder.createDataSet(configuration, results);
         var model = new LinesChartModel(dataSet);
+        model.setRangeMin(0);
 
         var newSeries = getSeries(dataSet, Messages.New_Warnings_Short(), JenkinsPalette.RED,
                 NewVersusFixedSeriesBuilder.NEW);
