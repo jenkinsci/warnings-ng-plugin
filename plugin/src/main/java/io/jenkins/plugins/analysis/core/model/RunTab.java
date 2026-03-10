@@ -57,6 +57,14 @@ public class RunTab extends Tab {
     }
 
     /**
+     * Generates the widget for the Overview tab.
+     * @return the widget.
+     */
+    public Widget getWidget() {
+        return new Widget(getWarningActions());
+    }
+
+    /**
      * The list of warning actions belonging to a run.
      * @return the list of ordered warning actions, sorted by warning count, then alphabetized.
      */
