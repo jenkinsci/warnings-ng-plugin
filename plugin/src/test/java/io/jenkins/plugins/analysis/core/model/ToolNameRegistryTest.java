@@ -36,24 +36,26 @@ class ToolNameRegistryTest {
     }
 
     @Test
-    void shouldEscapeHtmlInNames() {
+    void shouldNotEscapeHtmlInNames() {
         ToolNameRegistry registry = new ToolNameRegistry();
 
         registry.register("custom", "<script>alert('xss')</script>");
 
-        assertThat(registry.getName("custom")).isEqualTo("&lt;script&gt;alert('xss')&lt;/script&gt;");
-        assertThat(registry.asMap().get("custom")).isEqualTo("&lt;script&gt;alert('xss')&lt;/script&gt;");
+        // Names are no longer HTML-escaped here; escaping should happen at the presentation layer
+        assertThat(registry.getName("custom")).isEqualTo("<script>alert('xss')</script>");
+        assertThat(registry.asMap().get("custom")).isEqualTo("<script>alert('xss')</script>");
     }
 
     @Test
-    void shouldReturnEscapedIdForUnknownId() {
+    void shouldReturnIdForUnknownId() {
         ToolNameRegistry registry = new ToolNameRegistry();
         
         registry.register("unknown", "unknown");
         assertThat(registry.getName("unknown")).isEqualTo("unknown");
         
+        // Names are no longer HTML-escaped; the raw name is returned
         registry.register("<script>", "<script>");
-        assertThat(registry.getName("<script>")).isEqualTo("&lt;script&gt;");
+        assertThat(registry.getName("<script>")).isEqualTo("<script>");
     }
 
     @Test

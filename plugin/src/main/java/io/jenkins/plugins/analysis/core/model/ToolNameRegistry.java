@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.StringEscapeUtils;
 
 import hudson.model.Run;
 
@@ -37,12 +36,12 @@ public class ToolNameRegistry {
 
     /**
      * Creates a registry from the {@link ResultAction}s of a build. Each action provides a tool ID and name, which
-     * are stored in the registry for later lookup. Names are HTML-escaped at creation time.
+     * are stored in the registry for later lookup.
      *
      * @param build
      *         the build that contains the result actions
      *
-     * @return a registry containing all tool IDs and HTML-escaped names from the build
+     * @return a registry containing all tool IDs and names from the build
      */
     public static ToolNameRegistry fromBuild(final Run<?, ?> build) {
         Map<String, String> mapping = new HashMap<>();
@@ -53,31 +52,30 @@ public class ToolNameRegistry {
             if (StringUtils.isBlank(name)) {
                 name = factory.create(id).getName();
             }
-            mapping.put(id, StringEscapeUtils.escapeHtml4(name));
+            mapping.put(id, name);
         }
         return new ToolNameRegistry(mapping);
     }
 
     /**
      * Returns the human-readable name for a tool ID. If the ID is not registered, attempts to look up the name from
-     * the {@link LabelProviderFactory}. If that also fails, returns the ID itself. Names returned are already
-     * HTML-escaped.
+     * the {@link LabelProviderFactory}. If that also fails, returns the ID itself.
      *
      * @param id
      *         the tool ID
      *
-     * @return the HTML-escaped human-readable name, or the escaped ID if no name is found
+     * @return the human-readable name, or the ID if no name is found
      */
     public String getName(final String id) {
         if (idToNameMap.containsKey(id)) {
             return idToNameMap.get(id);
         }
         var labelProvider = new LabelProviderFactory().create(id);
-        return StringEscapeUtils.escapeHtml4(labelProvider.getName());
+        return labelProvider.getName();
     }
 
     /**
-     * Registers a tool ID with its corresponding name. The name will be HTML-escaped before storing.
+     * Registers a tool ID with its corresponding name.
      *
      * @param id
      *         the tool ID
@@ -85,7 +83,7 @@ public class ToolNameRegistry {
      *         the human-readable name
      */
     public void register(final String id, final String name) {
-        idToNameMap.put(id, StringEscapeUtils.escapeHtml4(name));
+        idToNameMap.put(id, name);
     }
 
     /**
@@ -110,9 +108,9 @@ public class ToolNameRegistry {
     }
 
     /**
-     * Returns the ID-to-name mapping as an immutable map. The names in the returned map are already HTML-escaped.
+     * Returns the ID-to-name mapping as an immutable map.
      *
-     * @return an immutable map from tool IDs to HTML-escaped names
+     * @return an immutable map from tool IDs to names
      */
     public Map<String, String> asMap() {
         return Collections.unmodifiableMap(idToNameMap);
