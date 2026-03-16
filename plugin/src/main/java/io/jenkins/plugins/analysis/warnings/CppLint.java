@@ -7,6 +7,7 @@ import org.jenkinsci.Symbol;
 import hudson.Extension;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 /**
  * Provides a parser and customized messages for Cpplint.
@@ -32,6 +33,11 @@ public class CppLint extends AnalysisModelParser {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
+        }
+
+        @Override
+        public StaticAnalysisLabelProvider getLabelProvider() {
+            return new StaticAnalysisLabelProvider(getId(), "C++ Lint", getDescriptionProvider());
         }
     }
 }
