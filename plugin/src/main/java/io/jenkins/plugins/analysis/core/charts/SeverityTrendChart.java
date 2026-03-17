@@ -53,6 +53,9 @@ public class SeverityTrendChart implements TrendChart {
         Severity[] visibleSeverities
                 = {Severity.WARNING_LOW, Severity.WARNING_NORMAL, Severity.WARNING_HIGH, Severity.ERROR};
         for (Severity severity : visibleSeverities) {
+            if (!dataSet.getDataSetIds().contains(severity.getName())) {
+                continue;
+            }
             List<Integer> values = dataSet.getSeries(severity.getName());
             if (values.stream().anyMatch(integer -> integer > 0)) {
                 var series = createSeries(severity);
