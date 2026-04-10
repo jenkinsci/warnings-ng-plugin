@@ -49,7 +49,7 @@
     <testcontainers.version>1.21.4</testcontainers.version>
 
     <!-- Jenkins Plug-in Dependencies Versions -->
-    <flexible-publish.version>0.15.2</flexible-publish.version>
+    <flexible-publish.version>0.16.1</flexible-publish.version>
     <form-element-path.version>1.11</form-element-path.version>
 
     <!-- Maven Surefire ArgLine -->
