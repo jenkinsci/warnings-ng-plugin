@@ -1,6 +1,8 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["github>jenkinsci/renovate-config"],
+  "extends": [
+    "github>jenkinsci/renovate-config"
+  ],
   "commitMessageAction": "Bump",
   "ignorePaths": ["src/**"]
 }
