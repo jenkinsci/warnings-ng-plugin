@@ -15,6 +15,7 @@ skinparam component {
 [Filter] <<..core.filter>>
 [Portlets] <<..core.portlets>>
 [Columns] <<..core.columns>>
+[MCP API] <<..core.mcp>>
 [Rest API] <<..core.restapi>>
 [Tokens] <<..core.tokens>>
 [Utilities] <<..core.util>> <<..api>>
@@ -44,5 +45,7 @@ skinparam component {
 [Charts] --> [Utilities]
 [Rest API] --> [Utilities]
 [Filter] --> [Utilities]
+
+[MCP API] --> [Model]
 
 @enduml
