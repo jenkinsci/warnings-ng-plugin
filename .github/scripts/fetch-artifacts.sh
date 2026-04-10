@@ -9,7 +9,7 @@ set -euo pipefail
 # ARTIFACT_NAMES: comma-separated list of artifact names (in the same order as WORKFLOWS)
 # Optional:
 # RETRIES: number of polling attempts per workflow (default: 30)
-# SLEEP_SEC: seconds to wait between attempts (default: 10)
+# SLEEP_SEC: seconds to wait between attempts (default: 30)
 # ALLOWED_EVENTS: comma-separated list of workflow run events to consider (default: pull_request,pull_request_target)
 
 IFS=',' read -r -a WORKFLOWS_ARR <<< "${OTHER_WORKFLOWS}"
@@ -19,7 +19,7 @@ SHA="${HEAD_SHA}"
 TOKEN="${TOKEN}"
 API_BASE="https://api.github.com/repos/${REPO}"
 RETRIES=${RETRIES:-30}
-SLEEP_SEC=${SLEEP_SEC:-10}
+SLEEP_SEC=${SLEEP_SEC:-30}
 ALLOWED_EVENTS=${ALLOWED_EVENTS:-pull_request,pull_request_target}
 
 mkdir -p artifacts

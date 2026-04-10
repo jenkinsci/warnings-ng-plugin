@@ -44,11 +44,14 @@ jobs:
              exit 1;
           fi
           mv -fv maven.log target/maven.log
+      - name: Write PR number
+        run: echo '${{ github.event.pull_request.number }}' > pr-number.txt
       - name: Upload Quality Reports
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: quality-reports
           path: |
+            pr-number.txt
             **/target/**/*.json
             **/target/**/*.xml
             **/target/**/*.log
