@@ -73,7 +73,7 @@ class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
      * Runs the {@link IssueReportScanner} on a workspace with a not readable file.
      */
     @Test
-    void cantReadFile() {
+    void cantReadFile() throws IOException, InterruptedException {
         var project = createCheckStyleJob(NON_READABLE_FILE_WORKSPACE);
 
         makeFileUnreadable(project);
@@ -83,6 +83,8 @@ class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(result).hasTotalSize(0);
         assertThat(result).hasErrorMessages(
                 "Skipping file 'no_read_permissions.xml' because Jenkins has no permission to read the file");
+
+        getWorkspace(project).deleteContents();
     }
 
     private void makeFileUnreadable(final FreeStyleProject project) {
