@@ -22,11 +22,11 @@ enum AxIssueKind {
         this.transformation = transformation;
     }
 
-    public String plural() {
+    String plural() {
         return pluralName;
     }
 
-    public Issue transform(final AxRawIssue rawIssue) {
+    Issue transform(final AxRawIssue rawIssue) {
         return transformation.transform(rawIssue);
     }
 }

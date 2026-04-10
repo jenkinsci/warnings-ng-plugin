@@ -6,6 +6,7 @@ import org.jvnet.hudson.test.TestExtension;
 import edu.hm.hafner.analysis.IssueParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+import java.io.Serial;
 import java.util.Optional;
 
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory.StaticAnalysisToolFactory;
@@ -69,7 +70,8 @@ class LabelProviderFactoryITest extends IntegrationTestWithJenkinsPerSuite {
      * Static analysis tool that that implements the extension point.
      */
     @SuppressWarnings("unused")
-    public static class TestTool extends ReportScanningTool {
+    static class TestTool extends ReportScanningTool {
+        @Serial
         private static final long serialVersionUID = 8456938025794683739L;
 
         @Override
@@ -86,6 +88,7 @@ class LabelProviderFactoryITest extends IntegrationTestWithJenkinsPerSuite {
          * Required descriptor for the tool.
          */
         @TestExtension
+        @SuppressWarnings("PMD.PublicMemberInNonPublicType")
         public static final class TestToolDescriptor extends ReportScanningToolDescriptor {
             /**
              * Creates a new descriptor.
@@ -107,7 +110,7 @@ class LabelProviderFactoryITest extends IntegrationTestWithJenkinsPerSuite {
      * Factory that returns a stub for all calls.
      */
     @TestExtension
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "PMD.PublicMemberInNonPublicType"})
     public static class TestFactory implements StaticAnalysisToolFactory {
         @Override
         public Optional<StaticAnalysisLabelProvider> getLabelProvider(final String id) {

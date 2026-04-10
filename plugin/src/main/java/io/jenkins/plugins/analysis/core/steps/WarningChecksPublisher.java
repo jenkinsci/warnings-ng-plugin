@@ -52,7 +52,7 @@ class WarningChecksPublisher {
     /**
      * Defines the scope of SCM checks annotations.
      */
-    public enum ChecksAnnotationScope {
+    enum ChecksAnnotationScope {
         /** All issues, i.e., new and outstanding. */
         ALL,
         /** Only new issues. */
@@ -145,7 +145,7 @@ class WarningChecksPublisher {
                 .orElse(StringUtils.EMPTY);
     }
 
-    public DomContent getReferenceBuild(final String id, final Run<?, ?> referenceBuild) {
+    private DomContent getReferenceBuild(final String id, final Run<?, ?> referenceBuild) {
         return join(Messages.Tool_ReferenceBuild(), createReferenceBuildLink(id, referenceBuild));
     }
 
