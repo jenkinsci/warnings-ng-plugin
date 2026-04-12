@@ -339,15 +339,19 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Enables CheckStyle tool twice for two different files with varying amount of issues: should produce a failure.
+     * Enables CheckStyle tool twice for two different files with varying amount of issues: the previous action should
+     * be replaced with a warning (to support retry after restart scenarios).
      */
     @Test
     void shouldThrowExceptionIfSameToolIsConfiguredTwice() {
-        Run<?, ?> build = runJobWithCheckStyleTwice(false, Result.FAILURE);
+        Run<?, ?> build = runJobWithCheckStyleTwice(false, Result.SUCCESS);
 
-        var result = getAnalysisResult(build);
-        assertThat(getConsoleLog(result)).contains("ID checkstyle is already used by another action: "
-                + "io.jenkins.plugins.analysis.core.model.ResultAction for CheckStyle");
+        List<AnalysisResult> results = getAnalysisResults(build);
+        
+        assertThat(results).hasSize(1);
+        var result = results.get(0);
+        
+        assertThat(getConsoleLog(result)).contains("Removing existing result action with ID 'checkstyle' (might be caused by a restart)");
         assertThat(result).hasId(CHECKSTYLE);
         assertThat(result).hasTotalSize(6);
     }
@@ -371,6 +375,29 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
 
         Set<String> ids = results.stream().map(AnalysisResult::getId).collect(Collectors.toSet());
         assertThat(ids).containsExactly(CHECKSTYLE, "second");
+    }
+
+    /**
+     * Tests retry after restart scenario (JENKINS-72920). When the same tool is run twice within a build
+     * (which can happen during retry after infrastructure failure), the second run should replace the first
+     * with a warning message instead of throwing an exception.
+     */
+    @Test
+    @org.junitpioneer.jupiter.Issue("JENKINS-72920")
+    void shouldAllowRetryAfterRestart() {
+        var project = createFreestyleJob("checkstyle.xml");
+        var tool = createTool(new CheckStyle(), "**/checkstyle-issues.txt");
+        enableWarnings(project, recorder -> recorder.setAggregatingResults(false), tool, tool);
+
+        Run<?, ?> build = buildWithResult(project, Result.SUCCESS);
+
+        List<AnalysisResult> results = getAnalysisResults(build);
+        assertThat(results).hasSize(1);
+        
+        var result = results.get(0);
+        assertThat(result).hasId(CHECKSTYLE);
+        assertThat(result).hasTotalSize(6);
+        assertThat(getConsoleLog(result)).contains("Removing existing result action with ID 'checkstyle' (might be caused by a restart)");
     }
 
     /**
