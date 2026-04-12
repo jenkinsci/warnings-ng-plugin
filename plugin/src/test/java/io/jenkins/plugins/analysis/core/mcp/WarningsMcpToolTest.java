@@ -28,7 +28,7 @@ import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 class WarningsMcpToolTest {
     @McpClientTest
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
-    void testMcpToolCallGetTestResults(final JenkinsRule jenkins,
+    void testMcpToolCallGetWarnings(final JenkinsRule jenkins,
             final JenkinsMcpClientBuilder jenkinsMcpClientBuilder) throws Exception {
         WorkflowJob j = jenkins.createProject(WorkflowJob.class, "singleStep");
         j.setDefinition(new CpsFlowDefinition("""
@@ -53,8 +53,8 @@ class WarningsMcpToolTest {
         AnalysisResult warningsResult = run.getAction(ResultAction.class).getResult();
 
         try (var client = jenkinsMcpClientBuilder.jenkins(jenkins).build()) {
-            McpSchema.CallToolRequest request =
-                    new McpSchema.CallToolRequest("getWarnings", Map.of("jobFullName", j.getFullName()));
+            McpSchema.CallToolRequest request = new McpSchema.CallToolRequest(
+                    "getWarnings", Map.of("jobFullName", j.getFullName()));
 
             var response = client.callTool(request);
 
@@ -79,5 +79,56 @@ class WarningsMcpToolTest {
             assertThat(((List<?>) warningsAction).size())
                     .isEqualTo(warningsResult.getIssues().size());
         }
+        try (var client = jenkinsMcpClientBuilder.jenkins(jenkins).build()) {
+            McpSchema.CallToolRequest request = new McpSchema.CallToolRequest(
+                    "getWarnings", Map.of("jobFullName", j.getFullName(),
+                    "checkId", "missing"));
+
+            var response = client.callTool(request);
+            assertResponseIsEmpty(response);
+        }
+    }
+
+    @McpClientTest
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
+    void testMcpToolNoWarnings(final JenkinsRule jenkins,
+                                       final JenkinsMcpClientBuilder jenkinsMcpClientBuilder) throws Exception {
+        WorkflowJob j = jenkins.createProject(WorkflowJob.class, "singleStep");
+        j.setDefinition(new CpsFlowDefinition("""
+                        stage('first') {
+                          node {
+                            echo "no warnings"
+                          }
+                        }
+                        """, true));
+
+        try (var client = jenkinsMcpClientBuilder.jenkins(jenkins).build()) {
+            McpSchema.CallToolRequest request = new McpSchema.CallToolRequest(
+                    "getWarnings", Map.of("jobFullName", j.getFullName()));
+
+            var response = client.callTool(request);
+            assertResponseIsEmpty(response);
+        }
+    }
+
+    @McpClientTest
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
+    void testMcpToolNoJob(final JenkinsRule jenkins,
+                               final JenkinsMcpClientBuilder jenkinsMcpClientBuilder) throws Exception {
+        try (var client = jenkinsMcpClientBuilder.jenkins(jenkins).build()) {
+            McpSchema.CallToolRequest request = new McpSchema.CallToolRequest(
+                    "getWarnings", Map.of("jobFullName", "missing"));
+
+            var response = client.callTool(request);
+            assertResponseIsEmpty(response);
+        }
+    }
+
+    private void assertResponseIsEmpty(final McpSchema.CallToolResult response) {
+        assertThat(response.isError()).isFalse();
+        assertThat(response.content()).hasSize(1);
+        McpSchema.Content firstItem = response.content().get(0);
+        assertThat(firstItem.type()).isEqualTo("text");
+        assertThat(((McpSchema.TextContent) firstItem).text()).contains("no results");
     }
 }

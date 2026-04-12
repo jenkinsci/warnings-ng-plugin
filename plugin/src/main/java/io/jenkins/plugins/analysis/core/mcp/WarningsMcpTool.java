@@ -9,10 +9,10 @@ import io.jenkins.plugins.mcp.server.annotation.ToolParam;
 import io.jenkins.plugins.mcp.server.extensions.util.JenkinsUtil;
 import jakarta.annotation.Nullable;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
 import org.jenkinsci.plugins.variant.OptionalExtension;
 
 /**
@@ -48,22 +48,23 @@ public class WarningsMcpTool implements McpServerExtension {
                     final String checkId) {
         Optional<Run> run = JenkinsUtil.getBuildByNumberOrLast(jobFullName, buildNumber);
         if (run.isPresent()) {
-            List<ResultAction> warningActions = run.get().getActions(ResultAction.class);
             Map<String, Object> response = new HashMap<>();
-            for (ResultAction warningAction : warningActions) {
-                if (checkId != null && !warningAction.getId().equals(checkId)) {
-                    continue;
-                }
-                var result = warningAction.getResult();
-                if (result != null) {
-                    response.put(
-                            warningAction.getId(),
-                            result.getIssues().stream().map(IssueJson::new).collect(Collectors.toList()));
-                }
-            }
+            run.get().getActions(ResultAction.class)
+                    .stream()
+                    .filter(action -> checkId == null || action.getId().equals(checkId))
+                    .filter(action -> action.getResult() != null)
+                    .forEach(warningAction -> addToResponse(response, warningAction));
             return response;
         }
         return Map.of();
+    }
+
+    private void addToResponse(final Map<String, Object> response,
+            final ResultAction warningAction) {
+        var result = warningAction.getResult();
+        response.put(
+                warningAction.getId(),
+                result.getIssues().stream().map(IssueJson::new).collect(Collectors.toList()));
     }
 
     private record IssueJson(
