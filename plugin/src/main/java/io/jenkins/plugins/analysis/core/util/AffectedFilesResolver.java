@@ -250,7 +250,7 @@ public class AffectedFilesResolver {
             return PERMISSION_ENFORCER.isInWorkspace(sourceFile, workspace, permittedAbsolutePaths);
         }
 
-        public void copy(final String from, final String to) throws IOException, InterruptedException {
+        void copy(final String from, final String to) throws IOException, InterruptedException {
             var file = createFile(from);
             if (file.toVirtualFile().canRead()) {
                 file.zip(computeBuildFolderFileName(to));
@@ -260,7 +260,7 @@ public class AffectedFilesResolver {
             }
         }
 
-        public boolean existsInBuildFolder(final String fileName) {
+        boolean existsInBuildFolder(final String fileName) {
             try {
                 return computeBuildFolderFileName(fileName).exists();
             }

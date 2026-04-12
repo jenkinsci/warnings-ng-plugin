@@ -837,15 +837,15 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
             super(area, path);
         }
 
-        public void setThreshold(final int threshold) {
+        void setThreshold(final int threshold) {
             this.threshold.set(threshold);
         }
 
-        public void setType(final QualityGateType type) {
+        void setType(final QualityGateType type) {
             this.type.select(type.getDisplayName());
         }
 
-        public void setCriticality(final QualityGateCriticality criticality) {
+        void setCriticality(final QualityGateCriticality criticality) {
             this.criticality.select(criticality.getDisplayName());
         }
     }
@@ -860,7 +860,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
             super(area, path);
         }
 
-        public void setPath(final String path) {
+        void setPath(final String path) {
             this.path.set(path);
         }
     }

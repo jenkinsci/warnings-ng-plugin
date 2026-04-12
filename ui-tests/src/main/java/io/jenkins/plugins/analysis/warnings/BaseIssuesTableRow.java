@@ -11,6 +11,7 @@ import edu.umd.cs.findbugs.annotations.CheckForNull;
  *
  * @author Ullrich Hafner
  */
+@SuppressWarnings("PMD.PublicMemberInNonPublicType")
 class BaseIssuesTableRow extends GenericTableRow {
     private static final String DETAILS = "Details";
     private static final String FILE = "File";
@@ -59,7 +60,7 @@ class BaseIssuesTableRow extends GenericTableRow {
     /**
      * Performs a click on the icon showing and hiding the details row.
      */
-    public void toggleDetailsRow() {
+    void toggleDetailsRow() {
         getCell(DETAILS).findElement(By.tagName("div")).click();
         getTable().updateTableRows();
     }
@@ -78,7 +79,7 @@ class BaseIssuesTableRow extends GenericTableRow {
      *
      * @return the source code view
      */
-    public SourceView openSourceCode() {
+    SourceView openSourceCode() {
         return getTable().openSourceCode(getFileLink());
     }
 
@@ -87,7 +88,7 @@ class BaseIssuesTableRow extends GenericTableRow {
      *
      * @return the source code view
      */
-    public ConsoleLogView openConsoleLog() {
+    ConsoleLogView openConsoleLog() {
         return getTable().openConsoleLogView(getFileLink());
     }
 

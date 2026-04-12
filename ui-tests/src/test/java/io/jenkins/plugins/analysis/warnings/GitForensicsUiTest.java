@@ -38,7 +38,6 @@ import static org.assertj.core.api.Assertions.*;
 @Category(DockerTest.class)
 @WithPlugins({"git", "git-forensics"})
 @WithCredentials(credentialType = WithCredentials.SSH_USERNAME_PRIVATE_KEY, values = {"gitplugin", "/org/jenkinsci/test/acceptance/docker/fixtures/GitContainer/unsafe"})
-@SuppressFBWarnings("BC")
 @SuppressWarnings("checkstyle:ClassFanOutComplexity")
 public class GitForensicsUiTest extends UiTest {
     @Inject
