@@ -2,4 +2,8 @@
     This option determines if failed builds should be selected as baseline or not.
     It is enabled by default, since analysis results might be inaccurate if the build failed.
     If unchecked, every build that contains a static analysis result is considered, even if the build failed.
+    <p>
+        Note: Builds that failed <b>only</b> due to a quality gate of this plugin are always considered as valid 
+        references, since the analysis results are accurate in these cases.
+    </p>
 </div>
