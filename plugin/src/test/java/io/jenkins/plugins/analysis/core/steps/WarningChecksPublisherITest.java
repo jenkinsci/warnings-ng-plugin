@@ -509,7 +509,6 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @SuppressWarnings("PMD.PublicMemberInNonPublicType")
     @TestExtension
-    @SuppressWarnings("PMD.PublicMemberInNonPublicType")
     public static class CapturingChecksPublisherTestExtension extends CapturingChecksPublisher.Factory {
         // activate test extension
     }

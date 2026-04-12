@@ -1270,7 +1270,6 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @SuppressWarnings("PMD.PublicMemberInNonPublicType")
     @TestExtension
-    @SuppressWarnings("PMD.PublicMemberInNonPublicType")
     public static class YouCannotTriggerMe implements UnprotectedRootAction {
         private int triggerCount;
 
@@ -1294,7 +1293,6 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
          *
          * @return the response
          */
-        @SuppressWarnings("PMD.PublicMemberInNonPublicType")
         public HttpResponse doIndex() {
             triggerCount++;
             return HttpResponses.text("triggered");

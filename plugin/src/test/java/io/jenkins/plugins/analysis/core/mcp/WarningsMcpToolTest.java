@@ -62,11 +62,6 @@ class WarningsMcpToolTest {
             assertThat(response.isError()).isFalse();
             assertThat(response.content()).hasSize(1);
             assertThat(response.content().get(0).type()).isEqualTo("text");
-            assertThat(response.content())
-                    .first()
-                    .isInstanceOfSatisfying(McpSchema.TextContent.class, textContent ->
-                            assertThat(textContent.type()).isEqualTo("text")
-                    );
 
             DocumentContext documentContext = JsonPath.using(Configuration.defaultConfiguration())
                     .parse(((McpSchema.TextContent) response.content().get(0)).text());
@@ -78,6 +73,25 @@ class WarningsMcpToolTest {
             assertThat(warningsAction).isInstanceOf(List.class);
             assertThat(((List<?>) warningsAction).size())
                     .isEqualTo(warningsResult.getIssues().size());
+        }
+        try (var client = jenkinsMcpClientBuilder.jenkins(jenkins).build()) {
+            McpSchema.CallToolRequest request = new McpSchema.CallToolRequest(
+                    "getWarnings", Map.of("jobFullName", j.getFullName(),
+                    "checkId", "checkstyle"));
+
+            var response = client.callTool(request);
+
+            // Assert response
+            assertThat(response.isError()).isFalse();
+            assertThat(response.content()).hasSize(1);
+            assertThat(response.content().get(0).type()).isEqualTo("text");
+
+            DocumentContext documentContext = JsonPath.using(Configuration.defaultConfiguration())
+                    .parse(((McpSchema.TextContent) response.content().get(0)).text());
+
+            var result = documentContext.read("$.result", Map.class);
+
+            assertThat(result.keySet()).isEqualTo(Set.of("checkstyle"));
         }
         try (var client = jenkinsMcpClientBuilder.jenkins(jenkins).build()) {
             McpSchema.CallToolRequest request = new McpSchema.CallToolRequest(
