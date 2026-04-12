@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout">
+    <l:userExperimentalFlag var="newBuildPage" flagClassName="jenkins.model.experimentalflags.NewBuildPageUserExperimentalFlag" />
+
+    <!-- This file can removed once newBuildPage is enabled by default -->
+
+    <j:if test="${!newBuildPage}">
+        <j:set var="url" value="${h.getNearestAncestorUrl(request2, it)}" />
+        <l:task icon="${action.iconFileName}" title="${action.displayName}" href="${url}/${action.urlName}" />
+    </j:if>
+</j:jelly>
