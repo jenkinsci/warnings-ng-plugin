@@ -50,7 +50,7 @@
 
     <!-- Jenkins Plug-in Dependencies Versions -->
     <flexible-publish.version>0.16.1</flexible-publish.version>
-    <form-element-path.version>1.11</form-element-path.version>
+    <form-element-path.version>1.12</form-element-path.version>
 
     <!-- Maven Surefire ArgLine -->
     <argLine>-Djava.awt.headless=true -Xmx1024m -Djenkins.test.timeout=1000 --add-opens java.base/java.lang=ALL-UNNAMED
