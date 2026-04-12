@@ -22,6 +22,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,8 +34,9 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import jenkins.MasterToSlaveFileCallable;
-
+import io.jenkins.plugins.analysis.core.filter.FileInclusionFilter;
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
+import io.jenkins.plugins.analysis.core.model.FileNameFilter;
 import io.jenkins.plugins.analysis.core.model.ReportLocations;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.Tool;
@@ -71,6 +73,7 @@ class IssuesScanner {
     private final Charset sourceCodeEncoding;
     private final Tool tool;
     private final List<RegexpFilter> filters;
+    private final FileInclusionFilter filesFilter;
     private final TaskListener listener;
     private final String scm;
     private final BlameMode blameMode;
@@ -88,13 +91,15 @@ class IssuesScanner {
     }
 
     @SuppressWarnings("checkstyle:ParameterNumber")
-    IssuesScanner(final Tool tool, final List<RegexpFilter> filters, final Charset sourceCodeEncoding,
+    IssuesScanner(final Tool tool, final List<RegexpFilter> filters, final FileInclusionFilter filesFilter,
+            final Charset sourceCodeEncoding,
             final FilePath workspace, final Set<String> sourceDirectories,
             final SourceCodeRetention sourceCodeRetention, final Run<?, ?> run,
             final FilePath jenkinsRootDir, final TaskListener listener,
             final String scm, final BlameMode blameMode, final PostProcessingMode postProcessingMode,
             final boolean quiet, final String sourcePathPrefix, final String targetPathPrefix) {
         this.filters = new ArrayList<>(filters);
+        this.filesFilter = filesFilter;
         this.sourceCodeEncoding = sourceCodeEncoding;
         this.tool = tool;
         this.workspace = workspace;
@@ -146,7 +151,17 @@ class IssuesScanner {
         }
         else {
             report.logInfo("Skipping post processing");
-            return new AnnotatedReport(tool.getActualId(), filter(report, filters));
+            FileNameFilter filterName = null;
+            if (filesFilter != null) {
+                String filePath = filesFilter.getFileName();
+                if (filePath != null) {
+                    FilePath filesFilterPath = new FilePath(workspace, filePath);
+                    String content = filesFilterPath.readToString();
+                    List<String> lines = Arrays.asList(content.split("\\r?\\n"));
+                    filterName = new FileNameFilter(lines);
+                }
+            }
+            return new AnnotatedReport(tool.getActualId(), filter(report, filters, filterName));
         }
     }
 
@@ -156,7 +171,7 @@ class IssuesScanner {
             linesLookAhead = scanningTool.getLinesLookAhead();
         }
         return new ReportPostProcessor(tool.getActualId(), report, sourceCodeEncoding.name(),
-                createBlamer(report), filters, getPermittedSourceDirectories(), sourceDirectories,
+                createBlamer(report), filters, filesFilter, getPermittedSourceDirectories(), sourceDirectories,
                 postProcessingMode, linesLookAhead, sourcePathPrefix, targetPathPrefix);
     }
 
@@ -230,7 +245,8 @@ class IssuesScanner {
         return StringUtils.EMPTY;
     }
 
-    private static Report filter(final Report report, final List<RegexpFilter> filters) {
+    private static Report filter(final Report report, final List<RegexpFilter> filters,
+            final FileNameFilter filterName) {
         int actualFilterSize = 0;
         var builder = new IssueFilterBuilder();
         for (RegexpFilter filter : filters) {
@@ -239,21 +255,31 @@ class IssuesScanner {
                 actualFilterSize++;
             }
         }
+
         var filtered = report.filter(builder.build());
+        var result = filtered;
+
+        if (filterName != null) {
+            result = filtered.filter(filterName);
+            actualFilterSize++;
+        }
+
         if (actualFilterSize > 0) {
             filtered.logInfo(
                     "Applying %d filters on the set of %d issues (%d issues have been removed, %d issues will be published)",
-                    filters.size(), report.size(), report.size() - filtered.size(), filtered.size());
+                    actualFilterSize, report.size(), report.size() - filtered.size(), result.size());
         }
         else {
-            filtered.logInfo("No filter has been set, publishing all %d issues", filtered.size());
+            filtered.logInfo("No filter has been set, publishing all %d issues", result.size());
         }
-        return filtered;
+        return result;
     }
 
     /**
-     * Post processes the report on the build agent. Assigns absolute paths, package names, and module names and
-     * computes fingerprints for each issue. Finally, for each file the SCM blames are computed.
+     * Post processes the report on the build agent. Assigns absolute paths, package
+     * names, and module names and
+     * computes fingerprints for each issue. Finally, for each file the SCM blames
+     * are computed.
      */
     @SuppressWarnings("checkstyle:ClassDataAbstractionCoupling")
     private static class ReportPostProcessor extends MasterToSlaveFileCallable<AnnotatedReport> {
@@ -268,15 +294,18 @@ class IssuesScanner {
         private final Set<String> requestedSourceDirectories;
         private final PostProcessingMode postProcessingMode;
         private final List<RegexpFilter> filters;
+        private final FileInclusionFilter filesFilter;
         private final int linesLookAhead;
         private final String sourcePathPrefix;
         private final String targetPathPrefix;
 
         @SuppressWarnings("checkstyle:ParameterNumber")
         ReportPostProcessor(final String id, final Report report, final String sourceCodeEncoding,
-                            final Blamer blamer, final List<RegexpFilter> filters, final Set<String> permittedSourceDirectories,
-                            final Set<String> requestedSourceDirectories, final PostProcessingMode postProcessingMode, final int linesLookAhead,
-                            final String sourcePathPrefix, final String targetPathPrefix) {
+                final Blamer blamer, final List<RegexpFilter> filters, final FileInclusionFilter filesFilter,
+                final Set<String> permittedSourceDirectories,
+                final Set<String> requestedSourceDirectories, final PostProcessingMode postProcessingMode,
+                final int linesLookAhead,
+                final String sourcePathPrefix, final String targetPathPrefix) {
             super();
 
             this.id = id;
@@ -284,6 +313,7 @@ class IssuesScanner {
             this.sourceCodeEncoding = sourceCodeEncoding;
             this.blamer = blamer;
             this.filters = filters;
+            this.filesFilter = filesFilter;
             this.permittedSourceDirectories = permittedSourceDirectories;
             this.requestedSourceDirectories = requestedSourceDirectories;
             this.postProcessingMode = postProcessingMode;
@@ -303,7 +333,23 @@ class IssuesScanner {
                 originalReport.logInfo(SKIPPING_POST_PROCESSING);
             }
 
-            Report filtered = filter(originalReport, filters); // the filters may depend on the resolved paths
+            FileNameFilter filterName = null;
+            if (filesFilter != null) {
+                String filePath = filesFilter.getFileName();
+                if (filePath != null) {
+                    FilePath workspacePath = new FilePath(workspace);
+                    FilePath fileFilterPath = workspacePath.child(filePath);
+                    try {
+                        String content = fileFilterPath.readToString();
+                        List<String> lines = Arrays.asList(content.split("\\r?\\n"));
+                        filterName = new FileNameFilter(lines);
+                    } catch (IOException | InterruptedException e) {
+                        originalReport.logError("Unable to read the filesFilter");
+                    }
+                }
+            }
+            Report filtered = filter(originalReport, filters, filterName); // the filters may depend on the resolved
+                                                                            // paths
 
             createFingerprints(filtered);
 
