@@ -157,6 +157,17 @@ class SeverityTrendChartTest {
                 .isArray().hasSize(4);
     }
 
+    @Test
+    void shouldReturnEmptyModelWhenAggregatingNoHistories() {
+        var chart = new SeverityTrendChart();
+
+        var model = chart.aggregate(List.of(), new ChartModelConfiguration(AxisType.DATE));
+
+        assertThatJson(model).node("series").isArray().isEmpty();
+        assertThatJson(model).node("domainAxisLabels").isArray().isEmpty();
+        assertThatJson(model).node("buildNumbers").isArray().isEmpty();
+    }
+
     private void verifySeries(final LineSeries series, final Severity severity, final int... values) {
         assertThatJson(series).node("name").isEqualTo(LocalizedSeverity.getLocalizedString(severity));
         for (int value : values) {

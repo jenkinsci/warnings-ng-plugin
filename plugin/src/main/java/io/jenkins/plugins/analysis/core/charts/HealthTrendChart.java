@@ -37,6 +37,7 @@ public class HealthTrendChart implements TrendChart {
         var dataSet = builder.createDataSet(configuration, results);
 
         var model = new LinesChartModel(dataSet);
+        model.setRangeMin(0);
 
         if (healthDescriptor.isEnabled()) {
             var healthy = createSeries(Messages.Healthy_Name(), JenkinsPalette.GREEN);

@@ -45,6 +45,7 @@ public class ToolsTrendChart implements TrendChart {
         var lineModel = builder.createDataSet(configuration, results);
 
         var model = new LinesChartModel(lineModel);
+        model.setRangeMin(0);
 
         int index = 0;
         for (String toolId : lineModel.getDataSetIds()) {
