@@ -1,7 +1,7 @@
 package io.jenkins.plugins.analysis.core.util;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
@@ -97,7 +97,7 @@ public class AffectedFilesResolver {
             var zipFile = getZipFile(build, fileName);
             var inputZipFile = new FilePath(zipFile.toFile());
             inputZipFile.unzip(unzippedSourcesDir);
-            StringUtils.removeEnd(zipFile.toString(), ZIP_EXTENSION);
+            Strings.CS.removeEnd(zipFile.toString(), ZIP_EXTENSION);
             var sourceFile = tempDir.resolve(FilenameUtils.getName(fileName));
 
             return Files.newInputStream(sourceFile);

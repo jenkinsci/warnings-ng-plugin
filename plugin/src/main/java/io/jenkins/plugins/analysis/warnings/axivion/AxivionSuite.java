@@ -214,7 +214,7 @@ public final class AxivionSuite extends Tool {
 
     private UsernamePasswordCredentials withValidCredentials(final Item context) {
         final List<StandardUsernamePasswordCredentials> all =
-                CredentialsProvider.lookupCredentials(
+                CredentialsProvider.lookupCredentialsInItem(
                         StandardUsernamePasswordCredentials.class,
                         context,
                         null,
@@ -389,7 +389,7 @@ public final class AxivionSuite extends Tool {
             }
 
             if (CredentialsMatchers.firstOrNull(
-                    CredentialsProvider.lookupCredentials(
+                    CredentialsProvider.lookupCredentialsInItem(
                             StandardUsernamePasswordCredentials.class,
                             item,
                             null,
@@ -427,7 +427,7 @@ public final class AxivionSuite extends Tool {
                 }
             }
 
-            final ListBoxModel credentials = CredentialsProvider.listCredentials(
+            final ListBoxModel credentials = CredentialsProvider.listCredentialsInItem(
                     StandardUsernamePasswordCredentials.class,
                     item,
                     null,

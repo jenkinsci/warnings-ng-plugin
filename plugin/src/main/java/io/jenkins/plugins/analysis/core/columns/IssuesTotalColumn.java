@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.core.columns;
 
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.util.VisibleForTesting;
@@ -152,7 +151,7 @@ public class IssuesTotalColumn extends ListViewColumn {
     }
 
     private LabelProviderFactory getLabelProviderFactory() {
-        return ObjectUtils.defaultIfNull(labelProviderFactory, new LabelProviderFactory());
+        return Objects.requireNonNullElseGet(labelProviderFactory, LabelProviderFactory::new);
     }
 
     /**
@@ -184,7 +183,7 @@ public class IssuesTotalColumn extends ListViewColumn {
      * @param job
      *         the job to select
      *
-     * @return the number of issues for a tool in a given job
+     * @return the list of issues for a tool in a given job
      */
     @SuppressWarnings("WeakerAccess") // called bv view
     public List<AnalysisResultDescription> getDetails(final Job<?, ?> job) {

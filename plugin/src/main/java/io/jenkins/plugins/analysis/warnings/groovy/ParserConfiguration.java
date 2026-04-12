@@ -30,7 +30,7 @@ import io.jenkins.plugins.util.JenkinsFacade;
  */
 @Extension
 @Symbol("warningsParsers")
-public class ParserConfiguration extends GlobalConfigurationItem {
+public final class ParserConfiguration extends GlobalConfigurationItem {
     private List<GroovyParser> parsers = new ArrayList<>();
     private boolean consoleLogScanningPermitted;
 
