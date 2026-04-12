@@ -28,7 +28,7 @@ import io.jenkins.plugins.util.QualityGate;
  *
  * @author Ullrich Hafner
  */
-public class WarningsQualityGate extends QualityGate {
+public final class WarningsQualityGate extends QualityGate {
     @Serial
     private static final long serialVersionUID = -3560049414586166711L;
 

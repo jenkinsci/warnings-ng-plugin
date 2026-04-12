@@ -69,12 +69,13 @@ class ReportXmlStream extends AbstractXmlStream<Report> {
             super(xs);
         }
 
+        @SuppressWarnings("rawtypes")
         @Override
         public boolean canConvert(final Class type) {
             return type == LineRangeList.class;
         }
 
-        @SuppressWarnings("CastToConcreteClass")
+        @SuppressWarnings({"CastToConcreteClass", "rawtypes"})
         @Override
         protected void populateCollection(final HierarchicalStreamReader reader,
                 final UnmarshallingContext context, final Collection collection) {
@@ -83,6 +84,7 @@ class ReportXmlStream extends AbstractXmlStream<Report> {
             ((LineRangeList) collection).trim();
         }
 
+        @SuppressWarnings("rawtypes")
         @Override
         protected Object createCollection(final Class type) {
             return new LineRangeList();
@@ -104,6 +106,7 @@ class ReportXmlStream extends AbstractXmlStream<Report> {
             return Severity.valueOf(reader.getValue());
         }
 
+        @SuppressWarnings("rawtypes")
         @Override
         public boolean canConvert(final Class type) {
             return type == Severity.class;
@@ -132,6 +135,7 @@ class ReportXmlStream extends AbstractXmlStream<Report> {
             return ref.unmarshal(reader, context);
         }
 
+        @SuppressWarnings("rawtypes")
         @Override
         public boolean canConvert(final Class type) {
             return type == Report.class;

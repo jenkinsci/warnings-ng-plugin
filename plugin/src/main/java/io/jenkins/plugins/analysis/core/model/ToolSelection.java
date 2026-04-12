@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.core.model;
 
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.util.VisibleForTesting;
@@ -15,8 +16,8 @@ import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.verb.POST;
 import hudson.Extension;
-import hudson.model.AbstractDescribableImpl;
 import hudson.model.BuildableItem;
+import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.model.Item;
 import hudson.util.ComboBoxModel;
@@ -29,8 +30,9 @@ import io.jenkins.plugins.util.JenkinsFacade;
  *
  * @author Ullrich Hafner
  */
-public class ToolSelection extends AbstractDescribableImpl<ToolSelection> {
+public class ToolSelection implements Describable<ToolSelection> {
     private String id = StringUtils.EMPTY;
+    private final JenkinsFacade jenkins = new JenkinsFacade();
 
     /** Creates a new instance of {@link ToolSelection}. */
     @DataBoundConstructor
@@ -56,7 +58,7 @@ public class ToolSelection extends AbstractDescribableImpl<ToolSelection> {
 
     @Override
     public ToolSelectionDescriptor getDescriptor() {
-        return (ToolSelectionDescriptor) super.getDescriptor();
+        return (ToolSelectionDescriptor) jenkins.getDescriptorOrDie(getClass());
     }
 
     /**
@@ -74,7 +76,7 @@ public class ToolSelection extends AbstractDescribableImpl<ToolSelection> {
     public static Predicate<ResultAction> createToolFilter(final boolean canSelectTools,
             final List<ToolSelection> selectedTools) {
         if (canSelectTools) {
-            return action -> StringUtils.containsAnyIgnoreCase(action.getId(), getIds(selectedTools));
+            return action -> Strings.CI.containsAny(action.getId(), getIds(selectedTools));
         }
         else {
             return jobAction -> true;

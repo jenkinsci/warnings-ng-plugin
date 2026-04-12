@@ -45,7 +45,9 @@ public class IssuesStatistics implements Serializable {
 
     private final int fixedSize;
 
+    @SuppressWarnings("serial")
     private final Map<Severity, Integer> totalSizeBySeverity = new HashMap<>();
+    @SuppressWarnings("serial")
     private final Map<Severity, Integer> newSizeBySeverity = new HashMap<>();
 
     @SuppressWarnings("checkstyle:ParameterNumber")

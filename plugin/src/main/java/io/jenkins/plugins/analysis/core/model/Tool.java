@@ -17,8 +17,8 @@ import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.verb.POST;
 import org.jenkinsci.Symbol;
 import hudson.FilePath;
-import hudson.model.AbstractDescribableImpl;
 import hudson.model.BuildableItem;
+import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.model.Item;
 import hudson.model.Run;
@@ -36,7 +36,7 @@ import io.jenkins.plugins.util.ValidationUtilities;
  * @author Ullrich Hafner
  * @see AnalysisModelParser
  */
-public abstract class Tool extends AbstractDescribableImpl<Tool> implements Serializable {
+public abstract class Tool implements Describable<Tool>, Serializable {
     @Serial
     private static final long serialVersionUID = 3305739700153168629L;
     private static final ValidationUtilities VALIDATION_UTILITIES = new ValidationUtilities();

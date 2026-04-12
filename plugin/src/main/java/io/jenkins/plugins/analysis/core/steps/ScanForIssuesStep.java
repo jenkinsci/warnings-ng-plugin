@@ -273,7 +273,9 @@ public class ScanForIssuesStep extends Step {
         private final String sourceCodeEncoding;
         private final boolean isBlameDisabled;
         private final boolean skipPostProcessing;
+        @SuppressWarnings("serial")
         private final List<RegexpFilter> filters;
+        @SuppressWarnings("serial")
         private final Set<String> sourceDirectories;
         private final String scm;
         private final boolean quiet;

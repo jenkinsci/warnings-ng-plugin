@@ -52,7 +52,7 @@ import io.jenkins.plugins.util.ValidationUtilities;
  */
 @SuppressFBWarnings(value = "SE, DESERIALIZATION_GADGET", justification = "transient fields are restored using a Jenkins callback (or are checked for null)")
 @SuppressWarnings({"PMD.GodClass", "PMD.CyclomaticComplexity", "checkstyle:ClassFanOutComplexity", "checkstyle:ClassDataAbstractionCoupling"})
-public class AnalysisResult implements Serializable, StaticAnalysisRun {
+public final class AnalysisResult implements Serializable, StaticAnalysisRun {
     @Serial
     private static final long serialVersionUID = 1110545450292087475L;
 
@@ -65,8 +65,11 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
 
     private IssuesStatistics totals;
 
+    @SuppressWarnings("serial")
     private final Map<String, Integer> sizePerOrigin;
+    @SuppressWarnings("serial")
     private final List<String> errors;
+    @SuppressWarnings("serial")
     private final List<String> messages;
     /**
      * Reference run to compute the issues difference: since a run cannot be persisted directly, the IDs are only
@@ -226,7 +229,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      *         determines whether the result should be persisted in the build folder
      */
     @VisibleForTesting
-    @SuppressWarnings({"checkstyle:ParameterNumber", "PMD.ConstructorCallsOverridableMethod"})
+    @SuppressWarnings({"checkstyle:ParameterNumber"})
     protected AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report,
             final Blames blames, final RepositoryStatistics repositoryStatistics,
             final QualityGateResult qualityGateResult, final Map<String, Integer> sizePerOrigin,

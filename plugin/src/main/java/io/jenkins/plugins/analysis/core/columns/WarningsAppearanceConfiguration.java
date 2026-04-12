@@ -23,7 +23,7 @@ import io.jenkins.plugins.util.JenkinsFacade;
  */
 @Extension
 @Symbol("warnings")
-public class WarningsAppearanceConfiguration extends GlobalConfigurationItem {
+public final class WarningsAppearanceConfiguration extends GlobalConfigurationItem {
     /**
      * Returns the singleton instance of this {@link WarningsAppearanceConfiguration}.
      *

@@ -67,10 +67,11 @@ public class RecordIssuesStep extends Step implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
     private static final ValidationUtilities VALIDATION_UTILITIES = new ValidationUtilities();
-
+    @SuppressWarnings("serial")
     private List<Tool> analysisTools = new ArrayList<>();
 
     private String sourceCodeEncoding = StringUtils.EMPTY;
+    @SuppressWarnings("serial")
     private Set<SourceCodeDirectory> sourceDirectories = new HashSet<>(); // @since 9.11.0
     private SourceCodeRetention sourceCodeRetention = SourceCodeRetention.EVERY_BUILD;
 
@@ -79,6 +80,7 @@ public class RecordIssuesStep extends Step implements Serializable {
     private int healthy;
     private int unhealthy;
     private Severity minimumSeverity = Severity.WARNING_LOW;
+    @SuppressWarnings("serial")
 
     private List<RegexpFilter> filters = new ArrayList<>();
 
@@ -95,7 +97,7 @@ public class RecordIssuesStep extends Step implements Serializable {
     private String id = StringUtils.EMPTY;
     private String name = StringUtils.EMPTY;
     private String icon = StringUtils.EMPTY; // @since 12.0.0: by default no custom icon is set
-
+    @SuppressWarnings("serial")
     private List<WarningsQualityGate> qualityGates = new ArrayList<>();
 
     private TrendChartType trendChartType = TrendChartType.AGGREGATION_TOOLS;
