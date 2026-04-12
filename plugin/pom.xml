@@ -38,7 +38,8 @@
     <maven.deploy.skip>false</maven.deploy.skip>
 
     <!-- Library Dependencies Versions -->
-    <analysis-model-tests.version>13.10.0</analysis-model-tests.version>
+    <analysis-model-library.version>14.2.0-958.v640d7a_650a_17</analysis-model-library.version>
+    <analysis-model-tests.version>14.2.0</analysis-model-tests.version>
     <pull-request-monitoring.version>335.v525cd64ec76b_</pull-request-monitoring.version>
 
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
@@ -81,6 +82,7 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>analysis-model-api</artifactId>
+      <version>${analysis-model-library.version}</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
