@@ -5,8 +5,6 @@ import javax.inject.Inject;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 import org.jenkinsci.test.acceptance.docker.DockerContainer;
 import org.jenkinsci.test.acceptance.docker.DockerContainerHolder;
 import org.jenkinsci.test.acceptance.docker.fixtures.JavaGitContainer;
@@ -50,7 +48,6 @@ import static io.jenkins.plugins.analysis.warnings.Assertions.*;
  */
 @WithPlugins("warnings-ng")
 @SuppressWarnings({"checkstyle:ClassFanOutComplexity", "PMD.SystemPrintln"})
-@SuppressFBWarnings("BC")
 public class WarningsPluginUiTest extends UiTest {
     private static final String SOURCE_VIEW_FOLDER = "/source-view/";
 

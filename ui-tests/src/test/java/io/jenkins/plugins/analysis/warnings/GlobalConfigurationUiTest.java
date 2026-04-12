@@ -3,8 +3,6 @@ package io.jenkins.plugins.analysis.warnings;
 import org.junit.Test;
 import org.openqa.selenium.NoSuchElementException;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -27,7 +25,6 @@ import static io.jenkins.plugins.analysis.warnings.Assertions.*;
  * @author Lukas Kirner
  */
 @WithPlugins("warnings-ng")
-@SuppressFBWarnings("BC")
 public class GlobalConfigurationUiTest extends UiTest {
     private static final String GCC_ID = "gcc";
 

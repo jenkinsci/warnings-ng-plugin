@@ -111,7 +111,7 @@ class IssuesScanner {
         this.targetPathPrefix = targetPathPrefix;
     }
 
-    public AnnotatedReport scan() throws IOException, InterruptedException {
+    AnnotatedReport scan() throws IOException, InterruptedException {
         var logger = new LogHandler(listener, tool.getActualName());
         logger.setQuiet(quiet);
         var report = tool.scan(run, workspace, sourceCodeEncoding, logger);

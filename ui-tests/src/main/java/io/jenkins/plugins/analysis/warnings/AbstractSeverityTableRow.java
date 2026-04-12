@@ -13,6 +13,7 @@ import edu.umd.cs.findbugs.annotations.CheckForNull;
  * @author Anna-Maria Hardi
  * @author Elvira Hauer
  */
+@SuppressWarnings("PMD.PublicMemberInNonPublicType")
 abstract class AbstractSeverityTableRow extends BaseIssuesTableRow {
     private static final String SEVERITY = "Severity";
     private static final String PACKAGE = "Package";
@@ -48,7 +49,7 @@ abstract class AbstractSeverityTableRow extends BaseIssuesTableRow {
      *
      * @return the representation of the filtered AnalysisResult
      */
-    public AnalysisResult clickOnSeverityLink() {
+    AnalysisResult clickOnSeverityLink() {
         return getTable().clickFilterLinkOnSite(getCell(SEVERITY).findElement(A_TAG));
     }
 

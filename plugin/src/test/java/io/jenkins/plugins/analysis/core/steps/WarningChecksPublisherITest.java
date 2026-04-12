@@ -505,8 +505,9 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Capturing checks publisher for inspection of checks created during a run.
+     * Capturing GitHub checks publisher for inspection of checks created during a run.
      */
+    @SuppressWarnings("PMD.PublicMemberInNonPublicType")
     @TestExtension
     public static class CapturingChecksPublisherTestExtension extends CapturingChecksPublisher.Factory {
         // activate test extension
