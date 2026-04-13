@@ -130,7 +130,8 @@ public class GitForensicsUiTest extends UiTest {
     }
 
     /** Verifies that freestyle jobs will correctly blame issues. */
-    @Test @Ignore
+    @Test
+    @Ignore
     public void shouldBlameOneIssueWithFreestyle() throws IOException {
         try (GitRepo repo = setupInitialGitRepository()) {
             repo.changeAndCommitFile("Test.java", "public class Test {}", "commit");
@@ -194,21 +195,32 @@ public class GitForensicsUiTest extends UiTest {
     /**
      * Verifies that freestyle jobs will correctly blame issues. This test handles multiple issue pages.
      */
-    @Test @Ignore
+    @Test
+    @Ignore
     public void shouldBlameElevenIssuesWithFreestyle() throws IOException {
         try (GitRepo repo = createRepoForMaster()) {
             Map<String, String> commits = commitDifferentFilesToGitRepository(repo);
-            repo.changeAndCommitFile("warnings.txt", "[javac] Test.java:1: warning: Test Warning for Jenkins\n"
-                            + "[javac] Test.java:2: warning: Test Warning for Jenkins\n"
-                            + "[javac] Test.java:3: warning: Test Warning for Jenkins\n"
-                            + "[javac] LoremIpsum.java:1: warning: Another Warning for Jenkins\n"
-                            + "[javac] LoremIpsum.java:2: warning: Another Warning for Jenkins\n"
-                            + "[javac] LoremIpsum.java:3: warning: Another Warning for Jenkins\n"
-                            + "[javac] LoremIpsum.java:4: warning: Another Warning for Jenkins\n"
-                            + "[javac] Bob.java:1: warning: Bobs Warning for Jenkins\n"
-                            + "[javac] Bob.java:2: warning: Bobs Warning for Jenkins\n"
-                            + "[javac] Bob.java:3: warning: Bobs Warning for Jenkins",
-                    "commit");
+            repo.changeAndCommitFile("warnings.txt", """
+                    [javac] Test.java:1: warning: Test Warning for Jenkins
+                    "
+                    [javac] Test.java:2: warning: Test Warning for Jenkins
+                    "
+                    [javac] Test.java:3: warning: Test Warning for Jenkins
+                    "
+                    [javac] LoremIpsum.java:1: warning: Another Warning for Jenkins
+                    "
+                    [javac] LoremIpsum.java:2: warning: Another Warning for Jenkins
+                    "
+                    [javac] LoremIpsum.java:3: warning: Another Warning for Jenkins
+                    "
+                    [javac] LoremIpsum.java:4: warning: Another Warning for Jenkins
+                    "
+                    [javac] Bob.java:1: warning: Bobs Warning for Jenkins
+                    "
+                    [javac] Bob.java:2: warning: Bobs Warning for Jenkins
+                    "
+                    [javac] Bob.java:3: warning: Bobs Warning for Jenkins"
+                    """, "commit");
 
             Build build = generateFreeStyleJob(repo);
             build.open();
@@ -224,7 +236,8 @@ public class GitForensicsUiTest extends UiTest {
     }
 
     /** Verifies that freestyle jobs will correctly show Git forensics statistics. */
-    @Test @Ignore
+    @Test
+    @Ignore
     public void shouldShowGitForensicsOneIssue() throws IOException {
         try (GitRepo repo = setupInitialGitRepository()) {
             repo.changeAndCommitFile("Test.java", "public class Test {}", "commit");
@@ -246,7 +259,8 @@ public class GitForensicsUiTest extends UiTest {
     }
 
     /** Verifies that pipelines will correctly show Git forensics statistics. */
-    @Test @Ignore
+    @Test
+    @Ignore
     public void shouldShowGitForensicsMultipleIssuesWithPipeline() throws IOException {
         try (GitRepo repo = createRepoForMaster()) {
             commitDifferentFilesToGitRepository(repo);
@@ -289,20 +303,23 @@ public class GitForensicsUiTest extends UiTest {
      * Verifies that freestyle jobs will correctly show Git forensics statistics. This test handles multiple issue
      * pages.
      */
-    @Test @Ignore
+    @Test
+    @Ignore
     public void shouldShowGitForensicsMultipleIssuesWithFreestyle() throws IOException {
         try (GitRepo repo = createRepoForMaster()) {
             commitDifferentFilesToGitRepository(repo);
-            repo.changeAndCommitFile("warnings.txt", "[javac] Test.java:1: warning: Test Warning for Jenkins\n"
-                    + "[javac] Test.java:2: warning: Test Warning for Jenkins\n"
-                    + "[javac] Test.java:3: warning: Test Warning for Jenkins\n"
-                    + "[javac] LoremIpsum.java:1: warning: Another Warning for Jenkins\n"
-                    + "[javac] LoremIpsum.java:2: warning: Another Warning for Jenkins\n"
-                    + "[javac] LoremIpsum.java:3: warning: Another Warning for Jenkins\n"
-                    + "[javac] LoremIpsum.java:4: warning: Another Warning for Jenkins\n"
-                    + "[javac] Bob.java:1: warning: Bobs Warning for Jenkins\n"
-                    + "[javac] Bob.java:2: warning: Bobs Warning for Jenkins\n"
-                    + "[javac] Bob.java:3: warning: Bobs Warning for Jenkins", "commit");
+            repo.changeAndCommitFile("warnings.txt", """
+                    [javac] Test.java:1: warning: Test Warning for Jenkins
+                    [javac] Test.java:2: warning: Test Warning for Jenkins
+                    [javac] Test.java:3: warning: Test Warning for Jenkins
+                    [javac] LoremIpsum.java:1: warning: Another Warning for Jenkins
+                    [javac] LoremIpsum.java:2: warning: Another Warning for Jenkins
+                    [javac] LoremIpsum.java:3: warning: Another Warning for Jenkins
+                    [javac] LoremIpsum.java:4: warning: Another Warning for Jenkins
+                    [javac] Bob.java:1: warning: Bobs Warning for Jenkins
+                    [javac] Bob.java:2: warning: Bobs Warning for Jenkins
+                    [javac] Bob.java:3: warning: Bobs Warning for Jenkins
+                    """, "commit");
 
             Build build = generateFreeStyleJob(repo);
             build.open();
@@ -327,21 +344,24 @@ public class GitForensicsUiTest extends UiTest {
         try (GitRepo repo = createRepoForMaster()) {
             commitDifferentFilesToGitRepository(repo);
             repo.setIdentity("Alice Miller", "alice@miller");
-            repo.changeAndCommitFile("LoremIpsum.java", "public class LoremIpsum {\n"
-                    + "    public LoremIpsum() {\n"
-                    + "        Log.log(\"Lorem ipsum dolor sit amet\");"
-                    + "    }\n"
-                    + "}", "commit");
-            repo.changeAndCommitFile("warnings.txt", "[javac] Test.java:1: warning: Test Warning for Jenkins\n"
-                            + "[javac] Test.java:2: warning: Test Warning for Jenkins\n"
-                            + "[javac] Test.java:3: warning: Test Warning for Jenkins\n"
-                            + "[javac] LoremIpsum.java:1: warning: Another Warning for Jenkins\n"
-                            + "[javac] LoremIpsum.java:2: warning: Another Warning for Jenkins\n"
-                            + "[javac] LoremIpsum.java:3: warning: Another Warning for Jenkins\n"
-                            + "[javac] LoremIpsum.java:4: warning: Another Warning for Jenkins\n"
-                            + "[javac] Bob.java:1: warning: Bobs Warning for Jenkins\n"
-                            + "[javac] Bob.java:2: warning: Bobs Warning for Jenkins\n"
-                            + "[javac] Bob.java:3: warning: Bobs Warning for Jenkins",
+            repo.changeAndCommitFile("LoremIpsum.java", """
+                    public class LoremIpsum {
+                        public LoremIpsum() {
+                            Log.log("Lorem ipsum dolor sit amet");
+                        }
+                    }
+                    """, "commit");
+            repo.changeAndCommitFile("warnings.txt", """
+                            [javac] Test.java:1: warning: Test Warning for Jenkins
+                            [javac] Test.java:2: warning: Test Warning for Jenkins
+                            [javac] Test.java:3: warning: Test Warning for Jenkins
+                            [javac] LoremIpsum.java:1: warning: Another Warning for Jenkins
+                            [javac] LoremIpsum.java:2: warning: Another Warning for Jenkins
+                            [javac] LoremIpsum.java:3: warning: Another Warning for Jenkins
+                            [javac] LoremIpsum.java:4: warning: Another Warning for Jenkins
+                            [javac] Bob.java:1: warning: Bobs Warning for Jenkins
+                            [javac] Bob.java:2: warning: Bobs Warning for Jenkins
+                            [javac] Bob.java:3: warning: Bobs Warning for Jenkins""",
                     "commit");
 
             Build build = generateFreeStyleJob(repo);

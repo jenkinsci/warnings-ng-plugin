@@ -22,7 +22,7 @@ import org.jenkinsci.test.acceptance.po.PostBuildStep;
  */
 @SuppressWarnings({"unused", "UnusedReturnValue", "PMD.GodClass", "PMD.ExcessivePublicCount"})
 @Describable("Record compiler warnings and static analysis results")
-public class IssuesRecorder extends AbstractStep implements PostBuildStep {
+public final class IssuesRecorder extends AbstractStep implements PostBuildStep {
     private final Control toolsRepeatable = findRepeatableAddButtonFor("tools");
     private final Control filtersRepeatable = findRepeatableAddButtonFor("filters");
     private final Control filterRegex = control("/filters/pattern");
@@ -525,7 +525,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     /**
      * Opens the advanced section.
      */
-    public final void openAdvancedOptions() {
+    public void openAdvancedOptions() {
         if (advancedButton != null && advancedButton.exists()) {
             advancedButton.click();
         }

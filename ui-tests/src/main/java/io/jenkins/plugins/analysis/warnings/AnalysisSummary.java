@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.warnings;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -24,7 +25,7 @@ import org.jenkinsci.test.acceptance.po.PageObject;
  * @author Michaela Reitschuster
  * @author Alexandra Wenzel
  */
-public class AnalysisSummary extends PageObject {
+public final class AnalysisSummary extends PageObject {
     private static final Pattern NUMBER = Pattern.compile("\\d+");
     private static final String AGGREGATION_MESSAGE = "Static analysis results from: ";
 
@@ -129,7 +130,7 @@ public class AnalysisSummary extends PageObject {
         for (WebElement result : results) {
             String message = result.getText();
             if (message.startsWith(AGGREGATION_MESSAGE)) {
-                String tools = StringUtils.removeStart(message, AGGREGATION_MESSAGE);
+                String tools = Strings.CS.removeStart(message, AGGREGATION_MESSAGE);
                 return Arrays.stream(tools.split(",", -1)).map(StringUtils::trim).collect(Collectors.toList());
             }
         }
@@ -328,7 +329,7 @@ public class AnalysisSummary extends PageObject {
 
         static QualityGateResult fromTextMessage(final String text) {
             for (QualityGateResult qualityGate : values()) {
-                if (StringUtils.containsIgnoreCase(text, qualityGate.name())) {
+                if (Strings.CI.contains(text, qualityGate.name())) {
                     return qualityGate;
                 }
             }
