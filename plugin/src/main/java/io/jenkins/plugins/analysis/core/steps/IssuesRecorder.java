@@ -45,7 +45,7 @@ import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import jenkins.model.Jenkins;
-
+import io.jenkins.plugins.analysis.core.filter.FileInclusionFilter;
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.HealthReportBuilder;
@@ -111,6 +111,7 @@ public class IssuesRecorder extends Recorder {
     private Severity minimumSeverity = Severity.WARNING_LOW;
 
     private List<RegexpFilter> filters = new ArrayList<>();
+    private FileInclusionFilter filesFilter;
 
     private boolean isEnabledForFailure;
     private boolean isAggregatingResults;
@@ -689,6 +690,21 @@ public class IssuesRecorder extends Recorder {
         this.filters = new ArrayList<>(filters);
     }
 
+    public FileInclusionFilter getFilesFilter() {
+        return this.filesFilter;
+    }
+
+    /**
+     * Sets the file path to read the files should be included in the recording.
+     *
+     * @param filePath
+     *         the file to load all the files inclusion
+     */
+    @DataBoundSetter
+    public void setFilesFilter(final String filePath) throws IOException {
+        this.filesFilter = new FileInclusionFilter(filePath);
+    }
+
     public void setChecksInfo(@CheckForNull final ChecksInfo checksInfo) {
         this.checksInfo = checksInfo;
     }
@@ -825,7 +841,7 @@ public class IssuesRecorder extends Recorder {
 
     private AnnotatedReport scanWithTool(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
             final Tool tool) throws IOException, InterruptedException {
-        var issuesScanner = new IssuesScanner(tool, getFilters(), getSourceCodeCharset(),
+        var issuesScanner = new IssuesScanner(tool, getFilters(), getFilesFilter(), getSourceCodeCharset(),
                 workspace, getSourceCodePaths(), getSourceCodeRetention(),
                 run, new FilePath(run.getRootDir()), listener,
                 scm, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED,
