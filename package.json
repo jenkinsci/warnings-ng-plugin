@@ -11,7 +11,7 @@
     "remark-preset-lint-recommended": "^7.0.0"
   },
   "devDependencies": {
-    "eslint": "^9.20.1",
+    "eslint": "^10.0.0",
     "eslint-config-standard": "^17.1.0",
     "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-node": "^11.1.0",

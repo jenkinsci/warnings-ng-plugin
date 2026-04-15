@@ -1,6 +1,6 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import hudson.Extension;
+import org.jenkinsci.plugins.variant.OptionalExtension;
 import hudson.Launcher;
 import hudson.matrix.MatrixAggregatable;
 import hudson.matrix.MatrixAggregator;
@@ -13,7 +13,7 @@ import hudson.model.BuildListener;
  *
  * @author Ullrich Hafner
  */
-@Extension(optional = true)
+@OptionalExtension(requireClasses = MatrixAggregatable.class)
 public class MatrixBridge implements MatrixAggregatable {
     @Override
     public MatrixAggregator createAggregator(final MatrixBuild build, final Launcher launcher, final BuildListener listener) {

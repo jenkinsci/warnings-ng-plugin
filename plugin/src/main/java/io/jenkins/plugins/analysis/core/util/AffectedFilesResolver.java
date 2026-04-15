@@ -1,7 +1,7 @@
 package io.jenkins.plugins.analysis.core.util;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
@@ -97,7 +97,7 @@ public class AffectedFilesResolver {
             var zipFile = getZipFile(build, fileName);
             var inputZipFile = new FilePath(zipFile.toFile());
             inputZipFile.unzip(unzippedSourcesDir);
-            StringUtils.removeEnd(zipFile.toString(), ZIP_EXTENSION);
+            Strings.CS.removeEnd(zipFile.toString(), ZIP_EXTENSION);
             var sourceFile = tempDir.resolve(FilenameUtils.getName(fileName));
 
             return Files.newInputStream(sourceFile);
@@ -250,7 +250,7 @@ public class AffectedFilesResolver {
             return PERMISSION_ENFORCER.isInWorkspace(sourceFile, workspace, permittedAbsolutePaths);
         }
 
-        public void copy(final String from, final String to) throws IOException, InterruptedException {
+        void copy(final String from, final String to) throws IOException, InterruptedException {
             var file = createFile(from);
             if (file.toVirtualFile().canRead()) {
                 file.zip(computeBuildFolderFileName(to));
@@ -260,7 +260,7 @@ public class AffectedFilesResolver {
             }
         }
 
-        public boolean existsInBuildFolder(final String fileName) {
+        boolean existsInBuildFolder(final String fileName) {
             try {
                 return computeBuildFolderFileName(fileName).exists();
             }

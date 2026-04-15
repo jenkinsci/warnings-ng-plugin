@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings.tasks;
 
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.IssueBuilder;
@@ -43,16 +44,16 @@ class TaskScanner {
     @SuppressWarnings("PMD.AvoidStringBufferField")
     private final StringBuilder errors = new StringBuilder();
 
-    /** Determines whether the tags are case sensitive or not. */
-    public enum CaseMode {
-        /** Tags are not case sensitive. */
+    /** Determines whether the tags are case-sensitive or not. */
+    enum CaseMode {
+        /** Tags are not case-sensitive. */
         IGNORE_CASE,
-        /** Tags are case sensitive. */
+        /** Tags are case-sensitive. */
         CASE_SENSITIVE
     }
 
     /** Determines whether tags are plain strings or regular expressions. */
-    public enum MatcherMode {
+    enum MatcherMode {
         /** Tags are interpreted as plain string. */
         STRING_MATCH,
         /** Tags are interpreted as regular expression. */
@@ -69,7 +70,7 @@ class TaskScanner {
      * @param lowTags
      *         tag identifiers indicating low priority
      * @param caseMode
-     *         if case should be ignored during matching
+     *         if the case should be ignored during matching
      * @param matcherMode
      *         if tag identifiers should be treated as regular expression
      */
@@ -121,7 +122,7 @@ class TaskScanner {
      *
      * @return the error messages
      */
-    public String getErrors() {
+    String getErrors() {
         return errors.toString();
     }
 
@@ -196,9 +197,10 @@ class TaskScanner {
      * @return the open tasks
      */
     @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE", justification = "https://github.com/spotbugs/spotbugs/issues/756")
-    public Report scan(final Path file, final Charset charset) {
-        try (Stream<String> lines = Files.lines(file, charset)) {
-            return scanTasks(lines.iterator(), new IssueBuilder().setFileName(file.toString()));
+    Report scan(final Path file, final Charset charset) {
+        try (Stream<String> lines = Files.lines(file, charset);
+                IssueBuilder issueBuilder = new IssueBuilder()) {
+            return scanTasks(lines.iterator(), issueBuilder.setFileName(file.toString()));
         }
         catch (IOException | UncheckedIOException exception) {
             var report = new Report();
@@ -256,7 +258,7 @@ class TaskScanner {
         var matcher = patterns.get(severity).matcher(line);
         if (matcher.matches() && matcher.groupCount() == 2) {
             var message = StringUtils.defaultString(matcher.group(2)).trim();
-            builder.setMessage(StringUtils.removeStart(message, ":").trim());
+            builder.setMessage(Strings.CS.removeStart(message, ":").trim());
 
             String tag = StringUtils.defaultString(matcher.group(1));
             if (isUppercase) {
@@ -275,7 +277,7 @@ class TaskScanner {
 
         private boolean ignore;
 
-        public boolean matches(final String line) {
+        boolean matches(final String line) {
             if (line.contains(IGNORE_BEGIN)) {
                 ignore = true;
             }

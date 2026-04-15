@@ -1,15 +1,16 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import org.openqa.selenium.WebElement;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
-
-import org.openqa.selenium.WebElement;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.PageObject;
@@ -20,7 +21,7 @@ import org.jenkinsci.test.acceptance.po.PageObject;
  * @author Lukas Kirner
  */
 @SuppressFBWarnings("EI")
-public class DashboardTable extends PageObject {
+public final class DashboardTable extends PageObject {
     private static final String EMPTY = "-";
 
     private final List<String> headers;
@@ -35,7 +36,6 @@ public class DashboardTable extends PageObject {
      *         the type of the result page (e.g., simian, checkstyle, cpd, etc.)
      */
     @SuppressFBWarnings("MC")
-    @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
     public DashboardTable(final Build parent, final URL url) {
         super(parent, url);
 
@@ -46,7 +46,7 @@ public class DashboardTable extends PageObject {
                 .filter(dom -> dom.getText().startsWith("Static analysis issues per tool and job"))
                 .flatMap(dom -> dom.findElements(by.tagName("table")).stream().skip(1))
                 .flatMap(dom -> dom.findElements(by.tagName("tr")).stream())
-                .collect(Collectors.toList());
+                .toList();
 
         headers = rows.stream()
                 .flatMap(dom -> dom.findElements(by.tagName("th")).stream())
@@ -56,7 +56,7 @@ public class DashboardTable extends PageObject {
                         return th.getText();
                     }
                     else {
-                        String src = images.get(0).getAttribute("src");
+                        String src = Objects.requireNonNull(images.getFirst().getAttribute("src"));
                         return src.substring(src.lastIndexOf('/'));
                     }
                 })
@@ -72,7 +72,7 @@ public class DashboardTable extends PageObject {
                         return Arrays.asList(entry.getText(), entry.getAttribute("href"));
                     }
                 }).collect(Collectors.toList()))
-                .collect(Collectors.toList());
+                .toList();
 
         table = lines.stream()
                 .collect(Collectors.toMap(entry -> entry.get(0).get(0),
@@ -100,7 +100,7 @@ public class DashboardTable extends PageObject {
     }
 
     /**
-     * Represents entry in dashboard table with warnings count and link to the plugin page.
+     * Represents an entry in the dashboard table with the warning count and a link to the plugin page.
      */
     public static class DashboardTableEntry {
         private final int warningsCount;

@@ -438,24 +438,25 @@ abstract class UiTest extends AbstractJUnitTest {
         groovyConfiguration.enterName(PEP8_TOOL);
         groovyConfiguration.enterId(PEP8_ID);
         groovyConfiguration.enterRegex("(.*):(\\d+):(\\d+): (\\D\\d*) (.*)");
-        groovyConfiguration.enterScript("import edu.hm.hafner.analysis.Severity\n"
-                + "\n"
-                + "String message = matcher.group(5)\n"
-                + "String category = matcher.group(4)\n"
-                + "Severity severity\n"
-                + "if (category.contains(\"E\")) {\n"
-                + "    severity = Severity.WARNING_NORMAL\n"
-                + "}else {\n"
-                + "    severity = Severity.WARNING_LOW\n"
-                + "}\n"
-                + "\n"
-                + "return builder.setFileName(matcher.group(1))\n"
-                + "    .setLineStart(Integer.parseInt(matcher.group(2)))\n"
-                + "    .setColumnStart(Integer.parseInt(matcher.group(3)))\n"
-                + "    .setCategory(category)\n"
-                + "    .setMessage(message)\n"
-                + "    .setSeverity(severity)\n"
-                + "    .buildOptional()");
+        groovyConfiguration.enterScript("""
+            import edu.hm.hafner.analysis.Severity
+            
+            String message = matcher.group(5)
+            String category = matcher.group(4)
+            Severity severity
+            if (category.contains("E")) {
+                severity = Severity.WARNING_NORMAL
+            }else {
+                severity = Severity.WARNING_LOW
+            }
+            
+            return builder.setFileName(matcher.group(1))
+                .setLineStart(Integer.parseInt(matcher.group(2)))
+                .setColumnStart(Integer.parseInt(matcher.group(3)))
+                .setCategory(category)
+                .setMessage(message)
+                .setSeverity(severity)
+                .buildOptional()""");
 
         groovyConfiguration.enterExampleLogMessage("optparse.py:69:11: E401 multiple imports on one line");
         settings.save();

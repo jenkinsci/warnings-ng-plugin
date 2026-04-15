@@ -222,6 +222,19 @@ class IssuesPublisher {
     }
 
     private Optional<Run<?, ?>> findReferenceBuild(final ResultSelector selector, final Report issues) {
+        Run<?, ?> previous = run.getPreviousCompletedBuild();
+        if (previous != null) {
+            List<ResetReferenceAction> actions = previous.getActions(ResetReferenceAction.class);
+            for (ResetReferenceAction action : actions) {
+                if (report.getId().equals(action.getId())) {
+                    issues.logInfo("Resetting reference build, ignoring quality gate result for one build");
+                    issues.logInfo("Using reference build '%s' to compute new, fixed, and outstanding issues",
+                            previous.getFullDisplayName());
+                    return Optional.of(previous);
+                }
+            }
+        }
+        
         var log = new FilteredLog("Errors while resolving the reference build:");
         var reference = new ReferenceFinder().findReference(run, log);
         issues.mergeLogMessages(log);
@@ -236,10 +249,12 @@ class IssuesPublisher {
     private Optional<Run<?, ?>> refineReferenceBasedOnQualityGate(final ResultSelector selector, final Report issues,
             final Run<?, ?> reference) {
         boolean isSkipped = false;
-        var gateEvaluationMode = determineQualityGateEvaluationMode(issues);
+        var gateEvaluationMode = determineQualityGateEvaluationMode();
         for (Run<?, ?> r = reference; r != null; r = r.getPreviousBuild()) {
             var result = r.getResult();
-            if (result != null && result.isBetterOrEqualTo(getRequiredResult())) {
+            boolean shouldConsiderBuild = result != null && (gateEvaluationMode == IGNORE_QUALITY_GATE 
+                    || result.isBetterOrEqualTo(getRequiredResult()));
+            if (shouldConsiderBuild) {
                 var displayName = r.getFullDisplayName();
                 Optional<ResultAction> action = selector.get(r);
                 if (action.isPresent()) {
@@ -285,18 +300,7 @@ class IssuesPublisher {
         return action.getRequiredResult();
     }
 
-    private QualityGateEvaluationMode determineQualityGateEvaluationMode(final Report filtered) {
-        Run<?, ?> previous = run.getPreviousCompletedBuild();
-        if (previous != null) {
-            List<ResetReferenceAction> actions = previous.getActions(ResetReferenceAction.class);
-            for (ResetReferenceAction action : actions) {
-                if (report.getId().equals(action.getId())) {
-                    filtered.logInfo("Resetting reference build, ignoring quality gate result for one build");
-
-                    return IGNORE_QUALITY_GATE;
-                }
-            }
-        }
+    private QualityGateEvaluationMode determineQualityGateEvaluationMode() {
         return qualityGateEvaluationMode;
     }
 }

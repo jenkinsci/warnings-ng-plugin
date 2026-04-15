@@ -1,8 +1,8 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.time.Duration;
-
 import org.openqa.selenium.By;
+
+import java.time.Duration;
 
 import org.jenkinsci.test.acceptance.po.Control;
 import org.jenkinsci.test.acceptance.po.PageObject;
@@ -14,7 +14,7 @@ import org.jenkinsci.test.acceptance.po.WorkflowJob;
  *
  * @author Lion Kosiuk
  */
-public class WarningsSnippetGenerator extends SnippetGenerator {
+public final class WarningsSnippetGenerator extends SnippetGenerator {
     private static final String RECORD_ISSUES_OPTION = "recordIssues: Record compiler warnings and static analysis results";
     private final Control selectSampleStep = control("/");
 

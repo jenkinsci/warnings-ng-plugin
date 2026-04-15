@@ -60,7 +60,7 @@ class MavenIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @BeforeAll
     @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
-    public static void installMaven() {
+    static void installMaven() {
         try {
             ToolInstallations.configureMaven35();
         }

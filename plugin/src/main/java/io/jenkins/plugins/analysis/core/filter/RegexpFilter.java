@@ -15,8 +15,8 @@ import java.util.regex.PatternSyntaxException;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.verb.POST;
-import hudson.model.AbstractDescribableImpl;
 import hudson.model.BuildableItem;
+import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.model.Item;
 import hudson.util.FormValidation;
@@ -28,7 +28,7 @@ import io.jenkins.plugins.util.JenkinsFacade;
  *
  * @author Ullrich Hafner
  */
-public abstract class RegexpFilter extends AbstractDescribableImpl<RegexpFilter> implements Serializable {
+public abstract class RegexpFilter implements Describable<RegexpFilter>, Serializable {
     @Serial
     private static final long serialVersionUID = 1892735849628260157L;
 

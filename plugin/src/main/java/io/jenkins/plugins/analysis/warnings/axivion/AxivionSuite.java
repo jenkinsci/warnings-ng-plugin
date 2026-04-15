@@ -2,7 +2,6 @@ package io.jenkins.plugins.analysis.warnings.axivion;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.utils.URIBuilder;
 
 import com.cloudbees.plugins.credentials.CredentialsMatchers;
 import com.cloudbees.plugins.credentials.CredentialsProvider;
@@ -19,10 +18,9 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
 import java.io.Serial;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.Collections;
@@ -100,31 +98,6 @@ public final class AxivionSuite extends Tool {
     }
 
     /**
-     * Encodes the URL path to handle special characters like whitespaces.
-     *
-     * @param urlString
-     *         the URL string to encode
-     *
-     * @return the encoded URL string
-     *
-     * @throws URISyntaxException
-     *         if the URL syntax is invalid
-     * @throws MalformedURLException
-     *         if the URL is malformed
-     */
-    private static String encodeProjectUrl(final String urlString) throws URISyntaxException, MalformedURLException {
-        final var url = new URL(urlString);
-        return new URIBuilder()
-                .setCharset(StandardCharsets.UTF_8)
-                .setHost(url.getHost())
-                .setPort(url.getPort())
-                .setPath(url.getPath())
-                .setScheme(url.getProtocol())
-                .build()
-                .toString();
-    }
-
-    /**
      * Stapler setter for the projectUrl field. Verifies the url and encodes the path part e.g. whitespaces in project
      * names. If the URL contains environment variables (e.g., ${VAR} or $VAR), they are preserved and will be
      * expanded at runtime.
@@ -138,12 +111,12 @@ public final class AxivionSuite extends Tool {
             this.projectUrl = projectUrl;
             return;
         }
-        
+
         try {
-            this.projectUrl = encodeProjectUrl(projectUrl);
+            this.projectUrl = new URI(projectUrl).toString();
         }
-        catch (URISyntaxException | MalformedURLException e) {
-            throw new IllegalArgumentException("Not a valid project url.", e);
+        catch (URISyntaxException exception) {
+            throw new IllegalArgumentException("Not a valid project url.", exception);
         }
     }
 
@@ -214,7 +187,7 @@ public final class AxivionSuite extends Tool {
 
     private UsernamePasswordCredentials withValidCredentials(final Item context) {
         final List<StandardUsernamePasswordCredentials> all =
-                CredentialsProvider.lookupCredentials(
+                CredentialsProvider.lookupCredentialsInItem(
                         StandardUsernamePasswordCredentials.class,
                         context,
                         null,
@@ -254,9 +227,9 @@ public final class AxivionSuite extends Tool {
             var environmentResolver = new EnvironmentResolver();
             expandedUrl = environmentResolver.expandEnvironmentVariables(
                     run.getEnvironment(TaskListener.NULL), projectUrl);
-            
+
             if (!expandedUrl.contains("$")) {
-                expandedUrl = encodeProjectUrl(expandedUrl);
+                expandedUrl = new URI(expandedUrl).toString();
             }
         }
         catch (IOException | InterruptedException | URISyntaxException e) {
@@ -321,11 +294,12 @@ public final class AxivionSuite extends Tool {
             }
 
             try {
-                new URL(projectUrl).toURI();
+                // noinspection ResultOfMethodCallIgnored
+                new URI(projectUrl).toURL();
 
                 return FormValidation.ok();
             }
-            catch (URISyntaxException | MalformedURLException ex) {
+            catch (IllegalArgumentException | URISyntaxException | MalformedURLException ex) {
                 return FormValidation.error("This is not a valid URL.");
             }
         }
@@ -389,7 +363,7 @@ public final class AxivionSuite extends Tool {
             }
 
             if (CredentialsMatchers.firstOrNull(
-                    CredentialsProvider.lookupCredentials(
+                    CredentialsProvider.lookupCredentialsInItem(
                             StandardUsernamePasswordCredentials.class,
                             item,
                             null,
@@ -427,7 +401,7 @@ public final class AxivionSuite extends Tool {
                 }
             }
 
-            final ListBoxModel credentials = CredentialsProvider.listCredentials(
+            final ListBoxModel credentials = CredentialsProvider.listCredentialsInItem(
                     StandardUsernamePasswordCredentials.class,
                     item,
                     null,

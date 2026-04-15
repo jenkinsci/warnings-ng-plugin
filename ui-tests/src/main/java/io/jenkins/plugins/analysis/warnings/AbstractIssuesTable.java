@@ -55,7 +55,7 @@ abstract class AbstractIssuesTable<T extends GenericTableRow> {
     /**
      * Updates the table rows. E.g. if they are changed by toggling a details-row.
      */
-    public final void updateTableRows() {
+    final void updateTableRows() {
         tableRows.clear();
 
         List<WebElement> tableRowsAsWebElements = tableElement.findElements(By.xpath(".//tbody/tr"));
@@ -83,11 +83,11 @@ abstract class AbstractIssuesTable<T extends GenericTableRow> {
      * @return the row
      * @see #createRow(WebElement)
      */
-    public T getRow(final int rowIndex) {
+    T getRow(final int rowIndex) {
         return getTableRows().get(rowIndex);
     }
 
-    public List<Header> getColumnHeaders() {
+    List<Header> getColumnHeaders() {
         return getHeaders().stream().map(Header::fromTitle).collect(Collectors.toList());
     }
 
@@ -99,7 +99,7 @@ abstract class AbstractIssuesTable<T extends GenericTableRow> {
      *
      * @return the source code view
      */
-    public SourceView openSourceCode(final WebElement link) {
+    SourceView openSourceCode(final WebElement link) {
         return analysisResult.openLinkOnSite(link, SourceView.class);
     }
 
@@ -111,7 +111,7 @@ abstract class AbstractIssuesTable<T extends GenericTableRow> {
      *
      * @return the source code view
      */
-    public ConsoleLogView openConsoleLogView(final WebElement link) {
+    ConsoleLogView openConsoleLogView(final WebElement link) {
         return analysisResult.openLinkOnSite(link, ConsoleLogView.class);
     }
 
@@ -120,7 +120,7 @@ abstract class AbstractIssuesTable<T extends GenericTableRow> {
      *
      * @return the totals
      */
-    public int getTotal() {
+    int getTotal() {
         String tableInfo = tab.findElement(By.id(tabId + "_info")).getText();
         String total = StringUtils.substringAfter(tableInfo, "of ");
         return Integer.parseInt(StringUtils.substringBefore(total, " "));
@@ -131,7 +131,7 @@ abstract class AbstractIssuesTable<T extends GenericTableRow> {
      *
      * @return the amount of table headers
      */
-    public int getHeaderSize() {
+    int getHeaderSize() {
         return headers.size();
     }
 
@@ -140,7 +140,7 @@ abstract class AbstractIssuesTable<T extends GenericTableRow> {
      *
      * @return the amount of table rows.
      */
-    public int getSize() {
+    int getSize() {
         return tableRows.size();
     }
 
@@ -149,7 +149,7 @@ abstract class AbstractIssuesTable<T extends GenericTableRow> {
      *
      * @return the rows of the table
      */
-    public List<T> getTableRows() {
+    List<T> getTableRows() {
         return tableRows;
     }
 
@@ -158,7 +158,7 @@ abstract class AbstractIssuesTable<T extends GenericTableRow> {
      *
      * @return the headers
      */
-    public List<String> getHeaders() {
+    List<String> getHeaders() {
         return headers;
     }
 
@@ -170,7 +170,7 @@ abstract class AbstractIssuesTable<T extends GenericTableRow> {
      *
      * @return the filtered AnalysisResult
      */
-    public AnalysisResult clickFilterLinkOnSite(final WebElement element) {
+    AnalysisResult clickFilterLinkOnSite(final WebElement element) {
         return analysisResult.openFilterLinkOnSite(element);
     }
 
@@ -180,7 +180,7 @@ abstract class AbstractIssuesTable<T extends GenericTableRow> {
      * @param pageNumber
      *         the number representing the page to open
      */
-    public void openTablePage(final int pageNumber) {
+    void openTablePage(final int pageNumber) {
         var pageButton = "//button[@class='page-link' and @data-dt-idx='" + (pageNumber - 1) + "']";
         WebElement webElement = analysisResult.find(By.xpath(pageButton));
         webElement.click();

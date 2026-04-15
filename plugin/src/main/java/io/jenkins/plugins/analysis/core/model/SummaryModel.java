@@ -241,11 +241,11 @@ public class SummaryModel {
      * Provides a way to stub the label provider factory during tests.
      */
     static class LabelProviderFactoryFacade {
-        public StaticAnalysisLabelProvider get(final String id) {
+        StaticAnalysisLabelProvider get(final String id) {
             return new LabelProviderFactory().create(id);
         }
 
-        public String getReferenceLink(final String id) {
+        String getReferenceLink(final String id) {
             return ReferenceBuild.getReferenceBuildLink(id);
         }
     }
