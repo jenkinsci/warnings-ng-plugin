@@ -35,7 +35,6 @@ public final class DashboardTable extends PageObject {
      * @param url
      *         the type of the result page (e.g., simian, checkstyle, cpd, etc.)
      */
-    @SuppressFBWarnings("MC")
     public DashboardTable(final Build parent, final URL url) {
         super(parent, url);
 
