@@ -1,14 +1,14 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.net.URL;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import com.google.inject.Injector;
+
+import java.net.URL;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.Control;
@@ -21,7 +21,7 @@ import org.jenkinsci.test.acceptance.po.PageObject;
  * @author Arne Schöntag
  * @author Nikolai Wohlgemuth
  */
-public class InfoView extends PageObject {
+public final class InfoView extends PageObject {
     private final Control errors = control(By.id("errors"));
     private final Control info = control(By.id("info"));
 

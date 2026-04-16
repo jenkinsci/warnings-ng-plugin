@@ -36,6 +36,7 @@ public class AnnotatedReport implements Serializable {
     private final Blames aggregatedBlames = new Blames();
     private final RepositoryStatistics aggregatedRepositoryStatistics = new RepositoryStatistics();
 
+    @SuppressWarnings("serial")
     private final Map<String, Integer> sizeOfOrigin = new HashMap<>();
 
     /**

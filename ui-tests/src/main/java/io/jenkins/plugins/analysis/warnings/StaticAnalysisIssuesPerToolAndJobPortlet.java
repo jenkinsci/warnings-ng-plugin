@@ -12,7 +12,7 @@ import org.jenkinsci.test.acceptance.po.Describable;
  */
 // TODO: add tool selection
 @Describable("Static analysis issues per tool and job")
-public class StaticAnalysisIssuesPerToolAndJobPortlet extends AbstractDashboardViewPortlet {
+public final class StaticAnalysisIssuesPerToolAndJobPortlet extends AbstractDashboardViewPortlet {
     private final Control hideCleanJobs = control("hideCleanJobs");
     private final Control showIcons = control("showIcons");
 

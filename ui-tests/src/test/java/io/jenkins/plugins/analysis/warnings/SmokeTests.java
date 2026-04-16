@@ -22,11 +22,12 @@ import static io.jenkins.plugins.analysis.warnings.IssuesColumnConfiguration.*;
  */
 @WithPlugins({"warnings-ng", "dashboard-view"})
 public class SmokeTests extends UiTest {
-    private static final String CHECKSTYLE_ICON = "/checkstyle.svg";
-    private static final String FINDBUGS_ICON = "/findbugs-24x24.png";
-    private static final String ANALYSIS_ICON = "/triangle-exclamation%20plugin-font-awesome-api";
-    private static final String DRY_ICON = "/clone%20plugin-font-awesome-api";
-    private static final String PMD_ICON = "/pmd-24x24.png";
+    // FIXME: re-enable dashboard view tests
+    // private static final String CHECKSTYLE_ICON = "/checkstyle.svg";
+    // private static final String FINDBUGS_ICON = "/findbugs-24x24.png";
+    // private static final String ANALYSIS_ICON = "/triangle-exclamation%20plugin-font-awesome-api";
+    // private static final String DRY_ICON = "/clone%20plugin-font-awesome-api";
+    // private static final String PMD_ICON = "/pmd-24x24.png";
 
     /**
      * Runs a pipeline with all tools two times. Verifies the analysis results in several views. Additionally, verifies

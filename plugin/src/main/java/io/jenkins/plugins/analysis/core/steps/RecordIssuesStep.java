@@ -67,10 +67,11 @@ public class RecordIssuesStep extends Step implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
     private static final ValidationUtilities VALIDATION_UTILITIES = new ValidationUtilities();
-
+    @SuppressWarnings("serial")
     private List<Tool> analysisTools = new ArrayList<>();
 
     private String sourceCodeEncoding = StringUtils.EMPTY;
+    @SuppressWarnings("serial")
     private Set<SourceCodeDirectory> sourceDirectories = new HashSet<>(); // @since 9.11.0
     private SourceCodeRetention sourceCodeRetention = SourceCodeRetention.EVERY_BUILD;
 
@@ -79,6 +80,7 @@ public class RecordIssuesStep extends Step implements Serializable {
     private int healthy;
     private int unhealthy;
     private Severity minimumSeverity = Severity.WARNING_LOW;
+    @SuppressWarnings("serial")
 
     private List<RegexpFilter> filters = new ArrayList<>();
 
@@ -95,12 +97,13 @@ public class RecordIssuesStep extends Step implements Serializable {
     private String id = StringUtils.EMPTY;
     private String name = StringUtils.EMPTY;
     private String icon = StringUtils.EMPTY; // @since 12.0.0: by default no custom icon is set
-
+    @SuppressWarnings("serial")
     private List<WarningsQualityGate> qualityGates = new ArrayList<>();
 
     private TrendChartType trendChartType = TrendChartType.AGGREGATION_TOOLS;
 
     private boolean failOnError;
+    private boolean stopBuild; // @since 12.10010: by default, pipeline execution will not be stopped
     private String scm = StringUtils.EMPTY;
 
     private boolean quiet;
@@ -545,6 +548,25 @@ public class RecordIssuesStep extends Step implements Serializable {
         return failOnError;
     }
 
+    /**
+     * If {@code true}, then the pipeline execution will be stopped (by throwing an {@code AbortException}) when the
+     * quality gate is not passed. This is useful to prevent subsequent stages from executing when quality criteria are
+     * not met. Note that the warning results are still published before the exception is thrown.
+     *
+     * @param stopBuild
+     *         if {@code true} then the build will be aborted when quality gates fail
+     */
+    @DataBoundSetter
+    @SuppressWarnings("unused") // Used by Stapler
+    public void setStopBuild(final boolean stopBuild) {
+        this.stopBuild = stopBuild;
+    }
+
+    @SuppressWarnings({"PMD.BooleanGetMethodName", "WeakerAccess"})
+    public boolean getStopBuild() {
+        return stopBuild;
+    }
+
     public int getHealthy() {
         return healthy;
     }
@@ -660,6 +682,7 @@ public class RecordIssuesStep extends Step implements Serializable {
             recorder.setIcon(step.getIcon());
             recorder.setQualityGates(step.getQualityGates());
             recorder.setFailOnError(step.getFailOnError());
+            recorder.setStopBuild(step.getStopBuild());
             recorder.setTrendChartType(step.getTrendChartType());
             recorder.setSourceDirectories(step.getAllSourceDirectories());
             recorder.setChecksInfo(getContext().get(ChecksInfo.class));

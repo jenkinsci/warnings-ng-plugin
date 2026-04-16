@@ -68,7 +68,7 @@ class GroovyExpressionMatcher implements Serializable {
      *         if the script contains compile errors
      */
     @SuppressFBWarnings("GROOVY_SHELL")
-    public Script compile() throws CompilationFailedException {
+    Script compile() throws CompilationFailedException {
         var binding = new Binding();
         var shell = new GroovyShell(GroovyExpressionMatcher.class.getClassLoader(), binding);
         return shell.parse(script);
@@ -117,11 +117,11 @@ class GroovyExpressionMatcher implements Serializable {
      *
      * @return unchecked result of the script
      */
-    public Object run(final Matcher matcher, final IssueBuilder builder, final int lineNumber, final String fileName) {
+    Object run(final Matcher matcher, final IssueBuilder builder, final int lineNumber, final String fileName) {
         if (compileScriptIfNotYetDone()) {
             builder.setFileName(fileName);
             builder.setLineStart(lineNumber);
-            
+
             var binding = compiled.getBinding();
             binding.setVariable("matcher", matcher);
             binding.setVariable("builder", builder);

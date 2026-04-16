@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
-import hudson.Extension;
+import org.jenkinsci.plugins.variant.OptionalExtension;
 import hudson.model.Descriptor;
 import hudson.model.Job;
 import hudson.model.Run;
@@ -384,7 +384,7 @@ public class IssuesTablePortlet extends DashboardPortlet {
      *
      * @author Ulli Hafner
      */
-    @Extension(optional = true)
+    @OptionalExtension(requireClasses = DashboardPortlet.class)
     public static class IssuesTablePortletDescriptor extends Descriptor<DashboardPortlet> {
         @NonNull
         @Override

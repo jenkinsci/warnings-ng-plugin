@@ -1218,7 +1218,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     @DisplayName("Should remap file paths from source to target prefix")
     void shouldRemapFilePathsFromDockerToWorkspace() {
         var job = createPipelineWithWorkspaceFilesWithSuffix("docker-paths.txt");
-        
+
         job.setDefinition(asStage(
                 createScanForIssuesStep(new Java(), "issues",
                         "sourcePathPrefix: '/docker/workspace'",
@@ -1230,11 +1230,11 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         var result = action.getResult();
 
         assertThat(result).hasTotalSize(2);
-        
+
         // Verify that paths have been remapped and don't contain the Docker path
         for (Issue issue : result.getIssues()) {
             String fileName = issue.getFileName().replaceFirst("^\\./", "");
-            
+
             assertThat(fileName)
                     .as("Issue file name should not contain Docker path")
                     .doesNotContain("/docker/workspace");
@@ -1268,6 +1268,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      *
      * @see StepsITest#showPreventXxeSecurity656
      */
+    @SuppressWarnings("PMD.PublicMemberInNonPublicType")
     @TestExtension
     public static class YouCannotTriggerMe implements UnprotectedRootAction {
         private int triggerCount;

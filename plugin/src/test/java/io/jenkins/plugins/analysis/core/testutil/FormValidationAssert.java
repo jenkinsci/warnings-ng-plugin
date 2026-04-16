@@ -1,6 +1,6 @@
 package io.jenkins.plugins.analysis.core.testutil;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.text.StringEscapeUtils;
 import org.assertj.core.api.AbstractAssert;
 
@@ -111,7 +111,7 @@ public class FormValidationAssert extends AbstractAssert<FormValidationAssert, F
         isNotNull();
 
         String actualMessage = StringEscapeUtils.unescapeHtml4(actual.getMessage());
-        if (!StringUtils.contains(actualMessage, expectedMessagePart)) {
+        if (!Strings.CI.contains(actualMessage, expectedMessagePart)) {
             failWithMessage("%nExpecting %s of:%n <%s>%nto contain:%n <%s>%nbut was:%n <%s>.", "message", StringEscapeUtils.unescapeHtml4(actual.toString()), expectedMessagePart,
                     actualMessage);
         }

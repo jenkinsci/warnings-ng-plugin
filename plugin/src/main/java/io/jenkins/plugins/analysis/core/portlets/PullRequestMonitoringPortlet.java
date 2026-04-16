@@ -15,7 +15,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.kohsuke.stapler.bind.JavaScriptMethod;
-import hudson.Extension;
+import org.jenkinsci.plugins.variant.OptionalExtension;
 import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
@@ -179,7 +179,7 @@ public class PullRequestMonitoringPortlet extends MonitorPortlet {
     /**
      * The factory for the {@link PullRequestMonitoringPortlet}.
      */
-    @Extension(optional = true)
+    @OptionalExtension(requireClasses = MonitorPortletFactory.class)
     public static class PortletFactory extends MonitorPortletFactory {
         @Override
         public Collection<MonitorPortlet> getPortlets(final Run<?, ?> build) {

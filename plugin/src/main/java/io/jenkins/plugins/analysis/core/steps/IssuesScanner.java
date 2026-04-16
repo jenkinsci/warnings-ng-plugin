@@ -111,7 +111,7 @@ class IssuesScanner {
         this.targetPathPrefix = targetPathPrefix;
     }
 
-    public AnnotatedReport scan() throws IOException, InterruptedException {
+    AnnotatedReport scan() throws IOException, InterruptedException {
         var logger = new LogHandler(listener, tool.getActualName());
         logger.setQuiet(quiet);
         var report = tool.scan(run, workspace, sourceCodeEncoding, logger);
@@ -264,9 +264,12 @@ class IssuesScanner {
         private final Report originalReport;
         private final String sourceCodeEncoding;
         private final Blamer blamer;
+        @SuppressWarnings("serial")
         private final Set<String> permittedSourceDirectories;
+        @SuppressWarnings("serial")
         private final Set<String> requestedSourceDirectories;
         private final PostProcessingMode postProcessingMode;
+        @SuppressWarnings("serial")
         private final List<RegexpFilter> filters;
         private final int linesLookAhead;
         private final String sourcePathPrefix;
