@@ -5,13 +5,19 @@ import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Helper class for displaying the Warnings widget.
+ */
 public class Widget {
-
     private final String symbol;
     private final List<String> lines = new ArrayList<>();
     private final List<ResultAction> failedResults;
 
-    public Widget(@MonotonicNonNull List<ResultAction> result) {
+    /**
+     * Constructs a widget.
+     * @param result the list of results to display in the widget.
+     */
+    public Widget(@MonotonicNonNull final List<ResultAction> result) {
         failedResults = result.stream().filter(e -> e.getResult().getTotalSize() > 0).toList();
         int failCount = result.stream().map(e -> e.getResult().getTotalSize()).reduce(0, Integer::sum);
         boolean isFailed = failCount > 0;
@@ -22,7 +28,8 @@ public class Widget {
 
         if (isFailed) {
             lines.add(Messages.Widget_WarningsForThisBuild(failCount));
-        } else {
+        }
+        else {
             lines.add(Messages.Widget_AllClear());
             lines.add(Messages.Widget_NoWarningsForThisBuild());
         }
