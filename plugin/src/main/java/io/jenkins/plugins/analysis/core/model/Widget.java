@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,9 +15,9 @@ public class Widget {
      * Constructs a widget.
      * @param result the list of results to display in the widget.
      */
-    public Widget(@MonotonicNonNull final List<ResultAction> result) {
+    public Widget(final List<ResultAction> result) {
         failedResults = result.stream().filter(e -> e.getResult().getTotalSize() > 0).toList();
-        int failCount = result.stream().map(e -> e.getResult().getTotalSize()).reduce(0, Integer::sum);
+        int failCount = failedResults.stream().map(e -> e.getResult().getTotalSize()).reduce(0, Integer::sum);
         boolean isFailed = failCount > 0;
 
         this.symbol = isFailed ? "symbol-warning-outline plugin-ionicons-api" : "symbol-status-blue";
