@@ -24,8 +24,6 @@ public class Widget {
 
         this.symbol = isFailed ? "symbol-warning-outline plugin-ionicons-api" : "symbol-status-blue";
 
-        List<String> counts = new ArrayList<>();
-
         if (isFailed) {
             lines.add(Messages.Widget_WarningsForThisBuild(failCount));
         }
@@ -33,8 +31,6 @@ public class Widget {
             lines.add(Messages.Widget_AllClear());
             lines.add(Messages.Widget_NoWarningsForThisBuild());
         }
-
-        lines.add(String.join(", ", counts));
     }
 
     public String getSymbol() {
