@@ -3,6 +3,7 @@ package io.jenkins.plugins.analysis.core.model;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junitpioneer.jupiter.Issue;
+import jenkins.model.experimentalflags.UserExperimentalFlag;
 
 import edu.hm.hafner.analysis.IssueBuilder;
 
@@ -92,6 +93,19 @@ class StaticAnalysisLabelProviderTest {
 
         assertThat(noNameLabelProvider).hasId(ID);
         assertThat(noNameLabelProvider).hasName(noNameLabelProvider.getDefaultName());
+    }
+
+    @Test
+    void shouldUsePlainLinkNameOnNewBuildPage() {
+        try (var mockedFlag = mockStatic(UserExperimentalFlag.class)) {
+            mockedFlag.when(() -> UserExperimentalFlag.getFlagValueForCurrentUser(
+                    "jenkins.model.experimentalflags.NewBuildPageUserExperimentalFlag"))
+                    .thenReturn(Boolean.TRUE);
+
+            var namedLabelProvider = new StaticAnalysisLabelProvider(ID, NAME);
+
+            assertThat(namedLabelProvider.getLinkName()).isEqualTo(NAME);
+        }
     }
 
     /**
