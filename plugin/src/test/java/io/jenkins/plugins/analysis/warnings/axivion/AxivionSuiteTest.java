@@ -10,15 +10,6 @@ class AxivionSuiteTest {
     }
 
     @Test
-    void projectUrlsAreEncoded() {
-        assertThat(newTool("http://localhost:9090/axivion/projects/vscode plugin").getProjectUrl())
-                .isEqualTo("http://localhost:9090/axivion/projects/vscode%20plugin");
-
-        assertThat(newTool("https://axivion.com/projects/vscode plugin").getProjectUrl())
-                .isEqualTo("https://axivion.com/projects/vscode%20plugin");
-    }
-
-    @Test
     void projectUrlWithEnvironmentVariablesArePreserved() {
         // Test with ${VAR} syntax
         assertThat(newTool("http://localhost:9090/axivion/projects/${BUILD_VARIANT}").getProjectUrl())

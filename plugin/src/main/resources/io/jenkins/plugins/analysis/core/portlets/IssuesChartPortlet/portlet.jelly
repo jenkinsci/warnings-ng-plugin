@@ -8,17 +8,18 @@
       <td>
         <div id="${it.id}-issues-chart" class="graph-cursor-pointer"
              style="width: 100%; min-height: ${it.height}px; min-width: 500px; height: ${it.height}px;"/>
-
       </td>
     </tr>
   </dp:decorate>
 
   <st:adjunct includes="io.jenkins.plugins.echarts"/>
 
-  <st:bind value="${it}" var="trendProxy"/>
-  <f:invisibleEntry>
-    <span class="issues-chart-portlet-data-holder" data-id="${it.id}" />
-  </f:invisibleEntry>
-  <st:adjunct includes="io.jenkins.plugins.analysis.core.portlets.IssuesChartPortlet.render-trend-chart" />
+  <j:set var="proxyId" value="${h.generateId()}" />
+  <st:bind value="${it}" var="trendProxy${proxyId}"/>
+  <span class="issues-chart-portlet-data-holder"
+        data-id="${it.id}"
+        data-proxy-name="trendProxy${proxyId}"
+        style="display:none"/>
 
+  <st:adjunct includes="io.jenkins.plugins.analysis.core.portlets.IssuesChartPortlet.render-trend-chart" />
 </j:jelly>

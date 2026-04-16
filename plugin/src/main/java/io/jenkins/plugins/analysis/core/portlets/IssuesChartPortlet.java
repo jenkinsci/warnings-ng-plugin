@@ -7,15 +7,17 @@ import edu.hm.hafner.echarts.JacksonFacade;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
-import hudson.Extension;
+import org.jenkinsci.plugins.variant.OptionalExtension;
 import hudson.model.Descriptor;
 import hudson.model.Job;
+import hudson.model.Run;
 import hudson.plugins.view.dashboard.DashboardPortlet;
 
 import io.jenkins.plugins.analysis.core.charts.SeverityTrendChart;
@@ -128,15 +130,32 @@ public class IssuesChartPortlet extends DashboardPortlet {
         var severityChart = new SeverityTrendChart();
 
         List<Iterable<? extends BuildResult<AnalysisBuildResult>>> histories = jobs.stream()
-                .filter(job -> job.getLastCompletedBuild() != null)
-                .map(Job::getLastCompletedBuild)
-                .flatMap(build -> build.getActions(ResultAction.class)
-                        .stream()
+                .filter(job -> job.getLastBuild() != null)
+                .flatMap(job -> findLastBuildWithResults(job).stream()
                         .filter(createToolFilter(selectTools, tools)))
                 .map(ResultAction::createBuildHistory).collect(Collectors.toList());
 
         return new JacksonFacade().toJson(
                 severityChart.aggregate(histories, new ChartModelConfiguration(AxisType.DATE)));
+    }
+
+    /**
+     * Returns the {@link ResultAction}s from the most recent build of the given job that has analysis results.
+     * Walks backwards from the last build, skipping builds that failed without producing analysis data.
+     *
+     * @param job
+     *         the job to search
+     *
+     * @return list of {@link ResultAction}s from the most recent build with results, or empty if none found
+     */
+    private List<ResultAction> findLastBuildWithResults(final Job<?, ?> job) {
+        for (Run<?, ?> run = job.getLastBuild(); run != null; run = run.getPreviousBuild()) {
+            List<ResultAction> actions = run.getActions(ResultAction.class);
+            if (!actions.isEmpty()) {
+                return actions;
+            }
+        }
+        return Collections.emptyList();
     }
 
     /**
@@ -159,7 +178,7 @@ public class IssuesChartPortlet extends DashboardPortlet {
      *
      * @author Ulli Hafner
      */
-    @Extension(optional = true)
+    @OptionalExtension(requireClasses = DashboardPortlet.class)
     public static class IssuesChartPortletDescriptor extends Descriptor<DashboardPortlet> {
         @NonNull
         @Override

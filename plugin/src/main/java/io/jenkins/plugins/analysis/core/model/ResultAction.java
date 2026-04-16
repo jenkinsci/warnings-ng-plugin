@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.core.model;
 
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Issue;
@@ -187,7 +188,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      */
     @SuppressWarnings("deprecation") // this is the only way for remote API calls to obtain the absolute path
     public String getAbsoluteUrl() {
-        return new JenkinsFacade().getAbsoluteUrl(StringUtils.removeEnd(getOwner().getUrl(), "/"), getUrlName());
+        return new JenkinsFacade().getAbsoluteUrl(Strings.CS.removeEnd(getOwner().getUrl(), "/"), getUrlName());
     }
 
     @Override

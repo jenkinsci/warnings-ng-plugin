@@ -962,6 +962,7 @@ public class IssuesRecorder extends Recorder {
             return Messages.ScanAndPublishIssues_DisplayName();
         }
 
+        @SuppressWarnings("rawtypes")
         @Override
         public boolean isApplicable(final Class<? extends AbstractProject> jobType) {
             return true;

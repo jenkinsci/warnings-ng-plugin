@@ -55,6 +55,7 @@ public class PublishIssuesStep extends Step implements Serializable {
     private static final long serialVersionUID = -1833335402353771148L;
     private static final ValidationUtilities VALIDATION_UTILITIES = new ValidationUtilities();
 
+    @SuppressWarnings("serial")
     private final List<AnnotatedReport> reports;
 
     private String sourceCodeEncoding = StringUtils.EMPTY;
@@ -73,6 +74,7 @@ public class PublishIssuesStep extends Step implements Serializable {
     private int unhealthy;
     private Severity minimumSeverity = Severity.WARNING_LOW;
 
+    @SuppressWarnings("serial")
     private List<WarningsQualityGate> qualityGates = new ArrayList<>();
 
     private TrendChartType trendChartType = TrendChartType.AGGREGATION_TOOLS;

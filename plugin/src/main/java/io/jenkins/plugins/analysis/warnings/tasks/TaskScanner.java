@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings.tasks;
 
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.IssueBuilder;
@@ -197,8 +198,9 @@ class TaskScanner {
      */
     @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE", justification = "https://github.com/spotbugs/spotbugs/issues/756")
     Report scan(final Path file, final Charset charset) {
-        try (Stream<String> lines = Files.lines(file, charset)) {
-            return scanTasks(lines.iterator(), new IssueBuilder().setFileName(file.toString()));
+        try (Stream<String> lines = Files.lines(file, charset);
+                IssueBuilder issueBuilder = new IssueBuilder()) {
+            return scanTasks(lines.iterator(), issueBuilder.setFileName(file.toString()));
         }
         catch (IOException | UncheckedIOException exception) {
             var report = new Report();
@@ -256,7 +258,7 @@ class TaskScanner {
         var matcher = patterns.get(severity).matcher(line);
         if (matcher.matches() && matcher.groupCount() == 2) {
             var message = StringUtils.defaultString(matcher.group(2)).trim();
-            builder.setMessage(StringUtils.removeStart(message, ":").trim());
+            builder.setMessage(Strings.CS.removeStart(message, ":").trim());
 
             String tag = StringUtils.defaultString(matcher.group(1));
             if (isUppercase) {
