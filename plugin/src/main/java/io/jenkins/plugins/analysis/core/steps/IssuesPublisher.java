@@ -133,12 +133,7 @@ class IssuesPublisher {
         var action = new ResultAction(run, result, healthDescriptor, getId(), name, icon,
                 sourceCodeEncoding, trendChartType);
 
-        if (run.getActions(ResultAction.class).isEmpty()) {
-            run.addOrReplaceAction(action);
-        }
-        else {
-            run.addAction(action);
-        }
+        run.addAction(action);
 
         if (trendChartType == TrendChartType.TOOLS_AGGREGATION || trendChartType == TrendChartType.AGGREGATION_ONLY) {
             run.addOrReplaceAction(new AggregationAction());
