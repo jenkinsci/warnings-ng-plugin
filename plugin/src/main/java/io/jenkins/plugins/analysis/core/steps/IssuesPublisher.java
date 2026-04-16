@@ -132,7 +132,13 @@ class IssuesPublisher {
                         report.getStatistics(), qualityGateResult, report.getSizeOfOrigin()));
         var action = new ResultAction(run, result, healthDescriptor, getId(), name, icon,
                 sourceCodeEncoding, trendChartType);
-        run.addOrReplaceAction(action);
+
+        if (run.getActions(ResultAction.class).isEmpty()) {
+            run.addOrReplaceAction(action);
+        }
+        else {
+            run.addAction(action);
+        }
 
         if (trendChartType == TrendChartType.TOOLS_AGGREGATION || trendChartType == TrendChartType.AGGREGATION_ONLY) {
             run.addOrReplaceAction(new AggregationAction());
