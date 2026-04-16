@@ -91,7 +91,15 @@ class IssuesPublisher {
      */
     ResultAction attachAction(final TrendChartType trendChartType) {
         var issues = report.getReport();
-        var deltaReport = computeDelta(issues);
+        var selector = new ByIdResultSelector(getId());
+        var existingAction = selector.get(run);
+        if (existingAction.isPresent()) {
+            issues.logError("Removing existing result action with ID '%s' (duplicate ID: restart or configuration error?)",
+                getId());
+            run.removeAction(existingAction.get());
+        }
+
+        var deltaReport = computeDelta(issues, selector);
 
         var qualityGateResult = evaluateQualityGate(issues, deltaReport);
         reportHealth(issues);
@@ -116,7 +124,7 @@ class IssuesPublisher {
         logger.logInfoMessages(issues.getInfoMessages());
         logger.logErrorMessages(issues.getErrorMessages());
 
-        var result = new AnalysisHistory(run, ensureThatIdIsUnique()).getResult()
+        var result = new AnalysisHistory(run, selector).getResult()
                 .map(previous -> new AnalysisResult(run, getId(), deltaReport, report.getBlames(),
                         report.getStatistics(), qualityGateResult, report.getSizeOfOrigin(),
                         previous))
@@ -124,7 +132,7 @@ class IssuesPublisher {
                         report.getStatistics(), qualityGateResult, report.getSizeOfOrigin()));
         var action = new ResultAction(run, result, healthDescriptor, getId(), name, icon,
                 sourceCodeEncoding, trendChartType);
-        run.addAction(action);
+        run.addOrReplaceAction(action);
 
         if (trendChartType == TrendChartType.TOOLS_AGGREGATION || trendChartType == TrendChartType.AGGREGATION_ONLY) {
             run.addOrReplaceAction(new AggregationAction());
@@ -137,8 +145,7 @@ class IssuesPublisher {
         return issues.stream().filter(Issue::isPartOfModifiedCode).count();
     }
 
-    private DeltaReport computeDelta(final Report issues) {
-        var selector = ensureThatIdIsUnique();
+    private DeltaReport computeDelta(final Report issues, final ResultSelector selector) {
         var possibleReferenceBuild = findReferenceBuild(selector, issues);
         if (possibleReferenceBuild.isPresent()) {
             Run<?, ?> build = possibleReferenceBuild.get();
@@ -187,16 +194,6 @@ class IssuesPublisher {
         else {
             report.logInfo("Skip detection of issues in modified code");
         }
-    }
-
-    private ResultSelector ensureThatIdIsUnique() {
-        var selector = new ByIdResultSelector(getId());
-        Optional<ResultAction> other = selector.get(run);
-        if (other.isPresent()) {
-            report.logInfo("Removing existing result action with ID '%s' (might be caused by a restart)", getId());
-            run.removeAction(other.get());
-        }
-        return selector;
     }
 
     private void reportHealth(final Report filtered) {

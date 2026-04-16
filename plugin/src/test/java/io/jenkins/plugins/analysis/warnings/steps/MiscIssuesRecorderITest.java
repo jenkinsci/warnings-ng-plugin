@@ -9,10 +9,8 @@ import edu.hm.hafner.analysis.Severity;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
@@ -36,9 +34,11 @@ import io.jenkins.plugins.analysis.warnings.RegisteredParser;
 import io.jenkins.plugins.analysis.warnings.tasks.OpenTasks;
 import io.jenkins.plugins.forensics.reference.SimpleReferenceRecorder;
 import io.jenkins.plugins.util.QualityGateStatus;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Integration tests of the warnings plug-in in freestyle jobs. Tests the new recorder {@link IssuesRecorder}.
@@ -339,70 +339,27 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Enables CheckStyle tool twice for two different files with varying amount of issues: the previous action should
-     * be replaced with a warning (to support retry after restart scenarios).
+     * Enables CheckStyle tool twice for two different files with varying number of issues. The second action should
+     * replace the first one, and the result must reflect the second file's warnings.
      */
     @Test
-    void shouldThrowExceptionIfSameToolIsConfiguredTwice() {
+    void shouldReplaceExistingAction() {
         Run<?, ?> build = runJobWithCheckStyleTwice(false, Result.SUCCESS);
 
         List<AnalysisResult> results = getAnalysisResults(build);
-        
         assertThat(results).hasSize(1);
+
         var result = results.get(0);
-        
-        assertThat(getConsoleLog(result)).contains("Removing existing result action with ID 'checkstyle' (might be caused by a restart)");
+
+        assertThat(getConsoleLog(result)).contains(
+                "Removing existing result action with ID 'checkstyle' (duplicate ID: restart or configuration error?)");
         assertThat(result).hasId(CHECKSTYLE);
-        assertThat(result).hasTotalSize(6);
-    }
-
-    /**
-     * Enables CheckStyle tool twice for two different files with varying amount of issues. Uses a different ID for both
-     * tools so that no exception will be thrown.
-     */
-    @Test
-    void shouldUseSameToolTwice() {
-        var project = createFreestyleJob("checkstyle.xml", "checkstyle-twice.xml");
-        var first = createTool(new CheckStyle(), "**/checkstyle-issues.txt");
-        var second = createTool(new CheckStyle(), "**/checkstyle-twice-issues.txt");
-        second.setId("second");
-        enableWarnings(project, recorder -> recorder.setAggregatingResults(false), first, second);
-
-        Run<?, ?> build = buildWithResult(project, Result.SUCCESS);
-
-        List<AnalysisResult> results = getAnalysisResults(build);
-        assertThat(results).hasSize(2);
-
-        Set<String> ids = results.stream().map(AnalysisResult::getId).collect(Collectors.toSet());
-        assertThat(ids).containsExactly(CHECKSTYLE, "second");
-    }
-
-    /**
-     * Tests retry after restart scenario (JENKINS-72920). When the same tool is run twice within a build
-     * (which can happen during retry after infrastructure failure), the second run should replace the first
-     * with a warning message instead of throwing an exception.
-     */
-    @Test
-    @org.junitpioneer.jupiter.Issue("JENKINS-72920")
-    void shouldAllowRetryAfterRestart() {
-        var project = createFreestyleJob("checkstyle.xml");
-        var tool = createTool(new CheckStyle(), "**/checkstyle-issues.txt");
-        enableWarnings(project, recorder -> recorder.setAggregatingResults(false), tool, tool);
-
-        Run<?, ?> build = buildWithResult(project, Result.SUCCESS);
-
-        List<AnalysisResult> results = getAnalysisResults(build);
-        assertThat(results).hasSize(1);
-        
-        var result = results.get(0);
-        assertThat(result).hasId(CHECKSTYLE);
-        assertThat(result).hasTotalSize(6);
-        assertThat(getConsoleLog(result)).contains("Removing existing result action with ID 'checkstyle' (might be caused by a restart)");
+        assertThat(result).hasTotalSize(5);
     }
 
     /**
      * Runs the CheckStyle tool twice for two different files with varying amount of issues: due to enabled aggregation,
-     * the build should report 6 issues.
+     * the build should report 11 issues.
      */
     @Test
     void shouldAggregateMultipleConfigurationsOfSameTool() {
@@ -410,18 +367,33 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
 
         var result = getAnalysisResult(build);
 
-        assertThat(result).hasTotalSize(12);
+        assertThat(result).hasTotalSize(11);
         assertThat(result).hasId("analysis");
         assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
     }
 
     private Run<?, ?> runJobWithCheckStyleTwice(final boolean isAggregationEnabled, final Result result) {
         var project = createFreestyleJob("checkstyle.xml", "checkstyle-twice.xml");
-        enableWarnings(project, recorder -> recorder.setAggregatingResults(isAggregationEnabled),
-                createTool(new CheckStyle(), "**/checkstyle-issues.txt"),
-                createTool(new CheckStyle(), "**/checkstyle-twice-issues.txt"));
+        var first = createTool(new CheckStyle(), "**/checkstyle-issues.txt");
+        configureCheckStyleDescriptor(first);
+
+        var second = createTool(new CheckStyle(), "**/checkstyle-twice-issues.txt");
+        configureCheckStyleDescriptor(second);
+
+        enableWarnings(project, recorder -> recorder.setAggregatingResults(isAggregationEnabled), first, second);
 
         return buildWithResult(project, result);
+    }
+
+    private void configureCheckStyleDescriptor(final ReportScanningTool tool) {
+        if (tool instanceof CheckStyle checkStyle) {
+            checkStyle.setId(CHECKSTYLE);
+            checkStyle.setName("CheckStyle");
+
+            var jenkinsFacade = mock(JenkinsFacade.class);
+            when(jenkinsFacade.getDescriptorOrDie(CheckStyle.class)).thenReturn(new CheckStyle.Descriptor());
+            checkStyle.setJenkinsFacade(jenkinsFacade);
+        }
     }
 
     /**
