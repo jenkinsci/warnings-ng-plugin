@@ -95,7 +95,7 @@ class IssuesPublisher {
         var existingAction = selector.get(run);
         if (existingAction.isPresent()) {
             issues.logError("Removing existing result action with ID '%s' (duplicate ID: restart or configuration error?)",
-                getId());
+                    getId());
             run.removeAction(existingAction.get());
         }
 
