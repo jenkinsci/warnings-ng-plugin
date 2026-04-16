@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.core.model;
 
+import jenkins.model.experimentalflags.UserExperimentalFlag;
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Issue;
@@ -208,6 +209,13 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      * @return the name of the side panel link
      */
     public String getLinkName() {
+        if (Boolean.TRUE.equals(UserExperimentalFlag.getFlagValueForCurrentUser("jenkins.model.experimentalflags.NewBuildPageUserExperimentalFlag"))) {
+            if (StringUtils.isNotBlank(name)) {
+                return name;
+            }
+            return getDefaultName();
+        }
+
         if (StringUtils.isNotBlank(name)) {
             return Messages.Tool_Link_Name(name);
         }

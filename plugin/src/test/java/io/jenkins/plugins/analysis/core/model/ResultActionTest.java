@@ -32,4 +32,31 @@ class ResultActionTest {
         action.onAttached(run);
         assertThat(action.getOwner()).isSameAs(run);
     }
+
+    @Test
+    void shouldCreateBadgeIfWarningsExist() {
+        AnalysisResult result = mock(AnalysisResult.class);
+        when(result.getTotalSize()).thenReturn(5);
+
+        var action = new ResultAction(null, result,
+                new HealthDescriptor(0, 0, Severity.WARNING_HIGH), "ID", "Name",
+                "icon", StandardCharsets.UTF_8, TrendChartType.AGGREGATION_TOOLS);
+
+        assertThat(action.getBadge()).isNotNull();
+        assertThat(action.getBadge().getText()).isEqualTo("5");
+        assertThat(action.getBadge().getTooltip()).isEqualTo(Messages.ResultAction_Badge(5));
+        assertThat(action.getBadge().getSeverity()).isEqualTo("warning");
+    }
+
+    @Test
+    void shouldNotCreateBadgeIfNoWarningsExist() {
+        AnalysisResult result = mock(AnalysisResult.class);
+        when(result.getTotalSize()).thenReturn(0);
+
+        var action = new ResultAction(null, result,
+                new HealthDescriptor(0, 0, Severity.WARNING_HIGH), "ID", "Name",
+                "icon", StandardCharsets.UTF_8, TrendChartType.AGGREGATION_TOOLS);
+
+        assertThat(action.getBadge()).isNull();
+    }
 }

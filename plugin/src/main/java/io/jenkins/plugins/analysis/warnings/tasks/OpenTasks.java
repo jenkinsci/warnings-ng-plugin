@@ -190,7 +190,7 @@ public class OpenTasks extends Tool {
     private static class LabelProvider extends SymbolIconLabelProvider {
         LabelProvider() {
             super(ID, Messages.Warnings_OpenTasks_Name(), i -> StringUtils.EMPTY,
-                    "symbol-solid/clipboard-check plugin-font-awesome-api");
+                    "symbol-clipboard plugin-ionicons-api");
         }
 
         @Override
