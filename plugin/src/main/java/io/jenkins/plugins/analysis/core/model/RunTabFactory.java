@@ -1,13 +1,14 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+
+import java.util.Collection;
+import java.util.List;
+
 import hudson.Extension;
 import hudson.model.Run;
 import jenkins.model.Tab;
 import jenkins.model.TransientActionFactory;
-
-import java.util.Collection;
-import java.util.List;
 
 /**
  * Adds a Warnings tab to the run page.
@@ -15,8 +16,9 @@ import java.util.List;
 @Extension
 public class RunTabFactory extends TransientActionFactory<Run<?, ?>> {
     @Override
+    @SuppressWarnings("unchecked")
     public Class<Run<?, ?>> type() {
-        return (Class<Run<?, ?>>) (Class<?>) Run.class;
+        return (Class) Run.class;
     }
 
     @NonNull
