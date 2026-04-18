@@ -840,16 +840,16 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldShowWarningsOfLocalGroovyParserWhenScanningFileInWorkspace() {
         var job = createPipelineWithWorkspaceFilesWithSuffix("pep8Test.txt");
         var inlineScript = "return builder.setFileName(matcher.group(1)).setLineStart(Integer.parseInt(matcher.group(2)))"
-            + ".setColumnStart(Integer.parseInt(matcher.group(3))).setCategory(matcher.group(4))"
-            + ".setMessage(matcher.group(5)).setSeverity(edu.hm.hafner.analysis.Severity.WARNING_NORMAL)"
-            + ".buildOptional()";
+                + ".setColumnStart(Integer.parseInt(matcher.group(3))).setCategory(matcher.group(4))"
+                + ".setMessage(matcher.group(5)).setSeverity(edu.hm.hafner.analysis.Severity.WARNING_NORMAL)"
+                + ".buildOptional()";
 
         job.setDefinition(asStage(
-            "def groovy = scanForIssues "
+                "def groovy = scanForIssues "
                 + "tool: groovyScript(parser: [id: 'local-groovy-pep8', name: 'Local Groovy Pep8',"
                 + " regexp: '(.*):(\\\\d+):(\\\\d+): (\\\\D\\\\d*) (.*)', script: '" + inlineScript + "',"
                 + " example: ''], pattern:'**/*issues.txt', reportEncoding:'UTF-8')",
-            "publishIssues issues:[groovy]"));
+                "publishIssues issues:[groovy]"));
 
         testGroovyPep8JobIsSuccessful(job, "local-groovy-pep8", "Local Groovy Pep8");
     }
