@@ -834,6 +834,27 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
+     * Configures a local {@link GroovyParser} directly in the job and runs it on a workspace file.
+     */
+    @Test
+    void shouldShowWarningsOfLocalGroovyParserWhenScanningFileInWorkspace() {
+        var job = createPipelineWithWorkspaceFilesWithSuffix("pep8Test.txt");
+        var inlineScript = "return builder.setFileName(matcher.group(1)).setLineStart(Integer.parseInt(matcher.group(2)))"
+            + ".setColumnStart(Integer.parseInt(matcher.group(3))).setCategory(matcher.group(4))"
+            + ".setMessage(matcher.group(5)).setSeverity(edu.hm.hafner.analysis.Severity.WARNING_NORMAL)"
+            + ".buildOptional()";
+
+        job.setDefinition(asStage(
+            "def groovy = scanForIssues "
+                + "tool: groovyScript(parser: [id: 'local-groovy-pep8', name: 'Local Groovy Pep8',"
+                + " regexp: '(.*):(\\\\d+):(\\\\d+): (\\\\D\\\\d*) (.*)', script: '" + inlineScript + "',"
+                + " example: ''], pattern:'**/*issues.txt', reportEncoding:'UTF-8')",
+            "publishIssues issues:[groovy]"));
+
+        testGroovyPep8JobIsSuccessful(job, "local-groovy-pep8", "Local Groovy Pep8");
+    }
+
+    /**
      * Registers a new {@link GroovyParser} (a Pep8 parser) in Jenkins global configuration and runs this parser on the
      * console that's showing an error log with 8 issues.
      *
@@ -916,12 +937,44 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         buildWithResult(job, Result.FAILURE);
     }
 
+    /**
+     * Uses a local parser and verifies that console log scanning is always rejected for safety reasons.
+     *
+     * @throws IOException
+     *         if the test fails unexpectedly
+     */
+    @Test
+    void shouldFailUsingLocalGroovyParserToScanConsoleLogEvenIfGlobalPermissionIsEnabled() throws IOException {
+        var job = createPipeline();
+        ArrayList<String> stages = new ArrayList<>();
+        catFileContentsByAddingEchosSteps(stages, "pep8Test.txt");
+
+        var inlineScript = "return builder.setFileName(matcher.group(1)).setLineStart(Integer.parseInt(matcher.group(2)))"
+                + ".setColumnStart(Integer.parseInt(matcher.group(3))).setCategory(matcher.group(4))"
+                + ".setMessage(matcher.group(5)).setSeverity(edu.hm.hafner.analysis.Severity.WARNING_NORMAL)"
+                + ".buildOptional()";
+
+        stages.add("def groovy = scanForIssues tool: groovyScript(parser: [id: 'local-groovy-pep8',"
+                + " name: 'Local Groovy Pep8', regexp: '(.*):(\\\\d+):(\\\\d+): (\\\\D\\\\d*) (.*)',"
+                + " script: '" + inlineScript + "', example: ''], pattern:'', reportEncoding:'UTF-8')");
+        stages.add("publishIssues issues:[groovy]");
+        job.setDefinition(asStage(stages.toArray(new String[0])));
+
+        ParserConfiguration.getInstance().setConsoleLogScanningPermitted(true);
+
+        buildWithResult(job, Result.FAILURE);
+    }
+
     private void testGroovyPep8JobIsSuccessful(final WorkflowJob job, final String id) {
+        testGroovyPep8JobIsSuccessful(job, id, "Groovy Pep8");
+    }
+
+    private void testGroovyPep8JobIsSuccessful(final WorkflowJob job, final String id, final String expectedName) {
         Run<?, ?> run = buildSuccessfully(job);
 
         var action = getResultAction(run);
         assertThat(action.getId()).isEqualTo(id);
-        assertThat(action.getDisplayName()).contains("Groovy Pep8");
+        assertThat(action.getDisplayName()).contains(expectedName);
 
         var result = action.getResult();
         assertThat(result.getIssues()).hasSize(8);

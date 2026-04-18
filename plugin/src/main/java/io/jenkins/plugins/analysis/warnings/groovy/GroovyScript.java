@@ -4,12 +4,14 @@ import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.util.Ensure;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 import java.io.Serial;
 
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.verb.POST;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
@@ -33,6 +35,8 @@ public class GroovyScript extends ReportScanningTool {
     private static final String ID = "groovy";
 
     private final String parserId;
+    @CheckForNull
+    private GroovyParser parser;
 
     /**
      * Creates a new instance of {@link GroovyScript}.
@@ -44,13 +48,27 @@ public class GroovyScript extends ReportScanningTool {
     public GroovyScript(final String parserId) {
         super();
 
-        Ensure.that(ParserConfiguration.getInstance().contains(parserId)).isTrue(
-                "There is no Groovy parser defined in the system configuration with ID '%s'", parserId);
-        this.parserId = parserId;
+        this.parserId = StringUtils.defaultString(parserId);
     }
 
     public String getParserId() {
         return parserId;
+    }
+
+    @CheckForNull
+    public GroovyParser getParser() {
+        return parser;
+    }
+
+    /**
+     * Sets a parser that is defined as part of the current job configuration.
+     *
+     * @param parser
+     *         local parser definition
+     */
+    @DataBoundSetter
+    public void setParser(final GroovyParser parser) {
+        this.parser = parser;
     }
 
     @Override
@@ -60,21 +78,36 @@ public class GroovyScript extends ReportScanningTool {
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
-        return new StaticAnalysisLabelProvider(parserId, getTool().getName());
+        var configuredParser = getTool();
+        return new StaticAnalysisLabelProvider(configuredParser.getId(), configuredParser.getName());
     }
 
     private GroovyParser getTool() {
+        if (parser != null) {
+            return parser;
+        }
+
+        Ensure.that(StringUtils.isNotBlank(parserId)).isTrue(
+                "No Groovy parser defined. Configure either 'parserId' or 'parser'");
+        Ensure.that(ParserConfiguration.getInstance().contains(parserId)).isTrue(
+                "There is no Groovy parser defined in the system configuration with ID '%s'", parserId);
+
         return ParserConfiguration.getInstance().getParser(parserId);
     }
 
     @Override
     public String getActualId() {
-        return StringUtils.defaultIfBlank(getId(), parserId);
+        return StringUtils.defaultIfBlank(getId(), getTool().getId());
     }
 
     @Override
     public String getActualName() {
         return StringUtils.defaultIfBlank(getName(), getTool().getName());
+    }
+
+    @Override
+    protected boolean canScanConsoleLog() {
+        return parser == null && getDescriptor().canScanConsoleLog();
     }
 
     /** Descriptor for this static analysis tool. */
