@@ -851,7 +851,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
                 + " example: ''], pattern:'**/*issues.txt', reportEncoding:'UTF-8')",
                 "publishIssues issues:[groovy]"));
 
-        testGroovyPep8JobIsSuccessful(job, "local-groovy-pep8", "Local Groovy Pep8");
+        testGroovyPep8JobIsSuccessful(job, "local-groovy-pep8", "Local Groovy Pep8", false);
     }
 
     /**
@@ -966,19 +966,23 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private void testGroovyPep8JobIsSuccessful(final WorkflowJob job, final String id) {
-        testGroovyPep8JobIsSuccessful(job, id, "Groovy Pep8");
+        testGroovyPep8JobIsSuccessful(job, id, "Groovy Pep8", true);
     }
 
-    private void testGroovyPep8JobIsSuccessful(final WorkflowJob job, final String id, final String expectedName) {
+    private void testGroovyPep8JobIsSuccessful(final WorkflowJob job, final String id,
+            final String expectedName, final boolean expectActionDisplayName) {
         Run<?, ?> run = buildSuccessfully(job);
 
         var action = getResultAction(run);
         assertThat(action.getId()).isEqualTo(id);
-        assertThat(action.getDisplayName()).contains(expectedName);
+        if (expectActionDisplayName) {
+            assertThat(action.getDisplayName()).contains(expectedName);
+        }
 
         var result = action.getResult();
         assertThat(result.getIssues()).hasSize(8);
         assertThat(result.getIssues().getPropertyCount(Issue::getOrigin)).containsOnly(entry(id, 8));
+        assertThat(result.getIssues().getNameOfOrigin(id)).isEqualTo(expectedName);
 
         var second = scheduleSuccessfulBuild(job);
         assertThat(second).hasFixedSize(0).hasTotalSize(8).hasNewSize(0);
