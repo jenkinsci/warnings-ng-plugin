@@ -906,7 +906,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         configuration.addParser(new GroovyParser(id, "Another Groovy Pep8",
                 "(.*):(\\d+):(\\d+): (\\D\\d*) (.*)",
                 toString("groovy/pep8.groovy"), ""));
-        testGroovyPep8JobIsSuccessful(job, id);
+        testGroovyPep8JobIsSuccessful(job, id, "Another Groovy Pep8", true);
     }
 
     /**
