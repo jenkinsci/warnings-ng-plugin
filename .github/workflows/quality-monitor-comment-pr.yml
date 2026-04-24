@@ -27,8 +27,6 @@ jobs:
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OTHER_WORKFLOWS: "quality-monitor-build.yml,dependency-check.yml"
           ARTIFACT_NAMES: "quality-reports,dependency-report"
-          RETRIES: 30
-          SLEEP_SEC: 10
         run: |
           chmod +x ./.github/scripts/fetch-artifacts.sh
           ./.github/scripts/fetch-artifacts.sh
