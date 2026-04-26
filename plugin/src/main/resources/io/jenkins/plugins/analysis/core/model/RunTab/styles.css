@@ -37,7 +37,7 @@
     text-decoration: none !important;
     z-index: 2;
 
-    svg {
+    svg, img {
         width: 0.875rem;
         height: 0.875rem;
         margin-bottom: 0;
