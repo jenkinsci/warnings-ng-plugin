@@ -1,0 +1,68 @@
+{
+  "extendedSupport": false,
+  "sbomId": "sha256:abc123def456",
+  "vulnerabilities": [
+    {
+      "detectedAt": "2026-04-01T00:00:00Z",
+      "feed": "vulnerabilities",
+      "feedGroup": "nvd",
+      "fix": "1.1.1l",
+      "nvdData": [
+        {
+          "cvssV3": { "baseScore": 7.5 },
+          "id": "CVE-2021-1234",
+          "isKev": false,
+          "source": "nvd@nist.gov"
+        }
+      ],
+      "packageName": "openssl",
+      "packagePath": "/usr/lib64/libssl.so.1.1",
+      "packageType": "rpm",
+      "packageVersion": "1.1.1k",
+      "purl": "pkg:rpm/rhel/openssl@1.1.1k",
+      "severity": "High",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2021-1234",
+      "vuln": "CVE-2021-1234",
+      "willNotFix": false
+    },
+    {
+      "detectedAt": "2026-04-01T00:00:00Z",
+      "feed": "vulnerabilities",
+      "feedGroup": "nvd",
+      "fix": "None",
+      "nvdData": [
+        {
+          "cvssV3": { "baseScore": 9.8 },
+          "id": "CVE-2021-5678",
+          "isKev": true,
+          "source": "nvd@nist.gov"
+        }
+      ],
+      "packageName": "busybox",
+      "packagePath": "/lib/apk/db/installed",
+      "packageType": "APKG",
+      "packageVersion": "1.34.0-r0",
+      "purl": "pkg:apk/alpine/busybox@1.34.0-r0",
+      "severity": "Critical",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2021-5678",
+      "vuln": "CVE-2021-5678",
+      "willNotFix": false
+    },
+    {
+      "detectedAt": "2026-04-01T00:00:00Z",
+      "feed": "vulnerabilities",
+      "feedGroup": "nvd",
+      "fix": "None",
+      "nvdData": [],
+      "packageName": "zlib",
+      "packagePath": "/lib64/libz.so.1",
+      "packageType": "rpm",
+      "packageVersion": "1.2.11",
+      "purl": "pkg:rpm/rhel/zlib@1.2.11",
+      "severity": "Medium",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-9999",
+      "vuln": "CVE-2022-9999",
+      "willNotFix": true
+    }
+  ]
+}
