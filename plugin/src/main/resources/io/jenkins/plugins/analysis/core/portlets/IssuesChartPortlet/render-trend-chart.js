@@ -5,6 +5,6 @@ window.addEventListener("DOMContentLoaded", () => {
         const id = dataHolder.getAttribute("data-id");
         const proxyName = dataHolder.getAttribute("data-proxy-name");
 
-        echartsJenkinsApi.renderTrendChart(id + '-issues-chart', 'false', window[proxyName]);
+        echartsJenkinsApi.renderConfigurableTrendChart(id + '-issues-chart', 'false', 'warnings', window[proxyName]);
     });
 });

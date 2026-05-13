@@ -12,7 +12,7 @@
     </tr>
   </dp:decorate>
 
-  <st:adjunct includes="io.jenkins.plugins.echarts"/>
+  <st:adjunct includes="io.jenkins.plugins.analysis.warnings.charts"/>
 
   <j:set var="proxyId" value="${h.generateId()}" />
   <st:bind value="${it}" var="trendProxy${proxyId}"/>
