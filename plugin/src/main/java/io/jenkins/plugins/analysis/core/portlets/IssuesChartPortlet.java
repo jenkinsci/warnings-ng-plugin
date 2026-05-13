@@ -2,7 +2,6 @@ package io.jenkins.plugins.analysis.core.portlets;
 
 import edu.hm.hafner.echarts.BuildResult;
 import edu.hm.hafner.echarts.ChartModelConfiguration;
-import edu.hm.hafner.echarts.ChartModelConfiguration.AxisType;
 import edu.hm.hafner.echarts.JacksonFacade;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -117,26 +116,6 @@ public class IssuesChartPortlet extends DashboardPortlet {
     @DataBoundSetter
     public void setHeight(final int height) {
         this.height = height;
-    }
-
-    /**
-     * Returns the UI model for an ECharts line chart that shows the issues stacked by severity.
-     *
-     * @return the UI model as JSON
-     */
-    @JavaScriptMethod
-    @SuppressWarnings("unused") // Called by jelly view
-    public String getBuildTrendModel() {
-        var severityChart = new SeverityTrendChart();
-
-        List<Iterable<? extends BuildResult<AnalysisBuildResult>>> histories = jobs.stream()
-                .filter(job -> job.getLastBuild() != null)
-                .flatMap(job -> findLastBuildWithResults(job).stream()
-                        .filter(createToolFilter(selectTools, tools)))
-                .map(ResultAction::createBuildHistory).collect(Collectors.toList());
-
-        return new JacksonFacade().toJson(
-                severityChart.aggregate(histories, new ChartModelConfiguration(AxisType.DATE)));
     }
 
     /**
