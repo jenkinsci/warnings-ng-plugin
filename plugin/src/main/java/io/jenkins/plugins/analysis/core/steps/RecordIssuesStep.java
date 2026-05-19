@@ -107,6 +107,7 @@ public class RecordIssuesStep extends Step implements Serializable {
     private String scm = StringUtils.EMPTY;
 
     private boolean quiet;
+    private String detailsURL = StringUtils.EMPTY; // @since 13.0.0: custom details URL for checks
 
     /**
      * Creates a new instance of {@link RecordIssuesStep}.
@@ -401,6 +402,27 @@ public class RecordIssuesStep extends Step implements Serializable {
     }
 
     /**
+     * Returns the custom details URL for checks.
+     *
+     * @return the custom details URL, or empty string if not set
+     */
+    public String getDetailsURL() {
+        return detailsURL;
+    }
+
+    /**
+     * Sets the custom details URL for checks. If set, this URL will be used instead of the default
+     * Jenkins job URL in the checks published to SCM platforms.
+     *
+     * @param detailsURL
+     *         the custom details URL
+     */
+    @DataBoundSetter
+    public void setDetailsURL(final String detailsURL) {
+        this.detailsURL = detailsURL;
+    }
+
+    /**
      * Returns whether SCM blaming should be disabled.
      *
      * @return {@code true} if SCM blaming should be disabled
@@ -687,6 +709,7 @@ public class RecordIssuesStep extends Step implements Serializable {
             recorder.setSourceDirectories(step.getAllSourceDirectories());
             recorder.setChecksInfo(getContext().get(ChecksInfo.class));
             recorder.setQuiet(step.isQuiet());
+            recorder.setDetailsURL(step.getDetailsURL());
 
             var workspace = getWorkspace();
             workspace.mkdirs();

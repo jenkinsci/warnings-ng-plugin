@@ -393,6 +393,82 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
                 .hasFieldOrPropertyWithValue("title", Optional.of("C4101"));
     }
 
+    /**
+     * Verifies that {@link WarningChecksPublisher} uses the default details URL when no custom URL is provided.
+     */
+    @Test
+    void shouldUseDefaultDetailsUrl() {
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
+        enableCheckStyleWarnings(project);
+
+        Run<?, ?> run = buildSuccessfully(project);
+        var resultAction = getResultAction(run);
+        var publisher = new WarningChecksPublisher(resultAction, TaskListener.NULL, null);
+
+        var details = publisher.extractChecksDetails(ChecksAnnotationScope.NEW);
+        assertThat(details.getDetailsURL())
+                .isPresent()
+                .hasValue(resultAction.getAbsoluteUrl());
+    }
+
+    /**
+     * Verifies that {@link WarningChecksPublisher} uses the custom details URL when provided.
+     */
+    @Test
+    void shouldUseCustomDetailsUrl() {
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
+        enableCheckStyleWarnings(project);
+
+        Run<?, ?> run = buildSuccessfully(project);
+        var resultAction = getResultAction(run);
+        var customUrl = "https://my.public.help.com/failing-jobs";
+        var publisher = new WarningChecksPublisher(resultAction, TaskListener.NULL, null, customUrl);
+
+        var details = publisher.extractChecksDetails(ChecksAnnotationScope.NEW);
+        assertThat(details.getDetailsURL())
+                .isPresent()
+                .hasValue(customUrl);
+    }
+
+    /**
+     * Verifies that {@link WarningChecksPublisher} uses the default details URL when empty string is provided.
+     */
+    @Test
+    void shouldUseDefaultDetailsUrlWhenEmptyStringProvided() {
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
+        enableCheckStyleWarnings(project);
+
+        Run<?, ?> run = buildSuccessfully(project);
+        var resultAction = getResultAction(run);
+        var publisher = new WarningChecksPublisher(resultAction, TaskListener.NULL, null, "");
+
+        var details = publisher.extractChecksDetails(ChecksAnnotationScope.NEW);
+        assertThat(details.getDetailsURL())
+                .isPresent()
+                .hasValue(resultAction.getAbsoluteUrl());
+    }
+
+    /**
+     * Verifies that {@code recordIssues} with custom details URL publishes the URL to the checks API.
+     */
+    @Test
+    void shouldPublishCustomDetailsUrlToChecksApi() {
+        var project = createPipelineWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
+        var customUrl = "https://my.public.help.com/failing-jobs";
+
+        project.setDefinition(asStage(
+                "recordIssues(tools: [checkStyle(pattern: '**/*issues.txt')], detailsURL: '" + customUrl + "')"));
+
+        buildSuccessfully(project);
+
+        List<ChecksDetails> publishedChecks = getPublishedChecks();
+
+        assertThat(publishedChecks).hasSize(1);
+        assertThat(publishedChecks.get(0).getDetailsURL())
+                .isPresent()
+                .hasValue(customUrl);
+    }
+
     private FreeStyleProject getFreeStyleJob() {
         var project = createFreeStyleProject();
         project.getPublishersList().add(new SimpleReferenceRecorder());

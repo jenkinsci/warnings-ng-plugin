@@ -80,11 +80,19 @@ class WarningChecksPublisher {
     private final TaskListener listener;
     @CheckForNull
     private final ChecksInfo checksInfo;
+    @CheckForNull
+    private final String customDetailsURL;
 
     WarningChecksPublisher(final ResultAction action, final TaskListener listener, @CheckForNull final ChecksInfo checksInfo) {
+        this(action, listener, checksInfo, null);
+    }
+
+    WarningChecksPublisher(final ResultAction action, final TaskListener listener, @CheckForNull final ChecksInfo checksInfo,
+            @CheckForNull final String customDetailsURL) {
         this.action = action;
         this.listener = listener;
         this.checksInfo = checksInfo;
+        this.customDetailsURL = customDetailsURL;
     }
 
     /**
@@ -111,6 +119,7 @@ class WarningChecksPublisher {
                 .orElse(labelProvider.getName());
 
         var summary = extractChecksSummary(totals) + "\n" + extractReferenceBuild(result);
+        var detailsUrl = StringUtils.isNotEmpty(customDetailsURL) ? customDetailsURL : action.getAbsoluteUrl();
         return new ChecksDetailsBuilder()
                 .withName(checksName)
                 .withStatus(ChecksStatus.COMPLETED)
@@ -121,7 +130,7 @@ class WarningChecksPublisher {
                         .withText(extractChecksText(totals))
                         .withAnnotations(extractChecksAnnotations(filterIssuesForAnnotations(annotationScope, result), labelProvider))
                         .build())
-                .withDetailsURL(action.getAbsoluteUrl())
+                .withDetailsURL(detailsUrl)
                 .build();
     }
 
