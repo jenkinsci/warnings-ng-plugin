@@ -469,6 +469,28 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
                 .hasValue(customUrl);
     }
 
+    /**
+     * Verifies that {@code publishIssues} with custom details URL publishes the URL to the checks API.
+     */
+    @Test
+    void shouldPublishCustomDetailsUrlToChecksApiWithPublishIssues() {
+        var project = createPipelineWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
+        var customUrl = "https://my.custom.url.com/build-status";
+
+        project.setDefinition(asStage(
+                createScanForIssuesStep(new CheckStyle()),
+                "publishIssues(issues: [issues], detailsURL: '" + customUrl + "')"));
+
+        buildSuccessfully(project);
+
+        List<ChecksDetails> publishedChecks = getPublishedChecks();
+
+        assertThat(publishedChecks).hasSize(1);
+        assertThat(publishedChecks.get(0).getDetailsURL())
+                .isPresent()
+                .hasValue(customUrl);
+    }
+
     private FreeStyleProject getFreeStyleJob() {
         var project = createFreeStyleProject();
         project.getPublishersList().add(new SimpleReferenceRecorder());

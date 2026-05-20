@@ -83,6 +83,7 @@ public class PublishIssuesStep extends Step implements Serializable {
     private String name = StringUtils.EMPTY;
     private String icon = StringUtils.EMPTY; // @since 12.0.0: by default no custom icon is set
     private String scm = StringUtils.EMPTY;
+    private String detailsURL = StringUtils.EMPTY; // @since 14.0.0: custom details URL for checks
 
     /**
      * Creates a new instance of {@link PublishIssuesStep}.
@@ -173,6 +174,21 @@ public class PublishIssuesStep extends Step implements Serializable {
 
     public String getScm() {
         return scm;
+    }
+
+    /**
+     * Sets the custom details URL for checks published to SCM platforms.
+     *
+     * @param detailsURL
+     *         the custom URL to use for the details link in checks
+     */
+    @DataBoundSetter
+    public void setDetailsURL(final String detailsURL) {
+        this.detailsURL = detailsURL;
+    }
+
+    public String getDetailsURL() {
+        return detailsURL;
     }
 
     /**
@@ -484,7 +500,8 @@ public class PublishIssuesStep extends Step implements Serializable {
             var action = publisher.attachAction(step.getTrendChartType());
 
             if (!step.isSkipPublishingChecks()) {
-                var checksPublisher = new WarningChecksPublisher(action, getTaskListener(), getContext().get(ChecksInfo.class));
+                var checksPublisher = new WarningChecksPublisher(action, getTaskListener(),
+                        getContext().get(ChecksInfo.class), step.getDetailsURL());
                 checksPublisher.publishChecks(step.getChecksAnnotationScope());
             }
 
