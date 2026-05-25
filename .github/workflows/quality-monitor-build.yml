@@ -24,7 +24,7 @@ jobs:
       - name: Set up Maven
         uses: stCarolas/setup-maven@v5
         with:
-          maven-version: 3.9.14
+          maven-version: 3.9.16
       - name: Check if quality monitor reports mutation coverage
         run: |
           FILE='.github/quality-monitor.json'
