@@ -1,8 +1,8 @@
-name: 'Quality Monitor Comment PR'
+name: 'Quality Monitor > PR'
 
 on:
   workflow_run:
-    workflows: ['Quality Monitor', 'Dependency Check']
+    workflows: ['Quality Monitor Build', 'Dependency Check']
     types: [completed]
 
 permissions:

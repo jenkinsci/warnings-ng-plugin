@@ -1,4 +1,4 @@
-name: 'Quality Monitor'
+name: 'Quality Monitor Build'
 
 on:
   push:
@@ -44,7 +44,6 @@ jobs:
              exit 1;
           fi
           mv -fv maven.log target/maven.log
-          rm -rf target/tmp
       - name: Write PR number
         run: echo '${{ github.event.pull_request.number }}' > pr-number.txt
       - name: Upload Quality Reports
