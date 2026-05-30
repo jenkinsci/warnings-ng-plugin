@@ -1,4 +1,4 @@
-name: 'Quality Monitor Build'
+name: 'Quality Monitor » Build'
 
 on:
   push:
