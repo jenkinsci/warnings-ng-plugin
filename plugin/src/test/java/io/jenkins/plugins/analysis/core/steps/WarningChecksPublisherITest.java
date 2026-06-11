@@ -34,6 +34,7 @@ import io.jenkins.plugins.checks.api.ChecksOutput.ChecksOutputBuilder;
 import io.jenkins.plugins.checks.api.ChecksPublisherFactory;
 import io.jenkins.plugins.checks.api.ChecksStatus;
 import io.jenkins.plugins.checks.util.CapturingChecksPublisher;
+import io.jenkins.plugins.checks.steps.ChecksInfo;
 import io.jenkins.plugins.forensics.reference.SimpleReferenceRecorder;
 import io.jenkins.plugins.util.QualityGate.QualityGateCriticality;
 
@@ -71,7 +72,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
                 .hasTotalSize(6)
                 .hasNewSize(2);
 
-        var publisher = new WarningChecksPublisher(getResultAction(run), TaskListener.NULL, null);
+        var publisher = new WarningChecksPublisher(getResultAction(run), TaskListener.NULL, null, null);
         assertThat(publisher.extractChecksDetails(ChecksAnnotationScope.NEW))
                 .hasFieldOrPropertyWithValue("detailsURL", Optional.of(getResultAction(run).getAbsoluteUrl()))
                 .usingRecursiveComparison()
@@ -114,14 +115,14 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that {@link WarningChecksPublisher} correctly reports a successful quality gate.
      */
     @Test
-    void shouldConcludeChecksAsSuccessWhenQualityGateIsPassed() {
+    void shouldConcludeChecksAsSuccessWhenQualityGateHased() {
         var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
         enableAndConfigureCheckstyle(project,
                 recorder -> recorder.setQualityGates(List.of(
                         new WarningsQualityGate(10, QualityGateType.TOTAL, QualityGateCriticality.UNSTABLE))));
 
         Run<?, ?> build = buildSuccessfully(project);
-        var publisher = new WarningChecksPublisher(getResultAction(build), TaskListener.NULL, null);
+        var publisher = new WarningChecksPublisher(getResultAction(build), TaskListener.NULL, null, null);
 
         assertThat(publisher.extractChecksDetails(ChecksAnnotationScope.NEW).getConclusion())
                 .isEqualTo(ChecksConclusion.SUCCESS);
@@ -156,7 +157,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
         copySingleFileToWorkspace(project, "PVSReport.xml", "PVSReport.plog");
         Run<?, ?> run = buildSuccessfully(project);
 
-        var publisher = new WarningChecksPublisher(getResultAction(run), TaskListener.NULL, null);
+        var publisher = new WarningChecksPublisher(getResultAction(run), TaskListener.NULL, null, null);
         var details = publisher.extractChecksDetails(ChecksAnnotationScope.NEW);
 
         assertThat(details.getOutput().get().getChecksAnnotations())
@@ -182,7 +183,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
                 .hasTotalSize(0)
                 .hasNewSize(0);
 
-        assertThat(new WarningChecksPublisher(getResultAction(run), TaskListener.NULL, null)
+        assertThat(new WarningChecksPublisher(getResultAction(run), TaskListener.NULL, null, null)
                 .extractChecksDetails(ChecksAnnotationScope.NEW).getOutput())
                 .isPresent()
                 .get()
@@ -203,7 +204,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
                 .hasTotalSize(4)
                 .hasNewSize(0);
 
-        assertThat(new WarningChecksPublisher(getResultAction(run), TaskListener.NULL, null)
+        assertThat(new WarningChecksPublisher(getResultAction(run), TaskListener.NULL, null, null)
                 .extractChecksDetails(ChecksAnnotationScope.NEW).getOutput())
                 .isPresent()
                 .get()
@@ -229,7 +230,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
                 .hasTotalSize(6)
                 .hasNewSize(6);
 
-        assertThat(new WarningChecksPublisher(getResultAction(run), TaskListener.NULL, null)
+        assertThat(new WarningChecksPublisher(getResultAction(run), TaskListener.NULL, null, null)
                 .extractChecksDetails(ChecksAnnotationScope.NEW).getOutput())
                 .isPresent()
                 .get()
@@ -251,7 +252,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
         copySingleFileToWorkspace(project, "pmd-report.xml");
         Run<?, ?> run = buildSuccessfully(project);
 
-        var publisher = new WarningChecksPublisher(getResultAction(run), TaskListener.NULL, null);
+        var publisher = new WarningChecksPublisher(getResultAction(run), TaskListener.NULL, null, null);
         var details = publisher.extractChecksDetails(ChecksAnnotationScope.NEW);
 
         assertThat(details.getOutput().get().getChecksAnnotations().get(0))
@@ -278,6 +279,59 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
 
         assertThat(publishedChecks.get(0).getOutput()).isPresent().hasValueSatisfying(
                 output -> assertThat(output.getTitle()).contains("No new issues, 6 total"));
+    }
+
+    /**
+     * Verifies that publishIssues propagates a direct detailsURL override to the publisher.
+     */
+    @Test
+    void shouldPropagateDirectDetailsURLFromPublishIssues() {
+        var project = createPipelineWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
+        var customUrl = "http://direct-publish-url";
+        // We need to run a scan first so that there are results to publish
+        project.setDefinition(asStage(createScanForIssuesStep(new CheckStyle()), 
+                "publishIssues(issues: [issues], detailsURL: '" + customUrl + "')"));
+        buildSuccessfully(project);
+
+        List<ChecksDetails> publishedChecks = getPublishedChecks();
+        assertThat(publishedChecks).hasSize(1);
+        assertThat(publishedChecks.get(0).getDetailsURL()).isEqualTo(Optional.of(customUrl));
+    }
+
+    /**
+     * Verifies that publishIssues uses the detailsURL from withChecks context when no direct override is provided.
+     */
+    @Test
+    void shouldUseContextDetailsURLWhenPublishIssuesHasNoOverride() {
+        var project = createPipelineWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
+        var contextUrl = "http://context-publish-url";
+        project.setDefinition(asStage("withChecks(name: 'Custom Name', detailsURL: '" + contextUrl + "') {",
+                createScanForIssuesStep(new CheckStyle()), 
+                "publishIssues(issues: [issues])", "}"));
+        buildSuccessfully(project);
+
+        List<ChecksDetails> publishedChecks = getPublishedChecks();
+        // index 0 is 'In progress' from withChecks, index 1 is publishIssues
+        assertThat(publishedChecks).hasSize(2);
+        assertThat(publishedChecks.get(1).getDetailsURL()).isEqualTo(Optional.of(contextUrl));
+    }
+
+    /**
+     * Verifies that a direct override in publishIssues takes precedence over the withChecks context URL.
+     */
+    @Test
+    void shouldPreferDirectOverrideOverContextURLForPublishIssues() {
+        var project = createPipelineWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
+        var contextUrl = "http://context-publish-url";
+        var directUrl = "http://direct-publish-url";
+        project.setDefinition(asStage("withChecks(name: 'Custom Name', detailsURL: '" + contextUrl + "') {",
+                createScanForIssuesStep(new CheckStyle()), 
+                "publishIssues(issues: [issues], detailsURL: '" + directUrl + "')", "}"));
+        buildSuccessfully(project);
+
+        List<ChecksDetails> publishedChecks = getPublishedChecks();
+        assertThat(publishedChecks).hasSize(2);
+        assertThat(publishedChecks.get(1).getDetailsURL()).isEqualTo(Optional.of(directUrl));
     }
 
     /**
@@ -374,6 +428,83 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
+     * Verifies the priority chain for detailsURL resolution: Direct Override > Context (ChecksInfo) > System Default.
+     */
+    @Test
+    void shouldResolveDetailsURLWithCorrectPriority() {
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
+        enableCheckStyleWarnings(project);
+        Run<?, ?> run = buildSuccessfully(project);
+        var action = getResultAction(run);
+        var defaultUrl = action.getAbsoluteUrl();
+
+        // Case 1: System Default (No override, no context)
+        var publisherDefault = new WarningChecksPublisher(action, TaskListener.NULL, null, null);
+        assertThat(publisherDefault.extractChecksDetails(ChecksAnnotationScope.NEW).getDetailsURL())
+                .isEqualTo(Optional.of(defaultUrl));
+
+        // Case 2: Contextual Override (No direct override, context provided)
+        var checksInfo = new ChecksInfo("Custom Name", "http://context-url");
+        var publisherContext = new WarningChecksPublisher(action, TaskListener.NULL, checksInfo, null);
+        assertThat(publisherContext.extractChecksDetails(ChecksAnnotationScope.NEW).getDetailsURL())
+                .isEqualTo(Optional.of("http://context-url"));
+
+        // Case 3: Direct Override (Wins over context and default)
+        var publisherDirect = new WarningChecksPublisher(action, TaskListener.NULL, checksInfo, "http://direct-url");
+        assertThat(publisherDirect.extractChecksDetails(ChecksAnnotationScope.NEW).getDetailsURL())
+                .isEqualTo(Optional.of("http://direct-url"));
+    }
+
+    /**
+     * Verifies that recordIssues propagates a direct detailsURL override to the publisher.
+     */
+    @Test
+    void shouldPropagateDirectDetailsURLFromRecordIssues() {
+        var project = createPipelineWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
+        var customUrl = "http://direct-override-url";
+        project.setDefinition(asStage("recordIssues(tools: [checkStyle()], detailsURL: '" + customUrl + "')"));
+        buildSuccessfully(project);
+
+        List<ChecksDetails> publishedChecks = getPublishedChecks();
+        assertThat(publishedChecks).hasSize(1);
+        assertThat(publishedChecks.get(0).getDetailsURL()).isEqualTo(Optional.of(customUrl));
+    }
+
+    /**
+     * Verifies that recordIssues uses the detailsURL from withChecks context when no direct override is provided.
+     */
+    @Test
+    void shouldUseContextDetailsURLWhenRecordIssuesHasNoOverride() {
+        var project = createPipelineWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
+        var customUrl = "http://context-override-url";
+        project.setDefinition(asStage("withChecks(name: 'Custom Name', detailsURL: '" + customUrl + "') {",
+                createRecordIssuesStep(new CheckStyle()), "}"));
+        buildSuccessfully(project);
+
+        List<ChecksDetails> publishedChecks = getPublishedChecks();
+        // index 0 is 'In progress' from withChecks, index 1 is recordIssues
+        assertThat(publishedChecks).hasSize(2);
+        assertThat(publishedChecks.get(1).getDetailsURL()).isEqualTo(Optional.of(customUrl));
+    }
+
+    /**
+     * Verifies that a direct override in recordIssues takes precedence over the withChecks context URL.
+     */
+    @Test
+    void shouldPreferDirectOverrideOverContextURL() {
+        var project = createPipelineWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
+        var customUrl = "http://context-override-url";
+        var directUrl = "http://direct-override-url";
+        project.setDefinition(asStage("withChecks(name: 'Custom Name', detailsURL: '" + customUrl + "') {",
+                "recordIssues(tools: [checkStyle()], detailsURL: '" + directUrl + "')", "}"));
+        buildSuccessfully(project);
+
+        List<ChecksDetails> publishedChecks = getPublishedChecks();
+        assertThat(publishedChecks).hasSize(2);
+        assertThat(publishedChecks.get(1).getDetailsURL()).isEqualTo(Optional.of(directUrl));
+    }
+
+    /**
      * Verifies that {@link WarningChecksPublisher} uses issue category when the type is not provided.
      */
     @Test
@@ -386,7 +517,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
         copySingleFileToWorkspace(project, "msbuild.log");
         Run<?, ?> run = buildSuccessfully(project);
 
-        var publisher = new WarningChecksPublisher(getResultAction(run), TaskListener.NULL, null);
+        var publisher = new WarningChecksPublisher(getResultAction(run), TaskListener.NULL, null, null);
         var details = publisher.extractChecksDetails(ChecksAnnotationScope.NEW);
 
         assertThat(details.getOutput().get().getChecksAnnotations().get(0))
@@ -481,7 +612,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
                 .hasTotalSize(6)
                 .hasQualityGateStatus(criticality.getStatus());
 
-        var publisher = new WarningChecksPublisher(getResultAction(build), TaskListener.NULL, null);
+        var publisher = new WarningChecksPublisher(getResultAction(build), TaskListener.NULL, null, null);
         assertThat(publisher.extractChecksDetails(ChecksAnnotationScope.NEW).getConclusion())
                 .isEqualTo(ChecksConclusion.FAILURE);
     }
