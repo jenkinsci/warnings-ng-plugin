@@ -1,8 +1,8 @@
-name: 'Quality Monitor Comment'
+name: 'Quality Monitor » HEAD'
 
 on:
   workflow_run:
-    workflows: ['Quality Monitor', 'Dependency Check']
+    workflows: ['Quality Monitor » Build', 'Dependency Check']
     types: [completed]
 
 permissions:
@@ -22,14 +22,6 @@ jobs:
         uses: actions/checkout@v6
       - name: Install jq and unzip
         run: sudo apt-get update && sudo apt-get install -y jq unzip
-      - name: Prepare environment
-        env:
-          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
-          REPO: ${{ github.repository }}
-          TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          echo "HEAD_SHA=$HEAD_SHA"
-          echo "REPO=$REPO"
       - name: Fetch reports from dependency check and quality monitor workflows
         env:
           REPO: ${{ github.repository }}
