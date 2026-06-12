@@ -43,7 +43,7 @@
     <analysis-model-tests.version>14.8.0</analysis-model-tests.version>
     <pull-request-monitoring.version>335.v525cd64ec76b_</pull-request-monitoring.version>
 
-    <eclipse-collections.version>9.2.0</eclipse-collections.version>
+    <eclipse-collections.version>13.0.0</eclipse-collections.version>
 
     <!-- Test Library Dependencies Versions -->
     <xmlunit.version>2.11.0</xmlunit.version>
