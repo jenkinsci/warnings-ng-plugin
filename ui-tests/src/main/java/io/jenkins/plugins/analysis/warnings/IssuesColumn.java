@@ -1,11 +1,12 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.util.List;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+
+import java.util.List;
+import java.util.Objects;
 
 import org.jenkinsci.test.acceptance.plugins.dashboard_view.DashboardView;
 import org.jenkinsci.test.acceptance.po.ContainerPageObject;
@@ -51,7 +52,7 @@ public class IssuesColumn extends PageObject {
 
         List<WebElement> rows = table.findElements(By.tagName("tr"));
         for (WebElement row : rows) {
-            if (row.getAttribute("id").startsWith("job_")) {
+            if (Objects.requireNonNull(row.getAttribute("id")).startsWith("job_")) {
                 return row.findElement(By.xpath("td[" + columnIndex + "]"));
             }
         }
