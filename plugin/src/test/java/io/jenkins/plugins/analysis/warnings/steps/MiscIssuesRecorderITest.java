@@ -221,6 +221,178 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
+     * Verifies that the recorder-level {@code id} parameter is used as the result ID when a single tool is configured.
+     * This is the main scenario from JENKINS-55445: users should be able to write
+     * {@code recordIssues id: "custom-id", tools: [checkstyle()]} and have the result use "custom-id" as its ID.
+     *
+     * @see <a href="https://github.com/jenkinsci/warnings-ng-plugin/issues/2726">Issue #2726 (JENKINS-55445)</a>
+     */
+    @Test
+    @org.junitpioneer.jupiter.Issue("JENKINS-55445")
+    void shouldUseRecorderIdForSingleToolWithoutToolId() {
+        var project = createFreestyleJob("checkstyle.xml");
+
+        var tool = configurePattern(new CheckStyle());
+        mockCheckStyleDescriptor(tool);
+
+        var recorder = enableGenericWarnings(project, tool);
+        recorder.setId(CUSTOM_ID);
+
+        var build = buildWithResult(project, Result.SUCCESS);
+        var action = getResultAction(build);
+        assertThat(action.getId()).isEqualTo(CUSTOM_ID);
+        assertThat(action.getDisplayName()).startsWith("CheckStyle");
+
+        // Verify the result URL uses the custom ID
+        var result = getAnalysisResult(build);
+        assertThat(result).hasId(CUSTOM_ID);
+    }
+
+    /**
+     * Verifies that the recorder-level {@code name} parameter is used as the result display name when a single tool
+     * is configured. Related to JENKINS-55445.
+     *
+     * @see <a href="https://github.com/jenkinsci/warnings-ng-plugin/issues/2726">Issue #2726 (JENKINS-55445)</a>
+     */
+    @Test
+    @org.junitpioneer.jupiter.Issue("JENKINS-55445")
+    void shouldUseRecorderNameForSingleToolWithoutToolName() {
+        var project = createFreestyleJob("checkstyle.xml");
+
+        var tool = configurePattern(new CheckStyle());
+        configureCheckStyleDescriptor(tool);
+
+        var recorder = enableGenericWarnings(project, tool);
+        recorder.setName(CUSTOM_NAME);
+
+        var build = buildWithResult(project, Result.SUCCESS);
+        var action = getResultAction(build);
+        assertThat(action.getId()).isEqualTo(CHECKSTYLE);
+        assertThat(action.getDisplayName()).startsWith(CUSTOM_NAME);
+    }
+
+    /**
+     * Verifies that both recorder-level {@code id} and {@code name} parameters can be set simultaneously for a single
+     * tool. Related to JENKINS-55445.
+     *
+     * @see <a href="https://github.com/jenkinsci/warnings-ng-plugin/issues/2726">Issue #2726 (JENKINS-55445)</a>
+     */
+    @Test
+    @org.junitpioneer.jupiter.Issue("JENKINS-55445")
+    void shouldUseRecorderIdAndNameForSingleToolConfiguration() {
+        var project = createFreestyleJob("checkstyle.xml");
+
+        var tool = configurePattern(new CheckStyle());
+        mockCheckStyleDescriptor(tool);
+
+        var recorder = enableGenericWarnings(project, tool);
+        recorder.setId(CUSTOM_ID);
+        recorder.setName(CUSTOM_NAME);
+
+        var build = buildWithResult(project, Result.SUCCESS);
+        var action = getResultAction(build);
+        assertThat(action.getId()).isEqualTo(CUSTOM_ID);
+        assertThat(action.getDisplayName()).startsWith(CUSTOM_NAME);
+
+        // Verify the result URL uses the custom ID
+        var result = getAnalysisResult(build);
+        assertThat(result).hasId(CUSTOM_ID);
+    }
+
+    /**
+     * Verifies that the recorder-level {@code id} takes precedence over the tool-level {@code id} when both are set
+     * for a single tool, and that a warning is logged. Related to JENKINS-55445.
+     *
+     * @see <a href="https://github.com/jenkinsci/warnings-ng-plugin/issues/2726">Issue #2726 (JENKINS-55445)</a>
+     */
+    @Test
+    @org.junitpioneer.jupiter.Issue("JENKINS-55445")
+    void shouldPreferRecorderIdOverToolIdForSingleTool() {
+        var project = createFreestyleJob("checkstyle.xml");
+
+        var tool = configurePattern(new CheckStyle());
+        configureCheckStyleDescriptor(tool); // sets tool id to CHECKSTYLE
+
+        var recorder = enableGenericWarnings(project, tool);
+        recorder.setId(CUSTOM_ID); // recorder id takes precedence
+
+        var build = buildWithResult(project, Result.SUCCESS);
+        var action = getResultAction(build);
+        assertThat(action.getId()).isEqualTo(CUSTOM_ID);
+
+        // Verify the warning about both recorder and tool having IDs is logged
+        assertThat(getConsoleLog(build)).contains("Do not set id, name, or icon for both the tool and the recorder");
+    }
+
+    /**
+     * Verifies that the recorder-level {@code id} is used for the result when multiple tools are configured with
+     * aggregation enabled. Related to JENKINS-55445.
+     *
+     * @see <a href="https://github.com/jenkinsci/warnings-ng-plugin/issues/2726">Issue #2726 (JENKINS-55445)</a>
+     */
+    @Test
+    @org.junitpioneer.jupiter.Issue("JENKINS-55445")
+    void shouldUseRecorderIdForAggregatedMultipleTools() {
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle.xml", "pmd-warnings.xml");
+
+        var checkStyleTool = createTool(new CheckStyle(), "**/checkstyle-issues.txt");
+        mockCheckStyleDescriptor(checkStyleTool);
+
+        var pmdTool = createTool(new Pmd(), "**/pmd-warnings-issues.txt");
+        mockPmdDescriptor(pmdTool);
+
+        enableWarnings(project, recorder -> {
+                    recorder.setAggregatingResults(true);
+                    recorder.setId(CUSTOM_ID);
+                    recorder.setName(CUSTOM_NAME);
+                },
+                checkStyleTool, pmdTool);
+
+        var build = buildWithResult(project, Result.SUCCESS);
+        var result = getAnalysisResult(build);
+        assertThat(result).hasId(CUSTOM_ID);
+
+        var action = getResultAction(build);
+        assertThat(action.getId()).isEqualTo(CUSTOM_ID);
+        assertThat(action.getDisplayName()).startsWith(CUSTOM_NAME);
+    }
+
+    /**
+     * Verifies that setting the recorder-level {@code id} with multiple tools and no aggregation logs a warning and
+     * uses the tool IDs instead. Related to JENKINS-55445.
+     *
+     * @see <a href="https://github.com/jenkinsci/warnings-ng-plugin/issues/2726">Issue #2726 (JENKINS-55445)</a>
+     */
+    @Test
+    @org.junitpioneer.jupiter.Issue("JENKINS-55445")
+    void shouldWarnWhenRecorderIdSetForMultipleToolsWithoutAggregation() {
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle.xml", "pmd-warnings.xml");
+
+        var checkStyleTool = createTool(new CheckStyle(), "**/checkstyle-issues.txt");
+        configureCheckStyleDescriptor(checkStyleTool);
+        checkStyleTool.setId(StringUtils.EMPTY); // reset so descriptor provides the id
+
+        var pmdTool = createTool(new Pmd(), "**/pmd-warnings-issues.txt");
+        mockPmdDescriptor(pmdTool);
+
+        enableWarnings(project, recorder -> {
+                    recorder.setAggregatingResults(false);
+                    recorder.setId(CUSTOM_ID);
+                },
+                checkStyleTool, pmdTool);
+
+        var build = buildWithResult(project, Result.SUCCESS);
+
+        // Without aggregation, the recorder-level id is ignored for multiple tools
+        assertThat(getConsoleLog(build)).contains("Do not set id, name, or icon of recorder when multiple tools are defined");
+
+        // Each tool should use its own ID
+        var results = getAnalysisResults(build);
+        assertThat(results).hasSize(2);
+        assertThat(results).extracting("id").containsExactlyInAnyOrder(CHECKSTYLE, "pmd");
+    }
+
+    /**
      * Runs the CheckStyle parser without specifying a pattern: the default pattern should be used.
      */
     @Test
@@ -393,6 +565,36 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
             var jenkinsFacade = mock(JenkinsFacade.class);
             when(jenkinsFacade.getDescriptorOrDie(CheckStyle.class)).thenReturn(new CheckStyle.Descriptor());
             checkStyle.setJenkinsFacade(jenkinsFacade);
+        }
+    }
+
+    /**
+     * Mocks the CheckStyle descriptor without changing the tool's own ID or name, so that
+     * the recorder-level ID/name can cleanly override the descriptor-based defaults.
+     *
+     * @param tool
+     *         the tool to mock the descriptor for
+     */
+    private void mockCheckStyleDescriptor(final ReportScanningTool tool) {
+        if (tool instanceof CheckStyle checkStyle) {
+            var jenkinsFacade = mock(JenkinsFacade.class);
+            when(jenkinsFacade.getDescriptorOrDie(CheckStyle.class)).thenReturn(new CheckStyle.Descriptor());
+            checkStyle.setJenkinsFacade(jenkinsFacade);
+        }
+    }
+
+    /**
+     * Mocks the Pmd descriptor without changing the tool's own ID or name, so that the tool
+     * can be scanned without the Pmd descriptor being registered in Jenkins.
+     *
+     * @param tool
+     *         the tool to mock the descriptor for
+     */
+    private void mockPmdDescriptor(final ReportScanningTool tool) {
+        if (tool instanceof Pmd pmd) {
+            var jenkinsFacade = mock(JenkinsFacade.class);
+            when(jenkinsFacade.getDescriptorOrDie(Pmd.class)).thenReturn(new Pmd.Descriptor());
+            pmd.setJenkinsFacade(jenkinsFacade);
         }
     }
 

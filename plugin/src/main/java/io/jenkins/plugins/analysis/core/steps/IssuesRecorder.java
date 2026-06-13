@@ -227,11 +227,12 @@ public class IssuesRecorder extends Recorder {
 
     /**
      * Defines the ID of the results. The ID is used as URL of the results and as name in UI elements. If no ID is
-     * given, then the ID of the associated result object is used.
+     * given, then the ID of the associated tool is used.
      *
      * <p>
-     * Note: this property is not used if {@link #isAggregatingResults} is {@code false}. It is also not visible in the
-     * UI in order to simplify the user interface.
+     * This property is used for both single-tool and multi-tool (aggregated) configurations. When a single tool is
+     * configured, the recorder-level ID takes precedence over the tool-level ID. When multiple tools are configured
+     * without aggregation, this property is ignored (the tool's own ID is used for each result).
      * </p>
      *
      * @param id
@@ -253,8 +254,9 @@ public class IssuesRecorder extends Recorder {
      * the associated {@link StaticAnalysisLabelProvider} is used.
      *
      * <p>
-     * Note: this property is not used if {@link #isAggregatingResults} is {@code false}. It is also not visible in the
-     * UI in order to simplify the user interface.
+     * This property is used for both single-tool and multi-tool (aggregated) configurations. When a single tool is
+     * configured, the recorder-level name takes precedence over the tool-level name. When multiple tools are configured
+     * without aggregation, this property is ignored (the tool's own name is used for each result).
      * </p>
      *
      * @param name
