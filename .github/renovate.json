@@ -7,8 +7,10 @@
   "ignorePaths": ["src/**"],
   "packageRules": [
     {
-      "matchPackagePrefixes": ["org.eclipse.collections:eclipse-collections"],
-      "allowedVersions": "< 10.0"
+      "allowedVersions": "< 10.0",
+      "matchPackageNames": [
+        "org.eclipse.collections:eclipse-collections{/,}**"
+      ]
     }
   ]
 }
