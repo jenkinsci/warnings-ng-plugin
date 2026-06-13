@@ -342,10 +342,10 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         mockPmdDescriptor(pmdTool);
 
         enableWarnings(project, recorder -> {
-                    recorder.setAggregatingResults(true);
-                    recorder.setId(CUSTOM_ID);
-                    recorder.setName(CUSTOM_NAME);
-                },
+            recorder.setAggregatingResults(true);
+            recorder.setId(CUSTOM_ID);
+            recorder.setName(CUSTOM_NAME);
+        },
                 checkStyleTool, pmdTool);
 
         var build = buildWithResult(project, Result.SUCCESS);
@@ -376,10 +376,9 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         mockPmdDescriptor(pmdTool);
 
         enableWarnings(project, recorder -> {
-                    recorder.setAggregatingResults(false);
-                    recorder.setId(CUSTOM_ID);
-                },
-                checkStyleTool, pmdTool);
+            recorder.setAggregatingResults(false);
+            recorder.setId(CUSTOM_ID);
+        }, checkStyleTool, pmdTool);
 
         var build = buildWithResult(project, Result.SUCCESS);
 
