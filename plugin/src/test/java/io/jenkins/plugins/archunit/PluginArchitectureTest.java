@@ -10,7 +10,6 @@ import com.tngtech.archunit.lang.ArchRule;
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.archunit.ArchitectureRules;
 
-import java.util.Arrays;
 import java.util.List;
 
 import io.jenkins.plugins.util.PluginArchitectureRules;
@@ -32,8 +31,8 @@ final class PluginArchitectureTest {
     @ArchTest
     static final ArchRule NO_EXCEPTIONS_WITH_NO_ARG_CONSTRUCTOR = noClasses()
             .that().haveSimpleNameNotContaining("Benchmark")
-            .should().callConstructorWhere(new ExceptionHasNoContext(ParsingCanceledException.class,
-                    IncompatibleClassChangeError.class));
+            .should().callConstructorWhere(new ExceptionHasNoContext(List.of(
+                    ParsingCanceledException.class, IncompatibleClassChangeError.class)));
 
     @ArchTest
     static final ArchRule NO_PUBLIC_TEST_CLASSES = ArchitectureRules.NO_PUBLIC_TEST_CLASSES;
@@ -77,11 +76,9 @@ final class PluginArchitectureTest {
     private static class ExceptionHasNoContext extends DescribedPredicate<JavaConstructorCall> {
         private final List<Class<? extends Throwable>> allowedExceptions;
 
-        @SafeVarargs
-        ExceptionHasNoContext(final Class<? extends Throwable>... allowedExceptions) {
+        ExceptionHasNoContext(final List<Class<? extends Throwable>> allowedExceptions) {
             super("exception context is missing");
-
-            this.allowedExceptions = Arrays.asList(allowedExceptions);
+            this.allowedExceptions = allowedExceptions;
         }
 
         @Override

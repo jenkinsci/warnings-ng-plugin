@@ -1,7 +1,7 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.codehaus.groovy.control.CompilationFailedException;
 
 import edu.hm.hafner.analysis.Issue;
@@ -15,6 +15,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -24,8 +25,8 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.verb.POST;
 import hudson.Extension;
-import hudson.model.AbstractDescribableImpl;
 import hudson.model.BuildableItem;
+import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.model.Item;
 import hudson.util.FormValidation;
@@ -40,7 +41,7 @@ import io.jenkins.plugins.util.ValidationUtilities;
  *
  * @author Ullrich Hafner
  */
-public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implements Serializable {
+public class GroovyParser implements Describable<GroovyParser>, Serializable {
     @Serial
     private static final long serialVersionUID = 2447124045452896581L;
     private static final ValidationUtilities VALIDATION_UTILITIES = new ValidationUtilities();
@@ -84,7 +85,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
     }
 
     private static boolean containsNewline(final String expression) {
-        return StringUtils.containsAny(expression, "\\n", "\\r", "\\R");
+        return Strings.CS.containsAny(expression, "\\n", "\\r", "\\R");
     }
 
     /**
@@ -212,7 +213,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
     }
 
     private JenkinsFacade getJenkinsFacade() {
-        return ObjectUtils.defaultIfNull(jenkinsFacade, new JenkinsFacade());
+        return Objects.requireNonNullElseGet(jenkinsFacade, JenkinsFacade::new);
     }
 
     /**

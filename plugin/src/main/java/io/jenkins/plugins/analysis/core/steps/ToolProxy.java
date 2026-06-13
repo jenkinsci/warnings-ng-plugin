@@ -6,7 +6,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import hudson.Extension;
-import hudson.model.AbstractDescribableImpl;
+import hudson.model.Describable;
 import hudson.model.Descriptor;
 
 import io.jenkins.plugins.analysis.core.model.Tool;
@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.Tool;
  *
  * @author Ullrich Hafner
  */
-public class ToolProxy extends AbstractDescribableImpl<ToolProxy> {
+public class ToolProxy implements Describable<ToolProxy> {
     private final Tool tool;
 
     /**

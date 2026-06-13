@@ -6,8 +6,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
@@ -28,7 +26,6 @@ import static io.jenkins.plugins.analysis.warnings.Assertions.*;
  * @author Simon Schönwiese
  */
 @WithPlugins("warnings-ng")
-@SuppressFBWarnings("BC")
 public class DetailsTabUiTest extends UiTest {
     private static final String DETAILS_TAB_RESOURCES = "details_tab_test/";
 

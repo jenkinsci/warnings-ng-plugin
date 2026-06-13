@@ -35,10 +35,12 @@
   </developers>
 
   <properties>
+    <!-- TODO remove explicit version once it's available in BOM -->
+    <mcp.plugin.version>0.168.v13951585050d</mcp.plugin.version>
     <maven.deploy.skip>false</maven.deploy.skip>
 
     <!-- Library Dependencies Versions -->
-    <analysis-model-tests.version>13.10.0</analysis-model-tests.version>
+    <analysis-model-tests.version>14.8.0</analysis-model-tests.version>
     <pull-request-monitoring.version>335.v525cd64ec76b_</pull-request-monitoring.version>
 
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
@@ -49,8 +51,8 @@
     <testcontainers.version>1.21.4</testcontainers.version>
 
     <!-- Jenkins Plug-in Dependencies Versions -->
-    <flexible-publish.version>0.15.2</flexible-publish.version>
-    <form-element-path.version>1.11</form-element-path.version>
+    <flexible-publish.version>0.16.1</flexible-publish.version>
+    <form-element-path.version>1.12</form-element-path.version>
 
     <!-- Maven Surefire ArgLine -->
     <argLine>-Djava.awt.headless=true -Xmx1024m -Djenkins.test.timeout=1000 --add-opens java.base/java.lang=ALL-UNNAMED
@@ -81,6 +83,7 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>analysis-model-api</artifactId>
+      <version>14.8.0-976.v5097f60f61a_4</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
@@ -109,7 +112,6 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>prism-api</artifactId>
-      <version>1.30.0-703.v116fb_3b_5b_b_a_a_</version>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
@@ -154,6 +156,16 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>json-path-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>variant</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>mcp-server</artifactId>
+      <optional>true</optional>
+      <version>${mcp.plugin.version}</version>
     </dependency>
 
     <!-- AxivionSuite Dependencies -->
@@ -225,6 +237,15 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>git-client</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>mcp-server</artifactId>
+      <optional>true</optional>
+      <version>${mcp.plugin.version}</version>
+      <classifier>tests</classifier>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -567,6 +588,10 @@
           <excludes combine.children="append">
             <exclude>.*Thresholds</exclude>
             <exclude>.*Test.*</exclude>
+            <exclude>.*DescriptionProvider.*</exclude>
+            <exclude>.*AgeBuilder.*</exclude>
+            <exclude>.*StaticAnalysisToolFactory.*</exclude>
+            <exclude>.*ResultSelector.*</exclude>
             <exclude>.*Benchmark.*</exclude>
             <exclude>.*TaskScanner.*</exclude>
           </excludes>

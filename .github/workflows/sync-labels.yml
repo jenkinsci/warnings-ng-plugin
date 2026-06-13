@@ -1,4 +1,4 @@
-name: Sync labels
+name: 'Sync Labels'
 on:
   push:
     branches:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   sync-labels:
-    name: Sync labels
+    name: Sync Labels
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
