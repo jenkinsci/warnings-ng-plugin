@@ -1061,6 +1061,12 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         shouldFindIssuesOfTool(3, new Grype(), "grype-report.json");
     }
 
+    /** Runs the AnchoreCtl parser on an output file that contains 3 issues. */
+    @Test
+    void shouldFindAllAnchoreCtlIssues() {
+        shouldFindIssuesOfTool(3, new AnchoreCtl(), "anchorectl-report.json");
+    }
+
     /** Runs the Vale analysis parser on an output file that contains 3 issues. */
     @Test
     void shouldFindAllValeIssues() {

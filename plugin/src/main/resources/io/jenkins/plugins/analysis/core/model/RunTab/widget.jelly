@@ -1,0 +1,64 @@
+<!--
+The MIT License
+
+Copyright (c) 2026, Jan Faracik
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+-->
+
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout" xmlns:st="jelly:stapler">
+    <st:adjunct includes="io.jenkins.plugins.analysis.core.model.RunTab.styles"/>
+
+    <j:set var="maxItems" value="7" />
+
+    <l:card title="${it.displayName}" expandable="${it.urlName}">
+        <j:set var="widget" value="${it.widget}" />
+
+        <a class="wng-widget__link" href="${it.urlName}" tabindex="-1" aria-hidden="true" />
+
+        <div class="jenkins-card__teaser">
+            <l:icon src="${widget.symbol}" class="jenkins-!-warning-color" />
+            <j:forEach var="line" items="${widget.lines}">
+                <div>${line}</div>
+            </j:forEach>
+
+            <j:if test="${!empty(widget.failedResults)}">
+                <div class="wng-widget">
+                    <j:forEach var="icon" items="${widget.failedResults}" indexVar="i">
+                        <j:if test="${i lt maxItems}">
+                            <a href="${it.urlName}/${icon.urlName}" class="wng-widget__item">
+                                <l:icon src="${icon.iconFileName}" />
+                                ${icon.displayName}
+                                <span class="jenkins-badge jenkins-!-warning-color">${icon.result.totalSize}</span>
+                            </a>
+                        </j:if>
+
+                        <j:if test="${i eq maxItems}">
+                            <span class="wng-widget__item wng-widget__item--more">
+                                ${size(widget.failedResults) - maxItems} left
+                                <l:icon src="symbol-chevron-forward-outline plugin-ionicons-api" />
+                            </span>
+                        </j:if>
+                    </j:forEach>
+                </div>
+            </j:if>
+        </div>
+    </l:card>
+</j:jelly>

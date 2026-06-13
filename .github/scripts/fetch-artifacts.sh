@@ -19,7 +19,7 @@ SHA="${HEAD_SHA}"
 TOKEN="${TOKEN}"
 API_BASE="https://api.github.com/repos/${REPO}"
 RETRIES=${RETRIES:-30}
-SLEEP_SEC=${SLEEP_SEC:-30}
+SLEEP_SEC=${SLEEP_SEC:-60}
 ALLOWED_EVENTS=${ALLOWED_EVENTS:-pull_request,pull_request_target}
 
 mkdir -p artifacts
