@@ -4,5 +4,11 @@
     "github>jenkinsci/renovate-config"
   ],
   "commitMessageAction": "Bump",
-  "ignorePaths": ["src/**"]
+  "ignorePaths": ["src/**"],
+  "packageRules": [
+    {
+      "matchPackagePrefixes": ["org.eclipse.collections:eclipse-collections"],
+      "allowedVersions": "< 10.0"
+    }
+  ]
 }
