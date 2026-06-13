@@ -220,13 +220,6 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(action.getIconFileName()).isEqualTo(CUSTOM_ICON);
     }
 
-    /**
-     * Verifies that the recorder-level {@code id} parameter is used as the result ID when a single tool is configured.
-     * This is the main scenario from JENKINS-55445: users should be able to write
-     * {@code recordIssues id: "custom-id", tools: [checkstyle()]} and have the result use "custom-id" as its ID.
-     *
-     * @see <a href="https://github.com/jenkinsci/warnings-ng-plugin/issues/2726">Issue #2726 (JENKINS-55445)</a>
-     */
     @Test
     @org.junitpioneer.jupiter.Issue("JENKINS-55445")
     void shouldUseRecorderIdForSingleToolWithoutToolId() {
@@ -243,17 +236,10 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(action.getId()).isEqualTo(CUSTOM_ID);
         assertThat(action.getDisplayName()).startsWith("CheckStyle");
 
-        // Verify the result URL uses the custom ID
         var result = getAnalysisResult(build);
         assertThat(result).hasId(CUSTOM_ID);
     }
 
-    /**
-     * Verifies that the recorder-level {@code name} parameter is used as the result display name when a single tool
-     * is configured. Related to JENKINS-55445.
-     *
-     * @see <a href="https://github.com/jenkinsci/warnings-ng-plugin/issues/2726">Issue #2726 (JENKINS-55445)</a>
-     */
     @Test
     @org.junitpioneer.jupiter.Issue("JENKINS-55445")
     void shouldUseRecorderNameForSingleToolWithoutToolName() {
@@ -271,12 +257,6 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(action.getDisplayName()).startsWith(CUSTOM_NAME);
     }
 
-    /**
-     * Verifies that both recorder-level {@code id} and {@code name} parameters can be set simultaneously for a single
-     * tool. Related to JENKINS-55445.
-     *
-     * @see <a href="https://github.com/jenkinsci/warnings-ng-plugin/issues/2726">Issue #2726 (JENKINS-55445)</a>
-     */
     @Test
     @org.junitpioneer.jupiter.Issue("JENKINS-55445")
     void shouldUseRecorderIdAndNameForSingleToolConfiguration() {
@@ -298,12 +278,6 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(result).hasId(CUSTOM_ID);
     }
 
-    /**
-     * Verifies that the recorder-level {@code id} takes precedence over the tool-level {@code id} when both are set
-     * for a single tool, and that a warning is logged. Related to JENKINS-55445.
-     *
-     * @see <a href="https://github.com/jenkinsci/warnings-ng-plugin/issues/2726">Issue #2726 (JENKINS-55445)</a>
-     */
     @Test
     @org.junitpioneer.jupiter.Issue("JENKINS-55445")
     void shouldPreferRecorderIdOverToolIdForSingleTool() {
@@ -322,12 +296,6 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(getConsoleLog(build)).contains("Do not set id, name, or icon for both the tool and the recorder");
     }
 
-    /**
-     * Verifies that the recorder-level {@code id} is used for the result when multiple tools are configured with
-     * aggregation enabled. Related to JENKINS-55445.
-     *
-     * @see <a href="https://github.com/jenkinsci/warnings-ng-plugin/issues/2726">Issue #2726 (JENKINS-55445)</a>
-     */
     @Test
     @org.junitpioneer.jupiter.Issue("JENKINS-55445")
     void shouldUseRecorderIdForAggregatedMultipleTools() {
@@ -355,12 +323,6 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(action.getDisplayName()).startsWith(CUSTOM_NAME);
     }
 
-    /**
-     * Verifies that setting the recorder-level {@code id} with multiple tools and no aggregation logs a warning and
-     * uses the tool IDs instead. Related to JENKINS-55445.
-     *
-     * @see <a href="https://github.com/jenkinsci/warnings-ng-plugin/issues/2726">Issue #2726 (JENKINS-55445)</a>
-     */
     @Test
     @org.junitpioneer.jupiter.Issue("JENKINS-55445")
     void shouldWarnWhenRecorderIdSetForMultipleToolsWithoutAggregation() {
@@ -368,7 +330,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
 
         var checkStyleTool = createTool(new CheckStyle(), "**/checkstyle-issues.txt");
         configureCheckStyleDescriptor(checkStyleTool);
-        checkStyleTool.setId(StringUtils.EMPTY); // reset so descriptor provides the id
+        checkStyleTool.setId(StringUtils.EMPTY);
 
         var pmdTool = createTool(new Pmd(), "**/pmd-warnings-issues.txt");
         mockPmdDescriptor(pmdTool);
