@@ -294,7 +294,6 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(action.getId()).isEqualTo(CUSTOM_ID);
         assertThat(action.getDisplayName()).startsWith(CUSTOM_NAME);
 
-        // Verify the result URL uses the custom ID
         var result = getAnalysisResult(build);
         assertThat(result).hasId(CUSTOM_ID);
     }
@@ -311,16 +310,15 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         var project = createFreestyleJob("checkstyle.xml");
 
         var tool = configurePattern(new CheckStyle());
-        configureCheckStyleDescriptor(tool); // sets tool id to CHECKSTYLE
+        configureCheckStyleDescriptor(tool);
 
         var recorder = enableGenericWarnings(project, tool);
-        recorder.setId(CUSTOM_ID); // recorder id takes precedence
+        recorder.setId(CUSTOM_ID); 
 
         var build = buildWithResult(project, Result.SUCCESS);
         var action = getResultAction(build);
         assertThat(action.getId()).isEqualTo(CUSTOM_ID);
 
-        // Verify the warning about both recorder and tool having IDs is logged
         assertThat(getConsoleLog(build)).contains("Do not set id, name, or icon for both the tool and the recorder");
     }
 
@@ -382,10 +380,8 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
 
         var build = buildWithResult(project, Result.SUCCESS);
 
-        // Without aggregation, the recorder-level id is ignored for multiple tools
         assertThat(getConsoleLog(build)).contains("Do not set id, name, or icon of recorder when multiple tools are defined");
 
-        // Each tool should use its own ID
         var results = getAnalysisResults(build);
         assertThat(results).hasSize(2);
         assertThat(results).extracting("id").containsExactlyInAnyOrder(CHECKSTYLE, "pmd");
