@@ -364,7 +364,7 @@
     <dependency>
       <groupId>com.parasoft</groupId>
       <artifactId>parasoft-findings</artifactId>
-      <version>10.7.6</version>
+      <version>10.7.7</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
