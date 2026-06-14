@@ -21,12 +21,6 @@ import java.util.stream.Stream;
 /**
  * Scans files line by line for occurrences of a configurable regular expression and reports each match as an issue.
  *
- * <p>
- * This scanner is the core logic for the {@link GrepParser} tool. It is designed to be simple to use: users
- * supply a regular expression, an optional message template, and a severity. Each line of a file that matches the
- * expression is turned into a {@link edu.hm.hafner.analysis.Issue}.
- * </p>
- *
  * @author Akash Manna
  */
 class GrepScanner {

@@ -39,17 +39,9 @@ import io.jenkins.plugins.util.ValidationUtilities;
  * Provides a simple grep-style file scanner that searches for occurrences of a configurable regular expression
  * in the workspace files and reports each matching line as an issue.
  *
- * <p>
- * This tool is designed for users who want to detect occurrences of certain patterns (e.g. "ERROR", "EXCEPTION",
- * custom log patterns) in build artefacts or log files without having to write Groovy scripts.
- * </p>
- *
- * <p>
- * Relates to JENKINS-53014: <a href="https://issues.jenkins.io/browse/JENKINS-53014">Add Grep Parsing
- * capability to Warnings Plugin</a>
- * </p>
- *
  * @author Akash Manna
+ * @see <a href="https://issues.jenkins.io/browse/JENKINS-53014">JENKINS-53014: Add Grep Parsing
+ * capability to Warnings Plugin</a>
  */
 @SuppressWarnings("PMD.DataClass")
 public class GrepParser extends Tool {
@@ -138,11 +130,6 @@ public class GrepParser extends Tool {
 
     /**
      * Sets an optional message template for matched issues.
-     *
-     * <p>
-     * The template may reference regex capturing groups using {@code $1}, {@code $2}, etc. When blank, the full
-     * matched line is used as the issue message.
-     * </p>
      *
      * @param message
      *         the message template

@@ -24,11 +24,6 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 /**
  * Integration tests for the {@link GrepParser} tool.
  *
- * <p>
- * These tests verify that the grep-based line scanner correctly counts matches, assigns severities,
- * respects include/exclude patterns, and integrates correctly with the warnings-ng recorder pipeline.
- * </p>
- *
  * @author Akash Manna
  * @see <a href="https://issues.jenkins.io/browse/JENKINS-53014">JENKINS-53014</a>
  */
@@ -232,6 +227,7 @@ class GrepParserITest extends IntegrationTestWithJenkinsPerSuite {
         var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(0);
+        
         // No error messages should be produced for a directory with no matching files
         assertThat(result.getErrorMessages()).isEmpty();
     }
