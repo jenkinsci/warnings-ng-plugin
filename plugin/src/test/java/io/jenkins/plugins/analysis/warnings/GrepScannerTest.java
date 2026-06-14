@@ -32,7 +32,7 @@ class GrepScannerTest extends ResourceTest {
 
         assertThat(scanner.isInvalidPattern()).isFalse(); // empty string is a valid (if trivial) regex
         var report = scanner.scanLines(lines("some text"), ISSUE_BUILDER);
-        
+
         // empty pattern matches every position, so every line is a match
         assertThat(report).hasSize(1);
     }
@@ -212,7 +212,7 @@ class GrepScannerTest extends ResourceTest {
         var report = scanner.scanLines(
                 lines("ERROR: failure",
                         "ERRATIC behaviour detected",
-                        "info: no errors"),
+                        "info: no ERRors"),
                 ISSUE_BUILDER);
 
         // All 3 lines contain "ERR" as a substring
