@@ -607,6 +607,10 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(action.getId()).isEqualTo("custom-id");
         assertThat(action.getDisplayName()).startsWith("custom-name");
         assertThat(action.getIconFileName()).isEqualTo("custom-icon");
+
+        var expectedSize = "emptyFile.txt".equals(fileName) ? 0 : 6;
+        assertThat(action.getResult().getIssues().filter(issue -> "custom-id".equals(issue.getOrigin())))
+                .hasSize(expectedSize);
     }
 
     @ParameterizedTest(name = "{index} => Reading JavaDoc warnings from file \"{0}\"")
@@ -624,6 +628,10 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(action.getId()).isEqualTo("custom-id");
         assertThat(action.getDisplayName()).startsWith("custom-name");
         assertThat(action.getIconFileName()).isEqualTo("custom-icon");
+
+        var expectedSize = "emptyFile.txt".equals(fileName) ? 0 : 6;
+        assertThat(action.getResult().getIssues().filter(issue -> "custom-id".equals(issue.getOrigin())))
+                .hasSize(expectedSize);
     }
 
     @ParameterizedTest(name = "{index} => Reading JavaDoc warnings from file \"{0}\"")

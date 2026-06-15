@@ -749,7 +749,11 @@ public class IssuesRecorder extends Recorder {
             var customIcon = StringUtils.defaultIfBlank(getIcon(), tool.getIcon());
 
             var report = new AnnotatedReport(customId);
-            report.add(scanWithTool(run, workspace, listener, tool), tool.getActualId());
+            AnnotatedReport scannedReport = scanWithTool(run, workspace, listener, tool);
+            if (!customId.equals(tool.getActualId()) || !customName.equals(tool.getActualName())) {
+                scannedReport.getReport().setOrigin(customId, customName);
+            }
+            report.add(scannedReport, customId);
 
             results.add(publishResult(run, workspace, listener, customName,
                     report, customName, customIcon, resultHandler));
