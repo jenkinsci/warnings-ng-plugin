@@ -2,13 +2,13 @@ package io.jenkins.plugins.analysis.core.portlets;
 
 import edu.hm.hafner.echarts.BuildResult;
 import edu.hm.hafner.echarts.ChartModelConfiguration;
-import edu.hm.hafner.echarts.JacksonFacade;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import tools.jackson.databind.ObjectMapper;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -138,7 +138,7 @@ public class IssuesChartPortlet extends DashboardPortlet {
                         .filter(createToolFilter(selectTools, tools)))
                 .map(ResultAction::createBuildHistory).collect(Collectors.toList());
 
-        return new JacksonFacade().toJson(
+        return new ObjectMapper().writeValueAsString(
                 severityChart.aggregate(histories, ChartModelConfiguration.fromJson(configuration)));
     }
 

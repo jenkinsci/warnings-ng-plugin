@@ -37,7 +37,6 @@ import io.jenkins.plugins.prism.FilePermissionEnforcer;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings("PMD.CouplingBetweenObjects")
 public class AffectedFilesResolver {
     /** Folder with the affected files within Jenkins' build results. */
     public static final String AFFECTED_FILES_FOLDER_NAME = "files-with-issues";

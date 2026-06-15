@@ -133,7 +133,7 @@ public class GitForensicsUiTest extends UiTest {
     }
 
     /** Verifies that freestyle jobs will correctly blame issues. */
-    @Test @Ignore
+    @Test @Ignore @SuppressWarnings("PMD.VariableDeclarationUsageDistance")
     public void shouldBlameOneIssueWithFreestyle() throws IOException {
         try (GitRepo repo = setupInitialGitRepository()) {
             repo.changeAndCommitFile("Test.java", "public class Test {}", "commit");
