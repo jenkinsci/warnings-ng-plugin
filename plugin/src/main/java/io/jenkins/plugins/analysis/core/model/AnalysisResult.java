@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.core.model; // NOPMD
+package io.jenkins.plugins.analysis.core.model;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.api.list.ImmutableList;
@@ -51,7 +51,7 @@ import io.jenkins.plugins.util.ValidationUtilities;
  * @author Ullrich Hafner
  */
 @SuppressFBWarnings(value = "SE, DESERIALIZATION_GADGET", justification = "transient fields are restored using a Jenkins callback (or are checked for null)")
-@SuppressWarnings({"PMD.GodClass", "PMD.CyclomaticComplexity", "checkstyle:ClassFanOutComplexity", "checkstyle:ClassDataAbstractionCoupling"})
+@SuppressWarnings({"PMD.GodClass", "PMD.CouplingBetweenObjects", "PMD.CyclomaticComplexity", "checkstyle:ClassFanOutComplexity", "checkstyle:ClassDataAbstractionCoupling"})
 public final class AnalysisResult implements Serializable, StaticAnalysisRun {
     @Serial
     private static final long serialVersionUID = 1110545450292087475L;
