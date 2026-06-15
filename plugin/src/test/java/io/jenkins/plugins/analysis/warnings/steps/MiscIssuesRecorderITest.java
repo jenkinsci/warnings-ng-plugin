@@ -238,6 +238,8 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
 
         var result = getAnalysisResult(build);
         assertThat(result).hasId(CUSTOM_ID);
+
+        assertThatAllIssuesHaveOrigin(result, "CUSTOM_ID", 6);
     }
 
     @Test
@@ -276,6 +278,8 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
 
         var result = getAnalysisResult(build);
         assertThat(result).hasId(CUSTOM_ID);
+
+        assertThatAllIssuesHaveOrigin(result, "CUSTOM_ID", 6);
     }
 
     @Test
@@ -292,6 +296,9 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         var build = buildWithResult(project, Result.SUCCESS);
         var action = getResultAction(build);
         assertThat(action.getId()).isEqualTo(CUSTOM_ID);
+
+        var result = getAnalysisResult(build);
+        assertThatAllIssuesHaveOrigin(result, "CUSTOM_ID", 6);
 
         assertThat(getConsoleLog(build)).contains("Do not set id, name, or icon for both the tool and the recorder");
     }
@@ -317,6 +324,8 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         var build = buildWithResult(project, Result.SUCCESS);
         var result = getAnalysisResult(build);
         assertThat(result).hasId(CUSTOM_ID);
+
+        assertThatAllIssuesHaveOrigin(result, "CUSTOM_ID", 10);
 
         var action = getResultAction(build);
         assertThat(action.getId()).isEqualTo(CUSTOM_ID);
@@ -553,6 +562,12 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
             when(jenkinsFacade.getDescriptorOrDie(Pmd.class)).thenReturn(new Pmd.Descriptor());
             pmd.setJenkinsFacade(jenkinsFacade);
         }
+    }
+
+    private void assertThatAllIssuesHaveOrigin(final AnalysisResult result, final String expectedOrigin, final int expectedSize) {
+        assertThat(result.getIssues()
+                .filter(issue -> expectedOrigin.equals(issue.getOrigin())))
+                .hasSize(expectedSize);
     }
 
     /**
