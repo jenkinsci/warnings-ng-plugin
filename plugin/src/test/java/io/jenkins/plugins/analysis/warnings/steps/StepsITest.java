@@ -62,7 +62,7 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
  * @see ScanForIssuesStep
  * @see PublishIssuesStep
  */
-@SuppressWarnings({"checkstyle:ClassDataAbstractionCoupling", "checkstyle:ClassFanOutComplexity"})
+@SuppressWarnings({"checkstyle:ClassDataAbstractionCoupling", "checkstyle:ClassFanOutComplexity", "PMD.CyclomaticComplexity"})
 class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String NO_QUALITY_GATE = "";
 
