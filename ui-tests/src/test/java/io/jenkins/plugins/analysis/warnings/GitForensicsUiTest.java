@@ -64,7 +64,7 @@ public class GitForensicsUiTest extends UiTest {
      */
     private GitRepo setupInitialGitRepository() {
         GitRepo repo = createRepoForMaster();
-        repo.setInitialConfiguration("Git SampleRepoRule", "gits@mplereporule");
+        repo.updateIdentity("Git SampleRepoRule", "gits@mplereporule");
         repo.setAndCommitFile("file", "Initial Commit", "init");
         return repo;
     }
@@ -80,7 +80,7 @@ public class GitForensicsUiTest extends UiTest {
     private Map<String, String> commitDifferentFilesToGitRepository(final GitRepo repo) {
         Map<String, String> commits = new HashMap<>();
 
-        repo.setInitialConfiguration("Git SampleRepoRule", "gits@mplereporule");
+        repo.updateIdentity("Git SampleRepoRule", "gits@mplereporule");
         repo.setAndCommitFile("Test.java", """
             public class Test {
                 public Test() {
@@ -89,7 +89,7 @@ public class GitForensicsUiTest extends UiTest {
             }""", "commit");
         commits.put("Test", repo.getLastSha1());
 
-        repo.setInitialConfiguration("John Doe", "john@doe");
+        repo.updateIdentity("John Doe", "john@doe");
         repo.setAndCommitFile("LoremIpsum.java", """
             public class LoremIpsum {
                 public LoremIpsum() {
@@ -98,7 +98,7 @@ public class GitForensicsUiTest extends UiTest {
             }""", "commit");
         commits.put("LoremIpsum", repo.getLastSha1());
 
-        repo.setInitialConfiguration("Alice Miller", "alice@miller");
+        repo.updateIdentity("Alice Miller", "alice@miller");
         repo.setAndCommitFile("Bob.java", """
             public class Bob {
                 public Bob() {
@@ -333,7 +333,7 @@ public class GitForensicsUiTest extends UiTest {
     public void shouldShowGitForensicsMultipleIssuesWithMultipleCommitsAndAuthors() throws IOException {
         try (GitRepo repo = createRepoForMaster()) {
             commitDifferentFilesToGitRepository(repo);
-            repo.setInitialConfiguration("Alice Miller", "alice@miller");
+            repo.updateIdentity("Alice Miller", "alice@miller");
             repo.setAndCommitFile("LoremIpsum.java", """
                 public class LoremIpsum {
                     public LoremIpsum() {
