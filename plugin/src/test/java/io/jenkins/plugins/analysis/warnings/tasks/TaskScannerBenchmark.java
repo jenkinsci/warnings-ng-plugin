@@ -32,7 +32,6 @@ import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.MatcherMode;
  */
 @BenchmarkMode(Mode.AverageTime)
 @Fork(value = 1, warmups = 3)
-@SuppressWarnings("PMD.JUnitJupiterTestShouldBePackagePrivate")
 public class TaskScannerBenchmark extends ResourceTest {
     /**
      * BenchmarkRunner - runs all benchmark tests in this class.
