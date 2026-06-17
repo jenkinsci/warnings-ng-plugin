@@ -64,8 +64,8 @@ public class GitForensicsUiTest extends UiTest {
      */
     private GitRepo setupInitialGitRepository() {
         GitRepo repo = createRepoForMaster();
-        repo.setIdentity("Git SampleRepoRule", "gits@mplereporule");
-        repo.changeAndCommitFile("file", "Initial Commit", "init");
+        repo.updateIdentity("Git SampleRepoRule", "gits@mplereporule");
+        repo.setAndCommitFile("file", "Initial Commit", "init");
         return repo;
     }
 
@@ -80,8 +80,8 @@ public class GitForensicsUiTest extends UiTest {
     private Map<String, String> commitDifferentFilesToGitRepository(final GitRepo repo) {
         Map<String, String> commits = new HashMap<>();
 
-        repo.setIdentity("Git SampleRepoRule", "gits@mplereporule");
-        repo.changeAndCommitFile("Test.java", """
+        repo.updateIdentity("Git SampleRepoRule", "gits@mplereporule");
+        repo.setAndCommitFile("Test.java", """
             public class Test {
                 public Test() {
                     System.out.println("Test");\
@@ -89,8 +89,8 @@ public class GitForensicsUiTest extends UiTest {
             }""", "commit");
         commits.put("Test", repo.getLastSha1());
 
-        repo.setIdentity("John Doe", "john@doe");
-        repo.changeAndCommitFile("LoremIpsum.java", """
+        repo.updateIdentity("John Doe", "john@doe");
+        repo.setAndCommitFile("LoremIpsum.java", """
             public class LoremIpsum {
                 public LoremIpsum() {
                     Log.log("Lorem ipsum dolor sit amet");\
@@ -98,8 +98,8 @@ public class GitForensicsUiTest extends UiTest {
             }""", "commit");
         commits.put("LoremIpsum", repo.getLastSha1());
 
-        repo.setIdentity("Alice Miller", "alice@miller");
-        repo.changeAndCommitFile("Bob.java", """
+        repo.updateIdentity("Alice Miller", "alice@miller");
+        repo.setAndCommitFile("Bob.java", """
             public class Bob {
                 public Bob() {
                     Log.log("Bob: 'Where are you?'");\
@@ -136,9 +136,9 @@ public class GitForensicsUiTest extends UiTest {
     @Test @Ignore @SuppressWarnings("PMD.VariableDeclarationUsageDistance")
     public void shouldBlameOneIssueWithFreestyle() throws IOException {
         try (GitRepo repo = setupInitialGitRepository()) {
-            repo.changeAndCommitFile("Test.java", "public class Test {}", "commit");
+            repo.setAndCommitFile("Test.java", "public class Test {}", "commit");
             String commitId = repo.getLastSha1();
-            repo.changeAndCommitFile("warnings.txt", "[javac] Test.java:1: warning: Test Warning for Jenkins",
+            repo.setAndCommitFile("warnings.txt", "[javac] Test.java:1: warning: Test Warning for Jenkins",
                     "commit");
 
             Build build = generateFreeStyleJob(repo);
@@ -160,7 +160,7 @@ public class GitForensicsUiTest extends UiTest {
     public void shouldBlameElevenIssuesWithPipeline() throws IOException {
         try (GitRepo repo = createRepoForMaster()) {
             Map<String, String> commits = commitDifferentFilesToGitRepository(repo);
-            repo.changeAndCommitFile("Jenkinsfile", """
+            repo.setAndCommitFile("Jenkinsfile", """
                 node {
                   stage ('Checkout') {
                     checkout scm
@@ -202,7 +202,7 @@ public class GitForensicsUiTest extends UiTest {
     public void shouldBlameElevenIssuesWithFreestyle() throws IOException {
         try (GitRepo repo = createRepoForMaster()) {
             Map<String, String> commits = commitDifferentFilesToGitRepository(repo);
-            repo.changeAndCommitFile("warnings.txt", """
+            repo.setAndCommitFile("warnings.txt", """
                     [javac] Test.java:1: warning: Test Warning for Jenkins
                     [javac] Test.java:2: warning: Test Warning for Jenkins
                     [javac] Test.java:3: warning: Test Warning for Jenkins
@@ -232,8 +232,8 @@ public class GitForensicsUiTest extends UiTest {
     @Test @Ignore
     public void shouldShowGitForensicsOneIssue() throws IOException {
         try (GitRepo repo = setupInitialGitRepository()) {
-            repo.changeAndCommitFile("Test.java", "public class Test {}", "commit");
-            repo.changeAndCommitFile("warnings.txt", "[javac] Test.java:1: warning: Test Warning for Jenkins",
+            repo.setAndCommitFile("Test.java", "public class Test {}", "commit");
+            repo.setAndCommitFile("warnings.txt", "[javac] Test.java:1: warning: Test Warning for Jenkins",
                     "commit");
 
             Build build = generateFreeStyleJob(repo);
@@ -255,7 +255,7 @@ public class GitForensicsUiTest extends UiTest {
     public void shouldShowGitForensicsMultipleIssuesWithPipeline() throws IOException {
         try (GitRepo repo = createRepoForMaster()) {
             commitDifferentFilesToGitRepository(repo);
-            repo.changeAndCommitFile("Jenkinsfile", """
+            repo.setAndCommitFile("Jenkinsfile", """
                     node {
                       stage ('Checkout') {
                         checkout scm
@@ -299,7 +299,7 @@ public class GitForensicsUiTest extends UiTest {
     public void shouldShowGitForensicsMultipleIssuesWithFreestyle() throws IOException {
         try (GitRepo repo = createRepoForMaster()) {
             commitDifferentFilesToGitRepository(repo);
-            repo.changeAndCommitFile("warnings.txt", """
+            repo.setAndCommitFile("warnings.txt", """
                 [javac] Test.java:1: warning: Test Warning for Jenkins
                 [javac] Test.java:2: warning: Test Warning for Jenkins
                 [javac] Test.java:3: warning: Test Warning for Jenkins
@@ -333,14 +333,14 @@ public class GitForensicsUiTest extends UiTest {
     public void shouldShowGitForensicsMultipleIssuesWithMultipleCommitsAndAuthors() throws IOException {
         try (GitRepo repo = createRepoForMaster()) {
             commitDifferentFilesToGitRepository(repo);
-            repo.setIdentity("Alice Miller", "alice@miller");
-            repo.changeAndCommitFile("LoremIpsum.java", """
+            repo.updateIdentity("Alice Miller", "alice@miller");
+            repo.setAndCommitFile("LoremIpsum.java", """
                 public class LoremIpsum {
                     public LoremIpsum() {
                         Log.log("Lorem ipsum dolor sit amet");\
                     }
                 }""", "commit");
-            repo.changeAndCommitFile("warnings.txt", """
+            repo.setAndCommitFile("warnings.txt", """
                     [javac] Test.java:1: warning: Test Warning for Jenkins
                     [javac] Test.java:2: warning: Test Warning for Jenkins
                     [javac] Test.java:3: warning: Test Warning for Jenkins
