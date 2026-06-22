@@ -855,4 +855,26 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         var issuesDetail = result.getOwner().getAction(ResultAction.class).getTarget();
         return (IssuesRow) issuesDetail.getTableModel("issues").getRows().get(rowNumber);
     }
+
+    /**
+     * Verifies that the XML parser infrastructure is pre-warmed before post-processing begins so that Xerces
+     * implementation classes are loaded only once, even when multiple pom.xml files are parsed for module name resolution.
+     *
+     * @see <a href="https://issues.jenkins.io/browse/JENKINS-66268">JENKINS-66268</a>
+     */
+    @Test
+    @org.junitpioneer.jupiter.Issue("JENKINS-66268")
+    void shouldNotProduceXmlParserWarmUpErrors() {
+        var project = createFreestyleJob("eclipse.txt");
+        copySingleFileToWorkspace(project,
+                "detectors/buildfiles/maven/pom.xml", "pom.xml");
+        enableEclipseWarnings(project);
+
+        var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+
+        assertThat(getConsoleLog(result)).doesNotContain("Failed to pre-warm XML parser infrastructure");
+        assertThat(result).hasInfoMessages(
+                "Resolving module names from module definitions (build.xml, pom.xml, or Manifest.mf files)",
+                "-> resolved module names for 8 issues");
+    }
 }

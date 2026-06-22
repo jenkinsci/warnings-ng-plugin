@@ -15,8 +15,13 @@ import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 import edu.hm.hafner.util.FilteredLog;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
+
+import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.SAXNotSupportedException;
 
 import java.io.File;
 import java.io.IOException;
@@ -319,18 +324,21 @@ class IssuesScanner {
         }
 
         /**
-         * Pre-warms the XML parser infrastructure so that the Xerces classes are loaded once on the agent JVM
-         * rather than being fetched repeatedly from the Jenkins controller via RemoteClassLoader for each XML
-         * file parsed during module or package name resolution.
+         * Pre-warms the XML parser infrastructure so that the Xerces implementation classes are loaded exactly once 
+         * on the agent JVM via the RemoteClassLoader, rather than being re-fetched from the Jenkins controller for 
+         * every XML file parsed during module or package name resolution.
          *
          * @see <a href="https://issues.jenkins.io/browse/JENKINS-66268">JENKINS-66268</a>
          */
         private void warmUpXmlParsers(final Report report) {
             try {
-                SAXParserFactory.newInstance();
-                DocumentBuilderFactory.newInstance();
+                var saxParserFactory = SAXParserFactory.newInstance();
+                saxParserFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+
+                var documentBuilderFactory = DocumentBuilderFactory.newInstance();
+                documentBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             }
-            catch (Exception e) {
+            catch (SAXNotRecognizedException | SAXNotSupportedException | ParserConfigurationException e) {
                 report.logException(e, "Failed to pre-warm XML parser infrastructure - XML parsing may be slow");
             }
         }
