@@ -24,7 +24,6 @@ import static org.assertj.core.api.Assertions.*;
  * @see <a href="https://issues.jenkins.io/browse/JENKINS-66268">JENKINS-66268</a>
  */
 class XmlParserWarmUpTest {
-
     private static final String SIMPLE_XML = """
             <?xml version="1.0" encoding="UTF-8"?>
             <project>
