@@ -327,8 +327,6 @@ class IssuesScanner {
          * Pre-warms the XML parser infrastructure so that the Xerces implementation classes are loaded exactly once 
          * on the agent JVM via the RemoteClassLoader, rather than being re-fetched from the Jenkins controller for 
          * every XML file parsed during module or package name resolution.
-         *
-         * @see <a href="https://issues.jenkins.io/browse/JENKINS-66268">JENKINS-66268</a>
          */
         private void warmUpXmlParsers(final Report report) {
             try {
