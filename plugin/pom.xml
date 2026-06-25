@@ -36,7 +36,7 @@
 
   <properties>
     <!-- TODO remove explicit version once it's available in BOM -->
-    <mcp.plugin.version>0.168.v13951585050d</mcp.plugin.version>
+    <mcp.plugin.version>0.183.vd11dc09ea_578</mcp.plugin.version>
     <maven.deploy.skip>false</maven.deploy.skip>
 
     <!-- Library Dependencies Versions -->
