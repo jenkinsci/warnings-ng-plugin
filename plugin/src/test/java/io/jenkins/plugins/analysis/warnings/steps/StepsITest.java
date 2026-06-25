@@ -4,6 +4,7 @@ import org.eclipse.collections.impl.factory.Lists;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.jvnet.hudson.test.TestExtension;
 
@@ -592,10 +593,10 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         scheduleBuildAndAssertStatus(job, Result.FAILURE);
     }
 
-    @ParameterizedTest(name = "{index} => Reading JavaDoc warnings from file \"{0}\"")
-    @ValueSource(strings = {"javadoc.txt", "emptyFile.txt"})
+    @ParameterizedTest(name = "{index} => Reading JavaDoc warnings from file \"{0}\", expecting {1} issues")
+    @CsvSource({"javadoc.txt, 6", "emptyFile.txt, 0"})
     @org.junitpioneer.jupiter.Issue("JENKINS-75344")
-    void shouldReportResultWithDifferentIdNameAndIconInStep(final String fileName) {
+    void shouldReportResultWithDifferentIdNameAndIconInStep(final String fileName, final int expectedIssues) {
         var job = createPipelineWithWorkspaceFilesWithSuffix(fileName);
 
         job.setDefinition(asStage(
@@ -608,15 +609,14 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(action.getDisplayName()).startsWith("custom-name");
         assertThat(action.getIconFileName()).isEqualTo("custom-icon");
 
-        var expectedSize = "emptyFile.txt".equals(fileName) ? 0 : 6;
         assertThat(action.getResult().getIssues().filter(issue -> "custom-id".equals(issue.getOrigin())))
-                .hasSize(expectedSize);
+                .hasSize(expectedIssues);
     }
 
-    @ParameterizedTest(name = "{index} => Reading JavaDoc warnings from file \"{0}\"")
-    @ValueSource(strings = {"javadoc.txt", "emptyFile.txt"})
+    @ParameterizedTest(name = "{index} => Reading JavaDoc warnings from file \"{0}\", expecting {1} issues")
+    @CsvSource({"javadoc.txt, 6", "emptyFile.txt, 0"})
     @org.junitpioneer.jupiter.Issue("JENKINS-75344")
-    void shouldReportResultWithDifferentIdNameAndIconInTool(final String fileName) {
+    void shouldReportResultWithDifferentIdNameAndIconInTool(final String fileName, final int expectedIssues) {
         var job = createPipelineWithWorkspaceFilesWithSuffix(fileName);
 
         job.setDefinition(asStage(
@@ -629,9 +629,8 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(action.getDisplayName()).startsWith("custom-name");
         assertThat(action.getIconFileName()).isEqualTo("custom-icon");
 
-        var expectedSize = "emptyFile.txt".equals(fileName) ? 0 : 6;
         assertThat(action.getResult().getIssues().filter(issue -> "custom-id".equals(issue.getOrigin())))
-                .hasSize(expectedSize);
+                .hasSize(expectedIssues);
     }
 
     @ParameterizedTest(name = "{index} => Reading JavaDoc warnings from file \"{0}\"")
@@ -745,6 +744,37 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
                                         javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8', id:'id2', name:'name2')
                                     ]
                                 )"""));
+    }
+
+    /**
+     * Runs two separate {@code recordIssues} steps, each using the {@code tools} array with a single tool and a
+     * different recorder-level ID. Verifies that both actions get their recorder-provided IDs (not the tool's default
+     * ID), so there is no ID collision and each action's issues use the correct origin.
+     *
+     * @see <a href="https://github.com/jenkinsci/warnings-ng-plugin/issues/3152">JENKINS-55445 / #3152</a>
+     */
+    @Test
+    @org.junitpioneer.jupiter.Issue("JENKINS-55445")
+    void shouldUseRecorderIdAsOriginWhenToolsArrayIsUsed() {
+        var job = createPipelineWithWorkspaceFilesWithSuffix("javadoc.txt", "javac.txt");
+        job.setDefinition(asStage(
+                "def r1 = recordIssues(id: 'id1', name: 'name1', tools: [java(pattern:'**/*issues.txt', reportEncoding:'UTF-8')])",
+                "def r2 = recordIssues(id: 'id2', name: 'name2', tools: [javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8')])"));
+
+        Run<?, ?> run = buildSuccessfully(job);
+
+        var actions = run.getActions(ResultAction.class);
+        assertThat(actions).hasSize(2);
+
+        var action1 = actions.stream().filter(a -> "id1".equals(a.getId())).findFirst().orElseThrow();
+        assertThat(action1.getId()).isEqualTo("id1");
+        assertThat(action1.getDisplayName()).contains("name1");
+        assertThat(action1.getResult().getIssues().filter(issue -> "id1".equals(issue.getOrigin()))).hasSize(2);
+
+        var action2 = actions.stream().filter(a -> "id2".equals(a.getId())).findFirst().orElseThrow();
+        assertThat(action2.getId()).isEqualTo("id2");
+        assertThat(action2.getDisplayName()).contains("name2");
+        assertThat(action2.getResult().getIssues().filter(issue -> "id2".equals(issue.getOrigin()))).hasSize(6);
     }
 
     private void verifyCustomIdsForOrigin(final CpsFlowDefinition stage) {
