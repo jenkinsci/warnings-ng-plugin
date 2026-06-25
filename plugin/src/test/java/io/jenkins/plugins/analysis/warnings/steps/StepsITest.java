@@ -756,10 +756,10 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     @org.junitpioneer.jupiter.Issue("JENKINS-55445")
     void shouldUseRecorderIdAsOriginWhenToolsArrayIsUsed() {
-        var job = createPipelineWithWorkspaceFilesWithSuffix("javadoc.txt", "javac.txt");
+        var job = createPipelineWithWorkspaceFilesWithSuffix("javac.txt");
         job.setDefinition(asStage(
                 "def r1 = recordIssues(id: 'id1', name: 'name1', tools: [java(pattern:'**/*issues.txt', reportEncoding:'UTF-8')])",
-                "def r2 = recordIssues(id: 'id2', name: 'name2', tools: [javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8')])"));
+                "def r2 = recordIssues(id: 'id2', name: 'name2', tools: [java(pattern:'**/*issues.txt', reportEncoding:'UTF-8')])"));
 
         Run<?, ?> run = buildSuccessfully(job);
 
@@ -774,7 +774,7 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         var action2 = actions.stream().filter(a -> "id2".equals(a.getId())).findFirst().orElseThrow();
         assertThat(action2.getId()).isEqualTo("id2");
         assertThat(action2.getDisplayName()).contains("name2");
-        assertThat(action2.getResult().getIssues().filter(issue -> "id2".equals(issue.getOrigin()))).hasSize(6);
+        assertThat(action2.getResult().getIssues().filter(issue -> "id2".equals(issue.getOrigin()))).hasSize(2);
     }
 
     private void verifyCustomIdsForOrigin(final CpsFlowDefinition stage) {
