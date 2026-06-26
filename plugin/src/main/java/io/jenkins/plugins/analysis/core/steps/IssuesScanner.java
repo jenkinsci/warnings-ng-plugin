@@ -263,7 +263,7 @@ class IssuesScanner {
      * computes fingerprints for each issue. Finally, for each file the SCM blames are computed.
      */
     @SuppressWarnings("checkstyle:ClassDataAbstractionCoupling")
-    private static class ReportPostProcessor extends MasterToSlaveFileCallable<AnnotatedReport> {
+    static class ReportPostProcessor extends MasterToSlaveFileCallable<AnnotatedReport> {
         private static final long serialVersionUID = -9138045560271783096L;
         private static final String SKIPPING_POST_PROCESSING = "Skipping detection of missing package and module names";
 
@@ -331,15 +331,13 @@ class IssuesScanner {
          * @param report
          *         report used to log parser initialization failures
          */
-        private void warmUpXmlParsers(final Report report) {
+        static void warmUpXmlParsers(final Report report) {
             try {
-                var saxParserFactory = SAXParserFactory.newInstance();
-                saxParserFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-
-                var documentBuilderFactory = DocumentBuilderFactory.newInstance();
-                documentBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+                var factory = new edu.hm.hafner.util.SecureXmlParserFactory();
+                factory.createSaxParser();
+                factory.createDocumentBuilder();
             }
-            catch (SAXNotRecognizedException | SAXNotSupportedException | ParserConfigurationException e) {
+            catch (RuntimeException e) {
                 report.logException(e, "Failed to pre-warm XML parser infrastructure - XML parsing may be slow");
             }
         }
