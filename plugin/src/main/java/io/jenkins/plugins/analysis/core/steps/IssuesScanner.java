@@ -14,14 +14,7 @@ import edu.hm.hafner.analysis.PackageNameResolver;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 import edu.hm.hafner.util.FilteredLog;
-
-import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.xml.sax.SAXNotRecognizedException;
-import org.xml.sax.SAXNotSupportedException;
+import edu.hm.hafner.util.SecureXmlParserFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -333,7 +326,7 @@ class IssuesScanner {
          */
         static void warmUpXmlParsers(final Report report) {
             try {
-                var factory = new edu.hm.hafner.util.SecureXmlParserFactory();
+                var factory = new SecureXmlParserFactory();
                 factory.createSaxParser();
                 factory.createDocumentBuilder();
             }
