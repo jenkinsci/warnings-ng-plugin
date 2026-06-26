@@ -15,6 +15,7 @@ import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 import edu.hm.hafner.util.FilteredLog;
 import edu.hm.hafner.util.SecureXmlParserFactory;
+import edu.hm.hafner.util.SecureXmlParserFactory.ParsingException;
 
 import java.io.File;
 import java.io.IOException;
@@ -330,7 +331,7 @@ class IssuesScanner {
                 factory.createSaxParser();
                 factory.createDocumentBuilder();
             }
-            catch (RuntimeException e) {
+            catch (ParsingException e) {
                 report.logException(e, "Failed to pre-warm XML parser infrastructure - XML parsing may be slow");
             }
         }
