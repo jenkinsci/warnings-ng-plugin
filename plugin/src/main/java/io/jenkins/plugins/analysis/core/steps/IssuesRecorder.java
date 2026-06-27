@@ -128,6 +128,9 @@ public class IssuesRecorder extends Recorder {
     @CheckForNull
     private ChecksInfo checksInfo;
 
+    @CheckForNull
+    private String detailsURL = StringUtils.EMPTY;
+
     private String id = StringUtils.EMPTY;
     private String name = StringUtils.EMPTY;
     private String icon = StringUtils.EMPTY; // @since 12.0.0: by default no custom icon is set
@@ -206,6 +209,22 @@ public class IssuesRecorder extends Recorder {
 
     public String getScm() {
         return scm;
+    }
+
+    /**
+     * Sets the custom details URL for checks. If set, this URL will be used instead of the default
+     * Jenkins job URL in the checks published to SCM platforms.
+     *
+     * @param detailsURL
+     *         the custom details URL
+     */
+    @DataBoundSetter
+    public void setDetailsURL(final String detailsURL) {
+        this.detailsURL = detailsURL;
+    }
+
+    public String getDetailsURL() {
+        return detailsURL;
     }
 
     /**
@@ -897,7 +916,7 @@ public class IssuesRecorder extends Recorder {
         var action = publisher.attachAction(trendChartType);
 
         if (!skipPublishingChecks) {
-            var checksPublisher = new WarningChecksPublisher(action, listener, checksInfo);
+            var checksPublisher = new WarningChecksPublisher(action, listener, checksInfo, detailsURL);
             checksPublisher.publishChecks(getChecksAnnotationScope());
         }
 
