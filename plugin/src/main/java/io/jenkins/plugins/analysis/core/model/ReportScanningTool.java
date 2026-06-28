@@ -136,14 +136,15 @@ public abstract class ReportScanningTool extends Tool {
     }
 
     /**
-     * Sets the context lines which is used in the fingerprinting process.
+     * Sets the context lines which is used in the fingerprinting process. The value must be a non-negative integer.
+     * If a negative value is provided, it will be clamped to 0.
      *
      * @param linesLookAhead
-     *         the actual number of lines.
+     *         the actual number of lines (must be &gt;= 0)
      */
     @DataBoundSetter
     public void setLinesLookAhead(final int linesLookAhead) {
-        this.linesLookAhead = linesLookAhead;
+        this.linesLookAhead = Math.max(0, linesLookAhead);
     }
 
     public int getLinesLookAhead() {
@@ -305,6 +306,23 @@ public abstract class ReportScanningTool extends Tool {
             }
 
             return VALIDATION_UTILITIES.validateCharset(reportEncoding);
+        }
+
+        /**
+         * Performs on-the-fly validation of the context lines (linesLookAhead) used for fingerprinting.
+         * The value must be a non-negative integer.
+         *
+         * @param linesLookAhead
+         *         the number of context lines to validate
+         *
+         * @return the validation result
+         */
+        @POST
+        public FormValidation doCheckLinesLookAhead(@QueryParameter final int linesLookAhead) {
+            if (linesLookAhead < 0) {
+                return FormValidation.error(Messages.ReportScanningTool_LinesLookAheadMustBeNonNegative());
+            }
+            return FormValidation.ok();
         }
 
         /**

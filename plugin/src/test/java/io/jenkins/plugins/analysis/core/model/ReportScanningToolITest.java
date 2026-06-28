@@ -55,6 +55,54 @@ class ReportScanningToolITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(descriptor.doCheckPattern(null, givenPattern)).isOk();
     }
 
+    /** Tests that a negative linesLookAhead value is rejected with an error. */
+    @Test
+    void descriptorMethodDoCheckLinesLookAheadWhenCalledWithNegativeValueReturnsError() {
+        final var descriptor = new ReportScanningTool.ReportScanningToolDescriptor("someId");
+
+        assertThat(descriptor.doCheckLinesLookAhead(-1)).isError();
+    }
+
+    /** Tests that linesLookAhead value of zero is valid. */
+    @Test
+    void descriptorMethodDoCheckLinesLookAheadWhenCalledWithZeroReturnsOk() {
+        final var descriptor = new ReportScanningTool.ReportScanningToolDescriptor("someId");
+
+        assertThat(descriptor.doCheckLinesLookAhead(0)).isOk();
+    }
+
+    /** Tests that a positive linesLookAhead value is valid. */
+    @Test
+    void descriptorMethodDoCheckLinesLookAheadWhenCalledWithPositiveValueReturnsOk() {
+        final var descriptor = new ReportScanningTool.ReportScanningToolDescriptor("someId");
+
+        assertThat(descriptor.doCheckLinesLookAhead(3)).isOk();
+    }
+
+    /** Tests that setting a negative linesLookAhead on a tool clamps it to zero. */
+    @Test
+    void setLinesLookAheadClampsNegativeValueToZero() {
+        var tool = new ReportScanningToolStubForTesting(null);
+        tool.setLinesLookAhead(-5);
+        assertThat(tool.getLinesLookAhead()).isEqualTo(0);
+    }
+
+    /** Tests that setting a zero linesLookAhead is stored as-is. */
+    @Test
+    void setLinesLookAheadStoresZeroValue() {
+        var tool = new ReportScanningToolStubForTesting(null);
+        tool.setLinesLookAhead(0);
+        assertThat(tool.getLinesLookAhead()).isEqualTo(0);
+    }
+
+    /** Tests that setting a positive linesLookAhead is stored as-is. */
+    @Test
+    void setLinesLookAheadStoresPositiveValue() {
+        var tool = new ReportScanningToolStubForTesting(null);
+        tool.setLinesLookAhead(5);
+        assertThat(tool.getLinesLookAhead()).isEqualTo(5);
+    }
+
     private ReportScanningTool.ReportScanningToolDescriptor makeDescriptor(final boolean canScanConsoleLog, final String getPattern) {
         return new ReportScanningToolStubForTesting.ReportScanningToolDescriptorStubForTesting("someId",
                 canScanConsoleLog, getPattern);
