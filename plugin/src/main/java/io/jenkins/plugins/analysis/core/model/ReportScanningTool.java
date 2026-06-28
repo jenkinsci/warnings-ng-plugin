@@ -319,9 +319,14 @@ public abstract class ReportScanningTool extends Tool {
          */
         @POST
         public FormValidation doCheckLinesLookAhead(@QueryParameter final int linesLookAhead) {
+            if (!JENKINS.hasPermission(Jenkins.READ)) {
+                return FormValidation.ok();
+            }
+
             if (linesLookAhead < 0) {
                 return FormValidation.error(Messages.ReportScanningTool_LinesLookAheadMustBeNonNegative());
             }
+
             return FormValidation.ok();
         }
 
