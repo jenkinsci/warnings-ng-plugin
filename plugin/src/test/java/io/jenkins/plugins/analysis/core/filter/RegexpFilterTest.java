@@ -3,6 +3,7 @@ package io.jenkins.plugins.analysis.core.filter;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 
+import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
@@ -217,7 +218,7 @@ class RegexpFilterTest {
         var filtered = report.filter(builder.build());
 
         assertThat(filtered).hasSize(2);
-        var fileNames = filtered.stream().map(issue -> issue.getFileName()).toList();
+        var fileNames = filtered.stream().map(Issue::getFileName).toList();
         assertThat(fileNames).containsExactlyInAnyOrder("include-first.java", "include-second.java");
     }
 

@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.core.filter;
 
 import org.junit.jupiter.api.Test;
 
+import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 
@@ -15,6 +16,7 @@ import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
  */
 @org.junitpioneer.jupiter.Issue("JENKINS-65553")
 class SuppressionFilterTest {
+    private static final String ANY_PATTERN = ".*";
     private static final IssueBuilder ISSUE_BUILDER = new IssueBuilder();
 
     @Test
@@ -164,16 +166,16 @@ class SuppressionFilterTest {
         var filtered = report.filter(combined);
 
         assertThat(filtered).hasSize(2);
-        var fileNames = filtered.stream().map(issue -> issue.getFileName()).toList();
+        var fileNames = filtered.stream().map(Issue::getFileName).toList();
         assertThat(fileNames).containsExactlyInAnyOrder("src/main/Baz.java", "src/legacy/Old.java");
     }
 
     @Test
-    void getFilterPredicateShouldNeverReturnNull() {
-        assertThat(new SuppressionFilter(".*").getFilterPredicate()).isNotNull();
+    void filterPredicateShouldNeverBeNull() {
+        assertThat(new SuppressionFilter(ANY_PATTERN).getFilterPredicate()).isNotNull();
         assertThat(new SuppressionFilter("").getFilterPredicate()).isNotNull();
 
-        var withMessage = new SuppressionFilter(".*");
+        var withMessage = new SuppressionFilter(ANY_PATTERN);
         withMessage.setMessagePattern(".*deprecated.*");
         assertThat(withMessage.getFilterPredicate()).isNotNull();
     }
