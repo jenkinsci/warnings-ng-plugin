@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.core.filter;
 
 import org.apache.commons.lang3.StringUtils;
 
+import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 import edu.hm.hafner.util.Ensure;
@@ -9,6 +10,7 @@ import edu.hm.hafner.util.VisibleForTesting;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -62,6 +64,29 @@ public abstract class RegexpFilter implements Describable<RegexpFilter>, Seriali
      *         the issue filter builder
      */
     public abstract void apply(IssueFilterBuilder builder);
+
+    /**
+     * Returns a custom {@link Predicate} to filter issues, or {@code null} if this filter applies itself via
+     * {@link #apply(IssueFilterBuilder)}.
+     *
+     * <p>Override this method to provide a compound predicate (e.g., matching on both file name and message
+     * simultaneously). When a non-null predicate is returned, {@link #apply(IssueFilterBuilder)} is not called.</p>
+     *
+     * @return a custom predicate, or {@code null} to use {@link #apply(IssueFilterBuilder)}
+     */
+    @edu.umd.cs.findbugs.annotations.CheckForNull
+    public Predicate<Issue> getFilterPredicate() {
+        return null;
+    }
+
+    /**
+     * Returns whether this filter is active (i.e., has at least one non-blank pattern).
+     *
+     * @return {@code true} if active
+     */
+    public boolean isActive() {
+        return StringUtils.isNotBlank(getPattern());
+    }
 
     /** Descriptor for a filter. */
     public abstract static class RegexpFilterDescriptor extends Descriptor<RegexpFilter> {
