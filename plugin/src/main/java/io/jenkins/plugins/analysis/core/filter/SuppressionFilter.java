@@ -3,7 +3,6 @@ package io.jenkins.plugins.analysis.core.filter;
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -28,24 +27,6 @@ import io.jenkins.plugins.util.JenkinsFacade;
  * match their respective regular expressions. This is equivalent to a single entry in Buildbot's
  * {@code suppressionFile}, where each rule specifies a filename pattern and a message pattern — and an issue
  * is suppressed only when it satisfies both conditions simultaneously.
- *
- * <p>Either {@code filePattern} or {@code messagePattern} may be blank (treated as "match all"), but at least
- * one must be non-blank for the filter to be active. When only one is set, the filter degenerates to a simple
- * single-property exclusion.</p>
- *
- * <p>Multiple {@link SuppressionFilter} entries in the filter list are independent: an issue is removed if it
- * matches <em>any</em> one of them.</p>
- *
- * <p>Example pipeline usage:</p>
- * <pre> {@code
- * recordIssues tool: java(),
- *   filters: [
- *     // Suppress deprecated-API warnings only in the legacy adapter
- *     suppress(filePattern: 'src/legacy/.*', messagePattern: '.*deprecated.*'),
- *     // Suppress all warnings from generated code
- *     suppress(filePattern: 'generated/.*', messagePattern: '.*'),
- *   ]
- * }</pre>
  *
  * @author Akash Manna
  * @see <a href="https://github.com/jenkinsci/warnings-ng-plugin/issues/3051">JENKINS-65553</a>
@@ -96,16 +77,6 @@ public class SuppressionFilter extends RegexpFilter {
      * Returns a compound predicate that keeps an issue unless <em>both</em> the file name matches
      * {@link #getPattern()} <em>and</em> the message matches {@link #getMessagePattern()}.
      *
-     * <p>Blank patterns act as wildcards (match everything). For example:</p>
-     * <ul>
-     *   <li>{@code filePattern="src/legacy/.*", messagePattern=".*deprecated.*"} - excludes only deprecated
-     *       warnings in legacy source files</li>
-     *   <li>{@code filePattern="", messagePattern=".*deprecated.*"} - excludes all deprecated warnings
-     *       (equivalent to {@link ExcludeMessage})</li>
-     *   <li>{@code filePattern="src/legacy/.*", messagePattern=""} - excludes all warnings in legacy source
-     *       files (equivalent to {@link ExcludeFile})</li>
-     * </ul>
-     *
      * @return a predicate that returns {@code true} for issues that should be <em>kept</em>
      */
     @Override
@@ -121,7 +92,6 @@ public class SuppressionFilter extends RegexpFilter {
         return issue -> {
             boolean fileMatches = fileRegex == null || fileRegex.matcher(issue.getFileName()).find();
             boolean messageMatches = messageRegex == null || messageRegex.matcher(issue.getMessage()).find();
-            // Keep the issue if it does NOT match both patterns
             return !(fileMatches && messageMatches);
         };
     }

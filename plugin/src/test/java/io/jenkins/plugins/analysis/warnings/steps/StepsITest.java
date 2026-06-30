@@ -1126,18 +1126,14 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldSupportListOfFiltersOfTheSameType() {
         var job = createPipelineWithWorkspaceFilesWithSuffix("pmd-filtering.xml");
 
-        // Two excludeFile filters: each one excludes issues from one file; together they should exclude all 16 issues
         setFilter(job, "excludeFile('File1.java'), excludeFile('File2.java')");
         var allExcluded = scheduleSuccessfulBuild(job);
         assertThat(allExcluded.getTotalSize()).isZero();
 
-        // Two includeFile filters: together they should include all 16 issues (OR semantics)
         setFilter(job, "includeFile('File1.java'), includeFile('File2.java')");
         var allIncluded = scheduleSuccessfulBuild(job);
         assertThat(allIncluded.getTotalSize()).isEqualTo(16);
 
-        // One excludeFile filter and one excludeCategory filter: together they form an AND on the remaining issues
-        // (File1.java has 8 issues, excluding Category1 from File2.java leaves 4 from File2.java)
         setFilter(job, "excludeFile('File1.java'), excludeCategory('Category1')");
         var filteredResult = scheduleSuccessfulBuild(job);
         assertThat(filteredResult.getIssues().getFiles()).containsExactly("File2.java");

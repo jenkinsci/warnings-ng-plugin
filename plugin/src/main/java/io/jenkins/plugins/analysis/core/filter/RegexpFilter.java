@@ -7,6 +7,7 @@ import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 import edu.hm.hafner.util.Ensure;
 import edu.hm.hafner.util.VisibleForTesting;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -69,12 +70,9 @@ public abstract class RegexpFilter implements Describable<RegexpFilter>, Seriali
      * Returns a custom {@link Predicate} to filter issues, or {@code null} if this filter applies itself via
      * {@link #apply(IssueFilterBuilder)}.
      *
-     * <p>Override this method to provide a compound predicate (e.g., matching on both file name and message
-     * simultaneously). When a non-null predicate is returned, {@link #apply(IssueFilterBuilder)} is not called.</p>
-     *
      * @return a custom predicate, or {@code null} to use {@link #apply(IssueFilterBuilder)}
      */
-    @edu.umd.cs.findbugs.annotations.CheckForNull
+    @CheckForNull
     public Predicate<Issue> getFilterPredicate() {
         return null;
     }
