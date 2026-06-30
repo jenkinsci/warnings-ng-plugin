@@ -5,10 +5,12 @@ import org.apache.commons.lang3.StringUtils;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import java.io.Serial;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -19,8 +21,6 @@ import hudson.Extension;
 import hudson.model.BuildableItem;
 import hudson.model.Item;
 import hudson.util.FormValidation;
-
-import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
  * A compound suppression filter that excludes issues where <em>both</em> the file name and the warning message
@@ -130,9 +130,11 @@ public class SuppressionFilter extends RegexpFilter {
          * @return the validation result
          */
         @POST
+        @SuppressFBWarnings(value = "RE_POSSIBLE_UNINTENDED_RANGE",
+                justification = "Pattern.compile is intentional: this method validates user-provided regex patterns")
         public FormValidation doCheckMessagePattern(@AncestorInPath final BuildableItem project,
                 @QueryParameter final String messagePattern) {
-            if (!new JenkinsFacade().hasPermission(Item.CONFIGURE, project)) {
+            if (!getJenkinsFacade().hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
             if (StringUtils.isBlank(messagePattern)) {
@@ -142,7 +144,7 @@ public class SuppressionFilter extends RegexpFilter {
                 Pattern.compile(messagePattern);
                 return FormValidation.ok();
             }
-            catch (java.util.regex.PatternSyntaxException exception) {
+            catch (PatternSyntaxException exception) {
                 return FormValidation.error(Messages.pattern_error(exception.getLocalizedMessage()));
             }
         }

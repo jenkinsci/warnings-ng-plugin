@@ -105,6 +105,15 @@ public abstract class RegexpFilter implements Describable<RegexpFilter>, Seriali
         }
 
         /**
+         * Returns the {@link JenkinsFacade} used for permission checks.
+         *
+         * @return the Jenkins facade
+         */
+        protected JenkinsFacade getJenkinsFacade() {
+            return jenkinsFacade;
+        }
+
+        /**
          * Performs on-the-fly validation of the regexp pattern.
          *
          * @param project
