@@ -113,18 +113,6 @@ public class SuppressionFilter extends RegexpFilter {
     @Extension
     @org.jenkinsci.Symbol("suppress")
     public static class DescriptorImpl extends RegexpFilterDescriptor {
-        private final JenkinsFacade jenkinsFacade;
-
-        /** Creates a new descriptor. */
-        public DescriptorImpl() {
-            this(new JenkinsFacade());
-        }
-
-        DescriptorImpl(final JenkinsFacade jenkinsFacade) {
-            super(jenkinsFacade);
-            this.jenkinsFacade = jenkinsFacade;
-        }
-
         @NonNull
         @Override
         public String getDisplayName() {
@@ -132,7 +120,7 @@ public class SuppressionFilter extends RegexpFilter {
         }
 
         /**
-         * Validates the message pattern.
+         * Performs on-the-fly validation of the message pattern.
          *
          * @param project
          *         the project that is configured
@@ -144,7 +132,7 @@ public class SuppressionFilter extends RegexpFilter {
         @POST
         public FormValidation doCheckMessagePattern(@AncestorInPath final BuildableItem project,
                 @QueryParameter final String messagePattern) {
-            if (!jenkinsFacade.hasPermission(Item.CONFIGURE, project)) {
+            if (!new JenkinsFacade().hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
             if (StringUtils.isBlank(messagePattern)) {
