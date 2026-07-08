@@ -11,7 +11,7 @@
 
   <groupId>io.jenkins.plugins</groupId>
   <artifactId>warnings-ng-ui-tests</artifactId>
-  <version>UNVERSIONED</version>
+  <version>UNVERSIONED-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>UI Tests of Warnings Plugin</name>
 
@@ -92,10 +92,6 @@
     <repository>
       <id>maven.jenkins-ci.org</id>
       <url>https://repo.jenkins-ci.org/releases/</url>
-    </repository>
-    <repository>
-      <id>incrementals.jenkins-ci.org</id>
-      <url>https://repo.jenkins-ci.org/incrementals/</url>
     </repository>
   </repositories>
 
@@ -287,12 +283,6 @@
           </plugin>
         </plugins>
       </build>
-    </profile>
-    <profile>
-      <id>consume-incrementals</id>
-    </profile>
-    <profile>
-      <id>might-produce-incrementals</id>
     </profile>
   </profiles>
 
