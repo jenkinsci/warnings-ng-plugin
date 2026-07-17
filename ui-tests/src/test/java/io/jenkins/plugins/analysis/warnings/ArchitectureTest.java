@@ -14,7 +14,7 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.*;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings("hideutilityclassconstructor")
+@SuppressWarnings("PMD.UseUtilityClass")
 @AnalyzeClasses(packages = "io.jenkins.plugins.analysis")
 class ArchitectureTest {
     @ArchTest

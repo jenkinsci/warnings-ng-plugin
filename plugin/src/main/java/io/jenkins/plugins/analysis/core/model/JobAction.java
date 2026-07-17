@@ -2,11 +2,12 @@ package io.jenkins.plugins.analysis.core.model;
 
 import edu.hm.hafner.echarts.BuildResult;
 import edu.hm.hafner.echarts.ChartModelConfiguration;
-import edu.hm.hafner.echarts.JacksonFacade;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 import java.io.IOException;
 import java.util.Optional;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ObjectNode;
 
 import org.kohsuke.stapler.StaplerRequest2;
 import org.kohsuke.stapler.StaplerResponse2;
@@ -31,7 +32,6 @@ import io.jenkins.plugins.echarts.AsyncConfigurableTrendChart;
  * @author Ullrich Hafner
  */
 public class JobAction implements Action, AsyncConfigurableTrendChart {
-    private static final JacksonFacade JACKSON_FACADE = new JacksonFacade();
     private static final String NEW_ISSUES_TREND_ID = "new";
     private static final String HEALTH_REPORT_TREND_ID = "health";
     private final Job<?, ?> owner;
@@ -205,9 +205,12 @@ public class JobAction implements Action, AsyncConfigurableTrendChart {
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
     public String getConfigurableBuildTrendModel(final String configuration) {
-        var chartType = JACKSON_FACADE.getString(configuration, "chartType", "severity");
+        var objectMapper = new ObjectMapper();
+        var node = objectMapper.readValue(configuration, ObjectNode.class).get("chartType");
 
-        return new JacksonFacade().toJson(selectChart(chartType).create(
+        var chartType = node == null ? "severity" : node.asString();
+
+        return objectMapper.writeValueAsString(selectChart(chartType).create(
                 createBuildHistory(), ChartModelConfiguration.fromJson(configuration)));
     }
 

@@ -73,7 +73,7 @@ class RegisteredParserTest {
 
             var descriptor = new Descriptor(jenkins);
             assertThat(descriptor.getId()).isEqualTo(Descriptor.ANALYSIS_MODEL_ID);
-            assertThat(descriptor.doFillAnalysisModelIdItems()).extracting(o -> o.value).first().isEqualTo("acu-cobol");
+            assertThat(descriptor.doFillAnalysisModelIdItems()).extracting(o -> o.value).first().isEqualTo("codeguru-security");
 
             when(jenkins.hasPermission(Jenkins.READ)).thenReturn(false);
             assertThat(descriptor.doFillAnalysisModelIdItems()).isEmpty();
