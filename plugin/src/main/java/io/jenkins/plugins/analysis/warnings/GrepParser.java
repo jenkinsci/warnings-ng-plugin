@@ -27,6 +27,7 @@ import hudson.model.Item;
 import hudson.model.Run;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
+import jenkins.model.Jenkins;
 
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.SymbolIconLabelProvider;
@@ -303,11 +304,16 @@ public class GrepParser extends Tool {
          *
          * @return a list-box model with all predefined severity options
          */
+        @POST
         public ListBoxModel doFillSeverityItems() {
             var items = new ListBoxModel();
-            items.add(Messages.Warnings_GrepParser_Severity_High(), Severity.WARNING_HIGH.getName());
-            items.add(Messages.Warnings_GrepParser_Severity_Normal(), Severity.WARNING_NORMAL.getName());
-            items.add(Messages.Warnings_GrepParser_Severity_Low(), Severity.WARNING_LOW.getName());
+
+            if (JENKINS.hasPermission(Jenkins.READ)) {
+                items.add(Messages.Warnings_GrepParser_Severity_High(), Severity.WARNING_HIGH.getName());
+                items.add(Messages.Warnings_GrepParser_Severity_Normal(), Severity.WARNING_NORMAL.getName());
+                items.add(Messages.Warnings_GrepParser_Severity_Low(), Severity.WARNING_LOW.getName());
+            }
+
             return items;
         }
 
