@@ -42,27 +42,32 @@ public class HealthReportBuilder {
         }
 
         if (healthDescriptor.isValid()) {
-            int percentage;
-            int healthy = healthDescriptor.getHealthy();
-            if (healthy == 0) {
-                // Special case: healthy=0 means only 0 issues is 100% healthy
-                percentage = relevantIssuesSize == 0 ? 100 : 0;
-            }
-            else if (relevantIssuesSize < healthy) {
-                percentage = 100;
-            }
-            else {
-                int unhealthy = healthDescriptor.getUnhealthy();
-                if (relevantIssuesSize > unhealthy) {
-                    percentage = 0;
-                }
-                else {
-                    percentage = 100 - ((relevantIssuesSize - healthy + 1) * 100 / (unhealthy - healthy + 2));
-                }
-            }
-
-            return new HealthReport(percentage, labelProvider.getToolTipLocalizable(relevantIssuesSize));
+            return createHealthReport(healthDescriptor, labelProvider, relevantIssuesSize);
         }
         return null;
+    }
+
+    private HealthReport createHealthReport(final HealthDescriptor healthDescriptor,
+            final StaticAnalysisLabelProvider labelProvider, final int relevantIssuesSize) {
+        int percentage;
+        int healthy = healthDescriptor.getHealthy();
+        if (healthy == 0) {
+            // Special case: healthy=0 means only 0 issues is 100% healthy
+            percentage = relevantIssuesSize == 0 ? 100 : 0;
+        }
+        else if (relevantIssuesSize < healthy) {
+            percentage = 100;
+        }
+        else {
+            int unhealthy = healthDescriptor.getUnhealthy();
+            if (relevantIssuesSize > unhealthy) {
+                percentage = 0;
+            }
+            else {
+                percentage = 100 - ((relevantIssuesSize - healthy + 1) * 100 / (unhealthy - healthy + 2));
+            }
+        }
+
+        return new HealthReport(percentage, labelProvider.getToolTipLocalizable(relevantIssuesSize));
     }
 }

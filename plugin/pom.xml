@@ -35,8 +35,6 @@
   </developers>
 
   <properties>
-    <!-- TODO remove explicit version once it's available in BOM -->
-    <mcp.plugin.version>0.183.vd11dc09ea_578</mcp.plugin.version>
     <maven.deploy.skip>false</maven.deploy.skip>
 
     <!-- Library Dependencies Versions -->
@@ -165,7 +163,6 @@
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>mcp-server</artifactId>
       <optional>true</optional>
-      <version>${mcp.plugin.version}</version>
     </dependency>
 
     <!-- AxivionSuite Dependencies -->
@@ -244,7 +241,6 @@
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>mcp-server</artifactId>
       <optional>true</optional>
-      <version>${mcp.plugin.version}</version>
       <classifier>tests</classifier>
       <scope>test</scope>
     </dependency>
