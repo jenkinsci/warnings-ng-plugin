@@ -61,9 +61,9 @@
 
   <dependencyManagement>
     <dependencies>
-      <!-- Remove once in bom;
-        job-dsl version coming from bom at this time is 1.93 - which still using commons-lang2
-        Below tests that use the job-dsl plugin are failing when running in Jenkins core that doesn't commons-lang2
+      <!-- Remove once this is updated in the BOM;
+        job-dsl version coming from the BOM at this time is 1.93, which still uses commons-lang2.
+        The tests below that use the job-dsl plugin are failing when running on Jenkins core that doesn't include commons-lang2
         io.jenkins.plugins.analysis.warnings.integrations.JobDslITest
           * shouldCreateFreestyleJobUsingJobDslAndVerifyIssueRecorderWithValuesSet
           * shouldCreateFreestyleJobUsingJobDslAndVerifyIssueRecorderWithDefaultConfiguration
