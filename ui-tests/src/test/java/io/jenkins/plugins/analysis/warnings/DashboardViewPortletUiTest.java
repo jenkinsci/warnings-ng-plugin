@@ -1,9 +1,9 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import org.junit.Test;
+
 import java.util.List;
 import java.util.Map;
-
-import org.junit.Test;
 
 import org.jenkinsci.test.acceptance.plugins.dashboard_view.DashboardView;
 import org.jenkinsci.test.acceptance.po.Build;
@@ -18,6 +18,7 @@ import static io.jenkins.plugins.analysis.warnings.Assertions.*;
  *
  * @author Lukas Kirner
  */
+@SuppressWarnings("PMD.WrongTestAnnotation")
 public class DashboardViewPortletUiTest extends UiTest {
     private static final String DASHBOARD_PREFIX = "dashboard_test/";
     private static final String CLEAN_CHECKSTYLE_RESULT = DASHBOARD_PREFIX + "checkstyle-clean.xml";
