@@ -16,6 +16,7 @@ import static org.assertj.core.api.Assertions.*;
  * @author Mitja Oldenbourg
  */
 @WithPlugins("warnings-ng")
+@SuppressWarnings("PMD.WrongTestAnnotation")
 public class TrendChartsUiTest extends UiTest {
     private static final String SOURCE_VIEW_FOLDER = "trend_charts_tests/";
     private static final String SEVERITIES_TREND_CHART = "severities-trend-chart";
