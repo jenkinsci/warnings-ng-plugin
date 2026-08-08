@@ -29,7 +29,7 @@ import hudson.FilePath;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-
+import io.jenkins.plugins.analysis.core.filter.FileInclusionFilter;
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.HealthReportBuilder;
@@ -83,6 +83,7 @@ public class RecordIssuesStep extends Step implements Serializable {
     @SuppressWarnings("serial")
 
     private List<RegexpFilter> filters = new ArrayList<>();
+    private FileInclusionFilter filesFilter;
 
     private boolean isEnabledForFailure;
     private boolean isAggregatingResults;
@@ -638,6 +639,15 @@ public class RecordIssuesStep extends Step implements Serializable {
         this.filters = new ArrayList<>(filters);
     }
 
+    public String getFilesFilter() {
+        return filesFilter != null ? filesFilter.getFileName() : null;
+    }
+
+    @DataBoundSetter
+    public void setFilesFilter(final String filePath) {
+        this.filesFilter = new FileInclusionFilter(filePath);
+    }
+
     @Override
     public StepExecution start(final StepContext context) {
         return new Execution(context, this);
@@ -669,6 +679,7 @@ public class RecordIssuesStep extends Step implements Serializable {
             recorder.setUnhealthy(step.getUnhealthy());
             recorder.setMinimumSeverity(step.getMinimumSeverity());
             recorder.setFilters(step.getFilters());
+            recorder.setFilesFilter(step.getFilesFilter());
             recorder.setEnabledForFailure(step.getEnabledForFailure());
             recorder.setAggregatingResults(step.getAggregatingResults());
             recorder.setBlameDisabled(step.isSkipBlames());
