@@ -115,8 +115,17 @@ public abstract class ReportScanningTool extends Tool {
         return !getSkipSymbolicLinks();
     }
 
-    private boolean isEmptyFileValid() {
+    /**
+     * Returns whether this tool instance may scan the console log when no file pattern is configured.
+     *
+     * @return {@code true} if console log scanning is allowed, {@code false} otherwise
+     */
+    protected boolean canScanConsoleLog() {
         return getDescriptor().canScanConsoleLog();
+    }
+
+    private boolean isEmptyFileValid() {
+        return canScanConsoleLog();
     }
 
     /**
@@ -220,7 +229,7 @@ public abstract class ReportScanningTool extends Tool {
     }
 
     private Report scanInConsoleLog(final FilePath workspace, final Run<?, ?> run, final LogHandler logger) {
-        Ensure.that(getDescriptor().canScanConsoleLog()).isTrue(
+        Ensure.that(canScanConsoleLog()).isTrue(
                 "Static analysis tool %s cannot scan console log output, please define a file pattern",
                 getActualName());
 
