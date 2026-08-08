@@ -7,6 +7,7 @@ import com.google.errorprone.annotations.MustBeClosed;
 import edu.hm.hafner.analysis.FileNameResolver;
 import edu.hm.hafner.analysis.FingerprintGenerator;
 import edu.hm.hafner.analysis.FullTextFingerprint;
+import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.ModuleDetectorRunner;
 import edu.hm.hafner.analysis.ModuleDetectorRunner.FileSystemFacade;
 import edu.hm.hafner.analysis.ModuleResolver;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import hudson.FilePath;
@@ -232,17 +234,25 @@ class IssuesScanner {
     private static Report filter(final Report report, final List<RegexpFilter> filters) {
         int actualFilterSize = 0;
         var builder = new IssueFilterBuilder();
+        var compoundPredicate = (Predicate<Issue>) issue -> true;
+
         for (RegexpFilter filter : filters) {
-            if (StringUtils.isNotBlank(filter.getPattern())) {
-                filter.apply(builder);
+            if (filter.isActive()) {
+                var customPredicate = filter.getFilterPredicate();
+                if (customPredicate != null) {
+                    compoundPredicate = compoundPredicate.and(customPredicate);
+                }
+                else {
+                    filter.apply(builder);
+                }
                 actualFilterSize++;
             }
         }
-        var filtered = report.filter(builder.build());
+        var filtered = report.filter(builder.build().and(compoundPredicate));
         if (actualFilterSize > 0) {
             filtered.logInfo(
                     "Applying %d filters on the set of %d issues (%d issues have been removed, %d issues will be published)",
-                    filters.size(), report.size(), report.size() - filtered.size(), filtered.size());
+                    actualFilterSize, report.size(), report.size() - filtered.size(), filtered.size());
         }
         else {
             filtered.logInfo("No filter has been set, publishing all %d issues", filtered.size());
