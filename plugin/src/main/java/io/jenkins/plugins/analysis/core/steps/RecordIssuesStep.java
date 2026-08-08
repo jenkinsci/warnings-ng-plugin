@@ -106,6 +106,9 @@ public class RecordIssuesStep extends Step implements Serializable {
     private boolean stopBuild; // @since 12.10010: by default, pipeline execution will not be stopped
     private String scm = StringUtils.EMPTY;
 
+    @CheckForNull
+    private String detailsURL = StringUtils.EMPTY;
+
     private boolean quiet;
 
     /**
@@ -314,6 +317,15 @@ public class RecordIssuesStep extends Step implements Serializable {
     @CheckForNull
     public Tool getTool() {
         return null;
+    }
+
+    @DataBoundSetter
+    public void setDetailsURL(final String detailsURL) {
+        this.detailsURL = detailsURL;
+    }
+
+    public String getDetailsURL() {
+        return detailsURL;
     }
 
     @CheckForNull
@@ -685,6 +697,7 @@ public class RecordIssuesStep extends Step implements Serializable {
             recorder.setStopBuild(step.getStopBuild());
             recorder.setTrendChartType(step.getTrendChartType());
             recorder.setSourceDirectories(step.getAllSourceDirectories());
+            recorder.setDetailsURL(step.getDetailsURL());
             recorder.setChecksInfo(getContext().get(ChecksInfo.class));
             recorder.setQuiet(step.isQuiet());
 

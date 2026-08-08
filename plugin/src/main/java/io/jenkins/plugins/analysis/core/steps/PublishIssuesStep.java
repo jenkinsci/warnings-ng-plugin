@@ -84,6 +84,9 @@ public class PublishIssuesStep extends Step implements Serializable {
     private String icon = StringUtils.EMPTY; // @since 12.0.0: by default no custom icon is set
     private String scm = StringUtils.EMPTY;
 
+    @CheckForNull
+    private String detailsURL = StringUtils.EMPTY;
+
     /**
      * Creates a new instance of {@link PublishIssuesStep}.
      *
@@ -173,6 +176,15 @@ public class PublishIssuesStep extends Step implements Serializable {
 
     public String getScm() {
         return scm;
+    }
+
+    @DataBoundSetter
+    public void setDetailsURL(final String detailsURL) {
+        this.detailsURL = detailsURL;
+    }
+
+    public String getDetailsURL() {
+        return detailsURL;
     }
 
     /**
@@ -484,7 +496,7 @@ public class PublishIssuesStep extends Step implements Serializable {
             var action = publisher.attachAction(step.getTrendChartType());
 
             if (!step.isSkipPublishingChecks()) {
-                var checksPublisher = new WarningChecksPublisher(action, getTaskListener(), getContext().get(ChecksInfo.class));
+                var checksPublisher = new WarningChecksPublisher(action, getTaskListener(), getContext().get(ChecksInfo.class), step.getDetailsURL());
                 checksPublisher.publishChecks(step.getChecksAnnotationScope());
             }
 
