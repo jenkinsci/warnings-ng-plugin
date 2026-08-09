@@ -50,6 +50,27 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String NEW_CHECKSTYLE_REPORT = "checkstyle1.xml";
 
     /**
+     * Verifies that publishIssues uses the detailsURL from withChecks context when no direct override is provided.
+     */
+    @Test
+    void shouldUseContextDetailsURLWhenPublishIssuesHasNoOverride() {
+        var project = createPipelineWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
+        var contextUrl = "http://context-publish-url";
+        var contextName = "Checks Name";
+        project.setDefinition(asStage("withChecks(name: '" + contextName
+                        + "', detailsURL: '" + contextUrl + "') {",
+                createScanForIssuesStep(new CheckStyle()),
+                "publishIssues(issues: [issues])", "}"));
+        buildSuccessfully(project);
+
+        List<ChecksDetails> publishedChecks = getPublishedChecks();
+        // index 0 is 'In progress' from withChecks, index 1 is publishIssues
+        assertThat(publishedChecks).hasSize(2);
+        assertThat(publishedChecks.get(1).getDetailsURL()).contains(contextUrl);
+        assertThat(publishedChecks.get(1).getName()).contains(contextName);
+    }
+
+    /**
      * Verifies that {@link WarningChecksPublisher} constructs the {@link ChecksDetails} correctly with only new
      * issues.
      */

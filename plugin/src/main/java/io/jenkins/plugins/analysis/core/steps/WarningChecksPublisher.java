@@ -109,6 +109,9 @@ class WarningChecksPublisher {
         var checksName = Optional.ofNullable(checksInfo).map(ChecksInfo::getName)
                 .filter(StringUtils::isNotEmpty)
                 .orElse(labelProvider.getName());
+        var detailsUrl = Optional.ofNullable(checksInfo).map(ChecksInfo::getDetailsURL)
+                .filter(StringUtils::isNotEmpty)
+                .orElse(action.getAbsoluteUrl());
 
         var summary = extractChecksSummary(totals) + "\n" + extractReferenceBuild(result);
         return new ChecksDetailsBuilder()
@@ -121,7 +124,7 @@ class WarningChecksPublisher {
                         .withText(extractChecksText(totals))
                         .withAnnotations(extractChecksAnnotations(filterIssuesForAnnotations(annotationScope, result), labelProvider))
                         .build())
-                .withDetailsURL(action.getAbsoluteUrl())
+                .withDetailsURL(detailsUrl)
                 .build();
     }
 
