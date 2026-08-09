@@ -234,7 +234,7 @@ public class GrepParser extends Tool {
         @POST
         public FormValidation doCheckIncludePattern(@AncestorInPath final AbstractProject<?, ?> project,
                 @QueryParameter final String includePattern) {
-            if (!project.hasPermission(Item.CONFIGURE)) {
+            if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
             return VALIDATION_UTILITIES.doCheckPattern(project, includePattern);
@@ -253,7 +253,7 @@ public class GrepParser extends Tool {
         @POST
         public FormValidation doCheckExcludePattern(@AncestorInPath final AbstractProject<?, ?> project,
                 @QueryParameter final String excludePattern) {
-            if (!project.hasPermission(Item.CONFIGURE)) {
+            if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
             return VALIDATION_UTILITIES.doCheckPattern(project, excludePattern);
@@ -272,7 +272,7 @@ public class GrepParser extends Tool {
         @POST
         public FormValidation doCheckRegexp(@AncestorInPath final BuildableItem project,
                 @QueryParameter final String regexp) {
-            if (!project.hasPermission(Item.CONFIGURE)) {
+            if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
             return checkRegexp(regexp);
@@ -326,7 +326,7 @@ public class GrepParser extends Tool {
                 @QueryParameter final String example,
                 @QueryParameter final String regexp,
                 @QueryParameter final String severity) {
-            if (StringUtils.isEmpty(example) || !project.hasPermission(Item.CONFIGURE)) {
+            if (StringUtils.isEmpty(example) || !JENKINS.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
 
