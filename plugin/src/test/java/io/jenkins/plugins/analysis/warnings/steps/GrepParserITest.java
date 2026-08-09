@@ -1,20 +1,12 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 
 import edu.hm.hafner.analysis.Severity;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-
-import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.model.Run;
 
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.GrepParser;
 import io.jenkins.plugins.util.QualityGateStatus;
