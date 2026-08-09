@@ -196,16 +196,6 @@ public class GrepParser extends Tool {
             super(ID, Messages.Warnings_GrepParser_Name(), i -> StringUtils.EMPTY,
                     "symbol-search plugin-ionicons-api");
         }
-
-        @Override
-        public String getLinkName() {
-            return Messages.Warnings_GrepParser_LinkName();
-        }
-
-        @Override
-        public String getTrendName() {
-            return Messages.Warnings_GrepParser_TrendName();
-        }
     }
 
     /** Descriptor for this static analysis tool. */

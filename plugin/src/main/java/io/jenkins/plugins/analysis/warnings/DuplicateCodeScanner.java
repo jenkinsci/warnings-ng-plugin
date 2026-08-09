@@ -163,7 +163,7 @@ public abstract class DuplicateCodeScanner extends AnalysisModelParser {
     }
 
     /** Descriptor for this static analysis tool. */
-    abstract static class DuplicateCodeDescriptor extends AnalysisModelParserDescriptor {
+    public abstract static class DuplicateCodeDescriptor extends AnalysisModelParserDescriptor {
         private static final JenkinsFacade JENKINS = new JenkinsFacade();
         private static final ThresholdValidation VALIDATION = new ThresholdValidation();
 
