@@ -337,7 +337,7 @@ public class GrepParser extends Tool {
             }
 
             try (var reader = new BufferedReader(new StringReader(example));
-                 var issueBuilder = new edu.hm.hafner.analysis.IssueBuilder()) {
+                    var issueBuilder = new edu.hm.hafner.analysis.IssueBuilder()) {
                 issueBuilder.setFileName("UI example");
                 var matches = scanner.scanLines(reader.lines().iterator(), issueBuilder);
                 if (matches.isEmpty()) {
