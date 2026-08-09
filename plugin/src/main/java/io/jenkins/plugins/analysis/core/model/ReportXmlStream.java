@@ -37,7 +37,7 @@ class ReportXmlStream extends AbstractXmlStream<Report> {
     }
 
     @Override
-    public Report createDefaultValue() {
+    protected Report createDefaultValue() {
         return new Report();
     }
 

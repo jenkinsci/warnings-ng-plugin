@@ -26,6 +26,7 @@ import static io.jenkins.plugins.analysis.warnings.Assertions.*;
  * @author Simon Schönwiese
  */
 @WithPlugins("warnings-ng")
+@SuppressWarnings("PMD.WrongTestAnnotation")
 public class DetailsTabUiTest extends UiTest {
     private static final String DETAILS_TAB_RESOURCES = "details_tab_test/";
 

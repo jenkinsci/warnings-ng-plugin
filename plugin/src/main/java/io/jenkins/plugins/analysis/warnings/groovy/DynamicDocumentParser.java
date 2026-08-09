@@ -40,7 +40,7 @@ class DynamicDocumentParser extends IssueParser {
 
     @Override
     @SuppressWarnings("PMD.DoNotUseThreads")
-    public Report parseReport(final ReaderFactory reader) throws ParsingException {
+    protected Report parseReport(final ReaderFactory reader) throws ParsingException {
         var report = new Report();
         var matcher = pattern.matcher(reader.readString() + "\n");
 

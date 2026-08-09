@@ -18,6 +18,7 @@ import static io.jenkins.plugins.analysis.warnings.Assertions.*;
  * @author Lion Kosiuk
  */
 @WithPlugins("warnings-ng")
+@SuppressWarnings("PMD.WrongTestAnnotation")
 public class SnippetGeneratorUiTest extends UiTest {
     /**
      * Tests the default configuration of the RecordIssuesStep.
