@@ -783,20 +783,24 @@ public class IssuesRecorder extends Recorder {
                     results.add(publishResult(run, workspace, listener, tool.getActualName(),
                             report, getReportName(tool), tool.getIcon(), resultHandler));
                 }
-                if (StringUtils.isNotBlank(getId()) || StringUtils.isNotBlank(getName()) || StringUtils.isNotBlank(getIcon())) {
-                    logHandler.log("Do not set id, name, or icon of recorder when multiple tools are defined");
-                }
+                logWarningForAmbigiousName(logHandler);
             }
         }
-        
+
         for (AnalysisResult result : results) {
             if (shouldStopBuild(result, stopBuild, logHandler)) {
                 throw new AbortException(
                         "Stopping build because quality gate has been missed for '" + result.getId() + "'");
             }
         }
-        
+
         return results;
+    }
+
+    private void logWarningForAmbigiousName(final LogHandler logHandler) {
+        if (StringUtils.isNotBlank(getId()) || StringUtils.isNotBlank(getName()) || StringUtils.isNotBlank(getIcon())) {
+            logHandler.log("Do not set id, name, or icon of recorder when multiple tools are defined");
+        }
     }
 
     private String getCustomName() {
@@ -916,7 +920,7 @@ public class IssuesRecorder extends Recorder {
      *
      * @return {@code true} if the build should be stopped, {@code false} otherwise
      */
-    static boolean shouldStopBuild(final AnalysisResult result, final boolean stopBuild, 
+    static boolean shouldStopBuild(final AnalysisResult result, final boolean stopBuild,
             final LogHandler logHandler) {
         if (!stopBuild) {
             return false;

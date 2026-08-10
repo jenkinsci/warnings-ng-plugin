@@ -40,7 +40,7 @@ class DynamicLineParserTest extends AbstractParserTest {
     }
 
     @Override
-    public DynamicLineParser createParser() {
+    protected DynamicLineParser createParser() {
         return new DynamicLineParser("(.*):(\\d+):(\\d+): (\\D\\d*) (.*)", toString("pep8.groovy"));
     }
 

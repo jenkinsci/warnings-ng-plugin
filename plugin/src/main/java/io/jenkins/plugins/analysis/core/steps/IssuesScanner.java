@@ -14,6 +14,8 @@ import edu.hm.hafner.analysis.PackageNameResolver;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 import edu.hm.hafner.util.FilteredLog;
+import edu.hm.hafner.util.SecureXmlParserFactory;
+import edu.hm.hafner.util.SecureXmlParserFactory.ParsingException;
 
 import java.io.File;
 import java.io.IOException;
@@ -255,7 +257,7 @@ class IssuesScanner {
      * computes fingerprints for each issue. Finally, for each file the SCM blames are computed.
      */
     @SuppressWarnings("checkstyle:ClassDataAbstractionCoupling")
-    private static class ReportPostProcessor extends MasterToSlaveFileCallable<AnnotatedReport> {
+    static class ReportPostProcessor extends MasterToSlaveFileCallable<AnnotatedReport> {
         private static final long serialVersionUID = -9138045560271783096L;
         private static final String SKIPPING_POST_PROCESSING = "Skipping detection of missing package and module names";
 
@@ -296,6 +298,7 @@ class IssuesScanner {
 
         @Override
         public AnnotatedReport invoke(final File workspace, final VirtualChannel channel) {
+            warmUpXmlParsers(originalReport);
             resolvePaths(workspace, originalReport);
             if (postProcessingMode == PostProcessingMode.ENABLED) {
                 resolveModuleNames(originalReport, workspace);
@@ -312,6 +315,25 @@ class IssuesScanner {
             var fileLocations = new ReportLocations().toFileLocations(filtered);
 
             return new AnnotatedReport(id, filtered, blame(filtered, fileLocations));
+        }
+
+        /**
+         * Pre-warms the XML parser infrastructure so that the Xerces implementation classes are loaded exactly once 
+         * on the agent JVM via the RemoteClassLoader, rather than being re-fetched from the Jenkins controller for 
+         * every XML file parsed during module or package name resolution.
+         * 
+         * @param report
+         *         report used to log parser initialization failures
+         */
+        static void warmUpXmlParsers(final Report report) {
+            try {
+                var factory = new SecureXmlParserFactory();
+                factory.createSaxParser();
+                factory.createDocumentBuilder();
+            }
+            catch (ParsingException e) {
+                report.logException(e, "Failed to pre-warm XML parser infrastructure - XML parsing may be slow");
+            }
         }
 
         private Blames blame(final Report filtered, final FileLocations fileLocations) {

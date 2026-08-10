@@ -20,6 +20,7 @@ import static io.jenkins.plugins.analysis.warnings.Assertions.*;
  * @author Ullrich Hafner
  */
 @WithPlugins("warnings-ng")
+@SuppressWarnings("PMD.WrongTestAnnotation")
 public class FreeStyleConfigurationUiTest extends AbstractJUnitTest {
     private static final String PATTERN = "**/*.txt";
     private static final String ENCODING = "UTF-8";

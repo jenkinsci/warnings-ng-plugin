@@ -20,6 +20,7 @@ import hudson.FilePath;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver.CopyResult;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver.RemoteFacade;
 
+import static io.jenkins.plugins.analysis.core.util.ConsoleLogHandler.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -44,6 +45,50 @@ class AffectedFilesResolverTest extends ResourceTest {
     @DisplayName("Should ignore illegal path names")
     void shouldReturnFallbackOnError(final String fileName) throws IOException, InterruptedException {
         var report = new Report().add(new IssueBuilder().setFileName(fileName).build());
+
+        new AffectedFilesResolver().copyAffectedFilesToBuildFolder(report, WORKSPACE, Collections.emptySet(), BUILD_ROOT);
+
+        assertThat(report.getErrorMessages()).isEmpty();
+        assertThat(report.getInfoMessages()).hasSize(1);
+        var message = report.getInfoMessages().get(0);
+        assertThat(message).contains("0 copied");
+        assertThat(message).contains("0 not in workspace");
+        assertThat(message).contains("1 not-found");
+        assertThat(message).contains("0 with I/O error");
+    }
+
+    /**
+     * Ensures that issues pointing to the console log are silently skipped and not counted as not-found.
+     * See <a href="https://github.com/jenkinsci/warnings-ng-plugin/issues/3296">issue #3296</a>.
+     */
+    @Test
+    @DisplayName("Should silently skip console log issues without counting them as not-found")
+    void shouldSkipConsoleLogIssues() throws IOException, InterruptedException {
+        var report = new Report().add(
+                new IssueBuilder().setFileName(JENKINS_CONSOLE_LOG_FILE_NAME_ID).build());
+
+        new AffectedFilesResolver().copyAffectedFilesToBuildFolder(report, WORKSPACE, Collections.emptySet(), BUILD_ROOT);
+
+        assertThat(report.getErrorMessages()).isEmpty();
+        assertThat(report.getInfoMessages()).hasSize(1);
+        var message = report.getInfoMessages().get(0);
+        assertThat(message).contains("0 copied");
+        assertThat(message).contains("0 not in workspace");
+        assertThat(message).contains("0 not-found");
+        assertThat(message).contains("0 with I/O error");
+    }
+
+    /**
+     * Ensures that console log issues are silently skipped while non-existent normal files are still counted
+     * as not-found.
+     * See <a href="https://github.com/jenkinsci/warnings-ng-plugin/issues/3296">issue #3296</a>.
+     */
+    @Test
+    @DisplayName("Should skip console log issues but still count other missing files as not-found")
+    void shouldSkipConsoleLogIssuesButCountOtherMissingFiles() throws IOException, InterruptedException {
+        var report = new Report();
+        report.add(new IssueBuilder().setFileName(JENKINS_CONSOLE_LOG_FILE_NAME_ID).build());
+        report.add(new IssueBuilder().setFileName("/does/not/exist").build());
 
         new AffectedFilesResolver().copyAffectedFilesToBuildFolder(report, WORKSPACE, Collections.emptySet(), BUILD_ROOT);
 
