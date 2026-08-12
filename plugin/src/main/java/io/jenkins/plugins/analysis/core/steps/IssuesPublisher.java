@@ -4,6 +4,7 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssuesInModifiedCodeMarker;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.FilteredLog;
+import edu.hm.hafner.util.VisibleForTesting;
 
 import java.nio.charset.Charset;
 import java.util.List;
@@ -99,9 +100,10 @@ class IssuesPublisher {
             run.removeAction(existingAction.get());
         }
 
-        var deltaReport = computeDelta(issues, selector);
+        var delta = computeDelta(issues, selector);
+        var deltaReport = delta.report();
 
-        var qualityGateResult = evaluateQualityGate(issues, deltaReport);
+        var qualityGateResult = evaluateQualityGate(issues, deltaReport, delta.isModifiedCodeAvailable());
         reportHealth(issues);
 
         issues.logInfo("Created analysis result for %d issues (found %d new issues, fixed %d issues)",
@@ -146,7 +148,7 @@ class IssuesPublisher {
         return issues.stream().filter(Issue::isPartOfModifiedCode).count();
     }
 
-    private DeltaReport computeDelta(final Report issues, final ResultSelector selector) {
+    private DeltaResult computeDelta(final Report issues, final ResultSelector selector) {
         var possibleReferenceBuild = findReferenceBuild(selector, issues);
         if (possibleReferenceBuild.isPresent()) {
             Run<?, ?> build = possibleReferenceBuild.get();
@@ -155,46 +157,69 @@ class IssuesPublisher {
 
             var deltaReport = new DeltaReport(issues, build, run.getNumber(), resultAction.getResult().getIssues());
 
-            markIssuesInModifiedFiles(build, issues, deltaReport);
-
-            return deltaReport;
+            return new DeltaResult(deltaReport, markIssuesInModifiedFiles(build, issues, deltaReport));
         }
         else {
-            return new DeltaReport(issues, run.getNumber());
+            return new DeltaResult(new DeltaReport(issues, run.getNumber()), true);
         }
     }
 
-    private void markIssuesInModifiedFiles(final Run<?, ?> referenceBuild, final Report issues, final DeltaReport deltaReport) {
-        if (issues.isNotEmpty()) {
-            report.logInfo("Detect all issues that are part of modified code");
-
-            var log = new FilteredLog("Errors while computing delta: ");
-            var delta = deltaCalculator.calculateDelta(run, referenceBuild, log);
-            issues.mergeLogMessages(log);
-
-            if (delta.isPresent()) {
-                var changes = delta.get().getFileChangesMap().values().stream()
-                        .collect(Collectors.toMap(
-                                FileChanges::getFileName,
-                                FileChanges::getModifiedLines,
-                                (left, right) -> {
-                                    left.addAll(right);
-                                    return left;
-                                }));
-                var marker = new IssuesInModifiedCodeMarker();
-                marker.markIssuesInModifiedCode(issues, changes);
-                report.logInfo("Issues in modified code: %d (new: %d, outstanding: %d)",
-                        count(deltaReport.getAllIssues()),
-                        count(deltaReport.getNewIssues()),
-                        count(deltaReport.getOutstandingIssues()));
-            }
-            else {
-                report.logInfo("No relevant modified code found");
-            }
-        }
-        else {
+    /**
+     * Marks all issues that are part of the modified code of this build. The modified code is determined by computing
+     * the SCM delta between this build and the specified reference build.
+     *
+     * @param referenceBuild
+     *         the reference build to compare with
+     * @param issues
+     *         the issues to mark
+     * @param deltaReport
+     *         the delta report that provides the new and outstanding issues
+     *
+     * @return {@code true} if the modified code of this build is known, {@code false} if the SCM delta could not be
+     *         computed so that the modified code is unknown
+     */
+    @VisibleForTesting
+    boolean markIssuesInModifiedFiles(final Run<?, ?> referenceBuild, final Report issues, final DeltaReport deltaReport) {
+        if (issues.isEmpty()) {
             report.logInfo("Skip detection of issues in modified code");
+
+            return true;
         }
+
+        report.logInfo("Detect all issues that are part of modified code");
+
+        var log = new FilteredLog("Errors while computing delta: ");
+        var delta = deltaCalculator.calculateDelta(run, referenceBuild, log);
+        issues.mergeLogMessages(log);
+
+        if (delta.isPresent()) {
+            var changes = delta.get().getFileChangesMap().values().stream()
+                    .collect(Collectors.toMap(
+                            FileChanges::getFileName,
+                            FileChanges::getModifiedLines,
+                            (left, right) -> {
+                                left.addAll(right);
+                                return left;
+                            }));
+            var marker = new IssuesInModifiedCodeMarker();
+            marker.markIssuesInModifiedCode(issues, changes);
+            report.logInfo("Issues in modified code: %d (new: %d, outstanding: %d)",
+                    count(deltaReport.getAllIssues()),
+                    count(deltaReport.getNewIssues()),
+                    count(deltaReport.getOutstandingIssues()));
+
+            return true;
+        }
+
+        if (log.hasErrors()) {
+            report.logInfo("Skipping detection of issues in modified code since the SCM delta is not available");
+
+            return false;
+        }
+
+        report.logInfo("No relevant modified code found");
+
+        return true;
     }
 
     private void reportHealth(final Report filtered) {
@@ -211,8 +236,10 @@ class IssuesPublisher {
         }
     }
 
-    private QualityGateResult evaluateQualityGate(final Report issues, final DeltaReport deltaReport) {
-        var evaluator = new WarningsQualityGateEvaluator(qualityGates, deltaReport.getStatistics());
+    private QualityGateResult evaluateQualityGate(final Report issues, final DeltaReport deltaReport,
+            final boolean isModifiedCodeAvailable) {
+        var evaluator = new WarningsQualityGateEvaluator(qualityGates, deltaReport.getStatistics(),
+                isModifiedCodeAvailable);
         var log = new FilteredLog("Errors while evaluating quality gates:");
         var qualityGateStatus = evaluator.evaluate(notifier, log);
         issues.mergeLogMessages(log);
@@ -300,5 +327,16 @@ class IssuesPublisher {
 
     private QualityGateEvaluationMode determineQualityGateEvaluationMode() {
         return qualityGateEvaluationMode;
+    }
+
+    /**
+     * The delta of this build with respect to the reference build.
+     *
+     * @param report
+     *         the delta report that contains the new, outstanding, and fixed issues
+     * @param isModifiedCodeAvailable
+     *         determines whether the modified code of this build is known
+     */
+    private record DeltaResult(DeltaReport report, boolean isModifiedCodeAvailable) {
     }
 }

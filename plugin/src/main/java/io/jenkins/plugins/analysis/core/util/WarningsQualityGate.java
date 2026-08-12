@@ -134,14 +134,14 @@ public final class WarningsQualityGate extends QualityGate {
         TOTAL_HIGH(StatisticProperties.TOTAL_HIGH),
         TOTAL_NORMAL(StatisticProperties.TOTAL_NORMAL),
         TOTAL_LOW(StatisticProperties.TOTAL_LOW),
-        TOTAL_MODIFIED(StatisticProperties.TOTAL_MODIFIED),
+        TOTAL_MODIFIED(StatisticProperties.TOTAL_MODIFIED, true),
 
         NEW(StatisticProperties.NEW),
         NEW_ERROR(StatisticProperties.NEW_ERROR),
         NEW_HIGH(StatisticProperties.NEW_HIGH),
         NEW_NORMAL(StatisticProperties.NEW_NORMAL),
         NEW_LOW(StatisticProperties.NEW_LOW),
-        NEW_MODIFIED(StatisticProperties.NEW_MODIFIED),
+        NEW_MODIFIED(StatisticProperties.NEW_MODIFIED, true),
 
         DELTA(StatisticProperties.DELTA),
         DELTA_ERROR(StatisticProperties.DELTA_ERROR),
@@ -150,9 +150,15 @@ public final class WarningsQualityGate extends QualityGate {
         DELTA_LOW(StatisticProperties.DELTA_LOW);
 
         private final StatisticProperties properties;
+        private final boolean basedOnModifiedCode;
 
         QualityGateType(final StatisticProperties statisticProperties) {
+            this(statisticProperties, false);
+        }
+
+        QualityGateType(final StatisticProperties statisticProperties, final boolean basedOnModifiedCode) {
             properties = statisticProperties;
+            this.basedOnModifiedCode = basedOnModifiedCode;
         }
 
         /**
@@ -162,6 +168,16 @@ public final class WarningsQualityGate extends QualityGate {
          */
         public String getDisplayName() {
             return properties.getDisplayName();
+        }
+
+        /**
+         * Returns whether this type counts issues in modified code only. Such quality gates can be evaluated only if
+         * the code delta between the current build and the reference build has been computed successfully.
+         *
+         * @return {@code true} if this type requires the SCM code delta, {@code false} otherwise
+         */
+        public boolean isBasedOnModifiedCode() {
+            return basedOnModifiedCode;
         }
 
         /**
