@@ -1114,6 +1114,33 @@ class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(oneIssue.getIssues().getPackages()).containsExactly("hm.edu.hafner.package2");
     }
 
+    /**
+     * Runs the PMD parser on an output file containing 16 issues (8 in File1.java, 8 in File2.java).
+     * Verifies that a <em>list</em> of multiple exclude filters of the same type each independently suppress
+     * issues, i.e., specifying two {@code excludeFile} filters excludes issues from both files.
+     *
+     * @see <a href="https://github.com/jenkinsci/warnings-ng-plugin/issues/3051">JENKINS-65553</a>
+     */
+    @Test
+    @org.junitpioneer.jupiter.Issue("JENKINS-65553")
+    void shouldSupportListOfFiltersOfTheSameType() {
+        var job = createPipelineWithWorkspaceFilesWithSuffix("pmd-filtering.xml");
+
+        setFilter(job, "excludeFile('File1.java'), excludeFile('File2.java')");
+        var allExcluded = scheduleSuccessfulBuild(job);
+        assertThat(allExcluded.getTotalSize()).isZero();
+
+        setFilter(job, "includeFile('File1.java'), includeFile('File2.java')");
+        var allIncluded = scheduleSuccessfulBuild(job);
+        assertThat(allIncluded.getTotalSize()).isEqualTo(16);
+
+        setFilter(job, "excludeFile('File1.java'), excludeCategory('Category1')");
+        var filteredResult = scheduleSuccessfulBuild(job);
+        assertThat(filteredResult.getIssues().getFiles()).containsExactly("File2.java");
+        assertThat(filteredResult.getIssues().getCategories()).containsExactly("Category2");
+        assertThat(filteredResult.getTotalSize()).isEqualTo(4);
+    }
+
     private void verifyIncludeFile(final WorkflowJob job, final String fileName) {
         setFilter(job, "includeFile('" + fileName + "')");
 

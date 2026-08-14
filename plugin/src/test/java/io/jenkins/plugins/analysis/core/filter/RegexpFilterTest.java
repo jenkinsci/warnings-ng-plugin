@@ -3,6 +3,7 @@ package io.jenkins.plugins.analysis.core.filter;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 
+import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
@@ -176,5 +177,90 @@ class RegexpFilterTest {
         filter.apply(filterBuilder);
 
         verify(filterBuilder).setExcludeMessageFilter(PATTERN);
+    }
+
+    @Test
+    @org.junitpioneer.jupiter.Issue("JENKINS-65553")
+    void shouldFilterWithMultipleExcludeFileFilters() {
+        var report = new Report();
+        report.add(ISSUE_BUILDER.setFileName("keep.java").build());
+        report.add(ISSUE_BUILDER.setFileName("exclude-first.java").build());
+        report.add(ISSUE_BUILDER.setFileName("exclude-second.java").build());
+
+        var firstFilter = new ExcludeFile(".*exclude-first.*");
+        var secondFilter = new ExcludeFile(".*exclude-second.*");
+
+        var builder = new IssueFilterBuilder();
+        firstFilter.apply(builder);
+        secondFilter.apply(builder);
+
+        var filtered = report.filter(builder.build());
+
+        assertThat(filtered).hasSize(1);
+        assertThat(filtered.get(0)).hasFileName("keep.java");
+    }
+
+    @Test
+    @org.junitpioneer.jupiter.Issue("JENKINS-65553")
+    void shouldFilterWithMultipleIncludeFileFilters() {
+        var report = new Report();
+        report.add(ISSUE_BUILDER.setFileName("include-first.java").build());
+        report.add(ISSUE_BUILDER.setFileName("include-second.java").build());
+        report.add(ISSUE_BUILDER.setFileName("excluded.java").build());
+
+        var firstFilter = new IncludeFile(".*include-first.*");
+        var secondFilter = new IncludeFile(".*include-second.*");
+
+        var builder = new IssueFilterBuilder();
+        firstFilter.apply(builder);
+        secondFilter.apply(builder);
+
+        var filtered = report.filter(builder.build());
+
+        assertThat(filtered).hasSize(2);
+        var fileNames = filtered.stream().map(Issue::getFileName).toList();
+        assertThat(fileNames).containsExactlyInAnyOrder("include-first.java", "include-second.java");
+    }
+
+    @Test
+    @org.junitpioneer.jupiter.Issue("JENKINS-65553")
+    void shouldFilterWithMultipleExcludeMessageFilters() {
+        var report = new Report();
+        report.add(ISSUE_BUILDER.setMessage("keep this warning").build());
+        report.add(ISSUE_BUILDER.setMessage("suppress deprecated API").build());
+        report.add(ISSUE_BUILDER.setMessage("suppress unused import").build());
+
+        var firstFilter = new ExcludeMessage(".*deprecated API.*");
+        var secondFilter = new ExcludeMessage(".*unused import.*");
+
+        var builder = new IssueFilterBuilder();
+        firstFilter.apply(builder);
+        secondFilter.apply(builder);
+
+        var filtered = report.filter(builder.build());
+
+        assertThat(filtered).hasSize(1);
+        assertThat(filtered.get(0)).hasMessage("keep this warning");
+    }
+
+    @Test
+    @org.junitpioneer.jupiter.Issue("JENKINS-65553")
+    void shouldCombineExcludeFiltersOfDifferentTypes() {
+        var report = new Report();
+        report.add(ISSUE_BUILDER.setFileName("keep.java").setCategory("ValidCategory").build());
+        report.add(ISSUE_BUILDER.setFileName("excluded-file.java").setCategory("ValidCategory").build());
+        report.add(ISSUE_BUILDER.setFileName("keep2.java").setCategory("ExcludedCategory").build());
+
+        var fileFilter = new ExcludeFile(".*excluded-file.*");
+        var categoryFilter = new ExcludeCategory("ExcludedCategory");
+
+        var builder = new IssueFilterBuilder();
+        fileFilter.apply(builder);
+        categoryFilter.apply(builder);
+
+        var filtered = report.filter(builder.build());
+
+        assertThat(filtered).hasSize(1);
+        assertThat(filtered.get(0)).hasFileName("keep.java");
     }
 }
