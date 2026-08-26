@@ -21,6 +21,7 @@ import static io.jenkins.plugins.analysis.warnings.IssuesColumnConfiguration.*;
  * @author Ullrich Hafner
  */
 @WithPlugins({"warnings-ng", "dashboard-view"})
+@SuppressWarnings("PMD.WrongTestAnnotation")
 public class SmokeTests extends UiTest {
     // FIXME: re-enable dashboard view tests
     // private static final String CHECKSTYLE_ICON = "/checkstyle.svg";

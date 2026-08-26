@@ -25,6 +25,7 @@ import static io.jenkins.plugins.analysis.warnings.Assertions.*;
  * @author Lukas Kirner
  */
 @WithPlugins("warnings-ng")
+@SuppressWarnings("PMD.WrongTestAnnotation")
 public class GlobalConfigurationUiTest extends UiTest {
     private static final String GCC_ID = "gcc";
 

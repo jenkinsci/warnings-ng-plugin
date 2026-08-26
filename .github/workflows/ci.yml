@@ -19,7 +19,7 @@ jobs:
     name: on ${{ matrix.platform }} with JDK ${{ matrix.jdk }}
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Set up JDK ${{ matrix.jdk }}
         uses: actions/setup-java@v5
         with:

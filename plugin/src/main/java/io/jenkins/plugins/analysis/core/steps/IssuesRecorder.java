@@ -227,11 +227,12 @@ public class IssuesRecorder extends Recorder {
 
     /**
      * Defines the ID of the results. The ID is used as URL of the results and as name in UI elements. If no ID is
-     * given, then the ID of the associated result object is used.
+     * given, then the ID of the associated tool is used.
      *
      * <p>
-     * Note: this property is not used if {@link #isAggregatingResults} is {@code false}. It is also not visible in the
-     * UI in order to simplify the user interface.
+     * This property is used for both single-tool and multi-tool (aggregated) configurations. When a single tool is
+     * configured, the recorder-level ID takes precedence over the tool-level ID. When multiple tools are configured
+     * without aggregation, this property is ignored (the tool's own ID is used for each result).
      * </p>
      *
      * @param id
@@ -253,8 +254,9 @@ public class IssuesRecorder extends Recorder {
      * the associated {@link StaticAnalysisLabelProvider} is used.
      *
      * <p>
-     * Note: this property is not used if {@link #isAggregatingResults} is {@code false}. It is also not visible in the
-     * UI in order to simplify the user interface.
+     * This property is used for both single-tool and multi-tool (aggregated) configurations. When a single tool is
+     * configured, the recorder-level name takes precedence over the tool-level name. When multiple tools are configured
+     * without aggregation, this property is ignored (the tool's own name is used for each result).
      * </p>
      *
      * @param name
@@ -747,7 +749,11 @@ public class IssuesRecorder extends Recorder {
             var customIcon = StringUtils.defaultIfBlank(getIcon(), tool.getIcon());
 
             var report = new AnnotatedReport(customId);
-            report.add(scanWithTool(run, workspace, listener, tool), tool.getActualId());
+            AnnotatedReport scannedReport = scanWithTool(run, workspace, listener, tool);
+            if (!customId.equals(tool.getActualId()) || !customName.equals(tool.getActualName())) {
+                scannedReport.getReport().setOrigin(customId, customName);
+            }
+            report.add(scannedReport, customId);
 
             results.add(publishResult(run, workspace, listener, customName,
                     report, customName, customIcon, resultHandler));
@@ -777,20 +783,24 @@ public class IssuesRecorder extends Recorder {
                     results.add(publishResult(run, workspace, listener, tool.getActualName(),
                             report, getReportName(tool), tool.getIcon(), resultHandler));
                 }
-                if (StringUtils.isNotBlank(getId()) || StringUtils.isNotBlank(getName()) || StringUtils.isNotBlank(getIcon())) {
-                    logHandler.log("Do not set id, name, or icon of recorder when multiple tools are defined");
-                }
+                logWarningForAmbigiousName(logHandler);
             }
         }
-        
+
         for (AnalysisResult result : results) {
             if (shouldStopBuild(result, stopBuild, logHandler)) {
                 throw new AbortException(
                         "Stopping build because quality gate has been missed for '" + result.getId() + "'");
             }
         }
-        
+
         return results;
+    }
+
+    private void logWarningForAmbigiousName(final LogHandler logHandler) {
+        if (StringUtils.isNotBlank(getId()) || StringUtils.isNotBlank(getName()) || StringUtils.isNotBlank(getIcon())) {
+            logHandler.log("Do not set id, name, or icon of recorder when multiple tools are defined");
+        }
     }
 
     private String getCustomName() {
@@ -910,7 +920,7 @@ public class IssuesRecorder extends Recorder {
      *
      * @return {@code true} if the build should be stopped, {@code false} otherwise
      */
-    static boolean shouldStopBuild(final AnalysisResult result, final boolean stopBuild, 
+    static boolean shouldStopBuild(final AnalysisResult result, final boolean stopBuild,
             final LogHandler logHandler) {
         if (!stopBuild) {
             return false;
