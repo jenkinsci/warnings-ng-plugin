@@ -24,7 +24,7 @@ import hudson.Extension;
 import hudson.FilePath;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-
+import io.jenkins.plugins.analysis.core.filter.FilterConfig;
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.IssuesScanner.BlameMode;
@@ -47,6 +47,7 @@ public class ScanForIssuesStep extends Step {
     private boolean quiet;
 
     private List<RegexpFilter> filters = new ArrayList<>();
+    private String filesFilter = StringUtils.EMPTY;
     private String scm = StringUtils.EMPTY;
 
     private String sourcePathPrefix = StringUtils.EMPTY; // @since 10.7.0
@@ -85,6 +86,21 @@ public class ScanForIssuesStep extends Step {
     @DataBoundSetter
     public void setFilters(final List<RegexpFilter> filters) {
         this.filters = new ArrayList<>(filters);
+    }
+
+    public String getFilesFilter() {
+        return filesFilter;
+    }
+
+    /**
+     * Sets the path to the file listing the files that should be included in the scan.
+     *
+     * @param filePath
+     *         the path to the file listing the files to include
+     */
+    @DataBoundSetter
+    public void setFilesFilter(final String filePath) {
+        this.filesFilter = filePath;
     }
 
     /**
@@ -274,7 +290,7 @@ public class ScanForIssuesStep extends Step {
         private final boolean isBlameDisabled;
         private final boolean skipPostProcessing;
         @SuppressWarnings("serial")
-        private final List<RegexpFilter> filters;
+        private final FilterConfig filterConfig;
         @SuppressWarnings("serial")
         private final Set<String> sourceDirectories;
         private final String scm;
@@ -297,7 +313,7 @@ public class ScanForIssuesStep extends Step {
             tool = step.getTool();
             sourceCodeEncoding = step.getSourceCodeEncoding();
             isBlameDisabled = step.isSkipBlames();
-            filters = step.getFilters();
+            filterConfig = new FilterConfig(step.getFilters(), step.getFilesFilter());
             sourceDirectories = step.getAllSourceDirectories();
             sourceCodeRetention = step.getSourceCodeRetention();
             scm = step.getScm();
@@ -312,7 +328,7 @@ public class ScanForIssuesStep extends Step {
             var workspace = getWorkspace();
             var listener = getTaskListener();
 
-            var issuesScanner = new IssuesScanner(tool, filters,
+            var issuesScanner = new IssuesScanner(tool, filterConfig,
                     getCharset(sourceCodeEncoding), workspace, sourceDirectories,
                     sourceCodeRetention, getRun(), new FilePath(getRun().getRootDir()), listener,
                     scm, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED,
