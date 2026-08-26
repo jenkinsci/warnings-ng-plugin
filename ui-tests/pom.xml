@@ -5,21 +5,21 @@
   <parent>
     <groupId>edu.hm.hafner</groupId>
     <artifactId>codingstyle-pom</artifactId>
-    <version>6.11.0</version>
+    <version>6.16.0</version>
     <relativePath />
   </parent>
 
   <groupId>io.jenkins.plugins</groupId>
   <artifactId>warnings-ng-ui-tests</artifactId>
-  <version>UNVERSIONED</version>
+  <version>UNVERSIONED-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>UI Tests of Warnings Plugin</name>
 
   <properties>
-    <jenkins.version>2.558</jenkins.version>
-    <hpi-plugin.version>3.1820.ve687007a_69e5</hpi-plugin.version>
+    <jenkins.version>2.576</jenkins.version>
+    <hpi-plugin.version>3.1848.v43eb_ce5a_9cb_6</hpi-plugin.version>
     <json-smart.version>2.3</json-smart.version>
-    <json-unit-assertj.version>5.1.1</json-unit-assertj.version>
+    <json-unit-assertj.version>6.1.0</json-unit-assertj.version>
     <module.name>${project.groupId}.warnings.ui.tests</module.name>
     <browser>firefox-container</browser>
 
@@ -38,7 +38,7 @@
         <!-- ClassNotFoundException if omitted -->
         <groupId>io.netty</groupId>
         <artifactId>netty-bom</artifactId>
-        <version>4.2.12.Final</version>
+        <version>4.2.17.Final</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -49,12 +49,12 @@
     <dependency>
       <groupId>org.jenkins-ci</groupId>
       <artifactId>acceptance-test-harness</artifactId>
-      <version>6612.v3a_89b_e635014</version>
+      <version>6717.v4d75df63dd10</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>2.21.2</version>
+      <version>2.22.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -80,22 +80,12 @@
       <version>${json-unit-assertj.version}</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>net.javacrumbs.json-unit</groupId>
-      <artifactId>json-unit-json-path</artifactId>
-      <version>${json-unit-assertj.version}</version>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 
   <repositories>
     <repository>
       <id>maven.jenkins-ci.org</id>
       <url>https://repo.jenkins-ci.org/releases/</url>
-    </repository>
-    <repository>
-      <id>incrementals.jenkins-ci.org</id>
-      <url>https://repo.jenkins-ci.org/incrementals/</url>
     </repository>
   </repositories>
 
@@ -197,7 +187,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-help-plugin</artifactId>
-        <version>3.5.1</version>
+        <version>3.5.2</version>
         <executions>
           <execution>
             <id>show-profiles</id>
@@ -287,12 +277,6 @@
           </plugin>
         </plugins>
       </build>
-    </profile>
-    <profile>
-      <id>consume-incrementals</id>
-    </profile>
-    <profile>
-      <id>might-produce-incrementals</id>
     </profile>
   </profiles>
 

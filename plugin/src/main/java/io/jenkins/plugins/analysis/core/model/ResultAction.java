@@ -1,8 +1,7 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import jenkins.management.Badge;
-import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
@@ -28,6 +27,7 @@ import hudson.model.HealthReport;
 import hudson.model.HealthReportingAction;
 import hudson.model.Result;
 import hudson.model.Run;
+import jenkins.management.Badge;
 import jenkins.model.RunAction2;
 import jenkins.tasks.SimpleBuildStep.LastBuildAction;
 
@@ -380,18 +380,18 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
         }
 
         @Override
-        public DefaultAgeBuilder getAgeBuilder(final Run<?, ?> owner, final String url) {
+        protected DefaultAgeBuilder getAgeBuilder(final Run<?, ?> owner, final String url) {
             return decorated.getAgeBuilder(owner, url);
         }
 
         @Override
-        public FileNameRenderer getFileNameRenderer(final Run<?, ?> owner) {
+        protected FileNameRenderer getFileNameRenderer(final Run<?, ?> owner) {
             return decorated.getFileNameRenderer(owner);
         }
 
         @VisibleForTesting
         @Override
-        public String getDefaultName() {
+        protected String getDefaultName() {
             return decorated.getDefaultName();
         }
 
@@ -432,7 +432,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
         }
 
         @Override
-        public Localizable getToolTipLocalizable(final int numberOfItems) {
+        protected Localizable getToolTipLocalizable(final int numberOfItems) {
             return decorated.getToolTipLocalizable(numberOfItems);
         }
 

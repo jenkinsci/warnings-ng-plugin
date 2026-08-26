@@ -35,23 +35,21 @@
   </developers>
 
   <properties>
-    <!-- TODO remove explicit version once it's available in BOM -->
-    <mcp.plugin.version>0.168.v13951585050d</mcp.plugin.version>
     <maven.deploy.skip>false</maven.deploy.skip>
 
     <!-- Library Dependencies Versions -->
-    <analysis-model-tests.version>14.8.0</analysis-model-tests.version>
+    <analysis-model-tests.version>14.14.0</analysis-model-tests.version>
     <pull-request-monitoring.version>335.v525cd64ec76b_</pull-request-monitoring.version>
 
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
 
     <!-- Test Library Dependencies Versions -->
-    <xmlunit.version>2.11.0</xmlunit.version>
+    <xmlunit.version>2.13.0</xmlunit.version>
     <jmh.version>1.37</jmh.version>
     <testcontainers.version>1.21.4</testcontainers.version>
 
     <!-- Jenkins Plug-in Dependencies Versions -->
-    <flexible-publish.version>0.16.1</flexible-publish.version>
+    <flexible-publish.version>0.17</flexible-publish.version>
     <form-element-path.version>1.12</form-element-path.version>
 
     <!-- Maven Surefire ArgLine -->
@@ -83,7 +81,6 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>analysis-model-api</artifactId>
-      <version>14.8.0-976.v5097f60f61a_4</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
@@ -165,7 +162,6 @@
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>mcp-server</artifactId>
       <optional>true</optional>
-      <version>${mcp.plugin.version}</version>
     </dependency>
 
     <!-- AxivionSuite Dependencies -->
@@ -244,7 +240,6 @@
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>mcp-server</artifactId>
       <optional>true</optional>
-      <version>${mcp.plugin.version}</version>
       <classifier>tests</classifier>
       <scope>test</scope>
     </dependency>
@@ -364,7 +359,7 @@
     <dependency>
       <groupId>com.parasoft</groupId>
       <artifactId>parasoft-findings</artifactId>
-      <version>10.7.6</version>
+      <version>10.7.7</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -504,24 +499,6 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-  <repositories>
-    <repository>
-      <id>repo.jenkins-ci.org</id>
-      <url>https://repo.jenkins-ci.org/public/</url>
-    </repository>
-    <repository>
-      <id>incrementals.jenkins-ci.org</id>
-      <url>https://repo.jenkins-ci.org/incrementals/</url>
-    </repository>
-  </repositories>
-
-  <pluginRepositories>
-    <pluginRepository>
-      <id>repo.jenkins-ci.org</id>
-      <url>https://repo.jenkins-ci.org/public/</url>
-    </pluginRepository>
-  </pluginRepositories>
 
   <build>
     <pluginManagement>

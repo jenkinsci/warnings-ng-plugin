@@ -17,6 +17,7 @@ import static io.jenkins.plugins.analysis.warnings.IssuesColumnConfiguration.*;
  * @author Oliver Scholz
  */
 @WithPlugins("warnings-ng")
+@SuppressWarnings("PMD.WrongTestAnnotation")
 public class IssuesColumnUiTest extends UiTest {
     private static final String CUSTOM_ISSUES_COLUMN_NAME = "Hello World";
 
