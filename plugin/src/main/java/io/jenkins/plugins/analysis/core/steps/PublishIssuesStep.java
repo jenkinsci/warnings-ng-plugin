@@ -470,12 +470,15 @@ public class PublishIssuesStep extends Step implements Serializable {
             }
             report.addAll(step.reports);
 
+            var logHandler = getLogger(report);
+
             var workspace = getContext().get(FilePath.class);
+            var deltaLog = new FilteredLog("Errors while creating the SCM delta calculator:");
             var deltaCalculator = workspace == null || step.isSkipDeltaCalculation()
                     ? new DeltaCalculator.NullDeltaCalculator()
-                    : DeltaCalculatorFactory.findDeltaCalculator(step.scm, getRun(), workspace, getTaskListener(), new FilteredLog());
+                    : DeltaCalculatorFactory.findDeltaCalculator(step.scm, getRun(), workspace, getTaskListener(), deltaLog);
+            report.getReport().mergeLogMessages(deltaLog);
 
-            var logHandler = getLogger(report);
             var publisher = new IssuesPublisher(getRun(), report,
                     deltaCalculator, new HealthDescriptor(step.getHealthy(), step.getUnhealthy(),
                             step.getMinimumSeverityAsSeverity()), step.getQualityGates(),

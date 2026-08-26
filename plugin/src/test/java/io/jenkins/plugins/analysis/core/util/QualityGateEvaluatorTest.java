@@ -6,6 +6,7 @@ import org.junitpioneer.jupiter.DefaultLocale;
 import edu.hm.hafner.util.FilteredLog;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.function.Function;
 
@@ -209,6 +210,83 @@ class QualityGateEvaluatorTest {
         result = evaluate(other, builder, new FilteredLog());
 
         assertThat(result.getOverallStatus()).isEqualTo(QualityGateStatus.FAILED);
+    }
+
+    @Test
+    void shouldMarkOnlyModifiedCodeTypesAsBasedOnModifiedCode() {
+        var modifiedCodeTypes = EnumSet.of(QualityGateType.TOTAL_MODIFIED, QualityGateType.NEW_MODIFIED);
+
+        for (QualityGateType type : QualityGateType.values()) {
+            assertThat(type.isBasedOnModifiedCode())
+                    .as("Quality gate type %s", type)
+                    .isEqualTo(modifiedCodeTypes.contains(type));
+        }
+    }
+
+    @Test
+    void shouldEvaluateModifiedCodeQualityGatesIfDeltaIsAvailable() {
+        List<WarningsQualityGate> qualityGates = new ArrayList<>();
+        qualityGates.add(addQualityGate(1, QualityGateType.NEW_MODIFIED, QualityGateCriticality.FAILURE));
+
+        var builder = new IssuesStatisticsBuilder();
+
+        var result = evaluate(qualityGates, builder, new FilteredLog());
+        assertThat(result.getOverallStatus()).isEqualTo(QualityGateStatus.PASSED);
+        assertThat(result.getMessages()).hasSize(1).first().asString()
+                .contains("≪Success≫", QualityGateType.NEW_MODIFIED.getDisplayName(), "Actual value: 0",
+                        "Quality gate: 1.00");
+
+        builder.setNewModifiedSize(1);
+
+        result = evaluate(qualityGates, builder, new FilteredLog());
+        assertThat(result.getOverallStatus()).isEqualTo(QualityGateStatus.FAILED);
+        assertThat(result.getMessages()).hasSize(1).first().asString()
+                .contains("≪Failed≫", QualityGateType.NEW_MODIFIED.getDisplayName(), "Actual value: 1",
+                        "Quality gate: 1.00");
+    }
+
+    @Test
+    void shouldSkipModifiedCodeQualityGatesIfDeltaIsNotAvailable() {
+        List<WarningsQualityGate> qualityGates = new ArrayList<>();
+        qualityGates.add(addQualityGate(1, QualityGateType.NEW_MODIFIED, QualityGateCriticality.FAILURE));
+        qualityGates.add(addQualityGate(1, QualityGateType.TOTAL_MODIFIED, QualityGateCriticality.FAILURE));
+
+        var builder = new IssuesStatisticsBuilder();
+
+        var result = evaluateWithoutModifiedCode(qualityGates, builder);
+
+        assertThat(result.getOverallStatus()).isEqualTo(QualityGateStatus.INACTIVE);
+        assertThat(result.getMessages()).hasSize(2).first().asString()
+                .contains("≪Not built≫", QualityGateType.NEW_MODIFIED.getDisplayName(),
+                        WarningsQualityGateEvaluator.MODIFIED_CODE_UNKNOWN_MESSAGE);
+        assertThat(result.getMessages()).hasSize(2).last().asString()
+                .contains("≪Not built≫", QualityGateType.TOTAL_MODIFIED.getDisplayName(),
+                        WarningsQualityGateEvaluator.MODIFIED_CODE_UNKNOWN_MESSAGE);
+    }
+
+    @Test
+    void shouldStillEvaluateRemainingQualityGatesIfDeltaIsNotAvailable() {
+        List<WarningsQualityGate> qualityGates = new ArrayList<>();
+        qualityGates.add(addQualityGate(1, QualityGateType.NEW_MODIFIED, QualityGateCriticality.FAILURE));
+        qualityGates.add(addQualityGate(1, QualityGateType.NEW, QualityGateCriticality.UNSTABLE));
+
+        var builder = new IssuesStatisticsBuilder().setNewNormalSize(1);
+
+        var result = evaluateWithoutModifiedCode(qualityGates, builder);
+
+        assertThat(result.getOverallStatus()).isEqualTo(QualityGateStatus.WARNING);
+        assertThat(result.getMessages()).hasSize(2).first().asString()
+                .contains("≪Not built≫", QualityGateType.NEW_MODIFIED.getDisplayName(),
+                        WarningsQualityGateEvaluator.MODIFIED_CODE_UNKNOWN_MESSAGE);
+        assertThat(result.getMessages()).hasSize(2).last().asString()
+                .contains("≪Unstable≫", QualityGateType.NEW.getDisplayName(), "Actual value: 1",
+                        "Quality gate: 1.00");
+    }
+
+    private QualityGateResult evaluateWithoutModifiedCode(final List<WarningsQualityGate> qualityGates,
+            final IssuesStatisticsBuilder builder) {
+        return new WarningsQualityGateEvaluator(qualityGates, builder.build(), false)
+                .evaluate(new NullResultHandler(), new FilteredLog());
     }
 
     private WarningsQualityGateEvaluator createEvaluator(

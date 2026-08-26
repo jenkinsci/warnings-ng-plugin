@@ -911,9 +911,11 @@ public class IssuesRecorder extends Recorder {
         logHandler.logInfoMessages(report.getInfoMessages());
         logHandler.logErrorMessages(report.getErrorMessages());
 
+        var deltaLog = new FilteredLog("Errors while creating the SCM delta calculator:");
         var deltaCalculator = isSkipDeltaCalculation()
                 ? new NullDeltaCalculator()
-                : DeltaCalculatorFactory.findDeltaCalculator(scm, run, workspace, listener, new FilteredLog());
+                : DeltaCalculatorFactory.findDeltaCalculator(scm, run, workspace, listener, deltaLog);
+        report.mergeLogMessages(deltaLog);
 
         var publisher = new IssuesPublisher(run, annotatedReport, deltaCalculator,
                 new HealthDescriptor(healthy, unhealthy, minimumSeverity), qualityGates,
