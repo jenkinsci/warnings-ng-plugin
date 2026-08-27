@@ -362,20 +362,18 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
 
         // #3 SUCCESS (Reference #2)
         cleanAndCopy(project, "eclipse4Warnings.txt");
-        Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(project, Result.SUCCESS,
-                analysisResult -> {
-                    assertThat(analysisResult)
-                            .hasTotalSize(4)
-                            .hasNewSize(0)
-                            .hasFixedSize(4)
-                            .hasQualityGateStatus(QualityGateStatus.PASSED)
-                            .hasReferenceBuild(Optional.of(failedDueToQualityGate));
-                    assertThat(analysisResult.getInfoMessages()).contains(
-                            "Analyzing builds newer than reference build 'Job #1' as well, "
-                                    + "since builds that failed due to a quality gate might be used as reference",
-                            "Quality gate has been missed for reference build 'Job #2', "
-                                    + "but is configured to be ignored");
-                }).getOwner();
+        var resultWithIgnoredQualityGate = scheduleBuildAndAssertStatus(project, Result.SUCCESS,
+                analysisResult -> assertThat(analysisResult)
+                        .hasTotalSize(4)
+                        .hasNewSize(0)
+                        .hasFixedSize(4)
+                        .hasQualityGateStatus(QualityGateStatus.PASSED)
+                        .hasReferenceBuild(Optional.of(failedDueToQualityGate)));
+        assertThat(resultWithIgnoredQualityGate.getInfoMessages()).contains(
+                "Analyzing builds newer than reference build 'Job #1' as well, "
+                        + "since builds that failed due to a quality gate might be used as reference",
+                "Quality gate has been missed for reference build 'Job #2', but is configured to be ignored");
+        Run<?, ?> expectedReference = resultWithIgnoredQualityGate.getOwner();
 
         // #4 FAILURE (Reference #3)
         cleanAndCopy(project, "eclipse6Warnings.txt");
