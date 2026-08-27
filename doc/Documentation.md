@@ -56,6 +56,7 @@ main build page. From there you can also dive into the details:
     * [Creating a Groovy parser programmatically](#creating-a-groovy-parser-programmatically)
     * [Importing a parser using configuration as code (JCasC)](#importing-a-parser-using-configuration-as-code-jcasc)
     * [Using the defined tool](#using-the-defined-tool)
+    * [Defining a Groovy parser directly in a pipeline](#defining-a-groovy-parser-directly-in-a-pipeline)
   * [Properties to process the affected source code files](#properties-to-process-the-affected-source-code-files)
   * [Control the selection of the reference build (baseline)](#configure-the-selection-of-the-reference-build-baseline)
   * [Filtering issues](#filtering-issues)
@@ -215,8 +216,11 @@ Jenkins plugin, see document ["Providing support for a custom static analysis to
 #### Creating a new tool using a Groovy parser
 
 If the format of your log messages is quite simple then you can define support for your tool by creating a simple 
-tool configuration in Jenkins' user interface. Due to security reasons (Groovy scripts can compromise your master) 
-this configuration is available in the system configuration only. 
+tool configuration in Jenkins' user interface. Due to security reasons (Groovy scripts can compromise your controller) 
+this configuration is available in the system configuration only, i.e., administrator permissions are required. 
+If you do not have these permissions, you can alternatively 
+[define a parser directly in your pipeline](#defining-a-groovy-parser-directly-in-a-pipeline). Such a parser 
+is restricted to scan files in the workspace of your build, though.
 The configuration of a new parser takes a regular expression that will be used to 
 match the report format. If the expression matches, then a Groovy script will be invoked that converts the matching 
 text into an issue instance. Here is an example of such a Groovy based parser:
@@ -290,6 +294,51 @@ In order to use a Groovy parser in a pipeline you need to use a script statement
 recordIssues sourceCodeEncoding: 'UTF-8', 
     tool: groovyScript(parserId: 'groovy-id-in-system-config', pattern:'**/*report.log', reportEncoding:'UTF-8')
 ```
+
+#### Defining a Groovy parser directly in a pipeline
+
+Registering a Groovy parser in Jenkins' system configuration requires administrator permissions. If you do not have 
+these permissions, or if you prefer to keep the parser definition together with your pipeline, you can define the 
+parser directly in the job configuration. Instead of referencing a registered parser using the `parserId` property, 
+provide the complete parser definition using the `parser` property of the `groovyScript` tool:
+
+```groovy
+recordIssues sourceCodeEncoding: 'UTF-8',
+    tool: groovyScript(
+        parser: [
+            id: 'pep8-groovy',
+            name: 'Pep8 Groovy Parser',
+            regexp: '(.*):(\\d+):(\\d+): (\\D\\d*) (.*)',
+            script: '''
+                return builder.setFileName(matcher.group(1))
+                        .setLineStart(Integer.parseInt(matcher.group(2)))
+                        .setColumnStart(Integer.parseInt(matcher.group(3)))
+                        .setCategory(matcher.group(4))
+                        .setMessage(matcher.group(5))
+                        .buildOptional()
+            ''',
+            example: 'optparse.py:69:11: E401 multiple imports on one line'
+        ],
+        pattern: '**/*report.log', reportEncoding: 'UTF-8')
+```
+
+The `parser` property takes the same values as a parser in the system configuration: `id`, `name`, `regexp`, 
+`script`, and `example` (see section 
+[Creating a Groovy parser programmatically](#creating-a-groovy-parser-programmatically) for the variables that are 
+available in the script). The ID and name of the parser are used as ID and name of the tool, unless you override 
+them using the `id` and `name` properties of the tool. Such a parser is visible in the defining job only, it will 
+not be added to the list of parsers in the system configuration. If both properties `parser` and `parserId` are 
+specified, then the local definition in `parser` takes precedence.
+
+Since a parser defined in this way can be provided by every user who is allowed to change the pipeline definition, 
+the following restriction applies for security reasons: such a parser can scan files in the workspace of the build 
+only (the Groovy script is executed on the agent that runs the build). Scanning of the console log (which would 
+execute the script on the Jenkins controller) is not permitted for these parsers, even if an administrator has 
+enabled console log scanning for Groovy parsers in the system configuration. Therefore, the `pattern` property 
+is mandatory for these parsers, otherwise the build will fail.
+
+Note: Defining a parser in this way is available for pipelines only. In the user interface of freestyle jobs you 
+can only select one of the parsers that have been registered in the system configuration.
 
 ### Properties to process the affected source code files
 
