@@ -315,25 +315,25 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
 
         // #5 FAILURE
         cleanAndCopy(project, "eclipse8Warnings.txt");
-        Run<?, ?> failedBuildDueToQualityGate = scheduleBuildAndAssertStatus(project, Result.FAILURE,
+        scheduleBuildAndAssertStatus(project, Result.FAILURE,
                 analysisResult -> assertThat(analysisResult)
                         .hasTotalSize(8)
                         .hasNewSize(6)
-                        .hasQualityGateStatus(QualityGateStatus.FAILED)).getOwner();
+                        .hasQualityGateStatus(QualityGateStatus.FAILED));
 
-        // #6 SUCCESS - should use #5 as reference (build #5 failed only due to quality gate, so it's a valid reference)
+        // #6 SUCCESS - should use #4 as reference (skip failed #5)
         cleanAndCopy(project, "eclipse4Warnings.txt");
         scheduleBuildAndAssertStatus(project, Result.SUCCESS,
                 analysisResult -> assertThat(analysisResult)
                         .hasTotalSize(4)
                         .hasNewSize(2)
                         .hasQualityGateStatus(QualityGateStatus.PASSED)
-                        .hasReferenceBuild(Optional.of(failedBuildDueToQualityGate)));
+                        .hasReferenceBuild(Optional.of(expectedReference)));
     }
 
     /**
-     * Verifies that builds that failed due to quality gate are used as reference.
-     * Regression test for JENKINS-61140: Improve reference selection for failed builds.
+     * Verifies that a build that failed only due to a quality gate is used as reference if the quality gate is
+     * ignored. Builds that failed due to other reasons are still skipped. Regression test for JENKINS-61140.
      */
     @Test
     @org.junitpioneer.jupiter.Issue("JENKINS-61140")
@@ -342,6 +342,7 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
         var project = createEmptyReferenceJob();
         enableWarnings(project, recorder -> {
             recorder.setEnabledForFailure(true);
+            recorder.setIgnoreQualityGate(true);
             recorder.setQualityGates(List.of(
                     new WarningsQualityGate(3, QualityGateType.NEW, QualityGateCriticality.FAILURE)));
         });
@@ -351,27 +352,50 @@ class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
                         .hasNewSize(0)
                         .hasQualityGateStatus(QualityGateStatus.PASSED));
 
-        // #2 FAILURE (quality gate fails the build with 6 new warnings)
+        // #2 FAILURE (quality gate fails the build)
         cleanAndCopy(project, "eclipse8Warnings.txt");
-        Run<?, ?> failedBuildDueToQualityGate = scheduleBuildAndAssertStatus(project, Result.FAILURE,
+        Run<?, ?> failedDueToQualityGate = scheduleBuildAndAssertStatus(project, Result.FAILURE,
                 analysisResult -> assertThat(analysisResult)
                         .hasTotalSize(8)
                         .hasNewSize(6)
                         .hasQualityGateStatus(QualityGateStatus.FAILED)).getOwner();
 
-        // #3 SUCCESS - should use #2 (failed due to quality gate) as reference, so 2 warnings from eclipse6 are new
+        // #3 SUCCESS (Reference #2)
         cleanAndCopy(project, "eclipse4Warnings.txt");
-        scheduleBuildAndAssertStatus(project, Result.SUCCESS,
+        Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(project, Result.SUCCESS,
                 analysisResult -> {
                     assertThat(analysisResult)
                             .hasTotalSize(4)
-                            .hasNewSize(2)
+                            .hasNewSize(0)
                             .hasFixedSize(4)
                             .hasQualityGateStatus(QualityGateStatus.PASSED)
-                            .hasReferenceBuild(Optional.of(failedBuildDueToQualityGate));
+                            .hasReferenceBuild(Optional.of(failedDueToQualityGate));
                     assertThat(analysisResult.getInfoMessages()).contains(
-                            "Quality gate failed for reference build 'Job #2', but build failed only due to quality gate, using this build as reference");
-                });
+                            "Analyzing builds newer than reference build 'Job #1' as well, "
+                                    + "since builds that failed due to a quality gate might be used as reference",
+                            "Quality gate has been missed for reference build 'Job #2', "
+                                    + "but is configured to be ignored");
+                }).getOwner();
+
+        // #4 FAILURE (Reference #3)
+        cleanAndCopy(project, "eclipse6Warnings.txt");
+        var failureStep = addFailureStep(project);
+        scheduleBuildAndAssertStatus(project, Result.FAILURE,
+                analysisResult -> assertThat(analysisResult)
+                        .hasTotalSize(6)
+                        .hasNewSize(2)
+                        .hasQualityGateStatus(QualityGateStatus.PASSED)
+                        .hasReferenceBuild(Optional.of(expectedReference)));
+        removeBuilder(project, failureStep);
+
+        // #5 FAILURE (Reference #3)
+        cleanAndCopy(project, "eclipse8Warnings.txt");
+        scheduleBuildAndAssertStatus(project, Result.FAILURE,
+                analysisResult -> assertThat(analysisResult)
+                        .hasTotalSize(8)
+                        .hasNewSize(4)
+                        .hasQualityGateStatus(QualityGateStatus.FAILED)
+                        .hasReferenceBuild(Optional.of(expectedReference)));
     }
 
     /**
