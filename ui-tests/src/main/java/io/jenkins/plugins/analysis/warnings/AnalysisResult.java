@@ -325,6 +325,7 @@ public class AnalysisResult extends PageObject {
      */
     public String getTrendChartById(final String elementId) {
         for (int i = 0; i < MAX_ATTEMPTS; i++) {
+            elasticSleep(500);
             Object result = executeScript(String.format(
                     "delete(window.Array.prototype.toJSON) %n"
                             + "return JSON.stringify(echarts.getInstanceByDom(document.getElementById(\"%s\")).getOption())",
@@ -332,7 +333,6 @@ public class AnalysisResult extends PageObject {
             if (result != null) {
                 return result.toString();
             }
-            elasticSleep(1000);
         }
         throw new NoSuchElementException("Found no trend chart with ID '%s''" + elementId);
     }

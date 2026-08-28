@@ -17,6 +17,10 @@
         to keep your project clean: as soon as there are issues, Jenkins will mark all builds as unstable until
         the issues have been resolved.
     </p>
+    <p>
+        Note that the reference build recorder skips failed builds by default (see its option to select the required
+        build result). Builds of the current job that failed only due to a quality gate of this step are analyzed
+        nevertheless, since their analysis results are accurate: if this option is set, then such a build will be used
+        as reference. Otherwise, such a build will be skipped like any other build that missed a quality gate.
+    </p>
 </div>
-
-
