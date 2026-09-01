@@ -6,6 +6,7 @@ import edu.hm.hafner.analysis.Severity;
 
 import hudson.model.Result;
 import hudson.model.Run;
+import hudson.tasks.Shell;
 
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.GrepParser;
@@ -257,6 +258,45 @@ class GrepParserITest extends IntegrationTestWithJenkinsPerSuite {
         var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(3);
+    }
+
+    /**
+     * Verifies that when no include pattern is set the GrepParser scans the console log instead
+     * of workspace files, and produces matches from the console output.
+     */
+    @Test
+    void shouldScanConsoleLogWhenNoIncludePatternIsSet() {
+        var project = createFreeStyleProject();
+        // Emit a known pattern to stdout so the grep can find it
+        project.getBuildersList().add(new Shell("echo 'ERROR: console log test'"));
+
+        // No includePattern → scanner should fall back to console log scanning
+        var parser = new GrepParser();
+        parser.setRegexp(ERROR_PATTERN);
+        enableWarnings(project, parser);
+
+        var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+
+        assertThat(result).hasTotalSize(1);
+        assertThat(result.getInfoMessages()).anySatisfy(
+                message -> assertThat(message).contains("Scanning console log"));
+    }
+
+    /**
+     * Verifies that the GrepParser correctly uses the ERROR severity level.
+     */
+    @Test
+    void shouldSupportErrorSeverity() {
+        var project = createFreeStyleProject();
+        createFileInWorkspace(project, "app.log", "FATAL: system crash\n");
+
+        var parser = createGrepParser("FATAL", "**/*.log", "", Severity.ERROR.getName());
+        enableWarnings(project, parser);
+
+        var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+
+        assertThat(result).hasTotalSize(1);
+        assertThat(result.getIssues().getSizeOf(Severity.ERROR)).isEqualTo(1);
     }
 
     // ==================== Helper methods ====================

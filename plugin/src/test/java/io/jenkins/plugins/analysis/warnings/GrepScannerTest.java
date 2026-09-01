@@ -21,7 +21,9 @@ import static edu.hm.hafner.analysis.assertions.Assertions.*;
  * @author Akash Manna
  */
 class GrepScannerTest extends ResourceTest {
-    private static final IssueBuilder ISSUE_BUILDER = new IssueBuilder().setFileName("test");
+    private IssueBuilder createIssueBuilder() {
+        return new IssueBuilder().setFileName("test");
+    }
 
     /**
      * Verifies that an empty pattern results in an error being reported.
@@ -31,7 +33,7 @@ class GrepScannerTest extends ResourceTest {
         var scanner = new GrepScanner("", Severity.WARNING_NORMAL, "");
 
         assertThat(scanner.isInvalidPattern()).isFalse(); // empty string is a valid (if trivial) regex
-        var report = scanner.scanLines(lines("some text"), ISSUE_BUILDER);
+        var report = scanner.scanLines(lines("some text"), createIssueBuilder());
 
         // empty pattern matches every position, so every line is a match
         assertThat(report).hasSize(1);
@@ -47,7 +49,7 @@ class GrepScannerTest extends ResourceTest {
         assertThat(scanner.isInvalidPattern()).isTrue();
         assertThat(scanner.getErrorMessage()).contains("[invalid");
 
-        var report = scanner.scanLines(lines("some text with ERROR"), ISSUE_BUILDER);
+        var report = scanner.scanLines(lines("some text with ERROR"), createIssueBuilder());
         assertThat(report).hasSize(0);
         assertThat(report.getErrorMessages()).hasSize(1);
         assertThat(report.getErrorMessages().get(0)).contains("[invalid");
@@ -65,7 +67,7 @@ class GrepScannerTest extends ResourceTest {
                         "ERROR: something went wrong",
                         "INFO: processing continues",
                         "ERROR: another failure"),
-                ISSUE_BUILDER);
+                createIssueBuilder());
 
         assertThat(report).hasSize(2);
         assertThat(report.get(0)).hasLineStart(2).hasSeverity(Severity.WARNING_HIGH);
@@ -83,7 +85,7 @@ class GrepScannerTest extends ResourceTest {
                 lines("INFO: startup complete",
                         "DEBUG: initialised pool",
                         "INFO: shutting down"),
-                ISSUE_BUILDER);
+                createIssueBuilder());
 
         assertThat(report).hasSize(0);
     }
@@ -97,11 +99,11 @@ class GrepScannerTest extends ResourceTest {
         var normalScanner = new GrepScanner("WARN", Severity.WARNING_NORMAL, "");
         var lowScanner = new GrepScanner("HINT", Severity.WARNING_LOW, "");
 
-        assertThat(highScanner.scanLines(lines("FATAL: disk full"), ISSUE_BUILDER).get(0))
+        assertThat(highScanner.scanLines(lines("FATAL: disk full"), createIssueBuilder()).get(0))
                 .hasSeverity(Severity.WARNING_HIGH);
-        assertThat(normalScanner.scanLines(lines("WARN: retrying"), ISSUE_BUILDER).get(0))
+        assertThat(normalScanner.scanLines(lines("WARN: retrying"), createIssueBuilder()).get(0))
                 .hasSeverity(Severity.WARNING_NORMAL);
-        assertThat(lowScanner.scanLines(lines("HINT: consider using cache"), ISSUE_BUILDER).get(0))
+        assertThat(lowScanner.scanLines(lines("HINT: consider using cache"), createIssueBuilder()).get(0))
                 .hasSeverity(Severity.WARNING_LOW);
     }
 
@@ -112,7 +114,7 @@ class GrepScannerTest extends ResourceTest {
     void shouldUseMatchedLineAsDefaultMessage() {
         var scanner = new GrepScanner("ERROR", Severity.WARNING_NORMAL, "");
 
-        var report = scanner.scanLines(lines("  ERROR: disk read failure  "), ISSUE_BUILDER);
+        var report = scanner.scanLines(lines("  ERROR: disk read failure  "), createIssueBuilder());
 
         assertThat(report).hasSize(1);
         assertThat(report.get(0).getMessage()).isEqualTo("ERROR: disk read failure");
@@ -126,7 +128,7 @@ class GrepScannerTest extends ResourceTest {
         // Pattern with a capturing group, template uses $1
         var scanner = new GrepScanner("ERROR: (.*)", Severity.WARNING_NORMAL, "Problem: $1");
 
-        var report = scanner.scanLines(lines("ERROR: disk full"), ISSUE_BUILDER);
+        var report = scanner.scanLines(lines("ERROR: disk full"), createIssueBuilder());
 
         assertThat(report).hasSize(1);
         assertThat(report.get(0).getMessage()).isEqualTo("Problem: disk full");
@@ -143,7 +145,7 @@ class GrepScannerTest extends ResourceTest {
                 lines("ERROR: some failure",
                         "WARNING: another issue",
                         "ERROR: disk failure"),
-                ISSUE_BUILDER);
+                createIssueBuilder());
 
         assertThat(report).hasSize(2);
         assertThat(report.get(0)).hasLineStart(1);
@@ -163,7 +165,7 @@ class GrepScannerTest extends ResourceTest {
                         "line 3",
                         "line 4 has MATCH",
                         "line 5 has MATCH"),
-                ISSUE_BUILDER);
+                createIssueBuilder());
 
         assertThat(report).hasSize(3);
         assertThat(report.get(0)).hasLineStart(2);
@@ -213,7 +215,7 @@ class GrepScannerTest extends ResourceTest {
                 lines("ERROR: failure",
                         "ERRATIC behaviour detected",
                         "info: no ERRors"),
-                ISSUE_BUILDER);
+                createIssueBuilder());
 
         // All 3 lines contain "ERR" as a substring
         assertThat(report).hasSize(3);
@@ -230,7 +232,7 @@ class GrepScannerTest extends ResourceTest {
                 lines("ERROR: uppercase",
                         "error: lowercase",
                         "Error: mixed"),
-                ISSUE_BUILDER);
+                createIssueBuilder());
 
         // Only the lowercase "error" line matches
         assertThat(report).hasSize(1);
@@ -248,10 +250,21 @@ class GrepScannerTest extends ResourceTest {
                 lines("ERROR: uppercase",
                         "error: lowercase",
                         "Error: mixed"),
-                ISSUE_BUILDER);
+                createIssueBuilder());
 
         // All 3 lines match with case-insensitive flag
         assertThat(report).hasSize(3);
+    }
+
+    /**
+     * Verifies that the ERROR severity is correctly assigned to matched issues.
+     */
+    @Test
+    void shouldAssignErrorSeverityCorrectly() {
+        var scanner = new GrepScanner("FATAL", Severity.ERROR, "");
+
+        assertThat(scanner.scanLines(lines("FATAL: system crash"), createIssueBuilder()).get(0))
+                .hasSeverity(Severity.ERROR);
     }
 
     private Iterator<String> lines(final String... lines) {

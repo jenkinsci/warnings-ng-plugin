@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.warnings;
 
 import org.apache.commons.lang3.StringUtils;
 
+import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
@@ -21,6 +22,7 @@ import org.kohsuke.stapler.verb.POST;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 import hudson.FilePath;
+import hudson.console.ConsoleNote;
 import hudson.model.AbstractProject;
 import hudson.model.BuildableItem;
 import hudson.model.Item;
@@ -32,6 +34,7 @@ import jenkins.model.Jenkins;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.SymbolIconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
+import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 import io.jenkins.plugins.util.JenkinsFacade;
 import io.jenkins.plugins.util.LogHandler;
 import io.jenkins.plugins.util.ValidationUtilities;
@@ -143,8 +146,8 @@ public class GrepParser extends Tool {
     /**
      * Returns the severity to assign to matched issues.
      *
-     * @return the severity name (one of {@link Severity#WARNING_HIGH}, {@link Severity#WARNING_NORMAL},
-     *         {@link Severity#WARNING_LOW})
+     * @return the severity name (one of {@link Severity#ERROR}, {@link Severity#WARNING_HIGH},
+     *         {@link Severity#WARNING_NORMAL}, {@link Severity#WARNING_LOW})
      */
     public String getSeverity() {
         return severity;
@@ -173,6 +176,11 @@ public class GrepParser extends Tool {
     @Override
     public Report scan(final Run<?, ?> run, final FilePath workspace, final Charset sourceCodeEncoding,
             final LogHandler logger) {
+        if (StringUtils.isBlank(includePattern)) {
+            var report = scanConsoleLog(run, logger);
+            report.setOrigin(getActualId(), getActualName());
+            return report;
+        }
         try {
             var report = workspace.act(
                     new AgentGrepScanner(regexp, severity, message, includePattern, excludePattern,
@@ -188,6 +196,28 @@ public class GrepParser extends Tool {
         catch (InterruptedException e) {
             throw new ParsingCanceledException(e);
         }
+    }
+
+    private Report scanConsoleLog(final Run<?, ?> run, final LogHandler logger) {
+        var report = new Report();
+        report.logInfo("Scanning console log for pattern '%s'", regexp);
+        logger.logInfoMessages(report.getInfoMessages());
+
+        var scanner = new GrepScanner(regexp, Severity.valueOf(severity, Severity.WARNING_NORMAL), message);
+        try (var bufferedReader = new BufferedReader(run.getLogReader());
+                var issueBuilder = new IssueBuilder()) {
+            var lines = bufferedReader.lines().map(ConsoleNote::removeNotes).iterator();
+            report.addAll(scanner.scanLines(lines, issueBuilder.setFileName(
+                    ConsoleLogHandler.JENKINS_CONSOLE_LOG_FILE_NAME_ID)).get());
+        }
+        catch (IOException e) {
+            report.logException(e, "Exception while reading console log:");
+        }
+
+        report.logInfo("Found a total of %d grep matches in console log", report.size());
+        logger.logInfoMessages(report.getInfoMessages());
+        logger.logErrorMessages(report.getErrorMessages());
+        return report;
     }
 
     /** Label provider with customised messages. */
@@ -299,6 +329,7 @@ public class GrepParser extends Tool {
             var items = new ListBoxModel();
 
             if (JENKINS.hasPermission(Jenkins.READ)) {
+                items.add(Messages.Warnings_GrepParser_Severity_Error(), Severity.ERROR.getName());
                 items.add(Messages.Warnings_GrepParser_Severity_High(), Severity.WARNING_HIGH.getName());
                 items.add(Messages.Warnings_GrepParser_Severity_Normal(), Severity.WARNING_NORMAL.getName());
                 items.add(Messages.Warnings_GrepParser_Severity_Low(), Severity.WARNING_LOW.getName());
@@ -309,6 +340,7 @@ public class GrepParser extends Tool {
 
         /**
          * Validates the example text against the configured regexp (live preview in the UI).
+         * The message template is also applied so that captured groups can be verified.
          *
          * @param project
          *         the project that is configured
@@ -318,6 +350,8 @@ public class GrepParser extends Tool {
          *         the regular expression to match
          * @param severity
          *         the severity to assign to matches
+         * @param message
+         *         the optional message template; when blank the matched line is used as-is
          *
          * @return validation result
          */
@@ -325,19 +359,20 @@ public class GrepParser extends Tool {
         public FormValidation doCheckExample(@AncestorInPath final BuildableItem project,
                 @QueryParameter final String example,
                 @QueryParameter final String regexp,
-                @QueryParameter final String severity) {
+                @QueryParameter final String severity,
+                @QueryParameter final String message) {
             if (StringUtils.isEmpty(example) || !JENKINS.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
 
             var scanner = new GrepScanner(regexp,
-                    Severity.valueOf(severity, Severity.WARNING_NORMAL), StringUtils.EMPTY);
+                    Severity.valueOf(severity, Severity.WARNING_NORMAL), message);
             if (scanner.isInvalidPattern()) {
                 return FormValidation.error(scanner.getErrorMessage());
             }
 
             try (var reader = new BufferedReader(new StringReader(example));
-                    var issueBuilder = new edu.hm.hafner.analysis.IssueBuilder()) {
+                    var issueBuilder = new IssueBuilder()) {
                 issueBuilder.setFileName("UI example");
                 var matches = scanner.scanLines(reader.lines().iterator(), issueBuilder);
                 if (matches.isEmpty()) {

@@ -12,11 +12,11 @@
   <f:entry title="${%Regular Expression}" field="regexp" description="${%description.regexp}">
     <f:textbox/>
   </f:entry>
-  <f:entry title="${%Severity}" field="severity" description="${%description.severity}">
-    <f:select/>
-  </f:entry>
   <f:entry title="${%Message (optional)}" field="message" description="${%description.message}">
     <f:textbox/>
+  </f:entry>
+  <f:entry title="${%Severity}" field="severity" description="${%description.severity}">
+    <f:select/>
   </f:entry>
   <f:entry title="${%Test the pattern}" field="example" description="${%description.example}">
     <f:textarea/>
