@@ -522,6 +522,10 @@ public class AffectedFilesResolver {
         }
 
         private ValidationResult validateIssueFile(final Issue issue, final FilePath workspacePath) {
+            if (ConsoleLogHandler.isInConsoleLog(issue.getFileName())) {
+                return new ValidationResult(issue.getFileName(), null, ValidationStatus.SKIPPED);
+            }
+
             try {
                 var sourceFileOptional = findSourceFile(issue, workspacePath);
 
@@ -563,7 +567,7 @@ public class AffectedFilesResolver {
         }
 
         private enum ValidationStatus {
-            VALID, NOT_FOUND, NOT_IN_WORKSPACE, CANNOT_READ, ERROR
+            VALID, NOT_FOUND, NOT_IN_WORKSPACE, CANNOT_READ, ERROR, SKIPPED
         }
 
         private static class ValidationResult {

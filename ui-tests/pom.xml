@@ -16,12 +16,12 @@
   <name>UI Tests of Warnings Plugin</name>
 
   <properties>
-    <jenkins.version>2.574</jenkins.version>
+    <jenkins.version>2.579</jenkins.version>
     <hpi-plugin.version>3.1848.v43eb_ce5a_9cb_6</hpi-plugin.version>
     <json-smart.version>2.3</json-smart.version>
-    <json-unit-assertj.version>6.0.1</json-unit-assertj.version>
+    <json-unit-assertj.version>6.2.0</json-unit-assertj.version>
     <module.name>${project.groupId}.warnings.ui.tests</module.name>
-    <browser>firefox-container</browser>
+    <browser>chrome-container</browser>
 
     <!-- Maven Surefire ArgLine -->
     <argLine>-Djava.awt.headless=true -Xmx1024m -Djenkins.test.timeout=1000 --add-opens java.base/sun.reflect.annotation=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.util.concurrent=ALL-UNNAMED</argLine>
@@ -38,7 +38,7 @@
         <!-- ClassNotFoundException if omitted -->
         <groupId>io.netty</groupId>
         <artifactId>netty-bom</artifactId>
-        <version>4.2.16.Final</version>
+        <version>4.2.17.Final</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -49,12 +49,12 @@
     <dependency>
       <groupId>org.jenkins-ci</groupId>
       <artifactId>acceptance-test-harness</artifactId>
-      <version>6690.vef265ee9cfcf</version>
+      <version>6724.va_7c5c4b_fcf9c</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>2.22.1</version>
+      <version>2.22.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -266,7 +266,7 @@
                 <SKIP_UPDATES>true</SKIP_UPDATES>
               </environmentVariables>
               <properties>
-                <browser>firefox</browser>
+                <browser>chrome</browser>
               </properties>
               <rerunFailingTestsCount>1</rerunFailingTestsCount>
               <includes>
