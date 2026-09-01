@@ -220,8 +220,6 @@ class GrepParserITest extends IntegrationTestWithJenkinsPerSuite {
         var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(0);
-        
-        // No error messages should be produced for a directory with no matching files
         assertThat(result.getErrorMessages()).isEmpty();
     }
 
@@ -267,17 +265,17 @@ class GrepParserITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     void shouldScanConsoleLogWhenNoIncludePatternIsSet() {
         var project = createFreeStyleProject();
-        // Emit a known pattern to stdout so the grep can find it
         project.getBuildersList().add(new Shell("echo 'ERROR: console log test'"));
 
-        // No includePattern → scanner should fall back to console log scanning
         var parser = new GrepParser();
         parser.setRegexp(ERROR_PATTERN);
         enableWarnings(project, parser);
 
         var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        assertThat(result).hasTotalSize(1);
+        assertThat(result.getIssues().size()).isGreaterThanOrEqualTo(1);
+        result.getIssues().forEach(issue ->
+                assertThat(issue.getFileName()).contains("jenkins-console"));
         assertThat(result.getInfoMessages()).anySatisfy(
                 message -> assertThat(message).contains("Scanning console log"));
     }

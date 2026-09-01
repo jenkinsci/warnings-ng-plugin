@@ -201,7 +201,6 @@ public class GrepParser extends Tool {
     private Report scanConsoleLog(final Run<?, ?> run, final LogHandler logger) {
         var report = new Report();
         report.logInfo("Scanning console log for pattern '%s'", regexp);
-        logger.logInfoMessages(report.getInfoMessages());
 
         var scanner = new GrepScanner(regexp, Severity.valueOf(severity, Severity.WARNING_NORMAL), message);
         try (var bufferedReader = new BufferedReader(run.getLogReader());
