@@ -2,9 +2,11 @@ package io.jenkins.plugins.analysis.core.model;
 
 import edu.hm.hafner.echarts.BuildResult;
 import edu.hm.hafner.echarts.ChartModelConfiguration;
+import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Optional;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.node.ObjectNode;
@@ -24,6 +26,7 @@ import io.jenkins.plugins.analysis.core.charts.TrendChart;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
 import io.jenkins.plugins.echarts.AsyncConfigurableTrendChart;
+import io.jenkins.plugins.util.ValidationUtilities;
 
 /**
  * A job action displays a link on the side panel of a job. This action also is responsible to render the historical
@@ -32,13 +35,16 @@ import io.jenkins.plugins.echarts.AsyncConfigurableTrendChart;
  * @author Ullrich Hafner
  */
 public class JobAction implements Action, AsyncConfigurableTrendChart {
+    private static final ValidationUtilities VALIDATION_UTILITIES = new ValidationUtilities();
+
     private static final String NEW_ISSUES_TREND_ID = "new";
     private static final String HEALTH_REPORT_TREND_ID = "health";
+
     private final Job<?, ?> owner;
     private final StaticAnalysisLabelProvider labelProvider;
     private final int numberOfTools;
     private final TrendChartType trendChartType;
-    private final String urlName;
+    private /* almost final */ String urlName;
 
     /**
      * Creates a new instance of {@link JobAction}.
@@ -93,11 +99,30 @@ public class JobAction implements Action, AsyncConfigurableTrendChart {
      */
     public JobAction(final Job<?, ?> owner, final StaticAnalysisLabelProvider labelProvider, final int numberOfTools,
             final TrendChartType trendChartType, final String urlName) {
+        VALIDATION_UTILITIES.ensureValidId(urlName);
+
         this.urlName = urlName;
         this.owner = owner;
         this.labelProvider = labelProvider;
         this.numberOfTools = numberOfTools;
         this.trendChartType = trendChartType;
+    }
+
+    /**
+     * This method normally is used by classes implementing the {@link Serializable} interface. We implement this
+     * method here to avoid illegal object instantiations by XStream.
+     *
+     * @return this
+     */
+    protected Object readResolve() {
+        VALIDATION_UTILITIES.ensureValidId(urlName);
+
+        return this;
+    }
+
+    @VisibleForTesting
+    void setUrlName(final String urlName) {
+        this.urlName = urlName;
     }
 
     /**

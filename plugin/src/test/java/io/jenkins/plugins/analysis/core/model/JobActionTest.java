@@ -96,6 +96,27 @@ class JobActionTest {
         verifyNoInteractions(request);
     }
 
+    @Test
+    void shouldFailBrokenUrl() {
+        var illegalUrl = "javascript:alert(document.domain)";
+
+        assertThatIllegalArgumentException().isThrownBy(
+                () -> new JobAction(mock(Job.class), mock(StaticAnalysisLabelProvider.class), 1,
+                        TrendChartType.TOOLS_ONLY, illegalUrl)
+        );
+
+        var good = new JobAction(mock(Job.class), mock(StaticAnalysisLabelProvider.class), 1,
+                TrendChartType.TOOLS_ONLY,
+                "validUrl");
+
+        assertThat(good.readResolve()).isSameAs(good);
+
+        good.setUrlName(illegalUrl);
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(good::readResolve);
+    }
+
     private Run<?, ?> createValidReferenceBuild(final int issuesSize) {
         Run<?, ?> reference = mock(Run.class);
         ResultAction action = mock(ResultAction.class);

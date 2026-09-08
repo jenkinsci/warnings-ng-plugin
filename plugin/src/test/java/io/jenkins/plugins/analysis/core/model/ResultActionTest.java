@@ -59,4 +59,25 @@ class ResultActionTest {
 
         assertThat(action.getBadge()).isNull();
     }
+
+    @Test
+    void shouldFailBrokenUrl() {
+        var illegalId = "javascript:alert(document.domain)";
+        assertThatIllegalArgumentException().isThrownBy(
+                () -> new ResultAction(null, mock(AnalysisResult.class),
+                        new HealthDescriptor(0, 0, Severity.WARNING_HIGH), illegalId, "Name",
+                        "icon", StandardCharsets.UTF_8, TrendChartType.AGGREGATION_TOOLS)
+        );
+
+        var good = new ResultAction(null, mock(AnalysisResult.class),
+                new HealthDescriptor(0, 0, Severity.WARNING_HIGH), "validId", "Name",
+                "icon", StandardCharsets.UTF_8, TrendChartType.AGGREGATION_TOOLS);
+
+        assertThat(good.readResolve()).isSameAs(good);
+
+        good.setId(illegalId);
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(good::readResolve);
+    }
 }

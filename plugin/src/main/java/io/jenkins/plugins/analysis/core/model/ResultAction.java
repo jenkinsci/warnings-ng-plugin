@@ -35,6 +35,7 @@ import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
 import io.jenkins.plugins.util.JenkinsFacade;
 import io.jenkins.plugins.util.QualityGateResult;
+import io.jenkins.plugins.util.ValidationUtilities;
 
 /**
  * Controls the life cycle of the analysis results in a job. This action persists the results of a build and displays a
@@ -44,17 +45,19 @@ import io.jenkins.plugins.util.QualityGateResult;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings("ClassFanOutComplexity")
+@SuppressWarnings({"checkstyle:ClassFanOutComplexity", "checkstyle:ClassDataAbstractionCoupling"})
 @SuppressFBWarnings(value = "SE", justification = "transient field owner ist restored using a Jenkins callback")
 public class ResultAction implements HealthReportingAction, LastBuildAction, RunAction2, StaplerProxy, Serializable {
     @Serial
     private static final long serialVersionUID = 6683647181785654908L;
 
+    private static final ValidationUtilities VALIDATION_UTILITIES = new ValidationUtilities();
+
     private transient Run<?, ?> owner;
 
     private final AnalysisResult result;
     private final HealthDescriptor healthDescriptor;
-    private final String id;
+    private /* almost final */ String id;
     private final String name;
     private /* almost final */ String icon;
     private final String charset;
@@ -84,6 +87,8 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
     public ResultAction(final Run<?, ?> owner, final AnalysisResult result, final HealthDescriptor healthDescriptor,
             final String id, final String name, final String icon,
             final Charset charset, final TrendChartType trendChartType) {
+        VALIDATION_UTILITIES.ensureValidId(id);
+
         this.owner = owner;
         this.result = result;
         this.healthDescriptor = healthDescriptor;
@@ -101,6 +106,8 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      */
     @Serial
     protected Object readResolve() {
+        VALIDATION_UTILITIES.ensureValidId(id);
+
         if (trendChartType == null) {
             trendChartType = TrendChartType.TOOLS_ONLY;
         }
@@ -118,6 +125,11 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
     @Whitelisted
     public String getId() {
         return id;
+    }
+
+    @VisibleForTesting
+    void setId(final String id) {
+        this.id = id;
     }
 
     @Whitelisted
