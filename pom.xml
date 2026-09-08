@@ -13,7 +13,7 @@
   <groupId>io.jenkins.plugins</groupId>
   <artifactId>warnings-ng-parent</artifactId>
   <packaging>pom</packaging>
-  <version>${revision}.${changelist}</version>
+  <version>${revision}.10223.${changelist}</version>
 
   <name>Aggregator for Warnings Plugin</name>
 
