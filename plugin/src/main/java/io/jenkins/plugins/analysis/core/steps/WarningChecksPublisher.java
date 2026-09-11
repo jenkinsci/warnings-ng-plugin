@@ -253,8 +253,11 @@ class WarningChecksPublisher {
                     .withRawDetails(StringUtils.normalizeSpace(labelProvider.getDescription(issue)));
 
             if (issue.getLineStart() == issue.getLineEnd()) {
-                builder.withStartColumn(issue.getColumnStart())
-                        .withEndColumn(issue.getColumnEnd());
+                // columns are 1-based and zero is for the whole line so skip start/end for whole line reports
+                if (issue.getColumnStart() != 0) {
+                    builder.withStartColumn(issue.getColumnStart())
+                           .withEndColumn(issue.getColumnEnd());
+                }
             }
 
             annotations.add(builder.build());
