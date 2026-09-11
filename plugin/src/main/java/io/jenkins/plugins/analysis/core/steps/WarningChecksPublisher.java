@@ -256,7 +256,7 @@ class WarningChecksPublisher {
                 // columns are 1-based and zero is for the whole line so skip start/end for whole line reports
                 if (issue.getColumnStart() != 0) {
                     builder.withStartColumn(issue.getColumnStart())
-                           .withEndColumn(issue.getColumnEnd());
+                            .withEndColumn(issue.getColumnEnd());
                 }
             }
 
