@@ -7,6 +7,7 @@ import org.jsoup.nodes.TextNode;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 
@@ -246,8 +247,8 @@ class WarningChecksPublisher {
             var builder = new ChecksAnnotationBuilder()
                     .withPath(issue.getFileName())
                     .withTitle(getIssueTitle(issue))
-                    .withAnnotationLevel(ChecksAnnotationLevel.WARNING)
-                    .withMessage(issue.getSeverity() + ":\n" + parseHtml(issue.getMessage()))
+                    .withAnnotationLevel(toChecksAnnotationLevel(issue.getSeverity()))
+                    .withMessage(parseHtml(issue.getMessage()))
                     .withStartLine(issue.getLineStart())
                     .withEndLine(issue.getLineEnd())
                     .withRawDetails(StringUtils.normalizeSpace(labelProvider.getDescription(issue)));
@@ -261,6 +262,30 @@ class WarningChecksPublisher {
         }
 
         return annotations;
+    }
+
+    private ChecksAnnotationLevel toChecksAnnotationLevel(Severity severity) {
+        // normalize the severity then map the issue severity to the check level.
+        final Severity sev = Severity.guessFromString(severity.getName());
+
+        // do not use .equals here - guessFromString returns static instances and we do not want to fall back
+        // to checking strings in the case of a non match
+        if (sev == Severity.ERROR) {
+            return ChecksAnnotationLevel.FAILURE;
+        }
+        if (sev == Severity.WARNING_HIGH) {
+            return ChecksAnnotationLevel.WARNING;
+        }
+        if (sev == Severity.WARNING_NORMAL) {
+            return ChecksAnnotationLevel.NOTICE;
+        }
+        if (sev == Severity.WARNING_LOW) {
+            // this could be because the state was mapped to this, or that it is the default
+            // but no API is exposed for this case
+            return ChecksAnnotationLevel.NOTICE;
+        }
+        listener.error("Checks publisher received an unexpected severity (%s)", sev.getName());
+        return ChecksAnnotationLevel.NOTICE;
     }
 
     private String parseHtml(final String html) {
