@@ -252,11 +252,9 @@ class WarningChecksPublisher {
                     .withEndLine(issue.getLineEnd())
                     .withRawDetails(StringUtils.normalizeSpace(labelProvider.getDescription(issue)));
 
-            if (issue.getLineStart() == issue.getLineEnd()) {
-                if (isValidColumnRange(issue)) {
-                    builder.withStartColumn(issue.getColumnStart())
-                            .withEndColumn(issue.getColumnEnd());
-                }
+            if (issue.getLineStart() == issue.getLineEnd() && isValidColumnRange(issue)) {
+                builder.withStartColumn(issue.getColumnStart())
+                        .withEndColumn(issue.getColumnEnd());
             }
 
             annotations.add(builder.build());
@@ -270,7 +268,7 @@ class WarningChecksPublisher {
      * The upstream contract uses a value of 0 (zero) to indicate a whole line which is not a valid number for checks.
      * @return {@code true} if the issues start column is {@code > 1}.
      */
-    private static boolean isValidColumnRange(Issue issue) {
+    private static boolean isValidColumnRange(final Issue issue) {
         return issue.getColumnStart() > 0;
     }
 
