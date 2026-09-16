@@ -253,8 +253,7 @@ class WarningChecksPublisher {
                     .withRawDetails(StringUtils.normalizeSpace(labelProvider.getDescription(issue)));
 
             if (issue.getLineStart() == issue.getLineEnd()) {
-                // columns are 1-based and zero is for the whole line so skip start/end for whole line reports
-                if (issue.getColumnStart() != 0) {
+                if (isValidColumnRange(issue)) {
                     builder.withStartColumn(issue.getColumnStart())
                             .withEndColumn(issue.getColumnEnd());
                 }
@@ -264,6 +263,15 @@ class WarningChecksPublisher {
         }
 
         return annotations;
+    }
+
+    /**
+     * Check if the column range is valid.
+     * The upstream contract uses a value of 0 (zero) to indicate a whole line which is not a valid number for checks.
+     * @return {@code true} if the issues start column is {@code > 1}.
+     */
+    private static boolean isValidColumnRange(Issue issue) {
+        return issue.getColumnStart() > 0;
     }
 
     private String parseHtml(final String html) {
