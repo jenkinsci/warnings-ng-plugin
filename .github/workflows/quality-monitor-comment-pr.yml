@@ -19,7 +19,7 @@ jobs:
 
     steps:
       - name: Checkout PR
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - name: Install jq and unzip
         run: sudo apt-get update && sudo apt-get install -y jq unzip
       - name: Download PR reports from dependency check and quality monitor workflows
@@ -55,7 +55,7 @@ jobs:
         id: quality-gates
         run: echo "json=$(jq -c . .github/quality-gates-pr.json)" >> "$GITHUB_OUTPUT"
       - name: Run Quality Monitor and Comment on PR
-        uses: uhafner/quality-monitor@v4
+        uses: uhafner/quality-monitor@0100da6973a1498aad89af676852a8c788d397f8 # v4
         with:
           sha: ${{ github.event.workflow_run.head_sha }}
           config: ${{ steps.quality-monitor.outputs.json }}
