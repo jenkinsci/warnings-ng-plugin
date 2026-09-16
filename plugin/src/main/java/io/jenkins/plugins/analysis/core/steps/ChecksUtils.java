@@ -7,7 +7,7 @@ import io.jenkins.plugins.checks.api.ChecksAnnotation.ChecksAnnotationLevel;
 /**
  * Helpers class containing utility methods for Check publishing.
  */
-public class ChecksUtils {
+class ChecksUtils {
     private ChecksUtils() {
         // prevent instantiation of this utility class
     }
@@ -18,7 +18,7 @@ public class ChecksUtils {
      * @param listener taskListener where any issues can be reported.
      * @return ChecksAnnotationLevel a level corresponsing to the given severity.
      * */
-    public static ChecksAnnotationLevel toChecksAnnotationLevel(final Severity severity, final TaskListener listener) {
+    static ChecksAnnotationLevel toChecksAnnotationLevel(final Severity severity, final TaskListener listener) {
         // normalize the severity then map the issue severity to the check level.
         final Severity sev = Severity.guessFromString(severity.getName());
     
