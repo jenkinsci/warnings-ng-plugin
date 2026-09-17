@@ -266,7 +266,7 @@ class WarningChecksPublisher {
     /**
      * Check if the column range is valid.
      * The upstream contract uses a value of 0 (zero) to indicate a whole line which is not a valid number for checks.
-     * @param isse the issue on which to check the column range.
+     * @param issue the issue on which to check the column range.
      * @return {@code true} if the issues start column is {@code > 1}.
      */
     private static boolean isValidColumnRange(final Issue issue) {
