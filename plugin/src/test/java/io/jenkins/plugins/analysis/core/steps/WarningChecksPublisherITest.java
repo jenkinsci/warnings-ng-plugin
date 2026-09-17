@@ -184,7 +184,6 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
                 .usingRecursiveFieldByFieldElementComparatorOnFields("message")
                 .containsOnly(new ChecksAnnotationBuilder()
                         .withMessage("""
-                                ERROR:
                                 Some diagnostic messages may contain incorrect line number.
                                 V002:https://pvs-studio.com/en/docs/warnings/v002/""")
                         .build());
@@ -439,8 +438,8 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
                         .withPath("X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins"
                                 + "/tasks/parser/CsharpNamespaceDetector.java")
                         .withTitle("RightCurlyCheck")
-                        .withAnnotationLevel(ChecksAnnotationLevel.WARNING)
-                        .withMessage("ERROR:\n'}' sollte in derselben Zeile stehen.")
+                        .withAnnotationLevel(ChecksAnnotationLevel.FAILURE)
+                        .withMessage("'}' sollte in derselben Zeile stehen.")
                         .withLine(30)
                         .withStartColumn(21)
                         .withEndColumn(21)
@@ -459,8 +458,8 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
                         .withPath("X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins"
                                 + "/tasks/parser/CsharpNamespaceDetector.java")
                         .withTitle("RightCurlyCheck")
-                        .withAnnotationLevel(ChecksAnnotationLevel.WARNING)
-                        .withMessage("ERROR:\n'}' sollte in derselben Zeile stehen.")
+                        .withAnnotationLevel(ChecksAnnotationLevel.FAILURE)
+                        .withMessage("'}' sollte in derselben Zeile stehen.")
                         .withLine(37)
                         .withStartColumn(9)
                         .withEndColumn(9)
