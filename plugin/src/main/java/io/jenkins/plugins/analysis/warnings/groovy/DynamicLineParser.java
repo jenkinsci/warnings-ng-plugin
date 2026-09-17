@@ -41,7 +41,7 @@ class DynamicLineParser extends LookaheadParser {
     }
 
     @Override
-    public Report parseReport(final ReaderFactory reader) throws ParsingException {
+    protected Report parseReport(final ReaderFactory reader) throws ParsingException {
         fileName = reader.getFileName();
 
         return super.parseReport(reader);
