@@ -28,7 +28,6 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.util.IssuesStatistics;
 import io.jenkins.plugins.checks.api.ChecksAnnotation;
 import io.jenkins.plugins.checks.api.ChecksAnnotation.ChecksAnnotationBuilder;
-import io.jenkins.plugins.checks.api.ChecksAnnotation.ChecksAnnotationLevel;
 import io.jenkins.plugins.checks.api.ChecksConclusion;
 import io.jenkins.plugins.checks.api.ChecksDetails;
 import io.jenkins.plugins.checks.api.ChecksDetails.ChecksDetailsBuilder;
@@ -246,8 +245,8 @@ class WarningChecksPublisher {
             var builder = new ChecksAnnotationBuilder()
                     .withPath(issue.getFileName())
                     .withTitle(getIssueTitle(issue))
-                    .withAnnotationLevel(ChecksAnnotationLevel.WARNING)
-                    .withMessage(issue.getSeverity() + ":\n" + parseHtml(issue.getMessage()))
+                    .withAnnotationLevel(ChecksUtils.toChecksAnnotationLevel(issue.getSeverity(), listener))
+                    .withMessage(parseHtml(issue.getMessage()))
                     .withStartLine(issue.getLineStart())
                     .withEndLine(issue.getLineEnd())
                     .withRawDetails(StringUtils.normalizeSpace(labelProvider.getDescription(issue)));
