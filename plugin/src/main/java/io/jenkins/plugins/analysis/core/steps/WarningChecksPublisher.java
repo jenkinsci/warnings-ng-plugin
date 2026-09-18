@@ -7,6 +7,7 @@ import org.jsoup.nodes.TextNode;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 
@@ -28,6 +29,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.util.IssuesStatistics;
 import io.jenkins.plugins.checks.api.ChecksAnnotation;
 import io.jenkins.plugins.checks.api.ChecksAnnotation.ChecksAnnotationBuilder;
+import io.jenkins.plugins.checks.api.ChecksAnnotation.ChecksAnnotationLevel;
 import io.jenkins.plugins.checks.api.ChecksConclusion;
 import io.jenkins.plugins.checks.api.ChecksDetails;
 import io.jenkins.plugins.checks.api.ChecksDetails.ChecksDetailsBuilder;
@@ -46,7 +48,7 @@ import static j2html.TagCreator.*;
  *
  * @author Kezhi Xiong
  */
-@SuppressWarnings("PMD.CouplingBetweenObjects")
+@SuppressWarnings({"PMD.CouplingBetweenObjects", "PMD.GodClass", "checkstyle:ClassFanOutComplexity"})
 class WarningChecksPublisher {
     /**
      * Defines the scope of SCM checks annotations.
@@ -87,7 +89,7 @@ class WarningChecksPublisher {
     }
 
     /**
-     * Publishes checks to the selected SCM platform. Afterwards, all warnings are available in corresponding platform's
+     * Publishes checks to the selected SCM platform. Afterward, all warnings are available in corresponding platform's
      * UI, e.g., GitHub checks.
      *
      * @param annotationScope
@@ -245,7 +247,7 @@ class WarningChecksPublisher {
             var builder = new ChecksAnnotationBuilder()
                     .withPath(issue.getFileName())
                     .withTitle(getIssueTitle(issue))
-                    .withAnnotationLevel(ChecksUtils.toChecksAnnotationLevel(issue.getSeverity(), listener))
+                    .withAnnotationLevel(mapSeverity(issue.getSeverity()))
                     .withMessage(parseHtml(issue.getMessage()))
                     .withStartLine(issue.getLineStart())
                     .withEndLine(issue.getLineEnd())
@@ -262,10 +264,24 @@ class WarningChecksPublisher {
         return annotations;
     }
 
+    private ChecksAnnotationLevel mapSeverity(final Severity severity) {
+        if (severity.equals(Severity.ERROR)) {
+            return ChecksAnnotationLevel.FAILURE;
+        }
+        else if (severity.equals(Severity.WARNING_HIGH)
+                || severity.equals(Severity.WARNING_NORMAL)) {
+            return ChecksAnnotationLevel.WARNING;
+        }
+        return ChecksAnnotationLevel.NOTICE;
+    }
+
     /**
-     * Check if the column range is valid.
-     * The upstream contract uses a value of 0 (zero) to indicate a whole line which is not a valid number for checks.
-     * @param issue the issue on which to check the column range.
+     * Check if the column range is valid. The upstream contract uses a value of 0 (zero) to indicate a whole line which
+     * is not a valid number for checks.
+     *
+     * @param issue
+     *         the issue on which to check the column range.
+     *
      * @return {@code true} if the issues start column is {@code > 1}.
      */
     private static boolean isValidColumnRange(final Issue issue) {
