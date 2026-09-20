@@ -253,9 +253,8 @@ class WarningChecksPublisher {
                     .withEndLine(issue.getLineEnd())
                     .withRawDetails(StringUtils.normalizeSpace(labelProvider.getDescription(issue)));
 
-            if (issue.getLineStart() == issue.getLineEnd() && isValidColumnRange(issue)) {
-                builder.withStartColumn(issue.getColumnStart())
-                        .withEndColumn(issue.getColumnEnd());
+            if (issue.isInSingleLine() && !issue.isForWholeLine()) {
+                builder.withStartColumn(issue.getColumnStart()).withEndColumn(issue.getColumnEnd());
             }
 
             annotations.add(builder.build());
@@ -273,19 +272,6 @@ class WarningChecksPublisher {
             return ChecksAnnotationLevel.WARNING;
         }
         return ChecksAnnotationLevel.NOTICE;
-    }
-
-    /**
-     * Check if the column range is valid. The upstream contract uses a value of 0 (zero) to indicate a whole line which
-     * is not a valid number for checks.
-     *
-     * @param issue
-     *         the issue on which to check the column range.
-     *
-     * @return {@code true} if the issues start column is {@code > 1}.
-     */
-    private static boolean isValidColumnRange(final Issue issue) {
-        return issue.getColumnStart() > 0;
     }
 
     private String parseHtml(final String html) {

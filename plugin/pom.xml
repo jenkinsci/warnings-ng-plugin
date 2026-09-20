@@ -38,7 +38,7 @@
     <maven.deploy.skip>false</maven.deploy.skip>
 
     <!-- Library Dependencies Versions -->
-    <analysis-model-tests.version>14.16.0</analysis-model-tests.version>
+    <analysis-model-tests.version>14.18.0</analysis-model-tests.version>
     <pull-request-monitoring.version>335.v525cd64ec76b_</pull-request-monitoring.version>
 
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
@@ -81,6 +81,8 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>analysis-model-api</artifactId>
+      <!-- TODO: Remove when release is part of the BOM -->
+      <version>14.18.0-1028.v9c938eeda_ef2</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
