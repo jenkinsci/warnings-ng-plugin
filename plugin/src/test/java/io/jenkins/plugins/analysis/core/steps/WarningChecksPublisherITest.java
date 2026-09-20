@@ -3,6 +3,8 @@ package io.jenkins.plugins.analysis.core.steps;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.jvnet.hudson.test.TestExtension;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
@@ -25,6 +27,7 @@ import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.MsBuild;
 import io.jenkins.plugins.analysis.warnings.PVSStudio;
 import io.jenkins.plugins.analysis.warnings.Pmd;
+import io.jenkins.plugins.analysis.warnings.WarningsPlugin;
 import io.jenkins.plugins.checks.api.ChecksAnnotation.ChecksAnnotationBuilder;
 import io.jenkins.plugins.checks.api.ChecksAnnotation.ChecksAnnotationLevel;
 import io.jenkins.plugins.checks.api.ChecksConclusion;
@@ -162,6 +165,33 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     void shouldConcludeChecksAsFailureWhenQualityGateResultIsUnstable() {
         assertChecksConclusionIsFailureWithQualityGateResult(QualityGateCriticality.UNSTABLE);
+    }
+
+    @ParameterizedTest(name = "Map warning severity {0} to checks level {1}")
+    @CsvSource({
+            "LOW, NOTICE",
+            "NORMAL, WARNING",
+            "HIGH, WARNING",
+            "ERROR, FAILURE"
+    })
+    void shouldMapSeverities(final String gccWarningPrefix, final ChecksAnnotationLevel expectedAnnotationLevel) {
+        var project = getFreeStyleJob();
+        enableWarnings(project, configurePattern(new WarningsPlugin()));
+
+        createFileInWorkspace(project, "issues.txt", """
+                    {"fileName":"some.properties","severity":"%s", "lineStart":10, "other":value, "additional": "stuff"}
+                """.formatted(gccWarningPrefix));
+
+        buildSuccessfully(project);
+
+        var publisher = new WarningChecksPublisher(getResultAction(project), TaskListener.NULL, null);
+        var details = publisher.extractChecksDetails(ChecksAnnotationScope.ALL);
+
+        assertThat(details.getOutput().get().getChecksAnnotations())
+                .usingRecursiveFieldByFieldElementComparatorOnFields("annotationLevel")
+                .containsOnly(new ChecksAnnotationBuilder()
+                        .withAnnotationLevel(expectedAnnotationLevel)
+                        .build());
     }
 
     /**
