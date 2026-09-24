@@ -1,24 +1,28 @@
 package io.jenkins.plugins.analysis.core.mcp;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import hudson.FilePath;
-import hudson.model.Result;
-import io.jenkins.plugins.mcp.server.junit.JenkinsMcpClientBuilder;
-import io.jenkins.plugins.mcp.server.junit.McpClientTest;
-import io.modelcontextprotocol.spec.McpSchema;
 
 import java.net.URL;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
-import org.jvnet.hudson.test.JenkinsRule;
-import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
+import hudson.FilePath;
+import hudson.model.Result;
+
+import io.jenkins.plugins.mcp.server.junit.JenkinsMcpClientBuilder;
+import io.jenkins.plugins.mcp.server.junit.McpClientTest;
+import io.modelcontextprotocol.spec.McpSchema;
+import io.modelcontextprotocol.spec.McpSchema.CallToolRequest;
+
+import static org.assertj.core.api.Assertions.*;
 
 @WithJenkins
 class WarningsMcpServerExtensionTest {
@@ -45,28 +49,29 @@ class WarningsMcpServerExtensionTest {
         jenkins.buildAndAssertStatus(Result.UNSTABLE, j);
 
         try (var client = jenkinsMcpClientBuilder.jenkins(jenkins).build()) {
-            McpSchema.CallToolRequest request = new McpSchema.CallToolRequest(
-                    "getWarnings", Map.of("jobFullName", j.getFullName()));
+            McpSchema.CallToolRequest request = createRequest(Map.of("jobFullName", j.getFullName()));
 
             var response = client.callTool(request);
             assertContainsSingleCheckstyleWarning(response);
         }
         try (var client = jenkinsMcpClientBuilder.jenkins(jenkins).build()) {
-            McpSchema.CallToolRequest request = new McpSchema.CallToolRequest(
-                    "getWarnings", Map.of("jobFullName", j.getFullName(),
+            McpSchema.CallToolRequest request = createRequest(Map.of("jobFullName", j.getFullName(),
                     "checkId", "checkstyle"));
 
             var response = client.callTool(request);
             assertContainsSingleCheckstyleWarning(response);
         }
         try (var client = jenkinsMcpClientBuilder.jenkins(jenkins).build()) {
-            McpSchema.CallToolRequest request = new McpSchema.CallToolRequest(
-                    "getWarnings", Map.of("jobFullName", j.getFullName(),
+            McpSchema.CallToolRequest request = createRequest(Map.of("jobFullName", j.getFullName(),
                     "checkId", "missing"));
 
             var response = client.callTool(request);
             assertResponseIsEmpty(response);
         }
+    }
+
+    private CallToolRequest createRequest(final Map<String, Object> j) {
+        return CallToolRequest.builder("getWarnings").arguments(j).build();
     }
 
     @McpClientTest
@@ -83,8 +88,7 @@ class WarningsMcpServerExtensionTest {
                         """, true));
 
         try (var client = jenkinsMcpClientBuilder.jenkins(jenkins).build()) {
-            McpSchema.CallToolRequest request = new McpSchema.CallToolRequest(
-                    "getWarnings", Map.of("jobFullName", j.getFullName()));
+            McpSchema.CallToolRequest request = createRequest(Map.of("jobFullName", j.getFullName()));
 
             var response = client.callTool(request);
             assertResponseIsEmpty(response);
@@ -95,8 +99,7 @@ class WarningsMcpServerExtensionTest {
     void testMcpToolNoJob(final JenkinsRule jenkins,
                                final JenkinsMcpClientBuilder jenkinsMcpClientBuilder) {
         try (var client = jenkinsMcpClientBuilder.jenkins(jenkins).build()) {
-            McpSchema.CallToolRequest request = new McpSchema.CallToolRequest(
-                    "getWarnings", Map.of("jobFullName", "missing"));
+            McpSchema.CallToolRequest request = createRequest(Map.of("jobFullName", "missing"));
 
             var response = client.callTool(request);
             assertResponseIsEmpty(response);
