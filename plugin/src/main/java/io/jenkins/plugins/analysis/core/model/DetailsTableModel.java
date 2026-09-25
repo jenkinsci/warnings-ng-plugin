@@ -226,9 +226,27 @@ public abstract class DetailsTableModel extends TableModel {
                 details = new UnescapedText(render(additionalDescription));
             }
             else {
-                details = DomContentJoiner.join(" ", false,
-                        p(strong().with(new UnescapedText(StringEscapeUtils.escapeHtml4(issue.getMessage())))),
-                        render(additionalDescription));
+                var message = issue.getMessage();
+                if (message.contains("\n")) {
+                    var firstLine = StringUtils.substringBefore(message, "\n").replaceAll("\r$", "");
+                    var remaining = StringUtils.substringAfter(message, "\n").replace("\r", "");
+                    if (StringUtils.isNotBlank(remaining)) {
+                        details = DomContentJoiner.join(" ", false,
+                                p(strong().with(new UnescapedText(StringEscapeUtils.escapeHtml4(firstLine)))),
+                                pre(code().with(new UnescapedText(StringEscapeUtils.escapeHtml4(remaining)))),
+                                render(additionalDescription));
+                    }
+                    else {
+                        details = DomContentJoiner.join(" ", false,
+                                p(strong().with(new UnescapedText(StringEscapeUtils.escapeHtml4(firstLine)))),
+                                render(additionalDescription));
+                    }
+                }
+                else {
+                    details = DomContentJoiner.join(" ", false,
+                            p(strong().with(new UnescapedText(StringEscapeUtils.escapeHtml4(message)))),
+                            render(additionalDescription));
+                }
             }
             return TableColumn.renderDetailsColumn(details.render(), jenkinsFacade);
         }
