@@ -222,15 +222,33 @@ public abstract class DetailsTableModel extends TableModel {
          */
         private String formatDetails(final Issue issue, final String additionalDescription) {
             UnescapedText details;
-            if (StringUtils.isBlank(issue.getMessage())) {
+            var issueMessage = issue.getMessage();
+            if (StringUtils.isBlank(issueMessage)) {
                 details = new UnescapedText(render(additionalDescription));
+            }
+            else if (issueMessage.contains("\n")) {
+                details = formatMultiLineMessage(issueMessage, additionalDescription);
             }
             else {
                 details = DomContentJoiner.join(" ", false,
-                        p(strong().with(new UnescapedText(StringEscapeUtils.escapeHtml4(issue.getMessage())))),
+                        p(strong().with(new UnescapedText(StringEscapeUtils.escapeHtml4(issueMessage)))),
                         render(additionalDescription));
             }
             return TableColumn.renderDetailsColumn(details.render(), jenkinsFacade);
+        }
+
+        private UnescapedText formatMultiLineMessage(final String issueMessage, final String additionalDescription) {
+            var firstLine = StringUtils.substringBefore(issueMessage, "\n").replaceAll("\r$", "");
+            var remaining = StringUtils.substringAfter(issueMessage, "\n").replace("\r", "");
+            if (StringUtils.isNotBlank(remaining)) {
+                return DomContentJoiner.join(" ", false,
+                        p(strong().with(new UnescapedText(StringEscapeUtils.escapeHtml4(firstLine)))),
+                        pre(code().with(new UnescapedText(StringEscapeUtils.escapeHtml4(remaining)))),
+                        render(additionalDescription));
+            }
+            return DomContentJoiner.join(" ", false,
+                    p(strong().with(new UnescapedText(StringEscapeUtils.escapeHtml4(firstLine)))),
+                    render(additionalDescription));
         }
 
         /**

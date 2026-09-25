@@ -103,6 +103,66 @@ class DetailsTableModelTest extends AbstractDetailsModelTest {
     }
 
     @Test
+    void shouldFormatMultiLineMessageIntoParagraphAndPreCode() {
+        try (var builder = new IssueBuilder()) {
+            builder.setMessage("Test failed: AssertionError\nTraceback (most recent call last):\n  File \"test.py\", line 10\n    assert 1 == 2");
+            var model = createRow(builder.build());
+
+            var actualColumn = model.getDescription();
+
+            assertThat(actualColumn)
+                    .contains("&lt;p&gt;&lt;strong&gt;Test failed: AssertionError&lt;/strong&gt;&lt;/p&gt;")
+                    .contains("&lt;pre&gt;&lt;code&gt;Traceback (most recent call last):\n  File &amp;quot;test.py&amp;quot;, line 10\n    assert 1 == 2&lt;/code&gt;&lt;/pre&gt;");
+        }
+    }
+
+    @Test
+    void shouldHandleMultiLineMessageWithWindowsLineEndings() {
+        try (var builder = new IssueBuilder()) {
+            builder.setMessage("Failure header\r\nLine 1\r\nLine 2");
+            var model = createRow(builder.build());
+
+            var actualColumn = model.getDescription();
+
+            assertThat(actualColumn)
+                    .contains("&lt;p&gt;&lt;strong&gt;Failure header&lt;/strong&gt;&lt;/p&gt;")
+                    .contains("&lt;pre&gt;&lt;code&gt;Line 1\nLine 2&lt;/code&gt;&lt;/pre&gt;")
+                    .doesNotContain("\r");
+        }
+    }
+
+    @Test
+    void shouldHandleMessageWithTrailingNewlineOnly() {
+        try (var builder = new IssueBuilder()) {
+            builder.setMessage("Single line with newline\n");
+            var model = createRow(builder.build());
+
+            var actualColumn = model.getDescription();
+
+            assertThat(actualColumn)
+                    .contains("&lt;p&gt;&lt;strong&gt;Single line with newline&lt;/strong&gt;&lt;/p&gt;")
+                    .doesNotContain("&lt;pre&gt;")
+                    .doesNotContain("&lt;code&gt;");
+        }
+    }
+
+    @Test
+    void shouldEscapeHtmlInMultiLineMessage() {
+        try (var builder = new IssueBuilder()) {
+            builder.setMessage("<error>tag</error>\n<stack>trace & 'quotes'</stack>");
+            var model = createRow(builder.build());
+
+            var actualColumn = model.getDescription();
+
+            assertThat(actualColumn)
+                    .doesNotContain("<error>")
+                    .doesNotContain("<stack>")
+                    .contains("&amp;lt;error&amp;gt;tag&amp;lt;/error&amp;gt;")
+                    .contains("&amp;lt;stack&amp;gt;trace &amp;amp; &#x27;quotes&#x27;&amp;lt;/stack&amp;gt;");
+        }
+    }
+
+    @Test
     void shouldCreateSortableFileName() {
         var issue = createIssue(1);
         var model = createRow(issue);
