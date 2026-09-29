@@ -7,7 +7,7 @@
 
 .wng-sidebar {
     position: sticky;
-    top: calc(var(--header-height) + var(--section-padding));
+    top: calc(var(--header-height) + var(--header-height) + var(--section-padding));
     width: unset !important;
 
     #tasks {
