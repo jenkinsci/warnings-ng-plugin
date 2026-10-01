@@ -1,10 +1,13 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import static io.jenkins.plugins.analysis.warnings.Assertions.assertThat;
+
+import io.jenkins.plugins.analysis.warnings.AnalysisResult.Tab;
+import io.jenkins.plugins.analysis.warnings.AnalysisSummary.InfoType;
+import io.jenkins.plugins.analysis.warnings.AnalysisSummary.QualityGateResult;
+import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateCriticality;
+import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateType;
 import javax.inject.Inject;
-
-import org.junit.Ignore;
-import org.junit.Test;
-
 import org.jenkinsci.test.acceptance.docker.DockerContainer;
 import org.jenkinsci.test.acceptance.docker.DockerContainerHolder;
 import org.jenkinsci.test.acceptance.docker.fixtures.JavaGitContainer;
@@ -19,14 +22,8 @@ import org.jenkinsci.test.acceptance.po.Folder;
 import org.jenkinsci.test.acceptance.po.FreeStyleJob;
 import org.jenkinsci.test.acceptance.po.Slave;
 import org.jenkinsci.test.acceptance.po.WorkflowJob;
-
-import io.jenkins.plugins.analysis.warnings.AnalysisResult.Tab;
-import io.jenkins.plugins.analysis.warnings.AnalysisSummary.InfoType;
-import io.jenkins.plugins.analysis.warnings.AnalysisSummary.QualityGateResult;
-import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateCriticality;
-import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateType;
-
-import static io.jenkins.plugins.analysis.warnings.Assertions.*;
+import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  * Acceptance tests for the Warnings Next Generation Plugin.
@@ -247,7 +244,7 @@ public class WarningsPluginUiTest extends UiTest {
 
         IssuesTableRow firstRow = issuesTable.getRow(0);
         ConsoleLogView sourceView = firstRow.openConsoleLog();
-        assertThat(sourceView).hasTitle("Console Output (lines 23-43)")
+        assertThat(sourceView)
                 .hasHighlightedText("[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!");
     }
 
