@@ -226,25 +226,22 @@ public abstract class DetailsTableModel extends TableModel {
             if (StringUtils.isBlank(issueMessage)) {
                 details = new UnescapedText(render(additionalDescription));
             }
-            else if (issueMessage.contains("\n")) {
-                details = formatMultiLineMessage(issueMessage, additionalDescription);
-            }
             else {
-                details = DomContentJoiner.join(" ", false,
-                        p(strong().with(new UnescapedText(StringEscapeUtils.escapeHtml4(issueMessage)))),
-                        render(additionalDescription));
+                details = formatMultiLineMessage(issueMessage, additionalDescription);
             }
             return TableColumn.renderDetailsColumn(details.render(), jenkinsFacade);
         }
 
         private UnescapedText formatMultiLineMessage(final String issueMessage, final String additionalDescription) {
             var firstLine = StringUtils.substringBefore(issueMessage, "\n").replaceAll("\r$", "");
-            var remaining = StringUtils.substringAfter(issueMessage, "\n").replace("\r", "");
-            if (StringUtils.isNotBlank(remaining)) {
-                return DomContentJoiner.join(" ", false,
-                        p(strong().with(new UnescapedText(StringEscapeUtils.escapeHtml4(firstLine)))),
-                        pre(code().with(new UnescapedText(StringEscapeUtils.escapeHtml4(remaining)))),
-                        render(additionalDescription));
+            if (issueMessage.contains("\n")) {
+                var remaining = StringUtils.substringAfter(issueMessage, "\n").replace("\r", "");
+                if (StringUtils.isNotBlank(remaining)) {
+                    return DomContentJoiner.join(" ", false,
+                            p(strong().with(new UnescapedText(StringEscapeUtils.escapeHtml4(firstLine)))),
+                            pre(code().with(new UnescapedText(StringEscapeUtils.escapeHtml4(remaining)))),
+                            render(additionalDescription));
+                }
             }
             return DomContentJoiner.join(" ", false,
                     p(strong().with(new UnescapedText(StringEscapeUtils.escapeHtml4(firstLine)))),

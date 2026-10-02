@@ -8,6 +8,7 @@ import edu.hm.hafner.analysis.IssueBuilder;
 import io.jenkins.plugins.analysis.core.model.DetailsTableModel.TableRow;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests the class {@link DetailsTableModel}.
@@ -144,6 +145,20 @@ class DetailsTableModelTest extends AbstractDetailsModelTest {
                     .doesNotContain("&lt;pre&gt;")
                     .doesNotContain("&lt;code&gt;");
         }
+    }
+
+    @Test
+    void shouldHandleMessageWithBlankRemainingPart() {
+        var issue = spy(createIssue(1));
+        when(issue.getMessage()).thenReturn("Header\n");
+        var model = createRow(issue);
+
+        var actualColumn = model.getDescription();
+
+        assertThat(actualColumn)
+                .contains("&lt;p&gt;&lt;strong&gt;Header&lt;/strong&gt;&lt;/p&gt;")
+                .doesNotContain("&lt;pre&gt;")
+                .doesNotContain("&lt;code&gt;");
     }
 
     @Test
