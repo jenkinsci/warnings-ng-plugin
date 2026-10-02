@@ -2,8 +2,6 @@ package io.jenkins.plugins.analysis.warnings.steps;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.io.IOException;
 
@@ -22,10 +20,8 @@ import static org.assertj.core.api.Assumptions.*;
  * @author Andreas Reiser
  * @author Andreas Moser
  */
-@Testcontainers(disabledWithoutDocker = true)
 @Disabled("Docker tests are failing with Java 17 Jenkins")
 class DockerContainerITest extends IntegrationTestWithJenkinsPerSuite {
-    @Container
     private static final AgentContainer AGENT_CONTAINER = new AgentContainer();
     private static final String EMPTY_PATTERN = "";
 
@@ -106,7 +102,7 @@ class DockerContainerITest extends IntegrationTestWithJenkinsPerSuite {
         return """
                 prog: test.o
                     gcc -o prog test.o
-                
+
                 test.o: test.cpp
                     gcc -c -Wall -Wextra -O2 test.cpp
                 """;
