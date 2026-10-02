@@ -1,8 +1,13 @@
 files:
   - README.md
+fileExtensions:
+  - md
+  - adoc
 dirs:
   - ./
   - doc
+  - src/main/asciidoc
 useGitIgnore: true
 ignorePatterns:
   - pattern: '^http://localhost:.*$'
+aliveStatusCodes: [ 200, 500, 501, 502, 503, 429 ]
