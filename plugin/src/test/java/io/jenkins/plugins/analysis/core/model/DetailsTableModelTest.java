@@ -8,6 +8,7 @@ import edu.hm.hafner.analysis.IssueBuilder;
 import io.jenkins.plugins.analysis.core.model.DetailsTableModel.TableRow;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests the class {@link DetailsTableModel}.
@@ -99,6 +100,80 @@ class DetailsTableModelTest extends AbstractDetailsModelTest {
                     .contains("&amp;#246;")  // &#246; should become &amp;#246;
                     .doesNotContain("ä")     // Should not be converted to actual character
                     .doesNotContain("ö");    // Should not be converted to actual character
+        }
+    }
+
+    @Test
+    void shouldFormatMultiLineMessageIntoParagraphAndPreCode() {
+        try (var builder = new IssueBuilder()) {
+            builder.setMessage("Test failed: AssertionError\nTraceback (most recent call last):\n  File \"test.py\", line 10\n    assert 1 == 2");
+            var model = createRow(builder.build());
+
+            var actualColumn = model.getDescription();
+
+            assertThat(actualColumn)
+                    .contains("&lt;p&gt;&lt;strong&gt;Test failed: AssertionError&lt;/strong&gt;&lt;/p&gt;")
+                    .contains("&lt;pre&gt;&lt;code&gt;Traceback (most recent call last):\n  File &amp;quot;test.py&amp;quot;, line 10\n    assert 1 == 2&lt;/code&gt;&lt;/pre&gt;");
+        }
+    }
+
+    @Test
+    void shouldHandleMultiLineMessageWithWindowsLineEndings() {
+        try (var builder = new IssueBuilder()) {
+            builder.setMessage("Failure header\r\nLine 1\r\nLine 2");
+            var model = createRow(builder.build());
+
+            var actualColumn = model.getDescription();
+
+            assertThat(actualColumn)
+                    .contains("&lt;p&gt;&lt;strong&gt;Failure header&lt;/strong&gt;&lt;/p&gt;")
+                    .contains("&lt;pre&gt;&lt;code&gt;Line 1\nLine 2&lt;/code&gt;&lt;/pre&gt;")
+                    .doesNotContain("\r");
+        }
+    }
+
+    @Test
+    void shouldHandleMessageWithTrailingNewlineOnly() {
+        try (var builder = new IssueBuilder()) {
+            builder.setMessage("Single line with newline\n");
+            var model = createRow(builder.build());
+
+            var actualColumn = model.getDescription();
+
+            assertThat(actualColumn)
+                    .contains("&lt;p&gt;&lt;strong&gt;Single line with newline&lt;/strong&gt;&lt;/p&gt;")
+                    .doesNotContain("&lt;pre&gt;")
+                    .doesNotContain("&lt;code&gt;");
+        }
+    }
+
+    @Test
+    void shouldHandleMessageWithBlankRemainingPart() {
+        var issue = spy(createIssue(1));
+        when(issue.getMessage()).thenReturn("Header\n");
+        var model = createRow(issue);
+
+        var actualColumn = model.getDescription();
+
+        assertThat(actualColumn)
+                .contains("&lt;p&gt;&lt;strong&gt;Header&lt;/strong&gt;&lt;/p&gt;")
+                .doesNotContain("&lt;pre&gt;")
+                .doesNotContain("&lt;code&gt;");
+    }
+
+    @Test
+    void shouldEscapeHtmlInMultiLineMessage() {
+        try (var builder = new IssueBuilder()) {
+            builder.setMessage("<error>tag</error>\n<stack>trace & 'quotes'</stack>");
+            var model = createRow(builder.build());
+
+            var actualColumn = model.getDescription();
+
+            assertThat(actualColumn)
+                    .doesNotContain("<error>")
+                    .doesNotContain("<stack>")
+                    .contains("&amp;lt;error&amp;gt;tag&amp;lt;/error&amp;gt;")
+                    .contains("&amp;lt;stack&amp;gt;trace &amp;amp; &#x27;quotes&#x27;&amp;lt;/stack&amp;gt;");
         }
     }
 
