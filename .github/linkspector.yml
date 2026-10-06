@@ -1,5 +1,5 @@
 files:
-  - README.md
+  - README.*
 fileExtensions:
   - md
   - adoc
