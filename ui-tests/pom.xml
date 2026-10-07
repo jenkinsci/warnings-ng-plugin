@@ -5,7 +5,7 @@
   <parent>
     <groupId>edu.hm.hafner</groupId>
     <artifactId>codingstyle-pom</artifactId>
-    <version>6.17.0</version>
+    <version>7.5.0</version>
     <relativePath />
   </parent>
 
@@ -16,7 +16,7 @@
   <name>UI Tests of Warnings Plugin</name>
 
   <properties>
-    <jenkins.version>2.583</jenkins.version>
+    <jenkins.version>2.584</jenkins.version>
     <hpi-plugin.version>3.1848.v43eb_ce5a_9cb_6</hpi-plugin.version>
     <json-smart.version>2.3</json-smart.version>
     <json-unit-assertj.version>6.2.0</json-unit-assertj.version>
@@ -49,7 +49,7 @@
     <dependency>
       <groupId>org.jenkins-ci</groupId>
       <artifactId>acceptance-test-harness</artifactId>
-      <version>6724.va_7c5c4b_fcf9c</version>
+      <version>6731.va_ea_dd2a_673a_4</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
