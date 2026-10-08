@@ -1,15 +1,14 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import org.eclipse.collections.api.list.ImmutableList;
-import org.eclipse.collections.impl.factory.Lists;
-import org.junit.jupiter.api.Test;
-
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.Report;
-
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 import static org.mockito.Mockito.*;
+
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.Report;
+import org.eclipse.collections.api.list.ImmutableList;
+import org.eclipse.collections.impl.factory.Lists;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class {@link DetailsTableModel}.
@@ -40,14 +39,15 @@ class IssuesModelTest extends AbstractDetailsModelTest {
         assertThat(model.getRows()).hasSize(2);
 
         var actualRow = model.getRow(issue);
-        assertThat(actualRow).hasDescription(EXPECTED_DESCRIPTION)
+        assertThat(actualRow)
+                .hasDescription(EXPECTED_DESCRIPTION)
                 .hasAge("1")
                 .hasPackageName(PACKAGE_NAME)
                 .hasCategory("<a href=\"category.1296530210/\">category-1</a>")
                 .hasType("<a href=\"type.-858804642/\">type-1</a>")
                 .hasSeverity("<a href=\"HIGH\">High</a>");
-        assertThatDetailedColumnContains(actualRow.getFileName(),
-                createExpectedFileName(issue), "/path/to/file-1:0000015");
+        assertThatDetailedColumnContains(
+                actualRow.getFileName(), createExpectedFileName(issue), "/path/to/file-1:0000015");
     }
 
     @Test
@@ -57,13 +57,11 @@ class IssuesModelTest extends AbstractDetailsModelTest {
         when(report.iterator()).thenReturn(issues.iterator());
 
         var model = createModel(report);
-        assertThat(getLabels(model))
-                .containsExactly("Details", "File", "Severity", "Age", "Hiddendetails");
+        assertThat(getLabels(model)).containsExactly("Details", "File", "Severity", "Age", "Hiddendetails");
         assertThat(model.getRows()).hasSize(1);
 
         when(report.hasPackages()).thenReturn(true);
-        assertThat(getLabels(model))
-                .containsExactly("Details", "File", "Package", "Severity", "Age", "Hiddendetails");
+        assertThat(getLabels(model)).containsExactly("Details", "File", "Package", "Severity", "Age", "Hiddendetails");
 
         when(report.hasCategories()).thenReturn(true);
         assertThat(getLabels(model))
@@ -77,7 +75,7 @@ class IssuesModelTest extends AbstractDetailsModelTest {
     private IssuesModel createModel(final Report report) {
         var jenkinsFacade = createJenkinsFacade();
 
-        return new IssuesModel(report, createFileNameRenderer(), createAgeBuilder(), issue -> DESCRIPTION,
-                jenkinsFacade);
+        return new IssuesModel(
+                report, createFileNameRenderer(), createAgeBuilder(), issue -> DESCRIPTION, jenkinsFacade);
     }
 }

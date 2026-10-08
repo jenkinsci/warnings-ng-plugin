@@ -1,16 +1,14 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
 import hudson.Extension;
 import hudson.model.Action;
 import hudson.model.Job;
 import hudson.model.Run;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import jenkins.model.TransientActionFactory;
 
 /**

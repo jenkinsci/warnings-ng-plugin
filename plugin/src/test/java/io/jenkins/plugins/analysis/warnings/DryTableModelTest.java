@@ -1,20 +1,17 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import org.junit.jupiter.api.Test;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 
 import edu.hm.hafner.analysis.DuplicationGroup;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
-import java.util.Locale;
-
 import io.jenkins.plugins.analysis.core.model.AbstractDetailsModelTest;
 import io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner.DryModel;
-
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
-import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
+import java.util.Locale;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class {@link DryModel}.
@@ -68,24 +65,28 @@ class DryTableModelTest extends AbstractDetailsModelTest {
                     .hasDescription("<div class=\"details-control\" data-description=\"" + DESCRIPTION + "\">"
                             + DETAILS_ICON + "</div>")
                     .hasAge("1");
-            assertThatDetailedColumnContains(actualRow.getFileName(),
-                    getFileNameFor(issue, 1), "/path/to/file-1:0000010");
+            assertThatDetailedColumnContains(
+                    actualRow.getFileName(), getFileNameFor(issue, 1), "/path/to/file-1:0000010");
             assertThat(actualRow.getPackageName()).isEqualTo("<a href=\"packageName.45/\">-</a>");
-            assertThat(actualRow.getDuplicatedIn()).isEqualTo(
-                    "<ul><li>%s</li></ul>".formatted(getFileNameFor(duplicate, 2)));
+            assertThat(actualRow.getDuplicatedIn())
+                    .isEqualTo("<ul><li>%s</li></ul>".formatted(getFileNameFor(duplicate, 2)));
             assertThat(actualRow.getLinesCount()).isEqualTo("15");
             assertThat(actualRow.getSeverity()).isEqualTo("<a href=\"NORMAL\">Normal</a>");
         }
     }
 
     private String getFileNameFor(final Issue issue, final int index) {
-        return String.format("<a href=\"source.%s/#%d\" data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" title=\"/path/to/file-"
-                        + index + "\">file-%d:%d</a>", issue.getId().toString(),
-                issue.getLineStart(), index, issue.getLineStart());
+        return String.format(
+                "<a href=\"source.%s/#%d\" data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" title=\"/path/to/file-"
+                        + index + "\">file-%d:%d</a>",
+                issue.getId().toString(),
+                issue.getLineStart(),
+                index,
+                issue.getLineStart());
     }
 
     private DryModel createModel(final Report report) {
-        return new DryModel(report, createFileNameRenderer(), createAgeBuilder(), issue -> DESCRIPTION,
-                createJenkinsFacade());
+        return new DryModel(
+                report, createFileNameRenderer(), createAgeBuilder(), issue -> DESCRIPTION, createJenkinsFacade());
     }
 }

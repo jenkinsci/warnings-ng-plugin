@@ -3,13 +3,10 @@ package io.jenkins.plugins.analysis.core.model;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.echarts.BuildResult;
 import edu.umd.cs.findbugs.annotations.NonNull;
-
+import hudson.model.Run;
+import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import java.util.Iterator;
 import java.util.Optional;
-
-import hudson.model.Run;
-
-import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 
 /**
  * History of analysis results.

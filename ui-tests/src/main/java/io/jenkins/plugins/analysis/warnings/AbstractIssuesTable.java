@@ -1,22 +1,18 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import org.apache.commons.lang3.StringUtils;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
-
+import io.jenkins.plugins.analysis.warnings.IssuesTable.Header;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import io.jenkins.plugins.analysis.warnings.IssuesTable.Header;
+import org.apache.commons.lang3.StringUtils;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
 /**
  * Area that represents the issues tables in an {@link AnalysisResult} page. Several issue aspects are visualized in
  * different tables so the actual rows are composed in concrete sub-classes.
  *
- * @param <T>
- *         the type of the table rows
- *
+ * @param <T> the type of the table rows
  * @author Stephan Plöderl
  */
 abstract class AbstractIssuesTable<T extends GenericTableRow> {
@@ -31,12 +27,9 @@ abstract class AbstractIssuesTable<T extends GenericTableRow> {
      * Creates a new {@link AbstractIssuesTable} that shows the issues in a table. The structure of the rows is
      * determined by the row type {@code T}.
      *
-     * @param tab
-     *         the WebElement containing the issues tab
-     * @param analysisResult
-     *         the AnalysisResult on which the issues table is displayed on
-     * @param divId
-     *         the ID of the div that contains the actual HTML table
+     * @param tab the WebElement containing the issues tab
+     * @param analysisResult the AnalysisResult on which the issues table is displayed on
+     * @param divId the ID of the div that contains the actual HTML table
      */
     AbstractIssuesTable(final WebElement tab, final AnalysisResult analysisResult, final String divId) {
         this.tab = tab;
@@ -44,17 +37,14 @@ abstract class AbstractIssuesTable<T extends GenericTableRow> {
         tabId = divId;
 
         tableElement = analysisResult.waitFor(By.xpath("//table[@id='" + divId + "' and @isLoaded='true']"));
-        headers = tableElement.findElements(By.xpath(".//thead/tr/th"))
-                .stream()
+        headers = tableElement.findElements(By.xpath(".//thead/tr/th")).stream()
                 .map(WebElement::getText)
                 .collect(Collectors.toList());
 
         updateTableRows();
     }
 
-    /**
-     * Updates the table rows. E.g. if they are changed by toggling a details-row.
-     */
+    /** Updates the table rows. E.g. if they are changed by toggling a details-row. */
     final void updateTableRows() {
         tableRows.clear();
 
@@ -66,9 +56,7 @@ abstract class AbstractIssuesTable<T extends GenericTableRow> {
      * Creates the concrete table row as an object of the matching sub-class of {@link GenericTableRow}. This row
      * contains the specialized column mapping of the corresponding issues table.
      *
-     * @param row
-     *         the WebElement representing the specific row
-     *
+     * @param row the WebElement representing the specific row
      * @return the table row
      */
     protected abstract T createRow(WebElement row);
@@ -77,9 +65,7 @@ abstract class AbstractIssuesTable<T extends GenericTableRow> {
      * Returns the table row at the given index. This row instance contains the specialized column mapping of the
      * corresponding issues table.
      *
-     * @param rowIndex
-     *         the number of the row to be returned
-     *
+     * @param rowIndex the number of the row to be returned
      * @return the row
      * @see #createRow(WebElement)
      */
@@ -94,9 +80,7 @@ abstract class AbstractIssuesTable<T extends GenericTableRow> {
     /**
      * Opens the source code of the affected file.
      *
-     * @param link
-     *         the WebElement representing the link
-     *
+     * @param link the WebElement representing the link
      * @return the source code view
      */
     SourceView openSourceCode(final WebElement link) {
@@ -106,9 +90,7 @@ abstract class AbstractIssuesTable<T extends GenericTableRow> {
     /**
      * Opens the console log view that contains the warning.
      *
-     * @param link
-     *         the WebElement representing the link
-     *
+     * @param link the WebElement representing the link
      * @return the source code view
      */
     ConsoleLogView openConsoleLogView(final WebElement link) {
@@ -165,9 +147,7 @@ abstract class AbstractIssuesTable<T extends GenericTableRow> {
     /**
      * Performs a click on a link which opens a filtered instance of the AnalysisResult.
      *
-     * @param element
-     *         the WebElement representing the link
-     *
+     * @param element the WebElement representing the link
      * @return the filtered AnalysisResult
      */
     AnalysisResult clickFilterLinkOnSite(final WebElement element) {
@@ -177,8 +157,7 @@ abstract class AbstractIssuesTable<T extends GenericTableRow> {
     /**
      * Performs a click on the page button to open the page of the table.
      *
-     * @param pageNumber
-     *         the number representing the page to open
+     * @param pageNumber the number representing the page to open
      */
     void openTablePage(final int pageNumber) {
         var pageButton = "//button[@class='page-link' and @data-dt-idx='" + (pageNumber - 1) + "']";

@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import edu.hm.hafner.analysis.IssueParser;
-
 import java.io.Serial;
 
 /**
@@ -10,6 +9,7 @@ import java.io.Serial;
 public class ReportScanningToolStubForTesting extends ReportScanningTool {
     @Serial
     private static final long serialVersionUID = 3729285280522413163L;
+
     private final IssueParser valueForCreateParser;
 
     ReportScanningToolStubForTesting(final IssueParser valueForCreateParser) {
@@ -30,8 +30,8 @@ public class ReportScanningToolStubForTesting extends ReportScanningTool {
         private final boolean valueForCanScanConsoleLog;
         private final String valueForGetPattern;
 
-        ReportScanningToolDescriptorStubForTesting(final String id, final boolean valueForCanScanConsoleLog,
-                final String valueForGetPattern) {
+        ReportScanningToolDescriptorStubForTesting(
+                final String id, final boolean valueForCanScanConsoleLog, final String valueForGetPattern) {
             super(id);
             this.valueForCanScanConsoleLog = valueForCanScanConsoleLog;
             this.valueForGetPattern = valueForGetPattern;

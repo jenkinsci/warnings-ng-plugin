@@ -1,14 +1,11 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import com.google.inject.Injector;
 import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import org.openqa.selenium.WebElement;
-
-import com.google.inject.Injector;
-
 import org.jenkinsci.test.acceptance.po.PageObject;
+import org.openqa.selenium.WebElement;
 
 /**
  * Page object that represents the part of the console log that contains the issue.
@@ -22,10 +19,8 @@ public class ConsoleLogView extends PageObject {
     /**
      * Creates a new source code view.
      *
-     * @param injector
-     *         injector
-     * @param url
-     *         the URL of the view
+     * @param injector injector
+     * @param url the URL of the view
      */
     public ConsoleLogView(final Injector injector, final URL url) {
         super(injector, url);

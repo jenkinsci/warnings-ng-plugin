@@ -1,17 +1,14 @@
 package io.jenkins.plugins.analysis.core.util;
 
-import org.junit.jupiter.api.Test;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.SerializableTest;
-
+import io.jenkins.plugins.analysis.core.util.IssuesStatistics.StatisticProperties;
 import java.util.Map;
 import java.util.NoSuchElementException;
-
-import io.jenkins.plugins.analysis.core.util.IssuesStatistics.StatisticProperties;
-
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
-import static org.mockito.Mockito.*;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class {@link IssuesStatistics}.
@@ -55,18 +52,20 @@ class IssuesStatisticsTest extends SerializableTest<IssuesStatistics> {
 
         assertThat(StatisticProperties.FIXED.get(statistics)).isEqualTo(13);
 
-        assertThat((Map<Severity, Integer>) statistics.getTotalSizePerSeverity().toMap()).contains(
-                entry(Severity.ERROR, 1),
-                entry(Severity.WARNING_HIGH, 2),
-                entry(Severity.WARNING_NORMAL, 3),
-                entry(Severity.WARNING_LOW, 4));
+        assertThat((Map<Severity, Integer>) statistics.getTotalSizePerSeverity().toMap())
+                .contains(
+                        entry(Severity.ERROR, 1),
+                        entry(Severity.WARNING_HIGH, 2),
+                        entry(Severity.WARNING_NORMAL, 3),
+                        entry(Severity.WARNING_LOW, 4));
     }
 
     @Test
     void shouldAggregateTotals() {
         var serializable = createSerializable();
 
-        assertThat(serializable.aggregate(serializable)).hasTotalErrorSize(2)
+        assertThat(serializable.aggregate(serializable))
+                .hasTotalErrorSize(2)
                 .hasTotalHighSize(4)
                 .hasTotalNormalSize(6)
                 .hasTotalLowSize(8)
@@ -107,10 +106,12 @@ class IssuesStatisticsTest extends SerializableTest<IssuesStatistics> {
     void shouldRejectUnsupportedSeverities() {
         var statistics = createSerializable();
 
-        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(
-                () -> statistics.getNewSizeOf(null)).withMessageContaining("null");
-        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(
-                () -> statistics.getNewSizeOf(new Severity("other"))).withMessageContaining("other");
+        assertThatExceptionOfType(NoSuchElementException.class)
+                .isThrownBy(() -> statistics.getNewSizeOf(null))
+                .withMessageContaining("null");
+        assertThatExceptionOfType(NoSuchElementException.class)
+                .isThrownBy(() -> statistics.getNewSizeOf(new Severity("other")))
+                .withMessageContaining("other");
     }
 
     @Override

@@ -1,20 +1,16 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import org.apache.commons.lang3.StringUtils;
-
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
-
+import hudson.remoting.VirtualChannel;
+import io.jenkins.plugins.analysis.core.util.FileFinder;
+import io.jenkins.plugins.util.ValidationUtilities;
 import java.io.File;
 import java.io.Serial;
 import java.nio.charset.Charset;
-
-import hudson.remoting.VirtualChannel;
 import jenkins.MasterToSlaveFileCallable;
-
-import io.jenkins.plugins.analysis.core.util.FileFinder;
-import io.jenkins.plugins.util.ValidationUtilities;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Searches in the workspace for files matching the given include and exclude patterns, then scans each file
@@ -51,8 +47,13 @@ class AgentGrepScanner extends MasterToSlaveFileCallable<Report> {
      *         the encoding used to read files
      */
     @SuppressWarnings("ParameterNumber")
-    AgentGrepScanner(final String regexp, final String severity, final String messageTemplate,
-            final String includePattern, final String excludePattern, final String sourceCodeEncoding) {
+    AgentGrepScanner(
+            final String regexp,
+            final String severity,
+            final String messageTemplate,
+            final String includePattern,
+            final String excludePattern,
+            final String sourceCodeEncoding) {
         super();
 
         this.regexp = regexp;

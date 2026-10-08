@@ -101,9 +101,20 @@ public class IssuesStatisticsBuilder {
 
     public IssuesStatistics build() {
         return new IssuesStatistics(
-                totalErrorSize, totalHighSize, totalNormalSize, totalLowSize, totalModifiedSize,
-                newErrorSize, newHighSize, newNormalSize, newLowSize, newModifiedSize,
-                deltaErrorSize, deltaHighSize, deltaNormalSize, deltaLowSize,
+                totalErrorSize,
+                totalHighSize,
+                totalNormalSize,
+                totalLowSize,
+                totalModifiedSize,
+                newErrorSize,
+                newHighSize,
+                newNormalSize,
+                newLowSize,
+                newModifiedSize,
+                deltaErrorSize,
+                deltaHighSize,
+                deltaNormalSize,
+                deltaLowSize,
                 fixedSize);
     }
 

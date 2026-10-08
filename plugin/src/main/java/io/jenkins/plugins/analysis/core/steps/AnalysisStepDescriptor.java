@@ -1,26 +1,23 @@
 package io.jenkins.plugins.analysis.core.steps;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-
-import java.util.Map;
-
-import org.kohsuke.stapler.AncestorInPath;
-import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.verb.POST;
-import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
 import hudson.model.BuildableItem;
 import hudson.model.Item;
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
-import jenkins.model.Jenkins;
-
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.steps.WarningChecksPublisher.ChecksAnnotationScope;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
 import io.jenkins.plugins.prism.SourceCodeRetention;
 import io.jenkins.plugins.util.JenkinsFacade;
 import io.jenkins.plugins.util.ValidationUtilities;
+import java.util.Map;
+import jenkins.model.Jenkins;
+import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
+import org.kohsuke.stapler.AncestorInPath;
+import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
 
 /**
  * Descriptor base class for all analysis steps. Provides generic validation methods and list box models for UI select
@@ -71,8 +68,8 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      * @return the validation result
      */
     @POST
-    public FormValidation doCheckReportEncoding(@AncestorInPath final BuildableItem project,
-            @QueryParameter final String reportEncoding) {
+    public FormValidation doCheckReportEncoding(
+            @AncestorInPath final BuildableItem project, @QueryParameter final String reportEncoding) {
         if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
             return FormValidation.ok();
         }
@@ -91,8 +88,8 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      * @return the validation result
      */
     @POST
-    public FormValidation doCheckSourceCodeEncoding(@AncestorInPath final BuildableItem project,
-            @QueryParameter final String sourceCodeEncoding) {
+    public FormValidation doCheckSourceCodeEncoding(
+            @AncestorInPath final BuildableItem project, @QueryParameter final String sourceCodeEncoding) {
         if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
             return FormValidation.ok();
         }
@@ -140,8 +137,10 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      * @return the validation result
      */
     @POST
-    public FormValidation doCheckHealthy(@AncestorInPath final BuildableItem project,
-            @QueryParameter final int healthy, @QueryParameter final int unhealthy) {
+    public FormValidation doCheckHealthy(
+            @AncestorInPath final BuildableItem project,
+            @QueryParameter final int healthy,
+            @QueryParameter final int unhealthy) {
         if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
             return FormValidation.ok();
         }
@@ -161,8 +160,10 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      * @return the validation result
      */
     @POST
-    public FormValidation doCheckUnhealthy(@AncestorInPath final BuildableItem project,
-            @QueryParameter final int healthy, @QueryParameter final int unhealthy) {
+    public FormValidation doCheckUnhealthy(
+            @AncestorInPath final BuildableItem project,
+            @QueryParameter final int healthy,
+            @QueryParameter final int unhealthy) {
         if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
             return FormValidation.ok();
         }
@@ -193,8 +194,7 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      * @return the validation result
      */
     @POST
-    public FormValidation doCheckId(@AncestorInPath final BuildableItem project,
-            @QueryParameter final String id) {
+    public FormValidation doCheckId(@AncestorInPath final BuildableItem project, @QueryParameter final String id) {
         if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
             return FormValidation.ok();
         }

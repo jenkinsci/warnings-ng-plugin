@@ -1,18 +1,13 @@
 package io.jenkins.plugins.analysis.core.steps;
 
+import static io.jenkins.plugins.analysis.core.model.QualityGateEvaluationMode.*;
+
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssuesInModifiedCodeMarker;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.FilteredLog;
-
-import java.nio.charset.Charset;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import hudson.model.Result;
 import hudson.model.Run;
-
 import io.jenkins.plugins.analysis.core.model.AggregationAction;
 import io.jenkins.plugins.analysis.core.model.AnalysisHistory;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
@@ -34,8 +29,10 @@ import io.jenkins.plugins.util.LogHandler;
 import io.jenkins.plugins.util.QualityGateResult;
 import io.jenkins.plugins.util.QualityGateStatus;
 import io.jenkins.plugins.util.ResultHandler;
-
-import static io.jenkins.plugins.analysis.core.model.QualityGateEvaluationMode.*;
+import java.nio.charset.Charset;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Publishes issues: Stores the created issues in an {@link AnalysisResult}. The result is attached to the {@link Run}
@@ -59,10 +56,19 @@ class IssuesPublisher {
     private final boolean failOnErrors;
 
     @SuppressWarnings("ParameterNumber")
-    IssuesPublisher(final Run<?, ?> run, final AnnotatedReport report, final DeltaCalculator deltaCalculator,
-            final HealthDescriptor healthDescriptor, final List<WarningsQualityGate> qualityGates,
-            final String name, final String icon, final boolean ignoreQualityGate, final Charset sourceCodeEncoding,
-            final LogHandler logger, final ResultHandler notifier, final boolean failOnErrors) {
+    IssuesPublisher(
+            final Run<?, ?> run,
+            final AnnotatedReport report,
+            final DeltaCalculator deltaCalculator,
+            final HealthDescriptor healthDescriptor,
+            final List<WarningsQualityGate> qualityGates,
+            final String name,
+            final String icon,
+            final boolean ignoreQualityGate,
+            final Charset sourceCodeEncoding,
+            final LogHandler logger,
+            final ResultHandler notifier,
+            final boolean failOnErrors) {
         this.report = report;
         this.run = run;
         this.deltaCalculator = deltaCalculator;
@@ -95,7 +101,8 @@ class IssuesPublisher {
         var selector = new ByIdResultSelector(getId());
         var existingAction = selector.get(run);
         if (existingAction.isPresent()) {
-            issues.logError("Removing existing result action with ID '%s' (duplicate ID: restart or configuration error?)",
+            issues.logError(
+                    "Removing existing result action with ID '%s' (duplicate ID: restart or configuration error?)",
                     getId());
             run.removeAction(existingAction.get());
         }
@@ -105,8 +112,10 @@ class IssuesPublisher {
         var qualityGateResult = evaluateQualityGate(issues, deltaReport);
         reportHealth(issues);
 
-        issues.logInfo("Created analysis result for %d issues (found %d new issues, fixed %d issues)",
-                deltaReport.getAllIssues().size(), deltaReport.getNewIssues().size(),
+        issues.logInfo(
+                "Created analysis result for %d issues (found %d new issues, fixed %d issues)",
+                deltaReport.getAllIssues().size(),
+                deltaReport.getNewIssues().size(),
                 deltaReport.getFixedIssues().size());
 
         if (failOnErrors && issues.hasErrors()) {
@@ -125,14 +134,27 @@ class IssuesPublisher {
         logger.logInfoMessages(issues.getInfoMessages());
         logger.logErrorMessages(issues.getErrorMessages());
 
-        var result = new AnalysisHistory(run, selector).getResult()
-                .map(previous -> new AnalysisResult(run, getId(), deltaReport, report.getBlames(),
-                        report.getStatistics(), qualityGateResult, report.getSizeOfOrigin(),
+        var result = new AnalysisHistory(run, selector)
+                .getResult()
+                .map(previous -> new AnalysisResult(
+                        run,
+                        getId(),
+                        deltaReport,
+                        report.getBlames(),
+                        report.getStatistics(),
+                        qualityGateResult,
+                        report.getSizeOfOrigin(),
                         previous))
-                .orElseGet(() -> new AnalysisResult(run, getId(), deltaReport, report.getBlames(),
-                        report.getStatistics(), qualityGateResult, report.getSizeOfOrigin()));
-        var action = new ResultAction(run, result, healthDescriptor, getId(), name, icon,
-                sourceCodeEncoding, trendChartType);
+                .orElseGet(() -> new AnalysisResult(
+                        run,
+                        getId(),
+                        deltaReport,
+                        report.getBlames(),
+                        report.getStatistics(),
+                        qualityGateResult,
+                        report.getSizeOfOrigin()));
+        var action = new ResultAction(
+                run, result, healthDescriptor, getId(), name, icon, sourceCodeEncoding, trendChartType);
 
         run.addAction(action);
 
@@ -154,18 +176,19 @@ class IssuesPublisher {
             var resultAction = selector.get(build)
                     .orElseThrow(() -> new IllegalStateException("Reference build does not contain a result action"));
 
-            var deltaReport = new DeltaReport(issues, build, run.getNumber(), resultAction.getResult().getIssues());
+            var deltaReport = new DeltaReport(
+                    issues, build, run.getNumber(), resultAction.getResult().getIssues());
 
             markIssuesInModifiedFiles(build, issues, deltaReport);
 
             return deltaReport;
-        }
-        else {
+        } else {
             return new DeltaReport(issues, run.getNumber());
         }
     }
 
-    private void markIssuesInModifiedFiles(final Run<?, ?> referenceBuild, final Report issues, final DeltaReport deltaReport) {
+    private void markIssuesInModifiedFiles(
+            final Run<?, ?> referenceBuild, final Report issues, final DeltaReport deltaReport) {
         if (issues.isNotEmpty()) {
             report.logInfo("Detect all issues that are part of modified code");
 
@@ -176,24 +199,21 @@ class IssuesPublisher {
             if (delta.isPresent()) {
                 var changes = delta.get().getFileChangesMap().values().stream()
                         .collect(Collectors.toMap(
-                                FileChanges::getFileName,
-                                FileChanges::getModifiedLines,
-                                (left, right) -> {
+                                FileChanges::getFileName, FileChanges::getModifiedLines, (left, right) -> {
                                     left.addAll(right);
                                     return left;
                                 }));
                 var marker = new IssuesInModifiedCodeMarker();
                 marker.markIssuesInModifiedCode(issues, changes);
-                report.logInfo("Issues in modified code: %d (new: %d, outstanding: %d)",
+                report.logInfo(
+                        "Issues in modified code: %d (new: %d, outstanding: %d)",
                         count(deltaReport.getAllIssues()),
                         count(deltaReport.getNewIssues()),
                         count(deltaReport.getOutstandingIssues()));
-            }
-            else {
+            } else {
                 report.logInfo("No relevant modified code found");
             }
-        }
-        else {
+        } else {
             report.logInfo("Skip detection of issues in modified code");
         }
     }
@@ -202,12 +222,10 @@ class IssuesPublisher {
         if (healthDescriptor.isEnabled()) {
             if (healthDescriptor.isValid()) {
                 filtered.logInfo("Enabling health report (%s)", healthDescriptor);
-            }
-            else {
+            } else {
                 filtered.logInfo("Health report is invalid (%s) - skipping", healthDescriptor);
             }
-        }
-        else {
+        } else {
             filtered.logInfo("Health report is disabled - skipping");
         }
     }
@@ -227,7 +245,8 @@ class IssuesPublisher {
             for (ResetReferenceAction action : actions) {
                 if (report.getId().equals(action.getId())) {
                     issues.logInfo("Resetting reference build, ignoring quality gate result for one build");
-                    issues.logInfo("Using reference build '%s' to compute new, fixed, and outstanding issues",
+                    issues.logInfo(
+                            "Using reference build '%s' to compute new, fixed, and outstanding issues",
                             previous.getFullDisplayName());
                     return Optional.of(previous);
                 }
@@ -244,11 +263,12 @@ class IssuesPublisher {
         return Optional.empty();
     }
 
-    private Optional<Run<?, ?>> refineReferenceBasedOnQualityGate(final ResultSelector selector, final Report issues,
-            final Run<?, ?> reference) {
+    private Optional<Run<?, ?>> refineReferenceBasedOnQualityGate(
+            final ResultSelector selector, final Report issues, final Run<?, ?> reference) {
         boolean isSkipped = false;
         var gateEvaluationMode = determineQualityGateEvaluationMode();
-        for (Run<?, ?> candidate = findStartOfSearch(reference, issues); candidate != null;
+        for (Run<?, ?> candidate = findStartOfSearch(reference, issues);
+                candidate != null;
                 candidate = candidate.getPreviousBuild()) {
             Optional<ResultAction> action = selector.get(candidate);
             if (hasRequiredResult(candidate, action)) {
@@ -272,7 +292,8 @@ class IssuesPublisher {
         // search at the previous completed build (only for the same job, newer builds of other jobs are not valid)
         Run<?, ?> previous = run.getPreviousCompletedBuild();
         if (previous != null && isNewerBuildOfSameJob(previous, reference)) {
-            issues.logInfo("Analyzing builds newer than reference build '%s' as well, "
+            issues.logInfo(
+                    "Analyzing builds newer than reference build '%s' as well, "
                             + "since builds that failed due to a quality gate might be used as reference",
                     reference.getFullDisplayName());
             return previous;
@@ -300,18 +321,22 @@ class IssuesPublisher {
                         .isPresent();
     }
 
-    private boolean isValidReference(final Optional<ResultAction> action,
-            final QualityGateEvaluationMode gateEvaluationMode, final String displayName, final Report issues) {
+    private boolean isValidReference(
+            final Optional<ResultAction> action,
+            final QualityGateEvaluationMode gateEvaluationMode,
+            final String displayName,
+            final Report issues) {
         if (action.isEmpty()) {
             return false;
         }
         if (action.get().isSuccessful()) {
-            issues.logInfo("Quality gate successful for reference build '%s', using this build as reference",
-                    displayName);
+            issues.logInfo(
+                    "Quality gate successful for reference build '%s', using this build as reference", displayName);
             return true;
         }
         if (gateEvaluationMode == IGNORE_QUALITY_GATE) {
-            issues.logInfo("Quality gate has been missed for reference build '%s', but is configured to be ignored",
+            issues.logInfo(
+                    "Quality gate has been missed for reference build '%s', but is configured to be ignored",
                     displayName);
             return true;
         }
@@ -321,10 +346,9 @@ class IssuesPublisher {
     private void logSkippedBuild(final String displayName, final Optional<ResultAction> action, final Report issues) {
         if (action.isPresent()) {
             issues.logInfo("Quality gate failed for reference build '%s', analyzing previous builds", displayName);
-        }
-        else {
-            issues.logInfo("Reference build '%s' does not contain a result action, analyzing previous builds",
-                    displayName);
+        } else {
+            issues.logInfo(
+                    "Reference build '%s' does not contain a result action, analyzing previous builds", displayName);
         }
     }
 

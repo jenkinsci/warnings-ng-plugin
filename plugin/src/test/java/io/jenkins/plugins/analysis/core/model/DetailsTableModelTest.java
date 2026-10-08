@@ -1,13 +1,11 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.*;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
-
 import io.jenkins.plugins.analysis.core.model.DetailsTableModel.TableRow;
-
-import static org.assertj.core.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class {@link DetailsTableModel}.
@@ -36,14 +34,14 @@ class DetailsTableModelTest extends AbstractDetailsModelTest {
 
             var actualColumn = model.getDescription();
             var actualMessage = model.getMessage();
-            
+
             assertThat(actualColumn)
                     .doesNotContain("<script>alert")
                     .doesNotContain("<b>Bold text</b>")
                     .contains("&amp;lt;script&amp;gt;")
                     .contains("&amp;lt;b&amp;gt;")
                     .contains("Bold text");
-            
+
             assertThat(actualMessage)
                     .doesNotContain("<script>")
                     .doesNotContain("</script>")
@@ -63,10 +61,8 @@ class DetailsTableModelTest extends AbstractDetailsModelTest {
             var model = createRow(issue, i -> "<img src=x onerror=alert('XSS')><div>Description</div>");
 
             var actualColumn = model.getDescription();
-            
-            assertThat(actualColumn)
-                    .doesNotContain("onerror=alert")  
-                    .contains("Description");  
+
+            assertThat(actualColumn).doesNotContain("onerror=alert").contains("Description");
         }
     }
 
@@ -79,7 +75,7 @@ class DetailsTableModelTest extends AbstractDetailsModelTest {
 
             var actualColumn = model.getDescription();
             var actualMessage = model.getMessage();
-            
+
             assertThat(actualColumn).contains("&lt;").contains("&gt;");
             assertThat(actualMessage).contains("&lt;").contains("&gt;");
         }
@@ -93,12 +89,12 @@ class DetailsTableModelTest extends AbstractDetailsModelTest {
             var model = createRow(builder.build());
 
             var actualMessage = model.getMessage();
-            
+
             assertThat(actualMessage)
-                    .contains("&amp;#228;")  // &#228; should become &amp;#228;
-                    .contains("&amp;#246;")  // &#246; should become &amp;#246;
-                    .doesNotContain("ä")     // Should not be converted to actual character
-                    .doesNotContain("ö");    // Should not be converted to actual character
+                    .contains("&amp;#228;") // &#228; should become &amp;#228;
+                    .contains("&amp;#246;") // &#246; should become &amp;#246;
+                    .doesNotContain("ä") // Should not be converted to actual character
+                    .doesNotContain("ö"); // Should not be converted to actual character
         }
     }
 
@@ -107,8 +103,7 @@ class DetailsTableModelTest extends AbstractDetailsModelTest {
         var issue = createIssue(1);
         var model = createRow(issue);
 
-        assertThatDetailedColumnContains(model.getFileName(),
-                createExpectedFileName(issue), "/path/to/file-1:0000015");
+        assertThatDetailedColumnContains(model.getFileName(), createExpectedFileName(issue), "/path/to/file-1:0000015");
     }
 
     @Test
@@ -123,12 +118,12 @@ class DetailsTableModelTest extends AbstractDetailsModelTest {
     }
 
     private TableRow createRow(final Issue issue) {
-        return new TableRow(createAgeBuilder(), createFileNameRenderer(), i -> DESCRIPTION, issue,
-                createJenkinsFacade());
+        return new TableRow(
+                createAgeBuilder(), createFileNameRenderer(), i -> DESCRIPTION, issue, createJenkinsFacade());
     }
 
     private TableRow createRow(final Issue issue, final DescriptionProvider descriptionProvider) {
-        return new TableRow(createAgeBuilder(), createFileNameRenderer(), descriptionProvider, issue,
-                createJenkinsFacade());
+        return new TableRow(
+                createAgeBuilder(), createFileNameRenderer(), descriptionProvider, issue, createJenkinsFacade());
     }
 }

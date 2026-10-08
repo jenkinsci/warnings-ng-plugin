@@ -1,13 +1,12 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
-import org.junit.jupiter.api.Test;
+import static edu.hm.hafner.analysis.assertions.Assertions.*;
 
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.analysis.assertions.SoftAssertions;
 import edu.hm.hafner.analysis.registry.AbstractParserTest;
-
-import static edu.hm.hafner.analysis.assertions.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test the class {@link DynamicLineParser}. Creates a new Pep8 parser in Groovy. All Pep8 test cases are reused.
@@ -46,7 +45,8 @@ class DynamicLineParserTest extends AbstractParserTest {
 
     @Test
     void shouldScanAllLinesAndAssignLineNumberAndFileName() {
-        var parser = new DynamicLineParser("^(.*)$",
+        var parser = new DynamicLineParser(
+                "^(.*)$",
                 "return builder.setFileName(fileName).setLineStart(lineNumber).setMessage(matcher.group(1)).buildOptional()");
         var report = parser.parse(createReaderFactory(FILE_NAME));
 

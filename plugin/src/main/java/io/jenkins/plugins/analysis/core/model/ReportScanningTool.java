@@ -1,6 +1,6 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import org.apache.commons.lang3.StringUtils;
+import static io.jenkins.plugins.analysis.core.util.ConsoleLogHandler.*;
 
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.ParsingCanceledException;
@@ -8,16 +8,6 @@ import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.Ensure;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
-
-import java.io.IOException;
-import java.io.Serial;
-import java.nio.charset.Charset;
-import java.util.List;
-
-import org.kohsuke.stapler.AncestorInPath;
-import org.kohsuke.stapler.DataBoundSetter;
-import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.verb.POST;
 import hudson.FilePath;
 import hudson.model.AbstractProject;
 import hudson.model.BuildableItem;
@@ -26,8 +16,6 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
-import jenkins.model.Jenkins;
-
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser.AnalysisModelParserDescriptor;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogReaderFactory;
 import io.jenkins.plugins.util.AgentFileVisitor.FileVisitorResult;
@@ -35,8 +23,16 @@ import io.jenkins.plugins.util.EnvironmentResolver;
 import io.jenkins.plugins.util.JenkinsFacade;
 import io.jenkins.plugins.util.LogHandler;
 import io.jenkins.plugins.util.ValidationUtilities;
-
-import static io.jenkins.plugins.analysis.core.util.ConsoleLogHandler.*;
+import java.io.IOException;
+import java.io.Serial;
+import java.nio.charset.Charset;
+import java.util.List;
+import jenkins.model.Jenkins;
+import org.apache.commons.lang3.StringUtils;
+import org.kohsuke.stapler.AncestorInPath;
+import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
 
 /**
  * Describes a static analysis tool that reports issues by scanning a report file. Report files are identified using an
@@ -47,6 +43,7 @@ import static io.jenkins.plugins.analysis.core.util.ConsoleLogHandler.*;
 public abstract class ReportScanningTool extends Tool {
     @Serial
     private static final long serialVersionUID = 2250515287336975478L;
+
     private static final ValidationUtilities VALIDATION_UTILITIES = new ValidationUtilities();
 
     private String pattern = StringUtils.EMPTY;
@@ -161,8 +158,8 @@ public abstract class ReportScanningTool extends Tool {
     }
 
     @Override
-    public Report scan(final Run<?, ?> run, final FilePath workspace, final Charset sourceCodeEncoding,
-            final LogHandler logger) {
+    public Report scan(
+            final Run<?, ?> run, final FilePath workspace, final Charset sourceCodeEncoding, final LogHandler logger) {
         var report = scan(run, workspace, logger);
         report.setOrigin(getActualId(), getActualName());
         return report;
@@ -172,10 +169,10 @@ public abstract class ReportScanningTool extends Tool {
         var actualPattern = getActualPattern();
         if (StringUtils.isBlank(actualPattern)) {
             return scanInConsoleLog(workspace, run, logger);
-        }
-        else {
+        } else {
             if (StringUtils.isBlank(getPattern())) {
-                logger.log("Using default pattern '%s' since user defined pattern is not set",
+                logger.log(
+                        "Using default pattern '%s' since user defined pattern is not set",
                         getDescriptor().getPattern());
             }
 
@@ -190,18 +187,16 @@ public abstract class ReportScanningTool extends Tool {
         try {
             var environmentResolver = new EnvironmentResolver();
 
-            return environmentResolver.expandEnvironmentVariables(
-                    run.getEnvironment(TaskListener.NULL), actualPattern);
-        }
-        catch (IOException | InterruptedException ignore) {
+            return environmentResolver.expandEnvironmentVariables(run.getEnvironment(TaskListener.NULL), actualPattern);
+        } catch (IOException | InterruptedException ignore) {
             return actualPattern; // fallback, no expansion
         }
     }
 
     private Report scanInWorkspace(final FilePath workspace, final String expandedPattern, final LogHandler logger) {
         try {
-            FileVisitorResult<Report> report = workspace.act(
-                    new IssueReportScanner(expandedPattern, reportEncoding, followSymlinks(), createParser(), !isEmptyFileValid()));
+            FileVisitorResult<Report> report = workspace.act(new IssueReportScanner(
+                    expandedPattern, reportEncoding, followSymlinks(), createParser(), !isEmptyFileValid()));
 
             var log = report.getLog();
             logger.log(log);
@@ -211,28 +206,25 @@ public abstract class ReportScanningTool extends Tool {
             // FIXME: properties are not set in the aggregation
             if (results.isEmpty()) {
                 aggregation = new Report();
-            }
-            else if (results.size() == 1) {
+            } else if (results.size() == 1) {
                 aggregation = results.get(0);
-            }
-            else {
+            } else {
                 aggregation = new Report(results);
             }
             aggregation.mergeLogMessages(log);
             return aggregation;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new ParsingException(e);
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
             throw new ParsingCanceledException(e);
         }
     }
 
     private Report scanInConsoleLog(final FilePath workspace, final Run<?, ?> run, final LogHandler logger) {
-        Ensure.that(canScanConsoleLog()).isTrue(
-                "Static analysis tool %s cannot scan console log output, please define a file pattern",
-                getActualName());
+        Ensure.that(canScanConsoleLog())
+                .isTrue(
+                        "Static analysis tool %s cannot scan console log output, please define a file pattern",
+                        getActualName());
 
         var consoleReport = new Report();
         consoleReport.logInfo("Parsing console log (workspace: '%s')", workspace);
@@ -243,9 +235,9 @@ public abstract class ReportScanningTool extends Tool {
         var report = createParser().parse(new ConsoleLogReaderFactory(run));
 
         report.logInfo("Successfully parsed console log");
-        report.logInfo("-> found %s (skipped %s)",
-                plural(report.getSize(), "issue"),
-                plural(report.getDuplicatesSize(), "duplicate"));
+        report.logInfo(
+                "-> found %s (skipped %s)",
+                plural(report.getSize(), "issue"), plural(report.getDuplicatesSize(), "duplicate"));
         report.setOriginReportFile(JENKINS_CONSOLE_LOG_FILE_NAME_ID);
 
         consoleReport.addAll(report);
@@ -308,8 +300,8 @@ public abstract class ReportScanningTool extends Tool {
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckReportEncoding(@AncestorInPath final BuildableItem project,
-                @QueryParameter final String reportEncoding) {
+        public FormValidation doCheckReportEncoding(
+                @AncestorInPath final BuildableItem project, @QueryParameter final String reportEncoding) {
             if (!JENKINS.hasPermission(Jenkins.READ)) {
                 return FormValidation.ok();
             }
@@ -350,8 +342,8 @@ public abstract class ReportScanningTool extends Tool {
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckPattern(@AncestorInPath final AbstractProject<?, ?> project,
-                @QueryParameter final String pattern) {
+        public FormValidation doCheckPattern(
+                @AncestorInPath final AbstractProject<?, ?> project, @QueryParameter final String pattern) {
             if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }

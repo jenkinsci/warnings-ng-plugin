@@ -1,9 +1,8 @@
 package io.jenkins.plugins.analysis.core.util;
 
 import com.google.errorprone.annotations.MustBeClosed;
-
 import edu.hm.hafner.analysis.Issue;
-
+import hudson.model.Run;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -12,8 +11,6 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.util.stream.Stream;
-
-import hudson.model.Run;
 
 /**
  * Facade to the files in the build folder of the Jenkins controller. Encapsulates all calls to the running Jenkins

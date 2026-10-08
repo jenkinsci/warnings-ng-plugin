@@ -1,13 +1,10 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import org.openqa.selenium.By;
-
 import org.jenkinsci.test.acceptance.po.GlobalSecurityConfig;
 import org.jenkinsci.test.acceptance.po.Jenkins;
+import org.openqa.selenium.By;
 
-/**
- * Global security configuration of the Prism Plugin.
- */
+/** Global security configuration of the Prism Plugin. */
 public class GlobalPrismSettings extends GlobalSecurityConfig {
     private static final String SOURCE_DIR_PATH = "/io-jenkins-plugins-prism-PrismConfiguration/";
     private static final String BUTTON_ADD = "repeatable-add";
@@ -20,8 +17,7 @@ public class GlobalPrismSettings extends GlobalSecurityConfig {
     /**
      * Enters the given source directory path on the system configuration page from jenkins.
      *
-     * @param absolutePath
-     *         source directory path as an absolute path.
+     * @param absolutePath source directory path as an absolute path.
      */
     public void enterSourceDirectoryPath(final String absolutePath) {
         ensureConfigPage();

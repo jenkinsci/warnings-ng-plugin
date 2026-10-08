@@ -1,15 +1,13 @@
 package io.jenkins.plugins.analysis.core.columns;
 
-import org.junit.jupiter.api.Test;
-
-import jenkins.model.Jenkins;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import io.jenkins.plugins.analysis.core.util.IssuesStatistics.StatisticProperties;
 import io.jenkins.plugins.util.GlobalConfigurationFacade;
 import io.jenkins.plugins.util.JenkinsFacade;
-
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
-import static org.mockito.Mockito.*;
+import jenkins.model.Jenkins;
+import org.junit.jupiter.api.Test;
 
 class WarningsAppearanceConfigurationTest {
     @Test
@@ -20,8 +18,10 @@ class WarningsAppearanceConfigurationTest {
 
         assertThat(configuration.doFillDefaultTypeItems()).isEmpty();
         when(jenkins.hasPermission(Jenkins.READ)).thenReturn(true);
-        assertThat(configuration.doFillDefaultTypeItems()).map(o -> o.value)
-                .contains("TOTAL",
+        assertThat(configuration.doFillDefaultTypeItems())
+                .map(o -> o.value)
+                .contains(
+                        "TOTAL",
                         "TOTAL_ERROR",
                         "TOTAL_HIGH",
                         "TOTAL_NORMAL",

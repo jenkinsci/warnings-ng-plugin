@@ -1,13 +1,11 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import edu.umd.cs.findbugs.annotations.CheckForNull;
-
-import java.io.Serial;
-import java.io.Serializable;
-
 import hudson.Util;
 import hudson.model.Action;
 import hudson.model.User;
+import java.io.Serial;
+import java.io.Serializable;
 
 /**
  * Marker for a build to indicate that this build should serve as a new reference build for the quality gate evaluation
@@ -77,8 +75,7 @@ public class ResetReferenceAction implements Action, Serializable {
         try {
             User user = User.getById(userId, false);
             return user != null ? user.getFullName() : userId;
-        }
-        catch (IllegalStateException e) {
+        } catch (IllegalStateException e) {
             // Can occur when Jenkins environment is not fully initialized (e.g., during unit tests)
             // User.getById() throws IllegalStateException when User$AllUsers extension is not available
             return userId;

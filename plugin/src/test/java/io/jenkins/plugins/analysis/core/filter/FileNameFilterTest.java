@@ -1,13 +1,11 @@
 package io.jenkins.plugins.analysis.core.filter;
 
-import java.util.List;
-
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.*;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
-
-import static org.assertj.core.api.Assertions.*;
+import java.util.List;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class {@link FileNameFilter}.
@@ -19,7 +17,8 @@ class FileNameFilterTest {
     void shouldMatchRelativeEntryAgainstAbsolutePath() {
         var filter = new FileNameFilter(List.of("src/File.ts"));
 
-        assertThat(filter.test(issue("/home/jenkins/workspace/job/src/File.ts"))).isTrue();
+        assertThat(filter.test(issue("/home/jenkins/workspace/job/src/File.ts")))
+                .isTrue();
     }
 
     @Test
@@ -40,7 +39,8 @@ class FileNameFilterTest {
     void shouldNormalizeSeparatorsAndRelativePrefix() {
         var filter = new FileNameFilter(List.of(".\\src\\File.ts"));
 
-        assertThat(filter.test(issue("/home/jenkins/workspace/job/src/File.ts"))).isTrue();
+        assertThat(filter.test(issue("/home/jenkins/workspace/job/src/File.ts")))
+                .isTrue();
     }
 
     @Test

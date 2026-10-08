@@ -1,24 +1,8 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import org.apache.commons.lang3.StringUtils;
-import org.eclipse.collections.impl.factory.Sets;
-
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.DataBoundSetter;
-import org.jenkinsci.plugins.workflow.steps.Step;
-import org.jenkinsci.plugins.workflow.steps.StepContext;
-import org.jenkinsci.plugins.workflow.steps.StepExecution;
 import hudson.EnvVars;
 import hudson.Extension;
 import hudson.FilePath;
@@ -31,6 +15,19 @@ import io.jenkins.plugins.analysis.core.steps.IssuesScanner.BlameMode;
 import io.jenkins.plugins.analysis.core.steps.IssuesScanner.PostProcessingMode;
 import io.jenkins.plugins.prism.SourceCodeDirectory;
 import io.jenkins.plugins.prism.SourceCodeRetention;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
+import org.eclipse.collections.impl.factory.Sets;
+import org.jenkinsci.plugins.workflow.steps.Step;
+import org.jenkinsci.plugins.workflow.steps.StepContext;
+import org.jenkinsci.plugins.workflow.steps.StepExecution;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 
 /**
  * Scan files or the console log for issues.
@@ -221,9 +218,7 @@ public class ScanForIssuesStep extends Step {
     }
 
     private Set<String> getAllSourceDirectories() {
-        return getSourceDirectories().stream()
-                .map(SourceCodeDirectory::getPath)
-                .collect(Collectors.toSet());
+        return getSourceDirectories().stream().map(SourceCodeDirectory::getPath).collect(Collectors.toSet());
     }
 
     /**
@@ -289,10 +284,13 @@ public class ScanForIssuesStep extends Step {
         private final String sourceCodeEncoding;
         private final boolean isBlameDisabled;
         private final boolean skipPostProcessing;
+
         @SuppressWarnings("serial")
         private final FilterConfig filterConfig;
+
         @SuppressWarnings("serial")
         private final Set<String> sourceDirectories;
+
         private final String scm;
         private final boolean quiet;
         private final SourceCodeRetention sourceCodeRetention;
@@ -328,12 +326,22 @@ public class ScanForIssuesStep extends Step {
             var workspace = getWorkspace();
             var listener = getTaskListener();
 
-            var issuesScanner = new IssuesScanner(tool, filterConfig,
-                    getCharset(sourceCodeEncoding), workspace, sourceDirectories,
-                    sourceCodeRetention, getRun(), new FilePath(getRun().getRootDir()), listener,
-                    scm, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED,
+            var issuesScanner = new IssuesScanner(
+                    tool,
+                    filterConfig,
+                    getCharset(sourceCodeEncoding),
+                    workspace,
+                    sourceDirectories,
+                    sourceCodeRetention,
+                    getRun(),
+                    new FilePath(getRun().getRootDir()),
+                    listener,
+                    scm,
+                    isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED,
                     skipPostProcessing ? PostProcessingMode.DISABLED : PostProcessingMode.ENABLED,
-                    quiet, sourcePathPrefix, targetPathPrefix);
+                    quiet,
+                    sourcePathPrefix,
+                    targetPathPrefix);
 
             return issuesScanner.scan();
         }
@@ -346,7 +354,9 @@ public class ScanForIssuesStep extends Step {
     public static class Descriptor extends AnalysisStepDescriptor {
         @Override
         public Set<Class<?>> getRequiredContext() {
-            return Sets.immutable.of(FilePath.class, EnvVars.class, TaskListener.class, Run.class).castToSet();
+            return Sets.immutable
+                    .of(FilePath.class, EnvVars.class, TaskListener.class, Run.class)
+                    .castToSet();
         }
 
         @Override

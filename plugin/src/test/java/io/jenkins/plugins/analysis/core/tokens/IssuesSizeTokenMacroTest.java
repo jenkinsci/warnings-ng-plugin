@@ -1,13 +1,11 @@
 package io.jenkins.plugins.analysis.core.tokens;
 
-import org.junit.jupiter.api.Test;
-
-import hudson.model.Run;
-
-import io.jenkins.plugins.analysis.core.util.IssuesStatistics.StatisticProperties;
-
 import static io.jenkins.plugins.analysis.core.testutil.JobStubs.*;
 import static org.assertj.core.api.Assertions.*;
+
+import hudson.model.Run;
+import io.jenkins.plugins.analysis.core.util.IssuesStatistics.StatisticProperties;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class {@link IssuesSizeTokenMacro}.
@@ -45,8 +43,7 @@ class IssuesSizeTokenMacroTest {
         var macro = new IssuesSizeTokenMacro();
 
         Run<?, ?> run = createBuildWithActions(
-                createAction("first", "first name", 1),
-                createAction("second", "second name", 2));
+                createAction("first", "first name", 1), createAction("second", "second name", 2));
         assertThat(expandMacro(macro, run)).isEqualTo("3");
 
         macro.setTool("first");
@@ -63,8 +60,7 @@ class IssuesSizeTokenMacroTest {
     void shouldExpandTokenForNewAndFixedWarnings() {
         var macro = new IssuesSizeTokenMacro();
 
-        Run<?, ?> run = createBuildWithActions(
-                createAction("id", "name", 3, 2, 1));
+        Run<?, ?> run = createBuildWithActions(createAction("id", "name", 3, 2, 1));
 
         assertThat(expandMacro(macro, run)).isEqualTo("3");
 
@@ -79,8 +75,9 @@ class IssuesSizeTokenMacroTest {
     void shouldThrowExceptionIfEnumDoesNotExist() {
         var macro = new IssuesSizeTokenMacro();
 
-        assertThatIllegalArgumentException().isThrownBy(
-                () -> macro.setType("wrong")).withMessageContaining("wrong");
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> macro.setType("wrong"))
+                .withMessageContaining("wrong");
     }
 
     private String expandMacro(final IssuesSizeTokenMacro macro, final Run<?, ?> run) {

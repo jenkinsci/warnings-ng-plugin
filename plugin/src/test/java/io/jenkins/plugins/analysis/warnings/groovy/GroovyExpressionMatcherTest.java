@@ -1,14 +1,12 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
-import org.codehaus.groovy.control.CompilationFailedException;
-import org.junit.jupiter.api.Test;
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 
 import edu.hm.hafner.analysis.IssueBuilder;
-
 import groovy.lang.Script;
 import java.util.Optional;
-
-import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
+import org.codehaus.groovy.control.CompilationFailedException;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class {@link GroovyExpressionMatcher}.
@@ -71,14 +69,17 @@ class GroovyExpressionMatcherTest {
                 "return builder.setLineStart(lineNumber).setFileName(fileName).buildOptional()");
 
         var result = matcher.run(null, new IssueBuilder(), 15, FILE_NAME);
-        assertThat(result).isEqualTo(new IssueBuilder().setLineStart(15).setFileName("File.txt").buildOptional());
+        assertThat(result)
+                .isEqualTo(new IssueBuilder()
+                        .setLineStart(15)
+                        .setFileName("File.txt")
+                        .buildOptional());
     }
 
     @Test
     void shouldAutomaticallySetFileNameAndLineStartWhenNotSetByScript() {
         // JENKINS-74818: Test that fileName and lineStart are automatically set when not explicitly set by the script
-        var matcher = new GroovyExpressionMatcher(
-                "return builder.setMessage('test message').buildOptional()");
+        var matcher = new GroovyExpressionMatcher("return builder.setMessage('test message').buildOptional()");
 
         var result = matcher.run(null, new IssueBuilder(), 42, "test.txt");
         var expected = new IssueBuilder()

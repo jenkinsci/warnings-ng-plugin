@@ -1,15 +1,12 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import org.apache.commons.lang3.StringUtils;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
-
-import org.kohsuke.stapler.DataBoundConstructor;
 import hudson.Extension;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
-
 import io.jenkins.plugins.analysis.core.model.Tool;
+import org.apache.commons.lang3.StringUtils;
+import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
  * Proxy to a static analysis tool.

@@ -2,20 +2,17 @@ package io.jenkins.plugins.analysis.core.model;
 
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
+import hudson.model.Action;
+import hudson.model.Api;
+import hudson.model.Run;
+import io.jenkins.plugins.analysis.core.restapi.AggregationApi;
+import io.jenkins.plugins.analysis.core.restapi.ToolApi;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import hudson.model.Action;
-import hudson.model.Api;
-import hudson.model.Run;
 import jenkins.model.RunAction2;
 import jenkins.tasks.SimpleBuildStep.LastBuildAction;
-
-import io.jenkins.plugins.analysis.core.restapi.AggregationApi;
-import io.jenkins.plugins.analysis.core.restapi.ToolApi;
 
 /**
  * Aggregates the results of all analysis results. Provides an entry point for the remote API. Currently, the aggregated
@@ -60,7 +57,9 @@ public class AggregationAction implements RunAction2, LastBuildAction {
     }
 
     private List<ToolApi> findActions() {
-        return owner.getActions(ResultAction.class).stream().map(this::createToolApi).collect(Collectors.toList());
+        return owner.getActions(ResultAction.class).stream()
+                .map(this::createToolApi)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -69,8 +68,12 @@ public class AggregationAction implements RunAction2, LastBuildAction {
     }
 
     private ToolApi createToolApi(final ResultAction result) {
-        return new ToolApi(result.getId(), result.getDisplayName(),
-                result.getAbsoluteUrl(), result.getResult().getTotalSize(), result.getResult().getSizePerSeverity());
+        return new ToolApi(
+                result.getId(),
+                result.getDisplayName(),
+                result.getAbsoluteUrl(),
+                result.getResult().getTotalSize(),
+                result.getResult().getSizePerSeverity());
     }
 
     @Override

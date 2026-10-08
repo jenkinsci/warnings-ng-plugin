@@ -1,18 +1,11 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.StringEscapeUtils;
+import static j2html.TagCreator.*;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.analysis.util.IntegerParser;
-
-import j2html.tags.DomContentJoiner;
-import j2html.tags.UnescapedText;
-import java.util.ArrayList;
-import java.util.List;
-
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 import io.jenkins.plugins.datatables.DetailedCell;
@@ -24,8 +17,12 @@ import io.jenkins.plugins.datatables.TableConfiguration;
 import io.jenkins.plugins.datatables.TableModel;
 import io.jenkins.plugins.prism.Sanitizer;
 import io.jenkins.plugins.util.JenkinsFacade;
-
-import static j2html.TagCreator.*;
+import j2html.tags.DomContentJoiner;
+import j2html.tags.UnescapedText;
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 
 /**
  * Provides the model for the issues details table. The model consists of the following parts:
@@ -59,8 +56,11 @@ public abstract class DetailsTableModel extends TableModel {
      * @param jenkinsFacade
      *         Jenkins facade to replaced with a stub during unit tests
      */
-    protected DetailsTableModel(final Report report, final FileNameRenderer fileNameRenderer,
-            final AgeBuilder ageBuilder, final DescriptionProvider descriptionProvider,
+    protected DetailsTableModel(
+            final Report report,
+            final FileNameRenderer fileNameRenderer,
+            final AgeBuilder ageBuilder,
+            final DescriptionProvider descriptionProvider,
             final JenkinsFacade jenkinsFacade) {
         super();
 
@@ -113,7 +113,8 @@ public abstract class DetailsTableModel extends TableModel {
     }
 
     protected TableColumn createDetailsColumn() {
-        return new ColumnBuilder().withHeaderLabel(Messages.Table_Column_Details())
+        return new ColumnBuilder()
+                .withHeaderLabel(Messages.Table_Column_Details())
                 .withDataPropertyKey("description")
                 .withResponsivePriority(1)
                 .withHeaderClass(ColumnCss.NO_SORT)
@@ -121,14 +122,16 @@ public abstract class DetailsTableModel extends TableModel {
     }
 
     protected TableColumn createHiddenDetailsColumn() {
-        return new ColumnBuilder().withHeaderLabel("Hiddendetails")
+        return new ColumnBuilder()
+                .withHeaderLabel("Hiddendetails")
                 .withDataPropertyKey("message")
                 .withHeaderClass(ColumnCss.HIDDEN)
                 .build();
     }
 
     protected TableColumn createFileColumn() {
-        return new ColumnBuilder().withHeaderLabel(Messages.Table_Column_File())
+        return new ColumnBuilder()
+                .withHeaderLabel(Messages.Table_Column_File())
                 .withDataPropertyKey("fileName")
                 .withResponsivePriority(1)
                 .withDetailedCell()
@@ -136,7 +139,8 @@ public abstract class DetailsTableModel extends TableModel {
     }
 
     protected TableColumn createAgeColumn() {
-        return new ColumnBuilder().withHeaderLabel(Messages.Table_Column_Age())
+        return new ColumnBuilder()
+                .withHeaderLabel(Messages.Table_Column_Age())
                 .withDataPropertyKey("age")
                 .withType(ColumnType.HTML_NUMBER)
                 .withResponsivePriority(10)
@@ -144,14 +148,16 @@ public abstract class DetailsTableModel extends TableModel {
     }
 
     protected TableColumn createSeverityColumn() {
-        return new ColumnBuilder().withHeaderLabel(Messages.Table_Column_Severity())
+        return new ColumnBuilder()
+                .withHeaderLabel(Messages.Table_Column_Severity())
                 .withDataPropertyKey("severity")
                 .withResponsivePriority(5)
                 .build();
     }
 
     protected TableColumn createPackageColumn() {
-        return new ColumnBuilder().withHeaderLabel(Messages.Table_Column_Package())
+        return new ColumnBuilder()
+                .withHeaderLabel(Messages.Table_Column_Package())
                 .withDataPropertyKey("packageName")
                 .withResponsivePriority(50_000)
                 .build();
@@ -193,8 +199,11 @@ public abstract class DetailsTableModel extends TableModel {
          * @param jenkinsFacade
          *         Jenkins facade to be replaced with a stub during unit tests
          */
-        protected TableRow(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
-                final DescriptionProvider descriptionProvider, final Issue issue,
+        protected TableRow(
+                final AgeBuilder ageBuilder,
+                final FileNameRenderer fileNameRenderer,
+                final DescriptionProvider descriptionProvider,
+                final Issue issue,
                 final JenkinsFacade jenkinsFacade) {
             this.jenkinsFacade = jenkinsFacade;
             message = StringEscapeUtils.escapeHtml4(issue.getMessage());
@@ -204,7 +213,8 @@ public abstract class DetailsTableModel extends TableModel {
         }
 
         private DetailedCell<String> createFileName(final FileNameRenderer fileNameRenderer, final Issue issue) {
-            return new DetailedCell<>(fileNameRenderer.renderAffectedFileLink(issue),
+            return new DetailedCell<>(
+                    fileNameRenderer.renderAffectedFileLink(issue),
                     "%s:%07d".formatted(issue.getFileName(), issue.getLineStart()));
         }
 
@@ -224,9 +234,10 @@ public abstract class DetailsTableModel extends TableModel {
             UnescapedText details;
             if (StringUtils.isBlank(issue.getMessage())) {
                 details = new UnescapedText(render(additionalDescription));
-            }
-            else {
-                details = DomContentJoiner.join(" ", false,
+            } else {
+                details = DomContentJoiner.join(
+                        " ",
+                        false,
                         p(strong().with(new UnescapedText(StringEscapeUtils.escapeHtml4(issue.getMessage())))),
                         render(additionalDescription));
             }
@@ -242,8 +253,8 @@ public abstract class DetailsTableModel extends TableModel {
          * @return the formatted column
          */
         protected final String formatSeverity(final Severity severity) {
-            return "<a href=\"%s\">%s</a>".formatted(
-                    severity.getName(), LocalizedSeverity.getLocalizedString(severity));
+            return "<a href=\"%s\">%s</a>"
+                    .formatted(severity.getName(), LocalizedSeverity.getLocalizedString(severity));
         }
 
         /**

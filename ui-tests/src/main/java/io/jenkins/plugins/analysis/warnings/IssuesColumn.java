@@ -1,18 +1,16 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
-
 import java.util.List;
 import java.util.Objects;
-
 import org.jenkinsci.test.acceptance.plugins.dashboard_view.DashboardView;
 import org.jenkinsci.test.acceptance.po.ContainerPageObject;
 import org.jenkinsci.test.acceptance.po.Jenkins;
 import org.jenkinsci.test.acceptance.po.ListView;
 import org.jenkinsci.test.acceptance.po.PageObject;
+import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 
 /**
  * {@link PageObject} to access the issues total column in a {@link ListView}, {@link DashboardView}, or {@link Jenkins}
@@ -31,13 +29,9 @@ public class IssuesColumn extends PageObject {
     /**
      * Creates a new issue column page object.
      *
-     * @param container
-     *         the view that contains the job status table with a column for the static analysis results
-     * @param name
-     *         the name of the column with the static analysis results
-     *
-     * @throws NoSuchElementException
-     *         if the specified column does not exist
+     * @param container the view that contains the job status table with a column for the static analysis results
+     * @param name the name of the column with the static analysis results
+     * @throws NoSuchElementException if the specified column does not exist
      */
     public IssuesColumn(final ContainerPageObject container, final String name) {
         super(container, container.url);
@@ -65,8 +59,7 @@ public class IssuesColumn extends PageObject {
         for (WebElement columnHeader : columnHeaders) {
             if (columnHeader.getText().contains(name)) {
                 return index + 1;
-            }
-            else {
+            } else {
                 index++;
             }
         }
@@ -106,9 +99,7 @@ public class IssuesColumn extends PageObject {
     /**
      * Reads the tool name from the table that is displayed when hovering the issue column.
      *
-     * @param rowNumber
-     *         number of the row in the displayed table
-     *
+     * @param rowNumber number of the row in the displayed table
      * @return Name of the tool in the given row
      */
     public String getToolFromTooltip(final int rowNumber) {
@@ -120,9 +111,7 @@ public class IssuesColumn extends PageObject {
     /**
      * Reads the issue count from the table that is displayed when hovering the issue column.
      *
-     * @param rowNumber
-     *         number of the row in the displayed table
-     *
+     * @param rowNumber number of the row in the displayed table
      * @return issue count in the given row
      */
     public String getTotalFromTooltip(final int rowNumber) {

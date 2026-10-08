@@ -1,35 +1,31 @@
 package io.jenkins.plugins.analysis.core.mcp;
 
-import org.jvnet.hudson.test.JenkinsRule;
-import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
+import static org.assertj.core.api.Assertions.*;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
-import java.net.URL;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-
-import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
-import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.FilePath;
 import hudson.model.Result;
-
 import io.jenkins.plugins.mcp.server.junit.JenkinsMcpClientBuilder;
 import io.jenkins.plugins.mcp.server.junit.McpClientTest;
 import io.modelcontextprotocol.spec.McpSchema;
 import io.modelcontextprotocol.spec.McpSchema.CallToolRequest;
-
-import static org.assertj.core.api.Assertions.*;
+import java.net.URL;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
+import org.jenkinsci.plugins.workflow.job.WorkflowJob;
+import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
 @WithJenkins
 class WarningsMcpServerExtensionTest {
     @McpClientTest
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
-    void testMcpToolCallGetWarnings(final JenkinsRule jenkins,
-            final JenkinsMcpClientBuilder jenkinsMcpClientBuilder) throws Exception {
+    void testMcpToolCallGetWarnings(final JenkinsRule jenkins, final JenkinsMcpClientBuilder jenkinsMcpClientBuilder)
+            throws Exception {
         WorkflowJob j = jenkins.createProject(WorkflowJob.class, "singleStep");
         j.setDefinition(new CpsFlowDefinition("""
                         stage('first') {
@@ -55,15 +51,15 @@ class WarningsMcpServerExtensionTest {
             assertContainsSingleCheckstyleWarning(response);
         }
         try (var client = jenkinsMcpClientBuilder.jenkins(jenkins).build()) {
-            McpSchema.CallToolRequest request = createRequest(Map.of("jobFullName", j.getFullName(),
-                    "checkId", "checkstyle"));
+            McpSchema.CallToolRequest request =
+                    createRequest(Map.of("jobFullName", j.getFullName(), "checkId", "checkstyle"));
 
             var response = client.callTool(request);
             assertContainsSingleCheckstyleWarning(response);
         }
         try (var client = jenkinsMcpClientBuilder.jenkins(jenkins).build()) {
-            McpSchema.CallToolRequest request = createRequest(Map.of("jobFullName", j.getFullName(),
-                    "checkId", "missing"));
+            McpSchema.CallToolRequest request =
+                    createRequest(Map.of("jobFullName", j.getFullName(), "checkId", "missing"));
 
             var response = client.callTool(request);
             assertResponseIsEmpty(response);
@@ -76,8 +72,8 @@ class WarningsMcpServerExtensionTest {
 
     @McpClientTest
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
-    void testMcpToolNoWarnings(final JenkinsRule jenkins,
-                                       final JenkinsMcpClientBuilder jenkinsMcpClientBuilder) throws Exception {
+    void testMcpToolNoWarnings(final JenkinsRule jenkins, final JenkinsMcpClientBuilder jenkinsMcpClientBuilder)
+            throws Exception {
         WorkflowJob j = jenkins.createProject(WorkflowJob.class, "singleStep");
         j.setDefinition(new CpsFlowDefinition("""
                         stage('first') {
@@ -96,8 +92,7 @@ class WarningsMcpServerExtensionTest {
     }
 
     @McpClientTest
-    void testMcpToolNoJob(final JenkinsRule jenkins,
-                               final JenkinsMcpClientBuilder jenkinsMcpClientBuilder) {
+    void testMcpToolNoJob(final JenkinsRule jenkins, final JenkinsMcpClientBuilder jenkinsMcpClientBuilder) {
         try (var client = jenkinsMcpClientBuilder.jenkins(jenkins).build()) {
             McpSchema.CallToolRequest request = createRequest(Map.of("jobFullName", "missing"));
 
@@ -125,7 +120,7 @@ class WarningsMcpServerExtensionTest {
         assertThat(result.keySet()).isEqualTo(Set.of("checkstyle"));
         JsonArray warnings = result.get("checkstyle").getAsJsonArray();
         assertThat(warnings.size()).isEqualTo(1);
-        assertThat(warnings.get(0).getAsJsonObject().keySet()).isEqualTo(
-                Set.of("category", "message", "type", "severity", "fileName", "line"));
+        assertThat(warnings.get(0).getAsJsonObject().keySet())
+                .isEqualTo(Set.of("category", "message", "type", "severity", "fileName", "line"));
     }
 }

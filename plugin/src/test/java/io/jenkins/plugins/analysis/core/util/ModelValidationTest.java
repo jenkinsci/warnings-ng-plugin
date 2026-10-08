@@ -1,21 +1,17 @@
 package io.jenkins.plugins.analysis.core.util;
 
-import org.junit.jupiter.api.Test;
-import org.junitpioneer.jupiter.Issue;
-
-import edu.hm.hafner.analysis.Severity;
-
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-
-import hudson.model.Job;
-
-import io.jenkins.plugins.util.JenkinsFacade;
-
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import static io.jenkins.plugins.analysis.core.util.ModelValidation.*;
 import static org.mockito.Mockito.*;
+
+import edu.hm.hafner.analysis.Severity;
+import hudson.model.Job;
+import io.jenkins.plugins.util.JenkinsFacade;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.Issue;
 
 /**
  * Tests the class {@link ModelValidation}.
@@ -120,25 +116,27 @@ class ModelValidationTest {
         var model = new ModelValidation();
 
         assertThat(model.validateHealthy(-1, 0))
-                .isError().hasMessage(Messages.FieldValidator_Error_NegativeThreshold());
+                .isError()
+                .hasMessage(Messages.FieldValidator_Error_NegativeThreshold());
         assertThat(model.validateUnhealthy(-1, 0)).isOk();
 
         assertThat(model.validateHealthy(1, 0)).isOk();
         assertThat(model.validateUnhealthy(1, 0))
-                .isError().hasMessage(Messages.FieldValidator_Error_ThresholdUnhealthyMissing());
+                .isError()
+                .hasMessage(Messages.FieldValidator_Error_ThresholdUnhealthyMissing());
 
-        assertThat(model.validateHealthy(1, 1))
-                .isError().hasMessage(Messages.FieldValidator_Error_ThresholdOrder());
-        assertThat(model.validateUnhealthy(1, 1))
-                .isError().hasMessage(Messages.FieldValidator_Error_ThresholdOrder());
+        assertThat(model.validateHealthy(1, 1)).isError().hasMessage(Messages.FieldValidator_Error_ThresholdOrder());
+        assertThat(model.validateUnhealthy(1, 1)).isError().hasMessage(Messages.FieldValidator_Error_ThresholdOrder());
 
         assertThat(model.validateHealthy(1, -1)).isOk();
         assertThat(model.validateUnhealthy(1, -1))
-                .isError().hasMessage(Messages.FieldValidator_Error_NegativeThreshold());
+                .isError()
+                .hasMessage(Messages.FieldValidator_Error_NegativeThreshold());
 
         assertThat(model.validateHealthy(0, -1)).isOk();
         assertThat(model.validateUnhealthy(0, -1))
-                .isError().hasMessage(Messages.FieldValidator_Error_NegativeThreshold());
+                .isError()
+                .hasMessage(Messages.FieldValidator_Error_NegativeThreshold());
     }
 
     @Test

@@ -1,26 +1,22 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import org.eclipse.collections.impl.factory.Lists;
-import org.junit.jupiter.api.Test;
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
-
-import java.io.IOException;
-import java.io.StringReader;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-
 import hudson.model.Run;
-
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
 import io.jenkins.plugins.prism.SourceCodeViewModel;
 import io.jenkins.plugins.util.JenkinsFacade;
-
-import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import java.io.IOException;
+import java.io.StringReader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import org.eclipse.collections.impl.factory.Lists;
+import org.junit.jupiter.api.Test;
 
 /**
  * Integration tests for {@link DetailFactory} source file reading functionality.
@@ -45,8 +41,10 @@ class DetailFactorySourceFileITest extends IntegrationTestWithJenkinsPerSuite {
 
         var details = createDetails(buildFolder, "a-file");
 
-        assertThat(details).isInstanceOfSatisfying(SourceCodeViewModel.class,
-                s -> assertThat(s.getSourceCode()).contains("IOException: file error"));
+        assertThat(details)
+                .isInstanceOfSatisfying(
+                        SourceCodeViewModel.class,
+                        s -> assertThat(s.getSourceCode()).contains("IOException: file error"));
     }
 
     /**
@@ -59,12 +57,13 @@ class DetailFactorySourceFileITest extends IntegrationTestWithJenkinsPerSuite {
 
         var details = createDetails(buildFolder, "a-file");
 
-        assertThat(details).isInstanceOfSatisfying(SourceCodeViewModel.class,
-                s -> assertThat(s.getSourceCode()).contains(AFFECTED_FILE_CONTENT));
+        assertThat(details)
+                .isInstanceOfSatisfying(
+                        SourceCodeViewModel.class,
+                        s -> assertThat(s.getSourceCode()).contains(AFFECTED_FILE_CONTENT));
     }
 
-    private Object createDetails(final BuildFolderFacade buildFolder,
-            final String fileName) {
+    private Object createDetails(final BuildFolderFacade buildFolder, final String fileName) {
         try (var issueBuilder = new IssueBuilder()) {
             var detailFactory = new DetailFactory(new JenkinsFacade(), buildFolder);
 
@@ -78,8 +77,15 @@ class DetailFactorySourceFileITest extends IntegrationTestWithJenkinsPerSuite {
             buildSuccessfully(project);
             Run<?, ?> run = project.getLastBuild();
 
-            return detailFactory.createTrendDetails("source." + issue.getId().toString(),
-                    run, createAnalysisResult(), report, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING,
+            return detailFactory.createTrendDetails(
+                    "source." + issue.getId().toString(),
+                    run,
+                    createAnalysisResult(),
+                    report,
+                    NEW_ISSUES,
+                    OUTSTANDING_ISSUES,
+                    FIXED_ISSUES,
+                    ENCODING,
                     createParent());
         }
     }

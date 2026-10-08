@@ -1,20 +1,13 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import javax.inject.Inject;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import static org.assertj.core.api.Assertions.*;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
-
+import javax.inject.Inject;
 import org.jenkinsci.test.acceptance.docker.DockerContainerHolder;
 import org.jenkinsci.test.acceptance.docker.fixtures.GitContainer;
 import org.jenkinsci.test.acceptance.junit.DockerTest;
@@ -26,8 +19,11 @@ import org.jenkinsci.test.acceptance.plugins.git.GitScm;
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.FreeStyleJob;
 import org.jenkinsci.test.acceptance.po.WorkflowJob;
-
-import static org.assertj.core.api.Assertions.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 /**
  * Verifies the blamer and forensics tabs and tables of the {@link IssuesRecorder}.
@@ -37,7 +33,9 @@ import static org.assertj.core.api.Assertions.*;
 @WithDocker
 @Category(DockerTest.class)
 @WithPlugins({"git", "git-forensics"})
-@WithCredentials(credentialType = WithCredentials.SSH_USERNAME_PRIVATE_KEY, values = {"gitplugin", "/org/jenkinsci/test/acceptance/docker/fixtures/GitContainer/unsafe"})
+@WithCredentials(
+        credentialType = WithCredentials.SSH_USERNAME_PRIVATE_KEY,
+        values = {"gitplugin", "/org/jenkinsci/test/acceptance/docker/fixtures/GitContainer/unsafe"})
 @SuppressWarnings({"checkstyle:ClassFanOutComplexity", "PMD.WrongTestAnnotation"})
 public class GitForensicsUiTest extends UiTest {
     @Inject
@@ -72,9 +70,7 @@ public class GitForensicsUiTest extends UiTest {
     /**
      * Commits multiple files to a given GitRepo.
      *
-     * @param repo
-     *         to add commits
-     *
+     * @param repo to add commits
      * @return Map with filename and the commit hash
      */
     private Map<String, String> commitDifferentFilesToGitRepository(final GitRepo repo) {
@@ -120,8 +116,7 @@ public class GitForensicsUiTest extends UiTest {
             repoUrl = gitContainer.getRepoUrl();
             host = gitContainer.host();
             port = gitContainer.port();
-        }
-        catch (MalformedURLException exception) {
+        } catch (MalformedURLException exception) {
             throw new AssertionError("Could not initialize GitContainer", exception);
         }
     }
@@ -133,13 +128,14 @@ public class GitForensicsUiTest extends UiTest {
     }
 
     /** Verifies that freestyle jobs will correctly blame issues. */
-    @Test @Ignore @SuppressWarnings("PMD.VariableDeclarationUsageDistance")
+    @Test
+    @Ignore
+    @SuppressWarnings("PMD.VariableDeclarationUsageDistance")
     public void shouldBlameOneIssueWithFreestyle() throws IOException {
         try (GitRepo repo = setupInitialGitRepository()) {
             repo.setAndCommitFile("Test.java", "public class Test {}", "commit");
             String commitId = repo.getLastSha1();
-            repo.setAndCommitFile("warnings.txt", "[javac] Test.java:1: warning: Test Warning for Jenkins",
-                    "commit");
+            repo.setAndCommitFile("warnings.txt", "[javac] Test.java:1: warning: Test Warning for Jenkins", "commit");
 
             Build build = generateFreeStyleJob(repo);
             build.open();
@@ -195,10 +191,9 @@ public class GitForensicsUiTest extends UiTest {
         }
     }
 
-    /**
-     * Verifies that freestyle jobs will correctly blame issues. This test handles multiple issue pages.
-     */
-    @Test @Ignore
+    /** Verifies that freestyle jobs will correctly blame issues. This test handles multiple issue pages. */
+    @Test
+    @Ignore
     public void shouldBlameElevenIssuesWithFreestyle() throws IOException {
         try (GitRepo repo = createRepoForMaster()) {
             Map<String, String> commits = commitDifferentFilesToGitRepository(repo);
@@ -212,8 +207,7 @@ public class GitForensicsUiTest extends UiTest {
                     [javac] LoremIpsum.java:4: warning: Another Warning for Jenkins
                     [javac] Bob.java:1: warning: Bobs Warning for Jenkins
                     [javac] Bob.java:2: warning: Bobs Warning for Jenkins
-                    [javac] Bob.java:3: warning: Bobs Warning for Jenkins""",
-                    "commit");
+                    [javac] Bob.java:3: warning: Bobs Warning for Jenkins""", "commit");
 
             Build build = generateFreeStyleJob(repo);
             build.open();
@@ -229,12 +223,12 @@ public class GitForensicsUiTest extends UiTest {
     }
 
     /** Verifies that freestyle jobs will correctly show Git forensics statistics. */
-    @Test @Ignore
+    @Test
+    @Ignore
     public void shouldShowGitForensicsOneIssue() throws IOException {
         try (GitRepo repo = setupInitialGitRepository()) {
             repo.setAndCommitFile("Test.java", "public class Test {}", "commit");
-            repo.setAndCommitFile("warnings.txt", "[javac] Test.java:1: warning: Test Warning for Jenkins",
-                    "commit");
+            repo.setAndCommitFile("warnings.txt", "[javac] Test.java:1: warning: Test Warning for Jenkins", "commit");
 
             Build build = generateFreeStyleJob(repo);
             build.open();
@@ -251,7 +245,8 @@ public class GitForensicsUiTest extends UiTest {
     }
 
     /** Verifies that pipelines will correctly show Git forensics statistics. */
-    @Test @Ignore
+    @Test
+    @Ignore
     public void shouldShowGitForensicsMultipleIssuesWithPipeline() throws IOException {
         try (GitRepo repo = createRepoForMaster()) {
             commitDifferentFilesToGitRepository(repo);
@@ -275,9 +270,7 @@ public class GitForensicsUiTest extends UiTest {
                         mineRepository()
                         recordIssues tools: [java()]
                       }
-                    }""",
-                    "commit"
-            );
+                    }""", "commit");
             Build build = generateWorkflowJob(repo);
             build.open();
 
@@ -295,7 +288,8 @@ public class GitForensicsUiTest extends UiTest {
      * Verifies that freestyle jobs will correctly show Git forensics statistics. This test handles multiple issue
      * pages.
      */
-    @Test @Ignore
+    @Test
+    @Ignore
     public void shouldShowGitForensicsMultipleIssuesWithFreestyle() throws IOException {
         try (GitRepo repo = createRepoForMaster()) {
             commitDifferentFilesToGitRepository(repo);
@@ -350,8 +344,7 @@ public class GitForensicsUiTest extends UiTest {
                     [javac] LoremIpsum.java:4: warning: Another Warning for Jenkins
                     [javac] Bob.java:1: warning: Bobs Warning for Jenkins
                     [javac] Bob.java:2: warning: Bobs Warning for Jenkins
-                    [javac] Bob.java:3: warning: Bobs Warning for Jenkins""",
-                    "commit");
+                    [javac] Bob.java:3: warning: Bobs Warning for Jenkins""", "commit");
 
             Build build = generateFreeStyleJob(repo);
             build.open();
@@ -374,8 +367,9 @@ public class GitForensicsUiTest extends UiTest {
     }
 
     private void verifyForensicsTableModel(final ForensicsTable forensicsTable) {
-        assertThat(forensicsTable.getHeaders()).containsExactly("Details", "File", "Age", "#Authors", "#Commits",
-                "Last Commit", "Added", "#LoC", "Code Churn");
+        assertThat(forensicsTable.getHeaders())
+                .containsExactly(
+                        "Details", "File", "Age", "#Authors", "#Commits", "Last Commit", "Added", "#LoC", "Code Churn");
     }
 
     private void assertElevenIssues(final Map<String, String> commits, final BlamesTable table) {
@@ -425,8 +419,8 @@ public class GitForensicsUiTest extends UiTest {
         assertThat(table.getHeaders()).containsExactly(DETAILS, FILE, AGE, AUTHOR, EMAIL, COMMIT, ADDED);
     }
 
-    private void assertColumnsOfRow(final ForensicsTableRow row, final String filename, final int commits,
-            final int authors) {
+    private void assertColumnsOfRow(
+            final ForensicsTableRow row, final String filename, final int commits, final int authors) {
         assertThat(row.getFileName()).isEqualTo(filename);
         assertThat(row.getAge()).isEqualTo(1);
         assertThat(row.getAuthors()).isEqualTo(authors);
@@ -435,8 +429,8 @@ public class GitForensicsUiTest extends UiTest {
         assertThat(row.getAdded()).isNotNull();
     }
 
-    private void assertMultipleIssuesAndAuthors(final ForensicsTable forensicsTable, final int commits,
-            final int authors) {
+    private void assertMultipleIssuesAndAuthors(
+            final ForensicsTable forensicsTable, final int commits, final int authors) {
         assertColumnsOfRow(forensicsTable.getRow(0), "Bob.java", 1, 1);
         assertColumnsOfRow(forensicsTable.getRow(1), "Bob.java", 1, 1);
         assertColumnsOfRow(forensicsTable.getRow(2), "Bob.java", 1, 1);
@@ -452,9 +446,7 @@ public class GitForensicsUiTest extends UiTest {
         FreeStyleJob freestyleJob = jenkins.jobs.create();
         freestyleJob.configure();
         repo.transferToDockerContainer(host, port);
-        freestyleJob.useScm(GitScm.class)
-                .url(repoUrl)
-                .credentials(USERNAME);
+        freestyleJob.useScm(GitScm.class).url(repoUrl).credentials(USERNAME);
 
         freestyleJob.addPublisher(ForensicsPublisher.class);
         addRecorder(freestyleJob);

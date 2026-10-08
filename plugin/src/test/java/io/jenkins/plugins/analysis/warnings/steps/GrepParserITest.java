@@ -1,18 +1,15 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
-import org.junit.jupiter.api.Test;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
 import edu.hm.hafner.analysis.Severity;
-
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.tasks.Shell;
-
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.GrepParser;
 import io.jenkins.plugins.util.QualityGateStatus;
-
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 /**
  * Integration tests for the {@link GrepParser} tool.
@@ -31,7 +28,9 @@ class GrepParserITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     void shouldCountMatchesInSingleFile() {
         var project = createFreeStyleProject();
-        createFileInWorkspace(project, "application.log",
+        createFileInWorkspace(
+                project,
+                "application.log",
                 "INFO: application started\n"
                         + "ERROR: null pointer exception\n"
                         + "INFO: processing request\n"
@@ -55,10 +54,7 @@ class GrepParserITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     void shouldReportZeroMatchesWhenNoLineMatches() {
         var project = createFreeStyleProject();
-        createFileInWorkspace(project, "clean.log",
-                "INFO: all good\n"
-                        + "DEBUG: initialised\n"
-                        + "INFO: done\n");
+        createFileInWorkspace(project, "clean.log", "INFO: all good\n" + "DEBUG: initialised\n" + "INFO: done\n");
 
         var parser = createGrepParser(ERROR_PATTERN, "**/*.log", "", Severity.WARNING_NORMAL.getName());
         enableWarnings(project, parser);
@@ -74,9 +70,7 @@ class GrepParserITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     void shouldAssignCorrectSeverity() {
         var project = createFreeStyleProject();
-        createFileInWorkspace(project, "app.log",
-                "ERROR: something failed\n"
-                        + "INFO: working\n");
+        createFileInWorkspace(project, "app.log", "ERROR: something failed\n" + "INFO: working\n");
 
         // Test HIGH severity
         var highParser = createGrepParser(ERROR_PATTERN, "**/*.log", "", Severity.WARNING_HIGH.getName());
@@ -140,10 +134,10 @@ class GrepParserITest extends IntegrationTestWithJenkinsPerSuite {
 
         var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        assertThat(result.getInfoMessages()).anySatisfy(
-                message -> assertThat(message).contains("found 1 files that will be scanned"));
-        assertThat(result.getInfoMessages()).anySatisfy(
-                message -> assertThat(message).contains("Found a total of 1 grep matches"));
+        assertThat(result.getInfoMessages())
+                .anySatisfy(message -> assertThat(message).contains("found 1 files that will be scanned"));
+        assertThat(result.getInfoMessages())
+                .anySatisfy(message -> assertThat(message).contains("Found a total of 1 grep matches"));
     }
 
     /**
@@ -170,14 +164,13 @@ class GrepParserITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     void shouldSupportRegexWithGroups() {
         var project = createFreeStyleProject();
-        createFileInWorkspace(project, "app.log",
-                "2024-01-01 ERROR - disk full\n"
-                        + "2024-01-02 INFO - all good\n"
-                        + "2024-01-03 ERROR - timeout\n");
+        createFileInWorkspace(
+                project,
+                "app.log",
+                "2024-01-01 ERROR - disk full\n" + "2024-01-02 INFO - all good\n" + "2024-01-03 ERROR - timeout\n");
 
         // Pattern with a group to capture the error description
-        var parser = createGrepParser(".*ERROR - (.*)", "**/*.log", "Detected: $1",
-                Severity.WARNING_NORMAL.getName());
+        var parser = createGrepParser(".*ERROR - (.*)", "**/*.log", "Detected: $1", Severity.WARNING_NORMAL.getName());
         enableWarnings(project, parser);
 
         var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
@@ -245,10 +238,7 @@ class GrepParserITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     void shouldSupportCaseInsensitivePatternViaRegexFlag() {
         var project = createFreeStyleProject();
-        createFileInWorkspace(project, "app.log",
-                "error: lowercase\n"
-                        + "ERROR: uppercase\n"
-                        + "Error: mixed\n");
+        createFileInWorkspace(project, "app.log", "error: lowercase\n" + "ERROR: uppercase\n" + "Error: mixed\n");
 
         var parser = createGrepParser("(?i)error", "**/*.log", "", Severity.WARNING_NORMAL.getName());
         enableWarnings(project, parser);
@@ -274,10 +264,9 @@ class GrepParserITest extends IntegrationTestWithJenkinsPerSuite {
         var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result.getIssues().size()).isGreaterThanOrEqualTo(1);
-        result.getIssues().forEach(issue ->
-                assertThat(issue.getFileName()).contains("jenkins-console"));
-        assertThat(result.getInfoMessages()).anySatisfy(
-                message -> assertThat(message).contains("Scanning console log"));
+        result.getIssues().forEach(issue -> assertThat(issue.getFileName()).contains("jenkins-console"));
+        assertThat(result.getInfoMessages())
+                .anySatisfy(message -> assertThat(message).contains("Scanning console log"));
     }
 
     /**
@@ -299,8 +288,8 @@ class GrepParserITest extends IntegrationTestWithJenkinsPerSuite {
 
     // ==================== Helper methods ====================
 
-    private GrepParser createGrepParser(final String regexp, final String includePattern,
-            final String message, final String severity) {
+    private GrepParser createGrepParser(
+            final String regexp, final String includePattern, final String message, final String severity) {
         var parser = new GrepParser();
         parser.setRegexp(regexp);
         parser.setIncludePattern(includePattern);

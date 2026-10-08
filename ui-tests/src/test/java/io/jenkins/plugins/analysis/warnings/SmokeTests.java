@@ -1,17 +1,15 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import org.junit.Test;
+import static io.jenkins.plugins.analysis.warnings.Assertions.*;
+import static io.jenkins.plugins.analysis.warnings.IssuesColumnConfiguration.*;
 
+import io.jenkins.plugins.analysis.warnings.AnalysisResult.Tab;
 import org.jenkinsci.test.acceptance.junit.WithPlugins;
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.Folder;
 import org.jenkinsci.test.acceptance.po.FreeStyleJob;
 import org.jenkinsci.test.acceptance.po.WorkflowJob;
-
-import io.jenkins.plugins.analysis.warnings.AnalysisResult.Tab;
-
-import static io.jenkins.plugins.analysis.warnings.Assertions.*;
-import static io.jenkins.plugins.analysis.warnings.IssuesColumnConfiguration.*;
+import org.junit.Test;
 
 /**
  * Smoke tests for the Warnings Next Generation Plugin. These tests are invoked during the validation of pull requests
@@ -78,16 +76,14 @@ public class SmokeTests extends UiTest {
 
         verifyColumnCount(build);
 
-//        FIXME: re-enable dashboard view tests
-//        DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, true);
-//        DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
-//
-//        verifyDashboardTablePortlet(dashboardTable, job.name);
+        //        FIXME: re-enable dashboard view tests
+        //        DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, true);
+        //        DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
+        //
+        //        verifyDashboardTablePortlet(dashboardTable, job.name);
     }
 
-    /**
-     * Runs a freestyle job with all tools two times. Verifies the analysis results in several views.
-     */
+    /** Runs a freestyle job with all tools two times. Verifies the analysis results in several views. */
     @Test
     @WithPlugins("cloudbees-folder")
     public void shouldShowBuildSummaryAndLinkToDetails() {
@@ -118,11 +114,11 @@ public class SmokeTests extends UiTest {
 
         verifyColumnCount(build);
 
-//        FIXME: re-enable dashboard view tests
-//        DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, true, folder);
-//        DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
-//
-//        verifyDashboardTablePortlet(dashboardTable, String.format("%s » %s", folder.name, job.name));
+        //        FIXME: re-enable dashboard view tests
+        //        DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, true, folder);
+        //        DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
+        //
+        //        verifyDashboardTablePortlet(dashboardTable, String.format("%s » %s", folder.name, job.name));
     }
 
     private void verifyColumnCount(final Build build) {
@@ -130,18 +126,18 @@ public class SmokeTests extends UiTest {
         assertThat(column).hasTotalCount("33");
     }
 
-//        FIXME: re-enable dashboard view tests
-//    private void verifyDashboardTablePortlet(final DashboardTable dashboardTable, final String jobName) {
-//        assertThat(dashboardTable.getHeaders()).containsExactly(
-//                "Job", CHECKSTYLE_ICON, DRY_ICON, FINDBUGS_ICON, ANALYSIS_ICON, PMD_ICON);
-//
-//        Map<String, Map<String, DashboardTableEntry>> table = dashboardTable.getTable();
-//        assertThat(table.get(jobName).get(FINDBUGS_ICON)).hasWarningsCount(0);
-//        assertThat(table.get(jobName).get(CHECKSTYLE_ICON)).hasWarningsCount(3);
-//        assertThat(table.get(jobName).get(ANALYSIS_ICON)).hasWarningsCount(8);
-//        assertThat(table.get(jobName).get(PMD_ICON)).hasWarningsCount(2);
-//        assertThat(table.get(jobName).get(DRY_ICON)).hasWarningsCount(20);
-//    }
+    //        FIXME: re-enable dashboard view tests
+    //    private void verifyDashboardTablePortlet(final DashboardTable dashboardTable, final String jobName) {
+    //        assertThat(dashboardTable.getHeaders()).containsExactly(
+    //                "Job", CHECKSTYLE_ICON, DRY_ICON, FINDBUGS_ICON, ANALYSIS_ICON, PMD_ICON);
+    //
+    //        Map<String, Map<String, DashboardTableEntry>> table = dashboardTable.getTable();
+    //        assertThat(table.get(jobName).get(FINDBUGS_ICON)).hasWarningsCount(0);
+    //        assertThat(table.get(jobName).get(CHECKSTYLE_ICON)).hasWarningsCount(3);
+    //        assertThat(table.get(jobName).get(ANALYSIS_ICON)).hasWarningsCount(8);
+    //        assertThat(table.get(jobName).get(PMD_ICON)).hasWarningsCount(2);
+    //        assertThat(table.get(jobName).get(DRY_ICON)).hasWarningsCount(20);
+    //    }
 
     private void createRecordIssuesStep(final WorkflowJob job, final int buildNumber) {
         job.script.set("node {\n"

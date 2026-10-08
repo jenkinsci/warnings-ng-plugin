@@ -1,5 +1,15 @@
 package io.jenkins.plugins.analysis.warnings.axivion;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import edu.hm.hafner.analysis.ParsingException;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -8,19 +18,6 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
-
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
-import edu.hm.hafner.analysis.ParsingException;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
 
 /**
  * Represents an actual dashboard connection to retrieve violations via http.
@@ -37,9 +34,7 @@ class RemoteAxivionDashboard implements AxivionDashboard {
     private final String namedFilter;
 
     RemoteAxivionDashboard(
-            final String projectUrl,
-            final UsernamePasswordCredentials credentials,
-            final String namedFilter) {
+            final String projectUrl, final UsernamePasswordCredentials credentials, final String namedFilter) {
         this.projectUrl = projectUrl;
         this.credentials = credentials;
         this.namedFilter = namedFilter;
@@ -51,7 +46,9 @@ class RemoteAxivionDashboard implements AxivionDashboard {
         var credentialsProvider = new BasicCredentialsProvider();
         credentialsProvider.setCredentials(AuthScope.ANY, credentials);
 
-        try (var client = HttpClients.custom().setDefaultCredentialsProvider(credentialsProvider).build()) {
+        try (var client = HttpClients.custom()
+                .setDefaultCredentialsProvider(credentialsProvider)
+                .build()) {
             var uriBuilder = new URIBuilder(projectUrl + "/issues");
             uriBuilder.setParameter("kind", kind.toString());
             if (!namedFilter.isEmpty()) {
@@ -74,8 +71,7 @@ class RemoteAxivionDashboard implements AxivionDashboard {
             try (var legacyResponse = client.execute(httpget)) {
                 return convertToJson(legacyResponse);
             }
-        }
-        catch (IOException | URISyntaxException e) {
+        } catch (IOException | URISyntaxException e) {
             throw new ParsingException(e, "Cannot retrieve information from dashboard");
         }
     }

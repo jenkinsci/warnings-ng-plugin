@@ -1,24 +1,21 @@
 package io.jenkins.plugins.analysis.core.model;
 
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
+import static org.mockito.Mockito.*;
+
+import hudson.model.FreeStyleBuild;
+import hudson.model.FreeStyleProject;
+import hudson.model.Item;
+import io.jenkins.plugins.util.JenkinsFacade;
+import io.jenkins.plugins.util.QualityGateResult;
+import io.jenkins.plugins.util.QualityGateStatus;
+import java.util.Collections;
+import java.util.Optional;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import java.util.Collections;
-import java.util.Optional;
-
-import hudson.model.FreeStyleBuild;
-import hudson.model.FreeStyleProject;
-import hudson.model.Item;
-
-import io.jenkins.plugins.util.JenkinsFacade;
-import io.jenkins.plugins.util.QualityGateResult;
-import io.jenkins.plugins.util.QualityGateStatus;
-
-import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * Tests the class {@link ResetQualityGateCommand}.
@@ -28,7 +25,10 @@ import static org.mockito.Mockito.*;
 class ResetQualityGateCommandTest {
     private static final String ID = "id";
 
-    @ParameterizedTest @EnumSource(value = QualityGateStatus.class, names = {"WARNING", "FAILED"})
+    @ParameterizedTest
+    @EnumSource(
+            value = QualityGateStatus.class,
+            names = {"WARNING", "FAILED"})
     void shouldBeEnabledIfAllConditionsAreSatisfied(final QualityGateStatus qualityGateStatus) {
         var command = new ResetQualityGateCommand();
 
@@ -40,7 +40,8 @@ class ResetQualityGateCommandTest {
         assertThat(command.isEnabled(selectedBuild, ID)).isTrue();
     }
 
-    @ParameterizedTest @ValueSource(booleans = {true, false})
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
     void shouldBeEnabledIfUserHasLocalConfigureRights(final boolean hasConfigureRightOnBuild) {
         var command = new ResetQualityGateCommand();
 
@@ -85,8 +86,8 @@ class ResetQualityGateCommandTest {
         FreeStyleProject parent = mock(FreeStyleProject.class);
         command.setJenkinsFacade(configureCorrectUserRights(true, parent));
         FreeStyleBuild selectedBuild = mock(FreeStyleBuild.class);
-        when(selectedBuild.getActions(ResetReferenceAction.class)).thenReturn(
-                Lists.list(new ResetReferenceAction("other")));
+        when(selectedBuild.getActions(ResetReferenceAction.class))
+                .thenReturn(Lists.list(new ResetReferenceAction("other")));
         when(selectedBuild.getActions(ResultAction.class)).thenReturn(Collections.emptyList());
 
         assertThat(command.isEnabled(selectedBuild, ID)).isFalse();
@@ -177,11 +178,14 @@ class ResetQualityGateCommandTest {
         return resultAction;
     }
 
-    private FreeStyleBuild attachReferenceBuild(final boolean hasNoReferenceBuild,
-            final boolean hasConfigurePermission, final ResultAction resultAction, final FreeStyleProject parent) {
+    private FreeStyleBuild attachReferenceBuild(
+            final boolean hasNoReferenceBuild,
+            final boolean hasConfigurePermission,
+            final ResultAction resultAction,
+            final FreeStyleProject parent) {
         FreeStyleBuild selectedBuild = mock(FreeStyleBuild.class);
-        when(selectedBuild.getActions(ResetReferenceAction.class)).thenReturn(
-                Lists.list(new ResetReferenceAction(hasNoReferenceBuild ? "other" : ID)));
+        when(selectedBuild.getActions(ResetReferenceAction.class))
+                .thenReturn(Lists.list(new ResetReferenceAction(hasNoReferenceBuild ? "other" : ID)));
         when(selectedBuild.getActions(ResultAction.class)).thenReturn(Lists.list(resultAction));
         when(selectedBuild.getAction(ResultAction.class)).thenReturn(resultAction);
         when(selectedBuild.hasPermission(Item.CONFIGURE)).thenReturn(hasConfigurePermission);

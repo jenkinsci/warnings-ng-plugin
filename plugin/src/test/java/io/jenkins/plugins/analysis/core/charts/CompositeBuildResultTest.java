@@ -1,15 +1,12 @@
 package io.jenkins.plugins.analysis.core.charts;
 
-import org.junit.jupiter.api.Test;
-
-import edu.hm.hafner.analysis.Severity;
-
-import java.util.List;
-
-import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
-
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import static io.jenkins.plugins.analysis.core.charts.BuildResultStubs.*;
+
+import edu.hm.hafner.analysis.Severity;
+import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
+import java.util.List;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class {@link CompositeBuildResult}.
@@ -26,7 +23,8 @@ class CompositeBuildResultTest {
 
         assertThat(run.getSizePerOrigin()).isEmpty();
         assertThat(new CompositeBuildResult(List.of(first)).getSizePerOrigin()).containsExactly(entry("first", 1));
-        assertThat(new CompositeBuildResult(List.of(first, second)).getSizePerOrigin()).containsExactly(entry("first", 1), entry("second", 2));
+        assertThat(new CompositeBuildResult(List.of(first, second)).getSizePerOrigin())
+                .containsExactly(entry("first", 1), entry("second", 2));
     }
 
     @Test

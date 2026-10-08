@@ -1,28 +1,15 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import org.apache.commons.lang3.StringUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Element;
-import org.jsoup.nodes.TextNode;
+import static j2html.TagCreator.*;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
-
-import j2html.tags.ContainerTag;
-import j2html.tags.DomContent;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.util.ListBoxModel;
-
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
@@ -40,8 +27,17 @@ import io.jenkins.plugins.checks.api.ChecksStatus;
 import io.jenkins.plugins.checks.steps.ChecksInfo;
 import io.jenkins.plugins.util.JenkinsFacade;
 import io.jenkins.plugins.util.QualityGateStatus;
-
-import static j2html.TagCreator.*;
+import j2html.tags.ContainerTag;
+import j2html.tags.DomContent;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
+import org.jsoup.nodes.TextNode;
 
 /**
  * Publishes warnings as checks to scm platforms.
@@ -74,15 +70,18 @@ class WarningChecksPublisher {
     }
 
     // fallback name for issue type / category.
-    // see: https://github.com/jenkinsci/analysis-model/blob/edf2a00e96bd2372da4f1fe34a226b984b7e0961/src/main/java/edu/hm/hafner/analysis/Issue.java#L30
+    // see:
+    // https://github.com/jenkinsci/analysis-model/blob/edf2a00e96bd2372da4f1fe34a226b984b7e0961/src/main/java/edu/hm/hafner/analysis/Issue.java#L30
     private static final String UNDEFINED_ISSUE_STRING = "-";
 
     private final ResultAction action;
     private final TaskListener listener;
+
     @CheckForNull
     private final ChecksInfo checksInfo;
 
-    WarningChecksPublisher(final ResultAction action, final TaskListener listener, @CheckForNull final ChecksInfo checksInfo) {
+    WarningChecksPublisher(
+            final ResultAction action, final TaskListener listener, @CheckForNull final ChecksInfo checksInfo) {
         this.action = action;
         this.listener = listener;
         this.checksInfo = checksInfo;
@@ -107,10 +106,12 @@ class WarningChecksPublisher {
 
         var labelProvider = action.getLabelProvider();
 
-        var checksName = Optional.ofNullable(checksInfo).map(ChecksInfo::getName)
+        var checksName = Optional.ofNullable(checksInfo)
+                .map(ChecksInfo::getName)
                 .filter(StringUtils::isNotEmpty)
                 .orElse(labelProvider.getName());
-        var detailsUrl = Optional.ofNullable(checksInfo).map(ChecksInfo::getDetailsURL)
+        var detailsUrl = Optional.ofNullable(checksInfo)
+                .map(ChecksInfo::getDetailsURL)
                 .filter(StringUtils::isNotEmpty)
                 .orElse(action.getAbsoluteUrl());
 
@@ -118,18 +119,21 @@ class WarningChecksPublisher {
         return new ChecksDetailsBuilder()
                 .withName(checksName)
                 .withStatus(ChecksStatus.COMPLETED)
-                .withConclusion(extractChecksConclusion(result.getQualityGateResult().getOverallStatus()))
+                .withConclusion(
+                        extractChecksConclusion(result.getQualityGateResult().getOverallStatus()))
                 .withOutput(new ChecksOutputBuilder()
                         .withTitle(extractChecksTitle(totals))
                         .withSummary(summary)
                         .withText(extractChecksText(totals))
-                        .withAnnotations(extractChecksAnnotations(filterIssuesForAnnotations(annotationScope, result), labelProvider))
+                        .withAnnotations(extractChecksAnnotations(
+                                filterIssuesForAnnotations(annotationScope, result), labelProvider))
                         .build())
                 .withDetailsURL(detailsUrl)
                 .build();
     }
 
-    private Report filterIssuesForAnnotations(final ChecksAnnotationScope annotationScope, final AnalysisResult result) {
+    private Report filterIssuesForAnnotations(
+            final ChecksAnnotationScope annotationScope, final AnalysisResult result) {
         if (annotationScope == ChecksAnnotationScope.SKIP) {
             return new Report();
         }
@@ -154,24 +158,21 @@ class WarningChecksPublisher {
     }
 
     private ContainerTag createReferenceBuildLink(final String id, final Run<?, ?> referenceBuild) {
-        return a(referenceBuild.getFullDisplayName()).withHref(
-                new JenkinsFacade().getAbsoluteUrl(referenceBuild.getUrl(), id));
+        return a(referenceBuild.getFullDisplayName())
+                .withHref(new JenkinsFacade().getAbsoluteUrl(referenceBuild.getUrl(), id));
     }
 
     private String extractChecksTitle(final IssuesStatistics statistics) {
         if (statistics.getTotalSize() == 0) {
             return "No issues";
-        }
-        else if (statistics.getNewSize() == 0) {
+        } else if (statistics.getNewSize() == 0) {
             return "No new issues, %d total".formatted(statistics.getTotalSize());
-        }
-        else if (statistics.getNewSize() == statistics.getTotalSize()) {
+        } else if (statistics.getNewSize() == statistics.getTotalSize()) {
             if (statistics.getNewSize() == 1) {
                 return "1 new issue";
             }
             return "%d new issues".formatted(statistics.getNewSize());
-        }
-        else {
+        } else {
             if (statistics.getNewSize() == 1) {
                 return "1 new issue, %d total".formatted(statistics.getTotalSize());
             }
@@ -216,13 +217,18 @@ class WarningChecksPublisher {
     private String extractChecksText(final IssuesStatistics statistics) {
         if (statistics.getNewSize() == 0) {
             return "## Severity distribution of all issues\n"
-                    + generateSeverityText(statistics.getTotalErrorSize(), statistics.getTotalHighSize(),
-                    statistics.getTotalNormalSize(), statistics.getTotalLowSize());
-        }
-        else {
+                    + generateSeverityText(
+                            statistics.getTotalErrorSize(),
+                            statistics.getTotalHighSize(),
+                            statistics.getTotalNormalSize(),
+                            statistics.getTotalLowSize());
+        } else {
             return "## Severity distribution of new issues\n"
-                    + generateSeverityText(statistics.getNewErrorSize(), statistics.getNewHighSize(),
-                    statistics.getNewNormalSize(), statistics.getNewLowSize());
+                    + generateSeverityText(
+                            statistics.getNewErrorSize(),
+                            statistics.getNewHighSize(),
+                            statistics.getNewNormalSize(),
+                            statistics.getNewLowSize());
         }
     }
 
@@ -239,8 +245,8 @@ class WarningChecksPublisher {
         };
     }
 
-    private List<ChecksAnnotation> extractChecksAnnotations(final Report issues,
-            final StaticAnalysisLabelProvider labelProvider) {
+    private List<ChecksAnnotation> extractChecksAnnotations(
+            final Report issues, final StaticAnalysisLabelProvider labelProvider) {
         List<ChecksAnnotation> annotations = new ArrayList<>(issues.getSize());
 
         for (Issue issue : issues) {
@@ -266,9 +272,7 @@ class WarningChecksPublisher {
     private ChecksAnnotationLevel mapSeverity(final Severity severity) {
         if (severity.equals(Severity.ERROR)) {
             return ChecksAnnotationLevel.FAILURE;
-        }
-        else if (severity.equals(Severity.WARNING_HIGH)
-                || severity.equals(Severity.WARNING_NORMAL)) {
+        } else if (severity.equals(Severity.WARNING_HIGH) || severity.equals(Severity.WARNING_NORMAL)) {
             return ChecksAnnotationLevel.WARNING;
         }
         return ChecksAnnotationLevel.NOTICE;
@@ -288,8 +292,7 @@ class WarningChecksPublisher {
         for (Element child : html.children()) {
             if (child.hasAttr("href")) {
                 contents.add(child.text().trim() + ":" + child.attr("href").trim());
-            }
-            else {
+            } else {
                 parseHtml(child, contents);
             }
         }

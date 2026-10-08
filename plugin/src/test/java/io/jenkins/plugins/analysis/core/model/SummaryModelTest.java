@@ -1,27 +1,23 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import org.eclipse.collections.api.list.ImmutableList;
-import org.eclipse.collections.impl.factory.Lists;
-import org.eclipse.collections.impl.factory.Maps;
-import org.junit.jupiter.api.Test;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.echarts.Build;
-
+import hudson.model.Run;
+import io.jenkins.plugins.analysis.core.model.SummaryModel.LabelProviderFactoryFacade;
+import io.jenkins.plugins.util.QualityGateResult;
+import io.jenkins.plugins.util.QualityGateStatus;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-
-import hudson.model.Run;
-
-import io.jenkins.plugins.analysis.core.model.SummaryModel.LabelProviderFactoryFacade;
-import io.jenkins.plugins.util.QualityGateResult;
-import io.jenkins.plugins.util.QualityGateStatus;
-
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
-import static org.mockito.Mockito.*;
+import org.eclipse.collections.api.list.ImmutableList;
+import org.eclipse.collections.impl.factory.Lists;
+import org.eclipse.collections.impl.factory.Maps;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class {@link SummaryModel}.
@@ -40,9 +36,7 @@ class SummaryModelTest {
 
     @Test
     void shouldCreateTitleMessageIfThereAreNoWarnings() {
-        var analysisResult = createAnalysisResult(
-                Maps.fixedSize.of(CHECK_STYLE_ID, 0), 0, 0,
-                EMPTY_ERRORS, 0);
+        var analysisResult = createAnalysisResult(Maps.fixedSize.of(CHECK_STYLE_ID, 0), 0, 0, EMPTY_ERRORS, 0);
 
         var summary = createSummary(analysisResult);
         assertThat(summary)
@@ -60,16 +54,15 @@ class SummaryModelTest {
                 .hasNoErrors()
                 .isNotResetQualityGateVisible();
 
-        assertThat(summary.getTools()).hasSize(1)
+        assertThat(summary.getTools())
+                .hasSize(1)
                 .extracting(StaticAnalysisLabelProvider::getId, StaticAnalysisLabelProvider::getName)
                 .containsExactly(tuple(CHECK_STYLE_ID, CHECK_STYLE_NAME));
     }
 
     @Test
     void shouldCreateTitleMessageIfThereIsOneWarning() {
-        var analysisResult = createAnalysisResult(
-                Maps.fixedSize.of(CHECK_STYLE_ID, 1), 0, 0,
-                EMPTY_ERRORS, 0);
+        var analysisResult = createAnalysisResult(Maps.fixedSize.of(CHECK_STYLE_ID, 1), 0, 0, EMPTY_ERRORS, 0);
 
         var summary = createSummary(analysisResult);
         assertThat(summary)
@@ -81,9 +74,7 @@ class SummaryModelTest {
 
     @Test
     void shouldCreateTitleMessageIfThereAreMultipleWarnings() {
-        var analysisResult = createAnalysisResult(
-                Maps.fixedSize.of(CHECK_STYLE_ID, 2), 0, 0,
-                EMPTY_ERRORS, 0);
+        var analysisResult = createAnalysisResult(Maps.fixedSize.of(CHECK_STYLE_ID, 2), 0, 0, EMPTY_ERRORS, 0);
 
         var summary = createSummary(analysisResult);
         assertThat(summary)
@@ -96,9 +87,7 @@ class SummaryModelTest {
 
     @Test
     void shouldCreateFixedAndNewWarnings() {
-        var analysisResult = createAnalysisResult(
-                Maps.fixedSize.of(CHECK_STYLE_ID, 2), 1, 3,
-                EMPTY_ERRORS, 1);
+        var analysisResult = createAnalysisResult(Maps.fixedSize.of(CHECK_STYLE_ID, 2), 1, 3, EMPTY_ERRORS, 1);
 
         var summary = createSummary(analysisResult);
         assertThat(summary)
@@ -114,9 +103,8 @@ class SummaryModelTest {
 
     @Test
     void shouldCreateTitleMessageIfThereAreWarningsFromMultipleTools() {
-        var analysisResult = createAnalysisResult(
-                Maps.fixedSize.of(CHECK_STYLE_ID, 2, PMD_ID, 3), 0, 0,
-                EMPTY_ERRORS, 0);
+        var analysisResult =
+                createAnalysisResult(Maps.fixedSize.of(CHECK_STYLE_ID, 2, PMD_ID, 3), 0, 0, EMPTY_ERRORS, 0);
 
         var summary = createSummary(analysisResult);
         assertThat(summary)
@@ -126,20 +114,18 @@ class SummaryModelTest {
                 .hasAnalysesCount(2)
                 .hasNoErrors();
 
-        assertThat(summary.getTools()).hasSize(2)
+        assertThat(summary.getTools())
+                .hasSize(2)
                 .extracting(StaticAnalysisLabelProvider::getId, StaticAnalysisLabelProvider::getName)
-                .containsExactly(
-                        tuple(CHECK_STYLE_ID, CHECK_STYLE_NAME),
-                        tuple(PMD_ID, PMD_NAME));
+                .containsExactly(tuple(CHECK_STYLE_ID, CHECK_STYLE_NAME), tuple(PMD_ID, PMD_NAME));
         assertThat(summary.totalSize(CHECK_STYLE_ID)).isEqualTo(2);
         assertThat(summary.totalSize(PMD_ID)).isEqualTo(3);
     }
 
     @Test
     void shouldCreateTitleMessageWithErrors() {
-        var analysisResult = createAnalysisResult(
-                Maps.fixedSize.of(CHECK_STYLE_ID, 2), 0, 0,
-                Lists.immutable.of(ERROR_MESSAGE), 0);
+        var analysisResult =
+                createAnalysisResult(Maps.fixedSize.of(CHECK_STYLE_ID, 2), 0, 0, Lists.immutable.of(ERROR_MESSAGE), 0);
 
         var summary = createSummary(analysisResult);
         assertThat(summary)
@@ -151,9 +137,8 @@ class SummaryModelTest {
 
     @Test
     void shouldUseReferenceBuildOfResult() {
-        var analysisResult = createAnalysisResult(
-                Maps.fixedSize.of(CHECK_STYLE_ID, 2), 0, 0,
-                Lists.immutable.of(ERROR_MESSAGE), 0);
+        var analysisResult =
+                createAnalysisResult(Maps.fixedSize.of(CHECK_STYLE_ID, 2), 0, 0, Lists.immutable.of(ERROR_MESSAGE), 0);
 
         Run<?, ?> run = mock(Run.class);
         when(run.getFullDisplayName()).thenReturn("Job #15");
@@ -165,15 +150,13 @@ class SummaryModelTest {
 
         var summary = createSummary(analysisResult);
 
-        assertThat(summary).hasReferenceBuild(Optional.of(run))
-                .hasReferenceBuildLink("#reference-link");
+        assertThat(summary).hasReferenceBuild(Optional.of(run)).hasReferenceBuildLink("#reference-link");
     }
 
     @Test
     void shouldUseQualityStatusOfResult() {
-        var analysisResult = createAnalysisResult(
-                Maps.fixedSize.of(CHECK_STYLE_ID, 2), 0, 0,
-                Lists.immutable.of(ERROR_MESSAGE), 0);
+        var analysisResult =
+                createAnalysisResult(Maps.fixedSize.of(CHECK_STYLE_ID, 2), 0, 0, Lists.immutable.of(ERROR_MESSAGE), 0);
 
         var qualityGateStatus = QualityGateStatus.FAILED;
         var result = mock(QualityGateResult.class);
@@ -187,9 +170,8 @@ class SummaryModelTest {
 
     @Test
     void shouldEnableResetQualityGateButton() {
-        var analysisResult = createAnalysisResult(
-                Maps.fixedSize.of(CHECK_STYLE_ID, 2), 0, 0,
-                Lists.immutable.of(ERROR_MESSAGE), 0);
+        var analysisResult =
+                createAnalysisResult(Maps.fixedSize.of(CHECK_STYLE_ID, 2), 0, 0, Lists.immutable.of(ERROR_MESSAGE), 0);
 
         var summary = createSummaryWithQualityGateReset(analysisResult);
 
@@ -198,9 +180,7 @@ class SummaryModelTest {
 
     @Test
     void shouldDetectResetQualityGateAction() {
-        var analysisResult = createAnalysisResult(
-                Maps.fixedSize.of(CHECK_STYLE_ID, 2), 0, 0,
-                EMPTY_ERRORS, 0);
+        var analysisResult = createAnalysisResult(Maps.fixedSize.of(CHECK_STYLE_ID, 2), 0, 0, EMPTY_ERRORS, 0);
 
         Run<?, ?> build = analysisResult.getOwner();
         when(analysisResult.getId()).thenReturn(TOOL_ID);
@@ -217,9 +197,7 @@ class SummaryModelTest {
 
     @Test
     void shouldHandleMissingResetAction() {
-        var analysisResult = createAnalysisResult(
-                Maps.fixedSize.of(CHECK_STYLE_ID, 2), 0, 0,
-                EMPTY_ERRORS, 0);
+        var analysisResult = createAnalysisResult(Maps.fixedSize.of(CHECK_STYLE_ID, 2), 0, 0, EMPTY_ERRORS, 0);
 
         Run<?, ?> build = analysisResult.getOwner();
         when(analysisResult.getId()).thenReturn(TOOL_ID);
@@ -242,25 +220,30 @@ class SummaryModelTest {
         Locale.setDefault(Locale.ENGLISH);
 
         LabelProviderFactoryFacade facade = mock(LabelProviderFactoryFacade.class);
-        var checkStyleLabelProvider = new StaticAnalysisLabelProvider(CHECK_STYLE_ID,
-                CHECK_STYLE_NAME);
+        var checkStyleLabelProvider = new StaticAnalysisLabelProvider(CHECK_STYLE_ID, CHECK_STYLE_NAME);
         when(facade.get(CHECK_STYLE_ID)).thenReturn(checkStyleLabelProvider);
         var pmdLabelProvider = new StaticAnalysisLabelProvider(PMD_ID, PMD_NAME);
         when(facade.get(PMD_ID)).thenReturn(pmdLabelProvider);
         when(facade.getReferenceLink("-")).thenReturn("-");
         when(facade.getReferenceLink(startsWith("#"))).thenReturn("#reference-link");
 
-        var summaryModel = new SummaryModel(new StaticAnalysisLabelProvider(TOOL_ID, TOOL_NAME), analysisResult, facade);
+        var summaryModel =
+                new SummaryModel(new StaticAnalysisLabelProvider(TOOL_ID, TOOL_NAME), analysisResult, facade);
         summaryModel.setResetQualityGateCommand(createResetReferenceAction(false));
         return summaryModel;
     }
 
-    private AnalysisResult createAnalysisResult(final Map<String, Integer> sizesPerOrigin,
-            final int newSize, final int fixedSize,
+    private AnalysisResult createAnalysisResult(
+            final Map<String, Integer> sizesPerOrigin,
+            final int newSize,
+            final int fixedSize,
             final ImmutableList<String> errorMessages,
             final int numberOfIssuesSinceBuild) {
         AnalysisResult analysisRun = mock(AnalysisResult.class);
-        when(analysisRun.getTotalSize()).thenReturn(sizesPerOrigin.values().stream().mapToInt(Integer::intValue).sum());
+        when(analysisRun.getTotalSize())
+                .thenReturn(sizesPerOrigin.values().stream()
+                        .mapToInt(Integer::intValue)
+                        .sum());
         when(analysisRun.getSizePerOrigin()).thenReturn(sizesPerOrigin);
         when(analysisRun.getNewSize()).thenReturn(newSize);
         when(analysisRun.getFixedSize()).thenReturn(fixedSize);
@@ -288,7 +271,10 @@ class SummaryModelTest {
                         .setLineStart(1)
                         .buildAndClean();
                 subReport.add(checkstyleWarning);
-                subReport.add(builder.setFileName("A.java").setCategory("Style").setLineStart(1).buildAndClean());
+                subReport.add(builder.setFileName("A.java")
+                        .setCategory("Style")
+                        .setLineStart(1)
+                        .buildAndClean());
                 container.addAll(subReport);
             }
             return container;

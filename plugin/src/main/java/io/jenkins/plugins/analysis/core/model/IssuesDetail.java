@@ -1,35 +1,14 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import org.apache.commons.lang3.StringUtils;
-
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.echarts.BuildResult;
 import edu.hm.hafner.echarts.ChartModelConfiguration;
 import edu.hm.hafner.echarts.PieChartModel;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.InvalidPathException;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.function.Function;
-import tools.jackson.databind.ObjectMapper;
-
-import org.kohsuke.accmod.Restricted;
-import org.kohsuke.accmod.restrictions.NoExternalUse;
-import org.kohsuke.stapler.StaplerRequest2;
-import org.kohsuke.stapler.StaplerResponse2;
-import org.kohsuke.stapler.bind.JavaScriptMethod;
 import hudson.model.Api;
 import hudson.model.ModelObject;
 import hudson.model.Run;
-
 import io.jenkins.plugins.analysis.core.charts.HealthTrendChart;
 import io.jenkins.plugins.analysis.core.charts.ModifiedCodePieChart;
 import io.jenkins.plugins.analysis.core.charts.NewVersusFixedPieChart;
@@ -49,13 +28,31 @@ import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 import io.jenkins.plugins.datatables.DefaultAsyncTableContentProvider;
 import io.jenkins.plugins.datatables.TableModel;
 import io.jenkins.plugins.forensics.util.CommitDecoratorFactory;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.function.Function;
+import org.apache.commons.lang3.StringUtils;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
+import org.kohsuke.stapler.StaplerRequest2;
+import org.kohsuke.stapler.StaplerResponse2;
+import org.kohsuke.stapler.bind.JavaScriptMethod;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Build view that shows the details for a subset of issues.
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings({"PMD.CouplingBetweenObjects", "PMD.GodClass", "ClassDataAbstractionCoupling", "ClassFanOutComplexity"})
+@SuppressWarnings({"PMD.CouplingBetweenObjects", "PMD.GodClass", "ClassDataAbstractionCoupling", "ClassFanOutComplexity"
+})
 public class IssuesDetail extends DefaultAsyncTableContentProvider implements ModelObject {
     private static final ResetQualityGateCommand RESET_QUALITY_GATE_COMMAND = new ResetQualityGateCommand();
     private static final String ISSUES_TABLE_ID = "issues";
@@ -125,13 +122,29 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
      *         the encoding to use when displaying source files
      */
     @SuppressWarnings("ParameterNumber")
-    public IssuesDetail(final Run<?, ?> owner, final AnalysisResult result,
-            final Report report, final Report newIssues,
-            final Report outstandingIssues, final Report fixedIssues,
-            final String displayName, final String url, final StaticAnalysisLabelProvider labelProvider,
+    public IssuesDetail(
+            final Run<?, ?> owner,
+            final AnalysisResult result,
+            final Report report,
+            final Report newIssues,
+            final Report outstandingIssues,
+            final Report fixedIssues,
+            final String displayName,
+            final String url,
+            final StaticAnalysisLabelProvider labelProvider,
             final Charset sourceEncoding) {
-        this(owner, result, report, newIssues, outstandingIssues, fixedIssues, displayName, url, labelProvider,
-                sourceEncoding, new HealthDescriptor(0, 0, Severity.ERROR));
+        this(
+                owner,
+                result,
+                report,
+                newIssues,
+                outstandingIssues,
+                fixedIssues,
+                displayName,
+                url,
+                labelProvider,
+                sourceEncoding,
+                new HealthDescriptor(0, 0, Severity.ERROR));
     }
 
     /**
@@ -161,11 +174,18 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
      *         health descriptor
      */
     @SuppressWarnings("ParameterNumber")
-    public IssuesDetail(final Run<?, ?> owner, final AnalysisResult result,
-            final Report report, final Report newIssues,
-            final Report outstandingIssues, final Report fixedIssues,
-            final String displayName, final String url, final StaticAnalysisLabelProvider labelProvider,
-            final Charset sourceEncoding, final HealthDescriptor healthDescriptor) {
+    public IssuesDetail(
+            final Run<?, ?> owner,
+            final AnalysisResult result,
+            final Report report,
+            final Report newIssues,
+            final Report outstandingIssues,
+            final Report fixedIssues,
+            final String displayName,
+            final String url,
+            final StaticAnalysisLabelProvider labelProvider,
+            final Charset sourceEncoding,
+            final HealthDescriptor healthDescriptor) {
         super();
 
         this.owner = owner;
@@ -197,12 +217,24 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
      * @param sourceEncoding
      *         the charset to visualize source files with
      */
-    public IssuesDetail(final Run<?, ?> owner, final AnalysisResult result,
+    public IssuesDetail(
+            final Run<?, ?> owner,
+            final AnalysisResult result,
             final StaticAnalysisLabelProvider labelProvider,
-            final HealthDescriptor healthDescriptor, final Charset sourceEncoding) {
-        this(owner, result, result.getIssues(), result.getNewIssues(), result.getOutstandingIssues(),
-                result.getFixedIssues(), labelProvider.getLinkName(), labelProvider.getId(),
-                labelProvider, sourceEncoding, healthDescriptor);
+            final HealthDescriptor healthDescriptor,
+            final Charset sourceEncoding) {
+        this(
+                owner,
+                result,
+                result.getIssues(),
+                result.getNewIssues(),
+                result.getOutstandingIssues(),
+                result.getFixedIssues(),
+                labelProvider.getLinkName(),
+                labelProvider.getId(),
+                labelProvider,
+                sourceEncoding,
+                healthDescriptor);
 
         infoMessages.addAll(result.getInfoMessages().castToList());
         errorMessages.addAll(result.getErrorMessages().castToList());
@@ -267,21 +299,22 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
     public TableModel getTableModel(final String id) {
         if (ISSUES_TABLE_ID.equals(id)) {
             return labelProvider.getIssuesModel(owner, getUrl(), report);
-        }
-        else if (BLAMES_TABLE_ID.equals(id)) {
-            return new BlamesModel(report, result.getBlames(),
+        } else if (BLAMES_TABLE_ID.equals(id)) {
+            return new BlamesModel(
+                    report,
+                    result.getBlames(),
                     labelProvider.getFileNameRenderer(owner),
                     labelProvider.getAgeBuilder(owner, getUrl()),
                     labelProvider,
                     CommitDecoratorFactory.findCommitDecorator(owner));
-        }
-        else if (FORENSICS_TABLE_ID.equals(id)) {
-            return new ForensicsModel(report, result.getForensics(),
+        } else if (FORENSICS_TABLE_ID.equals(id)) {
+            return new ForensicsModel(
+                    report,
+                    result.getForensics(),
                     labelProvider.getFileNameRenderer(owner),
                     labelProvider.getAgeBuilder(owner, getUrl()),
                     labelProvider);
-        }
-        else {
+        } else {
             throw new NoSuchElementException("No such table model: " + id);
         }
     }
@@ -314,8 +347,13 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
         var history = createHistory();
         for (BuildResult<AnalysisBuildResult> buildResult : history) {
             if (buildResult.getBuild().getDisplayName().equals(build)) {
-                return new BuildResultNavigator().getSameUrlForOtherBuild(owner, detailsUrl, getResult().getId(),
-                                buildResult.getBuild().getNumber()).orElse(StringUtils.EMPTY);
+                return new BuildResultNavigator()
+                        .getSameUrlForOtherBuild(
+                                owner,
+                                detailsUrl,
+                                getResult().getId(),
+                                buildResult.getBuild().getNumber())
+                        .orElse(StringUtils.EMPTY);
             }
         }
         return StringUtils.EMPTY;
@@ -427,7 +465,8 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
     private String createTrendAsJson(final TrendChart trendChart, final String configuration) {
         var history = createHistory();
 
-        return new ObjectMapper().writeValueAsString(trendChart.create(history, ChartModelConfiguration.fromJson(configuration)));
+        return new ObjectMapper()
+                .writeValueAsString(trendChart.create(history, ChartModelConfiguration.fromJson(configuration)));
     }
 
     private AnalysisHistory createHistory() {
@@ -570,12 +609,11 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
         Function<String, String> propertyFormatter;
         if (FILE_NAME_PROPERTY.equals(propertyName)) {
             propertyFormatter = new BaseNameMapper();
-        }
-        else if (ORIGIN_PROPERTY.equals(propertyName)) {
-            propertyFormatter = origin -> new LabelProviderFactory().create(origin,
-                    getIssues().getNameOfOrigin(origin)).getName();
-        }
-        else {
+        } else if (ORIGIN_PROPERTY.equals(propertyName)) {
+            propertyFormatter = origin -> new LabelProviderFactory()
+                    .create(origin, getIssues().getNameOfOrigin(origin))
+                    .getName();
+        } else {
             propertyFormatter = Function.identity();
         }
         return new PropertyStatistics(report, newIssues, propertyName, propertyFormatter);
@@ -601,15 +639,21 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
     @SuppressWarnings("unused") // Called by jelly view
     public Object getDynamic(final String link, final StaplerRequest2 request, final StaplerResponse2 response) {
         try {
-            return new DetailFactory().createTrendDetails(link, owner, result,
-                    report, newIssues, outstandingIssues, fixedIssues,
-                    sourceEncoding, this);
-        }
-        catch (NoSuchElementException ignored) {
+            return new DetailFactory()
+                    .createTrendDetails(
+                            link,
+                            owner,
+                            result,
+                            report,
+                            newIssues,
+                            outstandingIssues,
+                            fixedIssues,
+                            sourceEncoding,
+                            this);
+        } catch (NoSuchElementException ignored) {
             try {
                 response.sendRedirect2("../");
-            }
-            catch (IOException ignore) {
+            } catch (IOException ignore) {
                 // ignore
             }
             return this; // fallback on broken URLs
@@ -662,8 +706,7 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
                     return absolutePath; // fallback
                 }
                 return baseName.toString();
-            }
-            catch (InvalidPathException e) {
+            } catch (InvalidPathException e) {
                 return absolutePath;
             }
         }

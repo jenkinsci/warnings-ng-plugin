@@ -36,8 +36,8 @@ public class SvgIconLabelProvider extends StaticAnalysisLabelProvider {
      * @param iconName
      *         the unique name of the icon file
      */
-    public SvgIconLabelProvider(final String id, final String name, final DescriptionProvider descriptionProvider,
-            final String iconName) {
+    public SvgIconLabelProvider(
+            final String id, final String name, final DescriptionProvider descriptionProvider, final String iconName) {
         super(id, name, descriptionProvider);
 
         iconUrl = ICONS_URL + iconName + SVG_SUFFIX;

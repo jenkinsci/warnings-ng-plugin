@@ -1,13 +1,21 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import org.eclipse.collections.impl.factory.Lists;
-import org.junit.jupiter.api.Test;
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.assertThat;
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.assertThatExceptionOfType;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
-
+import hudson.DescriptorExtensionList;
+import hudson.model.ModelObject;
+import hudson.model.Run;
+import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
+import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
+import io.jenkins.plugins.bootstrap5.MessagesViewModel;
+import io.jenkins.plugins.util.JenkinsFacade;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -16,20 +24,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
-
-import hudson.DescriptorExtensionList;
-import hudson.model.ModelObject;
-import hudson.model.Run;
 import jenkins.model.Jenkins;
-
-import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
-import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
-import io.jenkins.plugins.bootstrap5.MessagesViewModel;
-import io.jenkins.plugins.util.JenkinsFacade;
-
-import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import org.eclipse.collections.impl.factory.Lists;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class {@link DetailFactory}.
@@ -52,28 +49,35 @@ class DetailFactoryTest {
     private static final String TOOL_ID = "spotbugs";
 
     @Test
+    @SuppressWarnings("checkstyle:LambdaBodyLength")
     void shouldThrowExceptionIfLinkIsNotFound() {
         assertThatExceptionOfType(NoSuchElementException.class)
-                .isThrownBy(() ->
-                        new DetailFactory().createTrendDetails("broken", RUN, createResult(), ALL_ISSUES, NEW_ISSUES,
-                                OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent()));
+                .isThrownBy(() -> new DetailFactory()
+                        .createTrendDetails(
+                                "broken",
+                                RUN,
+                                createResult(),
+                                ALL_ISSUES,
+                                NEW_ISSUES,
+                                OUTSTANDING_ISSUES,
+                                FIXED_ISSUES,
+                                ENCODING,
+                                createParent()));
     }
 
     @Test
     void shouldCreateDetailsForEmpty() {
         var empty = new Report();
 
-        var originDetails = createTrendDetails("origin.123", createResult(),
-                empty, empty, empty, empty, createParent(),
-                IssuesDetail.class);
+        var originDetails = createTrendDetails(
+                "origin.123", createResult(), empty, empty, empty, empty, createParent(), IssuesDetail.class);
         assertThat(originDetails).hasIssues(empty);
         assertThat(originDetails).hasFixedIssues(empty);
         assertThat(originDetails).hasNewIssues(empty);
         assertThat(originDetails).hasOutstandingIssues(empty);
 
-        var fileDetails = createTrendDetails("file.123", createResult(),
-                empty, empty, empty, empty, createParent(),
-                IssuesDetail.class);
+        var fileDetails = createTrendDetails(
+                "file.123", createResult(), empty, empty, empty, empty, createParent(), IssuesDetail.class);
         assertThat(fileDetails).hasIssues(empty);
         assertThat(fileDetails).hasFixedIssues(empty);
         assertThat(fileDetails).hasNewIssues(empty);
@@ -86,20 +90,38 @@ class DetailFactoryTest {
         Map<String, Integer> sizes = new HashMap<>();
         sizes.put(TOOL_ID, 20);
         when(result.getSizePerOrigin()).thenReturn(sizes);
-        var details = createTrendDetails("origin." + TOOL_ID.hashCode(), result,
-                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, createParent(),
+        var details = createTrendDetails(
+                "origin." + TOOL_ID.hashCode(),
+                result,
+                ALL_ISSUES,
+                NEW_ISSUES,
+                OUTSTANDING_ISSUES,
+                FIXED_ISSUES,
+                createParent(),
                 IssuesDetail.class);
         assertThat(details).hasIssues(ALL_ISSUES);
-        var empty = createTrendDetails("origin.wrongID", result,
-                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, createParent(),
+        var empty = createTrendDetails(
+                "origin.wrongID",
+                result,
+                ALL_ISSUES,
+                NEW_ISSUES,
+                OUTSTANDING_ISSUES,
+                FIXED_ISSUES,
+                createParent(),
                 IssuesDetail.class);
         assertThat(empty.getIssues()).isEmpty();
     }
 
     @Test
     void shouldReturnFixedWarningsDetailWhenCalledWithFixedLink() {
-        var details = createTrendDetails("fixed", createResult(),
-                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, createParent(),
+        var details = createTrendDetails(
+                "fixed",
+                createResult(),
+                ALL_ISSUES,
+                NEW_ISSUES,
+                OUTSTANDING_ISSUES,
+                FIXED_ISSUES,
+                createParent(),
                 FixedWarningsDetail.class);
         assertThat(details).hasIssues(FIXED_ISSUES);
         assertThat(details).hasFixedIssues(FIXED_ISSUES);
@@ -109,8 +131,14 @@ class DetailFactoryTest {
 
     @Test
     void shouldReturnAllIssues() {
-        var details = createTrendDetails("all", createResult(),
-                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, createParent(),
+        var details = createTrendDetails(
+                "all",
+                createResult(),
+                ALL_ISSUES,
+                NEW_ISSUES,
+                OUTSTANDING_ISSUES,
+                FIXED_ISSUES,
+                createParent(),
                 IssuesDetail.class);
         assertThat(details).hasIssues(ALL_ISSUES);
         assertThat(details).hasFixedIssues(FIXED_ISSUES);
@@ -121,20 +149,35 @@ class DetailFactoryTest {
     @Test
     void shouldReturnLabelProviderNameOnOrigin() {
         JenkinsFacade jenkins = mock(JenkinsFacade.class);
-        when(jenkins.getDescriptorsFor(Tool.class)).thenReturn(
-                DescriptorExtensionList.createDescriptorList((Jenkins) null, Tool.class));
+        when(jenkins.getDescriptorsFor(Tool.class))
+                .thenReturn(DescriptorExtensionList.createDescriptorList((Jenkins) null, Tool.class));
         BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
         var detailFactory = new DetailFactory(jenkins, buildFolder);
-        var details = detailFactory.createTrendDetails("origin." + TOOL_ID.hashCode(), RUN,
-                createResult(), ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent());
-        assertThat(details).isInstanceOfSatisfying(IssuesDetail.class,
-                d -> assertThat(d.getDisplayName()).isEqualTo("Static Analysis"));
+        var details = detailFactory.createTrendDetails(
+                "origin." + TOOL_ID.hashCode(),
+                RUN,
+                createResult(),
+                ALL_ISSUES,
+                NEW_ISSUES,
+                OUTSTANDING_ISSUES,
+                FIXED_ISSUES,
+                ENCODING,
+                createParent());
+        assertThat(details)
+                .isInstanceOfSatisfying(
+                        IssuesDetail.class, d -> assertThat(d.getDisplayName()).isEqualTo("Static Analysis"));
     }
 
     @Test
     void shouldReturnIssuesDetailWithNewIssuesWhenCalledWithNewLink() {
-        var details = createTrendDetails("new", createResult(),
-                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, createParent(),
+        var details = createTrendDetails(
+                "new",
+                createResult(),
+                ALL_ISSUES,
+                NEW_ISSUES,
+                OUTSTANDING_ISSUES,
+                FIXED_ISSUES,
+                createParent(),
                 IssuesDetail.class);
         assertThat(details).hasIssues(NEW_ISSUES);
         assertThat(details).hasFixedIssues(NO_ISSUES);
@@ -144,8 +187,14 @@ class DetailFactoryTest {
 
     @Test
     void shouldReturnIssuesDetailWithOutstandingIssuesWhenCalledWithOutstandingLink() {
-        var details = createTrendDetails("outstanding", createResult(),
-                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, createParent(),
+        var details = createTrendDetails(
+                "outstanding",
+                createResult(),
+                ALL_ISSUES,
+                NEW_ISSUES,
+                OUTSTANDING_ISSUES,
+                FIXED_ISSUES,
+                createParent(),
                 IssuesDetail.class);
         assertThat(details).hasIssues(OUTSTANDING_ISSUES);
         assertThat(details).hasFixedIssues(NO_ISSUES);
@@ -155,8 +204,14 @@ class DetailFactoryTest {
 
     @Test
     void shouldReturnPriorityDetailWithHighPriorityIssuesWhenCalledWithHighLink() {
-        var details = createTrendDetails("HIGH", createResult(),
-                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, createParent(),
+        var details = createTrendDetails(
+                "HIGH",
+                createResult(),
+                ALL_ISSUES,
+                NEW_ISSUES,
+                OUTSTANDING_ISSUES,
+                FIXED_ISSUES,
+                createParent(),
                 IssuesDetail.class);
         assertThatPrioritiesAreFiltered(details, Severity.WARNING_HIGH);
         assertThatPrioritiesAreCorrectlySet(details, 3, 0, 0);
@@ -164,8 +219,14 @@ class DetailFactoryTest {
 
     @Test
     void shouldReturnPriorityDetailWithNormalPriorityIssuesWhenCalledWithNormalLink() {
-        var details = createTrendDetails("NORMAL", createResult(),
-                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, createParent(),
+        var details = createTrendDetails(
+                "NORMAL",
+                createResult(),
+                ALL_ISSUES,
+                NEW_ISSUES,
+                OUTSTANDING_ISSUES,
+                FIXED_ISSUES,
+                createParent(),
                 IssuesDetail.class);
 
         assertThatPrioritiesAreFiltered(details, Severity.WARNING_NORMAL);
@@ -174,8 +235,14 @@ class DetailFactoryTest {
 
     @Test
     void shouldReturnPriorityDetailWithLowPriorityIssuesWhenCalledWithLowLink() {
-        var details = createTrendDetails("LOW", createResult(),
-                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, createParent(),
+        var details = createTrendDetails(
+                "LOW",
+                createResult(),
+                ALL_ISSUES,
+                NEW_ISSUES,
+                OUTSTANDING_ISSUES,
+                FIXED_ISSUES,
+                createParent(),
                 IssuesDetail.class);
 
         assertThatPrioritiesAreFiltered(details, Severity.WARNING_LOW);
@@ -191,8 +258,14 @@ class DetailFactoryTest {
 
     @Test
     void shouldReturnInfoErrorDetailWhenCalledWithInfoLink() {
-        var details = createTrendDetails("info", createResult(),
-                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, createParent(),
+        var details = createTrendDetails(
+                "info",
+                createResult(),
+                ALL_ISSUES,
+                NEW_ISSUES,
+                OUTSTANDING_ISSUES,
+                FIXED_ISSUES,
+                createParent(),
                 MessagesViewModel.class);
         assertThat(details.getErrorMessages()).containsExactly(ERROR_MESSAGES);
         assertThat(details.getDisplayName()).contains(PARENT_NAME);
@@ -210,8 +283,8 @@ class DetailFactoryTest {
         assertThat(((ConsoleDetail) details).getSourceCode()).contains(AFFECTED_FILE_CONTENT);
     }
 
-    private Object createDetails(final JenkinsFacade jenkins, final BuildFolderFacade buildFolder,
-            final String fileName) {
+    private Object createDetails(
+            final JenkinsFacade jenkins, final BuildFolderFacade buildFolder, final String fileName) {
         try (var issueBuilder = new IssueBuilder()) {
             var detailFactory = new DetailFactory(jenkins, buildFolder);
 
@@ -221,8 +294,15 @@ class DetailFactoryTest {
             var report = new Report();
             report.add(issue);
 
-            return detailFactory.createTrendDetails("source." + issue.getId().toString(),
-                    RUN, createResult(), report, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING,
+            return detailFactory.createTrendDetails(
+                    "source." + issue.getId().toString(),
+                    RUN,
+                    createResult(),
+                    report,
+                    NEW_ISSUES,
+                    OUTSTANDING_ISSUES,
+                    FIXED_ISSUES,
+                    ENCODING,
                     createParent());
         }
     }
@@ -236,8 +316,16 @@ class DetailFactoryTest {
         var detailFactory = new DetailFactory();
         AnalysisResult result = mock(AnalysisResult.class);
 
-        var details = detailFactory.createTrendDetails("category." + "CATEGORY2".hashCode(), RUN, result, ALL_ISSUES,
-                NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent());
+        var details = detailFactory.createTrendDetails(
+                "category." + "CATEGORY2".hashCode(),
+                RUN,
+                result,
+                ALL_ISSUES,
+                NEW_ISSUES,
+                OUTSTANDING_ISSUES,
+                FIXED_ISSUES,
+                ENCODING,
+                createParent());
         assertThat(details).isInstanceOf(IssuesDetail.class);
 
         var filtered = ((IssuesDetail) details).getIssues();
@@ -246,16 +334,21 @@ class DetailFactoryTest {
     }
 
     @SuppressWarnings("ParameterNumber")
-    private <T extends ModelObject> T createTrendDetails(final String link,
+    private <T extends ModelObject> T createTrendDetails(
+            final String link,
             final AnalysisResult result,
-            final Report allIssues, final Report newIssues,
-            final Report outstandingIssues, final Report fixedIssues,
-            final IssuesDetail parent, final Class<T> actualType) {
+            final Report allIssues,
+            final Report newIssues,
+            final Report outstandingIssues,
+            final Report fixedIssues,
+            final IssuesDetail parent,
+            final Class<T> actualType) {
         JenkinsFacade jenkins = mock(JenkinsFacade.class);
-        when(jenkins.getDescriptorsFor(Tool.class)).thenReturn(DescriptorExtensionList.createDescriptorList((Jenkins) null, Tool.class));
+        when(jenkins.getDescriptorsFor(Tool.class))
+                .thenReturn(DescriptorExtensionList.createDescriptorList((Jenkins) null, Tool.class));
         var detailFactory = new DetailFactory(jenkins, mock(BuildFolderFacade.class));
-        var details = detailFactory.createTrendDetails(link, RUN,
-                result, allIssues, newIssues, outstandingIssues, fixedIssues, ENCODING, parent);
+        var details = detailFactory.createTrendDetails(
+                link, RUN, result, allIssues, newIssues, outstandingIssues, fixedIssues, ENCODING, parent);
         assertThat(details).isInstanceOf(actualType);
         return actualType.cast(details);
     }
@@ -266,20 +359,27 @@ class DetailFactoryTest {
         return lines.stream();
     }
 
-    private void assertThatPrioritiesAreCorrectlySet(final IssuesDetail issuesDetail,
-            final int expectedSizeHigh, final int expectedSizeNormal, final int expectedSizeLow) {
-        assertThatReportHasSeverities(issuesDetail.getIssues(),
-                0, expectedSizeHigh, expectedSizeNormal, expectedSizeLow);
-        assertThatReportHasSeverities(issuesDetail.getOutstandingIssues(),
-                0, expectedSizeHigh, expectedSizeNormal, expectedSizeLow);
-        assertThatReportHasSeverities(issuesDetail.getFixedIssues(),
-                0, expectedSizeHigh, expectedSizeNormal, expectedSizeLow);
-        assertThatReportHasSeverities(issuesDetail.getNewIssues(),
-                0, expectedSizeHigh, expectedSizeNormal, expectedSizeLow);
+    private void assertThatPrioritiesAreCorrectlySet(
+            final IssuesDetail issuesDetail,
+            final int expectedSizeHigh,
+            final int expectedSizeNormal,
+            final int expectedSizeLow) {
+        assertThatReportHasSeverities(
+                issuesDetail.getIssues(), 0, expectedSizeHigh, expectedSizeNormal, expectedSizeLow);
+        assertThatReportHasSeverities(
+                issuesDetail.getOutstandingIssues(), 0, expectedSizeHigh, expectedSizeNormal, expectedSizeLow);
+        assertThatReportHasSeverities(
+                issuesDetail.getFixedIssues(), 0, expectedSizeHigh, expectedSizeNormal, expectedSizeLow);
+        assertThatReportHasSeverities(
+                issuesDetail.getNewIssues(), 0, expectedSizeHigh, expectedSizeNormal, expectedSizeLow);
     }
 
-    private void assertThatReportHasSeverities(final Report report, final int expectedSizeError,
-            final int expectedSizeHigh, final int expectedSizeNormal, final int expectedSizeLow) {
+    private void assertThatReportHasSeverities(
+            final Report report,
+            final int expectedSizeError,
+            final int expectedSizeHigh,
+            final int expectedSizeNormal,
+            final int expectedSizeLow) {
         assertThat(report.getSizeOf(Severity.ERROR)).isEqualTo(expectedSizeError);
         assertThat(report.getSizeOf(Severity.WARNING_HIGH)).isEqualTo(expectedSizeHigh);
         assertThat(report.getSizeOf(Severity.WARNING_NORMAL)).isEqualTo(expectedSizeNormal);

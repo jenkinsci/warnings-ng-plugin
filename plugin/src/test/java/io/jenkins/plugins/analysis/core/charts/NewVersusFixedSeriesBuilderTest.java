@@ -1,13 +1,11 @@
 package io.jenkins.plugins.analysis.core.charts;
 
-import org.junit.jupiter.api.Test;
-
-import java.util.Map;
-
-import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
-
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
+
+import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
+import java.util.Map;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class {@link NewVersusFixedSeriesBuilder}.

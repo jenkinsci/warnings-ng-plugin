@@ -1,18 +1,15 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
-
 import com.google.inject.Injector;
-
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.Control;
 import org.jenkinsci.test.acceptance.po.PageObject;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
 /**
  * {@link PageObject} representing the error and info messages view.
@@ -28,10 +25,8 @@ public final class InfoView extends PageObject {
     /**
      * Creates a new info and error view.
      *
-     * @param build
-     *         the build that contains the static analysis results
-     * @param id
-     *         the id of the analysis tool
+     * @param build the build that contains the static analysis results
+     * @param id the id of the analysis tool
      */
     @SuppressWarnings("unused") // Required to dynamically create page object using reflection
     public InfoView(final Build build, final String id) {
@@ -41,12 +36,9 @@ public final class InfoView extends PageObject {
     /**
      * Creates a new info and error view.
      *
-     * @param injector
-     *         injector
-     * @param url
-     *         the URL of the view
-     * @param id
-     *         the id of the analysis tool
+     * @param injector injector
+     * @param url the URL of the view
+     * @param id the id of the analysis tool
      */
     @SuppressWarnings("unused") // Required to dynamically create page object using reflection
     public InfoView(final Injector injector, final URL url, final String id) {
@@ -61,8 +53,7 @@ public final class InfoView extends PageObject {
     public List<String> getErrorMessages() {
         if (errors.exists()) {
             return getElementsFromContainingDivs(errors);
-        }
-        else {
+        } else {
             return Collections.emptyList();
         }
     }
@@ -77,9 +68,7 @@ public final class InfoView extends PageObject {
     }
 
     private List<String> getElementsFromContainingDivs(final Control control) {
-        return control.resolve()
-                .findElements(by.xpath("div"))
-                .stream()
+        return control.resolve().findElements(by.xpath("div")).stream()
                 .map(WebElement::getText)
                 .collect(Collectors.toList());
     }

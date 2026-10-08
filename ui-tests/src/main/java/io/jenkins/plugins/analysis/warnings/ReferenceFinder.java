@@ -15,10 +15,8 @@ public class ReferenceFinder extends AbstractStep implements PostBuildStep {
     /**
      * Creates a new page object.
      *
-     * @param parent
-     *         parent page object
-     * @param path
-     *         path on the parent page
+     * @param parent parent page object
+     * @param path path on the parent page
      */
     public ReferenceFinder(final Job parent, final String path) {
         super(parent, path);

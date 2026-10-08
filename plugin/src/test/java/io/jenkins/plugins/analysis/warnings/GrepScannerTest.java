@@ -1,19 +1,17 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import org.junit.jupiter.api.Test;
+import static edu.hm.hafner.analysis.assertions.Assertions.*;
 
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.ResourceTest;
-
 import java.io.File;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Iterator;
-
-import static edu.hm.hafner.analysis.assertions.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class {@link GrepScanner}.
@@ -63,7 +61,8 @@ class GrepScannerTest extends ResourceTest {
         var scanner = new GrepScanner("ERROR", Severity.WARNING_HIGH, "");
 
         var report = scanner.scanLines(
-                lines("INFO: system started",
+                lines(
+                        "INFO: system started",
                         "ERROR: something went wrong",
                         "INFO: processing continues",
                         "ERROR: another failure"),
@@ -82,9 +81,7 @@ class GrepScannerTest extends ResourceTest {
         var scanner = new GrepScanner("EXCEPTION", Severity.WARNING_NORMAL, "");
 
         var report = scanner.scanLines(
-                lines("INFO: startup complete",
-                        "DEBUG: initialised pool",
-                        "INFO: shutting down"),
+                lines("INFO: startup complete", "DEBUG: initialised pool", "INFO: shutting down"),
                 createIssueBuilder());
 
         assertThat(report).hasSize(0);
@@ -99,11 +96,17 @@ class GrepScannerTest extends ResourceTest {
         var normalScanner = new GrepScanner("WARN", Severity.WARNING_NORMAL, "");
         var lowScanner = new GrepScanner("HINT", Severity.WARNING_LOW, "");
 
-        assertThat(highScanner.scanLines(lines("FATAL: disk full"), createIssueBuilder()).get(0))
+        assertThat(highScanner
+                        .scanLines(lines("FATAL: disk full"), createIssueBuilder())
+                        .get(0))
                 .hasSeverity(Severity.WARNING_HIGH);
-        assertThat(normalScanner.scanLines(lines("WARN: retrying"), createIssueBuilder()).get(0))
+        assertThat(normalScanner
+                        .scanLines(lines("WARN: retrying"), createIssueBuilder())
+                        .get(0))
                 .hasSeverity(Severity.WARNING_NORMAL);
-        assertThat(lowScanner.scanLines(lines("HINT: consider using cache"), createIssueBuilder()).get(0))
+        assertThat(lowScanner
+                        .scanLines(lines("HINT: consider using cache"), createIssueBuilder())
+                        .get(0))
                 .hasSeverity(Severity.WARNING_LOW);
     }
 
@@ -142,10 +145,7 @@ class GrepScannerTest extends ResourceTest {
         var scanner = new GrepScanner("^ERROR.*failure$", Severity.WARNING_NORMAL, "");
 
         var report = scanner.scanLines(
-                lines("ERROR: some failure",
-                        "WARNING: another issue",
-                        "ERROR: disk failure"),
-                createIssueBuilder());
+                lines("ERROR: some failure", "WARNING: another issue", "ERROR: disk failure"), createIssueBuilder());
 
         assertThat(report).hasSize(2);
         assertThat(report.get(0)).hasLineStart(1);
@@ -160,11 +160,7 @@ class GrepScannerTest extends ResourceTest {
         var scanner = new GrepScanner("MATCH", Severity.WARNING_NORMAL, "");
 
         var report = scanner.scanLines(
-                lines("line 1",
-                        "line 2 has MATCH",
-                        "line 3",
-                        "line 4 has MATCH",
-                        "line 5 has MATCH"),
+                lines("line 1", "line 2 has MATCH", "line 3", "line 4 has MATCH", "line 5 has MATCH"),
                 createIssueBuilder());
 
         assertThat(report).hasSize(3);
@@ -194,14 +190,15 @@ class GrepScannerTest extends ResourceTest {
         var scanner = new GrepScanner("ERROR", Severity.WARNING_NORMAL, "");
 
         // Reuse the binary test file from the task scanner test resources
-        var url = getClass().getResource(
-                "/io/jenkins/plugins/analysis/warnings/tasks/file-with-strange-characters.txt");
+        var url =
+                getClass().getResource("/io/jenkins/plugins/analysis/warnings/tasks/file-with-strange-characters.txt");
         var pathToFile = Paths.get(url.toURI());
         var report = scanner.scan(pathToFile, StandardCharsets.UTF_8);
 
         assertThat(report.getErrorMessages()).isNotEmpty();
         assertThat(report.getErrorMessages().get(0))
-                .contains("Can't read source file").contains("UTF-8");
+                .contains("Can't read source file")
+                .contains("UTF-8");
     }
 
     /**
@@ -212,10 +209,7 @@ class GrepScannerTest extends ResourceTest {
         var scanner = new GrepScanner("ERR", Severity.WARNING_NORMAL, "");
 
         var report = scanner.scanLines(
-                lines("ERROR: failure",
-                        "ERRATIC behaviour detected",
-                        "info: no ERRors"),
-                createIssueBuilder());
+                lines("ERROR: failure", "ERRATIC behaviour detected", "info: no ERRors"), createIssueBuilder());
 
         // All 3 lines contain "ERR" as a substring
         assertThat(report).hasSize(3);
@@ -228,11 +222,8 @@ class GrepScannerTest extends ResourceTest {
     void shouldBeCaseSensitiveByDefault() {
         var scanner = new GrepScanner("error", Severity.WARNING_NORMAL, "");
 
-        var report = scanner.scanLines(
-                lines("ERROR: uppercase",
-                        "error: lowercase",
-                        "Error: mixed"),
-                createIssueBuilder());
+        var report =
+                scanner.scanLines(lines("ERROR: uppercase", "error: lowercase", "Error: mixed"), createIssueBuilder());
 
         // Only the lowercase "error" line matches
         assertThat(report).hasSize(1);
@@ -246,11 +237,8 @@ class GrepScannerTest extends ResourceTest {
     void shouldSupportCaseInsensitiveFlagInPattern() {
         var scanner = new GrepScanner("(?i)error", Severity.WARNING_NORMAL, "");
 
-        var report = scanner.scanLines(
-                lines("ERROR: uppercase",
-                        "error: lowercase",
-                        "Error: mixed"),
-                createIssueBuilder());
+        var report =
+                scanner.scanLines(lines("ERROR: uppercase", "error: lowercase", "Error: mixed"), createIssueBuilder());
 
         // All 3 lines match with case-insensitive flag
         assertThat(report).hasSize(3);
@@ -263,7 +251,8 @@ class GrepScannerTest extends ResourceTest {
     void shouldAssignErrorSeverityCorrectly() {
         var scanner = new GrepScanner("FATAL", Severity.ERROR, "");
 
-        assertThat(scanner.scanLines(lines("FATAL: system crash"), createIssueBuilder()).get(0))
+        assertThat(scanner.scanLines(lines("FATAL: system crash"), createIssueBuilder())
+                        .get(0))
                 .hasSeverity(Severity.ERROR);
     }
 

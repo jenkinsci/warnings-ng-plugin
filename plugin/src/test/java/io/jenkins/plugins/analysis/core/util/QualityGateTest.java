@@ -1,20 +1,17 @@
 package io.jenkins.plugins.analysis.core.util;
 
-import org.junit.jupiter.api.Test;
+import static io.jenkins.plugins.analysis.core.testutil.FormValidationAssert.*;
+import static org.mockito.Mockito.*;
 
 import edu.hm.hafner.util.SerializableTest;
-
 import hudson.model.BuildableItem;
 import hudson.model.Item;
-
 import io.jenkins.plugins.analysis.core.util.WarningsQualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.core.util.WarningsQualityGate.WarningsQualityGateDescriptor;
 import io.jenkins.plugins.util.JenkinsFacade;
 import io.jenkins.plugins.util.QualityGate;
 import io.jenkins.plugins.util.QualityGate.QualityGateCriticality;
-
-import static io.jenkins.plugins.analysis.core.testutil.FormValidationAssert.*;
-import static org.mockito.Mockito.*;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class {@link QualityGate}.
@@ -36,8 +33,7 @@ class QualityGateTest extends SerializableTest<WarningsQualityGate> {
                 .isError()
                 .hasMessage(Messages.FieldValidator_Error_NegativeThreshold());
 
-        assertThat(descriptor.doCheckThreshold(null, 1))
-                .isOk();
+        assertThat(descriptor.doCheckThreshold(null, 1)).isOk();
     }
 
     @Override

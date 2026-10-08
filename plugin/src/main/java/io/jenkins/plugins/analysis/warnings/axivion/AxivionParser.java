@@ -1,10 +1,8 @@
 package io.jenkins.plugins.analysis.warnings.axivion;
 
 import com.google.gson.JsonObject;
-
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
-
 import java.util.stream.StreamSupport;
 
 /**
@@ -47,8 +45,7 @@ class AxivionParser {
         final var errorType = payload.getAsJsonPrimitive("type");
         final var message = payload.getAsJsonPrimitive("message");
         if (version != null && errorType != null && message != null) {
-            report.logError("Dashboard '%s' threw '%s' with message '%s' ('%s').",
-                    version, errorType, message, kind);
+            report.logError("Dashboard '%s' threw '%s' with message '%s' ('%s').", version, errorType, message, kind);
         }
     }
 
@@ -57,9 +54,7 @@ class AxivionParser {
         private final String baseDir;
         private final boolean ignoreSuppressedOrJustified;
 
-        Config(final String projectUrl,
-                final String baseDir,
-                final boolean ignoreSuppressedOrJustified) {
+        Config(final String projectUrl, final String baseDir, final boolean ignoreSuppressedOrJustified) {
             this.baseDir = baseDir;
             this.projectUrl = projectUrl;
             this.ignoreSuppressedOrJustified = ignoreSuppressedOrJustified;

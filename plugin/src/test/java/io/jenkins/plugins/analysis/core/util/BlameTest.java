@@ -1,14 +1,12 @@
 package io.jenkins.plugins.analysis.core.util;
 
-import org.junit.jupiter.api.Test;
-
-import edu.hm.hafner.analysis.IssueBuilder;
-
-import io.jenkins.plugins.forensics.blame.Blames;
-import io.jenkins.plugins.forensics.blame.FileBlame;
-
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import static org.mockito.Mockito.*;
+
+import edu.hm.hafner.analysis.IssueBuilder;
+import io.jenkins.plugins.forensics.blame.Blames;
+import io.jenkins.plugins.forensics.blame.FileBlame;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class {@link Blame}.

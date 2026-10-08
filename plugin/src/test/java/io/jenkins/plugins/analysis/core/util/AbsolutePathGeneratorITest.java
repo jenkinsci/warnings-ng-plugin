@@ -1,28 +1,25 @@
 package io.jenkins.plugins.analysis.core.util;
 
-import org.apache.commons.lang3.StringUtils;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
-import org.junitpioneer.jupiter.Issue;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
-import net.sf.json.JSONArray;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
+import static org.assertj.core.api.Assumptions.*;
 
 import hudson.FilePath;
 import hudson.model.FreeStyleProject;
 import hudson.model.Slave;
 import hudson.slaves.DumbSlave;
-
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.Java;
 import io.jenkins.plugins.prism.SourceCodeDirectory;
-
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
-import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
-import static org.assertj.core.api.Assumptions.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+import net.sf.json.JSONArray;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.junitpioneer.jupiter.Issue;
 
 /**
  * Integration tests that resolve absolute paths.
@@ -49,8 +46,8 @@ class AbsolutePathGeneratorITest extends IntegrationTestWithJenkinsPerSuite {
         var project = createJobForAgent(agent);
 
         createFileInAgentWorkspace(agent, project, "Folder/Test.java", SOURCE_CODE);
-        createFileInAgentWorkspace(agent, project, "warnings.txt",
-                "[javac] Test.java:1: warning: Test Warning for Jenkins");
+        createFileInAgentWorkspace(
+                agent, project, "warnings.txt", "[javac] Test.java:1: warning: Test Warning for Jenkins");
 
         var javaJob = new Java();
         javaJob.setPattern("warnings.txt");
@@ -87,7 +84,10 @@ class AbsolutePathGeneratorITest extends IntegrationTestWithJenkinsPerSuite {
 
         var folder = createFolder(agent, project);
         createFileInAgentWorkspace(agent, project, "Folder/Test.java", SOURCE_CODE);
-        createFileInAgentWorkspace(agent, project, "warnings.txt",
+        createFileInAgentWorkspace(
+                agent,
+                project,
+                "warnings.txt",
                 "[javac] " + getAbsolutePathInLowerCase(folder) + ":1: warning: Test Warning for Jenkins");
 
         var javaJob = new Java();
@@ -106,8 +106,7 @@ class AbsolutePathGeneratorITest extends IntegrationTestWithJenkinsPerSuite {
             var project = createFreeStyleProject();
             project.setAssignedNode(agent);
             return project;
-        }
-        catch (IOException exception) {
+        } catch (IOException exception) {
             throw new AssertionError(exception);
         }
     }
@@ -118,7 +117,8 @@ class AbsolutePathGeneratorITest extends IntegrationTestWithJenkinsPerSuite {
             var jenkinsRule = getJenkins();
             int size = jenkinsRule.jenkins.getNodes().size();
 
-            var slave = new DumbSlave("slave" + size,
+            var slave = new DumbSlave(
+                    "slave" + size,
                     agentWorkspace.getPath().toLowerCase(Locale.ENGLISH),
                     jenkinsRule.createComputerLauncher(null));
             slave.setLabelString("agent");
@@ -126,8 +126,7 @@ class AbsolutePathGeneratorITest extends IntegrationTestWithJenkinsPerSuite {
             jenkinsRule.waitOnline(slave);
 
             return slave;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new AssertionError(e);
         }
     }
@@ -137,8 +136,7 @@ class AbsolutePathGeneratorITest extends IntegrationTestWithJenkinsPerSuite {
             var folder = getAgentWorkspace(agent, project).child("Folder");
             folder.mkdirs();
             return folder;
-        }
-        catch (IOException | InterruptedException exception) {
+        } catch (IOException | InterruptedException exception) {
             throw new AssertionError(exception);
         }
     }
