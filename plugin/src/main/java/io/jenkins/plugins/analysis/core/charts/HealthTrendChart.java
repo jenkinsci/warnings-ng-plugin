@@ -6,7 +6,6 @@ import edu.hm.hafner.echarts.LineSeries;
 import edu.hm.hafner.echarts.LineSeries.FilledMode;
 import edu.hm.hafner.echarts.LineSeries.StackedMode;
 import edu.hm.hafner.echarts.LinesChartModel;
-
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.echarts.JenkinsPalette;
@@ -31,7 +30,8 @@ public class HealthTrendChart implements TrendChart {
     }
 
     @Override
-    public LinesChartModel create(final Iterable<? extends BuildResult<AnalysisBuildResult>> results,
+    public LinesChartModel create(
+            final Iterable<? extends BuildResult<AnalysisBuildResult>> results,
             final ChartModelConfiguration configuration) {
         var builder = new HealthSeriesBuilder(healthDescriptor);
         var dataSet = builder.createDataSet(configuration, results);
@@ -46,10 +46,12 @@ public class HealthTrendChart implements TrendChart {
             var unhealthy = createSeries(Messages.Unhealthy_Name(), JenkinsPalette.RED);
             unhealthy.addAll(dataSet.getSeries(HealthSeriesBuilder.UNHEALTHY));
             model.addSeries(healthy, intermediate, unhealthy);
-        }
-        else {
-            var total = new LineSeries(Messages.Total_Name(), JenkinsPalette.YELLOW.normal(),
-                    StackedMode.SEPARATE_LINES, FilledMode.LINES);
+        } else {
+            var total = new LineSeries(
+                    Messages.Total_Name(),
+                    JenkinsPalette.YELLOW.normal(),
+                    StackedMode.SEPARATE_LINES,
+                    FilledMode.LINES);
             total.addAll(dataSet.getSeries(HealthSeriesBuilder.TOTAL));
             model.addSeries(total);
         }

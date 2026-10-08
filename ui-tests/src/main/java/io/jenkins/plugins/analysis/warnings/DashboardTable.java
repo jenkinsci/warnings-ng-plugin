@@ -1,9 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import org.openqa.selenium.WebElement;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -11,9 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
+import java.util.stream.Stream;
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.PageObject;
+import org.openqa.selenium.WebElement;
 
 /**
  * {@link PageObject} representing the dashboard on home.
@@ -30,10 +28,8 @@ public final class DashboardTable extends PageObject {
     /**
      * Creates a new page object representing the dashboard.
      *
-     * @param parent
-     *         a finished build
-     * @param url
-     *         the type of the result page (e.g., simian, checkstyle, cpd, etc.)
+     * @param parent a finished build
+     * @param url the type of the result page (e.g., simian, checkstyle, cpd, etc.)
      */
     public DashboardTable(final Build parent, final URL url) {
         super(parent, url);
@@ -53,29 +49,32 @@ public final class DashboardTable extends PageObject {
                     List<WebElement> images = th.findElements(by.tagName("img"));
                     if (images.isEmpty()) {
                         return th.getText();
-                    }
-                    else {
+                    } else {
                         String src = Objects.requireNonNull(images.getFirst().getAttribute("src"));
                         return src.substring(src.lastIndexOf('/'));
                     }
                 })
                 .collect(Collectors.toList());
 
-        List<List<List<String>>> lines = rows.stream().skip(1)
-                .map(dom -> dom.findElements(by.tagName("td")).stream().map(td -> {
-                    if (td.findElements(by.tagName("a")).isEmpty()) {
-                        return Arrays.asList(td.getText(), null);
-                    }
-                    else {
-                        WebElement entry = td.findElements(by.tagName("a")).get(0);
-                        return Arrays.asList(entry.getText(), entry.getAttribute("href"));
-                    }
-                }).collect(Collectors.toList()))
+        List<List<List<String>>> lines = rows.stream()
+                .skip(1)
+                .map(dom -> getRowLinks(dom).collect(Collectors.toList()))
                 .toList();
 
         table = lines.stream()
-                .collect(Collectors.toMap(entry -> entry.get(0).get(0),
-                        entry -> createPluginValueMapping(entry, headers)));
+                .collect(Collectors.toMap(
+                        entry -> entry.get(0).get(0), entry -> createPluginValueMapping(entry, headers)));
+    }
+
+    private Stream<List<String>> getRowLinks(final WebElement dom) {
+        return dom.findElements(by.tagName("td")).stream().map(td -> {
+            if (td.findElements(by.tagName("a")).isEmpty()) {
+                return Arrays.asList(td.getText(), null);
+            } else {
+                WebElement entry = td.findElements(by.tagName("a")).get(0);
+                return Arrays.asList(entry.getText(), entry.getAttribute("href"));
+            }
+        });
     }
 
     public List<String> getHeaders() {
@@ -86,21 +85,22 @@ public final class DashboardTable extends PageObject {
         return this.table;
     }
 
-    private Map<String, DashboardTableEntry> createPluginValueMapping(final List<List<String>> warnings,
-            final List<String> plugins) {
+    private Map<String, DashboardTableEntry> createPluginValueMapping(
+            final List<List<String>> warnings, final List<String> plugins) {
         Map<String, DashboardTableEntry> valuePluginMapping = new HashMap<>();
         for (int i = 1; i < warnings.size(); i++) {
             if (!EMPTY.equals(warnings.get(i).get(0))) {
-                valuePluginMapping.put(plugins.get(i).trim(),
-                        new DashboardTableEntry(Integer.parseInt(warnings.get(i).get(0)), warnings.get(i).get(1)));
+                valuePluginMapping.put(
+                        plugins.get(i).trim(),
+                        new DashboardTableEntry(
+                                Integer.parseInt(warnings.get(i).get(0)),
+                                warnings.get(i).get(1)));
             }
         }
         return valuePluginMapping;
     }
 
-    /**
-     * Represents an entry in the dashboard table with the warning count and a link to the plugin page.
-     */
+    /** Represents an entry in the dashboard table with the warning count and a link to the plugin page. */
     public static class DashboardTableEntry {
         private final int warningsCount;
         private final String url;
@@ -108,10 +108,8 @@ public final class DashboardTable extends PageObject {
         /**
          * Construct a DashboardTableEntry.
          *
-         * @param warningsCount
-         *         of the plugin in the build
-         * @param url
-         *         link to the plugin page
+         * @param warningsCount of the plugin in the build
+         * @param url link to the plugin page
          */
         public DashboardTableEntry(final int warningsCount, final String url) {
             this.warningsCount = warningsCount;

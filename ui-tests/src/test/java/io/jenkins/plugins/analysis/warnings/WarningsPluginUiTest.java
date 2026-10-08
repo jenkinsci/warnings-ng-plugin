@@ -52,14 +52,19 @@ public class WarningsPluginUiTest extends UiTest {
      * Credentials to access the docker container. The credentials are stored with the specified ID and use the provided
      * SSH key. Use the following annotation on your test case to use the specified docker container as git server or
      * build agent:
+     *
      * <blockquote>
+     *
      * <pre>@Test @WithDocker @WithCredentials(credentialType = WithCredentials.SSH_USERNAME_PRIVATE_KEY,
      *                                    values = {CREDENTIALS_ID, CREDENTIALS_KEY})}
      * public void shouldTestWithDocker() {
      * }
-     * </pre></blockquote>
+     * </pre>
+     *
+     * </blockquote>
      */
     private static final String CREDENTIALS_ID = "git";
+
     private static final String CREDENTIALS_KEY = "/org/jenkinsci/test/acceptance/docker/fixtures/GitContainer/unsafe";
     private static final String ICON = "/plugin/warnings-ng/icons/pmd.svg";
 
@@ -67,8 +72,8 @@ public class WarningsPluginUiTest extends UiTest {
     private DockerContainerHolder<JavaGitContainer> dockerContainer;
 
     /**
-     * Runs a pipeline with CheckStyle that is published under a custom ID and icon.
-     * Verifies the analysis results use the correct URL and icon.
+     * Runs a pipeline with CheckStyle that is published under a custom ID and icon. Verifies the analysis results use
+     * the correct URL and icon.
      */
     @Test
     @WithPlugins({"token-macro", "pipeline-stage-step", "workflow-durable-task-step", "workflow-basic-steps"})
@@ -92,21 +97,18 @@ public class WarningsPluginUiTest extends UiTest {
         build.open();
 
         AnalysisSummary checkstyle = new AnalysisSummary(build, "custom-id");
-        assertThat(checkstyle)
-                .hasTitleText(CHECK_STYLE_NAME + ": One warning")
-                .hasInfoType(InfoType.ERROR);
-        assertThat(checkstyle.getImage())
-                .endsWith(ICON);
+        assertThat(checkstyle).hasTitleText(CHECK_STYLE_NAME + ": One warning").hasInfoType(InfoType.ERROR);
+        assertThat(checkstyle.getImage()).endsWith(ICON);
 
         InfoView info = checkstyle.openInfoView();
         assertThat(info.getErrorMessages())
                 .contains("Can't create fingerprints for some files:")
-                .last().asString().endsWith("RemoteLauncher.java' file not found");
+                .last()
+                .asString()
+                .endsWith("RemoteLauncher.java' file not found");
     }
 
-    /**
-     * Verifies that static analysis results are correctly shown when the job is part of a folder.
-     */
+    /** Verifies that static analysis results are correctly shown when the job is part of a folder. */
     @Test
     public void shouldRunInFolder() {
         Folder folder = jenkins.jobs.create(Folder.class, "singleSummary");
@@ -173,13 +175,13 @@ public class WarningsPluginUiTest extends UiTest {
                 .hasQualityGateResult(QualityGateResult.FAILED);
 
         AnalysisResult result = analysisSummary.openOverallResult();
-        assertThat(result).hasActiveTab(Tab.TOOLS).hasTotal(25)
+        assertThat(result)
+                .hasActiveTab(Tab.TOOLS)
+                .hasTotal(25)
                 .hasOnlyAvailableTabs(Tab.TOOLS, Tab.PACKAGES, Tab.FILES, Tab.CATEGORIES, Tab.TYPES, Tab.ISSUES);
     }
 
-    /**
-     * Test to check that the issue filter can be configured and is applied.
-     */
+    /** Test to check that the issue filter can be configured and is applied. */
     @Test
     public void shouldFilterIssuesByIncludeAndExcludeFilters() {
         FreeStyleJob job = createFreeStyleJob("issue_filter/checkstyle-report.xml");
@@ -194,8 +196,9 @@ public class WarningsPluginUiTest extends UiTest {
 
         Build build = buildJob(job);
 
-        assertThat(build.getConsole()).contains(
-                "Applying 2 filters on the set of 4 issues (3 issues have been removed, 1 issues will be published)");
+        assertThat(build.getConsole())
+                .contains(
+                        "Applying 2 filters on the set of 4 issues (3 issues have been removed, 1 issues will be published)");
 
         AnalysisResult resultPage = new AnalysisResult(build, "checkstyle");
         resultPage.open();
@@ -204,9 +207,7 @@ public class WarningsPluginUiTest extends UiTest {
         assertThat(issuesTable.getSize()).isEqualTo(1);
     }
 
-    /**
-     * Creates and builds a maven job and verifies that all warnings are shown in the summary and details views.
-     */
+    /** Creates and builds a maven job and verifies that all warnings are shown in the summary and details views. */
     @Test
     @WithPlugins("maven-plugin")
     @SuppressWarnings("SystemOut")
@@ -236,25 +237,24 @@ public class WarningsPluginUiTest extends UiTest {
                 .hasReferenceBuild(0);
 
         AnalysisResult mavenDetails = summary.openOverallResult();
-        assertThat(mavenDetails).hasActiveTab(Tab.TYPES)
-                .hasTotal(3)
-                .hasOnlyAvailableTabs(Tab.TYPES, Tab.ISSUES);
+        assertThat(mavenDetails).hasActiveTab(Tab.TYPES).hasTotal(3).hasOnlyAvailableTabs(Tab.TYPES, Tab.ISSUES);
 
         IssuesTable issuesTable = mavenDetails.openIssuesTable();
 
         IssuesTableRow firstRow = issuesTable.getRow(0);
         ConsoleLogView sourceView = firstRow.openConsoleLog();
         assertThat(sourceView)
-                .hasHighlightedText("[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!");
+                .hasHighlightedText(
+                        "[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!");
     }
 
-    /**
-     * Verifies that warnings can be parsed on an agent as well.
-     */
+    /** Verifies that warnings can be parsed on an agent as well. */
     @Test
     @WithDocker
     @WithPlugins("ssh-slaves")
-    @WithCredentials(credentialType = WithCredentials.SSH_USERNAME_PRIVATE_KEY, values = {CREDENTIALS_ID, CREDENTIALS_KEY})
+    @WithCredentials(
+            credentialType = WithCredentials.SSH_USERNAME_PRIVATE_KEY,
+            values = {CREDENTIALS_ID, CREDENTIALS_KEY})
     @Ignore("Ignore docker based tests right now")
     public void shouldParseWarningsOnAgent() {
         DumbSlave dockerAgent = createDockerAgent();
@@ -321,4 +321,3 @@ public class WarningsPluginUiTest extends UiTest {
         return agent;
     }
 }
-

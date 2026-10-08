@@ -1,14 +1,12 @@
 package io.jenkins.plugins.analysis.warnings.tasks;
 
-import org.junit.jupiter.api.Test;
-import org.junitpioneer.jupiter.Issue;
+import static edu.hm.hafner.analysis.assertions.Assertions.*;
 
 import edu.hm.hafner.util.SerializableTest;
-
 import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.CaseMode;
 import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.MatcherMode;
-
-import static edu.hm.hafner.analysis.assertions.Assertions.*;
+import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.Issue;
 
 /**
  * Tests the class {@link AgentScanner}.
@@ -22,8 +20,14 @@ class AgentScannerTest extends SerializableTest<AgentScanner> {
     }
 
     private AgentScanner createScanner(final String includePattern) {
-        return new AgentScanner("high", "normal", "function",
-                CaseMode.CASE_SENSITIVE, MatcherMode.STRING_MATCH, includePattern, "",
+        return new AgentScanner(
+                "high",
+                "normal",
+                "function",
+                CaseMode.CASE_SENSITIVE,
+                MatcherMode.STRING_MATCH,
+                includePattern,
+                "",
                 "utf-8");
     }
 

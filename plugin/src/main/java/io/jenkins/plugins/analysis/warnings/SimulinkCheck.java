@@ -1,12 +1,10 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.io.Serial;
-
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.jenkinsci.Symbol;
 import hudson.Extension;
-
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
+import java.io.Serial;
+import org.jenkinsci.Symbol;
+import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
  * A parser for Simulink Check code generator report files.
@@ -16,6 +14,7 @@ import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 public class SimulinkCheck extends AnalysisModelParser {
     @Serial
     private static final long serialVersionUID = 1814097426285660166L;
+
     private static final String ID = "simulink-check-parser";
 
     /** Creates a new instance of {@link SimulinkCheck}. */

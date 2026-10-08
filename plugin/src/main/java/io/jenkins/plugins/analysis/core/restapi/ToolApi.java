@@ -1,9 +1,7 @@
 package io.jenkins.plugins.analysis.core.restapi;
 
 import edu.hm.hafner.analysis.Severity;
-
 import java.util.Map;
-
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
@@ -35,7 +33,12 @@ public class ToolApi {
      * @param sizePerSeverity
      *         the number of warnings, grouped by severity
      */
-    public ToolApi(final String id, final String name, final String latestUrl, final int size, final Map<Severity, Integer> sizePerSeverity) {
+    public ToolApi(
+            final String id,
+            final String name,
+            final String latestUrl,
+            final int size,
+            final Map<Severity, Integer> sizePerSeverity) {
         this.name = name;
         this.id = id;
         this.latestUrl = latestUrl;

@@ -1,8 +1,7 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.util.Optional;
-
 import hudson.model.Run;
+import java.util.Optional;
 
 /**
  * Selects a {@link ResultAction} from all registered actions in a given job.

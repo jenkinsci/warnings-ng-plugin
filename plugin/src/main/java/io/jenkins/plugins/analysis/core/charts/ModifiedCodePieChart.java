@@ -3,7 +3,6 @@ package io.jenkins.plugins.analysis.core.charts;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.echarts.PieChartModel;
 import edu.hm.hafner.echarts.PieData;
-
 import io.jenkins.plugins.echarts.JenkinsPalette;
 
 /**
@@ -26,7 +25,9 @@ public class ModifiedCodePieChart {
         var totals = issues.size();
         var modified = issues.getInModifiedCode().size();
         model.add(new PieData(Messages.Modified_Code_Warnings_Short(), modified), JenkinsPalette.RED.normal());
-        model.add(new PieData(Messages.Unchanged_Code_Warnings_Short(), totals - modified), JenkinsPalette.YELLOW.normal());
+        model.add(
+                new PieData(Messages.Unchanged_Code_Warnings_Short(), totals - modified),
+                JenkinsPalette.YELLOW.normal());
 
         return model;
     }

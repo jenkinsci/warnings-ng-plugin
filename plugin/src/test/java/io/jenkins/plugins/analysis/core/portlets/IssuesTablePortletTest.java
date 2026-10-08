@@ -1,23 +1,20 @@
 package io.jenkins.plugins.analysis.core.portlets;
 
-import org.junit.jupiter.api.Test;
-
-import java.util.Collections;
-import java.util.List;
-import nl.jqno.equalsverifier.EqualsVerifier;
+import static io.jenkins.plugins.analysis.core.testutil.JobStubs.*;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import hudson.model.Job;
-
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.ToolSelection;
 import io.jenkins.plugins.analysis.core.portlets.IssuesTablePortlet.Column;
 import io.jenkins.plugins.analysis.core.portlets.IssuesTablePortlet.PortletTableModel;
 import io.jenkins.plugins.analysis.core.portlets.IssuesTablePortlet.Result;
 import io.jenkins.plugins.analysis.core.portlets.IssuesTablePortlet.TableRow;
-
-import static io.jenkins.plugins.analysis.core.testutil.JobStubs.*;
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import java.util.Collections;
+import java.util.List;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class {@link IssuesTablePortlet}.
@@ -25,10 +22,10 @@ import static org.mockito.Mockito.*;
  * @author Ullrich Hafner
  */
 class IssuesTablePortletTest {
-    private static final Column SPOT_BUGS_COLUMN
-            = new Column(SPOT_BUGS_ID, SPOT_BUGS_NAME, SPOT_BUGS_NAME, SPOT_BUGS_ICON);
-    private static final Column CHECK_STYLE_COLUMN
-            = new Column(CHECK_STYLE_ID, CHECK_STYLE_NAME, CHECK_STYLE_NAME, CHECK_STYLE_ICON);
+    private static final Column SPOT_BUGS_COLUMN =
+            new Column(SPOT_BUGS_ID, SPOT_BUGS_NAME, SPOT_BUGS_NAME, SPOT_BUGS_ICON);
+    private static final Column CHECK_STYLE_COLUMN =
+            new Column(CHECK_STYLE_ID, CHECK_STYLE_NAME, CHECK_STYLE_NAME, CHECK_STYLE_ICON);
 
     @Test
     void shouldHaveComparableColumn() {
@@ -63,8 +60,7 @@ class IssuesTablePortletTest {
     @Test
     void shouldShowTableWithTwoTools() {
         Job<?, ?> job = createJobWithActions(
-                createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 1),
-                createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 2));
+                createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 1), createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 2));
 
         var model = createModel(List.of(job));
 
@@ -90,8 +86,7 @@ class IssuesTablePortletTest {
     @Test
     void shouldShowTableWithTwoSelectedTools() {
         Job<?, ?> job = createJobWithActions(
-                createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 1),
-                createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 2));
+                createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 1), createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 2));
 
         var portlet = createPortlet();
         assertThat(portlet.getSelectTools()).isFalse();
@@ -127,8 +122,12 @@ class IssuesTablePortletTest {
         assertThat(actualRow.getResults()).isEmpty();
     }
 
-    private void verifySingleTool(final Job<?, ?> job, final PortletTableModel model,
-            final String expectedId, final String expectedName, final int expectedSize) {
+    private void verifySingleTool(
+            final Job<?, ?> job,
+            final PortletTableModel model,
+            final String expectedId,
+            final String expectedName,
+            final int expectedSize) {
         assertThat(model.getColumns()).extracting(Column::getName).containsExactly(expectedName);
 
         List<TableRow> rows = model.getRows();
@@ -146,8 +145,7 @@ class IssuesTablePortletTest {
         assertThat(portlet.getShowIcons()).isTrue();
 
         Job<?, ?> job = createJobWithActions(
-                createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 1),
-                createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 2));
+                createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 1), createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 2));
 
         var model = portlet.getModel(List.of(job));
 
@@ -170,11 +168,9 @@ class IssuesTablePortletTest {
     @Test
     void shouldShowTableWithTwoToolsAndTwoJobs() {
         Job<?, ?> first = createJobWithActions(
-                createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 1),
-                createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 2));
+                createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 1), createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 2));
         Job<?, ?> second = createJobWithActions(
-                createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 3),
-                createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 4));
+                createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 3), createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 4));
 
         var model = createModel(List.of(first, second));
 
@@ -211,11 +207,9 @@ class IssuesTablePortletTest {
         assertThat(portlet.getHideCleanJobs()).isTrue();
 
         Job<?, ?> first = createJobWithActions(
-                createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 0),
-                createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 0));
+                createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 0), createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 0));
         Job<?, ?> second = createJobWithActions(
-                createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 3),
-                createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 4));
+                createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 3), createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 4));
 
         var model = portlet.getModel(List.of(first, second));
 
@@ -256,8 +250,7 @@ class IssuesTablePortletTest {
 
         Job<?, ?> first = createJobWithActions();
         Job<?, ?> second = createJobWithActions(
-                createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 3),
-                createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 4));
+                createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 3), createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 4));
 
         var model = portlet.getModel(List.of(first, second));
 
@@ -276,10 +269,8 @@ class IssuesTablePortletTest {
 
     @Test
     void shouldShowTableWithTwoJobsWithDifferentTools() {
-        Job<?, ?> first = createJobWithActions(
-                createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 1));
-        Job<?, ?> second = createJobWithActions(
-                createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 2));
+        Job<?, ?> first = createJobWithActions(createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 1));
+        Job<?, ?> second = createJobWithActions(createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 2));
 
         var model = createModel(List.of(first, second));
 
@@ -313,8 +304,8 @@ class IssuesTablePortletTest {
         return portlet.getModel(jobs);
     }
 
-    private void verifyRow(final TableRow actualRow,
-            final Job<?, ?> expectedJob, final String expectedId, final int expectedSize) {
+    private void verifyRow(
+            final TableRow actualRow, final Job<?, ?> expectedJob, final String expectedId, final int expectedSize) {
         assertThat(actualRow.getJob()).isSameAs(expectedJob);
 
         List<Result> results = actualRow.getResults();

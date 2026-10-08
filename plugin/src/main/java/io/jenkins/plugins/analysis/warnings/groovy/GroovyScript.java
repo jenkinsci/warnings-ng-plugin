@@ -1,28 +1,24 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
-import org.apache.commons.lang3.StringUtils;
-
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.util.Ensure;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
-
-import java.io.Serial;
-
-import org.kohsuke.stapler.AncestorInPath;
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.DataBoundSetter;
-import org.kohsuke.stapler.verb.POST;
-import org.jenkinsci.Symbol;
 import hudson.Extension;
 import hudson.model.BuildableItem;
 import hudson.model.Item;
 import hudson.util.ListBoxModel;
-
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.warnings.Messages;
 import io.jenkins.plugins.util.JenkinsFacade;
+import java.io.Serial;
+import org.apache.commons.lang3.StringUtils;
+import org.jenkinsci.Symbol;
+import org.kohsuke.stapler.AncestorInPath;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.verb.POST;
 
 /**
  * Selects a {@link GroovyParser} using the specified ID.
@@ -32,9 +28,11 @@ import io.jenkins.plugins.util.JenkinsFacade;
 public class GroovyScript extends ReportScanningTool {
     @Serial
     private static final long serialVersionUID = 8580859196688994603L;
+
     private static final String ID = "groovy";
 
     private final String parserId;
+
     @CheckForNull
     private GroovyParser parser;
 
@@ -87,10 +85,10 @@ public class GroovyScript extends ReportScanningTool {
             return parser;
         }
 
-        Ensure.that(StringUtils.isNotBlank(parserId)).isTrue(
-                "No Groovy parser defined. Configure either 'parserId' or 'parser'");
-        Ensure.that(ParserConfiguration.getInstance().contains(parserId)).isTrue(
-                "There is no Groovy parser defined in the system configuration with ID '%s'", parserId);
+        Ensure.that(StringUtils.isNotBlank(parserId))
+                .isTrue("No Groovy parser defined. Configure either 'parserId' or 'parser'");
+        Ensure.that(ParserConfiguration.getInstance().contains(parserId))
+                .isTrue("There is no Groovy parser defined in the system configuration with ID '%s'", parserId);
 
         return ParserConfiguration.getInstance().getParser(parserId);
     }

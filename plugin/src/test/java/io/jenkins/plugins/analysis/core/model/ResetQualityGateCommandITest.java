@@ -1,17 +1,13 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.io.IOException;
-
-import org.junit.jupiter.api.Test;
-import org.junitpioneer.jupiter.Issue;
+import static org.assertj.core.api.Assertions.*;
 
 import com.cloudbees.hudson.plugins.folder.Folder;
-
 import hudson.model.FreeStyleProject;
-
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
-
-import static org.assertj.core.api.Assertions.*;
+import java.io.IOException;
+import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.Issue;
 
 /**
  * Integration tests for {@link ResetQualityGateCommand} with folder hierarchies.

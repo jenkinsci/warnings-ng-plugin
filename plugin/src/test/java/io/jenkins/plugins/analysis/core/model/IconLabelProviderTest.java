@@ -1,9 +1,9 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import org.junit.jupiter.api.Test;
-
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import static io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.*;
+
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class {@link IconLabelProvider}.

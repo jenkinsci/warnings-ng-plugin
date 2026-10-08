@@ -1,21 +1,18 @@
 package io.jenkins.plugins.analysis.core.charts;
 
-import org.junit.jupiter.api.Test;
-
-import edu.hm.hafner.echarts.BuildResult;
-import edu.hm.hafner.echarts.ChartModelConfiguration;
-import edu.hm.hafner.echarts.ChartModelConfiguration.AxisType;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Set;
-
-import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
-
 import static edu.hm.hafner.analysis.Severity.*;
 import static io.jenkins.plugins.analysis.core.charts.BuildResultStubs.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
+
+import edu.hm.hafner.echarts.BuildResult;
+import edu.hm.hafner.echarts.ChartModelConfiguration;
+import edu.hm.hafner.echarts.ChartModelConfiguration.AxisType;
+import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Set;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class {@link SeveritySeriesBuilder}.
@@ -55,8 +52,9 @@ class SeveritySeriesBuilderTest {
         assertThat(dataSet.getDomainAxisSize()).isEqualTo(1);
         assertThat(dataSet.getDomainAxisLabels()).containsExactly("#1");
 
-        assertThat(dataSet.getDataSetIds()).containsExactlyInAnyOrder(
-                ERROR.getName(), WARNING_HIGH.getName(), WARNING_NORMAL.getName(), WARNING_LOW.getName());
+        assertThat(dataSet.getDataSetIds())
+                .containsExactlyInAnyOrder(
+                        ERROR.getName(), WARNING_HIGH.getName(), WARNING_NORMAL.getName(), WARNING_LOW.getName());
 
         assertThat(dataSet.getSeries(WARNING_HIGH.getName())).containsExactly(1);
         assertThat(dataSet.getSeries(WARNING_NORMAL.getName())).containsExactly(2);
@@ -75,18 +73,20 @@ class SeveritySeriesBuilderTest {
         when(configuration.getBuildCount()).thenReturn(3);
         when(configuration.isBuildCountDefined()).thenReturn(true);
 
-        var dataSet = builder.createDataSet(configuration, Arrays.asList(
-                createResult(4, 4000, 400, 40, 4),
-                createResult(3, 3000, 300, 30, 3),
-                createResult(2, 2000, 200, 20, 2),
-                createResult(1, 1000, 100, 10, 1)
-        ));
+        var dataSet = builder.createDataSet(
+                configuration,
+                Arrays.asList(
+                        createResult(4, 4000, 400, 40, 4),
+                        createResult(3, 3000, 300, 30, 3),
+                        createResult(2, 2000, 200, 20, 2),
+                        createResult(1, 1000, 100, 10, 1)));
 
         assertThat(dataSet.getDomainAxisSize()).isEqualTo(3);
         assertThat(dataSet.getDomainAxisLabels()).containsExactly("#2", "#3", "#4");
 
-        assertThat(dataSet.getDataSetIds()).containsExactlyInAnyOrder(
-                ERROR.getName(), WARNING_HIGH.getName(), WARNING_NORMAL.getName(), WARNING_LOW.getName());
+        assertThat(dataSet.getDataSetIds())
+                .containsExactlyInAnyOrder(
+                        ERROR.getName(), WARNING_HIGH.getName(), WARNING_NORMAL.getName(), WARNING_LOW.getName());
 
         assertThat(dataSet.getSeries(ERROR.getName())).containsExactly(2000, 3000, 4000);
         assertThat(dataSet.getSeries(WARNING_HIGH.getName())).containsExactly(200, 300, 400);

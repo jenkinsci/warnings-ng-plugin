@@ -1,17 +1,14 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import org.junit.Test;
+import static io.jenkins.plugins.analysis.warnings.Assertions.*;
 
+import io.jenkins.plugins.analysis.warnings.DashboardTable.DashboardTableEntry;
 import java.util.List;
 import java.util.Map;
-
 import org.jenkinsci.test.acceptance.plugins.dashboard_view.DashboardView;
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.FreeStyleJob;
-
-import io.jenkins.plugins.analysis.warnings.DashboardTable.DashboardTableEntry;
-
-import static io.jenkins.plugins.analysis.warnings.Assertions.*;
+import org.junit.Test;
 
 /**
  * Integration tests for the dashboard portlet.
@@ -67,9 +64,7 @@ public class DashboardViewPortletUiTest extends UiTest {
         assertThat(table.get(job.name).get(CHECKSTYLE_TOOL)).hasWarningsCount(4);
     }
 
-    /**
-     * Creates one Dashboard which will then be empty due to one successful build which has no warnings.
-     */
+    /** Creates one Dashboard which will then be empty due to one successful build which has no warnings. */
     @Test
     public void shouldHideCleanJob() {
         DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(true, false);
@@ -85,14 +80,12 @@ public class DashboardViewPortletUiTest extends UiTest {
     }
 
     /**
-     * Creates one Dashboard which will then display one successful build.
-     * Build has checkstyle and eclipse warnings.
+     * Creates one Dashboard which will then display one successful build. Build has checkstyle and eclipse warnings.
      */
     @Test
     public void shouldShow2Issues() {
         DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, false);
-        FreeStyleJob job = createFreeStyleJob(CHECKSTYLE_RESULT,
-                DASHBOARD_PREFIX + "eclipse.txt");
+        FreeStyleJob job = createFreeStyleJob(CHECKSTYLE_RESULT, DASHBOARD_PREFIX + "eclipse.txt");
         job.addPublisher(IssuesRecorder.class, recorder -> {
             recorder.setTool(CHECKSTYLE_TOOL, "**/checkstyle-report.xml");
             recorder.addTool(ECLIPSE_COMPILER, "**/eclipse.txt");
@@ -113,15 +106,14 @@ public class DashboardViewPortletUiTest extends UiTest {
     }
 
     /**
-     * Creates one Dashboard which will then display one successful build.
-     * Build has checkstyle, eclipse and pmd warnings.
+     * Creates one Dashboard which will then display one successful build. Build has checkstyle, eclipse and pmd
+     * warnings.
      */
     @Test
     public void shouldShow3Issues() {
         DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, false);
-        FreeStyleJob job = createFreeStyleJob(CHECKSTYLE_RESULT,
-                DASHBOARD_PREFIX + "eclipse.txt",
-                DASHBOARD_PREFIX + "pmd-report.xml");
+        FreeStyleJob job = createFreeStyleJob(
+                CHECKSTYLE_RESULT, DASHBOARD_PREFIX + "eclipse.txt", DASHBOARD_PREFIX + "pmd-report.xml");
         job.addPublisher(IssuesRecorder.class, recorder -> {
             recorder.setTool(CHECKSTYLE_TOOL, "**/checkstyle-report.xml");
             recorder.addTool(ECLIPSE_COMPILER, "**/eclipse.txt");
@@ -144,10 +136,7 @@ public class DashboardViewPortletUiTest extends UiTest {
         assertThat(table.get(job.name).get(PMD_TOOL)).hasWarningsCount(4);
     }
 
-    /**
-     * Creates one Dashboard which will then display two successful builds.
-     * Both builds have checkstyle warnings.
-     */
+    /** Creates one Dashboard which will then display two successful builds. Both builds have checkstyle warnings. */
     @Test
     public void shouldShowMultipleJobs() {
         DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, false);
@@ -173,9 +162,7 @@ public class DashboardViewPortletUiTest extends UiTest {
         assertThat(table.get(job2.name).get(CHECKSTYLE_TOOL)).hasWarningsCount(0);
     }
 
-    /**
-     * Creates one Dashboard which will then display one of two successful builds duo to one clean build.
-     */
+    /** Creates one Dashboard which will then display one of two successful builds duo to one clean build. */
     @Test
     public void shouldHideCleanJobs() {
         DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(true, false);

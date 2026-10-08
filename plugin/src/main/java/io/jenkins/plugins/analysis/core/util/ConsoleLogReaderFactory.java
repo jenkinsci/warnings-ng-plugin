@@ -1,19 +1,15 @@
 package io.jenkins.plugins.analysis.core.util;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.google.errorprone.annotations.MustBeClosed;
-
 import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.ReaderFactory;
-
+import hudson.console.ConsoleNote;
+import hudson.model.Run;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.function.Function;
 import java.util.regex.Pattern;
-
-import hudson.console.ConsoleNote;
-import hudson.model.Run;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Provides a reader factory for Jenkins' console log.
@@ -23,10 +19,10 @@ import hudson.model.Run;
 public class ConsoleLogReaderFactory extends ReaderFactory {
     private final Run<?, ?> run;
 
-    private static final Pattern TIME_STAMPER_PREFIX
-            = Pattern.compile("\\[\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z] ");
-    private static final Function<String, String> REMOVE_TIME_STAMPER_PREFIX
-            = string -> TIME_STAMPER_PREFIX.matcher(string).replaceFirst(StringUtils.EMPTY);
+    private static final Pattern TIME_STAMPER_PREFIX =
+            Pattern.compile("\\[\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z] ");
+    private static final Function<String, String> REMOVE_TIME_STAMPER_PREFIX =
+            string -> TIME_STAMPER_PREFIX.matcher(string).replaceFirst(StringUtils.EMPTY);
 
     /**
      * Creates a new {@link ConsoleLogReaderFactory}.
@@ -60,8 +56,7 @@ public class ConsoleLogReaderFactory extends ReaderFactory {
     public Reader create() {
         try {
             return run.getLogReader();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new ParsingException(e);
         }
     }

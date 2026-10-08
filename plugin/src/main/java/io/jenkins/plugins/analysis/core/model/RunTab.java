@@ -1,6 +1,10 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import hudson.model.Actionable;
+import java.io.IOException;
+import java.util.Comparator;
+import java.util.List;
+import java.util.NoSuchElementException;
 import jenkins.management.Badge;
 import jenkins.model.Tab;
 import jenkins.model.experimentalflags.BooleanUserExperimentalFlag;
@@ -8,11 +12,6 @@ import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.HttpRedirect;
 import org.kohsuke.stapler.StaplerResponse2;
-
-import java.io.IOException;
-import java.util.Comparator;
-import java.util.List;
-import java.util.NoSuchElementException;
 
 /**
  * Defines the Warnings tab for a run.
@@ -47,13 +46,18 @@ public class RunTab extends Tab {
 
     @Override
     public Badge getBadge() {
-        var warningActionsCount = getWarningActions().stream().map(e -> e.getResult().getTotalSize()).reduce(0, Integer::sum);
+        var warningActionsCount = getWarningActions().stream()
+                .map(e -> e.getResult().getTotalSize())
+                .reduce(0, Integer::sum);
 
         if (warningActionsCount == 0) {
             return null;
         }
 
-        return new Badge(String.valueOf(warningActionsCount), Messages.ResultAction_Badge(warningActionsCount), Badge.Severity.WARNING);
+        return new Badge(
+                String.valueOf(warningActionsCount),
+                Messages.ResultAction_Badge(warningActionsCount),
+                Badge.Severity.WARNING);
     }
 
     /**
@@ -70,14 +74,11 @@ public class RunTab extends Tab {
      */
     @Restricted(NoExternalUse.class)
     public List<ResultAction> getWarningActions() {
-        return getObject()
-                .getActions(ResultAction.class)
-                .stream()
-                .sorted(Comparator
-                        .comparingInt((ResultAction a) -> a.getResult().getTotalSize())
+        return getObject().getActions(ResultAction.class).stream()
+                .sorted(Comparator.comparingInt(
+                                (ResultAction a) -> a.getResult().getTotalSize())
                         .reversed()
-                        .thenComparing(ResultAction::getDisplayName, String.CASE_INSENSITIVE_ORDER)
-                )
+                        .thenComparing(ResultAction::getDisplayName, String.CASE_INSENSITIVE_ORDER))
                 .toList();
     }
 
@@ -88,8 +89,8 @@ public class RunTab extends Tab {
      * @throws IOException If an input or output exception occurs.
      */
     public HttpRedirect doIndex(final StaplerResponse2 rsp) throws IOException {
-        Boolean newUiEnabled = BooleanUserExperimentalFlag.
-                getFlagValueForCurrentUser("jenkins.model.experimentalflags.NewBuildPageUserExperimentalFlag");
+        Boolean newUiEnabled = BooleanUserExperimentalFlag.getFlagValueForCurrentUser(
+                "jenkins.model.experimentalflags.NewBuildPageUserExperimentalFlag");
 
         if (Boolean.TRUE.equals(newUiEnabled)) {
             return new HttpRedirect(getWarningActions().get(0).getUrlName());

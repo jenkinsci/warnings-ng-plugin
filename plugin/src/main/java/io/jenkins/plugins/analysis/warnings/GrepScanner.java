@@ -4,7 +4,6 @@ import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
@@ -53,8 +52,7 @@ class GrepScanner {
     private Pattern compile(final String regexp) {
         try {
             return Pattern.compile(regexp);
-        }
-        catch (PatternSyntaxException exception) {
+        } catch (PatternSyntaxException exception) {
             isPatternInvalid = true;
             errorMessage = "Specified pattern is an invalid regular expression: '%s': '%s'"
                     .formatted(regexp, exception.getMessage());
@@ -90,21 +88,19 @@ class GrepScanner {
      *
      * @return a report containing one issue per matching line
      */
-    @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE",
+    @SuppressFBWarnings(
+            value = "RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE",
             justification = "https://github.com/spotbugs/spotbugs/issues/756")
     Report scan(final Path file, final Charset charset) {
         try (Stream<String> lines = Files.lines(file, charset);
                 IssueBuilder issueBuilder = new IssueBuilder()) {
             return scanLines(lines.iterator(), issueBuilder.setFileName(file.toString()));
-        }
-        catch (IOException | UncheckedIOException exception) {
+        } catch (IOException | UncheckedIOException exception) {
             var report = new Report();
             var cause = exception.getCause();
             if (cause instanceof MalformedInputException || cause instanceof UnmappableCharacterException) {
-                report.logError("Can't read source file '%s', defined encoding '%s' seems to be wrong",
-                        file, charset);
-            }
-            else {
+                report.logError("Can't read source file '%s', defined encoding '%s' seems to be wrong", file, charset);
+            } else {
                 report.logException(exception, "Exception while reading the source code file '%s':", file);
             }
             return report;
@@ -151,8 +147,7 @@ class GrepScanner {
         // Support $0 for whole match, $1 for group 1, etc.
         try {
             return matcher.replaceFirst(messageTemplate);
-        }
-        catch (IndexOutOfBoundsException | IllegalArgumentException ignored) {
+        } catch (IndexOutOfBoundsException | IllegalArgumentException ignored) {
             return line.trim();
         }
     }

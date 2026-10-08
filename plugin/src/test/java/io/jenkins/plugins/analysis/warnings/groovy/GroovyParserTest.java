@@ -1,24 +1,20 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
+import static org.mockito.Mockito.*;
+
+import edu.hm.hafner.util.SerializableTest;
+import hudson.model.Run;
+import io.jenkins.plugins.analysis.core.util.ConsoleLogReaderFactory;
+import io.jenkins.plugins.analysis.warnings.groovy.GroovyParser.DescriptorImpl;
+import io.jenkins.plugins.util.JenkinsFacade;
+import java.io.IOException;
+import java.io.StringReader;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.junitpioneer.jupiter.Issue;
-
-import edu.hm.hafner.util.SerializableTest;
-
-import java.io.IOException;
-import java.io.StringReader;
-
-import hudson.model.Run;
-
-import io.jenkins.plugins.analysis.core.util.ConsoleLogReaderFactory;
-import io.jenkins.plugins.analysis.warnings.groovy.GroovyParser.DescriptorImpl;
-import io.jenkins.plugins.util.JenkinsFacade;
-
-import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * Tests the class {@link GroovyParser}.
@@ -27,8 +23,7 @@ import static org.mockito.Mockito.*;
  */
 class GroovyParserTest extends SerializableTest<GroovyParser> {
     private static final String SINGLE_LINE_EXAMPLE = "file/name/relative/unix:42:evil: this is a warning message";
-    private static final String MULTI_LINE_EXAMPLE
-            = """
+    private static final String MULTI_LINE_EXAMPLE = """
                 [javac] 1. WARNING in C:\\Desenvolvimento\\Java\\jfg\\src\\jfg\\AttributeException.java (at line 3)
                 [javac]     public class AttributeException extends RuntimeException
                 [javac]                  ^^^^^^^^^^^^^^^^^^
@@ -71,10 +66,13 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
         var script = toString("issue35262.groovy");
 
         var parser = createParser(multiLineRegexp, script);
-        assertThat(parser.hasMultiLineSupport()).as("Wrong multi line support guess").isTrue();
+        assertThat(parser.hasMultiLineSupport())
+                .as("Wrong multi line support guess")
+                .isTrue();
 
         var descriptor = createDescriptor();
-        assertThat(descriptor.checkExample(textToMatch, multiLineRegexp, script)).isOk();
+        assertThat(descriptor.checkExample(textToMatch, multiLineRegexp, script))
+                .isOk();
 
         var instance = parser.createParser();
         Run<?, ?> run = mock(Run.class);
@@ -92,8 +90,8 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
         return createParser(multiLineRegexp, script, example, "name");
     }
 
-    private GroovyParser createParser(final String multiLineRegexp, final String script, final String example,
-            final String name) {
+    private GroovyParser createParser(
+            final String multiLineRegexp, final String script, final String example, final String name) {
         var parser = new GroovyParser("id", name, multiLineRegexp, script, example);
         parser.setJenkinsFacade(createJenkinsFacade());
         return parser;
@@ -103,17 +101,19 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
         return createParser(multiLineRegexp, OK_SCRIPT);
     }
 
-    @Test @Issue("JENKINS-60154")
+    @Test
+    @Issue("JENKINS-60154")
     void shouldThrowExceptionDueToBrokenId() {
-        assertThatIllegalArgumentException().isThrownBy(() ->
-                new GroovyParser("broken id", "name", MULTI_LINE_REGEXP, OK_SCRIPT, "example"));
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> new GroovyParser("broken id", "name", MULTI_LINE_REGEXP, OK_SCRIPT, "example"));
     }
 
     @Test
     void shouldThrowExceptionDueToMissingName() {
         var groovyParser = createParser(MULTI_LINE_REGEXP, OK_SCRIPT, "example", StringUtils.EMPTY);
         assertThat(groovyParser.isValid()).isFalse();
-        assertThatIllegalArgumentException().isThrownBy(groovyParser::createParser)
+        assertThatIllegalArgumentException()
+                .isThrownBy(groovyParser::createParser)
                 .withMessageContaining("Name is not valid");
     }
 
@@ -121,7 +121,8 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
     void shouldThrowExceptionDueToBrokenScript() {
         var groovyParser = createParser(SINGLE_LINE_REGEXP, StringUtils.EMPTY);
         assertThat(groovyParser.isValid()).isFalse();
-        assertThatIllegalArgumentException().isThrownBy(groovyParser::createParser)
+        assertThatIllegalArgumentException()
+                .isThrownBy(groovyParser::createParser)
                 .withMessageContaining("Script is not valid");
     }
 
@@ -129,7 +130,8 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
     void shouldThrowExceptionDueToBrokenRegExp() {
         var groovyParser = createParser("one brace (", OK_SCRIPT);
         assertThat(groovyParser.isValid()).isFalse();
-        assertThatIllegalArgumentException().isThrownBy(groovyParser::createParser)
+        assertThatIllegalArgumentException()
+                .isThrownBy(groovyParser::createParser)
                 .withMessageContaining("RegExp is not valid");
     }
 
@@ -138,7 +140,9 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
         var parser = createParser(MULTI_LINE_REGEXP);
         assertThat(parser.isValid()).isTrue();
 
-        assertThat(parser.hasMultiLineSupport()).as("Wrong multi line support guess").isTrue();
+        assertThat(parser.hasMultiLineSupport())
+                .as("Wrong multi line support guess")
+                .isTrue();
         assertThat(parser.createParser()).isInstanceOf(DynamicDocumentParser.class);
     }
 
@@ -146,7 +150,9 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
     void shouldDetectSingleLineRegularExpression() {
         var parser = createParser(SINGLE_LINE_REGEXP);
 
-        assertThat(parser.hasMultiLineSupport()).as("Wrong single line support guess").isFalse();
+        assertThat(parser.hasMultiLineSupport())
+                .as("Wrong single line support guess")
+                .isFalse();
         assertThat(parser.createParser()).isInstanceOf(DynamicLineParser.class);
     }
 
@@ -186,32 +192,32 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
     void shouldFindOneIssueWithValidScriptAndRegularExpression() {
         var descriptor = createDescriptor();
 
-        assertThat(descriptor.checkExample(SINGLE_LINE_EXAMPLE, SINGLE_LINE_REGEXP,
-                toString("parser.groovy"))).isOk();
+        assertThat(descriptor.checkExample(SINGLE_LINE_EXAMPLE, SINGLE_LINE_REGEXP, toString("parser.groovy")))
+                .isOk();
     }
 
     @Test
     void shouldReportErrorWhenNoMatchesAreFoundInExample() {
         var descriptor = createDescriptor();
 
-        assertThat(descriptor.checkExample("this is a warning message", SINGLE_LINE_REGEXP,
-                toString("parser.groovy"))).isError();
+        assertThat(descriptor.checkExample("this is a warning message", SINGLE_LINE_REGEXP, toString("parser.groovy")))
+                .isError();
     }
 
     @Test
     void shouldReportErrorWhenRegularExpressionHasIllegalMatchAccess() {
         var descriptor = createDescriptor();
 
-        assertThat(descriptor.checkExample(SINGLE_LINE_EXAMPLE, "^\\s*(.*):(\\d+):(.*)$",
-                toString("parser.groovy"))).isError();
+        assertThat(descriptor.checkExample(SINGLE_LINE_EXAMPLE, "^\\s*(.*):(\\d+):(.*)$", toString("parser.groovy")))
+                .isError();
     }
 
     @Test
     @Issue("JENKINS-3259")
     void shouldShowDescriptionInPreview() {
         var descriptor = createDescriptor();
-        var result = descriptor.checkExample(SINGLE_LINE_EXAMPLE, SINGLE_LINE_REGEXP,
-                toString("parser-with-description.groovy"));
+        var result = descriptor.checkExample(
+                SINGLE_LINE_EXAMPLE, SINGLE_LINE_REGEXP, toString("parser-with-description.groovy"));
 
         assertThat(result).isOk();
         assertThat(result.getMessage()).contains("description:");
@@ -222,8 +228,8 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
     void shouldAcceptMultiLineRegularExpression() {
         var descriptor = createDescriptor();
 
-        assertThat(descriptor.checkExample(MULTI_LINE_EXAMPLE, MULTI_LINE_REGEXP,
-                toString("multiline.groovy"))).isOk();
+        assertThat(descriptor.checkExample(MULTI_LINE_EXAMPLE, MULTI_LINE_REGEXP, toString("multiline.groovy")))
+                .isOk();
     }
 
     private DescriptorImpl createDescriptor() {

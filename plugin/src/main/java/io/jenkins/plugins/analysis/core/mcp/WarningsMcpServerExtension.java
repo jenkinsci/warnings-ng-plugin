@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import org.jenkinsci.plugins.variant.OptionalExtension;
 
 /**
@@ -35,13 +34,13 @@ public class WarningsMcpServerExtension implements McpServerExtension {
             annotations = @Tool.Annotations(destructiveHint = false))
     public Map<String, Object> getWarnings(
             @ToolParam(description = "Job full name of the Jenkins job (e.g., 'folder/job-name')")
-            final String jobFullName,
-                    @ToolParam(
+                    final String jobFullName,
+            @ToolParam(
                             description =
                                     "Build number (optional, if not provided, returns the test results for last build)",
                             required = false)
                     final Integer buildNumber,
-                    @ToolParam(
+            @ToolParam(
                             description =
                                     "ID of the check action (optional, if not provided, all warnings are returned)",
                             required = false)
@@ -49,8 +48,7 @@ public class WarningsMcpServerExtension implements McpServerExtension {
         Optional<Run> run = JenkinsUtil.getBuildByNumberOrLast(jobFullName, buildNumber);
         if (run.isPresent()) {
             Map<String, Object> response = new HashMap<>();
-            run.get().getActions(ResultAction.class)
-                    .stream()
+            run.get().getActions(ResultAction.class).stream()
                     .filter(action -> checkId == null || action.getId().equals(checkId))
                     .forEach(warningAction -> addToResponse(response, warningAction));
             return response;
@@ -58,21 +56,14 @@ public class WarningsMcpServerExtension implements McpServerExtension {
         return Map.of();
     }
 
-    private void addToResponse(final Map<String, Object> response,
-            final ResultAction warningAction) {
+    private void addToResponse(final Map<String, Object> response, final ResultAction warningAction) {
         var result = warningAction.getResult();
         response.put(
                 warningAction.getId(),
                 result.getIssues().stream().map(IssueJson::new).collect(Collectors.toList()));
     }
 
-    private record IssueJson(
-            String category,
-            String message,
-            String type,
-            String severity,
-            String fileName,
-            int line) {
+    private record IssueJson(String category, String message, String type, String severity, String fileName, int line) {
         IssueJson(final Issue issue) {
             this(
                     issue.getCategory(),

@@ -1,20 +1,17 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.*;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.TreeString;
 import edu.hm.hafner.util.TreeStringBuilder;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import io.jenkins.plugins.forensics.miner.CommitDiffItem;
 import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
-
-import static org.assertj.core.api.Assertions.*;
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class {@link AnnotatedReport}.
@@ -115,7 +112,8 @@ class AnnotatedReportTest {
     @Test
     void shouldCreateDefensiveCopiesOfRepositoryStatisticsToAvoidConcurrentModification() {
         var repositoryStatistics = createRepositoryStatisticsWithFileStatistics();
-        var originalReport = new AnnotatedReport("original", new Report(), new io.jenkins.plugins.forensics.blame.Blames(), repositoryStatistics);
+        var originalReport = new AnnotatedReport(
+                "original", new Report(), new io.jenkins.plugins.forensics.blame.Blames(), repositoryStatistics);
 
         var aggregatedReport = new AnnotatedReport("aggregated");
         aggregatedReport.add(originalReport);
@@ -129,9 +127,9 @@ class AnnotatedReportTest {
         for (String fileName : originalStats.getFiles()) {
             var originalFileStats = originalStats.get(fileName);
             var aggregatedFileStats = aggregatedStats.get(fileName);
-            
+
             assertThat(aggregatedFileStats.getCommits()).isEqualTo(originalFileStats.getCommits());
-            
+
             assertThat(aggregatedFileStats.getCommits()).isNotSameAs(originalFileStats.getCommits());
         }
     }
@@ -140,7 +138,7 @@ class AnnotatedReportTest {
         var statistics = new RepositoryStatistics();
         var treeStringBuilder = new TreeStringBuilder();
         TreeString fileName = treeStringBuilder.intern("TestFile.java");
-        
+
         var commit1 = new CommitDiffItem("commit1", "author1", 1_234_567_890)
                 .addLines(10)
                 .deleteLines(5)
@@ -149,10 +147,10 @@ class AnnotatedReportTest {
                 .addLines(20)
                 .deleteLines(3)
                 .setNewPath(fileName);
-        
+
         List<CommitDiffItem> commits = List.of(commit1, commit2);
         statistics.addAll(commits);
-        
+
         return statistics;
     }
 

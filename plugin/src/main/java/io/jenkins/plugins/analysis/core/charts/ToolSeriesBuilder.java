@@ -1,11 +1,9 @@
 package io.jenkins.plugins.analysis.core.charts;
 
 import edu.hm.hafner.echarts.SeriesBuilder;
-
+import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import java.util.HashMap;
 import java.util.Map;
-
-import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 
 /**
  * Builds the series for a line chart showing the total of issues for each tool.

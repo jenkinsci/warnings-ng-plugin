@@ -1,17 +1,10 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
-import org.junit.jupiter.api.Test;
-import org.opentest4j.TestAbortedException;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import static org.assertj.core.api.Assumptions.*;
 
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
-
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.IssueReportScanner;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
@@ -20,9 +13,13 @@ import io.jenkins.plugins.analysis.core.util.WarningsQualityGate.QualityGateType
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.util.QualityGate.QualityGateCriticality;
 import io.jenkins.plugins.util.QualityGateStatus;
-
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
-import static org.assertj.core.api.Assumptions.*;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import org.junit.jupiter.api.Test;
+import org.opentest4j.TestAbortedException;
 
 /**
  * Integration tests for {@link IssueReportScanner}. This test is using a ZIP file with all the necessary files. The structure
@@ -81,8 +78,9 @@ class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
         var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(0);
-        assertThat(result).hasErrorMessages(
-                "Skipping file 'no_read_permissions.xml' because Jenkins has no permission to read the file");
+        assertThat(result)
+                .hasErrorMessages(
+                        "Skipping file 'no_read_permissions.xml' because Jenkins has no permission to read the file");
 
         getWorkspace(project).deleteContents();
     }
@@ -126,20 +124,20 @@ class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
     void findIssuesWithMultipleFiles() {
         var project = createJobWithWorkspaceFile(MULTIPLE_FILES_WORKSPACE);
         var recorder = enableWarnings(project, createTool(new CheckStyle(), "*.xml"));
-        recorder.setQualityGates(List.of(
-                new WarningsQualityGate(6, QualityGateType.TOTAL, QualityGateCriticality.FAILURE)));
+        recorder.setQualityGates(
+                List.of(new WarningsQualityGate(6, QualityGateType.TOTAL, QualityGateCriticality.FAILURE)));
 
         var result = scheduleBuildAndAssertStatus(project, Result.FAILURE);
 
         assertThat(result).hasTotalSize(6);
         assertThat(result).hasQualityGateStatus(QualityGateStatus.FAILED);
-        assertThat(result).hasInfoMessages(
-                "Successfully parsed file " + getCheckStyleFile(project),
-                "-> found 6 issues (skipped 0 duplicates)",
-                "-> found 2 files");
+        assertThat(result)
+                .hasInfoMessages(
+                        "Successfully parsed file " + getCheckStyleFile(project),
+                        "-> found 6 issues (skipped 0 duplicates)",
+                        "-> found 2 files");
         assertThat(result).hasErrorMessages("Skipping file 'zero_length_file.xml' because it's empty");
     }
-
 
     /**
      * Runs the {@link IssueReportScanner} on a directory contain symbolic links and expects to traverse them.
@@ -164,21 +162,23 @@ class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
         createSymbolicLinkAssumingSupported(realPath, subdirPath.resolve("link_to_actual_files"));
 
         var recorder = enableWarnings(project, createTool(new CheckStyle(), false));
-        recorder.setQualityGates(List.of(
-                new WarningsQualityGate(6, QualityGateType.TOTAL, QualityGateCriticality.FAILURE)));
+        recorder.setQualityGates(
+                List.of(new WarningsQualityGate(6, QualityGateType.TOTAL, QualityGateCriticality.FAILURE)));
 
         var result = scheduleBuildAndAssertStatus(project, Result.FAILURE);
 
         assertThat(result).hasTotalSize(6);
         assertThat(result).hasQualityGateStatus(QualityGateStatus.FAILED);
 
-        var checkstyleXml = project.getSomeWorkspace().getRemote() + File.separator
+        var checkstyleXml = project.getSomeWorkspace().getRemote()
+                + File.separator
                 + Path.of("subdir", "link_to_actual_files", "checkstyle.xml");
 
-        assertThat(result).hasInfoMessages(
-                "Successfully parsed file " + checkstyleXml,
-                "-> found 6 issues (skipped 0 duplicates)",
-                "-> found 2 files");
+        assertThat(result)
+                .hasInfoMessages(
+                        "Successfully parsed file " + checkstyleXml,
+                        "-> found 6 issues (skipped 0 duplicates)",
+                        "-> found 2 files");
     }
 
     /**
@@ -204,16 +204,17 @@ class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
         createSymbolicLinkAssumingSupported(realPath, subdirPath.resolve("link_to_actual_files"));
 
         var recorder = enableWarnings(project, createTool(new CheckStyle(), true));
-        recorder.setQualityGates(List.of(
-                new WarningsQualityGate(6, QualityGateType.TOTAL, QualityGateCriticality.FAILURE)));
+        recorder.setQualityGates(
+                List.of(new WarningsQualityGate(6, QualityGateType.TOTAL, QualityGateCriticality.FAILURE)));
 
         var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(0);
-        assertThat(result).hasInfoMessages(
-                "-> All quality gates have been passed",
-                "-> Details for each quality gate:",
-                "   - [Total (any severity)]: ≪Success≫ - (Actual value: 0, Quality gate: 6.00)");
+        assertThat(result)
+                .hasInfoMessages(
+                        "-> All quality gates have been passed",
+                        "-> Details for each quality gate:",
+                        "   - [Total (any severity)]: ≪Success≫ - (Actual value: 0, Quality gate: 6.00)");
     }
 
     private AnalysisModelParser createTool(final AnalysisModelParser tool, final boolean skipSymbolicLinks) {
@@ -225,11 +226,9 @@ class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
     private void createSymbolicLinkAssumingSupported(final Path realPath, final Path linkPath) {
         try {
             Files.createSymbolicLink(linkPath, realPath);
-        }
-        catch (UnsupportedOperationException e) {
+        } catch (UnsupportedOperationException e) {
             throw new TestAbortedException("Files.createSymbolicLink not supported on this OS", e);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             fail("Unable to create symbolic link", e);
         }
     }
@@ -244,10 +243,11 @@ class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
         var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(6);
-        assertThat(result).hasInfoMessages(
-                "Successfully parsed file " + getCheckStyleFile(project),
-                "-> found 6 issues (skipped 0 duplicates)",
-                "-> found 1 file");
+        assertThat(result)
+                .hasInfoMessages(
+                        "Successfully parsed file " + getCheckStyleFile(project),
+                        "-> found 6 issues (skipped 0 duplicates)",
+                        "-> found 1 file");
     }
 
     private String getCheckStyleFile(final FreeStyleProject project) {
@@ -274,8 +274,7 @@ class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
             copyDirectoryToWorkspace(job, importDirectory);
 
             return job;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new AssertionError(e);
         }
     }

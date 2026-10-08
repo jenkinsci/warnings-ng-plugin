@@ -1,25 +1,10 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import org.apache.commons.lang3.StringUtils;
-
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import edu.umd.cs.findbugs.annotations.NonNull;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.Serial;
-import java.io.StringReader;
-import java.nio.charset.Charset;
-
-import org.kohsuke.stapler.AncestorInPath;
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.DataBoundSetter;
-import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.verb.POST;
-import org.jenkinsci.Symbol;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.console.ConsoleNote;
@@ -29,8 +14,6 @@ import hudson.model.Item;
 import hudson.model.Run;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
-import jenkins.model.Jenkins;
-
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.SymbolIconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
@@ -38,6 +21,19 @@ import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 import io.jenkins.plugins.util.JenkinsFacade;
 import io.jenkins.plugins.util.LogHandler;
 import io.jenkins.plugins.util.ValidationUtilities;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.Serial;
+import java.io.StringReader;
+import java.nio.charset.Charset;
+import jenkins.model.Jenkins;
+import org.apache.commons.lang3.StringUtils;
+import org.jenkinsci.Symbol;
+import org.kohsuke.stapler.AncestorInPath;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
 
 /**
  * Provides a simple grep-style file scanner that searches for occurrences of a configurable regular expression
@@ -174,26 +170,23 @@ public class GrepParser extends Tool {
     }
 
     @Override
-    public Report scan(final Run<?, ?> run, final FilePath workspace, final Charset sourceCodeEncoding,
-            final LogHandler logger) {
+    public Report scan(
+            final Run<?, ?> run, final FilePath workspace, final Charset sourceCodeEncoding, final LogHandler logger) {
         if (StringUtils.isBlank(includePattern)) {
             var report = scanConsoleLog(run, logger);
             report.setOrigin(getActualId(), getActualName());
             return report;
         }
         try {
-            var report = workspace.act(
-                    new AgentGrepScanner(regexp, severity, message, includePattern, excludePattern,
-                            sourceCodeEncoding.name()));
+            var report = workspace.act(new AgentGrepScanner(
+                    regexp, severity, message, includePattern, excludePattern, sourceCodeEncoding.name()));
             report.setOrigin(getActualId(), getActualName());
             return report;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             var report = new Report();
             report.logException(e, "Exception while scanning files for grep pattern '%s':", regexp);
             return report;
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
             throw new ParsingCanceledException(e);
         }
     }
@@ -206,10 +199,10 @@ public class GrepParser extends Tool {
         try (var bufferedReader = new BufferedReader(run.getLogReader());
                 var issueBuilder = new IssueBuilder()) {
             var lines = bufferedReader.lines().map(ConsoleNote::removeNotes).iterator();
-            report.addAll(scanner.scanLines(lines, issueBuilder.setFileName(
-                    ConsoleLogHandler.JENKINS_CONSOLE_LOG_FILE_NAME_ID)).get());
-        }
-        catch (IOException e) {
+            report.addAll(scanner.scanLines(
+                            lines, issueBuilder.setFileName(ConsoleLogHandler.JENKINS_CONSOLE_LOG_FILE_NAME_ID))
+                    .get());
+        } catch (IOException e) {
             report.logException(e, "Exception while reading console log:");
         }
 
@@ -222,8 +215,7 @@ public class GrepParser extends Tool {
     /** Label provider with customised messages. */
     private static class LabelProvider extends SymbolIconLabelProvider {
         LabelProvider() {
-            super(ID, Messages.Warnings_GrepParser_Name(), i -> StringUtils.EMPTY,
-                    "symbol-search plugin-ionicons-api");
+            super(ID, Messages.Warnings_GrepParser_Name(), i -> StringUtils.EMPTY, "symbol-search plugin-ionicons-api");
         }
     }
 
@@ -261,8 +253,8 @@ public class GrepParser extends Tool {
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckIncludePattern(@AncestorInPath final AbstractProject<?, ?> project,
-                @QueryParameter final String includePattern) {
+        public FormValidation doCheckIncludePattern(
+                @AncestorInPath final AbstractProject<?, ?> project, @QueryParameter final String includePattern) {
             if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
@@ -280,8 +272,8 @@ public class GrepParser extends Tool {
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckExcludePattern(@AncestorInPath final AbstractProject<?, ?> project,
-                @QueryParameter final String excludePattern) {
+        public FormValidation doCheckExcludePattern(
+                @AncestorInPath final AbstractProject<?, ?> project, @QueryParameter final String excludePattern) {
             if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
@@ -299,8 +291,8 @@ public class GrepParser extends Tool {
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckRegexp(@AncestorInPath final BuildableItem project,
-                @QueryParameter final String regexp) {
+        public FormValidation doCheckRegexp(
+                @AncestorInPath final BuildableItem project, @QueryParameter final String regexp) {
             if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
@@ -355,7 +347,8 @@ public class GrepParser extends Tool {
          * @return validation result
          */
         @POST
-        public FormValidation doCheckExample(@AncestorInPath final BuildableItem project,
+        public FormValidation doCheckExample(
+                @AncestorInPath final BuildableItem project,
                 @QueryParameter final String example,
                 @QueryParameter final String regexp,
                 @QueryParameter final String severity,
@@ -364,8 +357,7 @@ public class GrepParser extends Tool {
                 return FormValidation.ok();
             }
 
-            var scanner = new GrepScanner(regexp,
-                    Severity.valueOf(severity, Severity.WARNING_NORMAL), message);
+            var scanner = new GrepScanner(regexp, Severity.valueOf(severity, Severity.WARNING_NORMAL), message);
             if (scanner.isInvalidPattern()) {
                 return FormValidation.error(scanner.getErrorMessage());
             }
@@ -376,17 +368,13 @@ public class GrepParser extends Tool {
                 var matches = scanner.scanLines(reader.lines().iterator(), issueBuilder);
                 if (matches.isEmpty()) {
                     return FormValidation.warning(Messages.Warnings_GrepParser_Validation_NoMatch());
-                }
-                else if (matches.size() == 1) {
+                } else if (matches.size() == 1) {
                     return FormValidation.ok(Messages.Warnings_GrepParser_Validation_OneMatch(
                             matches.get(0).getMessage()));
+                } else {
+                    return FormValidation.ok(Messages.Warnings_GrepParser_Validation_MultipleMatches(matches.size()));
                 }
-                else {
-                    return FormValidation.ok(Messages.Warnings_GrepParser_Validation_MultipleMatches(
-                            matches.size()));
-                }
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 return FormValidation.error(e.getMessage()); // should never happen
             }
         }

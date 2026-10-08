@@ -1,18 +1,16 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import org.junit.Test;
-
-import org.jenkinsci.test.acceptance.junit.AbstractJUnitTest;
-import org.jenkinsci.test.acceptance.junit.WithPlugins;
-import org.jenkinsci.test.acceptance.po.FreeStyleJob;
+import static io.jenkins.plugins.analysis.warnings.Assertions.*;
 
 import io.jenkins.plugins.analysis.warnings.IssuesRecorder.ChecksAnnotationScope;
 import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateCriticality;
 import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateType;
 import io.jenkins.plugins.analysis.warnings.IssuesRecorder.SourceCodeRetention;
 import io.jenkins.plugins.analysis.warnings.IssuesRecorder.TrendChartType;
-
-import static io.jenkins.plugins.analysis.warnings.Assertions.*;
+import org.jenkinsci.test.acceptance.junit.AbstractJUnitTest;
+import org.jenkinsci.test.acceptance.junit.WithPlugins;
+import org.jenkinsci.test.acceptance.po.FreeStyleJob;
+import org.junit.Test;
 
 /**
  * Verifies the freestyle UI configuration of the {@link IssuesRecorder}.
@@ -32,11 +30,13 @@ public class FreeStyleConfigurationUiTest extends AbstractJUnitTest {
     /**
      * Verifies that job configuration screen correctly modifies the properties of an {@link IssuesRecorder} instance.
      */
-    @Test @SuppressWarnings({"checkstyle:JavaNCSS", "PMD.NcssCount"})
+    @Test
+    @SuppressWarnings({"checkstyle:JavaNCSS", "PMD.NcssCount"})
     public void shouldSetPropertiesInJobConfiguration() {
         FreeStyleJob job = jenkins.getJobs().create(FreeStyleJob.class);
 
-        IssuesRecorder issuesRecorder = job.addPublisher(IssuesRecorder.class, recorder -> recorder.setTool("Eclipse ECJ"));
+        IssuesRecorder issuesRecorder =
+                job.addPublisher(IssuesRecorder.class, recorder -> recorder.setTool("Eclipse ECJ"));
 
         issuesRecorder.setSourceCodeEncoding(ENCODING);
         issuesRecorder.addSourceDirectory(SOURCE_DIRECTORY);

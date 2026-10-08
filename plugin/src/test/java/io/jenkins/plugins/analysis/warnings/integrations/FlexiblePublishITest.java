@@ -1,19 +1,9 @@
 package io.jenkins.plugins.analysis.warnings.integrations;
 
-import org.jenkins_ci.plugins.flexible_publish.ConditionalPublisher;
-import org.jenkins_ci.plugins.flexible_publish.FlexiblePublisher;
-import org.jenkins_ci.plugins.run_condition.BuildStepRunner.Run;
-import org.jenkins_ci.plugins.run_condition.core.AlwaysRun;
-import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
 import hudson.model.Result;
 import hudson.tasks.BuildStep;
-
 import io.jenkins.plugins.analysis.core.filter.ExcludeFile;
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
@@ -25,8 +15,15 @@ import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Java;
 import io.jenkins.plugins.util.QualityGate.QualityGateCriticality;
 import io.jenkins.plugins.util.QualityGateStatus;
-
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import org.jenkins_ci.plugins.flexible_publish.ConditionalPublisher;
+import org.jenkins_ci.plugins.flexible_publish.FlexiblePublisher;
+import org.jenkins_ci.plugins.run_condition.BuildStepRunner.Run;
+import org.jenkins_ci.plugins.run_condition.core.AlwaysRun;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test the flexible publish plugin in combination with the warnings-ng-plugin.
@@ -41,28 +38,27 @@ class FlexiblePublishITest extends IntegrationTestWithJenkinsPerSuite {
     /** Test that different tools can be configured with different settings. */
     @Test
     void shouldAnalyseTwoToolsWithDifferentSettings() {
-        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(CHECKSTYLE_WARNINGS,
-                JAVA_WARNINGS);
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(CHECKSTYLE_WARNINGS, JAVA_WARNINGS);
 
         var checkStyle = new CheckStyle();
         checkStyle.setPattern("**/checkstyle*");
         var checkStyleRecorder = new IssuesRecorder();
         checkStyleRecorder.setTools(checkStyle);
-        checkStyleRecorder.setQualityGates(List.of(
-                new WarningsQualityGate(6, QualityGateType.TOTAL, QualityGateCriticality.FAILURE)));
+        checkStyleRecorder.setQualityGates(
+                List.of(new WarningsQualityGate(6, QualityGateType.TOTAL, QualityGateCriticality.FAILURE)));
 
         var java = new Java();
         java.setPattern("**/java*");
         var javaRecorder = new IssuesRecorder();
         javaRecorder.setTools(java);
         javaRecorder.setEnabledForFailure(true);
-        javaRecorder.setQualityGates(List.of(
-                new WarningsQualityGate(2, QualityGateType.TOTAL, QualityGateCriticality.UNSTABLE)));
+        javaRecorder.setQualityGates(
+                List.of(new WarningsQualityGate(2, QualityGateType.TOTAL, QualityGateCriticality.UNSTABLE)));
 
-        project.getPublishersList().add(new FlexiblePublisher(Arrays.asList(
-                constructConditionalPublisher(checkStyleRecorder),
-                constructConditionalPublisher(javaRecorder)
-        )));
+        project.getPublishersList()
+                .add(new FlexiblePublisher(Arrays.asList(
+                        constructConditionalPublisher(checkStyleRecorder),
+                        constructConditionalPublisher(javaRecorder))));
 
         List<AnalysisResult> results = getAnalysisResults(buildWithResult(project, Result.FAILURE));
         assertThat(results).hasSize(2);
@@ -102,13 +98,6 @@ class FlexiblePublishITest extends IntegrationTestWithJenkinsPerSuite {
 
     private ConditionalPublisher constructConditionalPublisher(final BuildStep publisher) {
         return new ConditionalPublisher(
-                new AlwaysRun(),
-                Collections.singletonList(publisher),
-                new Run(),
-                false,
-                null,
-                null,
-                null
-        );
+                new AlwaysRun(), Collections.singletonList(publisher), new Run(), false, null, null, null);
     }
 }

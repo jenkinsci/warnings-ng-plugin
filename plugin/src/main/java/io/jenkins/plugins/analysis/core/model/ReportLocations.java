@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import edu.hm.hafner.analysis.Report;
-
 import io.jenkins.plugins.forensics.blame.FileLocations;
 
 /**

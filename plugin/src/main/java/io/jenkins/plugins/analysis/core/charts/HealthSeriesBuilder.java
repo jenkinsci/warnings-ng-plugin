@@ -1,12 +1,10 @@
 package io.jenkins.plugins.analysis.core.charts;
 
 import edu.hm.hafner.echarts.SeriesBuilder;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Builds the series for a graph showing all warnings by health descriptor.
@@ -47,13 +45,11 @@ public class HealthSeriesBuilder extends SeriesBuilder<AnalysisBuildResult> {
                 series.put(BETWEEN, Math.min(remainder, range));
                 remainder -= range;
                 series.put(UNHEALTHY, Math.max(remainder, 0));
-            }
-            else {
+            } else {
                 series.put(BETWEEN, 0);
                 series.put(UNHEALTHY, 0);
             }
-        }
-        else { // at least a graph should be shown if the health reporting has been disabled in the meantime
+        } else { // at least a graph should be shown if the health reporting has been disabled in the meantime
             series.put(TOTAL, current.getTotalSize());
         }
 

@@ -1,16 +1,14 @@
 package io.jenkins.plugins.analysis.core.charts;
 
-import org.eclipse.collections.impl.factory.Maps;
+import static org.mockito.Mockito.*;
 
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.echarts.Build;
 import edu.hm.hafner.echarts.BuildResult;
 import edu.hm.hafner.util.VisibleForTesting;
-
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.analysis.core.util.IssuesStatisticsBuilder;
-
-import static org.mockito.Mockito.*;
+import org.eclipse.collections.impl.factory.Maps;
 
 /**
  * Provides factory methods to create {@link AnalysisBuildResult} stubs.
@@ -18,15 +16,15 @@ import static org.mockito.Mockito.*;
  * @author Ullrich Hafner
  */
 public final class BuildResultStubs {
-    static BuildResult<AnalysisBuildResult> createResult(final int buildNumber,
-            final int errors, final int high, final int normal, final int low) {
+    static BuildResult<AnalysisBuildResult> createResult(
+            final int buildNumber, final int errors, final int high, final int normal, final int low) {
         AnalysisBuildResult buildResult = createAnalysisBuildResult(errors, high, normal, low);
 
         return createBuildResult(buildNumber, buildResult);
     }
 
-    static AnalysisBuildResult createAnalysisBuildResult(final int errors, final int high, final int normal,
-            final int low) {
+    static AnalysisBuildResult createAnalysisBuildResult(
+            final int errors, final int high, final int normal, final int low) {
         AnalysisBuildResult buildResult = mock(AnalysisBuildResult.class);
 
         when(buildResult.getTotalSizeOf(Severity.ERROR)).thenReturn(errors);
@@ -47,20 +45,19 @@ public final class BuildResultStubs {
     }
 
     @VisibleForTesting
-    static BuildResult<AnalysisBuildResult> createBuildResult(
-            final int buildNumber, final AnalysisBuildResult result) {
+    static BuildResult<AnalysisBuildResult> createBuildResult(final int buildNumber, final AnalysisBuildResult result) {
         return new BuildResult<>(new Build(buildNumber), result);
     }
 
-    static BuildResult<AnalysisBuildResult> createResultWithNewIssues(final int buildNumber,
-            final int errors, final int high, final int normal, final int low) {
+    static BuildResult<AnalysisBuildResult> createResultWithNewIssues(
+            final int buildNumber, final int errors, final int high, final int normal, final int low) {
         AnalysisBuildResult buildResult = createAnalysisBuildResultWithNew(errors, high, normal, low);
 
         return createBuildResult(buildNumber, buildResult);
     }
 
-    static AnalysisBuildResult createAnalysisBuildResultWithNew(final int errors, final int high, final int normal,
-            final int low) {
+    static AnalysisBuildResult createAnalysisBuildResultWithNew(
+            final int errors, final int high, final int normal, final int low) {
         AnalysisBuildResult buildResult = mock(AnalysisBuildResult.class);
 
         when(buildResult.getNewSizeOf(Severity.ERROR)).thenReturn(errors);

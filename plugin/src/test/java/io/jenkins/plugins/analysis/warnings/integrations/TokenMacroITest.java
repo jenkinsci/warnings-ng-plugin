@@ -1,14 +1,12 @@
 package io.jenkins.plugins.analysis.warnings.integrations;
 
-import org.junit.jupiter.api.Test;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
-import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.model.Result;
-
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
-
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import org.jenkinsci.plugins.workflow.job.WorkflowJob;
+import org.junit.jupiter.api.Test;
 
 /**
  * Integration tests for the expansion of the token-macro plugin.
@@ -80,8 +78,8 @@ class TokenMacroITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(getConsoleLog(baseline)).contains("[low=" + 1 + "]");
     }
 
-    private void verifyConsoleLog(final AnalysisResult baseline, final int totalSize, final int newSize,
-            final int fixedSize) {
+    private void verifyConsoleLog(
+            final AnalysisResult baseline, final int totalSize, final int newSize, final int fixedSize) {
         assertThat(baseline).hasTotalSize(totalSize);
         assertThat(baseline).hasNewSize(newSize);
         assertThat(baseline).hasFixedSize(fixedSize);

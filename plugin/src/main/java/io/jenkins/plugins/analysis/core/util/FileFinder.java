@@ -1,18 +1,16 @@
 package io.jenkins.plugins.analysis.core.util;
 
+import hudson.remoting.VirtualChannel;
+import java.io.File;
+import java.io.IOException;
+import java.io.Serial;
+import jenkins.MasterToSlaveFileCallable;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.selectors.TypeSelector;
 import org.apache.tools.ant.types.selectors.TypeSelector.FileType;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.Serial;
-
-import hudson.remoting.VirtualChannel;
-import jenkins.MasterToSlaveFileCallable;
 
 /**
  * Scans the workspace and finds all files matching a given ant pattern.
@@ -110,8 +108,7 @@ public class FileFinder extends MasterToSlaveFileCallable<String[]> {
             fileSet.setFollowSymlinks(followSymlinks);
 
             return fileSet.getDirectoryScanner(antProject).getIncludedFiles();
-        }
-        catch (BuildException ignored) {
+        } catch (BuildException ignored) {
             return new String[0]; // as fallback do not return any file
         }
     }

@@ -1,11 +1,17 @@
 package io.jenkins.plugins.analysis.core.portlets;
 
-import org.apache.commons.lang3.StringUtils;
+import static io.jenkins.plugins.analysis.core.model.ToolSelection.*;
 
 import edu.hm.hafner.util.Generated;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.NonNull;
-
+import hudson.model.Descriptor;
+import hudson.model.Job;
+import hudson.model.Run;
+import hudson.plugins.view.dashboard.DashboardPortlet;
+import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
+import io.jenkins.plugins.analysis.core.model.ResultAction;
+import io.jenkins.plugins.analysis.core.model.ToolSelection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -14,20 +20,10 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
+import org.apache.commons.lang3.StringUtils;
+import org.jenkinsci.plugins.variant.OptionalExtension;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
-import org.jenkinsci.plugins.variant.OptionalExtension;
-import hudson.model.Descriptor;
-import hudson.model.Job;
-import hudson.model.Run;
-import hudson.plugins.view.dashboard.DashboardPortlet;
-
-import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
-import io.jenkins.plugins.analysis.core.model.ResultAction;
-import io.jenkins.plugins.analysis.core.model.ToolSelection;
-
-import static io.jenkins.plugins.analysis.core.model.ToolSelection.*;
 
 /**
  * A dashboard view portlet that renders a two-dimensional table of issues per type and job.
@@ -144,8 +140,7 @@ public class IssuesTablePortlet extends DashboardPortlet {
             return true;
         }
 
-        return lastCompletedBuild.getActions(ResultAction.class)
-                .stream()
+        return lastCompletedBuild.getActions(ResultAction.class).stream()
                 .filter(createToolFilter(selectTools, tools))
                 .anyMatch(resultAction -> resultAction.getResult().getTotalSize() > 0);
     }
@@ -169,13 +164,17 @@ public class IssuesTablePortlet extends DashboardPortlet {
         private final List<TableRow> rows = new ArrayList<>();
         private final SortedSet<Column> columns;
 
-        PortletTableModel(final List<Job<?, ?>> visibleJobs, final Predicate<ResultAction> filter,
+        PortletTableModel(
+                final List<Job<?, ?>> visibleJobs,
+                final Predicate<ResultAction> filter,
                 final LabelProviderFactory labelProviderFactory) {
             columns = visibleJobs.stream()
                     .filter(job -> job.getLastCompletedBuild() != null)
                     .map(Job::getLastCompletedBuild)
-                    .flatMap(build -> build.getActions(ResultAction.class).stream().filter(filter))
-                    .collect(Collectors.toList()).stream()
+                    .flatMap(build ->
+                            build.getActions(ResultAction.class).stream().filter(filter))
+                    .collect(Collectors.toList())
+                    .stream()
                     .map(r -> createColumn(r, labelProviderFactory))
                     .collect(Collectors.toCollection(TreeSet::new));
 
@@ -188,7 +187,11 @@ public class IssuesTablePortlet extends DashboardPortlet {
 
         private Column createColumn(final ResultAction result, final LabelProviderFactory labelProviderFactory) {
             var labelProvider = labelProviderFactory.create(result.getId(), result.getName());
-            return new Column(result.getId(), labelProvider.getName(), labelProvider.getLinkName(), labelProvider.getSmallIconUrl());
+            return new Column(
+                    result.getId(),
+                    labelProvider.getName(),
+                    labelProvider.getLinkName(),
+                    labelProvider.getSmallIconUrl());
         }
 
         private void populateRows(final List<Job<?, ?>> visibleJobs) {
@@ -198,10 +201,8 @@ public class IssuesTablePortlet extends DashboardPortlet {
                     Run<?, ?> lastCompletedBuild = job.getLastCompletedBuild();
                     if (lastCompletedBuild == null) {
                         row.add(Result.EMPTY);
-                    }
-                    else {
-                        var result = lastCompletedBuild.getActions(ResultAction.class)
-                                .stream()
+                    } else {
+                        var result = lastCompletedBuild.getActions(ResultAction.class).stream()
                                 .filter(action -> action.getId().equals(column.getId()))
                                 .findFirst()
                                 .map(Result::new)
@@ -278,8 +279,10 @@ public class IssuesTablePortlet extends DashboardPortlet {
                 return false;
             }
             var column = (Column) o;
-            return Objects.equals(id, column.id) && Objects.equals(name, column.name)
-                    && Objects.equals(linkName, column.linkName) && Objects.equals(icon, column.icon);
+            return Objects.equals(id, column.id)
+                    && Objects.equals(name, column.name)
+                    && Objects.equals(linkName, column.linkName)
+                    && Objects.equals(icon, column.icon);
         }
 
         @Override
@@ -287,7 +290,8 @@ public class IssuesTablePortlet extends DashboardPortlet {
             return Objects.hash(id, name, linkName, icon);
         }
 
-        @Override @Generated
+        @Override
+        @Generated
         public String toString() {
             return "Column{"
                     + "id='" + id + '\'' + ", "
@@ -363,8 +367,7 @@ public class IssuesTablePortlet extends DashboardPortlet {
         public OptionalInt getTotal() {
             if (StringUtils.isEmpty(url)) {
                 return OptionalInt.empty();
-            }
-            else {
+            } else {
                 return OptionalInt.of(size);
             }
         }
