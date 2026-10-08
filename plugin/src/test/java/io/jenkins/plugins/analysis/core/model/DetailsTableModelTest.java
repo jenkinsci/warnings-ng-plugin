@@ -1,11 +1,14 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import static org.assertj.core.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
+
 import io.jenkins.plugins.analysis.core.model.DetailsTableModel.TableRow;
-import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests the class {@link DetailsTableModel}.
@@ -34,14 +37,14 @@ class DetailsTableModelTest extends AbstractDetailsModelTest {
 
             var actualColumn = model.getDescription();
             var actualMessage = model.getMessage();
-
+            
             assertThat(actualColumn)
                     .doesNotContain("<script>alert")
                     .doesNotContain("<b>Bold text</b>")
                     .contains("&amp;lt;script&amp;gt;")
                     .contains("&amp;lt;b&amp;gt;")
                     .contains("Bold text");
-
+            
             assertThat(actualMessage)
                     .doesNotContain("<script>")
                     .doesNotContain("</script>")
@@ -61,8 +64,10 @@ class DetailsTableModelTest extends AbstractDetailsModelTest {
             var model = createRow(issue, i -> "<img src=x onerror=alert('XSS')><div>Description</div>");
 
             var actualColumn = model.getDescription();
-
-            assertThat(actualColumn).doesNotContain("onerror=alert").contains("Description");
+            
+            assertThat(actualColumn)
+                    .doesNotContain("onerror=alert")  
+                    .contains("Description");  
         }
     }
 
@@ -75,7 +80,7 @@ class DetailsTableModelTest extends AbstractDetailsModelTest {
 
             var actualColumn = model.getDescription();
             var actualMessage = model.getMessage();
-
+            
             assertThat(actualColumn).contains("&lt;").contains("&gt;");
             assertThat(actualMessage).contains("&lt;").contains("&gt;");
         }
@@ -89,12 +94,86 @@ class DetailsTableModelTest extends AbstractDetailsModelTest {
             var model = createRow(builder.build());
 
             var actualMessage = model.getMessage();
-
+            
             assertThat(actualMessage)
-                    .contains("&amp;#228;") // &#228; should become &amp;#228;
-                    .contains("&amp;#246;") // &#246; should become &amp;#246;
-                    .doesNotContain("ä") // Should not be converted to actual character
-                    .doesNotContain("ö"); // Should not be converted to actual character
+                    .contains("&amp;#228;")  // &#228; should become &amp;#228;
+                    .contains("&amp;#246;")  // &#246; should become &amp;#246;
+                    .doesNotContain("ä")     // Should not be converted to actual character
+                    .doesNotContain("ö");    // Should not be converted to actual character
+        }
+    }
+
+    @Test
+    void shouldFormatMultiLineMessageIntoParagraphAndPreCode() {
+        try (var builder = new IssueBuilder()) {
+            builder.setMessage("Test failed: AssertionError\nTraceback (most recent call last):\n  File \"test.py\", line 10\n    assert 1 == 2");
+            var model = createRow(builder.build());
+
+            var actualColumn = model.getDescription();
+
+            assertThat(actualColumn)
+                    .contains("&lt;p&gt;&lt;strong&gt;Test failed: AssertionError&lt;/strong&gt;&lt;/p&gt;")
+                    .contains("&lt;pre&gt;&lt;code&gt;Traceback (most recent call last):\n  File &amp;quot;test.py&amp;quot;, line 10\n    assert 1 == 2&lt;/code&gt;&lt;/pre&gt;");
+        }
+    }
+
+    @Test
+    void shouldHandleMultiLineMessageWithWindowsLineEndings() {
+        try (var builder = new IssueBuilder()) {
+            builder.setMessage("Failure header\r\nLine 1\r\nLine 2");
+            var model = createRow(builder.build());
+
+            var actualColumn = model.getDescription();
+
+            assertThat(actualColumn)
+                    .contains("&lt;p&gt;&lt;strong&gt;Failure header&lt;/strong&gt;&lt;/p&gt;")
+                    .contains("&lt;pre&gt;&lt;code&gt;Line 1\nLine 2&lt;/code&gt;&lt;/pre&gt;")
+                    .doesNotContain("\r");
+        }
+    }
+
+    @Test
+    void shouldHandleMessageWithTrailingNewlineOnly() {
+        try (var builder = new IssueBuilder()) {
+            builder.setMessage("Single line with newline\n");
+            var model = createRow(builder.build());
+
+            var actualColumn = model.getDescription();
+
+            assertThat(actualColumn)
+                    .contains("&lt;p&gt;&lt;strong&gt;Single line with newline&lt;/strong&gt;&lt;/p&gt;")
+                    .doesNotContain("&lt;pre&gt;")
+                    .doesNotContain("&lt;code&gt;");
+        }
+    }
+
+    @Test
+    void shouldHandleMessageWithBlankRemainingPart() {
+        var issue = spy(createIssue(1));
+        when(issue.getMessage()).thenReturn("Header\n");
+        var model = createRow(issue);
+
+        var actualColumn = model.getDescription();
+
+        assertThat(actualColumn)
+                .contains("&lt;p&gt;&lt;strong&gt;Header&lt;/strong&gt;&lt;/p&gt;")
+                .doesNotContain("&lt;pre&gt;")
+                .doesNotContain("&lt;code&gt;");
+    }
+
+    @Test
+    void shouldEscapeHtmlInMultiLineMessage() {
+        try (var builder = new IssueBuilder()) {
+            builder.setMessage("<error>tag</error>\n<stack>trace & 'quotes'</stack>");
+            var model = createRow(builder.build());
+
+            var actualColumn = model.getDescription();
+
+            assertThat(actualColumn)
+                    .doesNotContain("<error>")
+                    .doesNotContain("<stack>")
+                    .contains("&amp;lt;error&amp;gt;tag&amp;lt;/error&amp;gt;")
+                    .contains("&amp;lt;stack&amp;gt;trace &amp;amp; &#x27;quotes&#x27;&amp;lt;/stack&amp;gt;");
         }
     }
 
@@ -103,7 +182,8 @@ class DetailsTableModelTest extends AbstractDetailsModelTest {
         var issue = createIssue(1);
         var model = createRow(issue);
 
-        assertThatDetailedColumnContains(model.getFileName(), createExpectedFileName(issue), "/path/to/file-1:0000015");
+        assertThatDetailedColumnContains(model.getFileName(),
+                createExpectedFileName(issue), "/path/to/file-1:0000015");
     }
 
     @Test
@@ -118,12 +198,12 @@ class DetailsTableModelTest extends AbstractDetailsModelTest {
     }
 
     private TableRow createRow(final Issue issue) {
-        return new TableRow(
-                createAgeBuilder(), createFileNameRenderer(), i -> DESCRIPTION, issue, createJenkinsFacade());
+        return new TableRow(createAgeBuilder(), createFileNameRenderer(), i -> DESCRIPTION, issue,
+                createJenkinsFacade());
     }
 
     private TableRow createRow(final Issue issue, final DescriptionProvider descriptionProvider) {
-        return new TableRow(
-                createAgeBuilder(), createFileNameRenderer(), descriptionProvider, issue, createJenkinsFacade());
+        return new TableRow(createAgeBuilder(), createFileNameRenderer(), descriptionProvider, issue,
+                createJenkinsFacade());
     }
 }
