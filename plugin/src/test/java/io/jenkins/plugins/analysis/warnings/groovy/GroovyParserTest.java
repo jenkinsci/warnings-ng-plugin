@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
-import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.assertThat;
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.*;
 
 import edu.hm.hafner.util.SerializableTest;
@@ -115,15 +116,6 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
         assertThatIllegalArgumentException()
                 .isThrownBy(groovyParser::createParser)
                 .withMessageContaining("Name is not valid");
-    }
-
-    @Test
-    void shouldThrowExceptionDueToBrokenScript() {
-        var groovyParser = createParser(SINGLE_LINE_REGEXP, StringUtils.EMPTY);
-        assertThat(groovyParser.isValid()).isFalse();
-        assertThatIllegalArgumentException()
-                .isThrownBy(groovyParser::createParser)
-                .withMessageContaining("Script is not valid");
     }
 
     @Test

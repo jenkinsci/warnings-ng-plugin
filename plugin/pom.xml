@@ -44,7 +44,7 @@
     <!-- Test Library Dependencies Versions -->
     <xmlunit.version>2.14.0</xmlunit.version>
     <jmh.version>1.37</jmh.version>
-    <testcontainers.version>1.21.4</testcontainers.version>
+    <testcontainers.version>2.0.5</testcontainers.version>
 
     <!-- Jenkins Plug-in Dependencies Versions -->
     <flexible-publish.version>0.17</flexible-publish.version>
@@ -300,6 +300,7 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>plugin-util-api</artifactId>
+      <version>7.1403.vd380b_c42e90c</version>
       <classifier>tests</classifier>
       <scope>test</scope>
       <exclusions>
@@ -470,14 +471,13 @@
     </dependency>
     <dependency>
       <groupId>org.testcontainers</groupId>
-      <artifactId>junit-jupiter</artifactId>
+      <artifactId>testcontainers</artifactId>
       <version>${testcontainers.version}</version>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>org.testcontainers</groupId>
-      <artifactId>testcontainers</artifactId>
+      <artifactId>testcontainers-junit-jupiter</artifactId>
       <version>${testcontainers.version}</version>
       <scope>test</scope>
     </dependency>

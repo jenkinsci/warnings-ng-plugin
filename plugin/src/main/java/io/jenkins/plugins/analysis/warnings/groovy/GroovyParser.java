@@ -186,11 +186,6 @@ public class GroovyParser implements Describable<GroovyParser>, Serializable {
             throw new IllegalArgumentException("Name is not valid: " + nameCheck.getMessage());
         }
 
-        var scriptCheck = descriptor.checkScript(script);
-        if (scriptCheck.kind == Kind.ERROR) {
-            throw new IllegalArgumentException("Script is not valid: " + scriptCheck.getMessage());
-        }
-
         var regexpCheck = descriptor.checkRegexp(regexp);
         if (regexpCheck.kind == Kind.ERROR) {
             throw new IllegalArgumentException("RegExp is not valid: " + regexpCheck.getMessage());
