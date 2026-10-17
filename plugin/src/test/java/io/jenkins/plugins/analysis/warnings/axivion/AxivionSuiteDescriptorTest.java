@@ -1,17 +1,15 @@
 package io.jenkins.plugins.analysis.warnings.axivion;
 
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.*;
 
 import hudson.util.FormValidation;
-
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
-
-import static org.assertj.core.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the descriptor validation for {@link AxivionSuite}.
  *
- * @author Akash Manna 
+ * @author Akash Manna
  */
 class AxivionSuiteDescriptorTest extends IntegrationTestWithJenkinsPerSuite {
     @Test
@@ -32,7 +30,8 @@ class AxivionSuiteDescriptorTest extends IntegrationTestWithJenkinsPerSuite {
         var descriptor = new AxivionSuite.AxivionSuiteToolDescriptor();
 
         // Test ${VAR} syntax
-        assertThat(descriptor.doCheckProjectUrl(project, "http://localhost:9090/axivion/projects/${BUILD_VARIANT}").kind)
+        assertThat(descriptor.doCheckProjectUrl(project, "http://localhost:9090/axivion/projects/${BUILD_VARIANT}")
+                        .kind)
                 .isEqualTo(FormValidation.Kind.OK);
 
         // Test $VAR syntax
@@ -53,8 +52,7 @@ class AxivionSuiteDescriptorTest extends IntegrationTestWithJenkinsPerSuite {
         var project = createFreeStyleProject();
         var descriptor = new AxivionSuite.AxivionSuiteToolDescriptor();
 
-        assertThat(descriptor.doCheckProjectUrl(project, "not-a-url").kind)
-                .isEqualTo(FormValidation.Kind.ERROR);
+        assertThat(descriptor.doCheckProjectUrl(project, "not-a-url").kind).isEqualTo(FormValidation.Kind.ERROR);
 
         assertThat(descriptor.doCheckProjectUrl(project, "invalid url with spaces").kind)
                 .isEqualTo(FormValidation.Kind.ERROR);
@@ -66,10 +64,8 @@ class AxivionSuiteDescriptorTest extends IntegrationTestWithJenkinsPerSuite {
         var descriptor = new AxivionSuite.AxivionSuiteToolDescriptor();
 
         // Basedir already supports environment variables
-        assertThat(descriptor.doCheckBasedir(project, "$WORKSPACE").kind)
-                .isEqualTo(FormValidation.Kind.OK);
+        assertThat(descriptor.doCheckBasedir(project, "$WORKSPACE").kind).isEqualTo(FormValidation.Kind.OK);
 
-        assertThat(descriptor.doCheckBasedir(project, "${BUILD_DIR}").kind)
-                .isEqualTo(FormValidation.Kind.OK);
+        assertThat(descriptor.doCheckBasedir(project, "${BUILD_DIR}").kind).isEqualTo(FormValidation.Kind.OK);
     }
 }

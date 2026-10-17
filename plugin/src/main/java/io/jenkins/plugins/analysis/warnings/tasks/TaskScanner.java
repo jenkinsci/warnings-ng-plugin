@@ -1,14 +1,11 @@
 package io.jenkins.plugins.analysis.warnings.tasks;
 
-import org.apache.commons.lang3.Strings;
-import org.apache.commons.lang3.StringUtils;
-
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
+import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
@@ -24,8 +21,8 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Stream;
-
-import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 /**
  * Scans a given input stream for open tasks.
@@ -38,9 +35,11 @@ class TaskScanner {
 
     /** The regular expression patterns to be used to scan the files. One pattern per priority. */
     private final Map<Severity, Pattern> patterns = new HashMap<>();
+
     private final boolean isUppercase;
 
     private boolean isPatternInvalid;
+
     @SuppressWarnings("PMD.AvoidStringBufferField")
     private final StringBuilder errors = new StringBuilder();
 
@@ -74,9 +73,12 @@ class TaskScanner {
      * @param matcherMode
      *         if tag identifiers should be treated as regular expression
      */
-    TaskScanner(@CheckForNull final String highTags, @CheckForNull final String normalTags,
+    TaskScanner(
+            @CheckForNull final String highTags,
+            @CheckForNull final String normalTags,
             @CheckForNull final String lowTags,
-            final CaseMode caseMode, final MatcherMode matcherMode) {
+            final CaseMode caseMode,
+            final MatcherMode matcherMode) {
         isUppercase = caseMode == CaseMode.IGNORE_CASE;
         if (StringUtils.isNotBlank(highTags)) {
             patterns.put(Severity.WARNING_HIGH, compile(highTags, caseMode, matcherMode));
@@ -92,16 +94,14 @@ class TaskScanner {
     String getTaskTags() {
         if (isPatternInvalid) {
             return "Invalid patterns detected:\n" + getErrors();
-        }
-        else if (patterns.isEmpty()) {
+        } else if (patterns.isEmpty()) {
             return "No task tags have been defined. Configuration Error?\n";
-        }
-        else {
+        } else {
             var builder = new StringBuilder("Using the following tasks patterns:\n");
             for (Severity severity : Severity.getPredefinedValues()) {
                 if (patterns.containsKey(severity)) {
-                    builder.append("-> %s: %s%n".formatted(LocalizedSeverity.getLocalizedString(severity),
-                            patterns.get(severity)));
+                    builder.append("-> %s: %s%n"
+                            .formatted(LocalizedSeverity.getLocalizedString(severity), patterns.get(severity)));
                 }
             }
             return builder.toString();
@@ -163,15 +163,13 @@ class TaskScanner {
             var regex = "^.*(" + StringUtils.join(regexps.iterator(), "|") + ")(.*)$";
             if (caseMode == CaseMode.IGNORE_CASE) {
                 return Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
-            }
-            else {
+            } else {
                 return Pattern.compile(regex);
             }
-        }
-        catch (PatternSyntaxException exception) {
+        } catch (PatternSyntaxException exception) {
             isPatternInvalid = true;
-            errors.append("Specified pattern is an invalid regular expression: '%s': '%s'".formatted(
-                    tagIdentifiers, exception.getMessage()));
+            errors.append("Specified pattern is an invalid regular expression: '%s': '%s'"
+                    .formatted(tagIdentifiers, exception.getMessage()));
 
             return INVALID;
         }
@@ -179,9 +177,8 @@ class TaskScanner {
 
     private String[] splitTags(final String tagIdentifiers) {
         if (tagIdentifiers.indexOf(',') == -1) {
-            return new String[]{tagIdentifiers};
-        }
-        else {
+            return new String[] {tagIdentifiers};
+        } else {
             return StringUtils.split(tagIdentifiers, ",");
         }
     }
@@ -196,20 +193,19 @@ class TaskScanner {
      *
      * @return the open tasks
      */
-    @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE", justification = "https://github.com/spotbugs/spotbugs/issues/756")
+    @SuppressFBWarnings(
+            value = "RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE",
+            justification = "https://github.com/spotbugs/spotbugs/issues/756")
     Report scan(final Path file, final Charset charset) {
         try (Stream<String> lines = Files.lines(file, charset);
                 IssueBuilder issueBuilder = new IssueBuilder()) {
             return scanTasks(lines.iterator(), issueBuilder.setFileName(file.toString()));
-        }
-        catch (IOException | UncheckedIOException exception) {
+        } catch (IOException | UncheckedIOException exception) {
             var report = new Report();
             var cause = exception.getCause();
             if (cause instanceof MalformedInputException || cause instanceof UnmappableCharacterException) {
-                report.logError("Can't read source file '%s', defined encoding '%s' seems to be wrong",
-                        file, charset);
-            }
-            else {
+                report.logError("Can't read source file '%s', defined encoding '%s' seems to be wrong", file, charset);
+            } else {
                 report.logException(exception, "Exception while reading the source code file '%s':", file);
             }
 
@@ -253,7 +249,11 @@ class TaskScanner {
         return report;
     }
 
-    private void createTask(final IssueBuilder builder, final Report report, final int lineNumber, final String line,
+    private void createTask(
+            final IssueBuilder builder,
+            final Report report,
+            final int lineNumber,
+            final String line,
             final Severity severity) {
         var matcher = patterns.get(severity).matcher(line);
         if (matcher.matches() && matcher.groupCount() == 2) {
@@ -263,8 +263,7 @@ class TaskScanner {
             String tag = StringUtils.defaultString(matcher.group(1));
             if (isUppercase) {
                 builder.setType(StringUtils.upperCase(tag));
-            }
-            else {
+            } else {
                 builder.setType(tag);
             }
             report.add(builder.setSeverity(severity).setLineStart(lineNumber).build());
@@ -280,8 +279,7 @@ class TaskScanner {
         boolean matches(final String line) {
             if (line.contains(IGNORE_BEGIN)) {
                 ignore = true;
-            }
-            else if (line.contains(IGNORE_END)) {
+            } else if (line.contains(IGNORE_END)) {
                 ignore = false;
             }
 

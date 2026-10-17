@@ -1,24 +1,9 @@
 package io.jenkins.plugins.analysis.warnings.tasks;
 
-import org.apache.commons.lang3.StringUtils;
-
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.Report;
 import edu.umd.cs.findbugs.annotations.NonNull;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.Serial;
-import java.io.StringReader;
-import java.nio.charset.Charset;
-
-import org.kohsuke.stapler.AncestorInPath;
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.DataBoundSetter;
-import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.verb.POST;
-import org.jenkinsci.Symbol;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.model.AbstractProject;
@@ -26,7 +11,6 @@ import hudson.model.BuildableItem;
 import hudson.model.Item;
 import hudson.model.Run;
 import hudson.util.FormValidation;
-
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.SymbolIconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
@@ -36,6 +20,18 @@ import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.MatcherMode;
 import io.jenkins.plugins.util.JenkinsFacade;
 import io.jenkins.plugins.util.LogHandler;
 import io.jenkins.plugins.util.ValidationUtilities;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.Serial;
+import java.io.StringReader;
+import java.nio.charset.Charset;
+import org.apache.commons.lang3.StringUtils;
+import org.jenkinsci.Symbol;
+import org.kohsuke.stapler.AncestorInPath;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
 
 /**
  * Provides a files scanner that detects open tasks in source code files.
@@ -158,23 +154,26 @@ public class OpenTasks extends Tool {
     }
 
     @Override
-    public Report scan(final Run<?, ?> run, final FilePath workspace, final Charset sourceCodeEncoding,
-            final LogHandler logger) {
+    public Report scan(
+            final Run<?, ?> run, final FilePath workspace, final Charset sourceCodeEncoding, final LogHandler logger) {
         try {
-            var openTasks = workspace.act(new AgentScanner(highTags, normalTags, lowTags,
+            var openTasks = workspace.act(new AgentScanner(
+                    highTags,
+                    normalTags,
+                    lowTags,
                     ignoreCase ? CaseMode.IGNORE_CASE : CaseMode.CASE_SENSITIVE,
                     isRegularExpression ? MatcherMode.REGEXP_MATCH : MatcherMode.STRING_MATCH,
-                    includePattern, excludePattern, sourceCodeEncoding.name()));
+                    includePattern,
+                    excludePattern,
+                    sourceCodeEncoding.name()));
             openTasks.setOrigin(getActualId(), getActualName());
 
             return openTasks;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             var report = new Report();
             report.logException(e, "Exception while reading the source code files:");
             return report;
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
             throw new ParsingCanceledException(e);
         }
     }
@@ -189,7 +188,10 @@ public class OpenTasks extends Tool {
     /** Label provider with customized messages. */
     private static class LabelProvider extends SymbolIconLabelProvider {
         LabelProvider() {
-            super(ID, Messages.Warnings_OpenTasks_Name(), i -> StringUtils.EMPTY,
+            super(
+                    ID,
+                    Messages.Warnings_OpenTasks_Name(),
+                    i -> StringUtils.EMPTY,
                     "symbol-clipboard plugin-ionicons-api");
         }
 
@@ -238,8 +240,8 @@ public class OpenTasks extends Tool {
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckIncludePattern(@AncestorInPath final AbstractProject<?, ?> project,
-                @QueryParameter final String includePattern) {
+        public FormValidation doCheckIncludePattern(
+                @AncestorInPath final AbstractProject<?, ?> project, @QueryParameter final String includePattern) {
             if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
@@ -258,8 +260,8 @@ public class OpenTasks extends Tool {
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckExcludePattern(@AncestorInPath final AbstractProject<?, ?> project,
-                @QueryParameter final String excludePattern) {
+        public FormValidation doCheckExcludePattern(
+                @AncestorInPath final AbstractProject<?, ?> project, @QueryParameter final String excludePattern) {
             if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
@@ -288,7 +290,8 @@ public class OpenTasks extends Tool {
          * @return validation result
          */
         @POST
-        public FormValidation doCheckExample(@AncestorInPath final BuildableItem project,
+        public FormValidation doCheckExample(
+                @AncestorInPath final BuildableItem project,
                 @QueryParameter final String example,
                 @QueryParameter final String high,
                 @QueryParameter final String normal,
@@ -304,27 +307,26 @@ public class OpenTasks extends Tool {
                     .setNormalTasks(normal)
                     .setLowTasks(low)
                     .setCaseMode(ignoreCase ? CaseMode.IGNORE_CASE : CaseMode.CASE_SENSITIVE)
-                    .setMatcherMode(asRegexp ? MatcherMode.REGEXP_MATCH : MatcherMode.STRING_MATCH).build();
+                    .setMatcherMode(asRegexp ? MatcherMode.REGEXP_MATCH : MatcherMode.STRING_MATCH)
+                    .build();
 
             if (scanner.isInvalidPattern()) {
                 return FormValidation.error(scanner.getErrors());
             }
 
-            try (var reader = new BufferedReader(new StringReader(example)); var issueBuilder = new IssueBuilder()) {
+            try (var reader = new BufferedReader(new StringReader(example));
+                    var issueBuilder = new IssueBuilder()) {
                 issueBuilder.setFileName("UI example");
                 var tasks = scanner.scanTasks(reader.lines().iterator(), issueBuilder);
                 if (tasks.isEmpty()) {
                     return FormValidation.warning(Messages.OpenTasks_Validation_NoTask());
-                }
-                else if (tasks.size() != 1) {
+                } else if (tasks.size() != 1) {
                     return FormValidation.warning(Messages.OpenTasks_Validation_MultipleTasks(tasks.size()));
-                }
-                else {
+                } else {
                     var task = tasks.get(0);
                     return FormValidation.ok(Messages.OpenTasks_Validation_OneTask(task.getType(), task.getMessage()));
                 }
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 return FormValidation.error(e.getMessage()); // should never happen
             }
         }

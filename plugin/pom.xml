@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -15,8 +14,7 @@
   <name>Warnings Plugin</name>
   <description>Jenkins plug-in that collects compiler warnings or issues reported by static analysis
     tools and visualizes the results. It has built-in support for more than one hundred static analysis tools
-    (including several compilers), see the list of supported report formats.
-  </description>
+    (including several compilers), see the list of supported report formats.</description>
   <url>https://github.com/jenkinsci/warnings-ng-plugin</url>
 
   <licenses>
@@ -55,29 +53,10 @@
     <!-- Maven Surefire ArgLine -->
     <argLine>-Djava.awt.headless=true -Xmx1024m -Djenkins.test.timeout=1000 --add-opens java.base/java.lang=ALL-UNNAMED
       --add-opens java.base/java.io=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens
-      java.base/java.util.concurrent=ALL-UNNAMED
-    </argLine>
+      java.base/java.util.concurrent=ALL-UNNAMED</argLine>
   </properties>
 
   <dependencies>
-
-    <!-- Project Library Dependencies -->
-    <dependency>
-      <groupId>org.eclipse.collections</groupId>
-      <artifactId>eclipse-collections-api</artifactId>
-      <version>${eclipse-collections.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.collections</groupId>
-      <artifactId>eclipse-collections</artifactId>
-      <version>${eclipse-collections.version}</version>
-    </dependency>
-
-    <!-- Required Jenkins Plug-in Dependencies -->
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>jsoup</artifactId>
-    </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>analysis-model-api</artifactId>
@@ -86,23 +65,11 @@
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
-      <artifactId>plugin-util-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
-      <artifactId>font-awesome-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
       <artifactId>bootstrap5-api</artifactId>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
-      <artifactId>jquery3-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
-      <artifactId>echarts-api</artifactId>
+      <artifactId>checks-api</artifactId>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
@@ -110,11 +77,111 @@
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
+      <artifactId>echarts-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>font-awesome-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>forensics-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>gson-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>jquery3-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>json-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>json-path-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>mcp-server</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>plugin-util-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
       <artifactId>prism-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>pull-request-monitoring</artifactId>
+      <version>${pull-request-monitoring.version}</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.collections</groupId>
+      <artifactId>eclipse-collections</artifactId>
+      <version>${eclipse-collections.version}</version>
+    </dependency>
+
+    <!-- Project Library Dependencies -->
+    <dependency>
+      <groupId>org.eclipse.collections</groupId>
+      <artifactId>eclipse-collections-api</artifactId>
+      <version>${eclipse-collections.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>antisamy-markup-formatter</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>apache-httpcomponents-client-4-api</artifactId>
+    </dependency>
+
+    <!-- AxivionSuite Dependencies -->
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>credentials</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>dashboard-view</artifactId>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>jackson2-api</artifactId>
+    </dependency>
+
+    <!-- Required Jenkins Plug-in Dependencies -->
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>jsoup</artifactId>
+    </dependency>
+
+    <!-- Optional Jenkins Plug-in Dependencies -->
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>matrix-project</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>structs</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>token-macro</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>variant</artifactId>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins.workflow</groupId>
@@ -126,235 +193,11 @@
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins.workflow</groupId>
-      <artifactId>workflow-step-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins.workflow</groupId>
       <artifactId>workflow-job</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>structs</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>antisamy-markup-formatter</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
-      <artifactId>checks-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
-      <artifactId>forensics-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
-      <artifactId>json-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
-      <artifactId>json-path-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>variant</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
-      <artifactId>mcp-server</artifactId>
-      <optional>true</optional>
-    </dependency>
-
-    <!-- AxivionSuite Dependencies -->
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>credentials</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>apache-httpcomponents-client-4-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
-      <artifactId>gson-api</artifactId>
-    </dependency>
-
-    <!-- Optional Jenkins Plug-in Dependencies -->
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>matrix-project</artifactId>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>dashboard-view</artifactId>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>token-macro</artifactId>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
-      <artifactId>pull-request-monitoring</artifactId>
-      <version>${pull-request-monitoring.version}</version>
-      <optional>true</optional>
-    </dependency>
-
-    <!-- ASM is required by token-macro but does not declare its dependency -->
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
-      <artifactId>asm-api</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <!-- Test Dependencies -->
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
-      <artifactId>forensics-api</artifactId>
-      <classifier>tests</classifier>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
-      <artifactId>git-forensics</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>config-file-provider</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>git</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>git-client</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
-      <artifactId>mcp-server</artifactId>
-      <optional>true</optional>
-      <classifier>tests</classifier>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>edu.hm.hafner</groupId>
-      <artifactId>analysis-model</artifactId>
-      <version>${analysis-model-tests.version}</version>
-      <classifier>tests</classifier>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>edu.hm.hafner</groupId>
-          <artifactId>codingstyle</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.github.spotbugs</groupId>
-          <artifactId>spotbugs-annotations</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>commons-io</groupId>
-          <artifactId>commons-io</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.commons</groupId>
-          <artifactId>commons-lang3</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>jaxen</groupId>
-          <artifactId>jaxen</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.ow2.asm</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.google.errorprone</groupId>
-          <artifactId>error_prone_annotations</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.main</groupId>
-      <artifactId>jenkins-test-harness-tools</artifactId>
-      <version>2.2</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.jenkins-ci.plugins</groupId>
-          <artifactId>gradle</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.xmlunit</groupId>
-      <artifactId>xmlunit-assertj</artifactId>
-      <version>${xmlunit.version}</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>net.bytebuddy</groupId>
-          <artifactId>byte-buddy</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>jakarta.xml.bind</groupId>
-          <artifactId>jakarta.xml.bind-api</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
-      <artifactId>plugin-util-api</artifactId>
-      <classifier>tests</classifier>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>com.google.errorprone</groupId>
-          <artifactId>error_prone_annotations</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
-      <artifactId>data-tables-api</artifactId>
-      <classifier>tests</classifier>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
-      <artifactId>checks-api</artifactId>
-      <classifier>tests</classifier>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.testcontainers</groupId>
-      <artifactId>testcontainers</artifactId>
-      <version>${testcontainers.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.testcontainers</groupId>
-      <artifactId>junit-jupiter</artifactId>
-      <version>${testcontainers.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <!-- Form element path plugin to simplify the location of UI elements in HtmlUnit tests -->
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>form-element-path</artifactId>
-      <version>${form-element-path.version}</version>
-      <scope>test</scope>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-step-api</artifactId>
     </dependency>
 
     <!-- Jenkins Plug-in Dependencies required for integration tests -->
@@ -371,19 +214,110 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>flexible-publish</artifactId>
-      <version>${flexible-publish.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>timestamper</artifactId>
+      <groupId>edu.hm.hafner</groupId>
+      <artifactId>analysis-model</artifactId>
+      <version>${analysis-model-tests.version}</version>
+      <classifier>tests</classifier>
       <scope>test</scope>
       <exclusions>
         <exclusion>
-          <groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
-          <artifactId>owasp-java-html-sanitizer</artifactId>
+          <groupId>com.github.spotbugs</groupId>
+          <artifactId>spotbugs-annotations</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.google.errorprone</groupId>
+          <artifactId>error_prone_annotations</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>commons-io</groupId>
+          <artifactId>commons-io</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>edu.hm.hafner</groupId>
+          <artifactId>codingstyle</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jaxen</groupId>
+          <artifactId>jaxen</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.commons</groupId>
+          <artifactId>commons-lang3</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.ow2.asm</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins</groupId>
+      <artifactId>configuration-as-code</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- ASM is required by token-macro but does not declare its dependency -->
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>asm-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>checks-api</artifactId>
+      <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>data-tables-api</artifactId>
+      <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Test Dependencies -->
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>forensics-api</artifactId>
+      <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>git-forensics</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>mcp-server</artifactId>
+      <classifier>tests</classifier>
+      <scope>test</scope>
+      <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>plugin-util-api</artifactId>
+      <classifier>tests</classifier>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>com.google.errorprone</groupId>
+          <artifactId>error_prone_annotations</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.main</groupId>
+      <artifactId>jenkins-test-harness-tools</artifactId>
+      <version>2.2</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.jenkins-ci.plugins</groupId>
+          <artifactId>gradle</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -408,18 +342,7 @@
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>job-dsl</artifactId>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>xmlunit</groupId>
-          <artifactId>xmlunit</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.jenkins</groupId>
-      <artifactId>configuration-as-code</artifactId>
+      <artifactId>ansicolor</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -429,8 +352,47 @@
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>ansicolor</artifactId>
+      <artifactId>config-file-provider</artifactId>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>flexible-publish</artifactId>
+      <version>${flexible-publish.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- Form element path plugin to simplify the location of UI elements in HtmlUnit tests -->
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>form-element-path</artifactId>
+      <version>${form-element-path.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>git</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>git-client</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>jdk-tool</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>job-dsl</artifactId>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>xmlunit</groupId>
+          <artifactId>xmlunit</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- stage -->
@@ -439,16 +401,10 @@
       <artifactId>pipeline-stage-step</artifactId>
       <scope>test</scope>
     </dependency>
-    <!-- node -->
     <dependency>
-      <groupId>org.jenkins-ci.plugins.workflow</groupId>
-      <artifactId>workflow-durable-task-step</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <!-- recorder -> step -->
-    <dependency>
-      <groupId>org.jenkins-ci.plugins.workflow</groupId>
-      <artifactId>workflow-basic-steps</artifactId>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>scm-api</artifactId>
+      <classifier>tests</classifier>
       <scope>test</scope>
     </dependency>
     <!-- Docker Agents -->
@@ -459,13 +415,25 @@
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>jdk-tool</artifactId>
+      <artifactId>timestamper</artifactId>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
+          <artifactId>owasp-java-html-sanitizer</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <!-- recorder -> step -->
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-basic-steps</artifactId>
       <scope>test</scope>
     </dependency>
+    <!-- node -->
     <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>scm-api</artifactId>
-      <classifier>tests</classifier>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-durable-task-step</artifactId>
       <scope>test</scope>
     </dependency>
 
@@ -499,6 +467,35 @@
       <artifactId>jmh-generator-annprocess</artifactId>
       <version>${jmh.version}</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>${testcontainers.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers</artifactId>
+      <version>${testcontainers.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.xmlunit</groupId>
+      <artifactId>xmlunit-assertj</artifactId>
+      <version>${xmlunit.version}</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>jakarta.xml.bind</groupId>
+          <artifactId>jakarta.xml.bind-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>net.bytebuddy</groupId>
+          <artifactId>byte-buddy</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
 

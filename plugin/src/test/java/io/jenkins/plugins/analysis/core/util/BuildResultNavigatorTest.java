@@ -1,12 +1,11 @@
 package io.jenkins.plugins.analysis.core.util;
 
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
-
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class {@link BuildResultNavigator}.
@@ -18,17 +17,23 @@ class BuildResultNavigatorTest {
     void shouldNavigateToTheSelectedBuild() {
         var navigator = new BuildResultNavigator();
 
-        assertThat(navigator.getSameUrlForOtherBuild(createBuild(),
-                "http://localhost:8080/job/pipeline-analysis-model/30/spotbugs/something",
-                "spotbugs", "111"))
+        assertThat(navigator.getSameUrlForOtherBuild(
+                        createBuild(),
+                        "http://localhost:8080/job/pipeline-analysis-model/30/spotbugs/something",
+                        "spotbugs",
+                        "111"))
                 .contains("http://localhost:8080/job/pipeline-analysis-model/111/spotbugs");
-        assertThat(navigator.getSameUrlForOtherBuild(createBuild(),
-                "http://localhost:8080/job/pipeline-analysis-model/30/spotbugs/something/else",
-                "spotbugs", "111"))
+        assertThat(navigator.getSameUrlForOtherBuild(
+                        createBuild(),
+                        "http://localhost:8080/job/pipeline-analysis-model/30/spotbugs/something/else",
+                        "spotbugs",
+                        "111"))
                 .contains("http://localhost:8080/job/pipeline-analysis-model/111/spotbugs");
-        assertThat(navigator.getSameUrlForOtherBuild(createBuild(),
-                "http://localhost:8080/job/pipeline-analysis-model/30/spotbugs",
-                "spotbugs", "111"))
+        assertThat(navigator.getSameUrlForOtherBuild(
+                        createBuild(),
+                        "http://localhost:8080/job/pipeline-analysis-model/30/spotbugs",
+                        "spotbugs",
+                        "111"))
                 .contains("http://localhost:8080/job/pipeline-analysis-model/111/spotbugs");
     }
 
@@ -41,9 +46,11 @@ class BuildResultNavigatorTest {
         when(currentBuild.getNumber()).thenReturn(30);
         when(currentBuild.getParent()).thenReturn(job);
 
-        assertThat(navigator.getSameUrlForOtherBuild(currentBuild,
-                "http://localhost:8080/job/pipeline-analysis-model/30/spotbugs/something",
-                "spotbugs", "111"))
+        assertThat(navigator.getSameUrlForOtherBuild(
+                        currentBuild,
+                        "http://localhost:8080/job/pipeline-analysis-model/30/spotbugs/something",
+                        "spotbugs",
+                        "111"))
                 .isEmpty();
     }
 
@@ -51,9 +58,11 @@ class BuildResultNavigatorTest {
     void shouldSkipBrokenNextBuildNumber() {
         var navigator = new BuildResultNavigator();
 
-        assertThat(navigator.getSameUrlForOtherBuild(mock(FreeStyleBuild.class),
-                "http://localhost:8080/job/pipeline-analysis-model/30/spotbugs/something",
-                "spotbugs", "##"))
+        assertThat(navigator.getSameUrlForOtherBuild(
+                        mock(FreeStyleBuild.class),
+                        "http://localhost:8080/job/pipeline-analysis-model/30/spotbugs/something",
+                        "spotbugs",
+                        "##"))
                 .isEmpty();
     }
 
@@ -61,9 +70,8 @@ class BuildResultNavigatorTest {
     void shouldSkipOtherUrl() {
         var navigator = new BuildResultNavigator();
 
-        assertThat(navigator.getSameUrlForOtherBuild(createBuild(),
-                "http://localhost:8080/job/pipeline-analysis-model/",
-                "spotbugs", "111"))
+        assertThat(navigator.getSameUrlForOtherBuild(
+                        createBuild(), "http://localhost:8080/job/pipeline-analysis-model/", "spotbugs", "111"))
                 .isEmpty();
     }
 

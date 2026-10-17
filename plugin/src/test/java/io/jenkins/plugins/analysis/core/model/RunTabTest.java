@@ -1,14 +1,12 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import org.junit.jupiter.api.Test;
-
-import java.util.List;
-import java.util.NoSuchElementException;
-
-import hudson.model.Run;
-
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
+
+import hudson.model.Run;
+import java.util.List;
+import java.util.NoSuchElementException;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class {@link RunTab}.
@@ -45,8 +43,7 @@ class RunTabTest {
                 .extracting(ResultAction::getId)
                 .containsExactly("pmd", "checkstyle", "spotbugs");
         assertThat(tab.getDynamic("checkstyle")).isSameAs(checkstyle);
-        assertThatThrownBy(() -> tab.getDynamic("missing"))
-                .isInstanceOf(NoSuchElementException.class);
+        assertThatThrownBy(() -> tab.getDynamic("missing")).isInstanceOf(NoSuchElementException.class);
     }
 
     @Test

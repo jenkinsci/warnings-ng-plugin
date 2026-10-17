@@ -1,10 +1,9 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-
-import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 /**
  * Base class for table rows that render the issues details.
@@ -32,8 +31,7 @@ class BaseIssuesTableRow extends GenericTableRow {
             fileName = StringUtils.EMPTY;
             lineNumber = 0;
             age = 0;
-        }
-        else {
+        } else {
             String[] file = getCellContent(FILE).split(FILE_LINE_SEPARATOR, -1);
             fileName = file[0];
             lineNumber = Integer.parseInt(file[1]);
@@ -57,9 +55,7 @@ class BaseIssuesTableRow extends GenericTableRow {
         return age;
     }
 
-    /**
-     * Performs a click on the icon showing and hiding the details row.
-     */
+    /** Performs a click on the icon showing and hiding the details row. */
     void toggleDetailsRow() {
         getCell(DETAILS).findElement(By.tagName("div")).click();
         getTable().updateTableRows();

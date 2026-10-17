@@ -1,12 +1,10 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.io.Serial;
-
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.jenkinsci.Symbol;
 import hudson.Extension;
-
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
+import java.io.Serial;
+import org.jenkinsci.Symbol;
+import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
  * Provides a parser and customized messages for the Mentor Graphics Modelsim/Questa Simulators.
@@ -16,6 +14,7 @@ import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 public class MentorGraphics extends AnalysisModelParser {
     @Serial
     private static final long serialVersionUID = 8284958840616127492L;
+
     private static final String ID = "modelsim";
 
     /** Creates a new instance of {@link MentorGraphics}. */

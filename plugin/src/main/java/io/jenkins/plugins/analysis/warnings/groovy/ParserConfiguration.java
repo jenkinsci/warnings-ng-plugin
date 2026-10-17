@@ -1,20 +1,9 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
 import edu.hm.hafner.util.VisibleForTesting;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-
-import org.kohsuke.stapler.DataBoundSetter;
-import org.kohsuke.stapler.QueryParameter;
-import org.jenkinsci.Symbol;
 import hudson.Extension;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
-import jenkins.model.Jenkins;
-
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory.StaticAnalysisToolFactory;
@@ -22,6 +11,14 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.util.GlobalConfigurationFacade;
 import io.jenkins.plugins.util.GlobalConfigurationItem;
 import io.jenkins.plugins.util.JenkinsFacade;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import jenkins.model.Jenkins;
+import org.jenkinsci.Symbol;
+import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.QueryParameter;
 
 /**
  * Global configuration of Groovy based parsers. These parsers are dynamically registered.
@@ -96,8 +93,7 @@ public final class ParserConfiguration extends GlobalConfigurationItem {
         if (contains(parserId)) {
             var parser = getParser(parserId);
             this.parsers.remove(parser);
-        }
-        else {
+        } else {
             throw new NoSuchElementException("No Groovy parser with ID '%s' found.".formatted(parserId));
         }
         save();

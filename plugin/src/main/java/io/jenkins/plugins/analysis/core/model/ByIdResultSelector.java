@@ -1,9 +1,8 @@
 package io.jenkins.plugins.analysis.core.model;
 
+import hudson.model.Run;
 import java.util.List;
 import java.util.Optional;
-
-import hudson.model.Run;
 
 /**
  * Selects actions using the specific ID of an action.

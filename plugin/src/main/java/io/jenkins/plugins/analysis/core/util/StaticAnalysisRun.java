@@ -1,14 +1,11 @@
 package io.jenkins.plugins.analysis.core.util;
 
-import org.eclipse.collections.api.list.ImmutableList;
-
-import java.util.Optional;
-
-import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
 import hudson.model.Run;
-
 import io.jenkins.plugins.util.QualityGateResult;
 import io.jenkins.plugins.util.QualityGateStatus;
+import java.util.Optional;
+import org.eclipse.collections.api.list.ImmutableList;
+import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
 
 /**
  * Provides detailed information for the results of a static analysis run.

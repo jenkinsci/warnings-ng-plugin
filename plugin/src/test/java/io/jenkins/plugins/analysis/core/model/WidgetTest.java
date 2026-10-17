@@ -1,11 +1,10 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import org.junit.jupiter.api.Test;
-
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
+
+import java.util.List;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class {@link Widget}.
@@ -33,9 +32,8 @@ class WidgetTest {
 
         assertThat(widget.getSymbol()).isEqualTo("symbol-status-blue");
         assertThat(widget.getFailedResults()).isEmpty();
-        assertThat(widget.getLines()).containsExactly(
-                Messages.Widget_AllClear(),
-                Messages.Widget_NoWarningsForThisBuild());
+        assertThat(widget.getLines())
+                .containsExactly(Messages.Widget_AllClear(), Messages.Widget_NoWarningsForThisBuild());
     }
 
     private ResultAction createResultAction(final int totalSize) {

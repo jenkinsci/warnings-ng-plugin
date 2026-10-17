@@ -1,15 +1,12 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import com.google.inject.Injector;
 import java.net.URL;
 import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
+import org.jenkinsci.test.acceptance.po.PageObject;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-
-import com.google.inject.Injector;
-
-import org.jenkinsci.test.acceptance.po.PageObject;
 
 /**
  * Page object that represents the source code view.
@@ -23,10 +20,8 @@ public class SourceView extends PageObject {
     /**
      * Creates a new source code view.
      *
-     * @param injector
-     *         injector
-     * @param url
-     *         the URL of the view
+     * @param injector injector
+     * @param url the URL of the view
      */
     public SourceView(final Injector injector, final URL url) {
         super(injector, url);
@@ -34,7 +29,7 @@ public class SourceView extends PageObject {
 
     private void removeSourceLinesFromView() {
         executeScript("inputs = document.getElementsByTagName('code')[1];"
-                    + "document.querySelectorAll(\"a[name]\").forEach(e => e.parentNode.removeChild(e));");
+                + "document.querySelectorAll(\"a[name]\").forEach(e => e.parentNode.removeChild(e));");
     }
 
     /**

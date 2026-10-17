@@ -1,13 +1,11 @@
 package io.jenkins.plugins.analysis.core.model;
 
+import hudson.model.Run;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
-
-import hudson.model.Run;
 
 /**
  * Registry that maps tool IDs to their human-readable names. This is used to display tool names instead of IDs in

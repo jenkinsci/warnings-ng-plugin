@@ -1,14 +1,10 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
-import org.junit.jupiter.api.Test;
-
-import java.util.List;
-import java.util.stream.Collectors;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.model.Run;
-
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.Cpd;
@@ -17,8 +13,9 @@ import io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner.DryModel.Duplic
 import io.jenkins.plugins.datatables.TableColumn;
 import io.jenkins.plugins.datatables.TableModel;
 import io.jenkins.plugins.util.QualityGateStatus;
-
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.junit.jupiter.api.Test;
 
 /**
  * Integration tests for the DRY parsers of the warnings plug-in in freestyle jobs.
@@ -186,7 +183,8 @@ class DryITest extends IntegrationTestWithJenkinsPerSuite {
                 .contains(DETAILS, FILE, SEVERITY, LINES, DUPLICATIONS, AGE);
     }
 
-    private void assertThatLineCountForSeverityIsCorrect(final List<Object> data, final String severity, final Integer min, final Integer max) {
+    private void assertThatLineCountForSeverityIsCorrect(
+            final List<Object> data, final String severity, final Integer min, final Integer max) {
         data.stream()
                 .map(DuplicateCodeScanner.DryModel.DuplicationRow.class::cast)
                 .filter(row -> row.getSeverity().contains(severity))
@@ -214,9 +212,14 @@ class DryITest extends IntegrationTestWithJenkinsPerSuite {
      * @param project
      *         the {@link FreeStyleProject} that shall be build.
      */
-    private void assertThatThresholdsAreEvaluated(final int normalThreshold, final int highThreshold,
-            final int low, final int normal, final int high,
-            final DuplicateCodeScanner scanner, final FreeStyleProject project) {
+    private void assertThatThresholdsAreEvaluated(
+            final int normalThreshold,
+            final int highThreshold,
+            final int low,
+            final int normal,
+            final int high,
+            final DuplicateCodeScanner scanner,
+            final FreeStyleProject project) {
         scanner.setNormalThreshold(normalThreshold);
         scanner.setHighThreshold(highThreshold);
 

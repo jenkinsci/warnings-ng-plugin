@@ -1,24 +1,12 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import org.apache.commons.lang3.StringUtils;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
-import org.jvnet.hudson.test.TestExtension;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Consumer;
-
-import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.model.AbstractProject;
 import hudson.model.FreeStyleProject;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-
 import io.jenkins.plugins.analysis.core.steps.WarningChecksPublisher.ChecksAnnotationScope;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.core.util.WarningsQualityGate;
@@ -39,8 +27,16 @@ import io.jenkins.plugins.checks.api.ChecksStatus;
 import io.jenkins.plugins.checks.util.CapturingChecksPublisher;
 import io.jenkins.plugins.forensics.reference.SimpleReferenceRecorder;
 import io.jenkins.plugins.util.QualityGate.QualityGateCriticality;
-
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Consumer;
+import org.apache.commons.lang3.StringUtils;
+import org.jenkinsci.plugins.workflow.job.WorkflowJob;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.jvnet.hudson.test.TestExtension;
 
 /**
  * Tests the class {@link WarningChecksPublisher}.
@@ -60,10 +56,11 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
         var project = createPipelineWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
         var contextUrl = "http://context-publish-url";
         var contextName = "Checks Name";
-        project.setDefinition(asStage("withChecks(name: '" + contextName
-                        + "', detailsURL: '" + contextUrl + "') {",
+        project.setDefinition(asStage(
+                "withChecks(name: '" + contextName + "', detailsURL: '" + contextUrl + "') {",
                 createScanForIssuesStep(new CheckStyle()),
-                "publishIssues(issues: [issues])", "}"));
+                "publishIssues(issues: [issues])",
+                "}"));
         buildSuccessfully(project);
 
         List<ChecksDetails> publishedChecks = getPublishedChecks();
@@ -85,42 +82,44 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
         configureScanner(project, "checkstyle", "");
 
         Run<?, ?> reference = buildSuccessfully(project);
-        assertThat(getAnalysisResult(reference))
-                .hasTotalSize(4)
-                .hasNewSize(0);
+        assertThat(getAnalysisResult(reference)).hasTotalSize(4).hasNewSize(0);
 
         configureScanner(project, "checkstyle1", "");
         Run<?, ?> run = buildSuccessfully(project);
-        assertThat(getAnalysisResult(run))
-                .hasTotalSize(6)
-                .hasNewSize(2);
+        assertThat(getAnalysisResult(run)).hasTotalSize(6).hasNewSize(2);
 
         var publisher = new WarningChecksPublisher(getResultAction(run), TaskListener.NULL, null);
         assertThat(publisher.extractChecksDetails(ChecksAnnotationScope.NEW))
-                .hasFieldOrPropertyWithValue("detailsURL", Optional.of(getResultAction(run).getAbsoluteUrl()))
+                .hasFieldOrPropertyWithValue(
+                        "detailsURL", Optional.of(getResultAction(run).getAbsoluteUrl()))
                 .usingRecursiveComparison()
                 .ignoringFields("detailsURL", "output.value.summary.value")
                 .isEqualTo(createExpectedCheckStyleDetails());
-        assertThat(publisher.extractChecksDetails(ChecksAnnotationScope.NEW).getOutput()).isPresent()
+        assertThat(publisher.extractChecksDetails(ChecksAnnotationScope.NEW).getOutput())
+                .isPresent()
                 .get()
-                .satisfies(
-                        output -> {
-                            assertThat(output.getSummary()).isPresent().get().asString()
-                                    .startsWith("""
+                .satisfies(output -> {
+                    assertThat(output.getSummary())
+                            .isPresent()
+                            .get()
+                            .asString()
+                            .startsWith("""
                                             |Total|New|Outstanding|Fixed|Trend
                                             |:-:|:-:|:-:|:-:|:-:
                                             |6|2|4|0|:-1:
-                                            
+
                                             Reference build: <a href="http://localhost:""")
-                                    .endsWith("#1</a>");
-                            assertThat(output.getChecksAnnotations()).hasSize(2);
-                        });
-        assertThat(publisher.extractChecksDetails(ChecksAnnotationScope.ALL).getOutput()).isPresent().get()
-                .satisfies(
-                        output -> assertThat(output.getChecksAnnotations()).hasSize(6));
-        assertThat(publisher.extractChecksDetails(ChecksAnnotationScope.SKIP).getOutput()).isPresent().get()
-                .satisfies(
-                        output -> assertThat(output.getChecksAnnotations()).isEmpty());
+                            .endsWith("#1</a>");
+                    assertThat(output.getChecksAnnotations()).hasSize(2);
+                });
+        assertThat(publisher.extractChecksDetails(ChecksAnnotationScope.ALL).getOutput())
+                .isPresent()
+                .get()
+                .satisfies(output -> assertThat(output.getChecksAnnotations()).hasSize(6));
+        assertThat(publisher.extractChecksDetails(ChecksAnnotationScope.SKIP).getOutput())
+                .isPresent()
+                .get()
+                .satisfies(output -> assertThat(output.getChecksAnnotations()).isEmpty());
     }
 
     private void configureScanner(final WorkflowJob job, final String fileName, final String parameters) {
@@ -140,9 +139,10 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     void shouldConcludeChecksAsSuccessWhenQualityGateIsPassed() {
         var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
-        enableAndConfigureCheckstyle(project,
-                recorder -> recorder.setQualityGates(List.of(
-                        new WarningsQualityGate(10, QualityGateType.TOTAL, QualityGateCriticality.UNSTABLE))));
+        enableAndConfigureCheckstyle(
+                project,
+                recorder -> recorder.setQualityGates(
+                        List.of(new WarningsQualityGate(10, QualityGateType.TOTAL, QualityGateCriticality.UNSTABLE))));
 
         Run<?, ?> build = buildSuccessfully(project);
         var publisher = new WarningChecksPublisher(getResultAction(build), TaskListener.NULL, null);
@@ -168,12 +168,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     @ParameterizedTest(name = "Map warning severity {0} to checks level {1}")
-    @CsvSource({
-            "LOW, NOTICE",
-            "NORMAL, WARNING",
-            "HIGH, WARNING",
-            "ERROR, FAILURE"
-    })
+    @CsvSource({"LOW, NOTICE", "NORMAL, WARNING", "HIGH, WARNING", "ERROR, FAILURE"})
     void shouldMapSeverities(final String gccWarningPrefix, final ChecksAnnotationLevel expectedAnnotationLevel) {
         var project = getFreeStyleJob();
         enableWarnings(project, configurePattern(new WarningsPlugin()));
@@ -212,11 +207,9 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
 
         assertThat(details.getOutput().get().getChecksAnnotations())
                 .usingRecursiveFieldByFieldElementComparatorOnFields("message")
-                .containsOnly(new ChecksAnnotationBuilder()
-                        .withMessage("""
+                .containsOnly(new ChecksAnnotationBuilder().withMessage("""
                                 Some diagnostic messages may contain incorrect line number.
-                                V002:https://pvs-studio.com/en/docs/warnings/v002/""")
-                        .build());
+                                V002:https://pvs-studio.com/en/docs/warnings/v002/""").build());
     }
 
     /**
@@ -228,12 +221,11 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
         enableCheckStyleWarnings(project);
 
         Run<?, ?> run = buildSuccessfully(project);
-        assertThat(getAnalysisResult(run))
-                .hasTotalSize(0)
-                .hasNewSize(0);
+        assertThat(getAnalysisResult(run)).hasTotalSize(0).hasNewSize(0);
 
         assertThat(new WarningChecksPublisher(getResultAction(run), TaskListener.NULL, null)
-                .extractChecksDetails(ChecksAnnotationScope.NEW).getOutput())
+                        .extractChecksDetails(ChecksAnnotationScope.NEW)
+                        .getOutput())
                 .isPresent()
                 .get()
                 .hasFieldOrPropertyWithValue("title", Optional.of("No issues"));
@@ -249,12 +241,11 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
         enableCheckStyleWarnings(project);
 
         Run<?, ?> run = buildSuccessfully(project);
-        assertThat(getAnalysisResult(run))
-                .hasTotalSize(4)
-                .hasNewSize(0);
+        assertThat(getAnalysisResult(run)).hasTotalSize(4).hasNewSize(0);
 
         assertThat(new WarningChecksPublisher(getResultAction(run), TaskListener.NULL, null)
-                .extractChecksDetails(ChecksAnnotationScope.NEW).getOutput())
+                        .extractChecksDetails(ChecksAnnotationScope.NEW)
+                        .getOutput())
                 .isPresent()
                 .get()
                 .hasFieldOrPropertyWithValue("title", Optional.of("No new issues, 4 total"));
@@ -269,18 +260,15 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
         enableCheckStyleWarnings(project);
 
         Run<?, ?> reference = buildSuccessfully(project);
-        assertThat(getAnalysisResult(reference))
-                .hasTotalSize(0)
-                .hasNewSize(0);
+        assertThat(getAnalysisResult(reference)).hasTotalSize(0).hasNewSize(0);
 
         copyMultipleFilesToWorkspaceWithSuffix(project, NEW_CHECKSTYLE_REPORT);
         Run<?, ?> run = buildSuccessfully(project);
-        assertThat(getAnalysisResult(run))
-                .hasTotalSize(6)
-                .hasNewSize(6);
+        assertThat(getAnalysisResult(run)).hasTotalSize(6).hasNewSize(6);
 
         assertThat(new WarningChecksPublisher(getResultAction(run), TaskListener.NULL, null)
-                .extractChecksDetails(ChecksAnnotationScope.NEW).getOutput())
+                        .extractChecksDetails(ChecksAnnotationScope.NEW)
+                        .getOutput())
                 .isPresent()
                 .get()
                 .hasFieldOrPropertyWithValue("title", Optional.of("6 new issues"));
@@ -326,8 +314,9 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
 
         assertThat(publishedChecks.get(0).getName()).contains("CheckStyle");
 
-        assertThat(publishedChecks.get(0).getOutput()).isPresent().hasValueSatisfying(
-                output -> assertThat(output.getTitle()).contains("No new issues, 6 total"));
+        assertThat(publishedChecks.get(0).getOutput())
+                .isPresent()
+                .hasValueSatisfying(output -> assertThat(output.getTitle()).contains("No new issues, 6 total"));
     }
 
     /**
@@ -355,11 +344,10 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
 
         var details = publishedChecks.get(0);
         assertThat(details.getName()).contains("CheckStyle");
-        assertThat(details.getOutput()).isPresent().hasValueSatisfying(
-                output -> {
-                    assertThat(output.getTitle()).contains("2 new issues, 6 total");
-                    assertThat(output.getChecksAnnotations()).hasSize(expectedSize);
-                });
+        assertThat(details.getOutput()).isPresent().hasValueSatisfying(output -> {
+            assertThat(output.getTitle()).contains("2 new issues, 6 total");
+            assertThat(output.getChecksAnnotations()).hasSize(expectedSize);
+        });
     }
 
     /**
@@ -377,8 +365,9 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
 
         var details = publishedChecks.get(0);
         assertThat(details.getName()).contains("CheckStyle");
-        assertThat(details.getOutput()).isPresent().hasValueSatisfying(
-                output -> assertThat(output.getTitle()).contains("No new issues, 6 total"));
+        assertThat(details.getOutput())
+                .isPresent()
+                .hasValueSatisfying(output -> assertThat(output.getTitle()).contains("No new issues, 6 total"));
     }
 
     /**
@@ -387,19 +376,23 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     void shouldHonorWithChecksContextPublishIssues() {
         var project = createPipelineWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
-        project.setDefinition(asStage("withChecks('Custom Checks Name') {", createScanForIssuesStep(new CheckStyle()),
-                PUBLISH_ISSUES_STEP, "}"));
+        project.setDefinition(asStage(
+                "withChecks('Custom Checks Name') {",
+                createScanForIssuesStep(new CheckStyle()),
+                PUBLISH_ISSUES_STEP,
+                "}"));
         buildSuccessfully(project);
 
         List<ChecksDetails> publishedChecks = getPublishedChecks();
 
-        assertThat(publishedChecks).hasSize(
-                2);  // First from 'In progress' check provided by withChecks, second from publishIssues
+        assertThat(publishedChecks)
+                .hasSize(2); // First from 'In progress' check provided by withChecks, second from publishIssues
 
         publishedChecks.forEach(check -> assertThat(check.getName()).contains("Custom Checks Name"));
 
-        assertThat(publishedChecks.get(1).getOutput()).isPresent().hasValueSatisfying(
-                output -> assertThat(output.getTitle()).contains("No new issues, 6 total"));
+        assertThat(publishedChecks.get(1).getOutput())
+                .isPresent()
+                .hasValueSatisfying(output -> assertThat(output.getTitle()).contains("No new issues, 6 total"));
     }
 
     /**
@@ -414,13 +407,14 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
 
         List<ChecksDetails> publishedChecks = getPublishedChecks();
 
-        assertThat(publishedChecks).hasSize(
-                2);  // First from 'In progress' check provided by withChecks, second from recordIssues
+        assertThat(publishedChecks)
+                .hasSize(2); // First from 'In progress' check provided by withChecks, second from recordIssues
 
         publishedChecks.forEach(check -> assertThat(check.getName()).contains("Custom Checks Name"));
 
-        assertThat(publishedChecks.get(1).getOutput()).isPresent().hasValueSatisfying(
-                output -> assertThat(output.getTitle()).contains("No new issues, 6 total"));
+        assertThat(publishedChecks.get(1).getOutput())
+                .isPresent()
+                .hasValueSatisfying(output -> assertThat(output.getTitle()).contains("No new issues, 6 total"));
     }
 
     /**
@@ -506,14 +500,12 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
                         .build())
                 .build();
 
-        return builder
-                .withOutput(output)
-                .build();
+        return builder.withOutput(output).build();
     }
 
     @CanIgnoreReturnValue
-    private IssuesRecorder enableAndConfigureCheckstyle(final AbstractProject<?, ?> job,
-            final Consumer<IssuesRecorder> configuration) {
+    private IssuesRecorder enableAndConfigureCheckstyle(
+            final AbstractProject<?, ?> job, final Consumer<IssuesRecorder> configuration) {
         var item = new IssuesRecorder();
         item.setTools(createTool(new CheckStyle(), "**/*issues.txt"));
         job.getPublishersList().add(item);
@@ -523,13 +515,13 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
 
     private void assertChecksConclusionIsFailureWithQualityGateResult(final QualityGateCriticality criticality) {
         var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix(NEW_CHECKSTYLE_REPORT);
-        enableAndConfigureCheckstyle(project, recorder -> recorder.setQualityGates(List.of(
-                        new WarningsQualityGate(1, QualityGateType.TOTAL, criticality))));
+        enableAndConfigureCheckstyle(
+                project,
+                recorder -> recorder.setQualityGates(
+                        List.of(new WarningsQualityGate(1, QualityGateType.TOTAL, criticality))));
 
         Run<?, ?> build = buildWithResult(project, criticality.getStatus().getResult());
-        assertThat(getAnalysisResult(build))
-                .hasTotalSize(6)
-                .hasQualityGateStatus(criticality.getStatus());
+        assertThat(getAnalysisResult(build)).hasTotalSize(6).hasQualityGateStatus(criticality.getStatus());
 
         var publisher = new WarningChecksPublisher(getResultAction(build), TaskListener.NULL, null);
         assertThat(publisher.extractChecksDetails(ChecksAnnotationScope.NEW).getConclusion())
@@ -541,8 +533,7 @@ class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private CapturingChecksPublisher.Factory getFactory() {
-        return getJenkins().getInstance().getExtensionList(ChecksPublisherFactory.class)
-                .stream()
+        return getJenkins().getInstance().getExtensionList(ChecksPublisherFactory.class).stream()
                 .filter(CapturingChecksPublisher.Factory.class::isInstance)
                 .map(CapturingChecksPublisher.Factory.class::cast)
                 .findAny()

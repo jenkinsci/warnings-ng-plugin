@@ -1,11 +1,8 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
-import org.codehaus.groovy.control.CompilationFailedException;
-
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
@@ -15,6 +12,7 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
+import org.codehaus.groovy.control.CompilationFailedException;
 
 /**
  * Creates a warning based on a regular expression match and groovy script.
@@ -30,6 +28,7 @@ import java.util.regex.Matcher;
 class GroovyExpressionMatcher implements Serializable {
     @Serial
     private static final long serialVersionUID = -2218299240520838315L;
+
     private static final Logger LOGGER = Logger.getLogger(GroovyExpressionMatcher.class.getName());
     private final String script;
     private transient Script compiled;
@@ -50,8 +49,7 @@ class GroovyExpressionMatcher implements Serializable {
             if (compiled == null) {
                 try {
                     compiled = compile();
-                }
-                catch (CompilationFailedException exception) {
+                } catch (CompilationFailedException exception) {
                     LOGGER.log(Level.SEVERE, "Groovy dynamic warnings parser: exception during compiling: ", exception);
                     return false;
                 }
@@ -89,8 +87,8 @@ class GroovyExpressionMatcher implements Serializable {
      * @return a new annotation for the specified pattern
      */
     @SuppressWarnings("all")
-    public Optional<Issue> createIssue(final Matcher matcher, final IssueBuilder builder, final int lineNumber,
-            final String fileName) {
+    public Optional<Issue> createIssue(
+            final Matcher matcher, final IssueBuilder builder, final int lineNumber, final String fileName) {
         var result = run(matcher, builder, lineNumber, fileName);
         if (result instanceof Optional<?> optional) {
             if (optional.isPresent()) {
@@ -137,8 +135,7 @@ class GroovyExpressionMatcher implements Serializable {
     private Object runScript() {
         try {
             return compiled.run();
-        }
-        catch (Exception exception) {
+        } catch (Exception exception) {
             LOGGER.log(Level.SEVERE, "Groovy dynamic warnings parser: exception during execution: ", exception);
             return Optional.empty();
         }

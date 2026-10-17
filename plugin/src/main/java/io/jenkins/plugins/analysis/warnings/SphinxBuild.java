@@ -1,12 +1,10 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.io.Serial;
-
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.jenkinsci.Symbol;
 import hudson.Extension;
-
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
+import java.io.Serial;
+import org.jenkinsci.Symbol;
+import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
  * Provides a parser and customized messages for Sphinx build warnings.
@@ -16,6 +14,7 @@ import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 public class SphinxBuild extends AnalysisModelParser {
     @Serial
     private static final long serialVersionUID = -7095926313386515100L;
+
     private static final String ID = "sphinx";
 
     /** Creates a new instance of {@link SphinxBuild}. */

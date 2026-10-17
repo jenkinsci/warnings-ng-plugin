@@ -5,7 +5,7 @@
   <parent>
     <groupId>edu.hm.hafner</groupId>
     <artifactId>codingstyle-pom</artifactId>
-    <version>6.17.0</version>
+    <version>7.5.0</version>
     <relativePath />
   </parent>
 
@@ -16,10 +16,10 @@
   <name>UI Tests of Warnings Plugin</name>
 
   <properties>
-    <jenkins.version>2.583</jenkins.version>
+    <jenkins.version>2.584</jenkins.version>
     <hpi-plugin.version>3.1848.v43eb_ce5a_9cb_6</hpi-plugin.version>
     <json-smart.version>2.3</json-smart.version>
-    <json-unit-assertj.version>6.2.0</json-unit-assertj.version>
+    <json-unit-assertj.version>6.3.0</json-unit-assertj.version>
     <module.name>${project.groupId}.warnings.ui.tests</module.name>
     <browser>chrome-container</browser>
 
@@ -30,11 +30,6 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.jenkins-ci.main</groupId>
-        <artifactId>jenkins-core</artifactId>
-        <version>${jenkins.version}</version>
-      </dependency>
-      <dependency>
         <!-- ClassNotFoundException if omitted -->
         <groupId>io.netty</groupId>
         <artifactId>netty-bom</artifactId>
@@ -42,14 +37,24 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+      <dependency>
+        <groupId>org.jenkins-ci.main</groupId>
+        <artifactId>jenkins-core</artifactId>
+        <version>${jenkins.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
   <dependencies>
     <dependency>
+      <groupId>javax.xml.bind</groupId>
+      <artifactId>jaxb-api</artifactId>
+      <version>2.3.1</version>
+    </dependency>
+    <dependency>
       <groupId>org.jenkins-ci</groupId>
       <artifactId>acceptance-test-harness</artifactId>
-      <version>6724.va_7c5c4b_fcf9c</version>
+      <version>6731.va_ea_dd2a_673a_4</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
@@ -58,9 +63,10 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>javax.xml.bind</groupId>
-      <artifactId>jaxb-api</artifactId>
-      <version>2.3.1</version>
+      <groupId>net.javacrumbs.json-unit</groupId>
+      <artifactId>json-unit-assertj</artifactId>
+      <version>${json-unit-assertj.version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
@@ -72,12 +78,6 @@
       <groupId>org.junit.vintage</groupId>
       <artifactId>junit-vintage-engine</artifactId>
       <version>${junit.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>net.javacrumbs.json-unit</groupId>
-      <artifactId>json-unit-assertj</artifactId>
-      <version>${json-unit-assertj.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

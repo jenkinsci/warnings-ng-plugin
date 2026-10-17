@@ -1,10 +1,9 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import org.junit.jupiter.api.Test;
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
-
-import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class {@link ReportScanningTool}.
@@ -13,8 +12,7 @@ class ReportScanningToolITest extends IntegrationTestWithJenkinsPerSuite {
     /** Tests that the descriptor's canScanConsoleLog() method returns true by default. */
     @Test
     void descriptorMethodCanScanConsoleLogReturnsTrue() {
-        final var descriptor = new ReportScanningTool.ReportScanningToolDescriptor(
-                "someId");
+        final var descriptor = new ReportScanningTool.ReportScanningToolDescriptor("someId");
 
         assertThat(descriptor.canScanConsoleLog()).isTrue();
     }
@@ -103,8 +101,9 @@ class ReportScanningToolITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(tool.getLinesLookAhead()).isEqualTo(5);
     }
 
-    private ReportScanningTool.ReportScanningToolDescriptor makeDescriptor(final boolean canScanConsoleLog, final String getPattern) {
-        return new ReportScanningToolStubForTesting.ReportScanningToolDescriptorStubForTesting("someId",
-                canScanConsoleLog, getPattern);
+    private ReportScanningTool.ReportScanningToolDescriptor makeDescriptor(
+            final boolean canScanConsoleLog, final String getPattern) {
+        return new ReportScanningToolStubForTesting.ReportScanningToolDescriptorStubForTesting(
+                "someId", canScanConsoleLog, getPattern);
     }
 }

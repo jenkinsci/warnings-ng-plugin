@@ -1,17 +1,13 @@
 package io.jenkins.plugins.analysis.core.util;
 
-import org.apache.commons.lang3.StringUtils;
-
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.VisibleForTesting;
-
-import java.util.regex.Pattern;
-
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
-
 import io.jenkins.plugins.util.JenkinsFacade;
+import java.util.regex.Pattern;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Validates all properties of a configuration of a static analysis tool in a job.
@@ -157,8 +153,7 @@ public class ModelValidation {
         return validateHealthReportConstraints(unhealthy, healthy, unhealthy);
     }
 
-    private FormValidation validateHealthReportConstraints(final int positive,
-            final int healthy, final int unhealthy) {
+    private FormValidation validateHealthReportConstraints(final int positive, final int healthy, final int unhealthy) {
         if (healthy == 0 && unhealthy == 0) {
             return FormValidation.ok();
         }

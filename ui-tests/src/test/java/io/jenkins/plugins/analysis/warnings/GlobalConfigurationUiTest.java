@@ -1,23 +1,20 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import org.junit.Test;
-import org.openqa.selenium.NoSuchElementException;
+import static io.jenkins.plugins.analysis.warnings.Assertions.*;
 
+import io.jenkins.plugins.analysis.warnings.AnalysisResult.Tab;
+import io.jenkins.plugins.analysis.warnings.AnalysisSummary.InfoType;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
 import org.jenkinsci.test.acceptance.junit.WithPlugins;
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.FreeStyleJob;
-
-import io.jenkins.plugins.analysis.warnings.AnalysisResult.Tab;
-import io.jenkins.plugins.analysis.warnings.AnalysisSummary.InfoType;
-
-import static io.jenkins.plugins.analysis.warnings.Assertions.*;
+import org.junit.Test;
+import org.openqa.selenium.NoSuchElementException;
 
 /**
  * UI tests for the global system configuration of the warnings plugin.
@@ -34,9 +31,7 @@ public class GlobalConfigurationUiTest extends UiTest {
         SHOULD_NOT_HAVE_SOURCE_CODE_LINK
     }
 
-    /**
-     * Verifies that a source code file will be copied from outside the workspace and linked in the open issues tab.
-     */
+    /** Verifies that a source code file will be copied from outside the workspace and linked in the open issues tab. */
     @Test
     public void shouldRunJobWithDifferentSourceCodeDirectory() throws IOException {
         String homeDir = getHomeDir();
@@ -73,8 +68,8 @@ public class GlobalConfigurationUiTest extends UiTest {
     }
 
     private void createFileInWorkspace(final FreeStyleJob job, final String homeDir) throws IOException {
-        String content = String.format("%s/config.xml:451: warning: foo defined but not used%n",
-                getJobDir(homeDir, job));
+        String content =
+                String.format("%s/config.xml:451: warning: foo defined but not used%n", getJobDir(homeDir, job));
 
         Path workspacePath = Paths.get(homeDir).resolve("workspace");
         if (Files.notExists(workspacePath)) {
@@ -119,17 +114,14 @@ public class GlobalConfigurationUiTest extends UiTest {
 
         if (linkType == LinkType.SHOULD_HAVE_SOURCE_CODE_LINK) {
             assertThat(row.getFileLink()).isNotNull();
-        }
-        else {
+        } else {
             assertThatExceptionOfType(NoSuchElementException.class)
                     .as("Source code link should not be available")
                     .isThrownBy(row::getFileLink);
         }
     }
 
-    /**
-     * Verifies that a custom groovy script is correctly executed.
-     */
+    /** Verifies that a custom groovy script is correctly executed. */
     @Test
     public void shouldRunJobWithGroovyConfiguration() {
         initGlobalSettingsForGroovyParser();
@@ -153,7 +145,8 @@ public class GlobalConfigurationUiTest extends UiTest {
     @Override
     protected AnalysisResult verifyPep8Details(final AnalysisSummary pep8) {
         AnalysisResult pep8Details = pep8.openOverallResult();
-        assertThat(pep8Details).hasActiveTab(Tab.CATEGORIES)
+        assertThat(pep8Details)
+                .hasActiveTab(Tab.CATEGORIES)
                 .hasTotal(8)
                 .hasOnlyAvailableTabs(Tab.CATEGORIES, Tab.ISSUES);
         return pep8Details;

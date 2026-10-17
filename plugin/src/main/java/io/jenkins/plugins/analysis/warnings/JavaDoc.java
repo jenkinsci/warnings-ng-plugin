@@ -1,14 +1,12 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.io.Serial;
-
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.jenkinsci.Symbol;
 import hudson.Extension;
-
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.SvgIconLabelProvider;
+import java.io.Serial;
+import org.jenkinsci.Symbol;
+import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
  * Provides customized messages for the JavaDoc parser.
@@ -18,6 +16,7 @@ import io.jenkins.plugins.analysis.core.model.SvgIconLabelProvider;
 public class JavaDoc extends AnalysisModelParser {
     @Serial
     private static final long serialVersionUID = -3987566418736570996L;
+
     private static final String ID = "javadoc-warnings";
 
     /** Creates a new instance of {@link JavaDoc}. */

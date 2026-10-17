@@ -1,24 +1,20 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import edu.hm.hafner.util.Ensure;
-
-import java.io.IOException;
-import java.io.Serial;
-import java.nio.charset.Charset;
-import java.util.Optional;
-
-import org.jenkinsci.plugins.workflow.graph.FlowNode;
-import org.jenkinsci.plugins.workflow.steps.StepContext;
-import org.jenkinsci.plugins.workflow.steps.SynchronousNonBlockingStepExecution;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import hudson.FilePath;
 import hudson.model.Computer;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
-
 import io.jenkins.plugins.util.PipelineResultHandler;
 import io.jenkins.plugins.util.ValidationUtilities;
+import java.io.IOException;
+import java.io.Serial;
+import java.nio.charset.Charset;
+import java.util.Optional;
+import org.jenkinsci.plugins.workflow.graph.FlowNode;
+import org.jenkinsci.plugins.workflow.steps.StepContext;
+import org.jenkinsci.plugins.workflow.steps.SynchronousNonBlockingStepExecution;
 
 /**
  * Base class for static analysis step executions. Provides several helper methods to obtain the defined {@link
@@ -120,8 +116,7 @@ abstract class AnalysisExecution<T> extends SynchronousNonBlockingStepExecution<
             if (listener != null) {
                 return listener;
             }
-        }
-        catch (IOException ignored) {
+        } catch (IOException ignored) {
             // ignore
         }
         return TaskListener.NULL;
@@ -156,8 +151,7 @@ abstract class AnalysisExecution<T> extends SynchronousNonBlockingStepExecution<
     protected FlowNode getFlowNode() {
         try {
             return getContext().get(FlowNode.class);
-        }
-        catch (IOException | InterruptedException ignored) {
+        } catch (IOException | InterruptedException ignored) {
             return null;
         }
     }

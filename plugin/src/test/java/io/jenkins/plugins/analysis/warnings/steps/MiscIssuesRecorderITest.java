@@ -1,21 +1,14 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
-import org.apache.commons.lang3.StringUtils;
-import org.junit.jupiter.api.Test;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
+import static org.mockito.Mockito.*;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Severity;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Supplier;
-import java.util.regex.Pattern;
-
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.model.Run;
-
 import io.jenkins.plugins.analysis.core.filter.ExcludeFile;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.IssuesModel.IssuesRow;
@@ -33,12 +26,15 @@ import io.jenkins.plugins.analysis.warnings.Pmd;
 import io.jenkins.plugins.analysis.warnings.RegisteredParser;
 import io.jenkins.plugins.analysis.warnings.tasks.OpenTasks;
 import io.jenkins.plugins.forensics.reference.SimpleReferenceRecorder;
-import io.jenkins.plugins.util.QualityGateStatus;
 import io.jenkins.plugins.util.JenkinsFacade;
-
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
-import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
-import static org.mockito.Mockito.*;
+import io.jenkins.plugins.util.QualityGateStatus;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Supplier;
+import java.util.regex.Pattern;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Test;
 
 /**
  * Integration tests of the warnings plug-in in freestyle jobs. Tests the new recorder {@link IssuesRecorder}.
@@ -60,7 +56,8 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     /**
      * Verifies that {@link FindBugs} handles the different severity mapping modes.
      */
-    @Test @org.junitpioneer.jupiter.Issue("JENKINS-55514")
+    @Test
+    @org.junitpioneer.jupiter.Issue("JENKINS-55514")
     void shouldMapSeverityFilterForFindBugs() {
         var project = createFreestyleJob("findbugs-severities.xml");
 
@@ -68,13 +65,15 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         findbugs.setUseRankAsPriority(true);
         enableGenericWarnings(project, findbugs);
 
-        assertThat(scheduleBuildAndAssertStatus(project, Result.SUCCESS)).hasTotalSize(12)
+        assertThat(scheduleBuildAndAssertStatus(project, Result.SUCCESS))
+                .hasTotalSize(12)
                 .hasTotalHighPrioritySize(0)
                 .hasTotalNormalPrioritySize(0)
                 .hasTotalLowPrioritySize(12);
 
         findbugs.setUseRankAsPriority(false);
-        assertThat(scheduleBuildAndAssertStatus(project, Result.SUCCESS)).hasTotalSize(12)
+        assertThat(scheduleBuildAndAssertStatus(project, Result.SUCCESS))
+                .hasTotalSize(12)
                 .hasTotalHighPrioritySize(1)
                 .hasTotalNormalPrioritySize(11)
                 .hasTotalLowPrioritySize(0);
@@ -106,9 +105,9 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
 
         assertThat(result).hasTotalSize(8);
         assertThat(result).hasNewSize(0);
-        assertThat(result).hasInfoMessages(
-                "-> resolved module names for 8 issues",
-                "-> resolved package names of 4 affected files");
+        assertThat(result)
+                .hasInfoMessages(
+                        "-> resolved module names for 8 issues", "-> resolved package names of 4 affected files");
     }
 
     /**
@@ -249,8 +248,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         for (AnalysisResult element : results) {
             if (CHECKSTYLE.equals(element.getId())) {
                 assertThat(element).hasTotalSize(6);
-            }
-            else {
+            } else {
                 assertThat(element.getId()).isEqualTo("pmd");
                 assertThat(element).hasTotalSize(4);
             }
@@ -273,16 +271,17 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(result).hasTotalSize(10);
         assertThat(result).hasId("analysis");
         assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
-        assertThat(result.getIssues().getOriginReportFiles()).satisfiesExactlyInAnyOrder(
-                first -> assertThat(first).endsWith("checkstyle-issues.txt"),
-                second -> assertThat(second).endsWith("pmd-warnings-issues.txt")
-        );
+        assertThat(result.getIssues().getOriginReportFiles())
+                .satisfiesExactlyInAnyOrder(
+                        first -> assertThat(first).endsWith("checkstyle-issues.txt"),
+                        second -> assertThat(second).endsWith("pmd-warnings-issues.txt"));
     }
 
     private List<AnalysisResult> runJobWithAggregation(final boolean isAggregationEnabled) {
-        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle.xml",
-                "pmd-warnings.xml");
-        enableWarnings(project, recorder -> recorder.setAggregatingResults(isAggregationEnabled),
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle.xml", "pmd-warnings.xml");
+        enableWarnings(
+                project,
+                recorder -> recorder.setAggregatingResults(isAggregationEnabled),
                 createTool(new CheckStyle(), "**/checkstyle-issues.txt"),
                 createTool(new Pmd(), "**/pmd-warnings-issues.txt"));
 
@@ -297,7 +296,8 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     void shouldHaveOriginsIfBuildContainsWarnings() {
         var project = createFreestyleJob("checkstyle.xml", "pmd-warnings.xml");
-        enableWarnings(project,
+        enableWarnings(
+                project,
                 recorder -> {
                     recorder.setAggregatingResults(true);
                     recorder.setFilters(Collections.singletonList(new ExcludeFile(".*")));
@@ -325,7 +325,8 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that a report that contains errors (since the report pattern does not find some files),
      * will fail the step if the property {@link IssuesRecorder#setFailOnError(boolean)} is enabled.
      */
-    @Test @org.junitpioneer.jupiter.Issue("JENKINS-58056")
+    @Test
+    @org.junitpioneer.jupiter.Issue("JENKINS-58056")
     void shouldFailBuildWhenFailBuildOnErrorsIsSet() {
         var job = createFreeStyleProject();
         var recorder = enableEclipseWarnings(job);
@@ -351,8 +352,9 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
 
         var result = results.get(0);
 
-        assertThat(getConsoleLog(result)).contains(
-                "Removing existing result action with ID 'checkstyle' (duplicate ID: restart or configuration error?)");
+        assertThat(getConsoleLog(result))
+                .contains(
+                        "Removing existing result action with ID 'checkstyle' (duplicate ID: restart or configuration error?)");
         assertThat(result).hasId(CHECKSTYLE);
         assertThat(result).hasTotalSize(5);
     }
@@ -444,8 +446,10 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         return project;
     }
 
-    private void verifyNoNewWarningsPortletModel(final PullRequestMonitoringPortlet portlet,
-            final int expectedOutstandingWarnings, final int expectedFixedWarnings) {
+    private void verifyNoNewWarningsPortletModel(
+            final PullRequestMonitoringPortlet portlet,
+            final int expectedOutstandingWarnings,
+            final int expectedFixedWarnings) {
         assertThat(portlet.hasNoNewWarnings()).isTrue();
 
         var simpleModel = portlet.getNoNewWarningsModel();
@@ -632,29 +636,29 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(issuesReport.findByProperty(Issue.byCategory("Design"))).hasSize(1);
         assertThat(issuesReport.findByProperty(Issue.byCategory("Sizes"))).hasSize(1);
 
-        assertThat(issuesReport.findByProperty(Issue.byType("DesignForExtensionCheck"))).hasSize(1);
+        assertThat(issuesReport.findByProperty(Issue.byType("DesignForExtensionCheck")))
+                .hasSize(1);
         assertThat(issuesReport.findByProperty(Issue.byType("LineLengthCheck"))).hasSize(1);
         assertThat(issuesReport.findByProperty(Issue.byType("RightCurlyCheck"))).hasSize(2);
 
-        assertThatIssuesRowValuesAreCorrect(getIssuesModel(result, 0),
-                "CsharpNamespaceDetector.java:29",
-                "Error",
-                "Sizes",
-                "LineLengthCheck",
-                "1");
-        assertThatIssuesRowValuesAreCorrect(getIssuesModel(result, 1),
+        assertThatIssuesRowValuesAreCorrect(
+                getIssuesModel(result, 0), "CsharpNamespaceDetector.java:29", "Error", "Sizes", "LineLengthCheck", "1");
+        assertThatIssuesRowValuesAreCorrect(
+                getIssuesModel(result, 1),
                 "CsharpNamespaceDetector.java:30",
                 "Error",
                 "Blocks",
                 "RightCurlyCheck",
                 "1");
-        assertThatIssuesRowValuesAreCorrect(getIssuesModel(result, 2),
+        assertThatIssuesRowValuesAreCorrect(
+                getIssuesModel(result, 2),
                 "CsharpNamespaceDetector.java:37",
                 "Error",
                 "Blocks",
                 "RightCurlyCheck",
                 "1");
-        assertThatIssuesRowValuesAreCorrect(getIssuesModel(result, 3),
+        assertThatIssuesRowValuesAreCorrect(
+                getIssuesModel(result, 3),
                 "CsharpNamespaceDetector.java:22",
                 "Error",
                 "Design",
@@ -668,22 +672,26 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(issuesReport.findByProperty(Issue.byCategory("Design"))).hasSize(2);
         assertThat(issuesReport.findByProperty(Issue.byCategory("Sizes"))).hasSize(1);
 
-        assertThat(issuesReport.findByProperty(Issue.byType("DesignForExtensionCheck"))).hasSize(2);
+        assertThat(issuesReport.findByProperty(Issue.byType("DesignForExtensionCheck")))
+                .hasSize(2);
         assertThat(issuesReport.findByProperty(Issue.byType("LineLengthCheck"))).hasSize(1);
 
-        assertThatIssuesRowValuesAreCorrect(getIssuesModel(baseline, 0),
+        assertThatIssuesRowValuesAreCorrect(
+                getIssuesModel(baseline, 0),
                 "CsharpNamespaceDetector.java:17",
                 "Error",
                 "Design",
                 "DesignForExtensionCheck",
                 "1");
-        assertThatIssuesRowValuesAreCorrect(getIssuesModel(baseline, 1),
+        assertThatIssuesRowValuesAreCorrect(
+                getIssuesModel(baseline, 1),
                 "CsharpNamespaceDetector.java:42",
                 "Error",
                 "Sizes",
                 "LineLengthCheck",
                 "1");
-        assertThatIssuesRowValuesAreCorrect(getIssuesModel(baseline, 2),
+        assertThatIssuesRowValuesAreCorrect(
+                getIssuesModel(baseline, 2),
                 "CsharpNamespaceDetector.java:22",
                 "Error",
                 "Design",
@@ -742,7 +750,9 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         var analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(analysisResult).hasTotalSize(3);
-        assertThat(analysisResult.getInfoMessages()).contains("Searching for all files in '%s' that match the pattern '**/*.txt'".formatted(getWorkspace(project)));
+        assertThat(analysisResult.getInfoMessages())
+                .contains("Searching for all files in '%s' that match the pattern '**/*.txt'"
+                        .formatted(getWorkspace(project)));
         assertThat(analysisResult.getInfoMessages()).contains("-> found 1 file");
     }
 
@@ -755,9 +765,7 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         var project = createJavaWarningsFreestyleProject("${FILE_PATTERN}");
 
         setEnvironmentVariables(
-                env("FILE_PATTERN", "${FILE_NAME}.${FILE_EXT}"),
-                env("FILE_NAME", "*_javac"),
-                env("FILE_EXT", "txt"));
+                env("FILE_PATTERN", "${FILE_NAME}.${FILE_EXT}"), env("FILE_NAME", "*_javac"), env("FILE_EXT", "txt"));
 
         createFileWithJavaWarnings("A_javac.txt", project, 1, 2);
         createFileWithJavaWarnings("B_javac.txt", project, 3, 4);
@@ -768,7 +776,9 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         var analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(analysisResult).hasTotalSize(4);
-        assertThat(analysisResult.getInfoMessages()).contains("Searching for all files in '%s' that match the pattern '*_javac.txt'".formatted(getWorkspace(project)));
+        assertThat(analysisResult.getInfoMessages())
+                .contains("Searching for all files in '%s' that match the pattern '*_javac.txt'"
+                        .formatted(getWorkspace(project)));
         assertThat(analysisResult.getInfoMessages()).contains("-> found 2 files");
     }
 
@@ -798,11 +808,13 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
      * @param linesWithWarning
      *         all lines in which a mocked warning should be placed
      */
-    private void createFileWithJavaWarnings(final String fileName, final FreeStyleProject project,
-            final int... linesWithWarning) {
+    private void createFileWithJavaWarnings(
+            final String fileName, final FreeStyleProject project, final int... linesWithWarning) {
         var warningText = new StringBuilder();
         for (int lineNumber : linesWithWarning) {
-            warningText.append(createJavaWarning("C:\\Path\\SourceFile.java", lineNumber)).append("\n");
+            warningText
+                    .append(createJavaWarning("C:\\Path\\SourceFile.java", lineNumber))
+                    .append("\n");
         }
 
         createFileInWorkspace(project, fileName, warningText.toString());
@@ -833,8 +845,12 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         return project;
     }
 
-    private void assertThatIssuesRowValuesAreCorrect(final IssuesRow row, final String expectedFileDisplayName,
-            final String expectedSeverity, final String expectedCategory, final String expectedType,
+    private void assertThatIssuesRowValuesAreCorrect(
+            final IssuesRow row,
+            final String expectedFileDisplayName,
+            final String expectedSeverity,
+            final String expectedCategory,
+            final String expectedType,
             final String expectedAge) {
         assertThat(row.getFileName().getDisplay()).isEqualTo(expectedFileDisplayName);
         assertThat(getTagValues(row.getCategory())).isEqualTo(expectedCategory);
@@ -866,15 +882,15 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     @org.junitpioneer.jupiter.Issue("JENKINS-66268")
     void shouldNotProduceXmlParserWarmUpErrors() {
         var project = createFreestyleJob("eclipse.txt");
-        copySingleFileToWorkspace(project,
-                "detectors/buildfiles/maven/pom.xml", "pom.xml");
+        copySingleFileToWorkspace(project, "detectors/buildfiles/maven/pom.xml", "pom.xml");
         enableEclipseWarnings(project);
 
         var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(getConsoleLog(result)).doesNotContain("Failed to pre-warm XML parser infrastructure");
-        assertThat(result).hasInfoMessages(
-                "Resolving module names from module definitions (build.xml, pom.xml, or Manifest.mf files)",
-                "-> resolved module names for 8 issues");
+        assertThat(result)
+                .hasInfoMessages(
+                        "Resolving module names from module definitions (build.xml, pom.xml, or Manifest.mf files)",
+                        "-> resolved module names for 8 issues");
     }
 }

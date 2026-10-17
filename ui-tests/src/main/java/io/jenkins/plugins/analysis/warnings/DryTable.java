@@ -11,10 +11,8 @@ public class DryTable extends AbstractIssuesTable<DryTableRow> {
     /**
      * Creates an IssuesTable of a specific type.
      *
-     * @param tab
-     *         the WebElement containing the issues-tab
-     * @param resultDetailsPage
-     *         the {@link AnalysisResult} on which the issues-table is displayed on
+     * @param tab the WebElement containing the issues-tab
+     * @param resultDetailsPage the {@link AnalysisResult} on which the issues-table is displayed on
      */
     public DryTable(final WebElement tab, final AnalysisResult resultDetailsPage) {
         super(tab, resultDetailsPage, "issues");

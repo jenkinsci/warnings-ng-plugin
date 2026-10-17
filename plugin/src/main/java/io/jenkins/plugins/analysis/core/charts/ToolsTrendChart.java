@@ -6,12 +6,10 @@ import edu.hm.hafner.echarts.LineSeries;
 import edu.hm.hafner.echarts.LineSeries.FilledMode;
 import edu.hm.hafner.echarts.LineSeries.StackedMode;
 import edu.hm.hafner.echarts.LinesChartModel;
-
-import java.util.Collections;
-import java.util.Map;
-
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.echarts.JenkinsPalette;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * Builds the line model for a trend chart showing the total number of issues per tool for a given number of builds.
@@ -39,7 +37,8 @@ public class ToolsTrendChart implements TrendChart {
     }
 
     @Override
-    public LinesChartModel create(final Iterable<? extends BuildResult<AnalysisBuildResult>> results,
+    public LinesChartModel create(
+            final Iterable<? extends BuildResult<AnalysisBuildResult>> results,
             final ChartModelConfiguration configuration) {
         var builder = new ToolSeriesBuilder();
         var lineModel = builder.createDataSet(configuration, results);
@@ -49,8 +48,11 @@ public class ToolsTrendChart implements TrendChart {
         int index = 0;
         for (String toolId : lineModel.getDataSetIds()) {
             String displayName = toolNames.getOrDefault(toolId, toolId);
-            var lineSeries = new LineSeries(displayName, JenkinsPalette.chartColor(index).normal(),
-                    StackedMode.SEPARATE_LINES, FilledMode.LINES);
+            var lineSeries = new LineSeries(
+                    displayName,
+                    JenkinsPalette.chartColor(index).normal(),
+                    StackedMode.SEPARATE_LINES,
+                    FilledMode.LINES);
             lineSeries.addAll(lineModel.getSeries(toolId));
             model.addSeries(lineSeries);
             index++;

@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
 import java.util.List;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -48,9 +47,7 @@ class GenericTableRow {
     /**
      * Returns a specific table data field specified by the header of the column.
      *
-     * @param header
-     *         the header text specifying the column
-     *
+     * @param header the header text specifying the column
      * @return the WebElement of the table data field
      */
     final WebElement getCell(final String header) {
@@ -60,9 +57,7 @@ class GenericTableRow {
     /**
      * Returns the String representation of the table cell.
      *
-     * @param header
-     *         the header specifying the column
-     *
+     * @param header the header specifying the column
      * @return the String representation of the cell
      */
     final String getCellContent(final String header) {

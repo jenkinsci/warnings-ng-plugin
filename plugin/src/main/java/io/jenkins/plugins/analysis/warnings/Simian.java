@@ -1,12 +1,10 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.io.Serial;
-
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.jenkinsci.Symbol;
 import hudson.Extension;
-
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import java.io.Serial;
+import org.jenkinsci.Symbol;
+import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
  * Provides a parser and customized messages for Simian duplication scanner.
@@ -16,6 +14,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 public class Simian extends DuplicateCodeScanner {
     @Serial
     private static final long serialVersionUID = 5817021796077055763L;
+
     private static final String ID = "simian";
 
     /** Creates a new instance of {@link Simian}. */

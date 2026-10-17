@@ -1,18 +1,14 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import org.apache.commons.lang3.StringUtils;
+import static j2html.TagCreator.*;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.util.VisibleForTesting;
-
-import j2html.tags.DomContent;
-
 import hudson.model.Run;
-
 import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
-
-import static j2html.TagCreator.*;
+import j2html.tags.DomContent;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Renders the name of an affected file of an issue. If the affected file is accessible, then a hyper link is created.
@@ -86,17 +82,14 @@ public class FileNameRenderer {
      */
     public DomContent createAffectedFileLink(final Issue issue, final String prefix) {
         if (ConsoleLogHandler.isInConsoleLog(issue.getFileName())) {
-            return a().withHref(prefix + getSourceCodeUrl(issue))
-                    .withText(getFileNameAtLine(issue));
-        }
-        else if (facade.canAccessAffectedFileOf(build, issue)) {
+            return a().withHref(prefix + getSourceCodeUrl(issue)).withText(getFileNameAtLine(issue));
+        } else if (facade.canAccessAffectedFileOf(build, issue)) {
             return a().withHref(prefix + getSourceCodeUrl(issue))
                     .withText(getFileNameAtLine(issue))
                     .attr("data-bs-toggle", "tooltip")
                     .attr("data-bs-placement", "top")
                     .withTitle(issue.getFileName());
-        }
-        else {
+        } else {
             return text(getFileNameAtLine(issue));
         }
     }
@@ -136,8 +129,7 @@ public class FileNameRenderer {
     public String getFileName(final Issue issue) {
         if (ConsoleLogHandler.isInConsoleLog(issue.getFileName())) {
             return Messages.ConsoleLog_Name();
-        }
-        else {
+        } else {
             return issue.getBaseName();
         }
     }

@@ -1,11 +1,10 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import org.junit.jupiter.api.Test;
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
-
-import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class {@link ReportLocations}.

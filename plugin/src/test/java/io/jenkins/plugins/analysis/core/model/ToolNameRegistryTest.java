@@ -1,11 +1,10 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import org.junit.jupiter.api.Test;
-
-import hudson.model.Run;
-
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
+
+import hudson.model.Run;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class {@link ToolNameRegistry}.
@@ -48,10 +47,10 @@ class ToolNameRegistryTest {
     @Test
     void shouldReturnEscapedIdForUnknownId() {
         ToolNameRegistry registry = new ToolNameRegistry();
-        
+
         registry.register("unknown", "unknown");
         assertThat(registry.getName("unknown")).isEqualTo("unknown");
-        
+
         registry.register("<script>", "<script>");
         assertThat(registry.getName("<script>")).isEqualTo("&lt;script&gt;");
     }
@@ -80,7 +79,7 @@ class ToolNameRegistryTest {
     @Test
     void shouldFallbackToIdForRegisteredIds() {
         ToolNameRegistry registry = new ToolNameRegistry();
-        
+
         registry.register("checkstyle", "CheckStyle");
         registry.register("unknownToolId", "Unknown Tool");
 

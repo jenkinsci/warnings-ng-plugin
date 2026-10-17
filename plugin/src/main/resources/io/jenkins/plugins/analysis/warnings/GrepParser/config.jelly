@@ -1,0 +1,27 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:i="/issues">
+
+  <f:entry title="${%Files to scan}" field="includePattern"
+           description="${%description.files('https://ant.apache.org/manual/Types/fileset.html')}">
+    <f:textbox/>
+  </f:entry>
+  <f:entry title="${%Files to exclude}" field="excludePattern"
+           description="${%description.exclude.files('https://ant.apache.org/manual/Types/fileset.html')}">
+    <f:textbox/>
+  </f:entry>
+  <f:entry title="${%Regular Expression}" field="regexp" description="${%description.regexp}">
+    <f:textbox/>
+  </f:entry>
+  <f:entry title="${%Message (optional)}" field="message" description="${%description.message}">
+    <f:textbox/>
+  </f:entry>
+  <f:entry title="${%Severity}" field="severity" description="${%description.severity}">
+    <f:select/>
+  </f:entry>
+  <f:entry title="${%Test the pattern}" field="example" description="${%description.example}">
+    <f:textarea/>
+  </f:entry>
+
+  <i:tool-defaults/>
+
+</j:jelly>

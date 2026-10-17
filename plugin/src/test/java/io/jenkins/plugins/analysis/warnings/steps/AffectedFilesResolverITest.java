@@ -1,24 +1,12 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.*;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Severity;
-
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.NoSuchElementException;
-import java.util.Set;
-
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.model.Run;
-
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.IssuesModel.IssuesRow;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
@@ -33,8 +21,16 @@ import io.jenkins.plugins.prism.PermittedSourceCodeDirectory;
 import io.jenkins.plugins.prism.PrismConfiguration;
 import io.jenkins.plugins.prism.SourceCodeDirectory;
 import io.jenkins.plugins.prism.SourceCodeRetention;
-
-import static org.assertj.core.api.Assertions.*;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.NoSuchElementException;
+import java.util.Set;
+import org.junit.jupiter.api.Test;
 
 /**
  * Integration tests for the class {@link AffectedFilesResolver}.
@@ -53,8 +49,10 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String COPY_FILES = "Copying affected files to Jenkins' build folder";
     private static final String INITIAL_JAVA_REPORT = FOLDER + "/javalog-1.txt";
     private static final String MODIFIED_JAVA_REPORT = FOLDER + "/javalog-2.txt";
-    private static final String INITIAL_JAVA_FINGERPRINT_SOURCE_FILE =  FOLDER + "/FingerprintTestWithoutModification.java";
-    private static final String MODIFIED_JAVA_FINGERPRINT_SOURCE_FILE = FOLDER + "/FingerprintTestWithModification.java";
+    private static final String INITIAL_JAVA_FINGERPRINT_SOURCE_FILE =
+            FOLDER + "/FingerprintTestWithoutModification.java";
+    private static final String MODIFIED_JAVA_FINGERPRINT_SOURCE_FILE =
+            FOLDER + "/FingerprintTestWithModification.java";
 
     /**
      * Verifies that the affected source code is copied and shown in the source code view. If the file is deleted in the
@@ -109,15 +107,15 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private void makeAffectedFilesInBuildFolderUnreadable(final AnalysisResult result) {
-        makeFileUnreadable(AffectedFilesResolver.getZipFile(result.getOwner(),
-                getIssueWithSource(result).getFileName()));
+        makeFileUnreadable(AffectedFilesResolver.getZipFile(
+                result.getOwner(), getIssueWithSource(result).getFileName()));
     }
 
     private Issue getIssueWithSource(final AnalysisResult result) {
-        return result.getIssues()
-                .stream()
+        return result.getIssues().stream()
                 .filter(issue -> issue.getFileName().endsWith("Main.java"))
-                .findFirst().orElseThrow(NoSuchElementException::new);
+                .findFirst()
+                .orElseThrow(NoSuchElementException::new);
     }
 
     private void deleteAffectedFilesInBuildFolder(final AnalysisResult result) {
@@ -126,8 +124,7 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
             Path file = AffectedFilesResolver.getZipFile(result.getOwner(), fileName);
             try {
                 Files.delete(file);
-            }
-            catch (IOException ignore) {
+            } catch (IOException ignore) {
                 // ignore
             }
         }
@@ -145,8 +142,8 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
         issues.forEach(issue -> assertThatFileExistsInBuildFolder(issue, project, result.getOwner()));
     }
 
-    private void assertThatFileExistsInBuildFolder(final Issue issue, final FreeStyleProject project,
-            final Run<?, ?> owner) {
+    private void assertThatFileExistsInBuildFolder(
+            final Issue issue, final FreeStyleProject project, final Run<?, ?> owner) {
         Path buildFolderCopy = AffectedFilesResolver.getFile(owner, issue.getFileName());
         if (issue.getFileName().contains(SOURCE_AFFECTED_FILE)) {
             assertThat(buildFolderCopy).exists();
@@ -201,7 +198,13 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
         prepareGccLog(job);
         enableWarnings(job, createTool(new Gcc4(), "**/gcc.log"));
 
-        buildAndVerifyFilesResolving(job, ColumnLink.SHOULD_NOT_HAVE_LINK, "0 copied", "1 not in workspace", "0 not-found", "0 with I/O error");
+        buildAndVerifyFilesResolving(
+                job,
+                ColumnLink.SHOULD_NOT_HAVE_LINK,
+                "0 copied",
+                "1 not in workspace",
+                "0 not-found",
+                "0 with I/O error");
     }
 
     /**
@@ -215,28 +218,43 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
 
         var recorder = enableWarnings(job, createTool(new Gcc4(), "**/gcc.log"));
         var buildsFolder = job.getRootDir().getAbsolutePath();
-        recorder.setSourceDirectories(Arrays.asList(new SourceCodeDirectory(buildsFolder), new SourceCodeDirectory("relative")));
+        recorder.setSourceDirectories(
+                Arrays.asList(new SourceCodeDirectory(buildsFolder), new SourceCodeDirectory("relative")));
 
         // First build: copying the affected file is forbidden
-        buildAndVerifyFilesResolving(job, ColumnLink.SHOULD_NOT_HAVE_LINK, "0 copied", "1 not in workspace", "0 not-found", "0 with I/O error");
+        buildAndVerifyFilesResolving(
+                job,
+                ColumnLink.SHOULD_NOT_HAVE_LINK,
+                "0 copied",
+                "1 not in workspace",
+                "0 not-found",
+                "0 with I/O error");
 
         // Use source directories of old Warnings plugin configuration
-        PrismConfiguration.getInstance().setSourceDirectories(
-                Collections.singletonList(new PermittedSourceCodeDirectory(buildsFolder)));
+        PrismConfiguration.getInstance()
+                .setSourceDirectories(Collections.singletonList(new PermittedSourceCodeDirectory(buildsFolder)));
 
         // Second build: copying the affected file is permitted
-        buildAndVerifyFilesResolving(job, ColumnLink.SHOULD_HAVE_LINK, "1 copied", "0 not in workspace", "0 not-found", "0 with I/O error");
+        buildAndVerifyFilesResolving(
+                job, ColumnLink.SHOULD_HAVE_LINK, "1 copied", "0 not in workspace", "0 not-found", "0 with I/O error");
 
         PrismConfiguration.getInstance().setSourceDirectories(new ArrayList<>());
 
         // Third build: copying the affected file is forbidden again
-        buildAndVerifyFilesResolving(job, ColumnLink.SHOULD_NOT_HAVE_LINK, "0 copied", "1 not in workspace", "0 not-found", "0 with I/O error");
+        buildAndVerifyFilesResolving(
+                job,
+                ColumnLink.SHOULD_NOT_HAVE_LINK,
+                "0 copied",
+                "1 not in workspace",
+                "0 not-found",
+                "0 with I/O error");
 
-        PrismConfiguration.getInstance().setSourceDirectories(
-                Collections.singletonList(new PermittedSourceCodeDirectory(buildsFolder)));
+        PrismConfiguration.getInstance()
+                .setSourceDirectories(Collections.singletonList(new PermittedSourceCodeDirectory(buildsFolder)));
 
         // Fourth build: copying the affected file is permitted again
-        buildAndVerifyFilesResolving(job, ColumnLink.SHOULD_HAVE_LINK, "1 copied", "0 not in workspace", "0 not-found", "0 with I/O error");
+        buildAndVerifyFilesResolving(
+                job, ColumnLink.SHOULD_HAVE_LINK, "1 copied", "0 not in workspace", "0 not-found", "0 with I/O error");
     }
 
     @Test
@@ -249,20 +267,20 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
 
         var buildsFolder = job.getRootDir().getAbsolutePath();
 
-        PrismConfiguration.getInstance().setSourceDirectories(
-                Collections.singletonList(new PermittedSourceCodeDirectory(buildsFolder)));
+        PrismConfiguration.getInstance()
+                .setSourceDirectories(Collections.singletonList(new PermittedSourceCodeDirectory(buildsFolder)));
 
-        Run<?, ?> first = buildAndVerifyFilesResolving(job, ColumnLink.SHOULD_HAVE_LINK,
-                "1 copied", "0 not in workspace", "0 not-found", "0 with I/O error");
-        Run<?, ?> second = buildAndVerifyFilesResolving(job, ColumnLink.SHOULD_HAVE_LINK,
-                "1 copied", "0 not in workspace", "0 not-found", "0 with I/O error");
+        Run<?, ?> first = buildAndVerifyFilesResolving(
+                job, ColumnLink.SHOULD_HAVE_LINK, "1 copied", "0 not in workspace", "0 not-found", "0 with I/O error");
+        Run<?, ?> second = buildAndVerifyFilesResolving(
+                job, ColumnLink.SHOULD_HAVE_LINK, "1 copied", "0 not in workspace", "0 not-found", "0 with I/O error");
 
         verifyResolving(ColumnLink.SHOULD_NOT_HAVE_LINK, getAnalysisResult(first));
         assertThat(getConsoleLog(second)).contains("Deleting source code files of build #1");
     }
 
-    private Run<?, ?> buildAndVerifyFilesResolving(final FreeStyleProject job, final ColumnLink columnLink,
-            final String... expectedResolveMessages) {
+    private Run<?, ?> buildAndVerifyFilesResolving(
+            final FreeStyleProject job, final ColumnLink columnLink, final String... expectedResolveMessages) {
         var result = scheduleBuildAndAssertStatus(job, Result.SUCCESS);
         assertThat(getConsoleLog(result)).contains(expectedResolveMessages);
 
@@ -277,9 +295,10 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
         var firstRow = getIssuesModel(result, 0);
         assertThat(firstRow.getSeverity()).contains(Severity.WARNING_NORMAL.getName());
         if (columnLink == ColumnLink.SHOULD_HAVE_LINK) {
-            assertThat(firstRow.getFileName().getDisplay()).startsWith("<a href=\"").contains("config.xml:451");
-        }
-        else {
+            assertThat(firstRow.getFileName().getDisplay())
+                    .startsWith("<a href=\"")
+                    .contains("config.xml:451");
+        } else {
             assertThat(firstRow.getFileName().getDisplay()).isEqualTo("config.xml:451");
         }
 
@@ -299,11 +318,9 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
         try {
             var workspace = getWorkspace(job);
             workspace.mkdirs();
-            var logMessage = "%s/config.xml:451: warning: foo defined but not used%n".formatted(
-                    job.getRootDir());
+            var logMessage = "%s/config.xml:451: warning: foo defined but not used%n".formatted(job.getRootDir());
             Files.write(Path.of(workspace.child("gcc.log").getRemote()), logMessage.getBytes(StandardCharsets.UTF_8));
-        }
-        catch (IOException | InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             throw new AssertionError(e);
         }
     }
@@ -312,8 +329,7 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldFindOneAffectedFile() {
         var result = buildEclipseProject(ECLIPSE_REPORT_ONE_AFFECTED_AFFECTED_FILE, SOURCE_AFFECTED_FILE);
 
-        assertThat(getConsoleLog(result))
-                .contains(COPY_FILES, "1 copied", "0 not-found", "0 with I/O error");
+        assertThat(getConsoleLog(result)).contains(COPY_FILES, "1 copied", "0 not-found", "0 with I/O error");
     }
 
     @Test
@@ -325,19 +341,18 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
 
         var result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        assertThat(getConsoleLog(result))
-                .doesNotContain(COPY_FILES, " copied", " not-found", " with I/O error");
+        assertThat(getConsoleLog(result)).doesNotContain(COPY_FILES, " copied", " not-found", " with I/O error");
     }
 
     @Test
     void shouldProduceDifferentFingerprints() {
         var project = createFreeStyleProject();
 
-        var firstBuildResult = configureBuildForFingerprintTests(project, INITIAL_JAVA_REPORT,
-                INITIAL_JAVA_FINGERPRINT_SOURCE_FILE, -1, false);
+        var firstBuildResult = configureBuildForFingerprintTests(
+                project, INITIAL_JAVA_REPORT, INITIAL_JAVA_FINGERPRINT_SOURCE_FILE, -1, false);
 
-        var secondBuildResult = configureBuildForFingerprintTests(project, MODIFIED_JAVA_REPORT,
-                MODIFIED_JAVA_FINGERPRINT_SOURCE_FILE, -1, true);
+        var secondBuildResult = configureBuildForFingerprintTests(
+                project, MODIFIED_JAVA_REPORT, MODIFIED_JAVA_FINGERPRINT_SOURCE_FILE, -1, true);
 
         assertThat(secondBuildResult.getNewIssues().size()).isEqualTo(1);
         assertThat(firstBuildResult.getIssues().get(0).getFingerprint())
@@ -348,19 +363,23 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldProduceSameFingerprints() {
         var project = createFreeStyleProject();
 
-        var firstBuildResult = configureBuildForFingerprintTests(project, INITIAL_JAVA_REPORT,
-                INITIAL_JAVA_FINGERPRINT_SOURCE_FILE, 2, false);
+        var firstBuildResult = configureBuildForFingerprintTests(
+                project, INITIAL_JAVA_REPORT, INITIAL_JAVA_FINGERPRINT_SOURCE_FILE, 2, false);
 
-        var secondBuildResult = configureBuildForFingerprintTests(project, MODIFIED_JAVA_REPORT,
-                MODIFIED_JAVA_FINGERPRINT_SOURCE_FILE, 2, true);
+        var secondBuildResult = configureBuildForFingerprintTests(
+                project, MODIFIED_JAVA_REPORT, MODIFIED_JAVA_FINGERPRINT_SOURCE_FILE, 2, true);
 
         assertThat(secondBuildResult.getNewIssues().size()).isEqualTo(0);
         assertThat(firstBuildResult.getIssues().get(0).getFingerprint())
                 .isEqualTo(secondBuildResult.getIssues().get(0).getFingerprint());
     }
 
-    private AnalysisResult configureBuildForFingerprintTests(final FreeStyleProject project, final String logFile,
-                                                             final String srcFile, final int linesLookAhead, final boolean warningEnabled) {
+    private AnalysisResult configureBuildForFingerprintTests(
+            final FreeStyleProject project,
+            final String logFile,
+            final String srcFile,
+            final int linesLookAhead,
+            final boolean warningEnabled) {
         copyFileToWorkspace(project, logFile, "log-java.txt");
         copyFileToWorkspace(project, srcFile, "FingerprintITest.java");
 
@@ -389,6 +408,7 @@ class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private enum ColumnLink {
-        SHOULD_HAVE_LINK, SHOULD_NOT_HAVE_LINK
+        SHOULD_HAVE_LINK,
+        SHOULD_NOT_HAVE_LINK
     }
 }

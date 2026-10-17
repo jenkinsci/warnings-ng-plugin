@@ -1,19 +1,10 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
-import org.junit.jupiter.api.Test;
-import org.w3c.dom.Node;
-import org.xmlunit.assertj.XmlAssert;
-import org.xmlunit.builder.Input;
-
-import net.sf.json.JSONArray;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
+import static org.assertj.core.api.Assertions.*;
 
 import hudson.model.Result;
 import hudson.model.Run;
-
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.restapi.AnalysisResultApi;
 import io.jenkins.plugins.analysis.core.restapi.ReportApi;
@@ -21,9 +12,14 @@ import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSu
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Pmd;
 import io.jenkins.plugins.analysis.warnings.SpotBugs;
-
-import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
-import static org.assertj.core.api.Assertions.*;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+import net.sf.json.JSONArray;
+import org.junit.jupiter.api.Test;
+import org.w3c.dom.Node;
+import org.xmlunit.assertj.XmlAssert;
+import org.xmlunit.builder.Input;
 
 /**
  * Integration tests of the remote API.
@@ -42,10 +38,12 @@ class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     void shouldReturnSummaryForTopLevelApiCall() {
         // Skip elements with absolute paths or other platform-specific information
-        verifyRemoteApi("/checkstyle/api/xml"
-                + "?exclude=/*/errorMessage"
-                + "&exclude=/*/infoMessage"
-                + "&exclude=/*/owner/url", RESULT_REMOTE_API_EXPECTED_XML);
+        verifyRemoteApi(
+                "/checkstyle/api/xml"
+                        + "?exclude=/*/errorMessage"
+                        + "&exclude=/*/infoMessage"
+                        + "&exclude=/*/owner/url",
+                RESULT_REMOTE_API_EXPECTED_XML);
     }
 
     /**
@@ -102,9 +100,8 @@ class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
 
         // navigate to one deep level element that is not visible at depth 0
         var xpath = XPathFactory.newInstance().newXPath();
-        var deepLevelElement = (Node) xpath
-                .compile("//analysisResultApi//owner//result")
-                .evaluate(actualDocument, XPathConstants.NODE);
+        var deepLevelElement = (Node)
+                xpath.compile("//analysisResultApi//owner//result").evaluate(actualDocument, XPathConstants.NODE);
 
         assertThat(deepLevelElement).isNotNull();
         assertThat(deepLevelElement.getNodeName()).isEqualTo("result");
@@ -117,8 +114,7 @@ class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldFindNewCheckStyleWarnings() {
-        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle1.xml",
-                "checkstyle2.xml");
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle1.xml", "checkstyle2.xml");
         var recorder = enableWarnings(project, createCheckstyle("**/checkstyle1*"));
         buildWithResult(project, Result.SUCCESS);
         recorder.setTools(createCheckstyle("**/checkstyle2*"));
@@ -133,10 +129,12 @@ class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
     /** Verifies that the remote API for the tools aggregation correctly returns the summary. */
     @Test
     void shouldReturnAggregation() {
-        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle1.xml",
-                "checkstyle2.xml");
-        enableWarnings(project, createCheckstyle("**/checkstyle1*"),
-                configurePattern(new Pmd()), configurePattern(new SpotBugs()));
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle1.xml", "checkstyle2.xml");
+        enableWarnings(
+                project,
+                createCheckstyle("**/checkstyle1*"),
+                configurePattern(new Pmd()),
+                configurePattern(new SpotBugs()));
         Run<?, ?> build = buildWithResult(project, Result.SUCCESS);
 
         var json = callJsonRemoteApi(build.getUrl() + "warnings-ng/api/json");
@@ -150,13 +148,15 @@ class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
         assertThatToolsContains(tools, "spotbugs", "SpotBugs Warnings", 0);
     }
 
-    private void assertThatToolsContains(final JSONArray tools,
-            final String expectedId, final String expectedName, final int expectedSize) {
+    private void assertThatToolsContains(
+            final JSONArray tools, final String expectedId, final String expectedName, final int expectedSize) {
         for (int i = 0; i < 3; i++) {
             if (tools.getString(i).contains(expectedId)) {
                 assertThatJson(tools.get(i)).node("id").isEqualTo(expectedId);
                 assertThatJson(tools.get(i)).node("name").isEqualTo(expectedName);
-                assertThatJson(tools.get(i)).node("latestUrl").asString()
+                assertThatJson(tools.get(i))
+                        .node("latestUrl")
+                        .asString()
                         .matches("http://localhost:\\d+/jenkins/job/test\\d+/1/" + expectedId);
                 assertThatJson(tools.get(i)).node("size").isEqualTo(expectedSize);
                 return;

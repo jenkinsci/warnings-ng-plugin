@@ -1,13 +1,11 @@
 package io.jenkins.plugins.analysis.warnings.axivion;
 
-import org.apache.commons.lang3.Validate;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Severity;
+import org.apache.commons.lang3.Validate;
 
 /**
  * Provides json to generic jenkins issue transformations for all six Axivion violation kinds.
@@ -72,8 +70,7 @@ final class DefaultTransformations {
                     + getString(payload, "targetEntity")
                     + "&gt;</i>"
                     + createLink(rawIssue, getInt(payload, "id"));
-        }
-        else {
+        } else {
             return "Missing Architecture Dependency from <i>"
                     + getString(payload, "architectureSourceType")
                     + " &lt;"
@@ -258,8 +255,7 @@ final class DefaultTransformations {
         if (severity != null) {
             if ("mandatory".equals(severity)) {
                 return Severity.WARNING_HIGH;
-            }
-            else if ("advisory".equals(severity)) {
+            } else if ("advisory".equals(severity)) {
                 return Severity.WARNING_LOW;
             }
         }

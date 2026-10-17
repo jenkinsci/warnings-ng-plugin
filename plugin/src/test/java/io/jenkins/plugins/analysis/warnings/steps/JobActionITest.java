@@ -1,15 +1,12 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
-import org.junit.jupiter.api.Test;
-import org.junitpioneer.jupiter.Issue;
-
-import java.util.List;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import static io.jenkins.plugins.analysis.core.model.MissingResultFallbackHandler.*;
 
 import hudson.model.Actionable;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.model.Run;
-
 import io.jenkins.plugins.analysis.core.model.AggregatedTrendAction;
 import io.jenkins.plugins.analysis.core.model.JobAction;
 import io.jenkins.plugins.analysis.core.model.MissingResultFallbackHandler;
@@ -22,9 +19,9 @@ import io.jenkins.plugins.analysis.core.util.TrendChartType;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.echarts.AsyncConfigurableTrendChart;
-
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
-import static io.jenkins.plugins.analysis.core.model.MissingResultFallbackHandler.*;
+import java.util.List;
+import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.Issue;
 
 /**
  * Integration tests of the warnings plug-in in freestyle jobs. Tests the new recorder {@link IssuesRecorder}.
@@ -147,12 +144,11 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     void shouldShowTrendsAndAggregationPipeline() {
         var job = createPipelineWithWorkspaceFilesWithSuffix(ECLIPSE_LOG, CHECKSTYLE_XML);
-        job.setDefinition(
-                asStage("def checkstyle = scanForIssues tool: checkStyle(pattern:'**/checkstyle.xml', reportEncoding:'UTF-8')",
-                        "publishIssues issues:[checkstyle], trendChartType: 'TOOLS_AGGREGATION'",
-                        "def eclipse = scanForIssues tool: eclipse(pattern:'**/eclipse.txt', reportEncoding:'UTF-8')",
-                        "publishIssues issues:[eclipse], trendChartType: 'TOOLS_AGGREGATION'"
-                ));
+        job.setDefinition(asStage(
+                "def checkstyle = scanForIssues tool: checkStyle(pattern:'**/checkstyle.xml', reportEncoding:'UTF-8')",
+                "publishIssues issues:[checkstyle], trendChartType: 'TOOLS_AGGREGATION'",
+                "def eclipse = scanForIssues tool: eclipse(pattern:'**/eclipse.txt', reportEncoding:'UTF-8')",
+                "publishIssues issues:[eclipse], trendChartType: 'TOOLS_AGGREGATION'"));
 
         buildSuccessfully(job);
         buildSuccessfully(job);
@@ -162,8 +158,7 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
 
         job.setDefinition(asStage("recordIssues tools: ["
                 + "checkStyle(pattern:'**/checkstyle.xml', reportEncoding:'UTF-8'),"
-                + "eclipse(pattern:'**/eclipse.txt', reportEncoding:'UTF-8')], trendChartType: 'TOOLS_ONLY'"
-        ));
+                + "eclipse(pattern:'**/eclipse.txt', reportEncoding:'UTF-8')], trendChartType: 'TOOLS_ONLY'"));
 
         buildSuccessfully(job);
 
@@ -172,8 +167,7 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
 
         job.setDefinition(asStage("recordIssues tools: ["
                 + "checkStyle(pattern:'**/checkstyle.xml', reportEncoding:'UTF-8'),"
-                + "eclipse(pattern:'**/eclipse.txt', reportEncoding:'UTF-8')], trendChartType: 'AGGREGATION_ONLY'"
-        ));
+                + "eclipse(pattern:'**/eclipse.txt', reportEncoding:'UTF-8')], trendChartType: 'AGGREGATION_ONLY'"));
 
         buildSuccessfully(job);
 
@@ -182,20 +176,18 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
 
         job.setDefinition(asStage("recordIssues tools: ["
                 + "checkStyle(pattern:'**/checkstyle.xml', reportEncoding:'UTF-8'),"
-                + "eclipse(pattern:'**/eclipse.txt', reportEncoding:'UTF-8')], trendChartType: 'NONE'"
-        ));
+                + "eclipse(pattern:'**/eclipse.txt', reportEncoding:'UTF-8')], trendChartType: 'NONE'"));
 
         buildSuccessfully(job);
 
         assertThatAggregationChartDoesNotExists(job);
         assertThatCheckstyleAndEclipseChartExist(job, false);
 
-        job.setDefinition(
-                asStage("def checkstyle = scanForIssues tool: checkStyle(pattern:'**/checkstyle.xml', reportEncoding:'UTF-8')",
-                        "publishIssues issues:[checkstyle], trendChartType: 'AGGREGATION_ONLY'",
-                        "def eclipse = scanForIssues tool: eclipse(pattern:'**/eclipse.txt', reportEncoding:'UTF-8')",
-                        "publishIssues issues:[eclipse], trendChartType: 'AGGREGATION_ONLY'"
-                ));
+        job.setDefinition(asStage(
+                "def checkstyle = scanForIssues tool: checkStyle(pattern:'**/checkstyle.xml', reportEncoding:'UTF-8')",
+                "publishIssues issues:[checkstyle], trendChartType: 'AGGREGATION_ONLY'",
+                "def eclipse = scanForIssues tool: eclipse(pattern:'**/eclipse.txt', reportEncoding:'UTF-8')",
+                "publishIssues issues:[eclipse], trendChartType: 'AGGREGATION_ONLY'"));
 
         buildSuccessfully(job);
 
@@ -261,13 +253,11 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         }
 
         List<JobAction> jobActionsAfterThirdBuild = project.getActions(JobAction.class);
-        assertThat(jobActionsAfterThirdBuild).isNotEmpty().hasSize(1).first().satisfies(
-                jobAction -> {
-                    assertThat(jobAction.getId()).isEqualTo(ECLIPSE_URL_NAME);
-                    assertThat(jobAction.getUrlName()).isEqualTo(ECLIPSE_URL_NAME);
-                    assertThatTrendChartIsVisible(jobAction);
-                }
-        );
+        assertThat(jobActionsAfterThirdBuild).isNotEmpty().hasSize(1).first().satisfies(jobAction -> {
+            assertThat(jobAction.getId()).isEqualTo(ECLIPSE_URL_NAME);
+            assertThat(jobAction.getUrlName()).isEqualTo(ECLIPSE_URL_NAME);
+            assertThatTrendChartIsVisible(jobAction);
+        });
 
         buildWithResult(project, Result.SUCCESS); // now the limit of historical builds is reached
         assertThat(project.getActions(JobAction.class)).isEmpty();
@@ -305,13 +295,11 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         }
 
         List<JobAction> jobActionsAfterThirdBuild = project.getActions(JobAction.class);
-        assertThat(jobActionsAfterThirdBuild).isNotEmpty().hasSize(1).first().satisfies(
-                jobAction -> {
-                    assertThat(jobAction.getId()).isEqualTo(ECLIPSE_URL_NAME);
-                    assertThat(jobAction.getUrlName()).isEqualTo(ECLIPSE_URL_NAME);
-                    assertThatTrendChartIsVisible(jobAction);
-                }
-        );
+        assertThat(jobActionsAfterThirdBuild).isNotEmpty().hasSize(1).first().satisfies(jobAction -> {
+            assertThat(jobAction.getId()).isEqualTo(ECLIPSE_URL_NAME);
+            assertThat(jobAction.getUrlName()).isEqualTo(ECLIPSE_URL_NAME);
+            assertThatTrendChartIsVisible(jobAction);
+        });
     }
 
     private void assertThatTrendChartIsVisible(final AsyncConfigurableTrendChart trendChart) {
@@ -322,7 +310,8 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(trendChart.isTrendVisible()).isFalse();
     }
 
-    private void assertThatCheckstyleAndEclipseChartExist(final Actionable actionable, final boolean shouldChartBeVisible) {
+    private void assertThatCheckstyleAndEclipseChartExist(
+            final Actionable actionable, final boolean shouldChartBeVisible) {
         List<JobAction> jobActions = actionable.getActions(JobAction.class);
         assertThat(jobActions).hasSize(2);
 
@@ -332,8 +321,7 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         if (CHECKSTYLE_ID.equals(jobActions.get(0).getUrlName())) {
             checkstyle = jobActions.get(0);
             eclipse = jobActions.get(1);
-        }
-        else {
+        } else {
             checkstyle = jobActions.get(1);
             eclipse = jobActions.get(0);
         }
@@ -345,8 +333,7 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         if (shouldChartBeVisible) {
             assertThatTrendChartIsVisible(eclipse);
             assertThatTrendChartIsVisible(checkstyle);
-        }
-        else {
+        } else {
             assertThatTrendChartIsHidden(eclipse);
             assertThatTrendChartIsHidden(checkstyle);
         }
@@ -357,8 +344,7 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(aggregatedTrendAction.getUrlName()).isEqualTo("warnings-aggregation");
         if (shouldChartBeVisible) {
             assertThatTrendChartIsVisible(aggregatedTrendAction);
-        }
-        else {
+        } else {
             assertThatTrendChartIsHidden(aggregatedTrendAction);
         }
     }
@@ -372,8 +358,8 @@ class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         assertActionProperties(project, build, "eclipse", "symbol-solid/triangle-exclamation plugin-font-awesome-api");
     }
 
-    private void assertActionProperties(final FreeStyleProject project, final Run<?, ?> build,
-            final String urlName, final String iconName) {
+    private void assertActionProperties(
+            final FreeStyleProject project, final Run<?, ?> build, final String urlName, final String iconName) {
         var jobAction = project.getAction(JobAction.class);
         assertThat(jobAction).isNotNull();
 

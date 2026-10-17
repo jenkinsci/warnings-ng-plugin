@@ -1,16 +1,13 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import org.apache.commons.lang3.StringUtils;
+import static edu.hm.hafner.analysis.Severity.*;
 
 import edu.hm.hafner.analysis.IssueDifference;
 import edu.hm.hafner.analysis.Report;
-
 import hudson.model.Run;
-
 import io.jenkins.plugins.analysis.core.util.IssuesStatistics;
 import io.jenkins.plugins.analysis.core.util.IssuesStatisticsBuilder;
-
-import static edu.hm.hafner.analysis.Severity.*;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Provides the delta between the reports of two different builds.
@@ -62,9 +59,12 @@ public class DeltaReport {
      * @param referenceIssues
      *         the issues in the reference build
      */
-    public DeltaReport(final Report report, final Run<?, ?> referenceBuild, final int currentBuildNumber, final Report referenceIssues) {
-        report.logInfo("Using reference build '%s' to compute new, fixed, and outstanding issues",
-                referenceBuild);
+    public DeltaReport(
+            final Report report,
+            final Run<?, ?> referenceBuild,
+            final int currentBuildNumber,
+            final Report referenceIssues) {
+        report.logInfo("Using reference build '%s' to compute new, fixed, and outstanding issues", referenceBuild);
 
         allIssues = report;
         this.referenceIssues = referenceIssues;
@@ -72,7 +72,8 @@ public class DeltaReport {
         outstandingIssues = difference.getOutstandingIssues();
         newIssues = difference.getNewIssues();
         fixedIssues = difference.getFixedIssues();
-        report.logInfo("Issues delta (vs. reference build): outstanding: %d, new: %d, fixed: %d",
+        report.logInfo(
+                "Issues delta (vs. reference build): outstanding: %d, new: %d, fixed: %d",
                 outstandingIssues.size(), newIssues.size(), fixedIssues.size());
         referenceBuildId = referenceBuild.getExternalizableId();
     }

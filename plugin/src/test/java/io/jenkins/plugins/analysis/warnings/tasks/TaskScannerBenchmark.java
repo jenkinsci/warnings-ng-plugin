@@ -1,5 +1,11 @@
 package io.jenkins.plugins.analysis.warnings.tasks;
 
+import edu.hm.hafner.util.ResourceTest;
+import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.CaseMode;
+import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.MatcherMode;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
@@ -14,15 +20,6 @@ import org.openjdk.jmh.profile.StackProfiler;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
-
-import edu.hm.hafner.util.ResourceTest;
-
-import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-
-import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.CaseMode;
-import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.MatcherMode;
 
 /**
  * Benchmark test for the {@link TaskScanner}.
@@ -97,8 +94,7 @@ public class TaskScannerBenchmark extends ResourceTest {
                     throw new IllegalArgumentException("Could not find file " + fileName);
                 }
                 return Path.of(resource.toURI());
-            }
-            catch (URISyntaxException exception) {
+            } catch (URISyntaxException exception) {
                 throw new AssertionError("Can't open file " + fileName, exception);
             }
         }

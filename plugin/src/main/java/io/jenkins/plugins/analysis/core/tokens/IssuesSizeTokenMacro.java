@@ -1,19 +1,16 @@
 package io.jenkins.plugins.analysis.core.tokens;
 
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.function.Predicate;
-
-import org.jenkinsci.plugins.tokenmacro.DataBoundTokenMacro;
-import org.jenkinsci.plugins.variant.OptionalExtension;
 import hudson.FilePath;
 import hudson.model.AbstractBuild;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.util.IssuesStatistics.StatisticProperties;
+import java.util.function.Predicate;
+import org.apache.commons.lang3.StringUtils;
+import org.jenkinsci.plugins.tokenmacro.DataBoundTokenMacro;
+import org.jenkinsci.plugins.variant.OptionalExtension;
 
 /**
  * Provides a token that evaluates the number of issues.
@@ -47,14 +44,14 @@ public class IssuesSizeTokenMacro extends DataBoundTokenMacro {
     }
 
     @Override
-    public String evaluate(final AbstractBuild<?, ?> abstractBuild, final TaskListener taskListener,
-            final String macroName) {
+    public String evaluate(
+            final AbstractBuild<?, ?> abstractBuild, final TaskListener taskListener, final String macroName) {
         return extractSelectedTotals(abstractBuild);
     }
 
     @Override
-    public String evaluate(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
-            final String macroName) {
+    public String evaluate(
+            final Run<?, ?> run, final FilePath workspace, final TaskListener listener, final String macroName) {
         return extractSelectedTotals(run);
     }
 
@@ -71,8 +68,7 @@ public class IssuesSizeTokenMacro extends DataBoundTokenMacro {
     private Predicate<ResultAction> createToolFilter() {
         if (StringUtils.isBlank(tool)) {
             return jobAction -> true;
-        }
-        else {
+        } else {
             return jobAction -> jobAction.getId().equals(tool);
         }
     }

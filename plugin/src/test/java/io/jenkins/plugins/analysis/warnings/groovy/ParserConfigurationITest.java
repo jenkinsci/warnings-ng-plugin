@@ -1,15 +1,13 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
-import org.junit.jupiter.api.Test;
-
-import java.util.Collections;
-import java.util.List;
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory.StaticAnalysisToolFactory;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.util.JenkinsFacade;
-
-import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
+import java.util.Collections;
+import java.util.List;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class {@link ParserConfiguration}.
@@ -42,12 +40,10 @@ class ParserConfigurationITest extends IntegrationTestWithJenkinsPerSuite {
 
         var provider = getToolProvider();
 
-        assertThat(provider.getLabelProvider(ID)).isNotEmpty().hasValueSatisfying(
-                labelProvider -> {
-                    assertThat(labelProvider.getId()).isEqualTo(ID);
-                    assertThat(labelProvider.getName()).isEqualTo(NAME);
-                }
-        );
+        assertThat(provider.getLabelProvider(ID)).isNotEmpty().hasValueSatisfying(labelProvider -> {
+            assertThat(labelProvider.getId()).isEqualTo(ID);
+            assertThat(labelProvider.getName()).isEqualTo(NAME);
+        });
     }
 
     private ParserConfiguration getConfiguration() {

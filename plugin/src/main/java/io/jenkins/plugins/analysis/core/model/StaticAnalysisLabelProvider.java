@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import jenkins.model.experimentalflags.UserExperimentalFlag;
-import org.apache.commons.lang3.StringUtils;
+import static j2html.TagCreator.*;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
@@ -9,16 +8,14 @@ import edu.hm.hafner.analysis.Report.IssueType;
 import edu.hm.hafner.util.Generated;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
-
+import hudson.model.Job;
+import hudson.model.Run;
 import java.io.Serial;
 import java.util.Locale;
 import java.util.function.Function;
-
+import jenkins.model.experimentalflags.UserExperimentalFlag;
+import org.apache.commons.lang3.StringUtils;
 import org.jvnet.localizer.Localizable;
-import hudson.model.Job;
-import hudson.model.Run;
-
-import static j2html.TagCreator.*;
 
 /**
  * A generic label provider for static analysis results. Creates pre-defined labels that are parameterized with a string
@@ -37,8 +34,10 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
 
     private final String id;
     private final String icon;
+
     @CheckForNull
     private String name;
+
     private final DescriptionProvider descriptionProvider;
 
     /**
@@ -74,8 +73,8 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      * @param descriptionProvider
      *         provides additional descriptions for an issue
      */
-    public StaticAnalysisLabelProvider(final String id, @CheckForNull final String name,
-            final DescriptionProvider descriptionProvider) {
+    public StaticAnalysisLabelProvider(
+            final String id, @CheckForNull final String name, final DescriptionProvider descriptionProvider) {
         this(id, name, descriptionProvider, IssueType.WARNING);
     }
 
@@ -91,8 +90,11 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      * @param type
      *        the type of the parser
      */
-    public StaticAnalysisLabelProvider(final String id, @CheckForNull final String name,
-            final DescriptionProvider descriptionProvider, final IssueType type) {
+    public StaticAnalysisLabelProvider(
+            final String id,
+            @CheckForNull final String name,
+            final DescriptionProvider descriptionProvider,
+            final IssueType type) {
         this.id = id;
         this.descriptionProvider = descriptionProvider;
         this.icon = getIcon(type);
@@ -209,7 +211,8 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      * @return the name of the side panel link
      */
     public String getLinkName() {
-        if (Boolean.TRUE.equals(UserExperimentalFlag.getFlagValueForCurrentUser("jenkins.model.experimentalflags.NewBuildPageUserExperimentalFlag"))) {
+        if (Boolean.TRUE.equals(UserExperimentalFlag.getFlagValueForCurrentUser(
+                "jenkins.model.experimentalflags.NewBuildPageUserExperimentalFlag"))) {
             if (StringUtils.isNotBlank(name)) {
                 return name;
             }
@@ -317,6 +320,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
     public static class DefaultAgeBuilder implements AgeBuilder {
         private final int currentBuildNumber;
         private final String resultUrl;
+
         @CheckForNull
         private Job<?, ?> owner;
 
@@ -359,8 +363,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
             var referenceBuildId = String.valueOf(referenceBuild);
             if (owner != null && owner.getBuild(referenceBuildId) == null) {
                 return computeAge(referenceBuild); // plain link
-            }
-            else {
+            } else {
                 String cleanUrl = StringUtils.stripEnd(resultUrl, "/");
                 int subDetailsCount = StringUtils.countMatches(cleanUrl, "/");
                 String backward = StringUtils.repeat("../", subDetailsCount + 2);
@@ -368,7 +371,8 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
 
                 var url = "%s%d/%s".formatted(backward, referenceBuild, detailsUrl);
                 return a(computeAge(referenceBuild))
-                        .withHref(StringUtils.stripEnd(url, "/")).render();
+                        .withHref(StringUtils.stripEnd(url, "/"))
+                        .render();
             }
         }
 

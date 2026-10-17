@@ -1,13 +1,10 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import org.openqa.selenium.By;
-
 import org.jenkinsci.test.acceptance.po.Jenkins;
 import org.jenkinsci.test.acceptance.po.JenkinsConfig;
+import org.openqa.selenium.By;
 
-/**
- * Global system configuration of the Warnings Plugin.
- */
+/** Global system configuration of the Warnings Plugin. */
 public class GlobalWarningsSettings extends JenkinsConfig {
     private static final String XPATH_PLUGIN_CONFIG = "//*[@path='%s']";
 
@@ -27,7 +24,8 @@ public class GlobalWarningsSettings extends JenkinsConfig {
     public GroovyConfiguration openGroovyConfiguration() {
         ensureConfigPage();
 
-        driver.findElement(By.xpath(String.format(XPATH_PLUGIN_CONFIG, GROOVY_PATH + BUTTON_ADD))).click();
+        driver.findElement(By.xpath(String.format(XPATH_PLUGIN_CONFIG, GROOVY_PATH + BUTTON_ADD)))
+                .click();
         return new GroovyConfiguration(this, url, GROOVY_PATH + PARSERS_PREFIX, XPATH_PLUGIN_CONFIG);
     }
 }

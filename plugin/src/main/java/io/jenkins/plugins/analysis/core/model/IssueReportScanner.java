@@ -6,13 +6,11 @@ import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.FilteredLog;
-
+import io.jenkins.plugins.util.AgentFileVisitor;
 import java.io.Serial;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.Optional;
-
-import io.jenkins.plugins.util.AgentFileVisitor;
 
 /**
  * Scans the workspace for issues reports that match a specified Ant file pattern and parse these files with the
@@ -41,8 +39,12 @@ public class IssueReportScanner extends AgentFileVisitor<Report> {
      * @param errorOnEmptyFiles
      *         determines whether the visitor should log errors if a file is empty
      */
-    public IssueReportScanner(final String filePattern, final String encoding,
-            final boolean followSymbolicLinks, final IssueParser parser, final boolean errorOnEmptyFiles) {
+    public IssueReportScanner(
+            final String filePattern,
+            final String encoding,
+            final boolean followSymbolicLinks,
+            final IssueParser parser,
+            final boolean errorOnEmptyFiles) {
         super(filePattern, encoding, followSymbolicLinks, errorOnEmptyFiles);
 
         this.parser = parser;
@@ -54,16 +56,14 @@ public class IssueReportScanner extends AgentFileVisitor<Report> {
             var fileReport = parser.parse(new FileReaderFactory(file, charset));
 
             log.logInfo("Successfully parsed file %s", file);
-            log.logInfo("-> found %s (skipped %s)",
-                    plural(fileReport.getSize(), "issue"),
-                    plural(fileReport.getDuplicatesSize(), "duplicate"));
+            log.logInfo(
+                    "-> found %s (skipped %s)",
+                    plural(fileReport.getSize(), "issue"), plural(fileReport.getDuplicatesSize(), "duplicate"));
 
             return Optional.of(fileReport);
-        }
-        catch (ParsingException exception) {
+        } catch (ParsingException exception) {
             log.logException(exception, "Parsing of file '%s' failed due to an exception:", file);
-        }
-        catch (ParsingCanceledException ignored) {
+        } catch (ParsingCanceledException ignored) {
             log.logInfo("Parsing of file %s has been canceled", file);
         }
         return Optional.empty();

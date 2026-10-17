@@ -6,7 +6,6 @@ import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.ReaderFactory;
 import edu.hm.hafner.analysis.Report;
-
 import java.io.Serial;
 import java.util.regex.Pattern;
 
@@ -18,6 +17,7 @@ import java.util.regex.Pattern;
 class DynamicDocumentParser extends IssueParser {
     @Serial
     private static final long serialVersionUID = -690643673847390322L;
+
     private final Pattern pattern;
     private static final int NO_LINE_NUMBER_AVAILABLE = 0;
 
@@ -45,8 +45,8 @@ class DynamicDocumentParser extends IssueParser {
         var matcher = pattern.matcher(reader.readString() + "\n");
 
         while (matcher.find()) {
-            expressionMatcher.createIssue(
-                    matcher, new IssueBuilder(), NO_LINE_NUMBER_AVAILABLE, reader.getFileName())
+            expressionMatcher
+                    .createIssue(matcher, new IssueBuilder(), NO_LINE_NUMBER_AVAILABLE, reader.getFileName())
                     .ifPresent(report::add);
 
             if (Thread.interrupted()) {

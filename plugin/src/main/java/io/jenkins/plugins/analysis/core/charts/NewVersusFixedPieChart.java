@@ -3,7 +3,6 @@ package io.jenkins.plugins.analysis.core.charts;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.echarts.PieChartModel;
 import edu.hm.hafner.echarts.PieData;
-
 import io.jenkins.plugins.echarts.JenkinsPalette;
 
 /**
@@ -28,7 +27,9 @@ public class NewVersusFixedPieChart {
         var model = new PieChartModel(Messages.NewVersusFixed_Name());
 
         model.add(new PieData(Messages.New_Warnings_Short(), newIssues.size()), JenkinsPalette.RED.normal());
-        model.add(new PieData(Messages.Outstanding_Warnings_Short(), outstandingIssues.size()), JenkinsPalette.YELLOW.normal());
+        model.add(
+                new PieData(Messages.Outstanding_Warnings_Short(), outstandingIssues.size()),
+                JenkinsPalette.YELLOW.normal());
         model.add(new PieData(Messages.Fixed_Warnings_Short(), fixedIssues.size()), JenkinsPalette.GREEN.normal());
 
         return model;

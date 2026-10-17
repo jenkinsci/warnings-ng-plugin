@@ -1,17 +1,14 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-
-import java.util.NoSuchElementException;
-
-import jenkins.model.Jenkins;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import io.jenkins.plugins.analysis.warnings.RegisteredParser.Descriptor;
 import io.jenkins.plugins.util.JenkinsFacade;
-
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
-import static org.mockito.Mockito.*;
+import java.util.NoSuchElementException;
+import jenkins.model.Jenkins;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class {@link RegisteredParser}.
@@ -73,7 +70,10 @@ class RegisteredParserTest {
 
             var descriptor = new Descriptor(jenkins);
             assertThat(descriptor.getId()).isEqualTo(Descriptor.ANALYSIS_MODEL_ID);
-            assertThat(descriptor.doFillAnalysisModelIdItems()).extracting(o -> o.value).first().isEqualTo("codeguru-security");
+            assertThat(descriptor.doFillAnalysisModelIdItems())
+                    .extracting(o -> o.value)
+                    .first()
+                    .isEqualTo("codeguru-security");
 
             when(jenkins.hasPermission(Jenkins.READ)).thenReturn(false);
             assertThat(descriptor.doFillAnalysisModelIdItems()).isEmpty();

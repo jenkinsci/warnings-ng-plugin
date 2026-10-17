@@ -1,10 +1,9 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-
-import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 /**
  * Representation of a table row displaying severity and package of an issue.
@@ -29,8 +28,7 @@ abstract class AbstractSeverityTableRow extends BaseIssuesTableRow {
         if (isDetailsRow()) {
             severity = StringUtils.EMPTY;
             packageName = StringUtils.EMPTY;
-        }
-        else {
+        } else {
             severity = getCellContent(SEVERITY);
             packageName = getCellContent(PACKAGE);
         }

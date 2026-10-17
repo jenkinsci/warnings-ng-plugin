@@ -1,17 +1,13 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import org.eclipse.collections.api.list.ImmutableList;
-
 import edu.hm.hafner.util.VisibleForTesting;
-
+import hudson.model.Run;
+import io.jenkins.plugins.forensics.reference.ReferenceBuild;
+import io.jenkins.plugins.util.QualityGateStatus;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import hudson.model.Run;
-
-import io.jenkins.plugins.forensics.reference.ReferenceBuild;
-import io.jenkins.plugins.util.QualityGateStatus;
+import org.eclipse.collections.api.list.ImmutableList;
 
 /**
  * Summary message of a static analysis run. This message is shown as part of the 'summary.jelly' information of the
@@ -48,7 +44,9 @@ public class SummaryModel {
     }
 
     @VisibleForTesting
-    SummaryModel(final StaticAnalysisLabelProvider labelProvider, final AnalysisResult result,
+    SummaryModel(
+            final StaticAnalysisLabelProvider labelProvider,
+            final AnalysisResult result,
             final LabelProviderFactoryFacade facade) {
         this.labelProvider = labelProvider;
         analysisResult = result;
@@ -165,9 +163,7 @@ public class SummaryModel {
     @SuppressWarnings("unused") // Called by jelly view
     public String getReferenceBuildLink() {
         return facade.getReferenceLink(
-                analysisResult.getReferenceBuild()
-                        .map(Run::getExternalizableId)
-                        .orElse("-"));
+                analysisResult.getReferenceBuild().map(Run::getExternalizableId).orElse("-"));
     }
 
     public boolean isZeroIssuesHighscore() {
@@ -210,9 +206,7 @@ public class SummaryModel {
      * @return the user name, or an empty string if not available
      */
     public String getResetBy() {
-        return getResetReferenceAction()
-                .map(ResetReferenceAction::getUserName)
-                .orElse("");
+        return getResetReferenceAction().map(ResetReferenceAction::getUserName).orElse("");
     }
 
     /**
@@ -221,9 +215,7 @@ public class SummaryModel {
      * @return the user ID, or an empty string if not available
      */
     public String getResetUserId() {
-        return getResetReferenceAction()
-                .map(ResetReferenceAction::getUserId)
-                .orElse("");
+        return getResetReferenceAction().map(ResetReferenceAction::getUserId).orElse("");
     }
 
     /**

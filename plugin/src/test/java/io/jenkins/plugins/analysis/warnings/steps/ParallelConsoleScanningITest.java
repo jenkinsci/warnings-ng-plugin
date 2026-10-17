@@ -1,19 +1,16 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
-import java.util.List;
-
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.jvnet.hudson.test.Issue;
-
-import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
-import org.jenkinsci.plugins.workflow.job.WorkflowJob;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
-
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import java.util.List;
+import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
+import org.jenkinsci.plugins.workflow.job.WorkflowJob;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.jvnet.hudson.test.Issue;
 
 /**
  * Integration and regression tests for JENKINS-55258 / GitHub issue #2707:
@@ -28,7 +25,8 @@ class ParallelConsoleScanningITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     @Issue("JENKINS-55258")
-    @DisplayName("scanForIssues isolates console logs per parallel branch, resolving files and multiline snippets correctly")
+    @DisplayName(
+            "scanForIssues isolates console logs per parallel branch, resolving files and multiline snippets correctly")
     void shouldIsolateParallelBranchConsoleScanning() throws Exception {
         WorkflowJob job = createPipeline();
         job.setDefinition(new CpsFlowDefinition(
@@ -59,7 +57,8 @@ class ParallelConsoleScanningITest extends IntegrationTestWithJenkinsPerSuite {
                         + ")\n"
                         + "node {\n"
                         + "  publishIssues issues: issuesList\n"
-                        + "}\n", true));
+                        + "}\n",
+                true));
 
         AnalysisResult result = scheduleSuccessfulBuild(job);
 
@@ -67,9 +66,13 @@ class ParallelConsoleScanningITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(result).hasTotalSize(2);
 
         var issueA = result.getIssues().stream()
-                .filter(i -> i.getFileName().endsWith("FileA.c")).findFirst().orElseThrow();
+                .filter(i -> i.getFileName().endsWith("FileA.c"))
+                .findFirst()
+                .orElseThrow();
         var issueB = result.getIssues().stream()
-                .filter(i -> i.getFileName().endsWith("FileB.c")).findFirst().orElseThrow();
+                .filter(i -> i.getFileName().endsWith("FileB.c"))
+                .findFirst()
+                .orElseThrow();
 
         // Multiline diagnostic snippets are preserved correctly within each branch
         assertThat(issueA.getMessage()).contains("int foo()").doesNotContain("int bar()");
@@ -109,16 +112,21 @@ class ParallelConsoleScanningITest extends IntegrationTestWithJenkinsPerSuite {
                         + "      }\n"
                         + "    }\n"
                         + "  }\n"
-                        + ")\n", true));
+                        + ")\n",
+                true));
 
         var build = buildSuccessfully(job);
         List<ResultAction> actions = build.getActions(ResultAction.class);
         assertThat(actions).hasSize(2);
 
         ResultAction actionA = actions.stream()
-                .filter(a -> "gcc-a".equals(a.getId())).findFirst().orElseThrow();
+                .filter(a -> "gcc-a".equals(a.getId()))
+                .findFirst()
+                .orElseThrow();
         ResultAction actionB = actions.stream()
-                .filter(a -> "gcc-b".equals(a.getId())).findFirst().orElseThrow();
+                .filter(a -> "gcc-b".equals(a.getId()))
+                .findFirst()
+                .orElseThrow();
 
         assertThat(actionA.getResult()).hasTotalSize(1);
         assertThat(actionA.getResult().getIssues().get(0).getFileName()).endsWith("FileA.c");
@@ -146,7 +154,8 @@ class ParallelConsoleScanningITest extends IntegrationTestWithJenkinsPerSuite {
                         + "    echo 'FileA.c:1:5: warning: message A [-Wextra]'\n"
                         + "    recordIssues tool: gcc()\n"
                         + "  }\n"
-                        + "}\n", true));
+                        + "}\n",
+                true));
 
         AnalysisResult result = scheduleSuccessfulBuild(job);
 
@@ -189,7 +198,8 @@ class ParallelConsoleScanningITest extends IntegrationTestWithJenkinsPerSuite {
                         + ")\n"
                         + "node {\n"
                         + "  publishIssues issues: issuesList\n"
-                        + "}\n", true));
+                        + "}\n",
+                true));
 
         AnalysisResult result = scheduleSuccessfulBuild(job);
 

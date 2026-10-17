@@ -1,28 +1,24 @@
 package io.jenkins.plugins.analysis.core.portlets;
 
 import com.google.gson.JsonObject;
-
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.echarts.Palette;
 import edu.hm.hafner.echarts.PieChartModel;
 import edu.hm.hafner.echarts.PieData;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import tools.jackson.databind.ObjectMapper;
-
-import org.kohsuke.stapler.bind.JavaScriptMethod;
-import org.jenkinsci.plugins.variant.OptionalExtension;
 import hudson.model.Run;
-
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.monitoring.MonitorPortlet;
 import io.jenkins.plugins.monitoring.MonitorPortletFactory;
 import io.jenkins.plugins.util.QualityGateStatus;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import org.jenkinsci.plugins.variant.OptionalExtension;
+import org.kohsuke.stapler.bind.JavaScriptMethod;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * A portlet that can be used for the

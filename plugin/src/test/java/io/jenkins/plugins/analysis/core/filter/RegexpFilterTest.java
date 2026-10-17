@@ -1,20 +1,17 @@
 package io.jenkins.plugins.analysis.core.filter;
 
-import org.apache.commons.lang3.StringUtils;
-import org.junit.jupiter.api.Test;
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
-
 import hudson.model.BuildableItem;
 import hudson.model.Item;
-
 import io.jenkins.plugins.analysis.core.filter.IncludeType.DescriptorImpl;
 import io.jenkins.plugins.util.JenkinsFacade;
-
-import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
-import static org.mockito.Mockito.*;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class {@link RegexpFilter}.
@@ -30,8 +27,12 @@ class RegexpFilterTest {
     void issue54035() {
         var report = new Report();
         report.add(ISSUE_BUILDER.setFileName("warning.txt").build());
-        report.add(ISSUE_BUILDER.setFileName("_build.external/mercury/Testing/na/na_test.c").build());
-        report.add(ISSUE_BUILDER.setFileName("@2/_build.external/pmix/src/mca/gds/gds.h").build());
+        report.add(ISSUE_BUILDER
+                .setFileName("_build.external/mercury/Testing/na/na_test.c")
+                .build());
+        report.add(ISSUE_BUILDER
+                .setFileName("@2/_build.external/pmix/src/mca/gds/gds.h")
+                .build());
 
         var filter = new ExcludeFile(".*_build\\.external\\/.*");
 

@@ -1,20 +1,17 @@
 package io.jenkins.plugins.archunit;
 
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.*;
+
 import com.tngtech.archunit.base.DescribedPredicate;
 import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.core.domain.JavaConstructorCall;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
-
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.archunit.ArchitectureRules;
-
-import java.util.List;
-
 import io.jenkins.plugins.util.PluginArchitectureRules;
-
-import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.*;
+import java.util.List;
 
 /**
  * Checks several architecture rules for the static analysis utilities.
@@ -30,9 +27,11 @@ final class PluginArchitectureTest {
 
     @ArchTest
     static final ArchRule NO_EXCEPTIONS_WITH_NO_ARG_CONSTRUCTOR = noClasses()
-            .that().haveSimpleNameNotContaining("Benchmark")
-            .should().callConstructorWhere(new ExceptionHasNoContext(List.of(
-                    ParsingCanceledException.class, IncompatibleClassChangeError.class)));
+            .that()
+            .haveSimpleNameNotContaining("Benchmark")
+            .should()
+            .callConstructorWhere(new ExceptionHasNoContext(
+                    List.of(ParsingCanceledException.class, IncompatibleClassChangeError.class)));
 
     @ArchTest
     static final ArchRule NO_PUBLIC_TEST_CLASSES = ArchitectureRules.NO_PUBLIC_TEST_CLASSES;
@@ -50,7 +49,8 @@ final class PluginArchitectureTest {
     static final ArchRule NO_FORBIDDEN_CLASSES_CALLED = ArchitectureRules.NO_FORBIDDEN_CLASSES_CALLED;
 
     @ArchTest
-    static final ArchRule ONLY_PACKAGE_PRIVATE_ARCHITECTURE_TESTS = ArchitectureRules.ONLY_PACKAGE_PRIVATE_ARCHITECTURE_TESTS;
+    static final ArchRule ONLY_PACKAGE_PRIVATE_ARCHITECTURE_TESTS =
+            ArchitectureRules.ONLY_PACKAGE_PRIVATE_ARCHITECTURE_TESTS;
 
     @ArchTest
     static final ArchRule NO_JENKINS_INSTANCE_CALL = PluginArchitectureRules.NO_JENKINS_INSTANCE_CALL;
@@ -59,16 +59,20 @@ final class PluginArchitectureTest {
     static final ArchRule NO_FORBIDDEN_PACKAGE_ACCESSED = PluginArchitectureRules.NO_FORBIDDEN_PACKAGE_ACCESSED;
 
     @ArchTest
-    static final ArchRule AJAX_PROXY_METHOD_MUST_BE_IN_PUBLIC_CLASS = PluginArchitectureRules.AJAX_PROXY_METHOD_MUST_BE_IN_PUBLIC_CLASS;
+    static final ArchRule AJAX_PROXY_METHOD_MUST_BE_IN_PUBLIC_CLASS =
+            PluginArchitectureRules.AJAX_PROXY_METHOD_MUST_BE_IN_PUBLIC_CLASS;
 
     @ArchTest
-    static final ArchRule DATA_BOUND_CONSTRUCTOR_MUST_BE_IN_PUBLIC_CLASS = PluginArchitectureRules.DATA_BOUND_CONSTRUCTOR_MUST_BE_IN_PUBLIC_CLASS;
+    static final ArchRule DATA_BOUND_CONSTRUCTOR_MUST_BE_IN_PUBLIC_CLASS =
+            PluginArchitectureRules.DATA_BOUND_CONSTRUCTOR_MUST_BE_IN_PUBLIC_CLASS;
 
     @ArchTest
-    static final ArchRule DATA_BOUND_SETTER_MUST_BE_IN_PUBLIC_CLASS = PluginArchitectureRules.DATA_BOUND_SETTER_MUST_BE_IN_PUBLIC_CLASS;
+    static final ArchRule DATA_BOUND_SETTER_MUST_BE_IN_PUBLIC_CLASS =
+            PluginArchitectureRules.DATA_BOUND_SETTER_MUST_BE_IN_PUBLIC_CLASS;
 
     @ArchTest
-    static final ArchRule USE_POST_FOR_VALIDATION_END_POINTS = PluginArchitectureRules.USE_POST_FOR_VALIDATION_END_POINTS;
+    static final ArchRule USE_POST_FOR_VALIDATION_END_POINTS =
+            PluginArchitectureRules.USE_POST_FOR_VALIDATION_END_POINTS;
 
     @ArchTest
     static final ArchRule USE_POST_FOR_LIST_MODELS_RULE = PluginArchitectureRules.USE_POST_FOR_LIST_AND_COMBOBOX_FILL;
@@ -87,8 +91,7 @@ final class PluginArchitectureTest {
             if (!target.getRawParameterTypes().isEmpty()) {
                 return false;
             }
-            return target.getOwner().isAssignableTo(Throwable.class)
-                    && !isPermittedException(target.getOwner());
+            return target.getOwner().isAssignableTo(Throwable.class) && !isPermittedException(target.getOwner());
         }
 
         private boolean isPermittedException(final JavaClass owner) {

@@ -16,16 +16,17 @@ public class Widget {
      * @param result the list of results to display in the widget.
      */
     public Widget(final List<ResultAction> result) {
-        failedResults = result.stream().filter(e -> e.getResult().getTotalSize() > 0).toList();
-        int failCount = failedResults.stream().map(e -> e.getResult().getTotalSize()).reduce(0, Integer::sum);
+        failedResults =
+                result.stream().filter(e -> e.getResult().getTotalSize() > 0).toList();
+        int failCount =
+                failedResults.stream().map(e -> e.getResult().getTotalSize()).reduce(0, Integer::sum);
         boolean isFailed = failCount > 0;
 
         this.symbol = isFailed ? "symbol-warning-outline plugin-ionicons-api" : "symbol-status-blue";
 
         if (isFailed) {
             lines.add(Messages.Widget_WarningsForThisBuild(failCount));
-        }
-        else {
+        } else {
             lines.add(Messages.Widget_AllClear());
             lines.add(Messages.Widget_NoWarningsForThisBuild());
         }

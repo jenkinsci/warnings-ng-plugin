@@ -1,12 +1,9 @@
 package io.jenkins.plugins.analysis.core.testutil;
 
-import org.assertj.core.api.AbstractAssert;
-
 import edu.hm.hafner.analysis.Report;
-
-import java.util.Objects;
-
 import io.jenkins.plugins.analysis.core.model.IssuesDetail;
+import java.util.Objects;
+import org.assertj.core.api.AbstractAssert;
 
 /**
  * Assertions for {@link IssuesDetail}.
@@ -92,7 +89,8 @@ public class IssuesDetailAssert extends AbstractAssert<IssuesDetailAssert, Issue
         isNotNull();
 
         if (!Objects.equals(actual.getFixedIssues(), expectedFixedIssues)) {
-            failWithMessage(EXPECTED_BUT_WAS_MESSAGE, "fixedIssues", actual, expectedFixedIssues, actual.getFixedIssues());
+            failWithMessage(
+                    EXPECTED_BUT_WAS_MESSAGE, "fixedIssues", actual, expectedFixedIssues, actual.getFixedIssues());
         }
         return this;
     }
@@ -111,7 +109,12 @@ public class IssuesDetailAssert extends AbstractAssert<IssuesDetailAssert, Issue
         isNotNull();
 
         if (!Objects.equals(actual.getOutstandingIssues(), expectedOutstandingIssues)) {
-            failWithMessage(EXPECTED_BUT_WAS_MESSAGE, "fixedIssues", actual, expectedOutstandingIssues, actual.getOutstandingIssues());
+            failWithMessage(
+                    EXPECTED_BUT_WAS_MESSAGE,
+                    "fixedIssues",
+                    actual,
+                    expectedOutstandingIssues,
+                    actual.getOutstandingIssues());
         }
         return this;
     }

@@ -4,20 +4,9 @@ import edu.hm.hafner.echarts.BuildResult;
 import edu.hm.hafner.echarts.ChartModelConfiguration;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
-
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.Optional;
-import tools.jackson.databind.ObjectMapper;
-import tools.jackson.databind.node.ObjectNode;
-
-import org.kohsuke.stapler.StaplerRequest2;
-import org.kohsuke.stapler.StaplerResponse2;
-import org.kohsuke.stapler.bind.JavaScriptMethod;
 import hudson.model.Action;
 import hudson.model.Job;
 import hudson.model.Run;
-
 import io.jenkins.plugins.analysis.core.charts.HealthTrendChart;
 import io.jenkins.plugins.analysis.core.charts.NewVersusFixedTrendChart;
 import io.jenkins.plugins.analysis.core.charts.SeverityTrendChart;
@@ -27,6 +16,14 @@ import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
 import io.jenkins.plugins.echarts.AsyncConfigurableTrendChart;
 import io.jenkins.plugins.util.ValidationUtilities;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.Optional;
+import org.kohsuke.stapler.StaplerRequest2;
+import org.kohsuke.stapler.StaplerResponse2;
+import org.kohsuke.stapler.bind.JavaScriptMethod;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ObjectNode;
 
 /**
  * A job action displays a link on the side panel of a job. This action also is responsible to render the historical
@@ -78,7 +75,10 @@ public class JobAction implements Action, AsyncConfigurableTrendChart {
      *        Use {@link #JobAction(Job, StaticAnalysisLabelProvider, int, TrendChartType, String)} instead.
      */
     @Deprecated
-    public JobAction(final Job<?, ?> owner, final StaticAnalysisLabelProvider labelProvider, final int numberOfTools,
+    public JobAction(
+            final Job<?, ?> owner,
+            final StaticAnalysisLabelProvider labelProvider,
+            final int numberOfTools,
             final TrendChartType trendChartType) {
         this(owner, labelProvider, numberOfTools, trendChartType, labelProvider.getId());
     }
@@ -97,8 +97,12 @@ public class JobAction implements Action, AsyncConfigurableTrendChart {
      * @param urlName
      *        the custom URL name of this action
      */
-    public JobAction(final Job<?, ?> owner, final StaticAnalysisLabelProvider labelProvider, final int numberOfTools,
-            final TrendChartType trendChartType, final String urlName) {
+    public JobAction(
+            final Job<?, ?> owner,
+            final StaticAnalysisLabelProvider labelProvider,
+            final int numberOfTools,
+            final TrendChartType trendChartType,
+            final String urlName) {
         VALIDATION_UTILITIES.ensureValidId(urlName);
 
         this.urlName = urlName;
@@ -166,8 +170,7 @@ public class JobAction implements Action, AsyncConfigurableTrendChart {
         Run<?, ?> lastBuild = owner.getLastBuild();
         if (lastBuild == null) {
             return new NullAnalysisHistory();
-        }
-        else {
+        } else {
             return new AnalysisHistory(lastBuild, new ByIdResultSelector(getId()));
         }
     }
@@ -204,8 +207,7 @@ public class JobAction implements Action, AsyncConfigurableTrendChart {
     public void doIndex(final StaplerRequest2 request, final StaplerResponse2 response) throws IOException {
         Optional<ResultAction> action = getLatestAction();
         if (action.isPresent()) {
-            response.sendRedirect2("../%d/%s".formatted(action.get().getOwner().getNumber(),
-                    getId()));
+            response.sendRedirect2("../%d/%s".formatted(action.get().getOwner().getNumber(), getId()));
         }
     }
 
@@ -235,8 +237,8 @@ public class JobAction implements Action, AsyncConfigurableTrendChart {
 
         var chartType = node == null ? "severity" : node.asString();
 
-        return objectMapper.writeValueAsString(selectChart(chartType).create(
-                createBuildHistory(), ChartModelConfiguration.fromJson(configuration)));
+        return objectMapper.writeValueAsString(
+                selectChart(chartType).create(createBuildHistory(), ChartModelConfiguration.fromJson(configuration)));
     }
 
     private TrendChart selectChart(final String chartType) {
@@ -255,8 +257,7 @@ public class JobAction implements Action, AsyncConfigurableTrendChart {
                 return new ToolsTrendChart(ToolNameRegistry.fromBuild(lastBuild).asMap());
             }
             return new ToolsTrendChart();
-        }
-        else {
+        } else {
             return new SeverityTrendChart();
         }
     }

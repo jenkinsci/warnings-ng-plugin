@@ -1,11 +1,10 @@
 package io.jenkins.plugins.analysis.core.testutil;
 
+import java.util.List;
+import java.util.Objects;
 import org.assertj.core.api.AbstractAssert;
 import org.assertj.core.util.Lists;
 import org.jfree.data.category.CategoryDataset;
-
-import java.util.List;
-import java.util.Objects;
 
 /**
  * Assertions for {@link CategoryDataset} instances.
@@ -38,7 +37,12 @@ public class CategoryDatasetAssertions extends AbstractAssert<CategoryDatasetAss
         }
 
         if (!Objects.equals(actualValues, expectedValues)) {
-            failWithMessage(EXPECTED_BUT_WAS_MESSAGE, "values", this.actual.getClass().getSimpleName(), expectedValues, actualValues);
+            failWithMessage(
+                    EXPECTED_BUT_WAS_MESSAGE,
+                    "values",
+                    this.actual.getClass().getSimpleName(),
+                    expectedValues,
+                    actualValues);
         }
 
         return this;

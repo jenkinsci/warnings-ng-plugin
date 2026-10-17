@@ -1,5 +1,11 @@
 package io.jenkins.plugins.analysis.core.util;
 
+import com.google.errorprone.annotations.MustBeClosed;
+import edu.hm.hafner.analysis.ParsingException;
+import edu.hm.hafner.analysis.ReaderFactory;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+import hudson.console.ConsoleNote;
+import hudson.model.Run;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -13,21 +19,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.regex.Pattern;
-
 import org.apache.commons.lang3.StringUtils;
 import org.jenkinsci.plugins.workflow.actions.LogAction;
 import org.jenkinsci.plugins.workflow.actions.ThreadNameAction;
 import org.jenkinsci.plugins.workflow.graph.BlockStartNode;
 import org.jenkinsci.plugins.workflow.graph.FlowNode;
-
-import com.google.errorprone.annotations.MustBeClosed;
-
-import edu.hm.hafner.analysis.ParsingException;
-import edu.hm.hafner.analysis.ReaderFactory;
-import edu.umd.cs.findbugs.annotations.CheckForNull;
-
-import hudson.console.ConsoleNote;
-import hudson.model.Run;
 
 /**
  * Provides a reader factory for Jenkins' console log. If a {@link FlowNode} is provided and is part of a parallel
@@ -38,13 +34,14 @@ import hudson.model.Run;
  */
 public class ConsoleLogReaderFactory extends ReaderFactory {
     private final Run<?, ?> run;
+
     @CheckForNull
     private final FlowNode flowNode;
 
-    private static final Pattern TIME_STAMPER_PREFIX
-            = Pattern.compile("\\[\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z] ");
-    private static final Function<String, String> REMOVE_TIME_STAMPER_PREFIX
-            = string -> TIME_STAMPER_PREFIX.matcher(string).replaceFirst(StringUtils.EMPTY);
+    private static final Pattern TIME_STAMPER_PREFIX =
+            Pattern.compile("\\[\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z] ");
+    private static final Function<String, String> REMOVE_TIME_STAMPER_PREFIX =
+            string -> TIME_STAMPER_PREFIX.matcher(string).replaceFirst(StringUtils.EMPTY);
 
     /**
      * Creates a new {@link ConsoleLogReaderFactory}.
@@ -106,8 +103,7 @@ public class ConsoleLogReaderFactory extends ReaderFactory {
         }
         try {
             return run.getLogReader();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new ParsingException(e);
         }
     }
@@ -134,10 +130,9 @@ public class ConsoleLogReaderFactory extends ReaderFactory {
                     }
                 }
             }
-            return Optional.of(new InputStreamReader(
-                    new ByteArrayInputStream(branchLog.toByteArray()), run.getCharset()));
-        }
-        catch (IOException e) {
+            return Optional.of(
+                    new InputStreamReader(new ByteArrayInputStream(branchLog.toByteArray()), run.getCharset()));
+        } catch (IOException e) {
             throw new ParsingException(e);
         }
     }
@@ -163,7 +158,8 @@ public class ConsoleLogReaderFactory extends ReaderFactory {
         var branchStartId = branchStart.getId();
         while (!queue.isEmpty()) {
             var curr = queue.poll();
-            if (!curr.equals(currentStep) && curr.getAllEnclosingIds().contains(branchStartId)
+            if (!curr.equals(currentStep)
+                    && curr.getAllEnclosingIds().contains(branchStartId)
                     && curr.getAction(LogAction.class) != null) {
                 stepsInBranch.add(curr);
             }
@@ -179,8 +175,7 @@ public class ConsoleLogReaderFactory extends ReaderFactory {
         stepsInBranch.sort((n1, n2) -> {
             try {
                 return Integer.compare(Integer.parseInt(n1.getId()), Integer.parseInt(n2.getId()));
-            }
-            catch (NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 return n1.getId().compareTo(n2.getId());
             }
         });

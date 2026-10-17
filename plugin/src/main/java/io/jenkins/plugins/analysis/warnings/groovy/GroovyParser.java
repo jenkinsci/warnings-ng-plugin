@@ -1,9 +1,5 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Strings;
-import org.codehaus.groovy.control.CompilationFailedException;
-
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.IssueParser;
@@ -11,19 +7,6 @@ import edu.hm.hafner.util.Ensure;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-
-import org.kohsuke.stapler.AncestorInPath;
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.verb.POST;
 import hudson.Extension;
 import hudson.model.BuildableItem;
 import hudson.model.Describable;
@@ -31,10 +14,23 @@ import hudson.model.Descriptor;
 import hudson.model.Item;
 import hudson.util.FormValidation;
 import hudson.util.FormValidation.Kind;
-import jenkins.model.Jenkins;
-
 import io.jenkins.plugins.util.JenkinsFacade;
 import io.jenkins.plugins.util.ValidationUtilities;
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+import jenkins.model.Jenkins;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
+import org.codehaus.groovy.control.CompilationFailedException;
+import org.kohsuke.stapler.AncestorInPath;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
 
 /**
  * Defines the properties of a warning parser that uses a Groovy script to parse the console log.
@@ -44,6 +40,7 @@ import io.jenkins.plugins.util.ValidationUtilities;
 public class GroovyParser implements Describable<GroovyParser>, Serializable {
     @Serial
     private static final long serialVersionUID = 2447124045452896581L;
+
     private static final ValidationUtilities VALIDATION_UTILITIES = new ValidationUtilities();
     static final int MAX_EXAMPLE_SIZE = 4096;
 
@@ -71,8 +68,8 @@ public class GroovyParser implements Describable<GroovyParser>, Serializable {
      *         the example to verify the parser
      */
     @DataBoundConstructor
-    public GroovyParser(final String id, final String name,
-            final String regexp, final String script, final String example) {
+    public GroovyParser(
+            final String id, final String name, final String regexp, final String script, final String example) {
         super();
 
         VALIDATION_UTILITIES.ensureValidId(id);
@@ -201,8 +198,7 @@ public class GroovyParser implements Describable<GroovyParser>, Serializable {
 
         if (hasMultiLineSupport()) {
             return new DynamicDocumentParser(regexp, script);
-        }
-        else {
+        } else {
             return new DynamicLineParser(regexp, script);
         }
     }
@@ -225,8 +221,8 @@ public class GroovyParser implements Describable<GroovyParser>, Serializable {
     public static class DescriptorImpl extends Descriptor<GroovyParser> {
         private static final String NEWLINE = "\n";
         private static final int MAX_MESSAGE_LENGTH = 60;
-        private static final FormValidation NO_RUN_SCRIPT_PERMISSION_WARNING
-                = FormValidation.warning(Messages.GroovyParser_Warning_NoRunScriptPermission());
+        private static final FormValidation NO_RUN_SCRIPT_PERMISSION_WARNING =
+                FormValidation.warning(Messages.GroovyParser_Warning_NoRunScriptPermission());
         private final JenkinsFacade jenkinsFacade;
 
         /**
@@ -254,8 +250,8 @@ public class GroovyParser implements Describable<GroovyParser>, Serializable {
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckId(@AncestorInPath final BuildableItem project,
-                @QueryParameter(required = true) final String id) {
+        public FormValidation doCheckId(
+                @AncestorInPath final BuildableItem project, @QueryParameter(required = true) final String id) {
             if (!jenkinsFacade.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
@@ -273,8 +269,8 @@ public class GroovyParser implements Describable<GroovyParser>, Serializable {
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckName(@AncestorInPath final BuildableItem project,
-                @QueryParameter(required = true) final String name) {
+        public FormValidation doCheckName(
+                @AncestorInPath final BuildableItem project, @QueryParameter(required = true) final String name) {
             if (!jenkinsFacade.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
@@ -300,8 +296,8 @@ public class GroovyParser implements Describable<GroovyParser>, Serializable {
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckRegexp(@AncestorInPath final BuildableItem project,
-                @QueryParameter(required = true) final String regexp) {
+        public FormValidation doCheckRegexp(
+                @AncestorInPath final BuildableItem project, @QueryParameter(required = true) final String regexp) {
             if (!jenkinsFacade.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
@@ -318,8 +314,7 @@ public class GroovyParser implements Describable<GroovyParser>, Serializable {
                 Ensure.that(pattern).isNotNull();
 
                 return FormValidation.ok();
-            }
-            catch (PatternSyntaxException exception) {
+            } catch (PatternSyntaxException exception) {
                 return FormValidation.error(
                         Messages.GroovyParser_Error_Regexp_invalid(exception.getLocalizedMessage()));
             }
@@ -336,8 +331,8 @@ public class GroovyParser implements Describable<GroovyParser>, Serializable {
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckScript(@AncestorInPath final BuildableItem project,
-                @QueryParameter(required = true) final String script) {
+        public FormValidation doCheckScript(
+                @AncestorInPath final BuildableItem project, @QueryParameter(required = true) final String script) {
             if (!jenkinsFacade.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
@@ -358,8 +353,7 @@ public class GroovyParser implements Describable<GroovyParser>, Serializable {
                 Ensure.that(compiled).isNotNull();
 
                 return FormValidation.ok();
-            }
-            catch (CompilationFailedException exception) {
+            } catch (CompilationFailedException exception) {
                 return FormValidation.error(
                         Messages.GroovyParser_Error_Script_invalid(exception.getLocalizedMessage()));
             }
@@ -380,9 +374,11 @@ public class GroovyParser implements Describable<GroovyParser>, Serializable {
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckExample(@AncestorInPath final BuildableItem project,
+        public FormValidation doCheckExample(
+                @AncestorInPath final BuildableItem project,
                 @QueryParameter final String example,
-                @QueryParameter final String regexp, @QueryParameter final String script) {
+                @QueryParameter final String regexp,
+                @QueryParameter final String script) {
             if (!jenkinsFacade.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
@@ -400,8 +396,7 @@ public class GroovyParser implements Describable<GroovyParser>, Serializable {
                 }
                 return FormValidation.aggregate(Arrays.asList(
                         FormValidation.warning(Messages.GroovyParser_long_examples_will_be_truncated()), response));
-            }
-            else {
+            } else {
                 return FormValidation.ok();
             }
         }
@@ -421,13 +416,12 @@ public class GroovyParser implements Describable<GroovyParser>, Serializable {
          * @return a result of {@link Kind#OK} if a warning has been found
          */
         @SuppressWarnings({"illegalcatch", "PMD.AvoidDeeplyNestedIfStmts"})
-        private FormValidation parseExample(final String script, final String example, final String regexp,
-                final boolean hasMultiLineSupport) {
+        private FormValidation parseExample(
+                final String script, final String example, final String regexp, final boolean hasMultiLineSupport) {
             Pattern pattern;
             if (hasMultiLineSupport) {
                 pattern = Pattern.compile(regexp, Pattern.MULTILINE);
-            }
-            else {
+            } else {
                 pattern = Pattern.compile(regexp);
             }
             var matcher = pattern.matcher(example);
@@ -443,14 +437,11 @@ public class GroovyParser implements Describable<GroovyParser>, Serializable {
                         }
                     }
                     return FormValidation.error(Messages.GroovyParser_Error_Example_wrongReturnType(result));
-                }
-                else {
+                } else {
                     return FormValidation.error(Messages.GroovyParser_Error_Example_regexpDoesNotMatch());
                 }
-            }
-            catch (Exception exception) { // catch all exceptions thrown by the Groovy script
-                return FormValidation.error(
-                        Messages.GroovyParser_Error_Example_exception(exception.getMessage()));
+            } catch (Exception exception) { // catch all exceptions thrown by the Groovy script
+                return FormValidation.error(Messages.GroovyParser_Error_Example_exception(exception.getMessage()));
             }
         }
 
@@ -474,8 +465,7 @@ public class GroovyParser implements Describable<GroovyParser>, Serializable {
                 okMessage.append(message, 0, size);
                 okMessage.append("[...]");
                 okMessage.append(message, message.length() - size, message.length());
-            }
-            else {
+            } else {
                 okMessage.append(message);
             }
         }

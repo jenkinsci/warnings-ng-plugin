@@ -1,13 +1,14 @@
 package io.jenkins.plugins.analysis.warnings.tasks;
 
-import org.junit.jupiter.api.Test;
+import static edu.hm.hafner.analysis.assertions.Assertions.*;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.ResourceTest;
-
+import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.CaseMode;
+import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.MatcherMode;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.StringReader;
@@ -17,11 +18,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.CaseMode;
-import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.MatcherMode;
-
-import static edu.hm.hafner.analysis.assertions.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class {@link TaskScanner}.
@@ -52,22 +49,23 @@ class TaskScannerTest extends ResourceTest {
         var pathToFile = getResourceAsFile("file-with-strange-characters.txt");
         var report = scanner.scan(pathToFile, StandardCharsets.UTF_8);
 
-        assertThat(report.getErrorMessages()).isNotEmpty().contains("Can't read source file '"
-                + pathToFile
-                + "', defined encoding 'UTF-8' seems to be wrong");
+        assertThat(report.getErrorMessages())
+                .isNotEmpty()
+                .contains("Can't read source file '" + pathToFile + "', defined encoding 'UTF-8' seems to be wrong");
     }
 
     @Test
     void shouldReportErrorIfPatternIsInvalid() {
-        var scanner = new TaskScannerBuilder().setHighTasks("[)")
+        var scanner = new TaskScannerBuilder()
+                .setHighTasks("[)")
                 .setMatcherMode(MatcherMode.REGEXP_MATCH)
                 .build();
 
         var report = scanner.scanTasks(read(FILE_WITH_TASKS), ISSUE_BUILDER);
 
         assertThat(report).hasSize(0);
-        var errorMessage = "Specified pattern is an invalid regular expression: '[)': "
-                + "'Unclosed character class near index 1";
+        var errorMessage =
+                "Specified pattern is an invalid regular expression: '[)': " + "'Unclosed character class near index 1";
         assertThat(report.getErrorMessages()).hasSize(1);
         assertThat(report.getErrorMessages().get(0)).startsWith(errorMessage);
 
@@ -90,23 +88,28 @@ class TaskScannerTest extends ResourceTest {
                 .scanTasks(read("regexp.txt"), ISSUE_BUILDER);
 
         assertThat(tasks).hasSize(5);
-        assertThat(tasks.get(0)).hasSeverity(Severity.WARNING_HIGH)
+        assertThat(tasks.get(0))
+                .hasSeverity(Severity.WARNING_HIGH)
                 .hasType("TODO1")
                 .hasLineStart(1)
                 .hasMessage("erstes");
-        assertThat(tasks.get(1)).hasSeverity(Severity.WARNING_HIGH)
+        assertThat(tasks.get(1))
+                .hasSeverity(Severity.WARNING_HIGH)
                 .hasType("TODO2")
                 .hasLineStart(2)
                 .hasMessage("zweites");
-        assertThat(tasks.get(2)).hasSeverity(Severity.WARNING_HIGH)
+        assertThat(tasks.get(2))
+                .hasSeverity(Severity.WARNING_HIGH)
                 .hasType("TODO3")
                 .hasLineStart(3)
                 .hasMessage("drittes");
-        assertThat(tasks.get(3)).hasSeverity(Severity.WARNING_HIGH)
+        assertThat(tasks.get(3))
+                .hasSeverity(Severity.WARNING_HIGH)
                 .hasType("TODO4")
                 .hasLineStart(4)
                 .hasMessage("viertes");
-        assertThat(tasks.get(4)).hasSeverity(Severity.WARNING_HIGH)
+        assertThat(tasks.get(4))
+                .hasSeverity(Severity.WARNING_HIGH)
                 .hasType("TODO20")
                 .hasLineStart(5)
                 .hasMessage("zwanzigstes");
@@ -117,7 +120,8 @@ class TaskScannerTest extends ResourceTest {
      *
      * @see <a href="https://issues.jenkins-ci.org/browse/JENKINS-64622">Issue 64622</a>
      */
-    @Test @org.junitpioneer.jupiter.Issue("JENKINS-64622")
+    @Test
+    @org.junitpioneer.jupiter.Issue("JENKINS-64622")
     void shouldHandleEmptyMatchWithRegExp() {
         var tasks = new TaskScannerBuilder()
                 .setHighTasks("(a)?(b)?.*")
@@ -133,7 +137,8 @@ class TaskScannerTest extends ResourceTest {
      *
      * @see <a href="https://issues.jenkins-ci.org/browse/JENKINS-22744">Issue 22744</a>
      */
-    @Test @org.junitpioneer.jupiter.Issue("JENKINS-22744")
+    @Test
+    @org.junitpioneer.jupiter.Issue("JENKINS-22744")
     void issue22744() {
         var tasks = new TaskScannerBuilder()
                 .setHighTasks("FIXME")
@@ -145,11 +150,13 @@ class TaskScannerTest extends ResourceTest {
                 .scanTasks(read("issue22744.java", "windows-1251"), ISSUE_BUILDER);
 
         assertThat(tasks).hasSize(2);
-        assertThat(tasks.get(0)).hasSeverity(Severity.WARNING_HIGH)
+        assertThat(tasks.get(0))
+                .hasSeverity(Severity.WARNING_HIGH)
                 .hasType("FIXME")
                 .hasLineStart(4)
                 .hasMessage("\u0442\u0435\u0441\u0442\u0438\u0440\u043e\u0432\u0430\u043d\u0438\u0435 Jenkins");
-        assertThat(tasks.get(1)).hasSeverity(Severity.WARNING_NORMAL)
+        assertThat(tasks.get(1))
+                .hasSeverity(Severity.WARNING_NORMAL)
                 .hasType("TODO")
                 .hasLineStart(5)
                 .hasMessage(
@@ -190,8 +197,7 @@ class TaskScannerTest extends ResourceTest {
                 .scanTasks(read("tasks-words-test.txt"), ISSUE_BUILDER);
 
         assertThat(tasks).hasSize(12);
-        assertThatReportHasSeverities(tasks,
-                0, 0, 7, 5);
+        assertThatReportHasSeverities(tasks, 0, 0, 7, 5);
     }
 
     /**
@@ -254,7 +260,8 @@ class TaskScannerTest extends ResourceTest {
      */
     @Test
     void shouldUseDefaults() {
-        var tasks = new TaskScannerBuilder().setHighTasks("FIXME")
+        var tasks = new TaskScannerBuilder()
+                .setHighTasks("FIXME")
                 .setNormalTasks("TODO")
                 .setLowTasks("@deprecated")
                 .setCaseMode(CaseMode.CASE_SENSITIVE)
@@ -273,7 +280,8 @@ class TaskScannerTest extends ResourceTest {
      */
     @Test
     void shouldFindHighPriority() {
-        var tasks = new TaskScannerBuilder().setHighTasks(FIXME)
+        var tasks = new TaskScannerBuilder()
+                .setHighTasks(FIXME)
                 .setCaseMode(CaseMode.CASE_SENSITIVE)
                 .setMatcherMode(MatcherMode.STRING_MATCH)
                 .build()
@@ -288,7 +296,8 @@ class TaskScannerTest extends ResourceTest {
      */
     @Test
     void shouldIgnoreSpaceInTags() {
-        var tasks = new TaskScannerBuilder().setHighTasks(" FIXME , TODO ")
+        var tasks = new TaskScannerBuilder()
+                .setHighTasks(" FIXME , TODO ")
                 .setCaseMode(CaseMode.CASE_SENSITIVE)
                 .setMatcherMode(MatcherMode.STRING_MATCH)
                 .build()
@@ -303,7 +312,8 @@ class TaskScannerTest extends ResourceTest {
      */
     @Test
     void shouldHaveTwoItemsWithHighPriority() {
-        var tasks = new TaskScannerBuilder().setHighTasks("FIXME,TODO")
+        var tasks = new TaskScannerBuilder()
+                .setHighTasks("FIXME,TODO")
                 .setCaseMode(CaseMode.CASE_SENSITIVE)
                 .setMatcherMode(MatcherMode.STRING_MATCH)
                 .build()
@@ -349,7 +359,8 @@ class TaskScannerTest extends ResourceTest {
      */
     @Test
     void shouldScanAllPriorities() {
-        var tasks = new TaskScannerBuilder().setHighTasks(FIXME)
+        var tasks = new TaskScannerBuilder()
+                .setHighTasks(FIXME)
                 .setNormalTasks("FIXME,TODO")
                 .setLowTasks("TODO")
                 .setCaseMode(CaseMode.CASE_SENSITIVE)
@@ -366,7 +377,8 @@ class TaskScannerTest extends ResourceTest {
      */
     @Test
     void shouldScanFileWithoutTasks() {
-        var tasks = new TaskScannerBuilder().setHighTasks("FIXME")
+        var tasks = new TaskScannerBuilder()
+                .setHighTasks("FIXME")
                 .setNormalTasks("TODO")
                 .setLowTasks("@deprecated")
                 .setCaseMode(CaseMode.CASE_SENSITIVE)
@@ -382,7 +394,8 @@ class TaskScannerTest extends ResourceTest {
      */
     @Test
     void shouldIgnoreItsOwnConfigurationWithIgnoreSectionMark() {
-        var tasks = new TaskScannerBuilder().setHighTasks("FIXME")
+        var tasks = new TaskScannerBuilder()
+                .setHighTasks("FIXME")
                 .setNormalTasks("TODO")
                 .setLowTasks("REVIEW")
                 .setHighTasks("FIXME")
@@ -410,8 +423,12 @@ class TaskScannerTest extends ResourceTest {
         return file.collect(Collectors.toList()).iterator();
     }
 
-    private void assertThatReportHasSeverities(final Report report, final int expectedSizeError,
-            final int expectedSizeHigh, final int expectedSizeNormal, final int expectedSizeLow) {
+    private void assertThatReportHasSeverities(
+            final Report report,
+            final int expectedSizeError,
+            final int expectedSizeHigh,
+            final int expectedSizeNormal,
+            final int expectedSizeLow) {
         assertThat(report.getSizeOf(Severity.ERROR)).isEqualTo(expectedSizeError);
         assertThat(report.getSizeOf(Severity.WARNING_HIGH)).isEqualTo(expectedSizeHigh);
         assertThat(report.getSizeOf(Severity.WARNING_NORMAL)).isEqualTo(expectedSizeNormal);

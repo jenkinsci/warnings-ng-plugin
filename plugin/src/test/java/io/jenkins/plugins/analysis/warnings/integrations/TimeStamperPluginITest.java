@@ -1,16 +1,13 @@
 package io.jenkins.plugins.analysis.warnings.integrations;
 
-import org.junit.jupiter.api.Test;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.PathUtil;
-
-import org.jenkinsci.plugins.workflow.job.WorkflowJob;
-
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
-
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import org.jenkinsci.plugins.workflow.job.WorkflowJob;
+import org.junit.jupiter.api.Test;
 
 /**
  * Integration test for the use of the warnings-ng plugin together with the timestamper plugin.
@@ -65,7 +62,8 @@ class TimeStamperPluginITest extends IntegrationTestWithJenkinsPerSuite {
     /**
      * Tests JENKINS-56484: Error while parsing clang errors with active timestamper plugin.
      */
-    @Test @org.junitpioneer.jupiter.Issue("JENKINS-56484")
+    @Test
+    @org.junitpioneer.jupiter.Issue("JENKINS-56484")
     void shouldCorrectlyParseClangErrors() {
         var project = createPipeline();
 

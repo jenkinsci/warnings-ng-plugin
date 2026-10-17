@@ -1,27 +1,18 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import org.apache.commons.lang3.StringUtils;
+import static edu.hm.hafner.analysis.registry.DryDescriptor.*;
+import static io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner.DryLabelProvider.*;
+import static j2html.TagCreator.*;
 
 import edu.hm.hafner.analysis.DuplicationGroup;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.registry.ParserDescriptor.Option;
 import edu.hm.hafner.util.VisibleForTesting;
-
-import j2html.tags.UnescapedText;
-import java.io.Serial;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.kohsuke.stapler.AncestorInPath;
-import org.kohsuke.stapler.DataBoundSetter;
-import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.verb.POST;
 import hudson.model.BuildableItem;
 import hudson.model.Item;
 import hudson.model.Run;
 import hudson.util.FormValidation;
-
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.DescriptionProvider;
 import io.jenkins.plugins.analysis.core.model.DetailsTableModel;
@@ -33,10 +24,15 @@ import io.jenkins.plugins.datatables.TableColumn.ColumnBuilder;
 import io.jenkins.plugins.datatables.TableColumn.ColumnCss;
 import io.jenkins.plugins.prism.Sanitizer;
 import io.jenkins.plugins.util.JenkinsFacade;
-
-import static edu.hm.hafner.analysis.registry.DryDescriptor.*;
-import static io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner.DryLabelProvider.*;
-import static j2html.TagCreator.*;
+import j2html.tags.UnescapedText;
+import java.io.Serial;
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.commons.lang3.StringUtils;
+import org.kohsuke.stapler.AncestorInPath;
+import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
 
 /**
  * Provides settings for duplicate code scanners.
@@ -56,9 +52,10 @@ public abstract class DuplicateCodeScanner extends AnalysisModelParser {
 
     @Override
     protected Option[] configureOptions() {
-        return new Option[]{
-                new Option(HIGH_OPTION_KEY, String.valueOf(getHighThreshold())),
-                new Option(NORMAL_OPTION_KEY, String.valueOf(getNormalThreshold()))};
+        return new Option[] {
+            new Option(HIGH_OPTION_KEY, String.valueOf(getHighThreshold())),
+            new Option(NORMAL_OPTION_KEY, String.valueOf(getNormalThreshold()))
+        };
     }
 
     /**
@@ -114,8 +111,7 @@ public abstract class DuplicateCodeScanner extends AnalysisModelParser {
             var properties = issue.getAdditionalProperties();
             if (properties instanceof DuplicationGroup group) {
                 return pre().with(new UnescapedText(getCodeFragment(group))).renderFormatted();
-            }
-            else {
+            } else {
                 return super.getDescription(issue);
             }
         }
@@ -130,8 +126,7 @@ public abstract class DuplicateCodeScanner extends AnalysisModelParser {
         }
 
         @Override
-        public DetailsTableModel getIssuesModel(final Run<?, ?> build, final String url,
-                final Report report) {
+        public DetailsTableModel getIssuesModel(final Run<?, ?> build, final String url, final Report report) {
             return new DryModel(report, getFileNameRenderer(build), getAgeBuilder(build, url), this);
         }
 
@@ -145,8 +140,8 @@ public abstract class DuplicateCodeScanner extends AnalysisModelParser {
                 List<Issue> duplications = group.getDuplications();
                 duplications.remove(issue); // do not show reference to this issue
 
-                return ul(
-                        each(duplications, link -> li(fileNameRenderer.createAffectedFileLink(link, prefix)))).render();
+                return ul(each(duplications, link -> li(fileNameRenderer.createAffectedFileLink(link, prefix))))
+                        .render();
             }
             return "-";
         }
@@ -190,7 +185,8 @@ public abstract class DuplicateCodeScanner extends AnalysisModelParser {
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckHighThreshold(@AncestorInPath final BuildableItem project,
+        public FormValidation doCheckHighThreshold(
+                @AncestorInPath final BuildableItem project,
                 @QueryParameter("highThreshold") final int highThreshold,
                 @QueryParameter("normalThreshold") final int normalThreshold) {
             if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
@@ -212,7 +208,8 @@ public abstract class DuplicateCodeScanner extends AnalysisModelParser {
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckNormalThreshold(@AncestorInPath final BuildableItem project,
+        public FormValidation doCheckNormalThreshold(
+                @AncestorInPath final BuildableItem project,
                 @QueryParameter("highThreshold") final int highThreshold,
                 @QueryParameter("normalThreshold") final int normalThreshold) {
             if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
@@ -322,14 +319,21 @@ public abstract class DuplicateCodeScanner extends AnalysisModelParser {
      * Provides a table that contains the duplication references as well.
      */
     public static class DryModel extends DetailsTableModel {
-        DryModel(final Report report, final FileNameRenderer fileNameRenderer, final AgeBuilder ageBuilder,
+        DryModel(
+                final Report report,
+                final FileNameRenderer fileNameRenderer,
+                final AgeBuilder ageBuilder,
                 final DescriptionProvider descriptionProvider) {
             super(report, fileNameRenderer, ageBuilder, descriptionProvider, new JenkinsFacade());
         }
 
         @VisibleForTesting
-        DryModel(final Report report, final FileNameRenderer fileNameRenderer, final AgeBuilder ageBuilder,
-                final DescriptionProvider descriptionProvider, final JenkinsFacade jenkinsFacade) {
+        DryModel(
+                final Report report,
+                final FileNameRenderer fileNameRenderer,
+                final AgeBuilder ageBuilder,
+                final DescriptionProvider descriptionProvider,
+                final JenkinsFacade jenkinsFacade) {
             super(report, fileNameRenderer, ageBuilder, descriptionProvider, jenkinsFacade);
         }
 
@@ -347,18 +351,21 @@ public abstract class DuplicateCodeScanner extends AnalysisModelParser {
             if (getReport().hasPackages()) {
                 columns.add(createPackageColumn());
             }
-            var severity = new ColumnBuilder().withHeaderLabel(Messages.DRY_Table_Column_Severity())
+            var severity = new ColumnBuilder()
+                    .withHeaderLabel(Messages.DRY_Table_Column_Severity())
                     .withDataPropertyKey("severity")
                     .withResponsivePriority(100)
                     .build();
             columns.add(severity);
-            var linesCount = new ColumnBuilder().withHeaderLabel(Messages.DRY_Table_Column_LinesCount())
+            var linesCount = new ColumnBuilder()
+                    .withHeaderLabel(Messages.DRY_Table_Column_LinesCount())
                     .withDataPropertyKey("linesCount")
                     .withResponsivePriority(5)
                     .withHeaderClass(ColumnCss.NUMBER)
                     .build();
             columns.add(linesCount);
-            var duplicatedIn = new ColumnBuilder().withHeaderLabel(Messages.DRY_Table_Column_DuplicatedIn())
+            var duplicatedIn = new ColumnBuilder()
+                    .withHeaderLabel(Messages.DRY_Table_Column_DuplicatedIn())
                     .withDataPropertyKey("duplicatedIn")
                     .withResponsivePriority(50)
                     .build();
@@ -369,8 +376,8 @@ public abstract class DuplicateCodeScanner extends AnalysisModelParser {
 
         @Override
         public DuplicationRow getRow(final Issue issue) {
-            var row = new DuplicationRow(getAgeBuilder(), getFileNameRenderer(), getDescriptionProvider(),
-                    issue, getJenkinsFacade());
+            var row = new DuplicationRow(
+                    getAgeBuilder(), getFileNameRenderer(), getDescriptionProvider(), issue, getJenkinsFacade());
             row.setPackageName(issue);
             row.setSeverity(issue);
             row.setLinesCount(String.valueOf(issue.getLineEnd() - issue.getLineStart() + 1));
@@ -388,9 +395,12 @@ public abstract class DuplicateCodeScanner extends AnalysisModelParser {
             private String linesCount;
             private String duplicatedIn;
 
-            DuplicationRow(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
+            DuplicationRow(
+                    final AgeBuilder ageBuilder,
+                    final FileNameRenderer fileNameRenderer,
                     final DescriptionProvider descriptionProvider,
-                    final Issue issue, final JenkinsFacade jenkinsFacade) {
+                    final Issue issue,
+                    final JenkinsFacade jenkinsFacade) {
                 super(ageBuilder, fileNameRenderer, descriptionProvider, issue, jenkinsFacade);
             }
 

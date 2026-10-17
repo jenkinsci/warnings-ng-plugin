@@ -1,16 +1,13 @@
 package io.jenkins.plugins.analysis.core.filter;
 
-import org.apache.commons.io.FilenameUtils;
-
 import edu.hm.hafner.util.FilteredLog;
-
+import hudson.FilePath;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
-
-import hudson.FilePath;
+import org.apache.commons.io.FilenameUtils;
 
 /**
  * Bundles filter configuration for issue scanning. Groups regex-based filters and an optional
@@ -19,9 +16,7 @@ import hudson.FilePath;
  * @param filters     the list of regular expression filters to apply to issues
  * @param filesFilter an optional path to a file that lists the files to include
  */
-public record FilterConfig(
-        List<RegexpFilter> filters,
-        String filesFilter) implements Serializable {
+public record FilterConfig(List<RegexpFilter> filters, String filesFilter) implements Serializable {
     private static final Logger LOGGER = Logger.getLogger(FilterConfig.class.getName());
 
     /**
@@ -63,9 +58,10 @@ public record FilterConfig(
         if (safePath == null) {
             // Also reported to the system log: an administrator should see rejected paths even if the
             // build (and with it the console log) is discarded later on.
-            LOGGER.warning(() -> String.format(
-                    "Rejected unsafe filter file path in plugin configuration: '%s'", filesFilter));
-            log.logError("Rejected the filter file path '%s': only relative paths within the workspace are supported",
+            LOGGER.warning(
+                    () -> String.format("Rejected unsafe filter file path in plugin configuration: '%s'", filesFilter));
+            log.logError(
+                    "Rejected the filter file path '%s': only relative paths within the workspace are supported",
                     filesFilter);
 
             return new NullFileNameFilter();
@@ -77,9 +73,9 @@ public record FilterConfig(
             if (!workspace.isDescendant(safePath)) {
                 LOGGER.warning(() -> String.format(
                         "Blocked potential path traversal attempt in plugin configuration. Target path '%s' is outside of workspace '%s'",
-                        filesFilter, workspace.getRemote()
-                ));
-                log.logError("Blocked the filter file '%s': it resolves to a path outside of the workspace '%s'",
+                        filesFilter, workspace.getRemote()));
+                log.logError(
+                        "Blocked the filter file '%s': it resolves to a path outside of the workspace '%s'",
                         filesFilter, workspace.getRemote());
 
                 return new NullFileNameFilter();
@@ -87,8 +83,7 @@ public record FilterConfig(
 
             var files = readFileNames(workspace.child(safePath));
             if (files.isEmpty()) {
-                log.logInfo("The filter file '%s' does not list any file name, no issues will be removed",
-                        filesFilter);
+                log.logInfo("The filter file '%s' does not list any file name, no issues will be removed", filesFilter);
 
                 return new NullFileNameFilter();
             }
@@ -96,8 +91,7 @@ public record FilterConfig(
             log.logInfo("Restricting issues to the %d files listed in '%s'", files.size(), filesFilter);
 
             return new FileNameFilter(files);
-        }
-        catch (IOException | InterruptedException exception) {
+        } catch (IOException | InterruptedException exception) {
             log.logException(exception, "Cannot read the filter file '%s'", filesFilter);
 
             return new NullFileNameFilter();
@@ -132,8 +126,6 @@ public record FilterConfig(
     }
 
     private boolean isAbsolute(final String path) {
-        return path.startsWith("/")
-                || path.startsWith("\\")
-                || path.matches("^[A-Za-z]:[/\\\\].*");
+        return path.startsWith("/") || path.startsWith("\\") || path.matches("^[A-Za-z]:[/\\\\].*");
     }
 }

@@ -1,13 +1,11 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import org.junit.jupiter.api.Test;
-
-import java.util.HashMap;
-import java.util.Map;
+import static org.assertj.core.api.Assertions.*;
 
 import io.jenkins.plugins.analysis.core.steps.ScanForIssuesStep.Descriptor;
-
-import static org.assertj.core.api.Assertions.*;
+import java.util.HashMap;
+import java.util.Map;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class {@link AnalysisStepDescriptor}.

@@ -1,10 +1,9 @@
 package io.jenkins.plugins.analysis.core.testutil;
 
-import org.eclipse.collections.impl.factory.Lists;
+import static org.mockito.Mockito.*;
 
 import hudson.model.Job;
 import hudson.model.Run;
-
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.JobAction;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
@@ -12,8 +11,7 @@ import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.ToolSelection;
 import io.jenkins.plugins.analysis.core.util.IssuesStatisticsBuilder;
-
-import static org.mockito.Mockito.*;
+import org.eclipse.collections.impl.factory.Lists;
 
 /**
  * Creates job stubs that contain static analysis results.
@@ -146,14 +144,14 @@ public final class JobStubs {
      *
      * @return the {@link ResultAction} stub
      */
-    public static ResultAction createAction(final String id, final String name,
-            final int totalSize, final int newSize, final int fixedSize) {
+    public static ResultAction createAction(
+            final String id, final String name, final int totalSize, final int newSize, final int fixedSize) {
         AnalysisResult result = mock(AnalysisResult.class);
         when(result.getTotalSize()).thenReturn(totalSize);
         when(result.getNewSize()).thenReturn(newSize);
         when(result.getFixedSize()).thenReturn(fixedSize);
-        when(result.getTotals()).thenReturn(
-                new IssuesStatisticsBuilder()
+        when(result.getTotals())
+                .thenReturn(new IssuesStatisticsBuilder()
                         .setTotalNormalSize(totalSize)
                         .setNewNormalSize(newSize)
                         .setFixedSize(fixedSize)

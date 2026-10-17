@@ -1,28 +1,24 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import org.apache.commons.lang3.StringUtils;
-import org.eclipse.collections.api.RichIterable;
-import org.eclipse.collections.api.multimap.MutableMultimap;
-import org.eclipse.collections.impl.factory.Lists;
-import org.eclipse.collections.impl.factory.Multimaps;
-
 import edu.hm.hafner.util.VisibleForTesting;
-
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.locks.ReentrantLock;
-
 import hudson.Launcher;
 import hudson.matrix.MatrixAggregator;
 import hudson.matrix.MatrixBuild;
 import hudson.matrix.MatrixRun;
 import hudson.model.BuildListener;
-
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.util.RunResultHandler;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
+import org.apache.commons.lang3.StringUtils;
+import org.eclipse.collections.api.RichIterable;
+import org.eclipse.collections.api.multimap.MutableMultimap;
+import org.eclipse.collections.impl.factory.Lists;
+import org.eclipse.collections.impl.factory.Multimaps;
 
 /**
  * Aggregates the {@link AnalysisResult}s of all {@link ResultAction}s of several {@link MatrixRun}s into {@link
@@ -50,7 +46,10 @@ public class IssuesAggregator extends MatrixAggregator {
      * @param recorder
      *         the recorder that actually scans for issues and records the found issues
      */
-    public IssuesAggregator(final MatrixBuild build, final Launcher launcher, final BuildListener listener,
+    public IssuesAggregator(
+            final MatrixBuild build,
+            final Launcher launcher,
+            final BuildListener listener,
             final IssuesRecorder recorder) {
         super(build, launcher, listener);
 
@@ -79,8 +78,7 @@ public class IssuesAggregator extends MatrixAggregator {
                 resultsPerTool.put(action.getId(), report);
                 reportToAxisName.put(report, axisName);
             }
-        }
-        finally {
+        } finally {
             aggregationTableLock.unlock();
         }
         return true;
@@ -92,13 +90,22 @@ public class IssuesAggregator extends MatrixAggregator {
 
     @Override
     public boolean endBuild() {
-        resultsPerTool.forEachKeyMultiValues((tool, reports) -> {
-            var reportsList = Lists.mutable.withAll(reports);
-            reportsList.sortThis(Comparator.comparing(reportToAxisName::get));
-            var aggregatedReport = new AnnotatedReport(tool, reportsList);
-            recorder.publishResult(build, build.getWorkspace(), listener, Messages.Tool_Default_Name(),
-                    aggregatedReport, StringUtils.EMPTY, recorder.getIcon(), new RunResultHandler(build));
-        });
+        resultsPerTool.forEachKeyMultiValues(this::publishAxisResult);
         return true;
+    }
+
+    private void publishAxisResult(final String tool, final Iterable<AnnotatedReport> reports) {
+        var reportsList = Lists.mutable.withAll(reports);
+        reportsList.sortThis(Comparator.comparing(reportToAxisName::get));
+        var aggregatedReport = new AnnotatedReport(tool, reportsList);
+        recorder.publishResult(
+                build,
+                build.getWorkspace(),
+                listener,
+                Messages.Tool_Default_Name(),
+                aggregatedReport,
+                StringUtils.EMPTY,
+                recorder.getIcon(),
+                new RunResultHandler(build));
     }
 }

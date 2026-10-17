@@ -1,20 +1,17 @@
 package io.jenkins.plugins.analysis.core.filter;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
+import static org.assertj.core.api.Assertions.*;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.util.FilteredLog;
-
 import hudson.FilePath;
-
-import static org.assertj.core.api.Assertions.*;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 /**
  * Tests the class {@link FilterConfig}.
@@ -35,11 +32,15 @@ class FilterConfigTest {
         var filter = config.readFileNameFilter(new FilePath(workspace.toFile()), log);
 
         assertThat(filter).isInstanceOf(FileNameFilter.class).isNotInstanceOf(NullFileNameFilter.class);
-        assertThat(filter.test(issue("/home/jenkins/workspace/job/src/File.ts"))).isTrue();
-        assertThat(filter.test(issue("/home/jenkins/workspace/job/src/Other.ts"))).isTrue();
-        assertThat(filter.test(issue("/home/jenkins/workspace/job/src/NotListed.ts"))).isFalse();
+        assertThat(filter.test(issue("/home/jenkins/workspace/job/src/File.ts")))
+                .isTrue();
+        assertThat(filter.test(issue("/home/jenkins/workspace/job/src/Other.ts")))
+                .isTrue();
+        assertThat(filter.test(issue("/home/jenkins/workspace/job/src/NotListed.ts")))
+                .isFalse();
         assertThat(log.getErrorMessages()).isEmpty();
-        assertThat(log.getInfoMessages()).anyMatch(message -> message.contains("Restricting issues to the 2 files listed"));
+        assertThat(log.getInfoMessages())
+                .anyMatch(message -> message.contains("Restricting issues to the 2 files listed"));
     }
 
     @Test
@@ -52,9 +53,12 @@ class FilterConfigTest {
         var filter = config.readFileNameFilter(new FilePath(workspace.toFile()), log);
 
         assertThat(filter).isInstanceOf(FileNameFilter.class).isNotInstanceOf(NullFileNameFilter.class);
-        assertThat(filter.test(issue("/home/jenkins/workspace/job/src/File.ts"))).isTrue();
-        assertThat(filter.test(issue("/home/jenkins/workspace/job/src/Other.ts"))).isTrue();
-        assertThat(filter.test(issue("/home/jenkins/workspace/job/src/NotListed.ts"))).isFalse();
+        assertThat(filter.test(issue("/home/jenkins/workspace/job/src/File.ts")))
+                .isTrue();
+        assertThat(filter.test(issue("/home/jenkins/workspace/job/src/Other.ts")))
+                .isTrue();
+        assertThat(filter.test(issue("/home/jenkins/workspace/job/src/NotListed.ts")))
+                .isFalse();
         assertThat(log.getInfoMessages())
                 .anyMatch(message -> message.contains("Restricting issues to the 2 files listed"));
     }
@@ -122,7 +126,8 @@ class FilterConfigTest {
         var filter = config.readFileNameFilter(new FilePath(workspace.toFile()), log);
 
         assertThat(filter).isInstanceOf(FileNameFilter.class).isNotInstanceOf(NullFileNameFilter.class);
-        assertThat(filter.test(issue("/home/jenkins/workspace/job/src/File.ts"))).isTrue();
+        assertThat(filter.test(issue("/home/jenkins/workspace/job/src/File.ts")))
+                .isTrue();
     }
 
     @Test
@@ -159,8 +164,7 @@ class FilterConfigTest {
             assertThat(config.readFileNameFilter(new FilePath(workspace.toFile()), log))
                     .isInstanceOf(NullFileNameFilter.class);
             assertThat(log.getErrorMessages()).anyMatch(message -> message.contains("outside of the workspace"));
-        }
-        finally {
+        } finally {
             Files.deleteIfExists(outside);
         }
     }

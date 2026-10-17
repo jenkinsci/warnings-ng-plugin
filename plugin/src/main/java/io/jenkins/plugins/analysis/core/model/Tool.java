@@ -1,23 +1,9 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import org.apache.commons.lang3.StringUtils;
-
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.VisibleForTesting;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.nio.charset.Charset;
-
-import org.kohsuke.stapler.AncestorInPath;
-import org.kohsuke.stapler.DataBoundSetter;
-import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.verb.POST;
-import org.jenkinsci.Symbol;
-import org.jenkinsci.plugins.workflow.graph.FlowNode;
-
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import hudson.FilePath;
 import hudson.model.BuildableItem;
@@ -26,11 +12,20 @@ import hudson.model.Descriptor;
 import hudson.model.Item;
 import hudson.model.Run;
 import hudson.util.FormValidation;
-import jenkins.security.MasterToSlaveCallable;
-
 import io.jenkins.plugins.util.JenkinsFacade;
 import io.jenkins.plugins.util.LogHandler;
 import io.jenkins.plugins.util.ValidationUtilities;
+import java.io.Serial;
+import java.io.Serializable;
+import java.nio.charset.Charset;
+import jenkins.security.MasterToSlaveCallable;
+import org.apache.commons.lang3.StringUtils;
+import org.jenkinsci.Symbol;
+import org.jenkinsci.plugins.workflow.graph.FlowNode;
+import org.kohsuke.stapler.AncestorInPath;
+import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
 
 /**
  * A tool that can produce a {@link Report report of issues} in some way. If your tool produces issues by scanning a
@@ -42,6 +37,7 @@ import io.jenkins.plugins.util.ValidationUtilities;
 public abstract class Tool implements Describable<Tool>, Serializable {
     @Serial
     private static final long serialVersionUID = 3305739700153168629L;
+
     private static final ValidationUtilities VALIDATION_UTILITIES = new ValidationUtilities();
 
     private String id = StringUtils.EMPTY;
@@ -215,8 +211,12 @@ public abstract class Tool implements Describable<Tool>, Serializable {
      * @throws ParsingCanceledException
      *         signals that the user has aborted the parsing
      */
-    public Report scan(final Run<?, ?> run, @CheckForNull final FlowNode flowNode, final FilePath workspace,
-            final Charset sourceCodeEncoding, final LogHandler logger)
+    public Report scan(
+            final Run<?, ?> run,
+            @CheckForNull final FlowNode flowNode,
+            final FilePath workspace,
+            final Charset sourceCodeEncoding,
+            final LogHandler logger)
             throws ParsingException, ParsingCanceledException {
         return scan(run, workspace, sourceCodeEncoding, logger);
     }
@@ -249,8 +249,7 @@ public abstract class Tool implements Describable<Tool>, Serializable {
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckId(@AncestorInPath final BuildableItem project,
-                @QueryParameter final String id) {
+        public FormValidation doCheckId(@AncestorInPath final BuildableItem project, @QueryParameter final String id) {
             if (!new JenkinsFacade().hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }

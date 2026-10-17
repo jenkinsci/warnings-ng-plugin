@@ -1,12 +1,8 @@
 package io.jenkins.plugins.analysis.warnings.integrations;
 
-import org.junit.jupiter.api.Test;
-import org.junitpioneer.jupiter.Issue;
-
-import java.util.List;
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 
 import hudson.model.FreeStyleProject;
-
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
@@ -17,8 +13,9 @@ import io.jenkins.plugins.analysis.warnings.groovy.ParserConfiguration;
 import io.jenkins.plugins.analysis.warnings.tasks.OpenTasks;
 import io.jenkins.plugins.casc.ConfigurationAsCode;
 import io.jenkins.plugins.casc.ConfiguratorException;
-
-import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
+import java.util.List;
+import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.Issue;
 
 /**
  * Checks whether all parser can be imported using the configuration-as-code plug-in.
@@ -48,7 +45,8 @@ class ConfigurationAsCodeITest extends IntegrationTestWithJenkinsPerTest {
     /**
      * Reads the YAML file with a freestyle job and verifies that the job has been created.
      */
-    @Test @Issue("JENKINS-57817")
+    @Test
+    @Issue("JENKINS-57817")
     void shouldFreestyleJobWithSpotBugsUsingJobDsl() {
         configureJenkins("job-dsl-spotbugs.yaml");
 
@@ -115,9 +113,9 @@ class ConfigurationAsCodeITest extends IntegrationTestWithJenkinsPerTest {
 
     private void configureJenkins(final String fileName) {
         try {
-            ConfigurationAsCode.get().configure(getResourceAsFile(fileName).toUri().toString());
-        }
-        catch (ConfiguratorException e) {
+            ConfigurationAsCode.get()
+                    .configure(getResourceAsFile(fileName).toUri().toString());
+        } catch (ConfiguratorException e) {
             throw new AssertionError(e);
         }
     }

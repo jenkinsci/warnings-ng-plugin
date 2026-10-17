@@ -1,20 +1,6 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import org.apache.commons.lang3.Strings;
-import org.apache.commons.lang3.StringUtils;
-
 import edu.hm.hafner.util.VisibleForTesting;
-
-import java.util.List;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-import org.kohsuke.stapler.AncestorInPath;
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.DataBoundSetter;
-import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.verb.POST;
 import hudson.Extension;
 import hudson.model.BuildableItem;
 import hudson.model.Describable;
@@ -22,8 +8,18 @@ import hudson.model.Descriptor;
 import hudson.model.Item;
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
-
 import io.jenkins.plugins.util.JenkinsFacade;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
+import org.kohsuke.stapler.AncestorInPath;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
 
 /**
  * UI proxy to let users select a static analysis report based on the UI.
@@ -73,12 +69,11 @@ public class ToolSelection implements Describable<ToolSelection> {
      *
      * @return filter {@link Predicate}
      */
-    public static Predicate<ResultAction> createToolFilter(final boolean canSelectTools,
-            final List<ToolSelection> selectedTools) {
+    public static Predicate<ResultAction> createToolFilter(
+            final boolean canSelectTools, final List<ToolSelection> selectedTools) {
         if (canSelectTools) {
             return action -> Strings.CI.containsAny(action.getId(), getIds(selectedTools));
-        }
-        else {
+        } else {
             return jobAction -> true;
         }
     }
@@ -124,10 +119,10 @@ public class ToolSelection implements Describable<ToolSelection> {
         }
 
         private Set<String> collectAvailableIds() {
-            return jenkinsFacade.getAllJobs()
-                    .stream()
+            return jenkinsFacade.getAllJobs().stream()
                     .flatMap(job -> job.getActions(JobAction.class).stream())
-                    .map(JobAction::getId).collect(Collectors.toSet());
+                    .map(JobAction::getId)
+                    .collect(Collectors.toSet());
         }
 
         /**
@@ -141,8 +136,7 @@ public class ToolSelection implements Describable<ToolSelection> {
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckId(@AncestorInPath final BuildableItem project,
-                @QueryParameter final String id) {
+        public FormValidation doCheckId(@AncestorInPath final BuildableItem project, @QueryParameter final String id) {
             if (!new JenkinsFacade().hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }

@@ -1,20 +1,31 @@
 package io.jenkins.plugins.analysis.warnings.axivion;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.http.auth.UsernamePasswordCredentials;
-
 import com.cloudbees.plugins.credentials.CredentialsMatchers;
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
 import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
-
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
+import hudson.Extension;
+import hudson.FilePath;
+import hudson.model.BuildableItem;
+import hudson.model.Item;
+import hudson.model.Run;
+import hudson.model.TaskListener;
+import hudson.util.FormValidation;
+import hudson.util.ListBoxModel;
+import hudson.util.Secret;
+import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import io.jenkins.plugins.analysis.core.model.Tool;
+import io.jenkins.plugins.analysis.warnings.axivion.AxivionParser.Config;
+import io.jenkins.plugins.util.EnvironmentResolver;
+import io.jenkins.plugins.util.JenkinsFacade;
+import io.jenkins.plugins.util.LogHandler;
 import java.io.IOException;
 import java.io.Serial;
 import java.net.MalformedURLException;
@@ -25,37 +36,22 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
-
+import jenkins.model.Jenkins;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.verb.POST;
-import org.jenkinsci.Symbol;
-import hudson.Extension;
-import hudson.FilePath;
-import hudson.model.BuildableItem;
-import hudson.model.Item;
-import hudson.model.Run;
-import hudson.model.TaskListener;
-import hudson.util.FormValidation;
-import hudson.util.ListBoxModel;
-import hudson.util.Secret;
-import jenkins.model.Jenkins;
-
-import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.model.Tool;
-import io.jenkins.plugins.analysis.warnings.axivion.AxivionParser.Config;
-import io.jenkins.plugins.util.EnvironmentResolver;
-import io.jenkins.plugins.util.JenkinsFacade;
-import io.jenkins.plugins.util.LogHandler;
 
 /** Provides a parser and customized messages for the Axivion Suite. */
 @SuppressWarnings({"PMD.DataClass", "ClassFanOutComplexity"})
 public final class AxivionSuite extends Tool {
     @Serial
     private static final long serialVersionUID = 967222727302169818L;
+
     private static final String ID = "axivion-suite";
     private static final String NAME = "Axivion Suite";
 
@@ -114,8 +110,7 @@ public final class AxivionSuite extends Tool {
 
         try {
             this.projectUrl = new URI(projectUrl).toString();
-        }
-        catch (URISyntaxException exception) {
+        } catch (URISyntaxException exception) {
             throw new IllegalArgumentException("Not a valid project url.", exception);
         }
     }
@@ -162,13 +157,13 @@ public final class AxivionSuite extends Tool {
     }
 
     @Override
-    public Report scan(final Run<?, ?> run, final FilePath workspace, final Charset sourceCodeEncoding,
-            final LogHandler logger) throws ParsingException, ParsingCanceledException {
+    public Report scan(
+            final Run<?, ?> run, final FilePath workspace, final Charset sourceCodeEncoding, final LogHandler logger)
+            throws ParsingException, ParsingCanceledException {
         final var expandedProjectUrl = expandProjectUrl(run, projectUrl);
         final var httpClientCredentials = withValidCredentials(run.getParent());
         final var dashboard = new RemoteAxivionDashboard(expandedProjectUrl, httpClientCredentials, namedFilter);
-        final var config = new Config(expandedProjectUrl, expandBaseDir(run, basedir),
-                ignoreSuppressedOrJustified);
+        final var config = new Config(expandedProjectUrl, expandBaseDir(run, basedir), ignoreSuppressedOrJustified);
         final var parser = new AxivionParser(config);
 
         final var report = new Report(ID, NAME);
@@ -186,24 +181,18 @@ public final class AxivionSuite extends Tool {
     }
 
     private UsernamePasswordCredentials withValidCredentials(final Item context) {
-        final List<StandardUsernamePasswordCredentials> all =
-                CredentialsProvider.lookupCredentialsInItem(
-                        StandardUsernamePasswordCredentials.class,
-                        context,
-                        null,
-                        Collections.emptyList());
+        final List<StandardUsernamePasswordCredentials> all = CredentialsProvider.lookupCredentialsInItem(
+                StandardUsernamePasswordCredentials.class, context, null, Collections.emptyList());
 
         final StandardUsernamePasswordCredentials jenkinsCredentials =
-                CredentialsMatchers.firstOrNull(all,
-                        CredentialsMatchers.withId(credentialsId));
+                CredentialsMatchers.firstOrNull(all, CredentialsMatchers.withId(credentialsId));
 
         if (jenkinsCredentials == null) {
             throw new ParsingException("Could not find the credentials for " + credentialsId);
         }
 
         return new UsernamePasswordCredentials(
-                jenkinsCredentials.getUsername(),
-                Secret.toString(jenkinsCredentials.getPassword()));
+                jenkinsCredentials.getUsername(), Secret.toString(jenkinsCredentials.getPassword()));
     }
 
     private static String expandBaseDir(final Run<?, ?> run, final String baseDir) {
@@ -212,10 +201,8 @@ public final class AxivionSuite extends Tool {
             var environmentResolver = new EnvironmentResolver();
 
             expandedBasedir =
-                    environmentResolver.expandEnvironmentVariables(
-                            run.getEnvironment(TaskListener.NULL), baseDir);
-        }
-        catch (IOException | InterruptedException ignore) {
+                    environmentResolver.expandEnvironmentVariables(run.getEnvironment(TaskListener.NULL), baseDir);
+        } catch (IOException | InterruptedException ignore) {
             expandedBasedir = baseDir;
         }
         return expandedBasedir;
@@ -225,14 +212,13 @@ public final class AxivionSuite extends Tool {
         String expandedUrl;
         try {
             var environmentResolver = new EnvironmentResolver();
-            expandedUrl = environmentResolver.expandEnvironmentVariables(
-                    run.getEnvironment(TaskListener.NULL), projectUrl);
+            expandedUrl =
+                    environmentResolver.expandEnvironmentVariables(run.getEnvironment(TaskListener.NULL), projectUrl);
 
             if (!expandedUrl.contains("$")) {
                 expandedUrl = new URI(expandedUrl).toString();
             }
-        }
-        catch (IOException | InterruptedException | URISyntaxException e) {
+        } catch (IOException | InterruptedException | URISyntaxException e) {
             expandedUrl = projectUrl;
         }
         return expandedUrl;
@@ -283,8 +269,8 @@ public final class AxivionSuite extends Tool {
          * @return {@link FormValidation#ok()} is a valid url or contains environment variables
          */
         @POST
-        public FormValidation doCheckProjectUrl(@AncestorInPath final BuildableItem project,
-                @QueryParameter final String projectUrl) {
+        public FormValidation doCheckProjectUrl(
+                @AncestorInPath final BuildableItem project, @QueryParameter final String projectUrl) {
             if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
@@ -298,8 +284,7 @@ public final class AxivionSuite extends Tool {
                 new URI(projectUrl).toURL();
 
                 return FormValidation.ok();
-            }
-            catch (IllegalArgumentException | URISyntaxException | MalformedURLException ex) {
+            } catch (IllegalArgumentException | URISyntaxException | MalformedURLException ex) {
                 return FormValidation.error("This is not a valid URL.");
             }
         }
@@ -316,8 +301,8 @@ public final class AxivionSuite extends Tool {
          */
         @SuppressFBWarnings("PATH_TRAVERSAL_IN")
         @POST
-        public FormValidation doCheckBasedir(@AncestorInPath final BuildableItem project,
-                @QueryParameter final String basedir) {
+        public FormValidation doCheckBasedir(
+                @AncestorInPath final BuildableItem project, @QueryParameter final String basedir) {
             if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
@@ -328,8 +313,7 @@ public final class AxivionSuite extends Tool {
                     Path.of(basedir);
                 }
                 return FormValidation.ok();
-            }
-            catch (InvalidPathException e) {
+            } catch (InvalidPathException e) {
                 return FormValidation.error("You have to provide a valid path.");
             }
         }
@@ -354,21 +338,16 @@ public final class AxivionSuite extends Tool {
                 if (!JENKINS.hasPermission(Jenkins.ADMINISTER)) {
                     return FormValidation.ok();
                 }
-            }
-            else {
-                if (!item.hasPermission(Item.EXTENDED_READ)
-                        && !item.hasPermission(CredentialsProvider.USE_ITEM)) {
+            } else {
+                if (!item.hasPermission(Item.EXTENDED_READ) && !item.hasPermission(CredentialsProvider.USE_ITEM)) {
                     return FormValidation.ok();
                 }
             }
 
             if (CredentialsMatchers.firstOrNull(
-                    CredentialsProvider.lookupCredentialsInItem(
-                            StandardUsernamePasswordCredentials.class,
-                            item,
-                            null,
-                            Collections.emptyList()),
-                    CredentialsMatchers.withId(credentialsId))
+                            CredentialsProvider.lookupCredentialsInItem(
+                                    StandardUsernamePasswordCredentials.class, item, null, Collections.emptyList()),
+                            CredentialsMatchers.withId(credentialsId))
                     == null) {
                 return FormValidation.error("Cannot find currently selected credentials.");
             }
@@ -393,10 +372,8 @@ public final class AxivionSuite extends Tool {
                 if (!JENKINS.hasPermission(Jenkins.ADMINISTER)) {
                     return result.includeCurrentValue(credentialsId);
                 }
-            }
-            else {
-                if (!item.hasPermission(Item.EXTENDED_READ)
-                        && !item.hasPermission(CredentialsProvider.USE_ITEM)) {
+            } else {
+                if (!item.hasPermission(Item.EXTENDED_READ) && !item.hasPermission(CredentialsProvider.USE_ITEM)) {
                     return result.includeCurrentValue(credentialsId);
                 }
             }
@@ -406,8 +383,7 @@ public final class AxivionSuite extends Tool {
                     item,
                     null,
                     Collections.emptyList(),
-                    CredentialsMatchers.always()
-            );
+                    CredentialsMatchers.always());
 
             result.addMissing(credentials);
             return result.includeCurrentValue(credentialsId);

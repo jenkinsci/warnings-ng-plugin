@@ -1,22 +1,18 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import org.apache.commons.lang3.StringUtils;
-import org.junit.jupiter.api.Test;
+import static io.jenkins.plugins.analysis.core.model.DeltaReportAssert.*;
+import static org.mockito.Mockito.*;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
-
-import java.util.Optional;
-
 import hudson.model.Run;
-
 import io.jenkins.plugins.analysis.core.util.IssuesStatisticsAssert;
 import io.jenkins.plugins.analysis.core.util.IssuesStatisticsBuilder;
-
-import static io.jenkins.plugins.analysis.core.model.DeltaReportAssert.*;
-import static org.mockito.Mockito.*;
+import java.util.Optional;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class {@link DeltaReport}.
@@ -103,7 +99,8 @@ class DeltaReportTest {
         var deltaReport = new DeltaReport(report, run, 0, referenceIssues);
         var issuesStatistics = deltaReport.getStatistics();
         IssuesStatisticsAssert.assertThat(issuesStatistics)
-                .isNotNull().usingRecursiveComparison()
+                .isNotNull()
+                .usingRecursiveComparison()
                 .isEqualTo(compareIssuesStatistics);
     }
 
@@ -115,7 +112,10 @@ class DeltaReportTest {
 
     private Issue getIssueWithSeverity(final String name, final Severity severity) {
         try (var builder = new IssueBuilder()) {
-            return builder.setFileName(name).setFingerprint(name).setSeverity(severity).build();
+            return builder.setFileName(name)
+                    .setFingerprint(name)
+                    .setSeverity(severity)
+                    .build();
         }
     }
 }

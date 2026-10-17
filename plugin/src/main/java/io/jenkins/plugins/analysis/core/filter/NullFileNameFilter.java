@@ -1,7 +1,7 @@
 package io.jenkins.plugins.analysis.core.filter;
 
-import java.util.Collections;
 import edu.hm.hafner.analysis.Issue;
+import java.util.Collections;
 
 /**
  * A null object implementation of {@link FileNameFilter} that accepts every issue. It is used when no file

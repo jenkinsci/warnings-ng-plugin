@@ -1,15 +1,13 @@
 package io.jenkins.plugins.analysis.core.charts;
 
 import edu.hm.hafner.analysis.Severity;
-
+import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
+import io.jenkins.plugins.analysis.core.util.IssuesStatistics;
+import io.jenkins.plugins.analysis.core.util.IssuesStatisticsBuilder;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-
-import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
-import io.jenkins.plugins.analysis.core.util.IssuesStatistics;
-import io.jenkins.plugins.analysis.core.util.IssuesStatisticsBuilder;
 
 /**
  * A build result that is composed of a series of other builds results simply by summing up the number of issues.
@@ -32,7 +30,8 @@ public class CompositeBuildResult implements AnalysisBuildResult {
                 .map(AnalysisBuildResult::getTotals)
                 .map(Objects::requireNonNull)
                 .reduce(new IssuesStatisticsBuilder().build(), IssuesStatistics::aggregate);
-        sizesPerOrigin = results.stream().map(AnalysisBuildResult::getSizePerOrigin)
+        sizesPerOrigin = results.stream()
+                .map(AnalysisBuildResult::getSizePerOrigin)
                 .reduce(new HashMap<>(), (first, second) -> {
                     second.forEach((key, value) -> first.merge(key, value, Integer::sum));
                     return first;

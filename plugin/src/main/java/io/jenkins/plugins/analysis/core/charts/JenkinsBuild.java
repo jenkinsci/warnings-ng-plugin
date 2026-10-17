@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.core.charts;
 
 import edu.hm.hafner.echarts.Build;
-
 import hudson.model.Run;
 
 /**

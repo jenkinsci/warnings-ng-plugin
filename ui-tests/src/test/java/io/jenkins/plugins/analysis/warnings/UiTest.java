@@ -1,7 +1,11 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import static io.jenkins.plugins.analysis.warnings.Assertions.*;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import io.jenkins.plugins.analysis.warnings.AnalysisResult.Tab;
+import io.jenkins.plugins.analysis.warnings.AnalysisSummary.InfoType;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -9,7 +13,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
 import org.jenkinsci.test.acceptance.junit.AbstractJUnitTest;
 import org.jenkinsci.test.acceptance.plugins.dashboard_view.DashboardView;
 import org.jenkinsci.test.acceptance.plugins.maven.MavenInstallation;
@@ -20,15 +23,7 @@ import org.jenkinsci.test.acceptance.po.FreeStyleJob;
 import org.jenkinsci.test.acceptance.po.Job;
 import org.jenkinsci.test.acceptance.po.WorkflowJob;
 
-import io.jenkins.plugins.analysis.warnings.AnalysisResult.Tab;
-import io.jenkins.plugins.analysis.warnings.AnalysisSummary.InfoType;
-
-import static io.jenkins.plugins.analysis.warnings.Assertions.*;
-import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
-
-/**
- * Base class for all UI tests. Provides several helper methods that can be used by all tests.
- */
+/** Base class for all UI tests. Provides several helper methods that can be used by all tests. */
 @SuppressFBWarnings("BC")
 @SuppressWarnings({"checkstyle:ClassFanOutComplexity", "PMD.CouplingBetweenObjects"})
 abstract class UiTest extends AbstractJUnitTest {
@@ -66,11 +61,13 @@ abstract class UiTest extends AbstractJUnitTest {
     }
 
     protected StringBuilder createReportFilesStep(final WorkflowJob job, final int build) {
-        String[] fileNames = {"checkstyle-report.xml", "pmd-report.xml", "findbugsXml.xml", "cpd.xml", "Main.java", "pep8Test.txt"};
+        String[] fileNames = {
+            "checkstyle-report.xml", "pmd-report.xml", "findbugsXml.xml", "cpd.xml", "Main.java", "pep8Test.txt"
+        };
         StringBuilder resourceCopySteps = new StringBuilder();
         for (String fileName : fileNames) {
-            resourceCopySteps.append(job.copyResourceStep(
-                    "/build_status_test/build_0" + build + "/" + fileName).replace("\\", "\\\\"));
+            resourceCopySteps.append(job.copyResourceStep("/build_status_test/build_0" + build + "/" + fileName)
+                    .replace("\\", "\\\\"));
         }
         return resourceCopySteps;
     }
@@ -79,10 +76,10 @@ abstract class UiTest extends AbstractJUnitTest {
         return job.addPublisher(IssuesRecorder.class, recorder -> {
             recorder.setTool("CheckStyle").setName(CHECK_STYLE_NAME).setPattern("**/checkstyle-report.xml");
             recorder.addTool("FindBugs");
-            recorder.addTool("Registered Parser",
+            recorder.addTool(
+                    "Registered Parser",
                     analysisModel -> analysisModel.setAnalysisModelId("PMD").setPattern("**/pmd-report.xml"));
-            recorder.addTool("CPD",
-                    cpd -> cpd.setHighThreshold(8).setNormalThreshold(3));
+            recorder.addTool("CPD", cpd -> cpd.setHighThreshold(8).setNormalThreshold(3));
             recorder.setEnabledForFailure(true);
         });
     }
@@ -94,9 +91,7 @@ abstract class UiTest extends AbstractJUnitTest {
     /**
      * Finds a resource with the given name and returns the content (decoded with UTF-8) as String.
      *
-     * @param fileName
-     *         name of the desired resource
-     *
+     * @param fileName name of the desired resource
      * @return the content represented as {@link String}
      */
     protected String readFileToString(final String fileName) {
@@ -107,21 +102,16 @@ abstract class UiTest extends AbstractJUnitTest {
      * Reads all the bytes from a file. The method ensures that the file is closed when all bytes have been read or an
      * I/O error, or other runtime exception, is thrown.
      *
-     * <p>
-     * Note that this method is intended for simple cases where it is convenient to read all bytes into a byte array. It
-     * is not intended for reading in large files.
-     * </p>
+     * <p>Note that this method is intended for simple cases where it is convenient to read all bytes into a byte array.
+     * It is not intended for reading in large files.
      *
-     * @param fileName
-     *         name of the desired resource
-     *
+     * @param fileName name of the desired resource
      * @return the content represented by a byte array
      */
     private byte[] readAllBytes(final String fileName) {
         try {
             return Files.readAllBytes(getPath(fileName));
-        }
-        catch (IOException | URISyntaxException e) {
+        } catch (IOException | URISyntaxException e) {
             throw new AssertionError("Can't read resource " + fileName, e);
         }
     }
@@ -189,7 +179,8 @@ abstract class UiTest extends AbstractJUnitTest {
 
         assertThat(openInfoView(build, CPD_ID))
                 .hasNoErrorMessages()
-                .hasInfoMessages("-> found 1 file",
+                .hasInfoMessages(
+                        "-> found 1 file",
                         "-> found 20 issues (skipped 0 duplicates)",
                         "-> 1 copied, 0 not in workspace, 0 not-found, 0 with I/O error",
                         "Issues delta (vs. reference build): outstanding: 0, new: 20, fixed: 0");
@@ -209,7 +200,8 @@ abstract class UiTest extends AbstractJUnitTest {
 
         assertThat(openInfoView(build, FINDBUGS_ID))
                 .hasNoErrorMessages()
-                .hasInfoMessages("-> found 1 file",
+                .hasInfoMessages(
+                        "-> found 1 file",
                         "-> found 0 issues (skipped 0 duplicates)",
                         "Issues delta (vs. reference build): outstanding: 0, new: 0, fixed: 0");
     }
@@ -226,13 +218,15 @@ abstract class UiTest extends AbstractJUnitTest {
                 .hasInfoType(InfoType.ERROR);
 
         AnalysisResult pmdDetails = pmd.openOverallResult();
-        assertThat(pmdDetails).hasActiveTab(Tab.CATEGORIES)
+        assertThat(pmdDetails)
+                .hasActiveTab(Tab.CATEGORIES)
                 .hasTotal(2)
                 .hasTotalNew(0)
                 .hasOnlyAvailableTabs(Tab.CATEGORIES, Tab.TYPES, Tab.ISSUES);
 
         assertThat(openInfoView(build, PMD_ID))
-                .hasInfoMessages("-> found 1 file",
+                .hasInfoMessages(
+                        "-> found 1 file",
                         "-> found 2 issues (skipped 0 duplicates)",
                         "Issues delta (vs. reference build): outstanding: 2, new: 0, fixed: 1")
                 .hasErrorMessages("Can't create fingerprints for some files:");
@@ -250,7 +244,8 @@ abstract class UiTest extends AbstractJUnitTest {
                 .hasInfoType(InfoType.ERROR);
 
         AnalysisResult checkstyleDetails = checkstyle.openOverallResult();
-        assertThat(checkstyleDetails).hasActiveTab(Tab.CATEGORIES)
+        assertThat(checkstyleDetails)
+                .hasActiveTab(Tab.CATEGORIES)
                 .hasTotal(3)
                 .hasOnlyAvailableTabs(Tab.CATEGORIES, Tab.TYPES, Tab.ISSUES);
 
@@ -259,7 +254,8 @@ abstract class UiTest extends AbstractJUnitTest {
         assertThat(issuesTable.getTotal()).isEqualTo(3);
 
         IssuesTableRow tableRow = issuesTable.getRow(0);
-        assertThat(tableRow).hasFileName("RemoteLauncher.java")
+        assertThat(tableRow)
+                .hasFileName("RemoteLauncher.java")
                 .hasLineNumber(59)
                 .hasCategory("Checks")
                 .hasType("FinalParametersCheck")
@@ -269,7 +265,8 @@ abstract class UiTest extends AbstractJUnitTest {
         verifyTrendCharts(checkstyleDetails);
 
         assertThat(openInfoView(build, CHECKSTYLE_ID))
-                .hasInfoMessages("-> found 1 file",
+                .hasInfoMessages(
+                        "-> found 1 file",
                         "-> found 3 issues (skipped 0 duplicates)",
                         "Issues delta (vs. reference build): outstanding: 0, new: 3, fixed: 1")
                 .hasErrorMessages("Can't create fingerprints for some files:");
@@ -287,24 +284,19 @@ abstract class UiTest extends AbstractJUnitTest {
                 .contains("#1")
                 .contains("#2");
 
+        assertThatJson(severitiesTrendChart).node("series").isArray().hasSize(1);
+
+        assertThatJson(severitiesTrendChart).node("series[0].name").isEqualTo("Error");
+
         assertThatJson(severitiesTrendChart)
-                .node("series")
+                .node("series[0].data")
                 .isArray()
-                .hasSize(1);
+                .contains(1)
+                .contains(3);
 
-        assertThatJson(severitiesTrendChart)
-                .node("series[0].name").isEqualTo("Error");
+        assertThatJson(toolsTrendChart).inPath("$.xAxis[*].data[*]").isArray().hasSize(2);
 
-        assertThatJson(severitiesTrendChart)
-                .node("series[0].data").isArray().contains(1).contains(3);
-
-        assertThatJson(toolsTrendChart)
-                .inPath("$.xAxis[*].data[*]")
-                .isArray()
-                .hasSize(2);
-
-        assertThatJson(toolsTrendChart)
-                .node("series[0].name").isEqualTo("checkstyle");
+        assertThatJson(toolsTrendChart).node("series[0].name").isEqualTo("checkstyle");
 
         assertThatJson(toolsTrendChart)
                 .node("series[0].data")
@@ -322,14 +314,9 @@ abstract class UiTest extends AbstractJUnitTest {
         assertThatJson(newVersusFixedTrendChart)
                 .and(
                         a -> a.node("series[0].name").isEqualTo("New"),
-                        a -> a.node("series[0].data").isArray()
-                                .contains(0)
-                                .contains(3),
+                        a -> a.node("series[0].data").isArray().contains(0).contains(3),
                         a -> a.node("series[1].name").isEqualTo("Fixed"),
-                        a -> a.node("series[1].data").isArray()
-                                .contains(0)
-                                .contains(1)
-                );
+                        a -> a.node("series[1].data").isArray().contains(0).contains(1));
     }
 
     protected void verifyPep8(final Build build) {
@@ -358,8 +345,7 @@ abstract class UiTest extends AbstractJUnitTest {
         assertThat(lowIssueCount).isEqualTo(2);
 
         assertThat(openInfoView(build, PEP8_ID))
-                .hasInfoMessages("-> found 1 file",
-                        "-> found 8 issues (skipped 0 duplicates)")
+                .hasInfoMessages("-> found 1 file", "-> found 8 issues (skipped 0 duplicates)")
                 .hasErrorMessages("Can't create fingerprints for some files:");
 
         if (referenceBuild > 0) {
@@ -371,13 +357,13 @@ abstract class UiTest extends AbstractJUnitTest {
     private long getCountOfSeverity(final IssuesTable issuesTable, final String normal) {
         return issuesTable.getTableRows().stream()
                 .map(AbstractSeverityTableRow::getSeverity)
-                .filter(normal::equals).count();
+                .filter(normal::equals)
+                .count();
     }
 
     protected AnalysisResult verifyPep8Details(final AnalysisSummary pep8) {
         AnalysisResult pep8Details = pep8.openOverallResult();
-        assertThat(pep8Details).hasActiveTab(Tab.ISSUES)
-                .hasOnlyAvailableTabs(Tab.CATEGORIES, Tab.ISSUES);
+        assertThat(pep8Details).hasActiveTab(Tab.ISSUES).hasOnlyAvailableTabs(Tab.CATEGORIES, Tab.ISSUES);
         return pep8Details;
     }
 
@@ -391,16 +377,16 @@ abstract class UiTest extends AbstractJUnitTest {
         return job.startBuild().waitUntilFinished().shouldSucceed();
     }
 
-    protected DashboardView createDashboardWithStaticAnalysisPortlet(final boolean hideCleanJobs,
-            final boolean showIcons) {
+    protected DashboardView createDashboardWithStaticAnalysisPortlet(
+            final boolean hideCleanJobs, final boolean showIcons) {
         return createDashboardWithStaticAnalysisPortlet(hideCleanJobs, showIcons, jenkins);
     }
 
-    protected DashboardView createDashboardWithStaticAnalysisPortlet(final boolean hideCleanJobs,
-            final boolean showIcons, final Container container) {
+    protected DashboardView createDashboardWithStaticAnalysisPortlet(
+            final boolean hideCleanJobs, final boolean showIcons, final Container container) {
         DashboardView view = createDashboardView(container);
-        StaticAnalysisIssuesPerToolAndJobPortlet portlet = view.addTopPortlet(
-                StaticAnalysisIssuesPerToolAndJobPortlet.class);
+        StaticAnalysisIssuesPerToolAndJobPortlet portlet =
+                view.addTopPortlet(StaticAnalysisIssuesPerToolAndJobPortlet.class);
         portlet.setHideCleanJobs(hideCleanJobs);
         portlet.setShowIcons(showIcons);
         view.save();
@@ -440,7 +426,7 @@ abstract class UiTest extends AbstractJUnitTest {
         groovyConfiguration.enterRegex("(.*):(\\d+):(\\d+): (\\D\\d*) (.*)");
         groovyConfiguration.enterScript("""
             import edu.hm.hafner.analysis.Severity
-            
+
             String message = matcher.group(5)
             String category = matcher.group(4)
             Severity severity
@@ -449,7 +435,7 @@ abstract class UiTest extends AbstractJUnitTest {
             }else {
                 severity = Severity.WARNING_LOW
             }
-            
+
             return builder.setFileName(matcher.group(1))
                 .setLineStart(Integer.parseInt(matcher.group(2)))
                 .setColumnStart(Integer.parseInt(matcher.group(3)))

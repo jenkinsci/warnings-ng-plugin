@@ -1,12 +1,8 @@
 package io.jenkins.plugins.analysis.warnings.axivion;
 
-import org.apache.commons.io.IOUtils;
-
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 import java.io.File;
 import java.io.IOError;
 import java.io.IOException;
@@ -15,6 +11,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URISyntaxException;
 import java.net.URL;
+import org.apache.commons.io.IOUtils;
 
 /**
  * Stub for an {@link AxivionDashboard} to retrieve actual violations from the resources folder instead of actually

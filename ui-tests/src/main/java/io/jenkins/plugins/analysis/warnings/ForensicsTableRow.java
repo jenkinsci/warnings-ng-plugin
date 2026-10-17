@@ -1,9 +1,8 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.WebElement;
-
-import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 /**
  * Representation of a table row displaying the forensic details for an issue.
@@ -36,8 +35,7 @@ public class ForensicsTableRow extends BaseIssuesTableRow {
             added = StringUtils.EMPTY;
             loc = 0;
             churn = 0;
-        }
-        else {
+        } else {
             authors = Integer.parseInt(getCellContent(AUTHORS));
             commits = Integer.parseInt(getCellContent(COMMITS));
             lastCommit = getCellContent(LAST_COMMIT);

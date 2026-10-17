@@ -1,15 +1,13 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import org.junit.Test;
-
-import org.jenkinsci.test.acceptance.junit.WithPlugins;
-import org.jenkinsci.test.acceptance.po.WorkflowJob;
+import static io.jenkins.plugins.analysis.warnings.Assertions.*;
 
 import io.jenkins.plugins.analysis.warnings.IssuesRecorder.ChecksAnnotationScope;
 import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateCriticality;
 import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateType;
-
-import static io.jenkins.plugins.analysis.warnings.Assertions.*;
+import org.jenkinsci.test.acceptance.junit.WithPlugins;
+import org.jenkinsci.test.acceptance.po.WorkflowJob;
+import org.junit.Test;
 
 /**
  * Acceptance tests for the WarningsSnippetGenerator.
@@ -20,9 +18,7 @@ import static io.jenkins.plugins.analysis.warnings.Assertions.*;
 @WithPlugins("warnings-ng")
 @SuppressWarnings("PMD.WrongTestAnnotation")
 public class SnippetGeneratorUiTest extends UiTest {
-    /**
-     * Tests the default configuration of the RecordIssuesStep.
-     */
+    /** Tests the default configuration of the RecordIssuesStep. */
     @Test
     public void defaultConfigurationTest() {
         WarningsSnippetGenerator snippetGenerator = createSnippetGenerator();
@@ -34,14 +30,13 @@ public class SnippetGeneratorUiTest extends UiTest {
         assertThat(script).isEqualTo("recordIssues sourceCodeRetention: 'LAST_BUILD', tools: [java()]");
     }
 
-    /**
-     * Tests the default configuration of the RecordIssuesStep by setting them explicitly.
-     */
+    /** Tests the default configuration of the RecordIssuesStep by setting them explicitly. */
     @Test
     public void defaultConfigurationExplicitTest() {
         WarningsSnippetGenerator snippetGenerator = createSnippetGenerator();
 
-        snippetGenerator.selectRecordIssues()
+        snippetGenerator
+                .selectRecordIssues()
                 .setAggregatingResults(false)
                 .setSkipBlames(false)
                 .setSkipPostProcessing(false)
@@ -55,14 +50,13 @@ public class SnippetGeneratorUiTest extends UiTest {
         assertThat(script).isEqualTo("recordIssues sourceCodeRetention: 'LAST_BUILD', tools: [java()]");
     }
 
-    /**
-     * Tests the configuration of the RecordIssuesStep that differs most from the default configuration.
-     */
+    /** Tests the configuration of the RecordIssuesStep that differs most from the default configuration. */
     @Test
     public void antiDefaultConfigurationExplicitTest() {
         WarningsSnippetGenerator snippetGenerator = createSnippetGenerator();
 
-        snippetGenerator.selectRecordIssues()
+        snippetGenerator
+                .selectRecordIssues()
                 .setAggregatingResults(true)
                 .setQuiet(true)
                 .setSkipBlames(true)
@@ -88,30 +82,26 @@ public class SnippetGeneratorUiTest extends UiTest {
         assertThat(script).contains(")]");
     }
 
-    /**
-     * Tests the HealthReportBuilder configuration.
-     */
+    /** Tests the HealthReportBuilder configuration. */
     @Test
     public void configureHealthReportTest() {
         WarningsSnippetGenerator snippetGenerator = createSnippetGenerator();
 
-        snippetGenerator.selectRecordIssues()
-                .setHealthReport(1, 9, "LOW")
-                .setTool(JAVA_COMPILER);
+        snippetGenerator.selectRecordIssues().setHealthReport(1, 9, "LOW").setTool(JAVA_COMPILER);
 
         String script = snippetGenerator.generateScript();
 
-        assertThat(script).isEqualTo("recordIssues healthy: 1, sourceCodeRetention: 'LAST_BUILD', tools: [java()], unhealthy: 9");
+        assertThat(script)
+                .isEqualTo("recordIssues healthy: 1, sourceCodeRetention: 'LAST_BUILD', tools: [java()], unhealthy: 9");
     }
 
-    /**
-     * Verifies a complex step configuration for RecordIssuesStep.
-     */
+    /** Verifies a complex step configuration for RecordIssuesStep. */
     @Test
     public void shouldHandleComplexConfiguration() {
         WarningsSnippetGenerator snippetGenerator = createSnippetGenerator();
 
-        snippetGenerator.selectRecordIssues()
+        snippetGenerator
+                .selectRecordIssues()
                 .setAggregatingResults(true)
                 .setSkipBlames(true)
                 .setSkipPostProcessing(true)
@@ -133,7 +123,8 @@ public class SnippetGeneratorUiTest extends UiTest {
         assertThat(script).contains("enabledForFailure: true");
         assertThat(script).contains("filters: [excludeType('*toExclude*')]");
         assertThat(script).contains("ignoreQualityGate: true");
-        assertThat(script).contains("qualityGates: [[criticality: 'FAILURE', integerThreshold: 1, threshold: 1.0, type: 'NEW']]");
+        assertThat(script)
+                .contains("qualityGates: [[criticality: 'FAILURE', integerThreshold: 1, threshold: 1.0, type: 'NEW']]");
 
         assertThat(script).contains("pattern: 'firstText'");
         assertThat(script).contains("sourceCodeEncoding: 'otherText'");

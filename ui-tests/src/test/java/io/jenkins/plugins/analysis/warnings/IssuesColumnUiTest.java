@@ -1,14 +1,13 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import org.junit.Test;
+import static io.jenkins.plugins.analysis.warnings.Assertions.*;
+import static io.jenkins.plugins.analysis.warnings.IssuesColumnConfiguration.*;
 
 import org.jenkinsci.test.acceptance.junit.WithPlugins;
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.FreeStyleJob;
 import org.jenkinsci.test.acceptance.po.ListView;
-
-import static io.jenkins.plugins.analysis.warnings.Assertions.*;
-import static io.jenkins.plugins.analysis.warnings.IssuesColumnConfiguration.*;
+import org.junit.Test;
 
 /**
  * Acceptance tests for the Warnings Issue Column.
@@ -21,9 +20,7 @@ import static io.jenkins.plugins.analysis.warnings.IssuesColumnConfiguration.*;
 public class IssuesColumnUiTest extends UiTest {
     private static final String CUSTOM_ISSUES_COLUMN_NAME = "Hello World";
 
-    /**
-     * Configure a job with multiple recorders: Should display a table when hovering over the issue column.
-     */
+    /** Configure a job with multiple recorders: Should display a table when hovering over the issue column. */
     @Test
     public void shouldDisplayIssueCount() {
         FreeStyleJob job = createFreeStyleJob("build_status_test/build_02");
@@ -61,8 +58,8 @@ public class IssuesColumnUiTest extends UiTest {
     }
 
     /**
-     * Configure a job with only one recorder, also create a ListView and configure the issue column to display only this
-     * tool results. Should have a link in issue column.
+     * Configure a job with only one recorder, also create a ListView and configure the issue column to display only
+     * this tool results. Should have a link in issue column.
      */
     @Test
     public void shouldShowConfiguredToolOnlyWithLink() {

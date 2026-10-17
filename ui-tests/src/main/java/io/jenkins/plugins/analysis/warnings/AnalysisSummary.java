@@ -1,10 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Strings;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -13,9 +8,12 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.PageObject;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
 /**
  * {@link PageObject} representing the analysis summary on the build page of a job.
@@ -40,10 +38,8 @@ public final class AnalysisSummary extends PageObject {
     /**
      * Creates a new page object representing the analysis summary on the build page of a job.
      *
-     * @param parent
-     *         a finished build configured with a static analysis tool
-     * @param id
-     *         the type of the result page (e.g., simian, checkstyle, cpd, etc.)
+     * @param parent a finished build configured with a static analysis tool
+     * @param id the type of the result page (e.g., simian, checkstyle, cpd, etc.)
      */
     public AnalysisSummary(final Build parent, final String id) {
         super(parent, parent.url(id));
@@ -54,7 +50,9 @@ public final class AnalysisSummary extends PageObject {
         titleElement = summary.findElement(By.id(id + "-title"));
 
         infoElement = summary.findElement(By.className("fa-image-button"));
-        hasErrorIcon = !infoElement.findElements(By.className("fa-image-button-warning")).isEmpty();
+        hasErrorIcon = !infoElement
+                .findElements(By.className("fa-image-button-warning"))
+                .isEmpty();
         results = summary.findElements(by.xpath("ul[@id='" + id + "-details']/li"));
     }
 
@@ -119,8 +117,8 @@ public final class AnalysisSummary extends PageObject {
     }
 
     /**
-     * Returns the tools that are part of the aggregated results. If aggregation is disabled, then an empty
-     * list is returned.
+     * Returns the tools that are part of the aggregated results. If aggregation is disabled, then an empty list is
+     * returned.
      *
      * @return the tools that participate in the aggregation
      */
@@ -130,7 +128,9 @@ public final class AnalysisSummary extends PageObject {
             String message = result.getText();
             if (message.startsWith(AGGREGATION_MESSAGE)) {
                 String tools = Strings.CS.removeStart(message, AGGREGATION_MESSAGE);
-                return Arrays.stream(tools.split(",", -1)).map(StringUtils::trim).collect(Collectors.toList());
+                return Arrays.stream(tools.split(",", -1))
+                        .map(StringUtils::trim)
+                        .collect(Collectors.toList());
             }
         }
         return Collections.emptyList();
@@ -142,7 +142,10 @@ public final class AnalysisSummary extends PageObject {
      * @return the details
      */
     public List<String> getDetails() {
-        return results.stream().map(WebElement::getText).map(StringUtils::normalizeSpace).collect(Collectors.toList());
+        return results.stream()
+                .map(WebElement::getText)
+                .map(StringUtils::normalizeSpace)
+                .collect(Collectors.toList());
     }
 
     private int getSize(final String linkName) {
@@ -160,11 +163,9 @@ public final class AnalysisSummary extends PageObject {
         Matcher matcher = NUMBER.matcher(linkText);
         if (matcher.find()) {
             return Integer.parseInt(matcher.group(0));
-        }
-        else if (linkText.startsWith("One")) {
+        } else if (linkText.startsWith("One")) {
             return 1;
-        }
-        else {
+        } else {
             return 0;
         }
     }
@@ -249,8 +250,7 @@ public final class AnalysisSummary extends PageObject {
      * Gets the {@link WebElement} of the reset button.
      *
      * @return the button
-     * @throws org.openqa.selenium.NoSuchElementException
-     *         When there is no quality gate reset button.
+     * @throws org.openqa.selenium.NoSuchElementException When there is no quality gate reset button.
      */
     public WebElement getQualityGateResetButton() throws org.openqa.selenium.NoSuchElementException {
         for (WebElement result : results) {
@@ -271,8 +271,7 @@ public final class AnalysisSummary extends PageObject {
             if (getQualityGateResetButton() != null) {
                 return true;
             }
-        }
-        catch (org.openqa.selenium.NoSuchElementException ignored) {
+        } catch (org.openqa.selenium.NoSuchElementException ignored) {
             // ignore and continue
         }
 
@@ -282,9 +281,7 @@ public final class AnalysisSummary extends PageObject {
     /**
      * Returns a clickable WebElement (a-tag), by a part of the elements text.
      *
-     * @param namePart
-     *         part of the visible text (should be unique within the item list)
-     *
+     * @param namePart part of the visible text (should be unique within the item list)
      * @return WebElement that belongs to the name part
      */
     private Optional<WebElement> findClickableResultEntryByNamePart(final String namePart) {
@@ -299,9 +296,7 @@ public final class AnalysisSummary extends PageObject {
     /**
      * Returns the complete visible text by a part of the elements text.
      *
-     * @param namePart
-     *         part of the visible text (should be unique within the item list)
-     *
+     * @param namePart part of the visible text (should be unique within the item list)
      * @return String that belongs to the name part
      */
     public String findResultEntryTextByNamePart(final String namePart) {
@@ -313,18 +308,18 @@ public final class AnalysisSummary extends PageObject {
         return null;
     }
 
-    /**
-     * Determines which icon is shown to represent the info messages view.
-     */
+    /** Determines which icon is shown to represent the info messages view. */
     public enum InfoType {
-        INFO, ERROR
+        INFO,
+        ERROR
     }
 
-    /**
-     * Determines the quality gate result.
-     */
+    /** Determines the quality gate result. */
     public enum QualityGateResult {
-        SUCCESS, FAILED, UNSTABLE, INACTIVE;
+        SUCCESS,
+        FAILED,
+        UNSTABLE,
+        INACTIVE;
 
         static QualityGateResult fromTextMessage(final String text) {
             for (QualityGateResult qualityGate : values()) {

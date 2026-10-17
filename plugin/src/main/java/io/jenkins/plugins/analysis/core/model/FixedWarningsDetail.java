@@ -2,14 +2,11 @@ package io.jenkins.plugins.analysis.core.model;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
-
-import java.nio.charset.Charset;
-import java.util.Optional;
-
 import hudson.model.Run;
-
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
+import java.nio.charset.Charset;
+import java.util.Optional;
 
 /**
  * Result object to visualize the fixed issues in a build.
@@ -36,10 +33,24 @@ public class FixedWarningsDetail extends IssuesDetail {
      *         the encoding to use when displaying source files
      */
     // TODO: display name should be from label provider to make it overridable
-    FixedWarningsDetail(final Run<?, ?> owner, final AnalysisResult result, final Report fixedIssues,
-            final String url, final StaticAnalysisLabelProvider labelProvider, final Charset sourceEncoding) {
-        super(owner, result, fixedIssues, NO_ISSUES, NO_ISSUES, fixedIssues, Messages.Fixed_Warnings_Header(),
-                url, labelProvider, sourceEncoding);
+    FixedWarningsDetail(
+            final Run<?, ?> owner,
+            final AnalysisResult result,
+            final Report fixedIssues,
+            final String url,
+            final StaticAnalysisLabelProvider labelProvider,
+            final Charset sourceEncoding) {
+        super(
+                owner,
+                result,
+                fixedIssues,
+                NO_ISSUES,
+                NO_ISSUES,
+                fixedIssues,
+                Messages.Fixed_Warnings_Header(),
+                url,
+                labelProvider,
+                sourceEncoding);
     }
 
     /**
@@ -54,8 +65,10 @@ public class FixedWarningsDetail extends IssuesDetail {
     @SuppressWarnings("unused") // Called by jelly view
     public boolean canDisplayFile(final Issue issue) {
         Optional<Run<?, ?>> referenceBuild = getResult().getReferenceBuild();
-        return referenceBuild.filter(run -> ConsoleLogHandler.isInConsoleLog(issue.getFileName())
-                || AffectedFilesResolver.hasAffectedFile(run, issue)).isPresent();
+        return referenceBuild
+                .filter(run -> ConsoleLogHandler.isInConsoleLog(issue.getFileName())
+                        || AffectedFilesResolver.hasAffectedFile(run, issue))
+                .isPresent();
     }
 
     /**
@@ -69,7 +82,8 @@ public class FixedWarningsDetail extends IssuesDetail {
      */
     @SuppressWarnings("unused") // Called by jelly view
     public String getReferenceUrl() {
-        return getResult().getReferenceBuild()
+        return getResult()
+                .getReferenceBuild()
                 .map(Run::getUrl)
                 .map(url -> url + getResult().getId())
                 .orElse("");

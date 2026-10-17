@@ -1,11 +1,8 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import org.openqa.selenium.WebElement;
-
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-
 import org.jenkinsci.test.acceptance.po.AbstractStep;
 import org.jenkinsci.test.acceptance.po.Control;
 import org.jenkinsci.test.acceptance.po.Describable;
@@ -14,6 +11,7 @@ import org.jenkinsci.test.acceptance.po.PageArea;
 import org.jenkinsci.test.acceptance.po.PageAreaImpl;
 import org.jenkinsci.test.acceptance.po.PageObject;
 import org.jenkinsci.test.acceptance.po.PostBuildStep;
+import org.openqa.selenium.WebElement;
 
 /**
  * {@link PageObject} representing the IssuesRecorder of the Jenkins Warnings Plugin.
@@ -53,10 +51,8 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
     /**
      * Creates a new page object.
      *
-     * @param parent
-     *         parent page object
-     * @param path
-     *         path on the parent page
+     * @param parent parent page object
+     * @param path path on the parent page
      */
     public IssuesRecorder(final Job parent, final String path) {
         super(parent, path);
@@ -71,9 +67,7 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
     /**
      * Sets the name of the static analysis tool to use.
      *
-     * @param toolName
-     *         the tool name
-     *
+     * @param toolName the tool name
      * @return the subpage of the tool
      */
     public StaticAnalysisTool setTool(final String toolName) {
@@ -85,11 +79,8 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
     /**
      * Sets the name and the pattern of the static analysis tool to use.
      *
-     * @param toolName
-     *         the tool name
-     * @param pattern
-     *         the file name pattern
-     *
+     * @param toolName the tool name
+     * @param pattern the file name pattern
      * @return the subpage of the tool
      */
     public StaticAnalysisTool setTool(final String toolName, final String pattern) {
@@ -99,11 +90,8 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
     /**
      * Sets a static analysis tool configuration.
      *
-     * @param toolName
-     *         the tool name
-     * @param configuration
-     *         the additional configuration options for this tool
-     *
+     * @param toolName the tool name
+     * @param configuration the additional configuration options for this tool
      * @return the subpage of the tool
      */
     public StaticAnalysisTool setTool(final String toolName, final Consumer<StaticAnalysisTool> configuration) {
@@ -115,9 +103,7 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
     /**
      * Adds a new static analysis tool configuration. The pattern will be empty, i.e. the console log is scanned.
      *
-     * @param toolName
-     *         the tool name
-     *
+     * @param toolName the tool name
      * @return the subpage of the tool
      */
     public StaticAnalysisTool addTool(final String toolName) {
@@ -127,11 +113,8 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
     /**
      * Adds a new static analysis tool configuration.
      *
-     * @param toolName
-     *         the tool name
-     * @param configuration
-     *         the additional configuration options for this tool
-     *
+     * @param toolName the tool name
+     * @param configuration the additional configuration options for this tool
      * @return the subpage of the tool
      */
     public StaticAnalysisTool addTool(final String toolName, final Consumer<StaticAnalysisTool> configuration) {
@@ -143,11 +126,8 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
     /**
      * Adds a new static analysis tool configuration.
      *
-     * @param toolName
-     *         the tool name
-     * @param pattern
-     *         the file name pattern
-     *
+     * @param toolName the tool name
+     * @param pattern the file name pattern
      * @return the subpage of the tool
      */
     public StaticAnalysisTool addTool(final String toolName, final String pattern) {
@@ -161,8 +141,8 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
     /**
      * Returns whether recording should be enabled for failed builds as well.
      *
-     * @return {@code true}  if recording should be enabled for failed builds as well, {@code false} if recording is
-     *         enabled for successful or unstable builds only
+     * @return {@code true} if recording should be enabled for failed builds as well, {@code false} if recording is
+     *     enabled for successful or unstable builds only
      */
     public boolean isEnabledForFailure() {
         return isChecked(enabledForFailureCheckBox);
@@ -172,8 +152,8 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
      * Returns whether the results for each configured static analysis result should be aggregated into a single result
      * or if every tool should get an individual result.
      *
-     * @return {@code true}  if the results of each static analysis tool should be aggregated into a single result,
-     *         {@code false} if every tool should get an individual result.
+     * @return {@code true} if the results of each static analysis tool should be aggregated into a single result,
+     *     {@code false} if every tool should get an individual result.
      */
     public boolean isAggregatingResults() {
         return isChecked(aggregatingResults);
@@ -182,8 +162,8 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
     /**
      * Returns whether the report results is in logger output.
      *
-     * @return {@code true} then the report logging of each static analysis tool is muted
-     *         {@code false} then reports logging goes to loghandler output
+     * @return {@code true} then the report logging of each static analysis tool is muted {@code false} then reports
+     *     logging goes to loghandler output
      */
     public boolean isQuiet() {
         return isChecked(quiet);
@@ -270,9 +250,7 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
     /**
      * Sets the source code encoding to the specified value.
      *
-     * @param encoding
-     *         the encoding to use when reading source files
-     *
+     * @param encoding the encoding to use when reading source files
      * @return this recorder
      */
     public IssuesRecorder setSourceCodeEncoding(final String encoding) {
@@ -284,9 +262,7 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
     /**
      * Enables or disables the checkbox 'enabledForFailure'.
      *
-     * @param isChecked
-     *         determines if the checkbox should be checked or not
-     *
+     * @param isChecked determines if the checkbox should be checked or not
      * @return this recorder
      */
     public IssuesRecorder setEnabledForFailure(final boolean isChecked) {
@@ -298,9 +274,7 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
     /**
      * Enables or disables the checkbox 'aggregatingResultsCheckBox'.
      *
-     * @param isChecked
-     *         determines if the checkbox should be checked or not
-     *
+     * @param isChecked determines if the checkbox should be checked or not
      * @return this recorder
      */
     public IssuesRecorder setEnabledForAggregation(final boolean isChecked) {
@@ -314,10 +288,8 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
      * disabled by default, so a failing quality gate will be passed from build to build until the original reason for
      * the failure has been resolved.
      *
-     * @param ignoreQualityGate
-     *         if {@code true} then the result of the quality gate is ignored, otherwise only build with a successful
-     *         quality gate are selected
-     *
+     * @param ignoreQualityGate if {@code true} then the result of the quality gate is ignored, otherwise only build
+     *     with a successful quality gate are selected
      * @return this recorder
      */
     public IssuesRecorder setIgnoreQualityGate(final boolean ignoreQualityGate) {
@@ -330,9 +302,7 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
      * Adds the path to the folder that contains the source code. If not relative and thus not part of the workspace
      * then this folder needs to be added in Jenkins global configuration.
      *
-     * @param sourceDirectory
-     *         a folder containing the source code
-     *
+     * @param sourceDirectory a folder containing the source code
      * @return this recorder
      */
     public IssuesRecorder addSourceDirectory(final String sourceDirectory) {
@@ -347,10 +317,8 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
      * Determines whether the results for each configured static analysis result should be aggregated into a single
      * result or if every tool should get an individual result.
      *
-     * @param aggregatingResults
-     *         if {@code true} then the results of each static analysis tool should be aggregated into a single result,
-     *         if {@code false} then every tool should get an individual result.
-     *
+     * @param aggregatingResults if {@code true} then the results of each static analysis tool should be aggregated into
+     *     a single result, if {@code false} then every tool should get an individual result.
      * @return this recorder
      */
     public IssuesRecorder setAggregatingResults(final boolean aggregatingResults) {
@@ -362,10 +330,8 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
     /**
      * Determines whether the report results will go to logger output.
      *
-     * @param quiet
-     *         if {@code true} then the report logging of each static analysis tool is muted
-     *         if {@code false} then reports logging goes to loghandler output
-     *
+     * @param quiet if {@code true} then the report logging of each static analysis tool is muted if {@code false} then
+     *     reports logging goes to loghandler output
      * @return this recorder
      */
     public IssuesRecorder setQuiet(final boolean quiet) {
@@ -378,9 +344,7 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
      * Sets the SCM that should be used to find the reference build for. The reference recorder will select the SCM
      * based on a substring comparison, there is no need to specify the full name.
      *
-     * @param scm
-     *         the ID of the SCM to use (a substring of the full ID)
-     *
+     * @param scm the ID of the SCM to use (a substring of the full ID)
      * @return this recorder
      */
     public IssuesRecorder setScm(final String scm) {
@@ -392,9 +356,7 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
     /**
      * Determines whether SCM blaming should be disabled or not.
      *
-     * @param blameDisabled
-     *         {@code true} if SCM blaming should be disabled, {@code false} otherwise
-     *
+     * @param blameDisabled {@code true} if SCM blaming should be disabled, {@code false} otherwise
      * @return this recorder
      */
     public IssuesRecorder setSkipBlames(final boolean blameDisabled) {
@@ -406,9 +368,7 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
     /**
      * Determines whether post-processing should be disabled or not.
      *
-     * @param skipPostProcessing
-     *         {@code true} if post-processing should be disabled, {@code false} otherwise
-     *
+     * @param skipPostProcessing {@code true} if post-processing should be disabled, {@code false} otherwise
      * @return this recorder
      */
     public IssuesRecorder setSkipPostProcessing(final boolean skipPostProcessing) {
@@ -420,10 +380,8 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
     /**
      * Determines whether to fail the build on errors during the step of recording issues.
      *
-     * @param failOnError
-     *         if {@code true} then the build will be failed on errors, {@code false} then errors are only reported in
-     *         the UI
-     *
+     * @param failOnError if {@code true} then the build will be failed on errors, {@code false} then errors are only
+     *     reported in the UI
      * @return this recorder
      */
     public IssuesRecorder setFailOnError(final boolean failOnError) {
@@ -435,9 +393,7 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
     /**
      * Determines whether skip publishing of checks.
      *
-     * @param skipPublishingChecks
-     *         if {@code true} then publishing checks should be skipped, {@code false} otherwise
-     *
+     * @param skipPublishingChecks if {@code true} then publishing checks should be skipped, {@code false} otherwise
      * @return this recorder
      */
     public IssuesRecorder setSkipPublishingChecks(final boolean skipPublishingChecks) {
@@ -449,9 +405,7 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
     /**
      * Determines which issues should be published using the Checks API as annotations.
      *
-     * @param checksAnnotationScope
-     *         determines which issues should be shown
-     *
+     * @param checksAnnotationScope determines which issues should be shown
      * @return this recorder
      */
     public IssuesRecorder setChecksAnnotationScope(final ChecksAnnotationScope checksAnnotationScope) {
@@ -463,9 +417,7 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
     /**
      * Sets the report file pattern.
      *
-     * @param pattern
-     *         the pattern to set
-     *
+     * @param pattern the pattern to set
      * @return this recorder
      */
     public IssuesRecorder setReportFilePattern(final String pattern) {
@@ -477,9 +429,7 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
     /**
      * Sets the type of the trend chart that should be shown on the job page.
      *
-     * @param trendChartType
-     *         the type of the trend chart to use
-     *
+     * @param trendChartType the type of the trend chart to use
      * @return this recorder
      */
     public IssuesRecorder setTrendChartType(final TrendChartType trendChartType) {
@@ -491,9 +441,7 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
     /**
      * Sets the source code retention strategy.
      *
-     * @param sourceCodeRetention
-     *         the type of strategy to use
-     *
+     * @param sourceCodeRetention the type of strategy to use
      * @return this recorder
      */
     public IssuesRecorder setSourceCodeRetention(final SourceCodeRetention sourceCodeRetention) {
@@ -505,13 +453,9 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
     /**
      * Sets the healthy report values.
      *
-     * @param healthy
-     *         the number of issues when health is reported as 100%
-     * @param unhealthy
-     *         the number of issues when health is reported as 0%
-     * @param minimumSeverity
-     *         the severity to consider
-     *
+     * @param healthy the number of issues when health is reported as 100%
+     * @param unhealthy the number of issues when health is reported as 0%
+     * @param minimumSeverity the severity to consider
      * @return this recorder
      */
     public IssuesRecorder setHealthReport(final int healthy, final int unhealthy, final String minimumSeverity) {
@@ -522,9 +466,7 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
         return this;
     }
 
-    /**
-     * Opens the advanced section.
-     */
+    /** Opens the advanced section. */
     public void openAdvancedOptions() {
         if (advancedButton != null && advancedButton.exists()) {
             advancedButton.click();
@@ -542,11 +484,8 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
     /**
      * Sets the name of the static analysis tool to use and the pattern.
      *
-     * @param toolName
-     *         the tool name
-     * @param pattern
-     *         the pattern
-     *
+     * @param toolName the tool name
+     * @param pattern the pattern
      * @return this recorder
      */
     public IssuesRecorder setToolWithPattern(final String toolName, final String pattern) {
@@ -560,17 +499,13 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
     /**
      * Adds a new quality gate.
      *
-     * @param threshold
-     *         the minimum number of issues that fails the quality gate
-     * @param type
-     *         the type of the quality gate
-     * @param criticality
-     *         determines whether the quality gate sets the build result to Unstable or Failed
-     *
+     * @param threshold the minimum number of issues that fails the quality gate
+     * @param type the type of the quality gate
+     * @param criticality determines whether the quality gate sets the build result to Unstable or Failed
      * @return this recorder
      */
-    public IssuesRecorder addQualityGateConfiguration(final int threshold, final QualityGateType type,
-            final QualityGateCriticality criticality) {
+    public IssuesRecorder addQualityGateConfiguration(
+            final int threshold, final QualityGateType type, final QualityGateCriticality criticality) {
         String path = createPageArea("qualityGates", qualityGatesRepeatable::click);
         QualityGatePanel qualityGate = new QualityGatePanel(this, path);
         qualityGate.setThreshold(threshold);
@@ -583,11 +518,8 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
     /**
      * Adds a new issue filter.
      *
-     * @param filterName
-     *         name of the filter
-     * @param regex
-     *         regular expression to apply
-     *
+     * @param filterName name of the filter
+     * @param regex regular expression to apply
      * @return this recorder
      */
     public IssuesRecorder addIssueFilter(final String filterName, final String regex) {
@@ -603,9 +535,7 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
                 by.xpath(".//input[@type='radio' and contains(@path,'unstable[" + isUnstable + "]')]"));
     }
 
-    /**
-     * Available quality gate types.
-     */
+    /** Available quality gate types. */
     public enum QualityGateType {
         TOTAL("Total (any severity)"),
         TOTAL_ERROR("Total (errors only)"),
@@ -641,9 +571,7 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
         }
     }
 
-    /**
-     * Available quality gate types.
-     */
+    /** Available quality gate types. */
     public enum QualityGateCriticality {
         FAILURE("Fail the build"),
         UNSTABLE("Mark the build as unstable"),
@@ -666,9 +594,7 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
         }
     }
 
-    /**
-     * Page area of a static analysis tool configuration.
-     */
+    /** Page area of a static analysis tool configuration. */
     public static class StaticAnalysisTool extends PageAreaImpl {
         private final Control tool = control("");
         private final Control pattern = control("tool/pattern");
@@ -687,9 +613,7 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
         /**
          * Sets the name of the tool.
          *
-         * @param toolName
-         *         the name of the tool, e.g., CheckStyle, CPD, etc.
-         *
+         * @param toolName the name of the tool, e.g., CheckStyle, CPD, etc.
          * @return this
          */
         public StaticAnalysisTool setTool(final String toolName) {
@@ -700,9 +624,7 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
         /**
          * Sets the custom ID of the tool.
          *
-         * @param id
-         *         the ID
-         *
+         * @param id the ID
          * @return this
          */
         public StaticAnalysisTool setId(final String id) {
@@ -714,9 +636,7 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
         /**
          * Sets the custom name of the tool.
          *
-         * @param name
-         *         the name
-         *
+         * @param name the name
          * @return this
          */
         public StaticAnalysisTool setName(final String name) {
@@ -728,9 +648,7 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
         /**
          * Sets the custom name of the tool.
          *
-         * @param icon
-         *         the icon
-         *
+         * @param icon the icon
          * @return this
          */
         public StaticAnalysisTool setIcon(final String icon) {
@@ -742,9 +660,7 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
         /**
          * Sets the pattern of the files to parse.
          *
-         * @param pattern
-         *         the pattern
-         *
+         * @param pattern the pattern
          * @return this
          */
         public StaticAnalysisTool setPattern(final String pattern) {
@@ -756,9 +672,7 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
         /**
          * Sets the normal threshold for duplicate code warnings.
          *
-         * @param normalThreshold
-         *         threshold to be set
-         *
+         * @param normalThreshold threshold to be set
          * @return this
          */
         public StaticAnalysisTool setNormalThreshold(final int normalThreshold) {
@@ -770,9 +684,7 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
         /**
          * Sets the high threshold for duplicate code warnings.
          *
-         * @param highThreshold
-         *         threshold to be set
-         *
+         * @param highThreshold threshold to be set
          * @return this
          */
         public StaticAnalysisTool setHighThreshold(final int highThreshold) {
@@ -784,9 +696,7 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
         /**
          * Sets the name of the parser in the analysis-model component.
          *
-         * @param analysisModelName
-         *         name of the parser
-         *
+         * @param analysisModelName name of the parser
          * @return this
          */
         public StaticAnalysisTool setAnalysisModelId(final String analysisModelName) {
@@ -798,9 +708,7 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
         /**
          * Sets whether to ignore symbolic links.
          *
-         * @param skipSymbolicLinks
-         *         determines the check state
-         *
+         * @param skipSymbolicLinks determines the check state
          * @return this
          */
         public StaticAnalysisTool setSkipSymbolicLinks(final boolean skipSymbolicLinks) {
@@ -810,9 +718,7 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
         }
     }
 
-    /**
-     * Page area of a filter configuration.
-     */
+    /** Page area of a filter configuration. */
     private static class IssueFilterPanel extends PageAreaImpl {
         private final Control regexField = control("pattern");
 
@@ -825,9 +731,7 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
         }
     }
 
-    /**
-     * Page area of a quality gate configuration.
-     */
+    /** Page area of a quality gate configuration. */
     private static class QualityGatePanel extends PageAreaImpl {
         private final Control threshold = control("integerThreshold");
         private final Control type = control("type");
@@ -850,9 +754,7 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
         }
     }
 
-    /**
-     * Page area of a source code path configuration.
-     */
+    /** Page area of a source code path configuration. */
     private static class SourceCodeDirectoryPanel extends PageAreaImpl {
         private final Control path = control("path");
 
@@ -865,9 +767,7 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
         }
     }
 
-    /**
-     * Defines the type of trend chart to use.
-     */
+    /** Defines the type of trend chart to use. */
     public enum TrendChartType {
         /** The aggregation trend is shown <b>before</b> all other analysis tool trend charts. */
         AGGREGATION_TOOLS,
@@ -879,9 +779,7 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
         NONE
     }
 
-    /**
-     * Defines the retention strategy for source code files.
-     */
+    /** Defines the retention strategy for source code files. */
     public enum SourceCodeRetention {
         /** Never store source code files. */
         NEVER,
@@ -893,9 +791,7 @@ public final class IssuesRecorder extends AbstractStep implements PostBuildStep 
         MODIFIED
     }
 
-    /**
-     * Defines the scope of SCM checks annotations.
-     */
+    /** Defines the scope of SCM checks annotations. */
     public enum ChecksAnnotationScope {
         /** All issues, i.e., new and outstanding. */
         ALL,

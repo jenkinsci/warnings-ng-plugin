@@ -1,9 +1,8 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import org.apache.commons.lang3.StringUtils;
+import static io.jenkins.plugins.analysis.core.util.AffectedFilesResolver.*;
 
 import com.google.errorprone.annotations.MustBeClosed;
-
 import edu.hm.hafner.analysis.FileNameResolver;
 import edu.hm.hafner.analysis.FingerprintGenerator;
 import edu.hm.hafner.analysis.FullTextFingerprint;
@@ -16,29 +15,14 @@ import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 import edu.hm.hafner.util.FilteredLog;
 import edu.hm.hafner.util.SecureXmlParserFactory;
 import edu.hm.hafner.util.SecureXmlParserFactory.ParsingException;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.InvalidPathException;
-import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import edu.umd.cs.findbugs.annotations.CheckForNull;
-import org.jenkinsci.plugins.workflow.graph.FlowNode;
 import hudson.FilePath;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
-import jenkins.MasterToSlaveFileCallable;
 import io.jenkins.plugins.analysis.core.filter.FilterConfig;
-import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.filter.NullFileNameFilter;
+import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.ReportLocations;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.Tool;
@@ -57,8 +41,20 @@ import io.jenkins.plugins.prism.PrismConfiguration;
 import io.jenkins.plugins.prism.SourceCodeRetention;
 import io.jenkins.plugins.prism.SourceDirectoryFilter;
 import io.jenkins.plugins.util.LogHandler;
-
-import static io.jenkins.plugins.analysis.core.util.AffectedFilesResolver.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import jenkins.MasterToSlaveFileCallable;
+import org.apache.commons.lang3.StringUtils;
+import org.jenkinsci.plugins.workflow.graph.FlowNode;
 
 /**
  * Scans report files or the console log for issues.
@@ -81,38 +77,73 @@ class IssuesScanner {
     private final boolean quiet;
     private final String sourcePathPrefix;
     private final String targetPathPrefix;
+
     @CheckForNull
     private final FlowNode flowNode;
 
     enum BlameMode {
-        ENABLED, DISABLED
+        ENABLED,
+        DISABLED
     }
 
     enum PostProcessingMode {
-        ENABLED, DISABLED
+        ENABLED,
+        DISABLED
     }
 
     @SuppressWarnings("checkstyle:ParameterNumber")
-    IssuesScanner(final Tool tool, final FilterConfig filterConfig,
+    IssuesScanner(
+            final Tool tool,
+            final FilterConfig filterConfig,
             final Charset sourceCodeEncoding,
-            final FilePath workspace, final Set<String> sourceDirectories,
-            final SourceCodeRetention sourceCodeRetention, final Run<?, ?> run,
-            final FilePath jenkinsRootDir, final TaskListener listener,
-            final String scm, final BlameMode blameMode, final PostProcessingMode postProcessingMode,
-            final boolean quiet, final String sourcePathPrefix, final String targetPathPrefix) {
-        this(tool, filterConfig, sourceCodeEncoding, workspace, sourceDirectories, sourceCodeRetention,
-                run, jenkinsRootDir, listener, scm, blameMode, postProcessingMode, quiet,
-                sourcePathPrefix, targetPathPrefix, null);
+            final FilePath workspace,
+            final Set<String> sourceDirectories,
+            final SourceCodeRetention sourceCodeRetention,
+            final Run<?, ?> run,
+            final FilePath jenkinsRootDir,
+            final TaskListener listener,
+            final String scm,
+            final BlameMode blameMode,
+            final PostProcessingMode postProcessingMode,
+            final boolean quiet,
+            final String sourcePathPrefix,
+            final String targetPathPrefix) {
+        this(
+                tool,
+                filterConfig,
+                sourceCodeEncoding,
+                workspace,
+                sourceDirectories,
+                sourceCodeRetention,
+                run,
+                jenkinsRootDir,
+                listener,
+                scm,
+                blameMode,
+                postProcessingMode,
+                quiet,
+                sourcePathPrefix,
+                targetPathPrefix,
+                null);
     }
 
     @SuppressWarnings("checkstyle:ParameterNumber")
-    IssuesScanner(final Tool tool, final FilterConfig filterConfig,
+    IssuesScanner(
+            final Tool tool,
+            final FilterConfig filterConfig,
             final Charset sourceCodeEncoding,
-            final FilePath workspace, final Set<String> sourceDirectories,
-            final SourceCodeRetention sourceCodeRetention, final Run<?, ?> run,
-            final FilePath jenkinsRootDir, final TaskListener listener,
-            final String scm, final BlameMode blameMode, final PostProcessingMode postProcessingMode,
-            final boolean quiet, final String sourcePathPrefix, final String targetPathPrefix,
+            final FilePath workspace,
+            final Set<String> sourceDirectories,
+            final SourceCodeRetention sourceCodeRetention,
+            final Run<?, ?> run,
+            final FilePath jenkinsRootDir,
+            final TaskListener listener,
+            final String scm,
+            final BlameMode blameMode,
+            final PostProcessingMode postProcessingMode,
+            final boolean quiet,
+            final String sourcePathPrefix,
+            final String targetPathPrefix,
             @CheckForNull final FlowNode flowNode) {
         this.filterConfig = filterConfig;
         this.sourceCodeEncoding = sourceCodeEncoding;
@@ -157,15 +188,14 @@ class IssuesScanner {
     }
 
     private AnnotatedReport postProcessReport(final Report report) throws IOException, InterruptedException {
-        if (tool.getDescriptor().isPostProcessingEnabled()
-                && report.isNotEmpty()) {
-            report.logInfo("Post processing issues on '%s' with source code encoding '%s'",
+        if (tool.getDescriptor().isPostProcessingEnabled() && report.isNotEmpty()) {
+            report.logInfo(
+                    "Post processing issues on '%s' with source code encoding '%s'",
                     getAgentName(), sourceCodeEncoding);
             var result = workspace.act(createPostProcessor(report));
             copyAffectedFiles(result.getReport(), createAffectedFilesFolder(result.getReport()));
             return result;
-        }
-        else {
+        } else {
             report.logInfo("Skipping post processing");
             return new AnnotatedReport(tool.getActualId(), filter(report, filterConfig, workspace));
         }
@@ -176,15 +206,22 @@ class IssuesScanner {
         if (tool instanceof ReportScanningTool scanningTool) {
             linesLookAhead = scanningTool.getLinesLookAhead();
         }
-        return new ReportPostProcessor(tool.getActualId(), report, sourceCodeEncoding.name(),
-                createBlamer(report), filterConfig, getPermittedSourceDirectories(), sourceDirectories,
-                postProcessingMode, linesLookAhead, sourcePathPrefix, targetPathPrefix);
+        return new ReportPostProcessor(
+                tool.getActualId(),
+                report,
+                sourceCodeEncoding.name(),
+                createBlamer(report),
+                filterConfig,
+                getPermittedSourceDirectories(),
+                sourceDirectories,
+                postProcessingMode,
+                linesLookAhead,
+                sourcePathPrefix,
+                targetPathPrefix);
     }
 
     private Set<String> getPermittedSourceDirectories() {
-        return PrismConfiguration.getInstance()
-                .getSourceDirectories()
-                .stream()
+        return PrismConfiguration.getInstance().getSourceDirectories().stream()
                 .map(PermittedSourceCodeDirectory::getPath)
                 .collect(Collectors.toSet());
     }
@@ -193,10 +230,8 @@ class IssuesScanner {
         if (blameMode == BlameMode.DISABLED) {
             report.logInfo("Skipping SCM blames as requested");
             return new NullBlamer();
-        }
-        else {
-            var log = new FilteredLog("Errors while determining a supported blamer for "
-                    + run.getFullDisplayName());
+        } else {
+            var log = new FilteredLog("Errors while determining a supported blamer for " + run.getFullDisplayName());
             report.logInfo("Creating SCM blamer to obtain author and commit information for affected files");
             if (!StringUtils.isBlank(scm)) {
                 report.logInfo("-> Filtering SCMs by key '%s'", scm);
@@ -208,19 +243,17 @@ class IssuesScanner {
         }
     }
 
-    private void copyAffectedFiles(final Report report, final FilePath buildFolder)
-            throws InterruptedException {
+    private void copyAffectedFiles(final Report report, final FilePath buildFolder) throws InterruptedException {
         var log = new FilteredLog("Errors while processing affected files");
         if (sourceCodeRetention == SourceCodeRetention.NEVER) {
             report.logInfo("Skipping copying of affected files");
-        }
-        else {
+        } else {
             report.logInfo("Copying affected files to Jenkins' build folder '%s'", buildFolder);
 
             Set<String> permittedSourceDirectories = getPermittedSourceDirectories();
             permittedSourceDirectories.add(workspace.getRemote());
-            new AffectedFilesResolver().copyAffectedFilesToBuildFolder(
-                    report, workspace, permittedSourceDirectories, buildFolder);
+            new AffectedFilesResolver()
+                    .copyAffectedFilesToBuildFolder(report, workspace, permittedSourceDirectories, buildFolder);
         }
         sourceCodeRetention.cleanup(run, AFFECTED_FILES_FOLDER_NAME, log);
 
@@ -231,10 +264,8 @@ class IssuesScanner {
         var buildDirectory = jenkinsRootDir.child(AFFECTED_FILES_FOLDER_NAME);
         try {
             buildDirectory.mkdirs();
-        }
-        catch (IOException exception) {
-            report.logException(exception,
-                    "Can't create directory '%s' for affected workspace files.", buildDirectory);
+        } catch (IOException exception) {
+            report.logException(exception, "Can't create directory '%s' for affected workspace files.", buildDirectory);
         }
         return buildDirectory;
     }
@@ -251,8 +282,7 @@ class IssuesScanner {
         return StringUtils.EMPTY;
     }
 
-    private static Report filter(final Report report, final FilterConfig filterConfig,
-            final FilePath workspace) {
+    private static Report filter(final Report report, final FilterConfig filterConfig, final FilePath workspace) {
         int actualFilterSize = 0;
         var builder = new IssueFilterBuilder();
         for (RegexpFilter filter : filterConfig.filters()) {
@@ -281,8 +311,7 @@ class IssuesScanner {
             result.logInfo(
                     "Applying %d filters on the set of %d issues (%d issues have been removed, %d issues will be published)",
                     actualFilterSize, report.size(), report.size() - result.size(), result.size());
-        }
-        else {
+        } else {
             result.logInfo("No filter has been set, publishing all %d issues", result.size());
         }
         return result;
@@ -303,24 +332,35 @@ class IssuesScanner {
         private final Report originalReport;
         private final String sourceCodeEncoding;
         private final Blamer blamer;
+
         @SuppressWarnings("serial")
         private final Set<String> permittedSourceDirectories;
+
         @SuppressWarnings("serial")
         private final Set<String> requestedSourceDirectories;
+
         private final PostProcessingMode postProcessingMode;
+
         @SuppressWarnings("serial")
         private final FilterConfig filterConfig;
+
         private final int linesLookAhead;
         private final String sourcePathPrefix;
         private final String targetPathPrefix;
 
         @SuppressWarnings("checkstyle:ParameterNumber")
-        ReportPostProcessor(final String id, final Report report, final String sourceCodeEncoding,
-                final Blamer blamer, final FilterConfig filterConfig,
+        ReportPostProcessor(
+                final String id,
+                final Report report,
+                final String sourceCodeEncoding,
+                final Blamer blamer,
+                final FilterConfig filterConfig,
                 final Set<String> permittedSourceDirectories,
-                final Set<String> requestedSourceDirectories, final PostProcessingMode postProcessingMode,
+                final Set<String> requestedSourceDirectories,
+                final PostProcessingMode postProcessingMode,
                 final int linesLookAhead,
-                final String sourcePathPrefix, final String targetPathPrefix) {
+                final String sourcePathPrefix,
+                final String targetPathPrefix) {
             super();
 
             this.id = id;
@@ -343,12 +383,14 @@ class IssuesScanner {
             if (postProcessingMode == PostProcessingMode.ENABLED) {
                 resolveModuleNames(originalReport, workspace);
                 resolvePackageNames(originalReport);
-            }
-            else {
+            } else {
                 originalReport.logInfo(SKIPPING_POST_PROCESSING);
             }
 
-            Report filtered = filter(originalReport, filterConfig, new FilePath(workspace)); // the filters may depend on the resolved paths
+            Report filtered = filter(
+                    originalReport,
+                    filterConfig,
+                    new FilePath(workspace)); // the filters may depend on the resolved paths
 
             createFingerprints(filtered);
 
@@ -358,10 +400,10 @@ class IssuesScanner {
         }
 
         /**
-         * Pre-warms the XML parser infrastructure so that the Xerces implementation classes are loaded exactly once 
-         * on the agent JVM via the RemoteClassLoader, rather than being re-fetched from the Jenkins controller for 
+         * Pre-warms the XML parser infrastructure so that the Xerces implementation classes are loaded exactly once
+         * on the agent JVM via the RemoteClassLoader, rather than being re-fetched from the Jenkins controller for
          * every XML file parsed during module or package name resolution.
-         * 
+         *
          * @param report
          *         report used to log parser initialization failures
          */
@@ -370,8 +412,7 @@ class IssuesScanner {
                 var factory = new SecureXmlParserFactory();
                 factory.createSaxParser();
                 factory.createDocumentBuilder();
-            }
-            catch (ParsingException e) {
+            } catch (ParsingException e) {
                 report.logException(e, "Failed to pre-warm XML parser infrastructure - XML parsing may be slow");
             }
         }
@@ -390,18 +431,25 @@ class IssuesScanner {
             try {
                 var nameResolver = new FileNameResolver();
                 report.logInfo("Resolving file names for all issues in workspace '%s'", workspace);
-                nameResolver.run(report, workspace.getAbsolutePath(), ConsoleLogHandler::isInConsoleLog,
-                        sourcePathPrefix, targetPathPrefix);
+                nameResolver.run(
+                        report,
+                        workspace.getAbsolutePath(),
+                        ConsoleLogHandler::isInConsoleLog,
+                        sourcePathPrefix,
+                        targetPathPrefix);
                 var errors = new FilteredLog("Source-Directories");
                 Set<String> filteredSourceDirectories = filterSourceDirectories(workspace, errors);
                 errors.getErrorMessages().forEach(report::logError);
                 for (String sourceDirectory : filteredSourceDirectories) {
                     report.logInfo("Resolving file names for all issues in source directory '%s'", sourceDirectory);
-                    nameResolver.run(report, sourceDirectory, ConsoleLogHandler::isInConsoleLog,
-                            sourcePathPrefix, targetPathPrefix);
+                    nameResolver.run(
+                            report,
+                            sourceDirectory,
+                            ConsoleLogHandler::isInConsoleLog,
+                            sourcePathPrefix,
+                            targetPathPrefix);
                 }
-            }
-            catch (InvalidPathException exception) {
+            } catch (InvalidPathException exception) {
                 report.logException(exception, "Resolving of file names aborted");
             }
         }
@@ -419,8 +467,7 @@ class IssuesScanner {
                 var runner = new ModuleDetectorRunner(workspace.toPath(), new DefaultFileSystem());
                 var resolver = new ModuleResolver(runner);
                 resolver.run(report);
-            }
-            catch (InvalidPathException exception) {
+            } catch (InvalidPathException exception) {
                 report.logException(exception, "Resolving of modul names aborted");
             }
         }
@@ -431,8 +478,7 @@ class IssuesScanner {
             try {
                 var resolver = new PackageNameResolver();
                 resolver.run(report, getCharset());
-            }
-            catch (InvalidPathException exception) {
+            } catch (InvalidPathException exception) {
                 report.logException(exception, "Resolving of package names aborted");
             }
         }
@@ -448,8 +494,7 @@ class IssuesScanner {
             if (linesLookAhead < 0) {
                 // no-arg constructor defaults context lines to 3
                 generator.run(new FullTextFingerprint(), report, getCharset());
-            }
-            else {
+            } else {
                 generator.run(new FullTextFingerprint(linesLookAhead), report, getCharset());
             }
         }

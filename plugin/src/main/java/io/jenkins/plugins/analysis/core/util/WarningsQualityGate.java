@@ -1,25 +1,22 @@
 package io.jenkins.plugins.analysis.core.util;
 
 import edu.hm.hafner.util.VisibleForTesting;
-
-import java.io.Serial;
-import java.util.function.Function;
-
-import org.kohsuke.stapler.AncestorInPath;
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.DataBoundSetter;
-import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.verb.POST;
 import hudson.Extension;
 import hudson.model.BuildableItem;
 import hudson.model.Item;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
-import jenkins.model.Jenkins;
-
 import io.jenkins.plugins.analysis.core.util.IssuesStatistics.StatisticProperties;
 import io.jenkins.plugins.util.JenkinsFacade;
 import io.jenkins.plugins.util.QualityGate;
+import java.io.Serial;
+import java.util.function.Function;
+import jenkins.model.Jenkins;
+import org.kohsuke.stapler.AncestorInPath;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
 
 /**
  * Defines a quality gate based on a specific threshold of issues (total, new, delta) in the current build. After a
@@ -57,8 +54,8 @@ public final class WarningsQualityGate extends QualityGate {
      * @param criticality
      *         the criticality of the quality gate
      */
-    public WarningsQualityGate(final int threshold, final QualityGateType type,
-            final QualityGateCriticality criticality) {
+    public WarningsQualityGate(
+            final int threshold, final QualityGateType type, final QualityGateCriticality criticality) {
         this(type);
 
         setIntegerThreshold(threshold);
@@ -66,8 +63,7 @@ public final class WarningsQualityGate extends QualityGate {
     }
 
     public boolean isUnstable() {
-        return getCriticality() == QualityGateCriticality.UNSTABLE
-                || getCriticality() == QualityGateCriticality.NOTE;
+        return getCriticality() == QualityGateCriticality.UNSTABLE || getCriticality() == QualityGateCriticality.NOTE;
     }
 
     /**
@@ -82,8 +78,7 @@ public final class WarningsQualityGate extends QualityGate {
     public void setUnstable(final boolean unstable) {
         if (unstable) {
             setCriticality(QualityGateCriticality.UNSTABLE);
-        }
-        else {
+        } else {
             setCriticality(QualityGateCriticality.FAILURE);
         }
     }
@@ -225,8 +220,8 @@ public final class WarningsQualityGate extends QualityGate {
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckThreshold(@AncestorInPath final BuildableItem project,
-                @QueryParameter final int threshold) {
+        public FormValidation doCheckThreshold(
+                @AncestorInPath final BuildableItem project, @QueryParameter final int threshold) {
             if (!jenkins.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }

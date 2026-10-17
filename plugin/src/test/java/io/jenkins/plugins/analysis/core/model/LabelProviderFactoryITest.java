@@ -1,19 +1,16 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import org.junit.jupiter.api.Test;
-import org.jvnet.hudson.test.TestExtension;
+import static io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProviderAssert.*;
+import static org.mockito.Mockito.*;
 
 import edu.hm.hafner.analysis.IssueParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
-
-import java.io.Serial;
-import java.util.Optional;
-
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory.StaticAnalysisToolFactory;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
-
-import static io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProviderAssert.*;
-import static org.mockito.Mockito.*;
+import java.io.Serial;
+import java.util.Optional;
+import org.junit.jupiter.api.Test;
+import org.jvnet.hudson.test.TestExtension;
 
 /**
  * Tests the class {@link LabelProviderFactory}.

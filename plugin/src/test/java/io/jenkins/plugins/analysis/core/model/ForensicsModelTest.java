@@ -1,15 +1,13 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import org.junit.jupiter.api.Test;
-
-import edu.hm.hafner.analysis.Report;
-
-import io.jenkins.plugins.forensics.miner.FileStatistics;
-import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
-
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 import static org.mockito.Mockito.*;
+
+import edu.hm.hafner.analysis.Report;
+import io.jenkins.plugins.forensics.miner.FileStatistics;
+import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class {@link ForensicsModel}.
@@ -31,16 +29,35 @@ class ForensicsModelTest extends AbstractDetailsModelTest {
         var columnDefinitions = model.getColumnsDefinition();
         assertThatJson(columnDefinitions).isArray().hasSize(10);
 
-        String[] columns = {"description", "fileName", "age", "authorsSize",
-                "commitsSize", "modifiedAt", "addedAt", "linesOfCode", "churn", "message"};
+        String[] columns = {
+            "description",
+            "fileName",
+            "age",
+            "authorsSize",
+            "commitsSize",
+            "modifiedAt",
+            "addedAt",
+            "linesOfCode",
+            "churn",
+            "message"
+        };
         for (int column = 0; column < columns.length; column++) {
             verifyColumnProperty(model, column, columns[column]);
         }
         verifyFileNameColumn(columnDefinitions);
 
         assertThat(getLabels(model))
-                .containsExactly("Details", "File", "Age", "#Authors",
-                        "#Commits", "Last Commit", "Added", "#LoC", "Code Churn", "Hiddendetails");
+                .containsExactly(
+                        "Details",
+                        "File",
+                        "Age",
+                        "#Authors",
+                        "#Commits",
+                        "Last Commit",
+                        "Added",
+                        "#LoC",
+                        "Code Churn",
+                        "Hiddendetails");
 
         assertThat(model.getRows()).hasSize(2);
     }
@@ -65,15 +82,16 @@ class ForensicsModelTest extends AbstractDetailsModelTest {
         var model = createModel(report, statistics);
 
         var actualRow = model.getRow(issue);
-        assertThat(actualRow).hasDescription(EXPECTED_DESCRIPTION)
+        assertThat(actualRow)
+                .hasDescription(EXPECTED_DESCRIPTION)
                 .hasAge("1")
                 .hasAuthorsSize("15")
                 .hasCommitsSize("20")
                 .hasModifiedAt(25)
                 .hasAddedAt(30);
 
-        assertThatDetailedColumnContains(actualRow.getFileName(),
-                createExpectedFileName(issue), "/path/to/file-1:0000015");
+        assertThatDetailedColumnContains(
+                actualRow.getFileName(), createExpectedFileName(issue), "/path/to/file-1:0000015");
     }
 
     @Test
@@ -87,17 +105,23 @@ class ForensicsModelTest extends AbstractDetailsModelTest {
         var model = createModel(report, blames);
 
         var actualRow = model.getRow(issue);
-        assertThat(actualRow).hasDescription(EXPECTED_DESCRIPTION)
+        assertThat(actualRow)
+                .hasDescription(EXPECTED_DESCRIPTION)
                 .hasAge("1")
                 .hasAuthorsSize(ForensicsModel.UNDEFINED)
                 .hasCommitsSize(ForensicsModel.UNDEFINED);
 
-        assertThatDetailedColumnContains(actualRow.getFileName(),
-                createExpectedFileName(issue), "/path/to/file-1:0000015");
+        assertThatDetailedColumnContains(
+                actualRow.getFileName(), createExpectedFileName(issue), "/path/to/file-1:0000015");
     }
 
     private ForensicsModel createModel(final Report report, final RepositoryStatistics statistics) {
-        return new ForensicsModel(report, statistics, createFileNameRenderer(), createAgeBuilder(),
-                issue -> DESCRIPTION, createJenkinsFacade());
+        return new ForensicsModel(
+                report,
+                statistics,
+                createFileNameRenderer(),
+                createAgeBuilder(),
+                issue -> DESCRIPTION,
+                createJenkinsFacade());
     }
 }
