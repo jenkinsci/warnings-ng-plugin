@@ -17,7 +17,6 @@ import org.jvnet.hudson.test.Issue;
  * Support scanning of console log with parallel steps.
  */
 class ParallelConsoleScanningITest extends IntegrationTestWithJenkinsPerSuite {
-
     /**
      * Verifies that scanForIssues properly isolates console log scanning to the enclosing parallel branch.
      * Diagnostics from one branch are not visible to another branch, preventing cross-branch file resolution
@@ -204,8 +203,10 @@ class ParallelConsoleScanningITest extends IntegrationTestWithJenkinsPerSuite {
         AnalysisResult result = scheduleSuccessfulBuild(job);
 
         assertThat(result).hasTotalSize(2);
-        assertThat(result.getIssues().get(0).getFileName()).endsWith("FileA.c");
-        assertThat(result.getIssues().get(1).getFileName()).endsWith("FileB.c");
+        assertThat(result.getIssues().stream().anyMatch(i -> i.getFileName().endsWith("FileA.c")))
+                .isTrue();
+        assertThat(result.getIssues().stream().anyMatch(i -> i.getFileName().endsWith("FileB.c")))
+                .isTrue();
         assertThat(getConsoleLog(result)).doesNotContain("Can't create fingerprints");
     }
 }

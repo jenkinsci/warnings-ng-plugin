@@ -119,21 +119,25 @@ public class ConsoleLogReaderFactory extends ReaderFactory {
             return Optional.of(new StringReader(StringUtils.EMPTY));
         }
 
-        var branchLog = new AppendableByteArrayOutputStream();
-        try {
+        try (var branchLog = new AppendableByteArrayOutputStream()) {
             for (var step : stepsInBranch) {
-                var logAction = step.getAction(LogAction.class);
-                if (logAction != null && logAction.getLogText() != null) {
-                    long bytes = logAction.getLogText().writeLogTo(0, branchLog);
-                    if (bytes > 0 && !branchLog.endsWithNewline()) {
-                        branchLog.write('\n');
-                    }
-                }
+                appendStepLog(branchLog, step);
             }
             return Optional.of(
                     new InputStreamReader(new ByteArrayInputStream(branchLog.toByteArray()), run.getCharset()));
         } catch (IOException e) {
             throw new ParsingException(e);
+        }
+    }
+
+    private void appendStepLog(final AppendableByteArrayOutputStream branchLog, final FlowNode step)
+            throws IOException {
+        var logAction = step.getAction(LogAction.class);
+        if (logAction != null && logAction.getLogText() != null) {
+            long bytes = logAction.getLogText().writeLogTo(0, branchLog);
+            if (bytes > 0 && !branchLog.endsWithNewline()) {
+                branchLog.write('\n');
+            }
         }
     }
 
@@ -164,23 +168,25 @@ public class ConsoleLogReaderFactory extends ReaderFactory {
                 stepsInBranch.add(curr);
             }
             for (var parent : curr.getParents()) {
-                if (parent != null && visited.add(parent.getId())) {
-                    if (parent.getAllEnclosingIds().contains(branchStartId)) {
-                        queue.add(parent);
-                    }
+                if (parent != null
+                        && visited.add(parent.getId())
+                        && parent.getAllEnclosingIds().contains(branchStartId)) {
+                    queue.add(parent);
                 }
             }
         }
 
-        stepsInBranch.sort((n1, n2) -> {
-            try {
-                return Integer.compare(Integer.parseInt(n1.getId()), Integer.parseInt(n2.getId()));
-            } catch (NumberFormatException e) {
-                return n1.getId().compareTo(n2.getId());
-            }
-        });
+        stepsInBranch.sort(ConsoleLogReaderFactory::compareNodeIds);
 
         return stepsInBranch;
+    }
+
+    private static int compareNodeIds(final FlowNode n1, final FlowNode n2) {
+        try {
+            return Integer.compare(Integer.parseInt(n1.getId()), Integer.parseInt(n2.getId()));
+        } catch (NumberFormatException e) {
+            return n1.getId().compareTo(n2.getId());
+        }
     }
 
     private static class AppendableByteArrayOutputStream extends ByteArrayOutputStream {

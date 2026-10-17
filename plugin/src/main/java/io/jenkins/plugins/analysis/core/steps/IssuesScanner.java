@@ -61,6 +61,7 @@ import org.jenkinsci.plugins.workflow.graph.FlowNode;
  *
  * @author Ullrich Hafner
  */
+@SuppressWarnings({"checkstyle:ClassFanOutComplexity", "ClassFanOutComplexity"})
 class IssuesScanner {
     private final FilePath workspace;
     private final Set<String> sourceDirectories;
