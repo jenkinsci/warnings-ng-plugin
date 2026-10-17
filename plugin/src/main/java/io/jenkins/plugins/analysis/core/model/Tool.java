@@ -16,6 +16,9 @@ import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.verb.POST;
 import org.jenkinsci.Symbol;
+import org.jenkinsci.plugins.workflow.graph.FlowNode;
+
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import hudson.FilePath;
 import hudson.model.BuildableItem;
 import hudson.model.Describable;
@@ -190,6 +193,33 @@ public abstract class Tool implements Describable<Tool>, Serializable {
      */
     public abstract Report scan(Run<?, ?> run, FilePath workspace, Charset sourceCodeEncoding, LogHandler logger)
             throws ParsingException, ParsingCanceledException;
+
+    /**
+     * Scans the results of a build for issues with an optional {@link FlowNode} context.
+     * Default implementation delegates to {@link #scan(Run, FilePath, Charset, LogHandler)}.
+     *
+     * @param run
+     *         the build
+     * @param flowNode
+     *         the flow node of the current execution (or {@code null} if not running in pipeline)
+     * @param workspace
+     *         the workspace of the build
+     * @param sourceCodeEncoding
+     *         the encoding to use to read source files
+     * @param logger
+     *         the logger
+     *
+     * @return the created report
+     * @throws ParsingException
+     *         signals that during parsing a non-recoverable error has occurred
+     * @throws ParsingCanceledException
+     *         signals that the user has aborted the parsing
+     */
+    public Report scan(final Run<?, ?> run, @CheckForNull final FlowNode flowNode, final FilePath workspace,
+            final Charset sourceCodeEncoding, final LogHandler logger)
+            throws ParsingException, ParsingCanceledException {
+        return scan(run, workspace, sourceCodeEncoding, logger);
+    }
 
     /** Descriptor for {@link Tool}. **/
     public abstract static class ToolDescriptor extends Descriptor<Tool> {

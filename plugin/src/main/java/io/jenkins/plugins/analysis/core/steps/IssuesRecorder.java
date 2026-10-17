@@ -22,6 +22,7 @@ import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.verb.POST;
 import org.jenkinsci.Symbol;
+import org.jenkinsci.plugins.workflow.graph.FlowNode;
 import hudson.AbortException;
 import hudson.Extension;
 import hudson.FilePath;
@@ -141,6 +142,9 @@ public class IssuesRecorder extends Recorder {
 
     private String sourcePathPrefix = StringUtils.EMPTY; // @since 10.7.0
     private String targetPathPrefix = StringUtils.EMPTY; // @since 10.7.0
+
+    @CheckForNull
+    private FlowNode flowNode;
 
     /**
      * Creates a new instance of {@link IssuesRecorder}.
@@ -852,6 +856,16 @@ public class IssuesRecorder extends Recorder {
         }
     }
 
+    /**
+     * Sets the {@link FlowNode} of the execution, if running in a pipeline.
+     *
+     * @param flowNode
+     *         the flow node
+     */
+    public void setFlowNode(@CheckForNull final FlowNode flowNode) {
+        this.flowNode = flowNode;
+    }
+
     private AnnotatedReport scanWithTool(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
             final Tool tool) throws IOException, InterruptedException {
         var filterConfig = new FilterConfig(getFilters(), filesFilter);
@@ -860,7 +874,7 @@ public class IssuesRecorder extends Recorder {
                 run, new FilePath(run.getRootDir()), listener,
                 scm, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED,
                 skipPostProcessing ? PostProcessingMode.DISABLED : PostProcessingMode.ENABLED, quiet,
-                sourcePathPrefix, targetPathPrefix);
+                sourcePathPrefix, targetPathPrefix, flowNode);
 
         return issuesScanner.scan();
     }

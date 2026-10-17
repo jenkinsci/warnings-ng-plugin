@@ -18,6 +18,7 @@ import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.verb.POST;
+import org.jenkinsci.plugins.workflow.graph.FlowNode;
 import hudson.FilePath;
 import hudson.model.AbstractProject;
 import hudson.model.BuildableItem;
@@ -163,15 +164,22 @@ public abstract class ReportScanningTool extends Tool {
     @Override
     public Report scan(final Run<?, ?> run, final FilePath workspace, final Charset sourceCodeEncoding,
             final LogHandler logger) {
-        var report = scan(run, workspace, logger);
+        return scan(run, null, workspace, sourceCodeEncoding, logger);
+    }
+
+    @Override
+    public Report scan(final Run<?, ?> run, @CheckForNull final FlowNode flowNode, final FilePath workspace,
+            final Charset sourceCodeEncoding, final LogHandler logger) {
+        var report = scan(run, flowNode, workspace, logger);
         report.setOrigin(getActualId(), getActualName());
         return report;
     }
 
-    private Report scan(final Run<?, ?> run, final FilePath workspace, final LogHandler logger) {
+    private Report scan(final Run<?, ?> run, @CheckForNull final FlowNode flowNode, final FilePath workspace,
+            final LogHandler logger) {
         var actualPattern = getActualPattern();
         if (StringUtils.isBlank(actualPattern)) {
-            return scanInConsoleLog(workspace, run, logger);
+            return scanInConsoleLog(workspace, run, flowNode, logger);
         }
         else {
             if (StringUtils.isBlank(getPattern())) {
@@ -229,7 +237,8 @@ public abstract class ReportScanningTool extends Tool {
         }
     }
 
-    private Report scanInConsoleLog(final FilePath workspace, final Run<?, ?> run, final LogHandler logger) {
+    private Report scanInConsoleLog(final FilePath workspace, final Run<?, ?> run,
+            @CheckForNull final FlowNode flowNode, final LogHandler logger) {
         Ensure.that(canScanConsoleLog()).isTrue(
                 "Static analysis tool %s cannot scan console log output, please define a file pattern",
                 getActualName());
@@ -240,7 +249,12 @@ public abstract class ReportScanningTool extends Tool {
         logger.logInfoMessages(consoleReport.getInfoMessages());
         logger.logErrorMessages(consoleReport.getErrorMessages());
 
-        var report = createParser().parse(new ConsoleLogReaderFactory(run));
+        var readerFactory = new ConsoleLogReaderFactory(run, flowNode);
+        if (readerFactory.isBranchLog()) {
+            consoleReport.logInfo("Filtering console log to current parallel branch");
+        }
+
+        var report = createParser().parse(readerFactory);
 
         report.logInfo("Successfully parsed console log");
         report.logInfo("-> found %s (skipped %s)",

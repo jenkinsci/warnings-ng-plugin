@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+import org.jenkinsci.plugins.workflow.graph.FlowNode;
 import hudson.FilePath;
 import hudson.model.Run;
 import hudson.model.TaskListener;
@@ -79,6 +81,8 @@ class IssuesScanner {
     private final boolean quiet;
     private final String sourcePathPrefix;
     private final String targetPathPrefix;
+    @CheckForNull
+    private final FlowNode flowNode;
 
     enum BlameMode {
         ENABLED, DISABLED
@@ -96,6 +100,20 @@ class IssuesScanner {
             final FilePath jenkinsRootDir, final TaskListener listener,
             final String scm, final BlameMode blameMode, final PostProcessingMode postProcessingMode,
             final boolean quiet, final String sourcePathPrefix, final String targetPathPrefix) {
+        this(tool, filterConfig, sourceCodeEncoding, workspace, sourceDirectories, sourceCodeRetention,
+                run, jenkinsRootDir, listener, scm, blameMode, postProcessingMode, quiet,
+                sourcePathPrefix, targetPathPrefix, null);
+    }
+
+    @SuppressWarnings("checkstyle:ParameterNumber")
+    IssuesScanner(final Tool tool, final FilterConfig filterConfig,
+            final Charset sourceCodeEncoding,
+            final FilePath workspace, final Set<String> sourceDirectories,
+            final SourceCodeRetention sourceCodeRetention, final Run<?, ?> run,
+            final FilePath jenkinsRootDir, final TaskListener listener,
+            final String scm, final BlameMode blameMode, final PostProcessingMode postProcessingMode,
+            final boolean quiet, final String sourcePathPrefix, final String targetPathPrefix,
+            @CheckForNull final FlowNode flowNode) {
         this.filterConfig = filterConfig;
         this.sourceCodeEncoding = sourceCodeEncoding;
         this.tool = tool;
@@ -111,12 +129,13 @@ class IssuesScanner {
         this.quiet = quiet;
         this.sourcePathPrefix = sourcePathPrefix;
         this.targetPathPrefix = targetPathPrefix;
+        this.flowNode = flowNode;
     }
 
     AnnotatedReport scan() throws IOException, InterruptedException {
         var logger = new LogHandler(listener, tool.getActualName());
         logger.setQuiet(quiet);
-        var report = tool.scan(run, workspace, sourceCodeEncoding, logger);
+        var report = tool.scan(run, flowNode, workspace, sourceCodeEncoding, logger);
 
         var annotatedReport = postProcessReport(report);
 

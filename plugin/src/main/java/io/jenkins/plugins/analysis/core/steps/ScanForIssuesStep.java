@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
+import org.jenkinsci.plugins.workflow.graph.FlowNode;
 import org.jenkinsci.plugins.workflow.steps.Step;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.StepExecution;
@@ -333,7 +334,7 @@ public class ScanForIssuesStep extends Step {
                     sourceCodeRetention, getRun(), new FilePath(getRun().getRootDir()), listener,
                     scm, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED,
                     skipPostProcessing ? PostProcessingMode.DISABLED : PostProcessingMode.ENABLED,
-                    quiet, sourcePathPrefix, targetPathPrefix);
+                    quiet, sourcePathPrefix, targetPathPrefix, getFlowNode());
 
             return issuesScanner.scan();
         }
@@ -346,7 +347,7 @@ public class ScanForIssuesStep extends Step {
     public static class Descriptor extends AnalysisStepDescriptor {
         @Override
         public Set<Class<?>> getRequiredContext() {
-            return Sets.immutable.of(FilePath.class, EnvVars.class, TaskListener.class, Run.class).castToSet();
+            return Sets.immutable.of(FilePath.class, EnvVars.class, TaskListener.class, Run.class, FlowNode.class).castToSet();
         }
 
         @Override
