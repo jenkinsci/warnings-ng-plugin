@@ -162,7 +162,7 @@ class ReportScanningToolITest extends IntegrationTestWithJenkinsPerSuite {
                 final FilePath workspace,
                 final Charset sourceCodeEncoding,
                 final LogHandler logger) {
-            delegatedWithNullFlowNode = (flowNode == null);
+            delegatedWithNullFlowNode = flowNode == null;
             return new Report();
         }
 

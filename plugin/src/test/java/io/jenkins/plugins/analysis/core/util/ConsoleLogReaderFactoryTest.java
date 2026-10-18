@@ -117,8 +117,8 @@ class ConsoleLogReaderFactoryTest {
         var factory = new ConsoleLogReaderFactory(run, currentStep);
 
         assertThat(factory.isBranchLog()).isTrue();
-        try (var reader = factory.create()) {
-            List<String> lines = new BufferedReader(reader).lines().toList();
+        try (var reader = new BufferedReader(factory.create())) {
+            List<String> lines = reader.lines().toList();
             assertThat(lines).containsExactly("Step 1 output without newline", "Step 2 output with newline");
         }
     }
@@ -143,8 +143,8 @@ class ConsoleLogReaderFactoryTest {
 
         var factory = new ConsoleLogReaderFactory(run, currentStep);
 
-        try (var reader = factory.create()) {
-            List<String> lines = new BufferedReader(reader).lines().toList();
+        try (var reader = new BufferedReader(factory.create())) {
+            List<String> lines = reader.lines().toList();
             assertThat(lines).containsExactly("Alpha", "Beta");
         }
     }
@@ -163,9 +163,8 @@ class ConsoleLogReaderFactoryTest {
         when(step.getAllEnclosingIds()).thenReturn(List.of("bStart"));
         when(step.getParents()).thenReturn(Collections.emptyList());
         var logAction = mock(LogAction.class);
-        @SuppressWarnings("rawtypes")
-        AnnotatedLargeText logText = mock(AnnotatedLargeText.class);
-        when(logAction.getLogText()).thenReturn(logText);
+        AnnotatedLargeText<?> logText = mock(AnnotatedLargeText.class);
+        doReturn(logText).when(logAction).getLogText();
         when(step.getAction(LogAction.class)).thenReturn(logAction);
         when(logText.writeLogTo(eq(0L), any(OutputStream.class))).thenThrow(new IOException("Stream error"));
 
@@ -196,8 +195,8 @@ class ConsoleLogReaderFactoryTest {
 
         var factory = new ConsoleLogReaderFactory(run, currentStep);
 
-        try (var reader = factory.create()) {
-            List<String> lines = new BufferedReader(reader).lines().toList();
+        try (var reader = new BufferedReader(factory.create())) {
+            List<String> lines = reader.lines().toList();
             assertThat(lines).containsExactly("Inside branch output");
         }
     }
@@ -219,8 +218,8 @@ class ConsoleLogReaderFactoryTest {
 
         var factory = new ConsoleLogReaderFactory(run, currentStep);
 
-        try (var reader = factory.create()) {
-            List<String> lines = new BufferedReader(reader).lines().toList();
+        try (var reader = new BufferedReader(factory.create())) {
+            List<String> lines = reader.lines().toList();
             assertThat(lines).containsExactly("Shared ancestor output", "Path A output", "Path B output");
         }
     }
@@ -250,8 +249,8 @@ class ConsoleLogReaderFactoryTest {
         var factory = new ConsoleLogReaderFactory(run, currentStep);
 
         assertThat(factory.isBranchLog()).isTrue();
-        try (var reader = factory.create()) {
-            List<String> lines = new BufferedReader(reader).lines().toList();
+        try (var reader = new BufferedReader(factory.create())) {
+            List<String> lines = reader.lines().toList();
             assertThat(lines).containsExactly("Inner branch output");
         }
     }
@@ -267,7 +266,6 @@ class ConsoleLogReaderFactoryTest {
         return currentStep;
     }
 
-    @SuppressWarnings("rawtypes")
     private FlowNode createStep(
             final String id, final String enclosingId, final List<FlowNode> parents, final String logOutput)
             throws IOException {
@@ -276,8 +274,8 @@ class ConsoleLogReaderFactoryTest {
         when(step.getAllEnclosingIds()).thenReturn(List.of(enclosingId));
         when(step.getParents()).thenReturn(parents);
         var logAction = mock(LogAction.class);
-        AnnotatedLargeText logText = mock(AnnotatedLargeText.class);
-        when(logAction.getLogText()).thenReturn(logText);
+        AnnotatedLargeText<?> logText = mock(AnnotatedLargeText.class);
+        doReturn(logText).when(logAction).getLogText();
         when(step.getAction(LogAction.class)).thenReturn(logAction);
         when(logText.writeLogTo(eq(0L), any(OutputStream.class))).thenAnswer(invocation -> {
             OutputStream out = invocation.getArgument(1);
