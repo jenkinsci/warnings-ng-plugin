@@ -225,6 +225,37 @@ class ConsoleLogReaderFactoryTest {
         }
     }
 
+    @Test
+    void shouldIsolateToInnermostEnclosingBranchWhenNestedParallelBranchesExist() throws IOException {
+        var run = mock(Run.class);
+        when(run.getCharset()).thenReturn(StandardCharsets.UTF_8);
+
+        var outerBranch = mock(BlockStartNode.class);
+        when(outerBranch.getId()).thenReturn("outer-10");
+        when(outerBranch.getAction(ThreadNameAction.class)).thenReturn(mock(ThreadNameAction.class));
+
+        var innerBranch = mock(BlockStartNode.class);
+        when(innerBranch.getId()).thenReturn("inner-20");
+        when(innerBranch.getAction(ThreadNameAction.class)).thenReturn(mock(ThreadNameAction.class));
+
+        var outerStep = createStep("11", "outer-10", Collections.emptyList(), "Outer branch output\n");
+        var innerStep = createStep("21", "inner-20", List.of(outerStep), "Inner branch output\n");
+
+        var currentStep = mock(FlowNode.class);
+        when(currentStep.getId()).thenReturn("22");
+        doReturn(List.of(innerBranch, outerBranch)).when(currentStep).getEnclosingBlocks();
+        when(currentStep.getAllEnclosingIds()).thenReturn(List.of("inner-20", "outer-10"));
+        when(currentStep.getParents()).thenReturn(List.of(innerStep));
+
+        var factory = new ConsoleLogReaderFactory(run, currentStep);
+
+        assertThat(factory.isBranchLog()).isTrue();
+        try (var reader = factory.create()) {
+            List<String> lines = new BufferedReader(reader).lines().toList();
+            assertThat(lines).containsExactly("Inner branch output");
+        }
+    }
+
     private FlowNode createCurrentStep(
             final String id, final BlockStartNode branchStart, final List<FlowNode> parents) {
         var currentStep = mock(FlowNode.class);

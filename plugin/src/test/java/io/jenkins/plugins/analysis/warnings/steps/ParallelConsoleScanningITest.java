@@ -209,4 +209,68 @@ class ParallelConsoleScanningITest extends IntegrationTestWithJenkinsPerSuite {
                 .isTrue();
         assertThat(getConsoleLog(result)).doesNotContain("Can't create fingerprints");
     }
+
+    /**
+     * Verifies that nested parallel branches isolate console scanning to the innermost branch.
+     */
+    @Test
+    @DisplayName("recordIssues isolates nested parallel branches to innermost branch")
+    void shouldIsolateNestedParallelBranches() throws Exception {
+        WorkflowJob job = createPipeline();
+        job.setDefinition(new CpsFlowDefinition(
+                "parallel(\n"
+                        + "  'Outer A': {\n"
+                        + "    node {\n"
+                        + "      dir('wsOuterA') {\n"
+                        + "        echo 'OuterA.c:1:1: warning: outer message [-Wextra]'\n"
+                        + "        parallel(\n"
+                        + "          'Inner 1': {\n"
+                        + "            dir('wsInner1') {\n"
+                        + "              writeFile file: 'File1.c', text: 'int foo() { return 0; }\\n'\n"
+                        + "              echo 'File1.c:1:5: warning: message 1 [-Wextra]'\n"
+                        + "              recordIssues tool: gcc(id: 'gcc-1')\n"
+                        + "            }\n"
+                        + "          },\n"
+                        + "          'Inner 2': {\n"
+                        + "            dir('wsInner2') {\n"
+                        + "              writeFile file: 'File2.c', text: 'int bar() { return 0; }\\n'\n"
+                        + "              echo 'File2.c:2:5: warning: message 2 [-Wextra]'\n"
+                        + "              recordIssues tool: gcc(id: 'gcc-2')\n"
+                        + "            }\n"
+                        + "          }\n"
+                        + "        )\n"
+                        + "      }\n"
+                        + "    }\n"
+                        + "  },\n"
+                        + "  'Outer B': {\n"
+                        + "    node {\n"
+                        + "      echo 'Outer B output'\n"
+                        + "    }\n"
+                        + "  }\n"
+                        + ")\n",
+                true));
+
+        var build = buildSuccessfully(job);
+        List<ResultAction> actions = build.getActions(ResultAction.class);
+        assertThat(actions).hasSize(2);
+
+        ResultAction action1 = actions.stream()
+                .filter(a -> "gcc-1".equals(a.getId()))
+                .findFirst()
+                .orElseThrow();
+        ResultAction action2 = actions.stream()
+                .filter(a -> "gcc-2".equals(a.getId()))
+                .findFirst()
+                .orElseThrow();
+
+        assertThat(action1.getResult()).hasTotalSize(1);
+        assertThat(action1.getResult().getIssues().get(0).getFileName()).endsWith("File1.c");
+
+        assertThat(action2.getResult()).hasTotalSize(1);
+        assertThat(action2.getResult().getIssues().get(0).getFileName()).endsWith("File2.c");
+
+        String consoleLog = getConsoleLog(build);
+        assertThat(consoleLog).contains("Filtering console log to current parallel branch");
+        assertThat(consoleLog).doesNotContain("Can't create fingerprints for some files");
+    }
 }
