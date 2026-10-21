@@ -204,7 +204,7 @@ the [Analysis Parsers Library](https://github.com/jenkinsci/analysis-model/).
                 axivionSuite()
             </td>
             <td>
-                <img src="plugin/src/main/webapp/icons/axivion-48x48.png" alt="Axivion Suite" height="48" width="48">
+                <img src="plugin/src/main/webapp/icons/axivion.svg" alt="Axivion Suite" height="48" width="48">
             </td>
             <td>
                 Axivion Suite
