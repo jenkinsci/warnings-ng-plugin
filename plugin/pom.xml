@@ -49,6 +49,8 @@
     <!-- Jenkins Plug-in Dependencies Versions -->
     <flexible-publish.version>0.17</flexible-publish.version>
     <form-element-path.version>1.12</form-element-path.version>
+    <!-- TODO: Remove once the BOM ships mcp-server 0.217 or newer, the tests need TestCrumbIssuerMcpExtension -->
+    <mcp-server.version>0.222.v9d40a_8d624e4</mcp-server.version>
 
     <!-- Maven Surefire ArgLine -->
     <argLine>-Djava.awt.headless=true -Xmx1024m -Djenkins.test.timeout=1000 --add-opens java.base/java.lang=ALL-UNNAMED
@@ -106,6 +108,7 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>mcp-server</artifactId>
+      <version>${mcp-server.version}</version>
       <optional>true</optional>
     </dependency>
     <dependency>
@@ -292,6 +295,7 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>mcp-server</artifactId>
+      <version>${mcp-server.version}</version>
       <classifier>tests</classifier>
       <scope>test</scope>
       <optional>true</optional>
