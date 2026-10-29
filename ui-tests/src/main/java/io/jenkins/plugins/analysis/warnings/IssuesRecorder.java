@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -20,6 +21,7 @@ import org.openqa.selenium.WebElement;
  */
 @SuppressWarnings({"unused", "UnusedReturnValue", "PMD.GodClass", "PMD.ExcessivePublicCount"})
 @Describable("Record compiler warnings and static analysis results")
+@SuppressFBWarnings("MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR")
 public final class IssuesRecorder extends AbstractStep implements PostBuildStep {
     private final Control toolsRepeatable = findRepeatableAddButtonFor("tools");
     private final Control filtersRepeatable = findRepeatableAddButtonFor("filters");

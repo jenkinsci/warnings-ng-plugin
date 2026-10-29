@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.analysis.warnings.IssuesTable.Header;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,7 @@ import org.openqa.selenium.WebElement;
  * @param <T> the type of the table rows
  * @author Stephan Plöderl
  */
+@SuppressFBWarnings("MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR")
 abstract class AbstractIssuesTable<T extends GenericTableRow> {
     private final AnalysisResult analysisResult;
     private final List<T> tableRows = new ArrayList<>();
