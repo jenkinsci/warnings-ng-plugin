@@ -15,6 +15,7 @@ import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 import edu.hm.hafner.util.FilteredLog;
 import edu.hm.hafner.util.SecureXmlParserFactory;
 import edu.hm.hafner.util.SecureXmlParserFactory.ParsingException;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import hudson.FilePath;
 import hudson.model.Run;
 import hudson.model.TaskListener;
@@ -53,12 +54,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import jenkins.MasterToSlaveFileCallable;
 import org.apache.commons.lang3.StringUtils;
+import org.jenkinsci.plugins.workflow.graph.FlowNode;
 
 /**
  * Scans report files or the console log for issues.
  *
  * @author Ullrich Hafner
  */
+@SuppressWarnings({"checkstyle:ClassFanOutComplexity", "ClassFanOutComplexity"})
 class IssuesScanner {
     private final FilePath workspace;
     private final Set<String> sourceDirectories;
@@ -75,6 +78,9 @@ class IssuesScanner {
     private final boolean quiet;
     private final String sourcePathPrefix;
     private final String targetPathPrefix;
+
+    @CheckForNull
+    private final FlowNode flowNode;
 
     enum BlameMode {
         ENABLED,
@@ -103,6 +109,43 @@ class IssuesScanner {
             final boolean quiet,
             final String sourcePathPrefix,
             final String targetPathPrefix) {
+        this(
+                tool,
+                filterConfig,
+                sourceCodeEncoding,
+                workspace,
+                sourceDirectories,
+                sourceCodeRetention,
+                run,
+                jenkinsRootDir,
+                listener,
+                scm,
+                blameMode,
+                postProcessingMode,
+                quiet,
+                sourcePathPrefix,
+                targetPathPrefix,
+                null);
+    }
+
+    @SuppressWarnings("checkstyle:ParameterNumber")
+    IssuesScanner(
+            final Tool tool,
+            final FilterConfig filterConfig,
+            final Charset sourceCodeEncoding,
+            final FilePath workspace,
+            final Set<String> sourceDirectories,
+            final SourceCodeRetention sourceCodeRetention,
+            final Run<?, ?> run,
+            final FilePath jenkinsRootDir,
+            final TaskListener listener,
+            final String scm,
+            final BlameMode blameMode,
+            final PostProcessingMode postProcessingMode,
+            final boolean quiet,
+            final String sourcePathPrefix,
+            final String targetPathPrefix,
+            @CheckForNull final FlowNode flowNode) {
         this.filterConfig = filterConfig;
         this.sourceCodeEncoding = sourceCodeEncoding;
         this.tool = tool;
@@ -118,12 +161,13 @@ class IssuesScanner {
         this.quiet = quiet;
         this.sourcePathPrefix = sourcePathPrefix;
         this.targetPathPrefix = targetPathPrefix;
+        this.flowNode = flowNode;
     }
 
     AnnotatedReport scan() throws IOException, InterruptedException {
         var logger = new LogHandler(listener, tool.getActualName());
         logger.setQuiet(quiet);
-        var report = tool.scan(run, workspace, sourceCodeEncoding, logger);
+        var report = tool.scan(run, flowNode, workspace, sourceCodeEncoding, logger);
 
         var annotatedReport = postProcessReport(report);
 
