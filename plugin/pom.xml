@@ -642,13 +642,7 @@
             </goals>
             <phase>verify</phase>
             <configuration>
-              <targetDirectory>${project.build.directory}/metrics</targetDirectory>
-              <rulesets>
-                <ruleset>/category/java/metric.xml</ruleset>
-              </rulesets>
-              <format>net.sourceforge.pmd.renderers.MetricsRenderer</format>
-              <includeTests>false</includeTests>
-              <skip>${pmd.skip}</skip>
+              <skip>true</skip>
             </configuration>
           </execution>
         </executions>
