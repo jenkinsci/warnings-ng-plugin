@@ -323,6 +323,7 @@ public class DetailFactory {
     }
 
     @VisibleForTesting
+    @SuppressWarnings("PMD.InternalApiUsage")
     private LabelProviderFactory createFactory() {
         return new LabelProviderFactory(jenkins);
     }

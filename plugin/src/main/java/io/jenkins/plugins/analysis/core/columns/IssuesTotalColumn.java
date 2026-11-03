@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.core.columns;
 
-import static io.jenkins.plugins.analysis.core.model.ToolSelection.*;
-
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -168,7 +166,7 @@ public class IssuesTotalColumn extends ListViewColumn {
         }
 
         return lastCompletedBuild.getActions(ResultAction.class).stream()
-                .filter(createToolFilter(selectTools, tools))
+                .filter(ToolSelection.createToolFilter(selectTools, tools))
                 .map(ResultAction::getResult)
                 .map(AnalysisResult::getTotals)
                 .mapToInt(totals -> type.getSizeGetter().apply(totals))
@@ -191,7 +189,7 @@ public class IssuesTotalColumn extends ListViewColumn {
         }
 
         return lastCompletedBuild.getActions(ResultAction.class).stream()
-                .filter(createToolFilter(selectTools, tools))
+                .filter(ToolSelection.createToolFilter(selectTools, tools))
                 .map(result -> new AnalysisResultDescription(result, getLabelProviderFactory(), type))
                 .collect(Collectors.toList());
     }
@@ -213,7 +211,7 @@ public class IssuesTotalColumn extends ListViewColumn {
         List<ResultAction> actions = lastCompletedBuild.getActions(ResultAction.class);
         Set<String> actualIds = actions.stream().map(ResultAction::getId).collect(Collectors.toSet());
 
-        String[] selectedIds = getIds(tools);
+        String[] selectedIds = ToolSelection.getIds(tools);
         if (selectedIds.length == 1 && selectTools) {
             var selectedId = selectedIds[0];
             if (actualIds.contains(selectedId)) {

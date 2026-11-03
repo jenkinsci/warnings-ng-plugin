@@ -1,6 +1,6 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import static j2html.TagCreator.*;
+import static j2html.TagCreator.a;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
@@ -26,7 +26,6 @@ import org.jvnet.localizer.Localizable;
  */
 public class StaticAnalysisLabelProvider implements DescriptionProvider {
     /** Default icon for all tools. */
-    @VisibleForTesting
     public static final String ANALYSIS_SVG_ICON = "symbol-solid/triangle-exclamation plugin-font-awesome-api";
 
     /** Provides an empty description. */

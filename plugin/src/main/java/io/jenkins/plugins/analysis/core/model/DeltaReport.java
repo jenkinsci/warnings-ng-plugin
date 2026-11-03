@@ -1,6 +1,9 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import static edu.hm.hafner.analysis.Severity.*;
+import static edu.hm.hafner.analysis.Severity.ERROR;
+import static edu.hm.hafner.analysis.Severity.WARNING_HIGH;
+import static edu.hm.hafner.analysis.Severity.WARNING_LOW;
+import static edu.hm.hafner.analysis.Severity.WARNING_NORMAL;
 
 import edu.hm.hafner.analysis.IssueDifference;
 import edu.hm.hafner.analysis.Report;

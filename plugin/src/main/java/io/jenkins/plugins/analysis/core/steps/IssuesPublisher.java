@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import static io.jenkins.plugins.analysis.core.model.QualityGateEvaluationMode.*;
-
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssuesInModifiedCodeMarker;
 import edu.hm.hafner.analysis.Report;
@@ -77,7 +75,9 @@ class IssuesPublisher {
         this.icon = icon;
         this.sourceCodeEncoding = sourceCodeEncoding;
         this.qualityGates = qualityGates;
-        qualityGateEvaluationMode = ignoreQualityGate ? IGNORE_QUALITY_GATE : SUCCESSFUL_QUALITY_GATE;
+        qualityGateEvaluationMode = ignoreQualityGate
+                ? QualityGateEvaluationMode.IGNORE_QUALITY_GATE
+                : QualityGateEvaluationMode.SUCCESSFUL_QUALITY_GATE;
         this.logger = logger;
         this.notifier = notifier;
         this.failOnErrors = failOnErrors;
@@ -334,7 +334,7 @@ class IssuesPublisher {
                     "Quality gate successful for reference build '%s', using this build as reference", displayName);
             return true;
         }
-        if (gateEvaluationMode == IGNORE_QUALITY_GATE) {
+        if (gateEvaluationMode == QualityGateEvaluationMode.IGNORE_QUALITY_GATE) {
             issues.logInfo(
                     "Quality gate has been missed for reference build '%s', but is configured to be ignored",
                     displayName);
@@ -343,6 +343,7 @@ class IssuesPublisher {
         return false;
     }
 
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     private void logSkippedBuild(final String displayName, final Optional<ResultAction> action, final Report issues) {
         if (action.isPresent()) {
             issues.logInfo("Quality gate failed for reference build '%s', analyzing previous builds", displayName);
