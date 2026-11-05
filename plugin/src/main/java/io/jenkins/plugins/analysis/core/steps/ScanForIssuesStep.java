@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.impl.factory.Sets;
+import org.jenkinsci.plugins.workflow.graph.FlowNode;
 import org.jenkinsci.plugins.workflow.steps.Step;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.StepExecution;
@@ -341,7 +342,8 @@ public class ScanForIssuesStep extends Step {
                     skipPostProcessing ? PostProcessingMode.DISABLED : PostProcessingMode.ENABLED,
                     quiet,
                     sourcePathPrefix,
-                    targetPathPrefix);
+                    targetPathPrefix,
+                    getFlowNode());
 
             return issuesScanner.scan();
         }
@@ -355,7 +357,7 @@ public class ScanForIssuesStep extends Step {
         @Override
         public Set<Class<?>> getRequiredContext() {
             return Sets.immutable
-                    .of(FilePath.class, EnvVars.class, TaskListener.class, Run.class)
+                    .of(FilePath.class, EnvVars.class, TaskListener.class, Run.class, FlowNode.class)
                     .castToSet();
         }
 

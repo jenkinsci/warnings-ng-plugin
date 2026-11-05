@@ -706,6 +706,7 @@ public class RecordIssuesStep extends Step implements Serializable {
             recorder.setSourceDirectories(step.getAllSourceDirectories());
             recorder.setChecksInfo(getContext().get(ChecksInfo.class));
             recorder.setQuiet(step.isQuiet());
+            recorder.setFlowNode(getFlowNode());
 
             var workspace = getWorkspace();
             workspace.mkdirs();
