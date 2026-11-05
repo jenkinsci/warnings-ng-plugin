@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.core.portlets;
 
-import static io.jenkins.plugins.analysis.core.model.ToolSelection.*;
-
 import edu.hm.hafner.echarts.BuildResult;
 import edu.hm.hafner.echarts.ChartModelConfiguration;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -131,7 +129,8 @@ public class IssuesChartPortlet extends DashboardPortlet {
 
         List<Iterable<? extends BuildResult<AnalysisBuildResult>>> histories = jobs.stream()
                 .filter(job -> job.getLastBuild() != null)
-                .flatMap(job -> findLastBuildWithResults(job).stream().filter(createToolFilter(selectTools, tools)))
+                .flatMap(job -> findLastBuildWithResults(job).stream()
+                        .filter(ToolSelection.createToolFilter(selectTools, tools)))
                 .map(ResultAction::createBuildHistory)
                 .collect(Collectors.toList());
 

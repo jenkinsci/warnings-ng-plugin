@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import static io.jenkins.plugins.analysis.core.util.AffectedFilesResolver.*;
-
 import com.google.errorprone.annotations.MustBeClosed;
 import edu.hm.hafner.analysis.FileNameResolver;
 import edu.hm.hafner.analysis.FingerprintGenerator;
@@ -212,13 +210,13 @@ class IssuesScanner {
             new AffectedFilesResolver()
                     .copyAffectedFilesToBuildFolder(report, workspace, permittedSourceDirectories, buildFolder);
         }
-        sourceCodeRetention.cleanup(run, AFFECTED_FILES_FOLDER_NAME, log);
+        sourceCodeRetention.cleanup(run, AffectedFilesResolver.AFFECTED_FILES_FOLDER_NAME, log);
 
         report.mergeLogMessages(log);
     }
 
     private FilePath createAffectedFilesFolder(final Report report) throws InterruptedException {
-        var buildDirectory = jenkinsRootDir.child(AFFECTED_FILES_FOLDER_NAME);
+        var buildDirectory = jenkinsRootDir.child(AffectedFilesResolver.AFFECTED_FILES_FOLDER_NAME);
         try {
             buildDirectory.mkdirs();
         } catch (IOException exception) {

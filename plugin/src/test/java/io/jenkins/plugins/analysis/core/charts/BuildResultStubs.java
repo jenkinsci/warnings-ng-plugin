@@ -45,6 +45,7 @@ public final class BuildResultStubs {
     }
 
     @VisibleForTesting
+    @SuppressWarnings("PMD.InternalApiUsage")
     static BuildResult<AnalysisBuildResult> createBuildResult(final int buildNumber, final AnalysisBuildResult result) {
         return new BuildResult<>(new Build(buildNumber), result);
     }

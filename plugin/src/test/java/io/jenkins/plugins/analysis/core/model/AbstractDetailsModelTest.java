@@ -1,8 +1,9 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import static j2html.TagCreator.*;
-import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
-import static org.assertj.core.api.Assertions.*;
+import static j2html.TagCreator.a;
+import static j2html.TagCreator.join;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 import com.google.errorprone.annotations.MustBeClosed;
@@ -20,6 +21,7 @@ import java.util.Locale;
 import java.util.stream.Stream;
 import org.apache.commons.text.StringEscapeUtils;
 import org.junit.jupiter.api.BeforeAll;
+import org.testcontainers.shaded.com.google.common.annotations.VisibleForTesting;
 
 /**
  * Base class for tests of the details models.
@@ -86,6 +88,8 @@ public abstract class AbstractDetailsModelTest {
      *
      * @return a {@link FileNameRenderer} stub
      */
+    @VisibleForTesting
+    @SuppressWarnings("PMD.InternalApiUsage")
     protected FileNameRenderer createFileNameRenderer() {
         BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
         when(buildFolder.canAccessAffectedFileOf(any(), any())).thenReturn(true);

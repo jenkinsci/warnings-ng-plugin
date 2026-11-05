@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import static io.jenkins.plugins.analysis.core.util.ConsoleLogHandler.*;
-
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.ParsingException;
@@ -17,6 +15,7 @@ import hudson.model.TaskListener;
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser.AnalysisModelParserDescriptor;
+import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogReaderFactory;
 import io.jenkins.plugins.util.AgentFileVisitor.FileVisitorResult;
 import io.jenkins.plugins.util.EnvironmentResolver;
@@ -238,7 +237,7 @@ public abstract class ReportScanningTool extends Tool {
         report.logInfo(
                 "-> found %s (skipped %s)",
                 plural(report.getSize(), "issue"), plural(report.getDuplicatesSize(), "duplicate"));
-        report.setOriginReportFile(JENKINS_CONSOLE_LOG_FILE_NAME_ID);
+        report.setOriginReportFile(ConsoleLogHandler.JENKINS_CONSOLE_LOG_FILE_NAME_ID);
 
         consoleReport.addAll(report);
 

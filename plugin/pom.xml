@@ -328,6 +328,7 @@
     <dependency>
       <groupId>org.jenkins-ci.main</groupId>
       <artifactId>maven-plugin</artifactId>
+      <version>3.27</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>

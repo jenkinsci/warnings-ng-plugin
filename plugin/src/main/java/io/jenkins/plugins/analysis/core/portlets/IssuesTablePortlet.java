@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.core.portlets;
 
-import static io.jenkins.plugins.analysis.core.model.ToolSelection.*;
-
 import edu.hm.hafner.util.Generated;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -141,7 +139,7 @@ public class IssuesTablePortlet extends DashboardPortlet {
         }
 
         return lastCompletedBuild.getActions(ResultAction.class).stream()
-                .filter(createToolFilter(selectTools, tools))
+                .filter(ToolSelection.createToolFilter(selectTools, tools))
                 .anyMatch(resultAction -> resultAction.getResult().getTotalSize() > 0);
     }
 
@@ -154,7 +152,8 @@ public class IssuesTablePortlet extends DashboardPortlet {
      * @return the table model
      */
     public PortletTableModel getModel(final List<Job<?, ?>> jobs) {
-        return new PortletTableModel(getVisibleJobs(jobs), createToolFilter(selectTools, tools), labelProviderFactory);
+        return new PortletTableModel(
+                getVisibleJobs(jobs), ToolSelection.createToolFilter(selectTools, tools), labelProviderFactory);
     }
 
     /**
