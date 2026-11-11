@@ -1,0 +1,7 @@
+<div>
+    If enabled, filters the console log to only the steps executed within the enclosing parallel Pipeline branch.
+    By default, this option is disabled (<code>false</code>), which scans the entire global build log and preserves
+    warnings emitted before the parallel block. Enable this option if you want to isolate console log scanning per
+    branch to avoid interleaved output from concurrently running branches. Note that warnings emitted prior to the
+    parallel block will not be included in branch-isolated scans.
+</div>

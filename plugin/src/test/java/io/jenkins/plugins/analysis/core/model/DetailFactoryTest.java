@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Stream;
 import jenkins.model.Jenkins;
 import org.eclipse.collections.impl.factory.Lists;
@@ -281,6 +282,49 @@ class DetailFactoryTest {
         var details = createDetails(jenkins, buildFolder, fileName);
         assertThat(details).isInstanceOf(ConsoleDetail.class);
         assertThat(((ConsoleDetail) details).getSourceCode()).contains(AFFECTED_FILE_CONTENT);
+    }
+
+    @Test
+    void shouldCreateConsoleDetailForBranchConsoleLogSourceLinks() {
+        JenkinsFacade jenkins = mock(JenkinsFacade.class);
+        BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
+        var fileName = ConsoleLogHandler.encodeFileName("10:14");
+        when(buildFolder.readConsoleLog(RUN, fileName)).thenReturn(Optional.of(createLines()));
+
+        var details = createDetails(jenkins, buildFolder, fileName);
+        assertThat(details).isInstanceOf(ConsoleDetail.class);
+        assertThat(((ConsoleDetail) details).getSourceCode()).contains(AFFECTED_FILE_CONTENT);
+        verify(buildFolder).readConsoleLog(RUN, fileName);
+    }
+
+    @Test
+    void shouldRenderEmptyConsoleDetailWhenBranchConsoleLogHasNoLines() {
+        JenkinsFacade jenkins = mock(JenkinsFacade.class);
+        BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
+        var fileName = ConsoleLogHandler.encodeFileName("10:14");
+        when(buildFolder.readConsoleLog(RUN, fileName)).thenReturn(Optional.of(Stream.empty()));
+
+        var details = createDetails(jenkins, buildFolder, fileName);
+        assertThat(details).isInstanceOf(ConsoleDetail.class);
+        assertThat(((ConsoleDetail) details).getSourceCode())
+                .doesNotContain(
+                        "Can not display branch-specific console log: the Pipeline step execution is no longer available.");
+        verify(buildFolder).readConsoleLog(RUN, fileName);
+    }
+
+    @Test
+    void shouldShowErrorMessageWhenBranchConsoleLogCannotBeReconstructed() {
+        JenkinsFacade jenkins = mock(JenkinsFacade.class);
+        BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
+        var fileName = ConsoleLogHandler.encodeFileName("10:14");
+        when(buildFolder.readConsoleLog(RUN, fileName)).thenReturn(Optional.empty());
+
+        var details = createDetails(jenkins, buildFolder, fileName);
+        assertThat(details).isInstanceOf(ConsoleDetail.class);
+        assertThat(((ConsoleDetail) details).getSourceCode())
+                .contains(
+                        "Can not display branch-specific console log: the Pipeline step execution is no longer available.");
+        verify(buildFolder).readConsoleLog(RUN, fileName);
     }
 
     private Object createDetails(

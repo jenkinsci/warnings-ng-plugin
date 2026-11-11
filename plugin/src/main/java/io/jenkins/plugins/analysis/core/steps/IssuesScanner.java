@@ -24,6 +24,7 @@ import io.jenkins.plugins.analysis.core.model.ReportLocations;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
+import io.jenkins.plugins.analysis.core.util.ConsoleLog;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 import io.jenkins.plugins.analysis.core.util.FileFinder;
 import io.jenkins.plugins.forensics.blame.Blamer;
@@ -57,6 +58,7 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author Ullrich Hafner
  */
+@SuppressWarnings({"checkstyle:ClassFanOutComplexity", "ClassFanOutComplexity"})
 class IssuesScanner {
     private final FilePath workspace;
     private final Set<String> sourceDirectories;
@@ -73,6 +75,8 @@ class IssuesScanner {
     private final boolean quiet;
     private final String sourcePathPrefix;
     private final String targetPathPrefix;
+
+    private final ConsoleLog consoleLog;
 
     enum BlameMode {
         ENABLED,
@@ -100,7 +104,8 @@ class IssuesScanner {
             final PostProcessingMode postProcessingMode,
             final boolean quiet,
             final String sourcePathPrefix,
-            final String targetPathPrefix) {
+            final String targetPathPrefix,
+            final ConsoleLog consoleLog) {
         this.filterConfig = filterConfig;
         this.sourceCodeEncoding = sourceCodeEncoding;
         this.tool = tool;
@@ -116,12 +121,13 @@ class IssuesScanner {
         this.quiet = quiet;
         this.sourcePathPrefix = sourcePathPrefix;
         this.targetPathPrefix = targetPathPrefix;
+        this.consoleLog = consoleLog;
     }
 
     AnnotatedReport scan() throws IOException, InterruptedException {
         var logger = new LogHandler(listener, tool.getActualName());
         logger.setQuiet(quiet);
-        var report = tool.scan(run, workspace, sourceCodeEncoding, logger);
+        var report = tool.scan(run, consoleLog, workspace, sourceCodeEncoding, logger);
 
         var annotatedReport = postProcessReport(report);
 

@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.impl.factory.Sets;
+import org.jenkinsci.plugins.workflow.graph.FlowNode;
 import org.jenkinsci.plugins.workflow.steps.Step;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.StepExecution;
@@ -113,6 +114,23 @@ public class ScanForIssuesStep extends Step {
 
     public boolean isQuiet() {
         return quiet;
+    }
+
+    private boolean filterBranchLog;
+
+    /**
+     * Sets whether to filter the console log to the enclosing parallel branch.
+     *
+     * @param filterBranchLog
+     *         {@code true} to filter the console log to the enclosing branch, {@code false} to scan the global build log
+     */
+    @DataBoundSetter
+    public void setFilterBranchLog(final boolean filterBranchLog) {
+        this.filterBranchLog = filterBranchLog;
+    }
+
+    public boolean isFilterBranchLog() {
+        return filterBranchLog;
     }
 
     /**
@@ -296,6 +314,7 @@ public class ScanForIssuesStep extends Step {
         private final SourceCodeRetention sourceCodeRetention;
         private final String sourcePathPrefix;
         private final String targetPathPrefix;
+        private final boolean filterBranchLog;
 
         /**
          * Creates a new instance of the step execution object.
@@ -319,6 +338,7 @@ public class ScanForIssuesStep extends Step {
             quiet = step.isQuiet();
             sourcePathPrefix = step.getSourcePathPrefix();
             targetPathPrefix = step.getTargetPathPrefix();
+            filterBranchLog = step.isFilterBranchLog();
         }
 
         @Override
@@ -326,6 +346,7 @@ public class ScanForIssuesStep extends Step {
             var workspace = getWorkspace();
             var listener = getTaskListener();
 
+            var consoleLog = createConsoleLog(filterBranchLog);
             var issuesScanner = new IssuesScanner(
                     tool,
                     filterConfig,
@@ -341,7 +362,8 @@ public class ScanForIssuesStep extends Step {
                     skipPostProcessing ? PostProcessingMode.DISABLED : PostProcessingMode.ENABLED,
                     quiet,
                     sourcePathPrefix,
-                    targetPathPrefix);
+                    targetPathPrefix,
+                    consoleLog);
 
             return issuesScanner.scan();
         }
@@ -355,7 +377,7 @@ public class ScanForIssuesStep extends Step {
         @Override
         public Set<Class<?>> getRequiredContext() {
             return Sets.immutable
-                    .of(FilePath.class, EnvVars.class, TaskListener.class, Run.class)
+                    .of(FilePath.class, EnvVars.class, TaskListener.class, Run.class, FlowNode.class)
                     .castToSet();
         }
 

@@ -36,6 +36,7 @@ import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.IssuesScanner.BlameMode;
 import io.jenkins.plugins.analysis.core.steps.IssuesScanner.PostProcessingMode;
 import io.jenkins.plugins.analysis.core.steps.WarningChecksPublisher.ChecksAnnotationScope;
+import io.jenkins.plugins.analysis.core.util.ConsoleLog;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
@@ -748,12 +749,22 @@ public class IssuesRecorder extends Recorder {
             final TaskListener listener,
             final ResultHandler resultHandler)
             throws InterruptedException, IOException {
+        return perform(run, ConsoleLog.BUILD, workspace, listener, resultHandler);
+    }
+
+    List<AnalysisResult> perform(
+            final Run<?, ?> run,
+            final ConsoleLog consoleLog,
+            final FilePath workspace,
+            final TaskListener listener,
+            final ResultHandler resultHandler)
+            throws InterruptedException, IOException {
         var logHandler = new LogHandler(listener, DEFAULT_ID);
         logHandler.setQuiet(quiet);
 
         var overallResult = run.getResult();
         if (isEnabledForFailure || overallResult == null || overallResult.isBetterOrEqualTo(Result.UNSTABLE)) {
-            return record(run, workspace, listener, resultHandler, logHandler);
+            return record(run, consoleLog, workspace, listener, resultHandler, logHandler);
         } else {
             logHandler.log("Skipping execution of recorder since overall result is '%s'", overallResult);
             return Collections.emptyList();
@@ -763,6 +774,7 @@ public class IssuesRecorder extends Recorder {
     @SuppressWarnings("PMD.CognitiveComplexity")
     private List<AnalysisResult> record(
             final Run<?, ?> run,
+            final ConsoleLog consoleLog,
             final FilePath workspace,
             final TaskListener listener,
             final ResultHandler resultHandler,
@@ -781,7 +793,7 @@ public class IssuesRecorder extends Recorder {
             var customIcon = StringUtils.defaultIfBlank(getIcon(), tool.getIcon());
 
             var report = new AnnotatedReport(customId);
-            AnnotatedReport scannedReport = scanWithTool(run, workspace, listener, tool);
+            AnnotatedReport scannedReport = scanWithTool(run, consoleLog, workspace, listener, tool);
             if (!customId.equals(tool.getActualId()) || !customName.equals(tool.getActualName())) {
                 scannedReport.getReport().setOrigin(customId, customName);
             }
@@ -800,7 +812,7 @@ public class IssuesRecorder extends Recorder {
             if (isAggregatingResults) {
                 var report = new AnnotatedReport(StringUtils.defaultIfBlank(getId(), DEFAULT_ID));
                 for (Tool tool : analysisTools) {
-                    report.add(scanWithTool(run, workspace, listener, tool), tool.getActualId());
+                    report.add(scanWithTool(run, consoleLog, workspace, listener, tool), tool.getActualId());
                 }
 
                 results.add(publishResult(
@@ -808,7 +820,7 @@ public class IssuesRecorder extends Recorder {
             } else {
                 for (Tool tool : analysisTools) {
                     var report = new AnnotatedReport(tool.getActualId());
-                    report.add(scanWithTool(run, workspace, listener, tool));
+                    report.add(scanWithTool(run, consoleLog, workspace, listener, tool));
 
                     results.add(publishResult(
                             run,
@@ -870,7 +882,11 @@ public class IssuesRecorder extends Recorder {
     }
 
     private AnnotatedReport scanWithTool(
-            final Run<?, ?> run, final FilePath workspace, final TaskListener listener, final Tool tool)
+            final Run<?, ?> run,
+            final ConsoleLog consoleLog,
+            final FilePath workspace,
+            final TaskListener listener,
+            final Tool tool)
             throws IOException, InterruptedException {
         var filterConfig = new FilterConfig(getFilters(), filesFilter);
         var issuesScanner = new IssuesScanner(
@@ -888,7 +904,8 @@ public class IssuesRecorder extends Recorder {
                 skipPostProcessing ? PostProcessingMode.DISABLED : PostProcessingMode.ENABLED,
                 quiet,
                 sourcePathPrefix,
-                targetPathPrefix);
+                targetPathPrefix,
+                consoleLog);
 
         return issuesScanner.scan();
     }
