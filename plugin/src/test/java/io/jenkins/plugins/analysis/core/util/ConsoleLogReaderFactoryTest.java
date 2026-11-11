@@ -13,11 +13,14 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 import org.apache.commons.io.IOUtils;
 import org.jenkinsci.plugins.workflow.actions.LogAction;
 import org.jenkinsci.plugins.workflow.actions.ThreadNameAction;
+import org.jenkinsci.plugins.workflow.flow.FlowExecution;
 import org.jenkinsci.plugins.workflow.graph.BlockStartNode;
 import org.jenkinsci.plugins.workflow.graph.FlowNode;
+import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -252,6 +255,227 @@ class ConsoleLogReaderFactoryTest {
         try (var reader = new BufferedReader(factory.create())) {
             List<String> lines = reader.lines().toList();
             assertThat(lines).containsExactly("Inner branch output");
+        }
+    }
+
+    @Test
+    void shouldEncodeFileNameWithBranchIdAndStepIdWhenInBranch() {
+        var run = mock(Run.class);
+        when(run.getCharset()).thenReturn(StandardCharsets.UTF_8);
+
+        var branchStart = mock(BlockStartNode.class);
+        when(branchStart.getId()).thenReturn("10");
+        when(branchStart.getAction(ThreadNameAction.class)).thenReturn(mock(ThreadNameAction.class));
+
+        var currentStep = mock(FlowNode.class);
+        when(currentStep.getId()).thenReturn("14");
+        doReturn(List.of(branchStart)).when(currentStep).getEnclosingBlocks();
+
+        var factory = new ConsoleLogReaderFactory(run, currentStep);
+
+        assertThat(factory.isBranchLog()).isTrue();
+        assertThat(factory.getFileName()).isEqualTo("jenkins-console.log:10:14");
+    }
+
+    @Test
+    void shouldRecognizeBranchWhenNodeIsItselfBlockStartNodeWithThreadName() {
+        var run = mock(Run.class);
+        when(run.getCharset()).thenReturn(StandardCharsets.UTF_8);
+
+        var branchStart = mock(BlockStartNode.class);
+        when(branchStart.getId()).thenReturn("20");
+        when(branchStart.getAction(ThreadNameAction.class)).thenReturn(mock(ThreadNameAction.class));
+        doReturn(Collections.emptyList()).when(branchStart).getEnclosingBlocks();
+
+        var factory = new ConsoleLogReaderFactory(run, branchStart);
+
+        assertThat(factory.isBranchLog()).isTrue();
+        assertThat(factory.getFileName()).isEqualTo("jenkins-console.log:20");
+    }
+
+    @Test
+    void shouldCacheLogContentAndReuseWithoutReevaluatingSteps() throws IOException {
+        var run = mock(Run.class);
+        when(run.getCharset()).thenReturn(StandardCharsets.UTF_8);
+
+        var branchStart = mock(BlockStartNode.class);
+        when(branchStart.getId()).thenReturn("30");
+        when(branchStart.getAction(ThreadNameAction.class)).thenReturn(mock(ThreadNameAction.class));
+
+        var step = createStep("31", "30", Collections.emptyList(), "Cached step output\n");
+        var currentStep = createCurrentStep("32", branchStart, List.of(step));
+
+        var factory = new ConsoleLogReaderFactory(run, currentStep);
+
+        try (var reader1 = new BufferedReader(factory.create())) {
+            assertThat(reader1.readLine()).isEqualTo("Cached step output");
+        }
+        // Second read should yield the same content from cached bytes
+        try (var reader2 = new BufferedReader(factory.create())) {
+            assertThat(reader2.readLine()).isEqualTo("Cached step output");
+        }
+    }
+
+    @Test
+    void shouldHandleConsoleLogHandlerMethods() {
+        assertThat(ConsoleLogHandler.isInConsoleLog("jenkins-console.log")).isTrue();
+        assertThat(ConsoleLogHandler.isInConsoleLog("jenkins-console.log:10:14"))
+                .isTrue();
+        assertThat(ConsoleLogHandler.isInConsoleLog("other-file.txt")).isFalse();
+
+        assertThat(ConsoleLogHandler.isBranchConsoleLog("jenkins-console.log:10:14"))
+                .isTrue();
+        assertThat(ConsoleLogHandler.isBranchConsoleLog("jenkins-console.log")).isFalse();
+
+        assertThat(ConsoleLogHandler.encodeFileName("10:14")).isEqualTo("jenkins-console.log:10:14");
+        assertThat(ConsoleLogHandler.extractBranchId("jenkins-console.log:10:14"))
+                .contains("10:14");
+        assertThat(ConsoleLogHandler.extractBranchId("jenkins-console.log")).isEmpty();
+    }
+
+    @Test
+    void shouldReturnEmptyOptionalWhenBranchLogExecutionIsPrunedOrNull() {
+        var run = mock(WorkflowRun.class);
+        when(run.getExecution()).thenReturn(null);
+
+        var facade = new BuildFolderFacade();
+        assertThat(facade.readConsoleLog(run, ConsoleLogHandler.encodeFileName("10:14")))
+                .isEmpty();
+    }
+
+    @Test
+    void shouldReturnEmptyOptionalWhenBranchLogStepNodeIsMissing() throws IOException {
+        var run = mock(WorkflowRun.class);
+        var execution = mock(FlowExecution.class);
+        when(run.getExecution()).thenReturn(execution);
+        when(execution.getNode("14")).thenReturn(null);
+
+        var facade = new BuildFolderFacade();
+        assertThat(facade.readConsoleLog(run, ConsoleLogHandler.encodeFileName("10:14")))
+                .isEmpty();
+    }
+
+    @Test
+    void shouldReturnEmptyOptionalWhenBranchLogStepNodeThrowsIOException() throws IOException {
+        var run = mock(WorkflowRun.class);
+        var execution = mock(FlowExecution.class);
+        when(run.getExecution()).thenReturn(execution);
+        when(execution.getNode("14")).thenThrow(new IOException("Node pruned"));
+
+        var facade = new BuildFolderFacade();
+        assertThat(facade.readConsoleLog(run, ConsoleLogHandler.encodeFileName("10:14")))
+                .isEmpty();
+    }
+
+    @Test
+    void shouldReturnEmptyOptionalWhenRunIsNotWorkflowRunForBranchLog() {
+        var run = mock(Run.class);
+
+        var facade = new BuildFolderFacade();
+        assertThat(facade.readConsoleLog(run, ConsoleLogHandler.encodeFileName("10:14")))
+                .isEmpty();
+    }
+
+    @Test
+    void shouldReturnEmptyOptionalWhenStepNodeBelongsToDifferentBranch() throws IOException {
+        var run = mock(WorkflowRun.class);
+        var execution = mock(FlowExecution.class);
+        when(run.getExecution()).thenReturn(execution);
+
+        var branchOther = mock(BlockStartNode.class);
+        when(branchOther.getId()).thenReturn("20");
+        when(branchOther.getAction(ThreadNameAction.class)).thenReturn(mock(ThreadNameAction.class));
+
+        var stepNode = mock(FlowNode.class);
+        when(stepNode.getId()).thenReturn("14");
+        doReturn(List.of(branchOther)).when(stepNode).getEnclosingBlocks();
+
+        when(execution.getNode("14")).thenReturn(stepNode);
+
+        var facade = new BuildFolderFacade();
+        assertThat(facade.readConsoleLog(run, ConsoleLogHandler.encodeFileName("10:14")))
+                .isEmpty();
+    }
+
+    @Test
+    void shouldReturnEmptyOptionalWhenStepNodeHasNoEnclosingBranch() throws IOException {
+        var run = mock(WorkflowRun.class);
+        var execution = mock(FlowExecution.class);
+        when(run.getExecution()).thenReturn(execution);
+
+        var stepNode = mock(FlowNode.class);
+        when(stepNode.getId()).thenReturn("14");
+        doReturn(Collections.emptyList()).when(stepNode).getEnclosingBlocks();
+
+        when(execution.getNode("14")).thenReturn(stepNode);
+
+        var facade = new BuildFolderFacade();
+        assertThat(facade.readConsoleLog(run, ConsoleLogHandler.encodeFileName("10:14")))
+                .isEmpty();
+    }
+
+    @Test
+    void shouldReconstructSuccessfullyWhenBranchIdMatches() throws IOException {
+        var run = mock(WorkflowRun.class);
+        when(run.getCharset()).thenReturn(StandardCharsets.UTF_8);
+
+        var execution = mock(FlowExecution.class);
+        when(run.getExecution()).thenReturn(execution);
+
+        var branchStart = mock(BlockStartNode.class);
+        when(branchStart.getId()).thenReturn("10");
+        when(branchStart.getAction(ThreadNameAction.class)).thenReturn(mock(ThreadNameAction.class));
+
+        var step11 = createStep("11", "10", Collections.emptyList(), "line from branch A\n");
+        var currentStep = createCurrentStep("14", branchStart, List.of(step11));
+
+        when(execution.getNode("14")).thenReturn(currentStep);
+
+        var facade = new BuildFolderFacade();
+        var result = facade.readConsoleLog(run, ConsoleLogHandler.encodeFileName("10:14"));
+        assertThat(result).isPresent();
+        try (Stream<String> stream = result.get()) {
+            assertThat(stream).containsExactly("line from branch A");
+        }
+    }
+
+    @Test
+    void shouldReconstructSuccessfullyWhenFileNameReferencesBranchStartNodeDirectly() throws IOException {
+        var run = mock(WorkflowRun.class);
+        when(run.getCharset()).thenReturn(StandardCharsets.UTF_8);
+
+        var execution = mock(FlowExecution.class);
+        when(run.getExecution()).thenReturn(execution);
+
+        var branchStart = mock(BlockStartNode.class);
+        when(branchStart.getId()).thenReturn("20");
+        when(branchStart.getAction(ThreadNameAction.class)).thenReturn(mock(ThreadNameAction.class));
+        doReturn(Collections.emptyList()).when(branchStart).getEnclosingBlocks();
+        when(branchStart.getExecution()).thenReturn(execution);
+
+        var step21 = createStep("21", "20", List.of(branchStart), "line from branch 20\n");
+        when(execution.getCurrentHeads()).thenReturn(List.of(step21));
+        when(execution.getNode("20")).thenReturn(branchStart);
+
+        var facade = new BuildFolderFacade();
+        var result = facade.readConsoleLog(run, ConsoleLogHandler.encodeFileName("20"));
+        assertThat(result).isPresent();
+        try (Stream<String> stream = result.get()) {
+            assertThat(stream).containsExactly("line from branch 20");
+        }
+    }
+
+    @Test
+    void shouldReturnGlobalConsoleLogWhenFileNameIsNotBranchLog() throws IOException {
+        var run = mock(Run.class);
+        when(run.getCharset()).thenReturn(StandardCharsets.UTF_8);
+        when(run.getLogReader()).thenReturn(new java.io.StringReader("line 1\nline 2"));
+
+        var facade = new BuildFolderFacade();
+        var result = facade.readConsoleLog(run, ConsoleLogHandler.JENKINS_CONSOLE_LOG_FILE_NAME_ID);
+        assertThat(result).isPresent();
+        try (Stream<String> stream = result.get()) {
+            assertThat(stream).containsExactly("line 1", "line 2");
         }
     }
 

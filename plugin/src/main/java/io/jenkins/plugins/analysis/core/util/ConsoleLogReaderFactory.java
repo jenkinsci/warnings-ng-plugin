@@ -11,17 +11,18 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.StringReader;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
+import java.util.Queue;
+import java.util.Set;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.jenkinsci.plugins.workflow.actions.LogAction;
-import org.jenkinsci.plugins.workflow.actions.ThreadNameAction;
 import org.jenkinsci.plugins.workflow.graph.BlockStartNode;
 import org.jenkinsci.plugins.workflow.graph.FlowNode;
 
@@ -68,13 +69,21 @@ public class ConsoleLogReaderFactory extends ReaderFactory {
         this.flowNode = flowNode;
     }
 
+    private final ReentrantLock lock = new ReentrantLock();
+    private boolean branchEvaluated;
+
+    @CheckForNull
+    private BlockStartNode enclosingBranch;
+
+    private byte[] branchLogContent;
+
     /**
      * Returns whether this reader factory is operating on a branch-specific console log.
      *
      * @return {@code true} if scoped to a parallel branch, {@code false} if reading the global run log
      */
     public boolean isBranchLog() {
-        return flowNode != null && findEnclosingBranch(flowNode) != null;
+        return getEnclosingBranch() != null;
     }
 
     /**
@@ -84,7 +93,27 @@ public class ConsoleLogReaderFactory extends ReaderFactory {
      */
     @Override
     public String getFileName() {
+        var branch = getEnclosingBranch();
+        if (branch != null && flowNode != null) {
+            String branchId = flowNode.equals(branch) ? branch.getId() : branch.getId() + ":" + flowNode.getId();
+            return ConsoleLogHandler.encodeFileName(branchId);
+        }
         return ConsoleLogHandler.JENKINS_CONSOLE_LOG_FILE_NAME_ID;
+    }
+
+    private BlockStartNode getEnclosingBranch() {
+        lock.lock();
+        try {
+            if (!branchEvaluated) {
+                if (flowNode != null) {
+                    enclosingBranch = ConsoleLogHandler.findEnclosingBranch(flowNode);
+                }
+                branchEvaluated = true;
+            }
+            return enclosingBranch;
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**
@@ -95,11 +124,9 @@ public class ConsoleLogReaderFactory extends ReaderFactory {
     @Override
     @MustBeClosed
     public Reader create() {
-        if (flowNode != null) {
-            var branchLog = getBranchLogReader(flowNode);
-            if (branchLog.isPresent()) {
-                return branchLog.get();
-            }
+        var branch = getEnclosingBranch();
+        if (branch != null && flowNode != null) {
+            return getBranchLogReader(flowNode, branch);
         }
         try {
             return run.getLogReader();
@@ -108,25 +135,27 @@ public class ConsoleLogReaderFactory extends ReaderFactory {
         }
     }
 
-    private Optional<Reader> getBranchLogReader(final FlowNode node) {
-        var branchStart = findEnclosingBranch(node);
-        if (branchStart == null) {
-            return Optional.empty();
-        }
-
-        var stepsInBranch = collectPrecedingStepsInBranch(node, branchStart);
-        if (stepsInBranch.isEmpty()) {
-            return Optional.of(new StringReader(StringUtils.EMPTY));
-        }
-
-        try (var branchLog = new AppendableByteArrayOutputStream()) {
-            for (var step : stepsInBranch) {
-                appendStepLog(branchLog, step);
+    private Reader getBranchLogReader(final FlowNode node, final BlockStartNode branchStart) {
+        lock.lock();
+        try {
+            if (branchLogContent == null) {
+                var stepsInBranch = collectPrecedingStepsInBranch(node, branchStart);
+                if (stepsInBranch.isEmpty()) {
+                    branchLogContent = new byte[0];
+                } else {
+                    try (var branchLog = new AppendableByteArrayOutputStream()) {
+                        for (var step : stepsInBranch) {
+                            appendStepLog(branchLog, step);
+                        }
+                        branchLogContent = branchLog.toByteArray();
+                    } catch (IOException e) {
+                        throw new ParsingException(e);
+                    }
+                }
             }
-            return Optional.of(
-                    new InputStreamReader(new ByteArrayInputStream(branchLog.toByteArray()), run.getCharset()));
-        } catch (IOException e) {
-            throw new ParsingException(e);
+            return new InputStreamReader(new ByteArrayInputStream(branchLogContent), run.getCharset());
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -141,51 +170,55 @@ public class ConsoleLogReaderFactory extends ReaderFactory {
         }
     }
 
-    @CheckForNull
-    private BlockStartNode findEnclosingBranch(final FlowNode node) {
-        for (var block : node.getEnclosingBlocks()) {
-            if (block.getAction(ThreadNameAction.class) != null) {
-                return block;
-            }
-        }
-        return null;
-    }
-
     private List<FlowNode> collectPrecedingStepsInBranch(final FlowNode currentStep, final BlockStartNode branchStart) {
-        var stepsInBranch = new ArrayList<FlowNode>();
-        var visited = new HashSet<String>();
-        var queue = new ArrayDeque<FlowNode>();
-
-        queue.add(currentStep);
-        visited.add(currentStep.getId());
+        Collection<FlowNode> startNodes = getTraversalRoots(currentStep, branchStart);
+        if (startNodes.isEmpty()) {
+            return List.of();
+        }
 
         var branchStartId = branchStart.getId();
+        var stepsInBranch = new ArrayList<FlowNode>();
+        var visited = new HashSet<String>();
+        var queue = new ArrayDeque<>(startNodes);
+
+        for (FlowNode root : startNodes) {
+            visited.add(root.getId());
+        }
+
+        boolean isBranchReconstruction = currentStep.equals(branchStart);
         while (!queue.isEmpty()) {
             var curr = queue.poll();
-            if (!curr.equals(currentStep)
+            if ((isBranchReconstruction || !curr.equals(currentStep))
                     && curr.getAllEnclosingIds().contains(branchStartId)
                     && curr.getAction(LogAction.class) != null) {
                 stepsInBranch.add(curr);
             }
-            for (var parent : curr.getParents()) {
-                if (parent != null
-                        && visited.add(parent.getId())
-                        && parent.getAllEnclosingIds().contains(branchStartId)) {
-                    queue.add(parent);
-                }
-            }
+            addUnvisitedParents(curr, branchStartId, visited, queue);
         }
 
-        stepsInBranch.sort(ConsoleLogReaderFactory::compareNodeIds);
-
+        stepsInBranch.sort(ConsoleLogHandler::compareNodeIds);
         return stepsInBranch;
     }
 
-    private static int compareNodeIds(final FlowNode n1, final FlowNode n2) {
-        try {
-            return Integer.compare(Integer.parseInt(n1.getId()), Integer.parseInt(n2.getId()));
-        } catch (NumberFormatException e) {
-            return n1.getId().compareTo(n2.getId());
+    private Collection<FlowNode> getTraversalRoots(final FlowNode currentStep, final BlockStartNode branchStart) {
+        if (currentStep.equals(branchStart)) {
+            var execution = currentStep.getExecution();
+            if (execution != null) {
+                return execution.getCurrentHeads();
+            }
+            return List.of();
+        }
+        return List.of(currentStep);
+    }
+
+    private void addUnvisitedParents(
+            final FlowNode node, final String branchStartId, final Set<String> visited, final Queue<FlowNode> queue) {
+        for (var parent : node.getParents()) {
+            if (parent != null
+                    && visited.add(parent.getId())
+                    && parent.getAllEnclosingIds().contains(branchStartId)) {
+                queue.add(parent);
+            }
         }
     }
 

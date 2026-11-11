@@ -116,6 +116,23 @@ public class ScanForIssuesStep extends Step {
         return quiet;
     }
 
+    private boolean filterBranchLog;
+
+    /**
+     * Sets whether to filter the console log to the enclosing parallel branch.
+     *
+     * @param filterBranchLog
+     *         {@code true} to filter the console log to the enclosing branch, {@code false} to scan the global build log
+     */
+    @DataBoundSetter
+    public void setFilterBranchLog(final boolean filterBranchLog) {
+        this.filterBranchLog = filterBranchLog;
+    }
+
+    public boolean isFilterBranchLog() {
+        return filterBranchLog;
+    }
+
     /**
      * Sets the SCM that should be used to find the reference build for. The reference recorder will select the SCM
      * based on a substring comparison, there is no need to specify the full name.
@@ -297,6 +314,7 @@ public class ScanForIssuesStep extends Step {
         private final SourceCodeRetention sourceCodeRetention;
         private final String sourcePathPrefix;
         private final String targetPathPrefix;
+        private final boolean filterBranchLog;
 
         /**
          * Creates a new instance of the step execution object.
@@ -320,6 +338,7 @@ public class ScanForIssuesStep extends Step {
             quiet = step.isQuiet();
             sourcePathPrefix = step.getSourcePathPrefix();
             targetPathPrefix = step.getTargetPathPrefix();
+            filterBranchLog = step.isFilterBranchLog();
         }
 
         @Override
@@ -327,6 +346,7 @@ public class ScanForIssuesStep extends Step {
             var workspace = getWorkspace();
             var listener = getTaskListener();
 
+            var consoleLog = createConsoleLog(filterBranchLog);
             var issuesScanner = new IssuesScanner(
                     tool,
                     filterConfig,
@@ -343,7 +363,7 @@ public class ScanForIssuesStep extends Step {
                     quiet,
                     sourcePathPrefix,
                     targetPathPrefix,
-                    getFlowNode());
+                    consoleLog);
 
             return issuesScanner.scan();
         }

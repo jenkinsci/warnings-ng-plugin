@@ -137,9 +137,7 @@ public class DetailFactory {
         if (link.startsWith("source.")) {
             var issue = allIssues.findById(UUID.fromString(plainLink));
             if (ConsoleLogHandler.isInConsoleLog(issue.getFileName())) {
-                try (Stream<String> consoleLog = buildFolder.readConsoleLog(owner)) {
-                    return new ConsoleDetail(owner, consoleLog, issue.getLineStart(), issue.getLineEnd());
-                }
+                return createConsoleDetail(owner, issue);
             } else {
                 var marker = asMarker(
                         issue, labelProvider.getSourceCodeDescription(owner, issue), labelProvider.getSmallIconUrl());
@@ -171,6 +169,26 @@ public class DetailFactory {
                 url,
                 labelProvider,
                 sourceEncoding);
+    }
+
+    private ConsoleDetail createConsoleDetail(final Run<?, ?> owner, final Issue issue) {
+        if (ConsoleLogHandler.isBranchConsoleLog(issue.getFileName())) {
+            var consoleLog = buildFolder.readConsoleLog(owner, issue.getFileName());
+            if (consoleLog.isEmpty()) {
+                return new ConsoleDetail(
+                        owner,
+                        Stream.of(
+                                "Can not display branch-specific console log: the Pipeline step execution is no longer available."),
+                        1,
+                        1);
+            }
+            try (Stream<String> lines = consoleLog.get()) {
+                return new ConsoleDetail(owner, lines, issue.getLineStart(), issue.getLineEnd());
+            }
+        }
+        try (Stream<String> consoleLog = buildFolder.readConsoleLog(owner)) {
+            return new ConsoleDetail(owner, consoleLog, issue.getLineStart(), issue.getLineEnd());
+        }
     }
 
     private Marker asMarker(final Issue issue, final String description, final String icon) {

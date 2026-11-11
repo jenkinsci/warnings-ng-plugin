@@ -4,7 +4,6 @@ import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.VisibleForTesting;
-import edu.umd.cs.findbugs.annotations.CheckForNull;
 import hudson.FilePath;
 import hudson.model.BuildableItem;
 import hudson.model.Describable;
@@ -12,6 +11,7 @@ import hudson.model.Descriptor;
 import hudson.model.Item;
 import hudson.model.Run;
 import hudson.util.FormValidation;
+import io.jenkins.plugins.analysis.core.util.ConsoleLog;
 import io.jenkins.plugins.util.JenkinsFacade;
 import io.jenkins.plugins.util.LogHandler;
 import io.jenkins.plugins.util.ValidationUtilities;
@@ -21,7 +21,6 @@ import java.nio.charset.Charset;
 import jenkins.security.MasterToSlaveCallable;
 import org.apache.commons.lang3.StringUtils;
 import org.jenkinsci.Symbol;
-import org.jenkinsci.plugins.workflow.graph.FlowNode;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
@@ -191,13 +190,13 @@ public abstract class Tool implements Describable<Tool>, Serializable {
             throws ParsingException, ParsingCanceledException;
 
     /**
-     * Scans the results of a build for issues with an optional {@link FlowNode} context.
+     * Scans the results of a build for issues with the specified {@link ConsoleLog}.
      * Default implementation delegates to {@link #scan(Run, FilePath, Charset, LogHandler)}.
      *
      * @param run
      *         the build
-     * @param flowNode
-     *         the flow node of the current execution (or {@code null} if not running in pipeline)
+     * @param consoleLog
+     *         the console log abstraction
      * @param workspace
      *         the workspace of the build
      * @param sourceCodeEncoding
@@ -213,7 +212,7 @@ public abstract class Tool implements Describable<Tool>, Serializable {
      */
     public Report scan(
             final Run<?, ?> run,
-            @CheckForNull final FlowNode flowNode,
+            final ConsoleLog consoleLog,
             final FilePath workspace,
             final Charset sourceCodeEncoding,
             final LogHandler logger)

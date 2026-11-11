@@ -624,7 +624,37 @@ node {
     }
 }
 ``` 
-  
+
+#### Parallel Pipeline branch console log scanning
+
+When executing parallel branches in a Jenkins Pipeline (Scripted or Declarative), concurrently running steps write to the same global build log.
+By default, `recordIssues` and `scanForIssues` scan the complete global build log (`filterBranchLog: false`), which ensures all warnings emitted before or across parallel blocks are preserved.
+
+If you want to isolate console log scanning to only the steps within the enclosing parallel branch (preventing cross-branch diagnostic interleaving and file resolution conflicts), enable `filterBranchLog: true`:
+
+```groovy
+parallel(
+  'Linux': {
+    node('linux') {
+      sh 'make'
+      recordIssues tool: gcc(), filterBranchLog: true
+    }
+  },
+  'Windows': {
+    node('windows') {
+      bat 'msbuild'
+      recordIssues tool: msBuild(), filterBranchLog: true
+    }
+  }
+)
+```
+
+**Scope and limitations of branch-isolated scanning:**
+- When `filterBranchLog: true` is enabled, the scanner reads only preceding steps executed within that specific parallel branch.
+- Warnings emitted before the `parallel` block (for example, in a preparatory setup step) are not part of the branch log and will not be included in branch-isolated scans.
+- Issue details view reconstructs the exact branch log lines using the branch's execution flow node identity.
+- Scanning outside a parallel branch (e.g., after the `parallel` block completes) scans the global build log.
+
 ## Feature Overview
 
 The most important features are described in the following sections. 

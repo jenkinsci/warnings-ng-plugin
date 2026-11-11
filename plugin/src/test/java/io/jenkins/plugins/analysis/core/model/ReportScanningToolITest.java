@@ -5,16 +5,15 @@ import static org.mockito.Mockito.*;
 
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.Report;
-import edu.umd.cs.findbugs.annotations.CheckForNull;
 import hudson.FilePath;
 import hudson.model.Run;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
+import io.jenkins.plugins.analysis.core.util.ConsoleLog;
 import io.jenkins.plugins.util.LogHandler;
 import java.io.File;
 import java.io.Serial;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import org.jenkinsci.plugins.workflow.graph.FlowNode;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -113,16 +112,16 @@ class ReportScanningToolITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(tool.getLinesLookAhead()).isEqualTo(5);
     }
 
-    /** Tests that scan without flowNode delegates to scan with null flowNode. */
+    /** Tests that scan without consoleLog delegates to scan with ConsoleLog.BUILD. */
     @Test
-    void shouldDelegateScanWithoutFlowNode() {
+    void shouldDelegateScanWithoutConsoleLog() {
         var tool = new DelegatingReportScanningTool();
 
         var report =
                 tool.scan(mock(Run.class), new FilePath(new File(".")), StandardCharsets.UTF_8, mock(LogHandler.class));
 
         assertThat(report).isNotNull();
-        assertThat(tool.hasDelegatedWithNullFlowNode()).isTrue();
+        assertThat(tool.hasDelegatedWithBuildConsoleLog()).isTrue();
     }
 
     private ReportScanningTool.ReportScanningToolDescriptor makeDescriptor(
@@ -131,13 +130,13 @@ class ReportScanningToolITest extends IntegrationTestWithJenkinsPerSuite {
                 "someId", canScanConsoleLog, getPattern);
     }
 
-    /** Tests that scan with flowNode delegates to scan without flowNode in base Tool class. */
+    /** Tests that scan with consoleLog delegates to scan without consoleLog in base Tool class. */
     @Test
-    void shouldDelegateScanWithFlowNodeInBaseTool() {
+    void shouldDelegateScanWithConsoleLogInBaseTool() {
         var tool = new TestTool();
         var report = tool.scan(
                 mock(Run.class),
-                mock(FlowNode.class),
+                ConsoleLog.BUILD,
                 new FilePath(new File(".")),
                 StandardCharsets.UTF_8,
                 mock(LogHandler.class));
@@ -149,7 +148,7 @@ class ReportScanningToolITest extends IntegrationTestWithJenkinsPerSuite {
         @Serial
         private static final long serialVersionUID = 1L;
 
-        private boolean delegatedWithNullFlowNode;
+        private boolean delegatedWithBuildConsoleLog;
 
         DelegatingReportScanningTool() {
             super(mock(IssueParser.class));
@@ -158,16 +157,16 @@ class ReportScanningToolITest extends IntegrationTestWithJenkinsPerSuite {
         @Override
         public Report scan(
                 final Run<?, ?> run,
-                @CheckForNull final FlowNode flowNode,
+                final ConsoleLog consoleLog,
                 final FilePath workspace,
                 final Charset sourceCodeEncoding,
                 final LogHandler logger) {
-            delegatedWithNullFlowNode = flowNode == null;
+            delegatedWithBuildConsoleLog = consoleLog == ConsoleLog.BUILD;
             return new Report();
         }
 
-        boolean hasDelegatedWithNullFlowNode() {
-            return delegatedWithNullFlowNode;
+        boolean hasDelegatedWithBuildConsoleLog() {
+            return delegatedWithBuildConsoleLog;
         }
     }
 

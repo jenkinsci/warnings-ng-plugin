@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.warnings;
 
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.ParsingCanceledException;
+import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -17,7 +18,7 @@ import hudson.util.ListBoxModel;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.SymbolIconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
-import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
+import io.jenkins.plugins.analysis.core.util.ConsoleLog;
 import io.jenkins.plugins.util.JenkinsFacade;
 import io.jenkins.plugins.util.LogHandler;
 import io.jenkins.plugins.util.ValidationUtilities;
@@ -172,8 +173,18 @@ public class GrepParser extends Tool {
     @Override
     public Report scan(
             final Run<?, ?> run, final FilePath workspace, final Charset sourceCodeEncoding, final LogHandler logger) {
+        return scan(run, ConsoleLog.BUILD, workspace, sourceCodeEncoding, logger);
+    }
+
+    @Override
+    public Report scan(
+            final Run<?, ?> run,
+            final ConsoleLog consoleLog,
+            final FilePath workspace,
+            final Charset sourceCodeEncoding,
+            final LogHandler logger) {
         if (StringUtils.isBlank(includePattern)) {
-            var report = scanConsoleLog(run, logger);
+            var report = scanConsoleLog(run, consoleLog, logger);
             report.setOrigin(getActualId(), getActualName());
             return report;
         }
@@ -191,18 +202,21 @@ public class GrepParser extends Tool {
         }
     }
 
-    private Report scanConsoleLog(final Run<?, ?> run, final LogHandler logger) {
+    private Report scanConsoleLog(final Run<?, ?> run, final ConsoleLog consoleLog, final LogHandler logger) {
         var report = new Report();
         report.logInfo("Scanning console log for pattern '%s'", regexp);
+        if (consoleLog.isBranchLog()) {
+            report.logInfo("Filtering console log to current parallel branch");
+        }
 
         var scanner = new GrepScanner(regexp, Severity.valueOf(severity, Severity.WARNING_NORMAL), message);
-        try (var bufferedReader = new BufferedReader(run.getLogReader());
+        var readerFactory = consoleLog.createReaderFactory(run);
+        try (var bufferedReader = new BufferedReader(readerFactory.create());
                 var issueBuilder = new IssueBuilder()) {
             var lines = bufferedReader.lines().map(ConsoleNote::removeNotes).iterator();
-            report.addAll(scanner.scanLines(
-                            lines, issueBuilder.setFileName(ConsoleLogHandler.JENKINS_CONSOLE_LOG_FILE_NAME_ID))
+            report.addAll(scanner.scanLines(lines, issueBuilder.setFileName(readerFactory.getFileName()))
                     .get());
-        } catch (IOException e) {
+        } catch (IOException | ParsingException e) {
             report.logException(e, "Exception while reading console log:");
         }
 

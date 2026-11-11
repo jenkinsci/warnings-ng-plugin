@@ -111,6 +111,8 @@ public class RecordIssuesStep extends Step implements Serializable {
 
     private boolean quiet;
 
+    private boolean filterBranchLog;
+
     /**
      * Creates a new instance of {@link RecordIssuesStep}.
      */
@@ -656,6 +658,21 @@ public class RecordIssuesStep extends Step implements Serializable {
         this.filesFilter = filePath;
     }
 
+    /**
+     * Sets whether to filter the console log to the enclosing parallel branch.
+     *
+     * @param filterBranchLog
+     *         {@code true} to filter the console log to the enclosing branch, {@code false} to scan the global build log
+     */
+    @DataBoundSetter
+    public void setFilterBranchLog(final boolean filterBranchLog) {
+        this.filterBranchLog = filterBranchLog;
+    }
+
+    public boolean isFilterBranchLog() {
+        return filterBranchLog;
+    }
+
     @Override
     public StepExecution start(final StepContext context) {
         return new Execution(context, this);
@@ -706,12 +723,12 @@ public class RecordIssuesStep extends Step implements Serializable {
             recorder.setSourceDirectories(step.getAllSourceDirectories());
             recorder.setChecksInfo(getContext().get(ChecksInfo.class));
             recorder.setQuiet(step.isQuiet());
-            recorder.setFlowNode(getFlowNode());
 
             var workspace = getWorkspace();
             workspace.mkdirs();
 
-            return recorder.perform(getRun(), workspace, getTaskListener(), createResultHandler());
+            var consoleLog = createConsoleLog(step.isFilterBranchLog());
+            return recorder.perform(getRun(), consoleLog, workspace, getTaskListener(), createResultHandler());
         }
     }
 

@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import static io.jenkins.plugins.analysis.core.util.ConsoleLogHandler.*;
-
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.ParsingException;
@@ -17,7 +15,7 @@ import hudson.model.TaskListener;
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser.AnalysisModelParserDescriptor;
-import io.jenkins.plugins.analysis.core.util.ConsoleLogReaderFactory;
+import io.jenkins.plugins.analysis.core.util.ConsoleLog;
 import io.jenkins.plugins.util.AgentFileVisitor.FileVisitorResult;
 import io.jenkins.plugins.util.EnvironmentResolver;
 import io.jenkins.plugins.util.JenkinsFacade;
@@ -29,7 +27,6 @@ import java.nio.charset.Charset;
 import java.util.List;
 import jenkins.model.Jenkins;
 import org.apache.commons.lang3.StringUtils;
-import org.jenkinsci.plugins.workflow.graph.FlowNode;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
@@ -161,29 +158,26 @@ public abstract class ReportScanningTool extends Tool {
     @Override
     public Report scan(
             final Run<?, ?> run, final FilePath workspace, final Charset sourceCodeEncoding, final LogHandler logger) {
-        return scan(run, null, workspace, sourceCodeEncoding, logger);
+        return scan(run, ConsoleLog.BUILD, workspace, sourceCodeEncoding, logger);
     }
 
     @Override
     public Report scan(
             final Run<?, ?> run,
-            @CheckForNull final FlowNode flowNode,
+            final ConsoleLog consoleLog,
             final FilePath workspace,
             final Charset sourceCodeEncoding,
             final LogHandler logger) {
-        var report = scan(run, flowNode, workspace, logger);
+        var report = scan(run, consoleLog, workspace, logger);
         report.setOrigin(getActualId(), getActualName());
         return report;
     }
 
     private Report scan(
-            final Run<?, ?> run,
-            @CheckForNull final FlowNode flowNode,
-            final FilePath workspace,
-            final LogHandler logger) {
+            final Run<?, ?> run, final ConsoleLog consoleLog, final FilePath workspace, final LogHandler logger) {
         var actualPattern = getActualPattern();
         if (StringUtils.isBlank(actualPattern)) {
-            return scanInConsoleLog(workspace, run, flowNode, logger);
+            return scanInConsoleLog(workspace, run, consoleLog, logger);
         } else {
             if (StringUtils.isBlank(getPattern())) {
                 logger.log(
@@ -236,10 +230,7 @@ public abstract class ReportScanningTool extends Tool {
     }
 
     private Report scanInConsoleLog(
-            final FilePath workspace,
-            final Run<?, ?> run,
-            @CheckForNull final FlowNode flowNode,
-            final LogHandler logger) {
+            final FilePath workspace, final Run<?, ?> run, final ConsoleLog consoleLog, final LogHandler logger) {
         Ensure.that(canScanConsoleLog())
                 .isTrue(
                         "Static analysis tool %s cannot scan console log output, please define a file pattern",
@@ -251,8 +242,8 @@ public abstract class ReportScanningTool extends Tool {
         logger.logInfoMessages(consoleReport.getInfoMessages());
         logger.logErrorMessages(consoleReport.getErrorMessages());
 
-        var readerFactory = new ConsoleLogReaderFactory(run, flowNode);
-        if (readerFactory.isBranchLog()) {
+        var readerFactory = consoleLog.createReaderFactory(run);
+        if (consoleLog.isBranchLog()) {
             consoleReport.logInfo("Filtering console log to current parallel branch");
         }
 
@@ -262,7 +253,7 @@ public abstract class ReportScanningTool extends Tool {
         report.logInfo(
                 "-> found %s (skipped %s)",
                 plural(report.getSize(), "issue"), plural(report.getDuplicatesSize(), "duplicate"));
-        report.setOriginReportFile(JENKINS_CONSOLE_LOG_FILE_NAME_ID);
+        report.setOriginReportFile(readerFactory.getFileName());
 
         consoleReport.addAll(report);
 

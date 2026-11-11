@@ -9,6 +9,7 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import io.jenkins.plugins.analysis.core.filter.FilterConfig;
 import io.jenkins.plugins.analysis.core.model.Tool;
+import io.jenkins.plugins.analysis.core.util.ConsoleLog;
 import io.jenkins.plugins.prism.SourceCodeRetention;
 import io.jenkins.plugins.util.LogHandler;
 import java.io.File;
@@ -22,14 +23,15 @@ import org.junit.jupiter.api.Test;
  */
 class IssuesScannerTest {
     @Test
-    void shouldDelegateScanWithNullFlowNodeWhenConstructedWithoutFlowNode() throws IOException, InterruptedException {
+    void shouldDelegateScanWithConsoleLogBuild() throws IOException, InterruptedException {
         var tool = mock(Tool.class);
         var descriptor = mock(Tool.ToolDescriptor.class);
         when(descriptor.isPostProcessingEnabled()).thenReturn(false);
         when(tool.getDescriptor()).thenReturn(descriptor);
         when(tool.getActualName()).thenReturn("tool");
         when(tool.getActualId()).thenReturn("tool-id");
-        when(tool.scan(any(), any(), any(), any(), any())).thenReturn(new Report());
+        when(tool.scan(any(Run.class), any(ConsoleLog.class), any(FilePath.class), any(), any()))
+                .thenReturn(new Report());
 
         var filterConfig = new FilterConfig(Collections.emptyList(), "");
         var workspace = new FilePath(new File("."));
@@ -52,11 +54,13 @@ class IssuesScannerTest {
                 IssuesScanner.PostProcessingMode.DISABLED,
                 true,
                 "",
-                "");
+                "",
+                ConsoleLog.BUILD);
 
         var report = scanner.scan();
 
         assertThat(report).isNotNull();
-        verify(tool).scan(eq(run), isNull(), eq(workspace), eq(StandardCharsets.UTF_8), any(LogHandler.class));
+        verify(tool)
+                .scan(eq(run), eq(ConsoleLog.BUILD), eq(workspace), eq(StandardCharsets.UTF_8), any(LogHandler.class));
     }
 }
