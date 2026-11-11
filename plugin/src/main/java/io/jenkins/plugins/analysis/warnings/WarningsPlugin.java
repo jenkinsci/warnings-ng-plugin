@@ -1,6 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import static j2html.TagCreator.*;
+import static j2html.TagCreator.p;
 
 import hudson.Extension;
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;

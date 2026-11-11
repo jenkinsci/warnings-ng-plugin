@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import static j2html.TagCreator.*;
+import static j2html.TagCreator.a;
+import static j2html.TagCreator.text;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.util.VisibleForTesting;

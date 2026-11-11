@@ -410,6 +410,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
 
         @VisibleForTesting
         @Override
+        @SuppressWarnings("PMD.InternalApiUsage")
         protected String getDefaultName() {
             return decorated.getDefaultName();
         }

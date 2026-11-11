@@ -19,8 +19,8 @@ import hudson.model.TaskListener;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import hudson.util.Secret;
-import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import io.jenkins.plugins.analysis.core.model.SvgIconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.warnings.axivion.AxivionParser.Config;
 import io.jenkins.plugins.util.EnvironmentResolver;
@@ -225,7 +225,7 @@ public final class AxivionSuite extends Tool {
     }
 
     /** Provides the Axivion icons. */
-    private static class LabelProvider extends IconLabelProvider {
+    private static class LabelProvider extends SvgIconLabelProvider {
         LabelProvider() {
             super(ID, "Axivion Suite", EMPTY_DESCRIPTION, "axivion");
         }
