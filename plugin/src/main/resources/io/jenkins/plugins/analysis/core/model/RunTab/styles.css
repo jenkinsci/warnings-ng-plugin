@@ -63,3 +63,287 @@
         color: var(--text-color-secondary);
     }
 }
+
+/* Overview page (OverviewModel/index.jelly) */
+
+.wng-dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--section-padding) / 2);
+    min-width: 0;
+}
+
+/* The three metric cards (total, new, fixed) share the full width, so that captions and legends fit in one line. */
+.wng-dashboard__top {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: calc(var(--section-padding) / 2);
+    align-items: stretch;
+}
+
+.wng-dashboard__metric-card {
+    display: flex;
+    min-width: 0;
+}
+
+/* Stretch the cards themselves (not only their wrappers), so that all metric cards have the same height. */
+.wng-dashboard__metric-card > .jenkins-card {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.wng-dashboard__metric-value {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+}
+
+.wng-dashboard__metric-value[data-trend="worse"] {
+    color: var(--red);
+}
+
+.wng-dashboard__metric-value[data-trend="better"] {
+    color: var(--green);
+}
+
+.wng-dashboard__metric-caption {
+    font-size: var(--font-size-xs);
+    color: var(--text-color-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Segmented severity bar with legend (see warnings/severity-bar.jelly) */
+.wng-severity-bar {
+    display: flex;
+    gap: 2px;
+    height: 8px;
+    margin: 6px 0 4px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.wng-severity-bar__segment {
+    min-width: 4px;
+}
+
+.wng-severity-bar__segment--error {
+    background: var(--red);
+}
+
+.wng-severity-bar__segment--high {
+    background: var(--orange);
+}
+
+.wng-severity-bar__segment--normal {
+    background: var(--yellow);
+}
+
+.wng-severity-bar__segment--low {
+    background: var(--text-color-secondary);
+}
+
+.wng-severity-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 10px;
+    font-size: var(--font-size-xs);
+    color: var(--text-color-secondary);
+}
+
+.wng-severity-legend__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+}
+
+.wng-severity-legend__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+/* Quality gates: overall status on the left, the gates of the individual tools distributed horizontally. */
+.wng-dashboard__quality-gates {
+    display: flex;
+    /* stretch: the divider line of the overall status spans all rows of the tools grid */
+    align-items: stretch;
+    gap: var(--section-padding);
+}
+
+.wng-dashboard__quality-gate-total {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    min-width: 100px;
+    padding-right: var(--section-padding);
+    border-right: var(--jenkins-border);
+    text-align: center;
+}
+
+.wng-dashboard__quality-gate-status {
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+}
+
+.wng-dashboard__quality-gate-tools {
+    flex: 1;
+    display: grid;
+    /* At most 3 tools per row (each column at least a third of the width), and each column at least 290px wide,
+       so that the name, value, threshold, and criticality of a quality gate fit into one line. */
+    grid-template-columns: repeat(auto-fill, minmax(max(290px, calc((100% - 2 * 16px) / 3)), 1fr));
+    gap: 12px 16px;
+}
+
+.wng-dashboard__quality-gate-tool {
+    display: grid;
+    grid-template-columns: 1fr max-content max-content max-content;
+    column-gap: 6px;
+    row-gap: 4px;
+    align-items: center;
+    align-content: start;
+}
+
+.wng-dashboard__quality-gate-tool-name {
+    grid-column: 1 / -1;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--text-color) !important;
+    text-decoration: none !important;
+}
+
+.wng-dashboard__quality-gate-item {
+    display: contents;
+}
+
+.wng-dashboard__quality-gate-item-name {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    color: var(--text-color-secondary);
+    font-size: var(--font-size-sm);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.wng-dashboard__quality-gate-item-value {
+    font-weight: 600;
+    white-space: nowrap;
+    text-align: right;
+}
+
+.wng-dashboard__quality-gate-item-value[data-successful="false"] {
+    color: var(--red);
+}
+
+.wng-dashboard__quality-gate-item-value[data-successful="true"] {
+    color: var(--green);
+}
+
+.wng-dashboard__quality-gate-item-threshold {
+    font-size: var(--font-size-xs);
+    color: var(--text-color-secondary);
+    white-space: nowrap;
+}
+
+.wng-dashboard__quality-gate-item-criticality {
+    display: inline-flex;
+    align-items: center;
+}
+
+@media (max-width: 800px) {
+    .wng-dashboard__top {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .wng-dashboard__quality-gates {
+        flex-direction: column;
+    }
+
+    .wng-dashboard__quality-gate-total {
+        flex-direction: row;
+        padding-right: 0;
+        border-right: none;
+    }
+}
+
+/* Results table: same style as the "Further metrics" table of the coverage overview: small font, bold row labels
+   and values, column headers in the secondary text color with an underline, and no vertical lines. The table uses
+   the full width (like the quality gates card), a horizontal scrollbar is shown if it does not fit. */
+.wng-dashboard__results-card {
+    overflow-x: auto;
+}
+
+.wng-dashboard__results {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--font-size-sm);
+}
+
+.wng-dashboard__results th {
+    color: var(--text-color-secondary);
+    font-weight: 600;
+    text-align: left;
+    white-space: nowrap;
+    padding: 0 0 6px 24px;
+    border-bottom: 1px solid var(--jenkins-border-color, #e5e7eb);
+}
+
+.wng-dashboard__results td {
+    font-weight: 600;
+    white-space: nowrap;
+    padding: 5px 0 5px 24px;
+}
+
+/* Same distance between the underline of the headers and the first row as in the coverage table */
+.wng-dashboard__results tbody tr:first-child td {
+    padding-top: 10px;
+}
+
+.wng-dashboard__results th.wng-dashboard__label,
+.wng-dashboard__results td.wng-dashboard__label {
+    padding-left: 0;
+    padding-right: 16px;
+}
+
+.wng-dashboard__tool {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* The tool icons use the text color, not the link color of the tool name */
+.wng-dashboard__tool-icon,
+.wng-dashboard__tool-icon svg {
+    color: var(--text-color);
+}
+
+.wng-dashboard__number {
+    text-align: right !important;
+    font-variant-numeric: tabular-nums;
+}
+
+.wng-dashboard__status {
+    text-align: center !important;
+}
+
+.wng-dashboard__results .wng-dashboard__zero {
+    font-weight: 400;
+    color: var(--text-color-secondary);
+}
+
+.wng-dashboard__sum td {
+    padding-top: 10px;
+    border-top: 1px solid var(--jenkins-border-color, #e5e7eb);
+}

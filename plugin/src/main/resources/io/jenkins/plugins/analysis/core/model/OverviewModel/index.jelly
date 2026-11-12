@@ -1,0 +1,192 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:wng="/warnings">
+
+  <st:header name="Content-Type" value="text/html;charset=UTF-8"/>
+
+  <l:run-subpage>
+    <st:adjunct includes="io.jenkins.plugins.analysis.core.model.RunTab.styles"/>
+
+    <j:set var="tab" value="${it.tab}"/>
+    <j:set var="tabUrl" value="${url + '/' + tab.urlName}"/>
+    <j:set var="severities" value="${it.severities}"/>
+
+    <l:app-bar title="${it.displayName}"/>
+
+    <div class="wng-body">
+      <wng:sidepanel tab="${tab}"/>
+
+      <div class="wng-dashboard">
+
+        <j:if test="${it.hasQualityGates()}">
+          <j:set var="status" value="${it.qualityGateStatus}"/>
+          <l:card title="${%Quality Gates}">
+            <div class="wng-dashboard__quality-gates">
+              <div class="wng-dashboard__quality-gate-total">
+                <l:icon class="${status.iconClass} icon-lg" alt="${status.description}"/>
+                <div class="wng-dashboard__quality-gate-status">${status.description}</div>
+              </div>
+              <div class="wng-dashboard__quality-gate-tools">
+                <j:forEach var="action" items="${it.qualityGateActions}">
+                  <div class="wng-dashboard__quality-gate-tool">
+                    <a class="wng-dashboard__quality-gate-tool-name" href="${tabUrl + '/' + action.urlName}">
+                      <l:icon src="${action.iconFileName}" class="icon-sm" alt=""/>
+                      ${action.displayName}
+                    </a>
+                    <j:forEach var="item" items="${action.qualityGateResult.resultItems}">
+                      <div class="wng-dashboard__quality-gate-item">
+                        <span class="wng-dashboard__quality-gate-item-name" tooltip="${item.qualityGate.name}">
+                          <l:icon class="${item.status.iconClass} icon-sm" alt="${item.status.description}"/>
+                          ${item.qualityGate.name}
+                        </span>
+                        <span class="wng-dashboard__quality-gate-item-value"
+                              data-successful="${item.status.successful}">${item.actualValue}</span>
+                        <span class="wng-dashboard__quality-gate-item-threshold">(${%Threshold}: ${item.qualityGate.integerThreshold})</span>
+                        <span class="wng-dashboard__quality-gate-item-criticality"
+                              tooltip="${it.getCriticalityDescription(item.qualityGate)}">
+                          <l:icon src="${it.getCriticalityIcon(item.qualityGate)}"
+                                  class="icon-sm ${it.getCriticalityColor(item.qualityGate)}"
+                                  alt="${it.getCriticalityDescription(item.qualityGate)}"/>
+                        </span>
+                      </div>
+                    </j:forEach>
+                  </div>
+                </j:forEach>
+              </div>
+            </div>
+          </l:card>
+        </j:if>
+
+        <div class="wng-dashboard__top">
+          <div class="wng-dashboard__metric-card">
+            <l:card title="${%Total}">
+              <div class="wng-dashboard__metric-value" tooltip="${%total.caption(size(it.actions))}">${it.totalSize}</div>
+              <j:choose>
+                <j:when test="${it.totalSize gt 0}">
+                  <wng:severity-bar segments="${it.totalSegments}"/>
+                </j:when>
+                <j:otherwise>
+                  <div class="wng-dashboard__metric-caption">${%total.caption(size(it.actions))}</div>
+                </j:otherwise>
+              </j:choose>
+            </l:card>
+          </div>
+          <div class="wng-dashboard__metric-card">
+            <l:card title="${%New}">
+              <div class="wng-dashboard__metric-value" data-trend="${it.newSize gt 0 ? 'worse' : 'none'}"
+                   tooltip="${%new.caption}">${it.newSize}</div>
+              <j:choose>
+                <j:when test="${it.newSize gt 0}">
+                  <wng:severity-bar segments="${it.newSegments}"/>
+                </j:when>
+                <j:otherwise>
+                  <div class="wng-dashboard__metric-caption">${%new.caption}</div>
+                </j:otherwise>
+              </j:choose>
+            </l:card>
+          </div>
+          <div class="wng-dashboard__metric-card">
+            <l:card title="${%Fixed}">
+              <div class="wng-dashboard__metric-value" data-trend="${it.fixedSize gt 0 ? 'better' : 'none'}">${it.fixedSize}</div>
+              <div class="wng-dashboard__metric-caption">${%fixed.caption}</div>
+            </l:card>
+          </div>
+
+        </div>
+
+        <div class="wng-dashboard__results-card">
+          <l:card title="${%Results}">
+            <table class="wng-dashboard__results">
+              <thead>
+                <tr>
+                  <th class="wng-dashboard__label">${%Tool}</th>
+                  <th class="wng-dashboard__number">${%Total}</th>
+                  <th class="wng-dashboard__number">${%New}</th>
+                  <th class="wng-dashboard__number">${%Fixed}</th>
+                  <j:forEach var="severity" items="${severities}">
+                    <th class="wng-dashboard__number">${it.getSeverityLabel(severity)}</th>
+                  </j:forEach>
+                  <j:if test="${it.hasQualityGates()}">
+                    <th class="wng-dashboard__status">${%Quality Gate}</th>
+                  </j:if>
+                </tr>
+              </thead>
+              <tbody>
+                <j:forEach var="action" items="${it.actions}">
+                  <j:set var="result" value="${action.result}"/>
+                  <tr>
+                    <td class="wng-dashboard__label">
+                      <a class="wng-dashboard__tool" href="${tabUrl + '/' + action.urlName}">
+                        <l:icon src="${action.iconFileName}" class="icon-sm wng-dashboard__tool-icon" alt=""/>
+                        ${action.displayName}
+                      </a>
+                    </td>
+                    <td class="wng-dashboard__number">${result.totalSize}</td>
+                    <td class="wng-dashboard__number">
+                      <j:choose>
+                        <j:when test="${result.newSize gt 0}">
+                          <span class="jenkins-badge jenkins-!-error-color">+${result.newSize}</span>
+                        </j:when>
+                        <j:otherwise>
+                          <span class="wng-dashboard__zero">0</span>
+                        </j:otherwise>
+                      </j:choose>
+                    </td>
+                    <td class="wng-dashboard__number">
+                      <j:choose>
+                        <j:when test="${result.fixedSize gt 0}">
+                          <span class="jenkins-badge jenkins-!-success-color">−${result.fixedSize}</span>
+                        </j:when>
+                        <j:otherwise>
+                          <span class="wng-dashboard__zero">0</span>
+                        </j:otherwise>
+                      </j:choose>
+                    </td>
+                    <j:forEach var="severity" items="${severities}">
+                      <td class="wng-dashboard__number">${result.getTotalSizeOf(severity)}</td>
+                    </j:forEach>
+                    <j:if test="${it.hasQualityGates()}">
+                      <td class="wng-dashboard__status">
+                        <j:set var="gate" value="${action.qualityGateResult}"/>
+                        <j:choose>
+                          <j:when test="${gate.inactive}">
+                            <span class="wng-dashboard__zero" tooltip="${%No quality gate}">–</span>
+                          </j:when>
+                          <j:otherwise>
+                            <l:icon class="${gate.overallStatus.iconClass} icon-sm"
+                                    alt="${gate.overallStatus.description}"
+                                    tooltip="${gate.overallStatus.description}"/>
+                          </j:otherwise>
+                        </j:choose>
+                      </td>
+                    </j:if>
+                  </tr>
+                </j:forEach>
+              </tbody>
+              <j:if test="${size(it.actions) gt 1}">
+                <tfoot>
+                  <tr class="wng-dashboard__sum">
+                    <td class="wng-dashboard__label">${%Total}</td>
+                    <td class="wng-dashboard__number">${it.totalSize}</td>
+                    <td class="wng-dashboard__number">${it.newSize}</td>
+                    <td class="wng-dashboard__number">${it.fixedSize}</td>
+                    <j:forEach var="severity" items="${severities}">
+                      <td class="wng-dashboard__number">${it.getTotalSizeOf(severity)}</td>
+                    </j:forEach>
+                    <j:if test="${it.hasQualityGates()}">
+                      <td class="wng-dashboard__status">
+                        <l:icon class="${it.qualityGateStatus.iconClass} icon-sm"
+                                alt="${it.qualityGateStatus.description}"
+                                tooltip="${it.qualityGateStatus.description}"/>
+                      </td>
+                    </j:if>
+                  </tr>
+                </tfoot>
+              </j:if>
+            </table>
+          </l:card>
+        </div>
+
+      </div>
+    </div>
+  </l:run-subpage>
+</j:jelly>
