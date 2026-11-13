@@ -91,6 +91,24 @@ class RunTabTest {
     }
 
     /**
+     * Verifies that the trend model provides a source for all tools and for each of the sorted warning actions.
+     */
+    @Test
+    void shouldCreateTrendWithSortedActions() {
+        Run<?, ?> run = mock(Run.class);
+        var checkstyle = createResultAction("checkstyle", "CheckStyle", 3);
+        var pmd = createResultAction("pmd", "PMD", 5);
+        when(run.getActions(ResultAction.class)).thenReturn(List.of(checkstyle, pmd));
+
+        var trend = new RunTab(run).getTrend();
+
+        assertThat(trend).hasObject(run).hasUrlName("trend");
+        assertThat(trend.getSources())
+                .extracting(TrendModel.TrendSource::getId)
+                .containsExactly(TrendModel.ALL_TOOLS_ID, "pmd", "checkstyle");
+    }
+
+    /**
      * Verifies that the index page redirects to the overview page of the run, using an absolute URL that is derived
      * from the URL of the run.
      *

@@ -347,3 +347,31 @@
     padding-top: 10px;
     border-top: 1px solid var(--jenkins-border-color, #e5e7eb);
 }
+
+/* Controls of the app bar (e.g., the selection of the tool and chart type on the trend page). */
+.wng-app-bar__controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--section-padding);
+}
+
+.wng-app-bar__control {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+
+    .jenkins-select__input {
+        min-width: 16em;
+    }
+}
+
+.wng-app-bar__number {
+    width: 6em;
+}
+
+.wng-trend__chart {
+    width: 100%;
+    min-height: 300px;
+}

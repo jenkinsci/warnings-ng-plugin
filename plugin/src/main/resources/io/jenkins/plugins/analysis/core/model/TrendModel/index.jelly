@@ -1,0 +1,58 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:wng="/warnings">
+
+  <st:header name="Content-Type" value="text/html;charset=UTF-8"/>
+
+  <l:run-subpage>
+    <st:adjunct includes="io.jenkins.plugins.analysis.core.model.RunTab.styles"/>
+    <st:adjunct includes="io.jenkins.plugins.jquery3"/>
+    <st:adjunct includes="io.jenkins.plugins.echarts"/>
+
+    <l:app-bar title="${it.displayName}">
+      <div class="wng-app-bar__controls">
+        <div class="wng-app-bar__control" tooltip="${%tool-tooltip}">
+          <label for="wng-trend-tool">${%tool-title}:</label>
+          <div class="jenkins-select">
+            <select id="wng-trend-tool" class="jenkins-select__input">
+              <j:forEach var="source" items="${it.sources}">
+                <option value="${source.id}" data-charts="${source.chartIds}"
+                        data-default-chart="${source.defaultChartType.id}">${source.displayName}</option>
+              </j:forEach>
+            </select>
+          </div>
+        </div>
+
+        <div class="wng-app-bar__control" tooltip="${%chart-tooltip}">
+          <label for="wng-trend-chart-type">${%chart-title}:</label>
+          <div class="jenkins-select">
+            <select id="wng-trend-chart-type" class="jenkins-select__input">
+              <j:forEach var="chartType" items="${it.chartTypes}">
+                <option value="${chartType.id}">${chartType.displayName}</option>
+              </j:forEach>
+            </select>
+          </div>
+        </div>
+
+        <div class="wng-app-bar__control" tooltip="${%builds-tooltip}">
+          <label for="wng-trend-builds">${%builds-title}:</label>
+          <input id="wng-trend-builds" class="jenkins-input wng-app-bar__number" type="number"
+                 min="2" max="500"/>
+        </div>
+      </div>
+    </l:app-bar>
+
+    <div class="wng-body">
+      <wng:sidepanel tab="${it.tab}"/>
+
+      <div class="wng-dashboard">
+        <l:card title="${%Trend}">
+          <div id="wng-trend" class="wng-trend__chart"/>
+        </l:card>
+      </div>
+    </div>
+
+    <st:bind var="proxy" value="${it}"/>
+    <st:adjunct includes="io.jenkins.plugins.analysis.core.model.TrendModel.trend-model"/>
+  </l:run-subpage>
+
+</j:jelly>
