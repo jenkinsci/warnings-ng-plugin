@@ -1,7 +1,9 @@
 package io.jenkins.plugins.analysis.core.model;
 
+import edu.hm.hafner.util.VisibleForTesting;
 import hudson.model.Actionable;
-import java.io.IOException;
+import hudson.model.Run;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -10,19 +12,39 @@ import jenkins.model.Tab;
 import jenkins.model.experimentalflags.BooleanUserExperimentalFlag;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
-import org.kohsuke.stapler.HttpRedirect;
-import org.kohsuke.stapler.StaplerResponse2;
+import org.kohsuke.stapler.HttpResponse;
+import org.kohsuke.stapler.HttpResponses;
+import org.kohsuke.stapler.verb.GET;
 
 /**
  * Defines the Warnings tab for a run.
  */
 public class RunTab extends Tab {
+    static final String URL = "warnings";
+
+    private final NewBuildPageFacade newBuildPage;
+
     /**
      * Constructs a new {@link RunTab}.
      * @param object the run to construct the tab for
      */
     public RunTab(final Actionable object) {
+        this(object, new NewBuildPageFacade());
+    }
+
+    /**
+     * Constructs a new {@link RunTab} with a custom facade for the experimental flag of the new build page.
+     *
+     * @param object
+     *         the run to construct the tab for
+     * @param newBuildPage
+     *         the facade that determines whether the new build page is enabled
+     */
+    @VisibleForTesting
+    RunTab(final Actionable object, final NewBuildPageFacade newBuildPage) {
         super(object);
+
+        this.newBuildPage = newBuildPage;
     }
 
     @Override
@@ -41,7 +63,7 @@ public class RunTab extends Tab {
 
     @Override
     public String getUrlName() {
-        return "warnings";
+        return URL;
     }
 
     @Override
@@ -83,21 +105,31 @@ public class RunTab extends Tab {
     }
 
     /**
-     * Redirects to first warning action if new UI enabled.
-     * @param rsp the response to use for forwarding if the new UI is disabled.
-     * @return the highest priority warning action.
-     * @throws IOException If an input or output exception occurs.
+     * Returns the model of the overview page that summarizes the results of all warning actions. Stapler resolves
+     * this getter before {@link #getDynamic(String)}, so the URL {@code warnings/overview} always shows the overview.
+     *
+     * @return the overview model
      */
-    public HttpRedirect doIndex(final StaplerResponse2 rsp) throws IOException {
-        Boolean newUiEnabled = BooleanUserExperimentalFlag.getFlagValueForCurrentUser(
-                "jenkins.model.experimentalflags.NewBuildPageUserExperimentalFlag");
+    @Restricted(NoExternalUse.class)
+    public OverviewModel getOverview() {
+        return new OverviewModel(getObject(), getWarningActions());
+    }
 
-        if (Boolean.TRUE.equals(newUiEnabled)) {
-            return new HttpRedirect(getWarningActions().get(0).getUrlName());
+    /**
+     * Redirects to the overview page if the new build page is enabled. The redirect target is derived from the URL of
+     * the run (and not from the request), and it is resolved via the context path, so it always points to the
+     * overview page of this run, independent of whether the request URL ends with a slash.
+     *
+     * @return the redirect to the overview page, or a 404 error if the new build page is disabled
+     */
+    @GET
+    public HttpResponse doIndex() {
+        if (newBuildPage.isEnabled() && getObject() instanceof Run<?, ?> run) {
+            return HttpResponses.redirectViaContextPath(run.getUrl() + URL + "/" + OverviewModel.URL);
         }
 
-        rsp.sendError(404, "This page requires the new build page UI to be enabled");
-        return null;
+        return HttpResponses.errorWithoutStack(
+                HttpServletResponse.SC_NOT_FOUND, "This page requires the new build page UI to be enabled");
     }
 
     /**
@@ -114,5 +146,24 @@ public class RunTab extends Tab {
         }
 
         throw new NoSuchElementException("No warnings found for " + getObject());
+    }
+
+    /**
+     * Facade for the experimental flag of the new build page. Encapsulates the static access to the current user so
+     * that the flag can be replaced in tests.
+     */
+    @VisibleForTesting
+    static class NewBuildPageFacade {
+        private static final String NEW_BUILD_PAGE_FLAG =
+                "jenkins.model.experimentalflags.NewBuildPageUserExperimentalFlag";
+
+        /**
+         * Returns whether the new build page is enabled for the current user.
+         *
+         * @return {@code true} if the new build page is enabled, {@code false} otherwise
+         */
+        boolean isEnabled() {
+            return Boolean.TRUE.equals(BooleanUserExperimentalFlag.getFlagValueForCurrentUser(NEW_BUILD_PAGE_FLAG));
+        }
     }
 }

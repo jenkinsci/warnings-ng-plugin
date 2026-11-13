@@ -1,0 +1,36 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:st="jelly:stapler" xmlns:j="jelly:core" xmlns:l="/lib/layout">
+
+  <st:documentation>
+    Provides the side panel links of the Warnings tab of a run: the overview page and one link for each result
+    (static analysis tool) of the run.
+
+    <st:attribute name="tab" type="io.jenkins.plugins.analysis.core.model.RunTab" use="required">
+      The Warnings tab of the run that provides the results.
+    </st:attribute>
+    <st:attribute name="active">
+      The URL of the task that should be shown as selected (e.g., 'overview'). Required only for pages that are
+      subpages of a task. All other tasks are selected by Jenkins core if the current URL matches the URL of the task.
+    </st:attribute>
+  </st:documentation>
+
+  <st:adjunct includes="io.jenkins.plugins.analysis.core.model.RunTab.active-tab"/>
+
+  <j:set var="tabUrl" value="${url + '/' + tab.urlName}"/>
+
+  <!-- The attribute data-active-task is omitted if no active task is given (null attribute values are skipped). -->
+  <div id="side-panel" class="app-page-body__sidebar wng-sidebar" data-active-task="${attrs.active}">
+    <l:tasks>
+      <l:task title="${%Overview}"
+              icon="symbol-grid-outline plugin-ionicons-api"
+              href="${tabUrl + '/overview'}"/>
+      <j:forEach var="item" items="${tab.warningActions}">
+        <l:task title="${item.displayName}"
+                icon="${item.iconFileName}"
+                href="${tabUrl + '/' + item.urlName}"
+                badge="${item.badge}"/>
+      </j:forEach>
+    </l:tasks>
+  </div>
+
+</j:jelly>
