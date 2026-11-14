@@ -22,7 +22,7 @@
           </div>
         </div>
 
-        <div class="wng-app-bar__control" tooltip="${%chart-tooltip}">
+        <div class="wng-app-bar__control" data-html-tooltip="${%chart-tooltip}">
           <label for="wng-trend-chart-type">${%chart-title}:</label>
           <div class="jenkins-select">
             <select id="wng-trend-chart-type" class="jenkins-select__input">
