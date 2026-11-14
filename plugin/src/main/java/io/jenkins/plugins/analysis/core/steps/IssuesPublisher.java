@@ -154,7 +154,7 @@ class IssuesPublisher {
                         qualityGateResult,
                         report.getSizeOfOrigin()));
         var action = new ResultAction(
-                run, result, healthDescriptor, getId(), name, icon, sourceCodeEncoding, trendChartType);
+                run, result, healthDescriptor, getId(), name, icon, sourceCodeEncoding.name(), trendChartType);
 
         run.addAction(action);
 

@@ -80,6 +80,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      *         determines if the trend chart will be shown
      */
     @SuppressWarnings("checkstyle:ParameterNumber")
+    @VisibleForTesting
     public ResultAction(
             final Run<?, ?> owner,
             final AnalysisResult result,
@@ -89,6 +90,39 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
             final String icon,
             final Charset charset,
             final TrendChartType trendChartType) {
+        this(owner, result, healthDescriptor, id, name, icon, charset.name(), trendChartType);
+    }
+
+    /**
+     * Creates a new instance of {@link ResultAction}.
+     *
+     * @param owner
+     *         the associated build/run that created the static analysis result
+     * @param result
+     *         the result of the static analysis run
+     * @param healthDescriptor
+     *         the health descriptor of the static analysis run
+     * @param id
+     *         the ID of the results
+     * @param name
+     *         the optional name of the results
+     * @param icon
+     *         the optional icon of the results
+     * @param charset
+     *         the charset to use to display source files
+     * @param trendChartType
+     *         determines if the trend chart will be shown
+     */
+    @SuppressWarnings("checkstyle:ParameterNumber")
+    public ResultAction(
+            final Run<?, ?> owner,
+            final AnalysisResult result,
+            final HealthDescriptor healthDescriptor,
+            final String id,
+            final String name,
+            final String icon,
+            final String charset,
+            final TrendChartType trendChartType) {
         VALIDATION_UTILITIES.ensureValidId(id);
 
         this.owner = owner;
@@ -97,7 +131,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
         this.id = id;
         this.name = name;
         this.icon = icon;
-        this.charset = charset.name();
+        this.charset = charset;
         this.trendChartType = trendChartType;
     }
 
