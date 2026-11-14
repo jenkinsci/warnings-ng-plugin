@@ -1,6 +1,6 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 import edu.hm.hafner.analysis.Severity;
@@ -320,7 +320,6 @@ class TrendModelTest {
      *
      * @return the build result
      */
-    @SuppressWarnings("PMD.InternalApiUsage")
     private BuildResult<AnalysisBuildResult> createBuildResult(
             final int buildNumber, final AnalysisBuildResult result) {
         return new BuildResult<>(new Build(buildNumber), result);
