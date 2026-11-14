@@ -68,6 +68,7 @@ public class ToolsTableModel extends TableModel {
     public TableConfiguration getTableConfiguration() {
         var tableConfiguration = new TableConfiguration();
         tableConfiguration.responsive();
+        tableConfiguration.optimalPageLength();
         return tableConfiguration;
     }
 
