@@ -392,3 +392,9 @@
         margin-bottom: 0;
     }
 }
+
+/* Message of the issues page if no issues have been reported. */
+.wng-issues__empty {
+    margin: 0;
+    color: var(--text-color-secondary);
+}

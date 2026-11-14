@@ -21,6 +21,7 @@ import org.kohsuke.stapler.verb.GET;
  */
 public class RunTab extends Tab {
     static final String URL = "warnings";
+    private static final String SOURCE_LINK_PREFIX = "source.";
 
     private final NewBuildPageFacade newBuildPage;
 
@@ -128,6 +129,18 @@ public class RunTab extends Tab {
     }
 
     /**
+     * Returns the model of the issues page that shows the issues of all warning actions in a table. Stapler
+     * resolves this getter before {@link #getDynamic(String)}, so the URL {@code warnings/table} always shows the
+     * issues.
+     *
+     * @return the issues model
+     */
+    @Restricted(NoExternalUse.class)
+    public IssuesPageModel getTable() {
+        return new IssuesPageModel(getObject(), getWarningActions());
+    }
+
+    /**
      * Redirects to the overview page if the new build page is enabled. The redirect target is derived from the URL of
      * the run (and not from the request), and it is resolved via the context path, so it always points to the
      * overview page of this run, independent of whether the request URL ends with a slash.
@@ -145,19 +158,38 @@ public class RunTab extends Tab {
     }
 
     /**
-     * Renders a dynamic warning action of the Warnings tab.
-     * @param name the name of the warning action to render.
-     * @return the warning action.
+     * Renders a dynamic warning action of the Warnings tab, or the affected file of an issue. The latter is required
+     * for the links to the affected files on the issues page (see {@link IssuesPageModel}): these links are relative
+     * to the URL of the tab and do not contain the tool that reported the issue.
+     *
+     * @param name
+     *         the name of the warning action to render, or the link to the affected file of an issue
+     *
+     * @return the warning action, or the view that shows the affected file
+     * @throws NoSuchElementException
+     *         if there is no such action or issue
      */
-    public ResultAction getDynamic(final String name) {
+    public Object getDynamic(final String name) {
         for (ResultAction ui : getWarningActions()) {
             String urlName = ui.getUrlName();
             if (name.equals(urlName)) {
                 return ui;
             }
         }
+        if (name.startsWith(SOURCE_LINK_PREFIX)) {
+            for (ResultAction action : getWarningActions()) {
+                if (hasIssue(action, name)) {
+                    return action.getTarget().createDetails(name);
+                }
+            }
+        }
 
         throw new NoSuchElementException("No warnings found for " + getObject());
+    }
+
+    private boolean hasIssue(final ResultAction action, final String sourceLink) {
+        return action.getResult().getIssues().stream()
+                .anyMatch(issue -> sourceLink.equals(SOURCE_LINK_PREFIX + issue.getId()));
     }
 
     /**
