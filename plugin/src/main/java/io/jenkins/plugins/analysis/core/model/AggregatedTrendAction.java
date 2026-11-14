@@ -1,21 +1,13 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import edu.hm.hafner.echarts.BuildResult;
 import edu.hm.hafner.echarts.ChartModelConfiguration;
 import edu.hm.hafner.echarts.LinesChartModel;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.model.Action;
 import hudson.model.Job;
 import hudson.model.Run;
-import io.jenkins.plugins.analysis.core.charts.CompositeBuildResult;
-import io.jenkins.plugins.analysis.core.charts.JenkinsBuild;
 import io.jenkins.plugins.analysis.core.charts.ToolsTrendChart;
-import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.echarts.AsyncConfigurableTrendChart;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
@@ -105,53 +97,5 @@ public class AggregatedTrendAction implements Action, AsyncConfigurableTrendChar
 
         var singleResult = history.iterator().next();
         return singleResult.hasMultipleResults();
-    }
-
-    /**
-     * Combines the history results of several {@link AnalysisBuildResult static analysis results} into a single result
-     * history.
-     *
-     * @author Ullrich Hafner
-     */
-    private static class CompositeBuildResultsIterable implements Iterable<BuildResult<AnalysisBuildResult>> {
-        private final Run<?, ?> lastBuild;
-
-        CompositeBuildResultsIterable(final Run<?, ?> lastBuild) {
-            this.lastBuild = lastBuild;
-        }
-
-        @Override
-        @NonNull
-        public Iterator<BuildResult<AnalysisBuildResult>> iterator() {
-            return new CompositeIterator(lastBuild);
-        }
-    }
-
-    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    private static class CompositeIterator implements Iterator<BuildResult<AnalysisBuildResult>> {
-        private Optional<Run<?, ?>> latestAction;
-
-        CompositeIterator(final Run<?, ?> current) {
-            latestAction = Optional.of(current);
-        }
-
-        @Override
-        public boolean hasNext() {
-            return latestAction.isPresent();
-        }
-
-        @Override
-        public BuildResult<AnalysisBuildResult> next() {
-            if (latestAction.isEmpty()) {
-                throw new NoSuchElementException("No more build results available");
-            }
-            Run<?, ?> run = latestAction.get();
-            latestAction = Optional.ofNullable(run.getPreviousBuild());
-
-            Set<AnalysisResult> results = run.getActions(ResultAction.class).stream()
-                    .map(ResultAction::getResult)
-                    .collect(Collectors.toSet());
-            return new BuildResult<>(new JenkinsBuild(run), new CompositeBuildResult(results));
-        }
     }
 }

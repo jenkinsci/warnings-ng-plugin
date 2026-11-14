@@ -2,8 +2,8 @@
 <j:jelly xmlns:st="jelly:stapler" xmlns:j="jelly:core" xmlns:l="/lib/layout">
 
   <st:documentation>
-    Provides the side panel links of the Warnings tab of a run: the overview page and one link for each result
-    (static analysis tool) of the run.
+    Provides the side panel links of the Warnings tab of a run: the overview page, the trend page, and one link for
+    each result (static analysis tool) of the run.
 
     <st:attribute name="tab" type="io.jenkins.plugins.analysis.core.model.RunTab" use="required">
       The Warnings tab of the run that provides the results.
@@ -24,6 +24,9 @@
       <l:task title="${%Overview}"
               icon="symbol-grid-outline plugin-ionicons-api"
               href="${tabUrl + '/overview'}"/>
+      <l:task title="${%Trend}"
+              icon="symbol-trending-up-outline plugin-ionicons-api"
+              href="${tabUrl + '/trend'}"/>
       <j:forEach var="item" items="${tab.warningActions}">
         <l:task title="${item.displayName}"
                 icon="${item.iconFileName}"

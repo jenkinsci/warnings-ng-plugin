@@ -116,6 +116,18 @@ public class RunTab extends Tab {
     }
 
     /**
+     * Returns the model of the trend page that shows the trend of the results of all warning actions (or of a
+     * single action). Stapler resolves this getter before {@link #getDynamic(String)}, so the URL
+     * {@code warnings/trend} always shows the trend.
+     *
+     * @return the trend model
+     */
+    @Restricted(NoExternalUse.class)
+    public TrendModel getTrend() {
+        return new TrendModel(getObject(), getWarningActions());
+    }
+
+    /**
      * Redirects to the overview page if the new build page is enabled. The redirect target is derived from the URL of
      * the run (and not from the request), and it is resolved via the context path, so it always points to the
      * overview page of this run, independent of whether the request URL ends with a slash.
