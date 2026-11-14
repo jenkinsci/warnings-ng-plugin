@@ -664,15 +664,7 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
     Object createDetails(final String link) {
         return new DetailFactory()
                 .createTrendDetails(
-                        link,
-                        owner,
-                        result,
-                        report,
-                        newIssues,
-                        outstandingIssues,
-                        fixedIssues,
-                        sourceEncoding,
-                        this);
+                        link, owner, result, report, newIssues, outstandingIssues, fixedIssues, sourceEncoding, this);
     }
 
     // ------------------------------------ UI entry points for Stapler --------------------------------

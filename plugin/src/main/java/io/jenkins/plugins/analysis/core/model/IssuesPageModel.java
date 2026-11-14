@@ -148,7 +148,8 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
      * @return {@code true} if there are issues, {@code false} otherwise
      */
     public boolean hasIssues() {
-        return actions.stream().anyMatch(action -> action.getResult().getIssues().isNotEmpty());
+        return actions.stream()
+                .anyMatch(action -> action.getResult().getIssues().isNotEmpty());
     }
 
     /**
@@ -157,7 +158,8 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
      * @return {@code true} if the SCM blames table should be offered, {@code false} otherwise
      */
     public boolean isBlameVisible() {
-        return actions.stream().anyMatch(action -> !action.getResult().getBlames().isEmpty());
+        return actions.stream()
+                .anyMatch(action -> !action.getResult().getBlames().isEmpty());
     }
 
     /**
@@ -166,7 +168,8 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
      * @return {@code true} if the SCM forensics table should be offered, {@code false} otherwise
      */
     public boolean isForensicsVisible() {
-        return actions.stream().anyMatch(action -> !action.getResult().getForensics().isEmpty());
+        return actions.stream()
+                .anyMatch(action -> !action.getResult().getForensics().isEmpty());
     }
 
     /**
@@ -263,7 +266,9 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
         DetailsTableModel createIssuesModel(final ResultAction action) {
             return action.getLabelProvider()
                     .getIssuesModel(
-                            action.getOwner(), action.getUrlName(), action.getResult().getIssues());
+                            action.getOwner(),
+                            action.getUrlName(),
+                            action.getResult().getIssues());
         }
 
         /**
