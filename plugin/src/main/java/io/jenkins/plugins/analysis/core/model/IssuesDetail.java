@@ -639,17 +639,7 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
     @SuppressWarnings("unused") // Called by jelly view
     public Object getDynamic(final String link, final StaplerRequest2 request, final StaplerResponse2 response) {
         try {
-            return new DetailFactory()
-                    .createTrendDetails(
-                            link,
-                            owner,
-                            result,
-                            report,
-                            newIssues,
-                            outstandingIssues,
-                            fixedIssues,
-                            sourceEncoding,
-                            this);
+            return createDetails(link);
         } catch (NoSuchElementException ignored) {
             try {
                 response.sendRedirect2("../");
@@ -658,6 +648,31 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
             }
             return this; // fallback on broken URLs
         }
+    }
+
+    /**
+     * Returns a new subpage for the selected link. In contrast to
+     * {@link #getDynamic(String, StaplerRequest2, StaplerResponse2)}, broken links are not redirected.
+     *
+     * @param link
+     *         the link to identify the subpage to show
+     *
+     * @return the new subpage
+     * @throws NoSuchElementException
+     *         if there is no subpage for the specified link
+     */
+    Object createDetails(final String link) {
+        return new DetailFactory()
+                .createTrendDetails(
+                        link,
+                        owner,
+                        result,
+                        report,
+                        newIssues,
+                        outstandingIssues,
+                        fixedIssues,
+                        sourceEncoding,
+                        this);
     }
 
     // ------------------------------------ UI entry points for Stapler --------------------------------

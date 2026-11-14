@@ -3,6 +3,9 @@ package io.jenkins.plugins.analysis.core.model;
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.IssueBuilder;
+import edu.hm.hafner.analysis.Report;
 import hudson.model.Actionable;
 import hudson.model.Run;
 import io.jenkins.plugins.analysis.core.model.RunTab.NewBuildPageFacade;
@@ -109,6 +112,50 @@ class RunTabTest {
     }
 
     /**
+     * Verifies that the issues page is created for the sorted actions of the run.
+     */
+    @Test
+    void shouldCreateIssuesPage() {
+        Run<?, ?> run = mock(Run.class);
+        var checkstyle = createResultActionWithIssues("checkstyle", new Report());
+        when(run.getActions(ResultAction.class)).thenReturn(List.of(checkstyle));
+
+        var table = new RunTab(run).getTable();
+
+        assertThat(table).hasDisplayName("Issues").hasUrlName("table");
+        assertThat(table.getObject()).isSameAs(run);
+        assertThat(table.getTools()).containsExactly(checkstyle);
+    }
+
+    /**
+     * Verifies that the link to the affected file of an issue is resolved by the tool that reported the issue.
+     */
+    @Test
+    void shouldResolveSourceLinksOfAllTools() {
+        Run<?, ?> run = mock(Run.class);
+        var checkstyle = createResultActionWithIssues("checkstyle", new Report());
+        var report = new Report();
+        Issue issue;
+        try (var builder = new IssueBuilder()) {
+            issue = builder.setFileName("file.txt").build();
+        }
+        report.add(issue);
+        var pmd = createResultActionWithIssues("pmd", report);
+        when(run.getActions(ResultAction.class)).thenReturn(List.of(checkstyle, pmd));
+        var link = "source." + issue.getId();
+        var sourceView = new Object();
+        IssuesDetail details = mock(IssuesDetail.class);
+        when(details.createDetails(link)).thenReturn(sourceView);
+        when(pmd.getTarget()).thenReturn(details);
+
+        var tab = new RunTab(run);
+
+        assertThat(tab.getDynamic(link)).isSameAs(sourceView);
+        assertThatExceptionOfType(NoSuchElementException.class)
+                .isThrownBy(() -> tab.getDynamic("source.00000000-0000-0000-0000-000000000000"));
+    }
+
+    /**
      * Verifies that the index page redirects to the overview page of the run, using an absolute URL that is derived
      * from the URL of the run.
      *
@@ -193,6 +240,15 @@ class RunTabTest {
         when(facade.isEnabled()).thenReturn(isNewBuildPageEnabled);
 
         return new RunTab(run, facade);
+    }
+
+    private ResultAction createResultActionWithIssues(final String id, final Report issues) {
+        var action = createResultAction(id, id, issues.size());
+        var labelProvider = mock(StaticAnalysisLabelProvider.class);
+        when(labelProvider.getIssuesModel(any(), any(), any())).thenReturn(mock(IssuesModel.class));
+        when(action.getLabelProvider()).thenReturn(labelProvider);
+        when(action.getResult().getIssues()).thenReturn(issues);
+        return action;
     }
 
     private ResultAction createResultAction(final String id, final String displayName, final int totalSize) {
