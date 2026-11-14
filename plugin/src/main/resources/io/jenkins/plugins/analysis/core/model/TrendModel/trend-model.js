@@ -127,11 +127,17 @@
         }
     }
 
+    let latestTrendRequest = 0;
+
     function renderTrendChart() {
         fitChartToViewport();
         const configuration = readConfiguration();
         persistConfiguration(configuration);
+        const request = ++latestTrendRequest;
         proxy.getTrendChart(JSON.stringify(configuration), function (t) {
+            if (request !== latestTrendRequest) {
+                return;
+            }
             const element = document.getElementById(CHART_ID);
             const existing = echarts.getInstanceByDom(element);
             if (existing) {
