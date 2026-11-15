@@ -23,6 +23,7 @@ import jenkins.model.experimentalflags.BooleanUserExperimentalFlag;
  */
 public class RunTab extends Tab {
     static final String URL = "warnings";
+    static final String ICON = "symbol-warning-outline plugin-ionicons-api";
     private static final String SOURCE_LINK_PREFIX = "source.";
 
     private final NewBuildPageFacade newBuildPage;
@@ -56,7 +57,7 @@ public class RunTab extends Tab {
             return null;
         }
 
-        return "symbol-warning-outline plugin-ionicons-api";
+        return ICON;
     }
 
     @Override

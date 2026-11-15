@@ -4,6 +4,7 @@
     const TOOL_SELECTOR = '#wng-issues-tool';
     const TABLE_SELECTOR = '#wng-issues-table';
     const BASELINE_SELECTOR = '#wng-issues-baseline';
+    const TOOL_ICON_SELECTOR = '.wng-app-bar__tool-icon';
     const PANEL_SELECTOR = '.wng-issues__panel';
     const PANEL_ID_PREFIX = 'wng-issues-panel-';
     const HIDDEN_CLASS = 'jenkins-hidden';
@@ -123,6 +124,16 @@
     }
 
     /**
+     * Shows the icon of the selected tool next to the select box and hides the icons of all other tools.
+     */
+    function showToolIcon() {
+        const tool = $(TOOL_SELECTOR).val();
+        $(TOOL_ICON_SELECTOR).each(function () {
+            $(this).toggleClass(HIDDEN_CLASS, this.getAttribute('data-tool') !== tool);
+        });
+    }
+
+    /**
      * Applies the selected tool and baseline to all tables.
      */
     function applyFilters() {
@@ -170,10 +181,14 @@
         restoreSelection(TABLE_SELECTOR, TABLE_KEY, TABLE_PARAMETER, urlSettings);
         restoreSelection(BASELINE_SELECTOR, BASELINE_KEY, BASELINE_PARAMETER, urlSettings);
 
+        showToolIcon();
         showSelectedTable();
         applyFilters();
 
-        bindSelection(TOOL_SELECTOR, TOOL_KEY, applyFilters);
+        bindSelection(TOOL_SELECTOR, TOOL_KEY, function () {
+            showToolIcon();
+            applyFilters();
+        });
         bindSelection(BASELINE_SELECTOR, BASELINE_KEY, applyFilters);
         bindSelection(TABLE_SELECTOR, TABLE_KEY, showSelectedTable);
     });

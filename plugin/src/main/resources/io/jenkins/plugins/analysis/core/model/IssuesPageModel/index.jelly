@@ -17,6 +17,12 @@
         <div class="wng-app-bar__controls">
           <div class="wng-app-bar__control" tooltip="${%tool-tooltip}">
             <label for="wng-issues-tool">${%tool-title}:</label>
+            <j:if test="${it.hasSeveralTools()}">
+              <wng:tool-icon tool="${it.allToolsId}" icon="${it.tab.iconFileName}"/>
+            </j:if>
+            <j:forEach var="tool" items="${it.tools}">
+              <wng:tool-icon tool="${tool.id}" icon="${tool.iconFileName}"/>
+            </j:forEach>
             <div class="jenkins-select">
               <select id="wng-issues-tool" class="jenkins-select__input" data-all-tools="${it.allToolsId}">
                 <j:if test="${it.hasSeveralTools()}">

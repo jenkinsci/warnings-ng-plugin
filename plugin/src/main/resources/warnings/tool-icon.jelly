@@ -1,0 +1,21 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:st="jelly:stapler" xmlns:j="jelly:core" xmlns:l="/lib/layout">
+
+  <st:documentation>
+    Renders the icon of a tool for the tool selection in the app bar. The options of a select box cannot contain
+    icons, so the icons of all tools are rendered next to the select box. All icons are hidden: the page script shows
+    the icon of the selected tool.
+
+    <st:attribute name="tool" type="String" use="required">
+      The ID of the tool, i.e., the value of the corresponding option of the select box.
+    </st:attribute>
+    <st:attribute name="icon" type="String" use="required">
+      The icon of the tool: a symbol or the URL of an image.
+    </st:attribute>
+  </st:documentation>
+
+  <span class="wng-app-bar__tool-icon jenkins-hidden" data-tool="${tool}">
+    <l:icon src="${icon}" class="icon-sm" alt=""/>
+  </span>
+
+</j:jelly>
