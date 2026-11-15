@@ -117,8 +117,13 @@ class RunTabTest {
     @Test
     void shouldCreateIssuesPage() {
         Run<?, ?> run = mock(Run.class);
-        var checkstyle = createResultActionWithIssues("checkstyle", new Report());
-        when(run.getActions(ResultAction.class)).thenReturn(List.of(checkstyle));
+        var report = new Report();
+        try (var builder = new IssueBuilder()) {
+            report.add(builder.setFileName("file.txt").build());
+        }
+        var checkstyle = createResultActionWithIssues("checkstyle", report);
+        var pmd = createResultActionWithIssues("pmd", new Report());
+        when(run.getActions(ResultAction.class)).thenReturn(List.of(checkstyle, pmd));
 
         var table = new RunTab(run).getTable();
 
