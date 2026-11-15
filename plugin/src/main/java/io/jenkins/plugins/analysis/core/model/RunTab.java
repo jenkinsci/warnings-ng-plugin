@@ -1,20 +1,22 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import edu.hm.hafner.util.VisibleForTesting;
-import hudson.model.Actionable;
-import hudson.model.Run;
+
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
-import jenkins.management.Badge;
-import jenkins.model.Tab;
-import jenkins.model.experimentalflags.BooleanUserExperimentalFlag;
+
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.HttpResponses;
 import org.kohsuke.stapler.verb.GET;
+import hudson.model.Actionable;
+import hudson.model.Run;
+import jenkins.management.Badge;
+import jenkins.model.Tab;
+import jenkins.model.experimentalflags.BooleanUserExperimentalFlag;
 
 /**
  * Defines the Warnings tab for a run.
@@ -189,7 +191,7 @@ public class RunTab extends Tab {
 
     private boolean hasIssue(final ResultAction action, final String sourceLink) {
         return action.getResult().getIssues().stream()
-                .anyMatch(issue -> sourceLink.equals(SOURCE_LINK_PREFIX + issue.getId()));
+                .anyMatch(issue -> (SOURCE_LINK_PREFIX + issue.getId()).equals(sourceLink));
     }
 
     /**

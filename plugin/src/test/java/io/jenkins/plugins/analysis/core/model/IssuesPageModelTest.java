@@ -115,14 +115,18 @@ class IssuesPageModelTest extends AbstractDetailsModelTest {
         assertThatJson(json).isArray().hasSize(3);
         assertThatJson(json).node("[0].tool").isEqualTo(CHECKSTYLE);
         assertThatJson(json).node("[0].baseline").isEqualTo("new");
-        assertThatJson(json).node("[0].fileName.display").isEqualTo(createExpectedFileName(newIssue));
-        assertThatJson(json).node("[0].severity").isEqualTo("<a href=\"HIGH\">High</a>");
+        // the HTML values are compared as plain strings, otherwise the expected values are parsed as JSON
+        assertThatJson(json).node("[0].fileName.display").isString().isEqualTo(createExpectedFileName(newIssue));
+        assertThatJson(json).node("[0].severity").isString().isEqualTo("<a href=\"HIGH\">High</a>");
         assertThatJson(json).node("[0].row").isAbsent();
         assertThatJson(json).node("[1].tool").isEqualTo(CHECKSTYLE);
         assertThatJson(json).node("[1].baseline").isEqualTo("outstanding");
         assertThatJson(json).node("[2].tool").isEqualTo(PMD);
         assertThatJson(json).node("[2].baseline").isEqualTo("outstanding");
-        assertThatJson(json).node("[2].category").isEqualTo("<a href=\"category.1296530212/\">category-3</a>");
+        assertThatJson(json)
+                .node("[2].category")
+                .isString()
+                .isEqualTo("<a href=\"category.1296530212/\">category-3</a>");
     }
 
     /**
