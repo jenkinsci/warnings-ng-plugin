@@ -367,6 +367,17 @@
     }
 }
 
+/* Icon of the selected tool next to the tool selection. Uses the text color, like the tool icons of the overview. */
+.wng-app-bar__tool-icon {
+    display: inline-flex;
+    align-items: center;
+}
+
+.wng-app-bar__tool-icon,
+.wng-app-bar__tool-icon svg {
+    color: var(--text-color);
+}
+
 .wng-app-bar__number {
     width: 6em;
 }
