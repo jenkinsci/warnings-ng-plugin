@@ -6,12 +6,15 @@ import static org.mockito.Mockito.*;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
+import hudson.model.Job;
 import hudson.model.Run;
 import io.jenkins.plugins.analysis.core.model.IssuesPageModel.TableModelFactory;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.DefaultAgeBuilder;
 import io.jenkins.plugins.datatables.TableColumn;
 import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
 import io.jenkins.plugins.forensics.util.CommitDecorator.NullDecorator;
+import java.net.URI;
 import java.util.List;
 import java.util.NoSuchElementException;
 import org.junit.jupiter.api.Test;
@@ -221,6 +224,35 @@ class IssuesPageModelTest extends AbstractDetailsModelTest {
                 .containsExactly("Hiddentool", "Hiddenbaseline");
         assertThat(model.getTableModel(IssuesPageModel.BLAMES_TABLE_ID).getRows())
                 .isEmpty();
+    }
+
+    /**
+     * Verifies that the links of the age column open the results of the tool in the build that reported an issue
+     * for the first time. The links are relative to the URL of the issues page, which is located two levels below
+     * the current build.
+     */
+    @Test
+    void shouldLinkAgeToResultsOfReferenceBuild() {
+        var action = createAction("open-tasks", createReport(createIssue(1)), new Report());
+        Job<?, ?> job = mock(Job.class);
+        Run<?, ?> referenceBuild = mock(Run.class);
+        when(job.getBuild("11")).thenAnswer(invocation -> referenceBuild);
+        var factory = new TableModelFactory();
+
+        var ageUrl = factory.getAgeUrl(action);
+        var age = new DefaultAgeBuilder(36, ageUrl, job).apply(11);
+
+        assertThat(age).isEqualTo("<a href=\"../../../11/open-tasks\">26</a>");
+        assertThat(URI.create("http://localhost:8080/job/pipeline/36/warnings/table/")
+                        .resolve("../../../11/open-tasks"))
+                .hasToString("http://localhost:8080/job/pipeline/11/open-tasks");
+
+        factory.createIssuesModel(action);
+        factory.createForensicsModel(action);
+
+        var labelProvider = action.getLabelProvider();
+        verify(labelProvider).getIssuesModel(any(), eq(ageUrl), any());
+        verify(labelProvider).getAgeBuilder(any(), eq(ageUrl));
     }
 
     /**

@@ -281,6 +281,23 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
         }
 
         /**
+         * Returns the URL that is used to render the links of the age column. These links open the results of the
+         * tool in the build that reported an issue for the first time. They are created by the
+         * {@link StaticAnalysisLabelProvider.AgeBuilder age builder} of the tool, which expects the URL of a view
+         * relative to the build: it navigates one level up for each element of this URL to reach the build. The
+         * issues page is located two levels below the build ({@code warnings/table/}), so an additional element is
+         * appended to the URL of the tool.
+         *
+         * @param action
+         *         the results of the tool
+         *
+         * @return the URL to use for the age builder
+         */
+        String getAgeUrl(final ResultAction action) {
+            return action.getUrlName() + "/" + URL;
+        }
+
+        /**
          * Creates the issues table model of the specified tool.
          *
          * @param action
@@ -292,7 +309,7 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
             return action.getLabelProvider()
                     .getIssuesModel(
                             action.getOwner(),
-                            action.getUrlName(),
+                            getAgeUrl(action),
                             action.getResult().getIssues());
         }
 
@@ -311,7 +328,7 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
                     action.getResult().getIssues(),
                     action.getResult().getBlames(),
                     labelProvider.getFileNameRenderer(run),
-                    labelProvider.getAgeBuilder(run, action.getUrlName()),
+                    labelProvider.getAgeBuilder(run, getAgeUrl(action)),
                     labelProvider,
                     CommitDecoratorFactory.findCommitDecorator(run));
         }
@@ -331,7 +348,7 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
                     action.getResult().getIssues(),
                     action.getResult().getForensics(),
                     labelProvider.getFileNameRenderer(run),
-                    labelProvider.getAgeBuilder(run, action.getUrlName()),
+                    labelProvider.getAgeBuilder(run, getAgeUrl(action)),
                     labelProvider);
         }
 
