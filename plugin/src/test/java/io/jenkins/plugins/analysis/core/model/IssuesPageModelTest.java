@@ -135,23 +135,23 @@ class IssuesPageModelTest extends AbstractDetailsModelTest {
         var checkstyle = createAction(CHECKSTYLE, report, new Report());
         TableModelFactory factory = mock(TableModelFactory.class);
         when(factory.hasDefaultIssuesTable(checkstyle)).thenReturn(true);
-        when(factory.createBlamesModel(checkstyle))
-                .thenReturn(new BlamesModel(
-                        report,
-                        new Blames(),
-                        createFileNameRenderer(),
-                        createAgeBuilder(),
-                        issue -> DESCRIPTION,
-                        new NullDecorator(),
-                        createJenkinsFacade()));
-        when(factory.createForensicsModel(checkstyle))
-                .thenReturn(new ForensicsModel(
-                        report,
-                        new RepositoryStatistics(),
-                        createFileNameRenderer(),
-                        createAgeBuilder(),
-                        issue -> DESCRIPTION,
-                        createJenkinsFacade()));
+        var blamesModel = new BlamesModel(
+                report,
+                new Blames(),
+                createFileNameRenderer(),
+                createAgeBuilder(),
+                issue -> DESCRIPTION,
+                new NullDecorator(),
+                createJenkinsFacade());
+        when(factory.createBlamesModel(checkstyle)).thenReturn(blamesModel);
+        var forensicsModel = new ForensicsModel(
+                report,
+                new RepositoryStatistics(),
+                createFileNameRenderer(),
+                createAgeBuilder(),
+                issue -> DESCRIPTION,
+                createJenkinsFacade());
+        when(factory.createForensicsModel(checkstyle)).thenReturn(forensicsModel);
 
         var model = new IssuesPageModel(mock(Run.class), List.of(checkstyle), factory);
 
@@ -219,13 +219,10 @@ class IssuesPageModelTest extends AbstractDetailsModelTest {
     private ResultAction createAction(final String id, final Report issues, final Report newIssues) {
         var action = createAction(id, issues);
         var labelProvider = mock(StaticAnalysisLabelProvider.class);
-        when(labelProvider.getIssuesModel(any(), any(), any()))
-                .thenReturn(new IssuesModel(
-                        issues,
-                        createFileNameRenderer(),
-                        createAgeBuilder(),
-                        issue -> DESCRIPTION,
-                        createJenkinsFacade()));
+        // the helper methods create mocks, so the model must be created before the stubbing starts
+        var issuesModel = new IssuesModel(
+                issues, createFileNameRenderer(), createAgeBuilder(), issue -> DESCRIPTION, createJenkinsFacade());
+        when(labelProvider.getIssuesModel(any(), any(), any())).thenReturn(issuesModel);
         when(action.getLabelProvider()).thenReturn(labelProvider);
         when(action.getResult().getNewIssues()).thenReturn(newIssues);
         return action;
