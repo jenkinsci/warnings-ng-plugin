@@ -8,6 +8,8 @@
 
     <j:set var="tab" value="${it.tab}"/>
     <j:set var="tabUrl" value="${url + '/' + tab.urlName}"/>
+    <!-- The tools link to the issues page (or to the classic details view if a tool is not part of that page) -->
+    <j:set var="issuesPage" value="${tab.table}"/>
     <j:set var="severities" value="${it.severities}"/>
 
     <l:app-bar title="${it.displayName}"/>
@@ -28,7 +30,7 @@
               <div class="wng-dashboard__quality-gate-tools">
                 <j:forEach var="action" items="${it.qualityGateActions}">
                   <div class="wng-dashboard__quality-gate-tool">
-                    <a class="wng-dashboard__quality-gate-tool-name" href="${tabUrl + '/' + action.urlName}">
+                    <a class="wng-dashboard__quality-gate-tool-name" href="${tabUrl + '/' + issuesPage.getUrlOf(action)}">
                       <l:icon src="${action.iconFileName}" class="icon-sm" alt=""/>
                       ${action.displayName}
                     </a>
@@ -115,7 +117,7 @@
                   <j:set var="result" value="${action.result}"/>
                   <tr>
                     <td class="wng-dashboard__label">
-                      <a class="wng-dashboard__tool" href="${tabUrl + '/' + action.urlName}">
+                      <a class="wng-dashboard__tool" href="${tabUrl + '/' + issuesPage.getUrlOf(action)}">
                         <l:icon src="${action.iconFileName}" class="icon-sm wng-dashboard__tool-icon" alt=""/>
                         ${action.displayName}
                       </a>

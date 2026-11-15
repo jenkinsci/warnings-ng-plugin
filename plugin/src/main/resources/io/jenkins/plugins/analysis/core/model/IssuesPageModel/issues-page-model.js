@@ -25,6 +25,11 @@
     const TABLE_KEY = 'table';
     const BASELINE_KEY = 'baseline';
 
+    // Names of the settings in the fragment of the URL, see IssuesPageModel#getUrlOf
+    const TOOL_PARAMETER = 'tool';
+    const TABLE_PARAMETER = 'table';
+    const BASELINE_PARAMETER = 'show';
+
     function readStorage(key) {
         try {
             return localStorage.getItem(STORAGE_PREFIX + key);
@@ -49,7 +54,31 @@
         }).length > 0;
     }
 
-    function restoreSelection(selector, key) {
+    /**
+     * Returns the settings that are given in the fragment of the URL, e.g., '#tool=pmd&show=new'. Such links are
+     * used by the overview page to open the issues of a specific tool.
+     *
+     * @return {URLSearchParams} the settings of the URL
+     */
+    function readUrlSettings() {
+        return new URLSearchParams(window.location.hash.replace(/^#/, ''));
+    }
+
+    /**
+     * Selects the option that is given in the URL. If there is no such option, the option that has been stored
+     * the last time is selected. A selection of the URL is not stored, so it is valid for the opened link only.
+     *
+     * @param {String} selector the selector of the select box
+     * @param {String} key the key of the setting in the local storage
+     * @param {String} parameter the name of the setting in the URL
+     * @param {URLSearchParams} urlSettings the settings of the URL
+     */
+    function restoreSelection(selector, key, parameter, urlSettings) {
+        const requested = urlSettings.get(parameter);
+        if (hasOption(selector, requested)) {
+            $(selector).val(requested);
+            return;
+        }
         const stored = readStorage(key);
         if (hasOption(selector, stored)) {
             $(selector).val(stored);
@@ -136,9 +165,10 @@
             removePropertyLinks(this);
         });
 
-        restoreSelection(TOOL_SELECTOR, TOOL_KEY);
-        restoreSelection(TABLE_SELECTOR, TABLE_KEY);
-        restoreSelection(BASELINE_SELECTOR, BASELINE_KEY);
+        const urlSettings = readUrlSettings();
+        restoreSelection(TOOL_SELECTOR, TOOL_KEY, TOOL_PARAMETER, urlSettings);
+        restoreSelection(TABLE_SELECTOR, TABLE_KEY, TABLE_PARAMETER, urlSettings);
+        restoreSelection(BASELINE_SELECTOR, BASELINE_KEY, BASELINE_PARAMETER, urlSettings);
 
         showSelectedTable();
         applyFilters();

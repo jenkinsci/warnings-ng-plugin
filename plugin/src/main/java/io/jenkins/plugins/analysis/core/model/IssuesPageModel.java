@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.core.model;
 
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.VisibleForTesting;
+import hudson.Util;
 import hudson.model.Actionable;
 import hudson.model.ModelObject;
 import hudson.model.Run;
@@ -18,11 +19,13 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * Server side model that provides the data for the "Issues" page of the Warnings tab of a run. The page answers the
  * question: "Which warnings have been reported in this build?". It shows the issues of all
- * {@link ResultAction results} of the run in a single table. Tools that provide a custom issues table (e.g.,
- * duplicate code detectors) are not part of this page yet, they are still available in the side panel.
+ * {@link ResultAction results} of the run in a single table. Tools without issues are not shown. Tools that provide
+ * a custom issues table (e.g., duplicate code detectors) are not part of this page yet, they are still available in
+ * the side panel.
  *
  * <p>
- * The following settings can be changed on the client side in the app bar, see {@code issues-page-model.js}:
+ * The following settings can be changed on the client side in the app bar, see {@code issues-page-model.js}. They
+ * can also be preselected in the fragment of the URL, e.g., {@code table#tool=pmd&show=new}:
  * </p>
  * <ul>
  *     <li>the tool: all tools (only if the run has more than one result) or a single tool</li>
@@ -46,6 +49,7 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
     static final String ISSUES_TABLE_ID = "issues";
     static final String BLAMES_TABLE_ID = "blames";
     static final String FORENSICS_TABLE_ID = "forensics";
+    private static final String TOOL_PARAMETER = "tool";
 
     private final Actionable owner;
     private final List<ResultAction> actions;
@@ -79,7 +83,10 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
 
         this.owner = owner;
         this.factory = factory;
-        this.actions = actions.stream().filter(factory::hasDefaultIssuesTable).toList();
+        this.actions = actions.stream()
+                .filter(action -> action.getResult().getTotalSize() > 0)
+                .filter(factory::hasDefaultIssuesTable)
+                .toList();
     }
 
     @Override
@@ -115,7 +122,7 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
     }
 
     /**
-     * Returns the tools that are shown on this page, i.e., all tools that use the default issues table.
+     * Returns the tools that are shown on this page, i.e., all tools with issues that use the default issues table.
      *
      * @return the tools
      */
@@ -148,8 +155,24 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
      * @return {@code true} if there are issues, {@code false} otherwise
      */
     public boolean hasIssues() {
-        return actions.stream()
-                .anyMatch(action -> action.getResult().getIssues().isNotEmpty());
+        return !actions.isEmpty();
+    }
+
+    /**
+     * Returns the URL that shows the details of the specified tool, relative to the Warnings tab. If the tool is
+     * part of this page, then the URL opens this page and selects the tool, see {@code issues-page-model.js}.
+     * Otherwise, the URL opens the classic details view of the tool.
+     *
+     * @param action
+     *         the results of the tool
+     *
+     * @return the relative URL
+     */
+    public String getUrlOf(final ResultAction action) {
+        if (actions.contains(action)) {
+            return URL + "#" + TOOL_PARAMETER + "=" + Util.rawEncode(action.getId());
+        }
+        return action.getUrlName();
     }
 
     /**
@@ -252,7 +275,9 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
          * @return {@code true} if the tool uses the default issues table, {@code false} otherwise
          */
         boolean hasDefaultIssuesTable(final ResultAction action) {
-            return createIssuesModel(action) instanceof IssuesModel;
+            // the type of the table does not depend on the issues, so the issues are not loaded for this check
+            return action.getLabelProvider().getIssuesModel(action.getOwner(), action.getUrlName(), new Report())
+                    instanceof IssuesModel;
         }
 
         /**
