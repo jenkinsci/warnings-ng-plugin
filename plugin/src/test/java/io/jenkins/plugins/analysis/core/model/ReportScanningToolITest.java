@@ -1,8 +1,19 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
+import static org.mockito.Mockito.*;
 
+import edu.hm.hafner.analysis.IssueParser;
+import edu.hm.hafner.analysis.Report;
+import hudson.FilePath;
+import hudson.model.Run;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
+import io.jenkins.plugins.analysis.core.util.ConsoleLog;
+import io.jenkins.plugins.util.LogHandler;
+import java.io.File;
+import java.io.Serial;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -101,9 +112,75 @@ class ReportScanningToolITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(tool.getLinesLookAhead()).isEqualTo(5);
     }
 
+    /** Tests that scan without consoleLog delegates to scan with ConsoleLog.BUILD. */
+    @Test
+    void shouldDelegateScanWithoutConsoleLog() {
+        var tool = new DelegatingReportScanningTool();
+
+        var report =
+                tool.scan(mock(Run.class), new FilePath(new File(".")), StandardCharsets.UTF_8, mock(LogHandler.class));
+
+        assertThat(report).isNotNull();
+        assertThat(tool.hasDelegatedWithBuildConsoleLog()).isTrue();
+    }
+
     private ReportScanningTool.ReportScanningToolDescriptor makeDescriptor(
             final boolean canScanConsoleLog, final String getPattern) {
         return new ReportScanningToolStubForTesting.ReportScanningToolDescriptorStubForTesting(
                 "someId", canScanConsoleLog, getPattern);
+    }
+
+    /** Tests that scan with consoleLog delegates to scan without consoleLog in base Tool class. */
+    @Test
+    void shouldDelegateScanWithConsoleLogInBaseTool() {
+        var tool = new TestTool();
+        var report = tool.scan(
+                mock(Run.class),
+                ConsoleLog.BUILD,
+                new FilePath(new File(".")),
+                StandardCharsets.UTF_8,
+                mock(LogHandler.class));
+
+        assertThat(report).isNotNull();
+    }
+
+    private static class DelegatingReportScanningTool extends ReportScanningToolStubForTesting {
+        @Serial
+        private static final long serialVersionUID = 1L;
+
+        private boolean delegatedWithBuildConsoleLog;
+
+        DelegatingReportScanningTool() {
+            super(mock(IssueParser.class));
+        }
+
+        @Override
+        public Report scan(
+                final Run<?, ?> run,
+                final ConsoleLog consoleLog,
+                final FilePath workspace,
+                final Charset sourceCodeEncoding,
+                final LogHandler logger) {
+            delegatedWithBuildConsoleLog = consoleLog == ConsoleLog.BUILD;
+            return new Report();
+        }
+
+        boolean hasDelegatedWithBuildConsoleLog() {
+            return delegatedWithBuildConsoleLog;
+        }
+    }
+
+    private static class TestTool extends Tool {
+        @Serial
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public Report scan(
+                final Run<?, ?> run,
+                final FilePath workspace,
+                final Charset sourceCodeEncoding,
+                final LogHandler logger) {
+            return new Report();
+        }
     }
 }
