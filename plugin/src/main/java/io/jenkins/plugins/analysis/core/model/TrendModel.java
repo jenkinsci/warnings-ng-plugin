@@ -124,7 +124,7 @@ public class TrendModel implements ModelObject {
             trendSources.add(new TrendSource(
                     action.getId(),
                     action.getDisplayName(),
-                    action.getIconFileName(),
+                    action.getSmallImage(),
                     action::createBuildHistory,
                     action.getHealthDescriptor(),
                     origins,

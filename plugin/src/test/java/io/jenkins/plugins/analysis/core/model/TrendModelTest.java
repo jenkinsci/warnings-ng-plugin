@@ -256,7 +256,7 @@ class TrendModelTest {
 
         when(action.getId()).thenReturn(id);
         when(action.getDisplayName()).thenReturn(displayName);
-        when(action.getIconFileName()).thenReturn(id + "-icon");
+        when(action.getSmallImage()).thenReturn(id + "-icon");
         when(action.getResult()).thenReturn(result);
         when(action.getHealthDescriptor()).thenReturn(healthDescriptor);
         when(action.createBuildHistory()).thenReturn(buildHistory);

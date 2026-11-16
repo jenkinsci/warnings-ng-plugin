@@ -126,7 +126,7 @@ public class LogModel implements ModelObject {
         private ToolLog(final ResultAction action) {
             this.id = action.getId();
             this.displayName = action.getDisplayName();
-            this.iconFileName = action.getIconFileName();
+            this.iconFileName = action.getSmallImage();
             this.infoMessages = action.getResult().getInfoMessages().castToList();
             this.errorMessages = action.getResult().getErrorMessages().castToList();
         }

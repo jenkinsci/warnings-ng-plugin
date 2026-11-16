@@ -50,6 +50,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
     private static final ValidationUtilities VALIDATION_UTILITIES = new ValidationUtilities();
 
     private transient Run<?, ?> owner;
+    private transient NewBuildPageFacade newBuildPage = new NewBuildPageFacade();
 
     private final AnalysisResult result;
     private final HealthDescriptor healthDescriptor;
@@ -150,7 +151,13 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
         if (icon == null) {
             icon = StringUtils.EMPTY;
         }
+        newBuildPage = new NewBuildPageFacade(); // transient field is not restored by XStream
         return this;
+    }
+
+    @VisibleForTesting
+    void setNewBuildPageFacade(final NewBuildPageFacade newBuildPage) {
+        this.newBuildPage = newBuildPage;
     }
 
     /**
@@ -265,8 +272,19 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
         return result;
     }
 
+    /**
+     * Returns the icon for the side panel link of this action. If the new build page is enabled, then the results are
+     * shown in the Warnings tab (see {@link RunTab}), so no link is created in the side panel. Use
+     * {@link #getSmallImage()} to obtain the icon of the tool independently of the active UI.
+     *
+     * @return the icon for the side panel link, or {@code null} if the new build page is enabled
+     */
+    @CheckForNull
     @Override
     public String getIconFileName() {
+        if (newBuildPage.isEnabled()) {
+            return null; // Jenkins API: null hides the link
+        }
         return getSmallImage();
     }
 

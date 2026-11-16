@@ -21,7 +21,7 @@
               <wng:tool-icon tool="${it.allToolsId}" icon="${it.tab.iconFileName}"/>
             </j:if>
             <j:forEach var="tool" items="${it.tools}">
-              <wng:tool-icon tool="${tool.id}" icon="${tool.iconFileName}"/>
+              <wng:tool-icon tool="${tool.id}" icon="${tool.smallImage}"/>
             </j:forEach>
             <div class="jenkins-select">
               <select id="wng-issues-tool" class="jenkins-select__input" data-all-tools="${it.allToolsId}">

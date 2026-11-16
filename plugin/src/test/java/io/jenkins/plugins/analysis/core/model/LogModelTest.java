@@ -100,7 +100,7 @@ class LogModelTest {
 
         when(action.getId()).thenReturn(id);
         when(action.getDisplayName()).thenReturn(displayName);
-        when(action.getIconFileName()).thenReturn(id + "-icon");
+        when(action.getSmallImage()).thenReturn(id + "-icon");
         when(action.getResult()).thenReturn(result);
         when(result.getInfoMessages()).thenReturn(Lists.immutable.withAll(infoMessages));
         when(result.getErrorMessages()).thenReturn(Lists.immutable.withAll(errorMessages));

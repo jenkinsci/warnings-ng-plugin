@@ -44,7 +44,36 @@ class JobActionTest {
     }
 
     private JobAction createJobAction(final Job<?, ?> job, final StaticAnalysisLabelProvider labelProvider) {
-        return new JobAction(job, labelProvider, 1, TrendChartType.TOOLS_ONLY, labelProvider.getId());
+        return createJobAction(job, labelProvider, false);
+    }
+
+    private JobAction createJobAction(
+            final Job<?, ?> job, final StaticAnalysisLabelProvider labelProvider, final boolean isNewBuildPageEnabled) {
+        var facade = mock(NewBuildPageFacade.class);
+        when(facade.isEnabled()).thenReturn(isNewBuildPageEnabled);
+
+        return new JobAction(job, labelProvider, 1, TrendChartType.TOOLS_ONLY, labelProvider.getId(), facade);
+    }
+
+    /**
+     * Verifies that the link in the side panel of the job is hidden if the new build page is enabled: the results
+     * are shown in the Warnings tab of a build then. The action is still available using its URL.
+     */
+    @Test
+    void shouldHideSidePanelLinkIfNewBuildPageIsEnabled() {
+        StaticAnalysisLabelProvider labelProvider = mock(StaticAnalysisLabelProvider.class);
+        when(labelProvider.getId()).thenReturn(ANALYSIS_ID);
+        when(labelProvider.getLinkName()).thenReturn(LINK_NAME);
+        when(labelProvider.getSmallIconUrl()).thenReturn(ICON);
+
+        Job<?, ?> job = mock(Job.class);
+
+        assertThat(createJobAction(job, labelProvider, false).getIconFileName()).isEqualTo(ICON);
+
+        var hidden = createJobAction(job, labelProvider, true);
+        assertThat(hidden.getIconFileName()).isNull();
+        assertThat(hidden.getUrlName()).isEqualTo(ANALYSIS_ID);
+        assertThat(hidden.getDisplayName()).isEqualTo(LINK_NAME);
     }
 
     @Test
