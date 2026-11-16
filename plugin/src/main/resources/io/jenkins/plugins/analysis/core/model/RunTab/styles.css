@@ -409,3 +409,21 @@
     margin: 0;
     color: var(--text-color-secondary);
 }
+
+/* Log page (LogModel/index.jelly): the cards with the error and information messages of a tool. The height of the
+   messages is computed in log-model.js, which measures the gap between the cards dynamically. */
+.wng-log__panel {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--section-padding) / 2);
+}
+
+.wng-log {
+    display: block;
+    overflow-y: auto;
+    margin: 0;
+    padding-left: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+}

@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.NoSuchElementException;
+import org.eclipse.collections.impl.factory.Lists;
 import org.junit.jupiter.api.Test;
 import org.kohsuke.stapler.StaplerRequest2;
 import org.kohsuke.stapler.StaplerResponse2;
@@ -130,6 +131,28 @@ class RunTabTest {
         assertThat(table).hasDisplayName("Issues").hasUrlName("table");
         assertThat(table.getObject()).isSameAs(run);
         assertThat(table.getTools()).containsExactly(checkstyle);
+    }
+
+    /**
+     * Verifies that the log page shows the messages of the sorted actions of the run, including the tools without
+     * issues.
+     */
+    @Test
+    void shouldCreateLogPage() {
+        Run<?, ?> run = mock(Run.class);
+        var checkstyle = createResultAction("checkstyle", "CheckStyle", 0);
+        when(checkstyle.getResult().getInfoMessages()).thenReturn(Lists.immutable.of("Parsing checkstyle.xml"));
+        when(checkstyle.getResult().getErrorMessages()).thenReturn(Lists.immutable.empty());
+        var pmd = createResultAction("pmd", "PMD", 5);
+        when(pmd.getResult().getInfoMessages()).thenReturn(Lists.immutable.empty());
+        when(pmd.getResult().getErrorMessages()).thenReturn(Lists.immutable.of("No files found"));
+        when(run.getActions(ResultAction.class)).thenReturn(List.of(checkstyle, pmd));
+
+        var log = new RunTab(run).getLog();
+
+        assertThat(log).hasDisplayName("Log Messages").hasUrlName("log").hasDefaultToolId("pmd");
+        assertThat(log.getObject()).isSameAs(run);
+        assertThat(log.getTools()).extracting(LogModel.ToolLog::getId).containsExactly("pmd", "checkstyle");
     }
 
     /**

@@ -1,0 +1,78 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:wng="/warnings">
+
+  <st:header name="Content-Type" value="text/html;charset=UTF-8"/>
+
+  <l:run-subpage>
+    <st:adjunct includes="io.jenkins.plugins.analysis.core.model.RunTab.styles"/>
+    <st:adjunct includes="io.jenkins.plugins.jquery3"/>
+
+    <j:set var="hasTools" value="${it.hasTools()}"/>
+    <j:set var="defaultToolId" value="${it.defaultToolId}"/>
+
+    <l:app-bar title="${it.displayName}">
+      <j:if test="${hasTools}">
+        <div class="wng-app-bar__controls">
+          <div class="wng-app-bar__control" tooltip="${%tool-tooltip}">
+            <label for="wng-log-tool">${%tool-title}:</label>
+            <j:forEach var="tool" items="${it.tools}">
+              <wng:tool-icon tool="${tool.id}" icon="${tool.iconFileName}"/>
+            </j:forEach>
+            <div class="jenkins-select">
+              <select id="wng-log-tool" class="jenkins-select__input">
+                <j:forEach var="tool" items="${it.tools}">
+                  <!-- The attribute selected is omitted for all other tools (null attribute values are skipped). -->
+                  <option value="${tool.id}"
+                          selected="${tool.id == defaultToolId ? 'selected' : null}">${tool.label}</option>
+                </j:forEach>
+              </select>
+            </div>
+          </div>
+        </div>
+      </j:if>
+    </l:app-bar>
+
+    <div class="wng-body">
+      <wng:sidepanel tab="${it.tab}"/>
+
+      <div class="wng-dashboard">
+        <j:choose>
+          <j:when test="${hasTools}">
+            <!-- The messages of all tools are part of the page, the visible tool is selected on the client side. -->
+            <j:forEach var="tool" items="${it.tools}">
+              <div class="wng-log__panel jenkins-hidden" data-tool="${tool.id}">
+                <j:if test="${tool.hasErrors()}">
+                  <l:card title="${%errors-title}">
+                    <pre class="wng-log wng-log__errors">
+                      <j:forEach var="message" items="${tool.errorMessages}">
+                        <div>${message}</div>
+                      </j:forEach>
+                    </pre>
+                  </l:card>
+                </j:if>
+
+                <l:card title="${%info-title}">
+                  <pre class="wng-log wng-log__info">
+                    <j:forEach var="message" items="${tool.infoMessages}">
+                      <div>${message}</div>
+                    </j:forEach>
+                  </pre>
+                </l:card>
+              </div>
+            </j:forEach>
+          </j:when>
+          <j:otherwise>
+            <l:card title="${it.displayName}">
+              <p class="wng-issues__empty">${%no-tools}</p>
+            </l:card>
+          </j:otherwise>
+        </j:choose>
+      </div>
+    </div>
+
+    <j:if test="${hasTools}">
+      <st:adjunct includes="io.jenkins.plugins.analysis.core.model.LogModel.log-model"/>
+    </j:if>
+  </l:run-subpage>
+
+</j:jelly>
