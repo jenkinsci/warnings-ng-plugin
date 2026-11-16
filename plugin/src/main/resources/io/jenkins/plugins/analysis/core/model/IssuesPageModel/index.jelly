@@ -29,7 +29,8 @@
                   <option value="${it.allToolsId}">${%tool-all}</option>
                 </j:if>
                 <j:forEach var="tool" items="${it.tools}">
-                  <option value="${tool.id}">${tool.displayName}</option>
+                  <option value="${tool.id}"
+                          data-issues-table="${it.getIssuesTableId(tool)}">${tool.displayName}</option>
                 </j:forEach>
               </select>
             </div>
@@ -79,6 +80,14 @@
                 <dt:table model="${it.getTableModel('issues')}"/>
               </l:card>
             </div>
+            <!-- Tools with a custom issues table: the table replaces the issues table if the tool is selected -->
+            <j:forEach var="customTableId" items="${it.customTableIds}">
+              <div id="wng-issues-panel-${customTableId}" class="wng-issues__panel jenkins-hidden">
+                <l:card title="${%table-issues}">
+                  <dt:table model="${it.getTableModel(customTableId)}"/>
+                </l:card>
+              </div>
+            </j:forEach>
             <j:if test="${blameVisible}">
               <div id="wng-issues-panel-blames" class="wng-issues__panel jenkins-hidden">
                 <l:card title="${%table-blames}">
