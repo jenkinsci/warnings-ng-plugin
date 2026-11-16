@@ -19,9 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * Server side model that provides the data for the "Issues" page of the Warnings tab of a run. The page answers the
  * question: "Which warnings have been reported in this build?". It shows the issues of all
- * {@link ResultAction results} of the run in a single table. Tools without issues are not shown. Tools that provide
- * a custom issues table (e.g., duplicate code detectors) are not part of this page yet, they are still available in
- * the side panel.
+ * {@link ResultAction results} of the run in a single table. Tools without issues are not shown.
  *
  * <p>
  * The following settings can be changed on the client side in the app bar, see {@code issues-page-model.js}. They
@@ -40,6 +38,13 @@ import org.apache.commons.lang3.StringUtils;
  * {@link ForensicsModel}. The links to the affected files are resolved by {@link RunTab#getDynamic(String)}.
  * </p>
  *
+ * <p>
+ * Some tools provide a custom issues table with different columns (e.g., duplicate code detectors). The rows of such
+ * a table cannot be combined with the rows of other tools. So the issues of these tools are shown with the default
+ * columns in the table of all tools. Additionally, the page provides the custom table of each of these tools: this
+ * table replaces the issues table if the corresponding tool is selected.
+ * </p>
+ *
  * @author Ullrich Hafner
  */
 public class IssuesPageModel extends DefaultAsyncTableContentProvider implements ModelObject {
@@ -49,6 +54,9 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
     static final String ISSUES_TABLE_ID = "issues";
     static final String BLAMES_TABLE_ID = "blames";
     static final String FORENSICS_TABLE_ID = "forensics";
+    /** Prefix of the IDs of the custom issues tables. The suffix is the index of the tool, see {@link #getTools()}. */
+    static final String CUSTOM_TABLE_ID_PREFIX = "issues-tool-";
+
     private static final String TOOL_PARAMETER = "tool";
 
     private final Actionable owner;
@@ -85,7 +93,6 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
         this.factory = factory;
         this.actions = actions.stream()
                 .filter(action -> action.getResult().getTotalSize() > 0)
-                .filter(factory::hasDefaultIssuesTable)
                 .toList();
     }
 
@@ -122,7 +129,7 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
     }
 
     /**
-     * Returns the tools that are shown on this page, i.e., all tools with issues that use the default issues table.
+     * Returns the tools that are shown on this page, i.e., all tools with issues.
      *
      * @return the tools
      */
@@ -176,6 +183,35 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
     }
 
     /**
+     * Returns the ID of the issues table that is shown if the specified tool is selected: the ID of the custom
+     * table of the tool, or the ID of the table of all tools if the tool uses the default issues table.
+     *
+     * @param action
+     *         the results of the tool
+     *
+     * @return the ID of the table
+     */
+    public String getIssuesTableId(final ResultAction action) {
+        if (actions.contains(action) && factory.hasCustomIssuesTable(action)) {
+            return CUSTOM_TABLE_ID_PREFIX + actions.indexOf(action);
+        }
+        return ISSUES_TABLE_ID;
+    }
+
+    /**
+     * Returns the IDs of the custom issues tables, i.e., one ID for each tool that does not use the default issues
+     * table.
+     *
+     * @return the IDs of the tables
+     */
+    public List<String> getCustomTableIds() {
+        return actions.stream()
+                .map(this::getIssuesTableId)
+                .filter(tableId -> !ISSUES_TABLE_ID.equals(tableId))
+                .toList();
+    }
+
+    /**
      * Returns whether author and commit information is available for at least one of the tools.
      *
      * @return {@code true} if the SCM blames table should be offered, {@code false} otherwise
@@ -196,11 +232,12 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
     }
 
     /**
-     * Returns the table model that matches the given table ID. Each table contains the issues of all tools.
+     * Returns the table model that matches the given table ID. The issues table, the SCM blames table, and the SCM
+     * forensics table contain the issues of all tools. A custom table contains the issues of a single tool.
      *
      * @param tableId
-     *         ID of the table model, one of {@link #ISSUES_TABLE_ID}, {@link #BLAMES_TABLE_ID}, or
-     *         {@link #FORENSICS_TABLE_ID}
+     *         ID of the table model, one of {@link #ISSUES_TABLE_ID}, {@link #BLAMES_TABLE_ID},
+     *         {@link #FORENSICS_TABLE_ID}, or one of the {@link #getCustomTableIds() IDs of the custom tables}
      *
      * @return the table model
      * @throws NoSuchElementException
@@ -217,7 +254,16 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
         if (FORENSICS_TABLE_ID.equals(tableId)) {
             return createTable(tableId, factory::createForensicsModel);
         }
-        throw new NoSuchElementException("No such table model: " + tableId);
+        return actions.stream()
+                .filter(action -> getIssuesTableId(action).equals(tableId))
+                .findFirst()
+                .map(action -> createCustomTable(tableId, action))
+                .orElseThrow(() -> new NoSuchElementException("No such table model: " + tableId));
+    }
+
+    private TableModel createCustomTable(final String tableId, final ResultAction action) {
+        var model = factory.createCustomIssuesModel(action);
+        return new ToolsTableModel(tableId, model.getColumns(), List.of(createToolIssues(action, model)));
     }
 
     private TableModel createTable(final String tableId, final Function<ResultAction, DetailsTableModel> creator) {
@@ -235,13 +281,17 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
             final Function<ResultAction, DetailsTableModel> creator,
             final List<TableColumn> columns) {
         var tools = actions.stream()
-                .map(action -> new ToolIssues(
-                        action.getId(),
-                        creator.apply(action),
-                        action.getResult().getIssues(),
-                        action.getResult().getNewIssues()))
+                .map(action -> createToolIssues(action, creator.apply(action)))
                 .toList();
         return new ToolsTableModel(tableId, columns, tools);
+    }
+
+    private ToolIssues createToolIssues(final ResultAction action, final DetailsTableModel model) {
+        return new ToolIssues(
+                action.getId(),
+                model,
+                action.getResult().getIssues(),
+                action.getResult().getNewIssues());
     }
 
     /**
@@ -266,18 +316,18 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
     @VisibleForTesting
     static class TableModelFactory {
         /**
-         * Returns whether the specified tool uses the default issues table. Tools with a custom table (and custom
-         * columns) cannot be combined with other tools in a single table.
+         * Returns whether the specified tool provides a custom issues table, i.e., a table with different columns
+         * than the default issues table.
          *
          * @param action
          *         the results of the tool
          *
-         * @return {@code true} if the tool uses the default issues table, {@code false} otherwise
+         * @return {@code true} if the tool provides a custom issues table, {@code false} otherwise
          */
-        boolean hasDefaultIssuesTable(final ResultAction action) {
+        boolean hasCustomIssuesTable(final ResultAction action) {
             // the type of the table does not depend on the issues, so the issues are not loaded for this check
-            return action.getLabelProvider().getIssuesModel(action.getOwner(), action.getUrlName(), new Report())
-                    instanceof IssuesModel;
+            return !(action.getLabelProvider().getIssuesModel(action.getOwner(), getAgeUrl(action), new Report())
+                    instanceof IssuesModel);
         }
 
         /**
@@ -298,7 +348,26 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
         }
 
         /**
-         * Creates the issues table model of the specified tool.
+         * Creates the issues table model of the specified tool, which is either the default issues table or a custom
+         * table of the tool.
+         *
+         * @param action
+         *         the results of the tool
+         *
+         * @return the table model
+         */
+        DetailsTableModel createCustomIssuesModel(final ResultAction action) {
+            return action.getLabelProvider()
+                    .getIssuesModel(
+                            action.getOwner(),
+                            getAgeUrl(action),
+                            action.getResult().getIssues());
+        }
+
+        /**
+         * Creates the issues table model of the specified tool that is used in the table of all tools. If the tool
+         * provides a custom issues table, then the default issues table is used instead, so that the rows of all
+         * tools provide the same properties.
          *
          * @param action
          *         the results of the tool
@@ -306,11 +375,17 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
          * @return the table model
          */
         DetailsTableModel createIssuesModel(final ResultAction action) {
-            return action.getLabelProvider()
-                    .getIssuesModel(
-                            action.getOwner(),
-                            getAgeUrl(action),
-                            action.getResult().getIssues());
+            var model = createCustomIssuesModel(action);
+            if (model instanceof IssuesModel) {
+                return model;
+            }
+            var labelProvider = action.getLabelProvider();
+            var run = action.getOwner();
+            return new IssuesModel(
+                    action.getResult().getIssues(),
+                    labelProvider.getFileNameRenderer(run),
+                    labelProvider.getAgeBuilder(run, getAgeUrl(action)),
+                    labelProvider);
         }
 
         /**

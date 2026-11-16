@@ -10,7 +10,9 @@ import hudson.model.Job;
 import hudson.model.Run;
 import io.jenkins.plugins.analysis.core.model.IssuesPageModel.TableModelFactory;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.DefaultAgeBuilder;
+import io.jenkins.plugins.analysis.core.model.ToolsTableModel.ToolRow;
 import io.jenkins.plugins.datatables.TableColumn;
+import io.jenkins.plugins.datatables.TableColumn.ColumnBuilder;
 import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
 import io.jenkins.plugins.forensics.util.CommitDecorator.NullDecorator;
@@ -30,18 +32,16 @@ class IssuesPageModelTest extends AbstractDetailsModelTest {
     private static final String PMD = "pmd";
 
     /**
-     * Verifies that the page provides the basic properties and all tools with issues that use the default issues
-     * table.
+     * Verifies that the page provides the basic properties and all tools with issues.
      */
     @Test
-    void shouldProvideToolsWithIssuesAndDefaultIssuesTable() {
+    void shouldProvideToolsWithIssues() {
         var checkstyle = createAction(CHECKSTYLE, createReport(createIssue(1)), new Report());
         var pmd = createAction(PMD, createReport(createIssue(2)), new Report());
-        var cpd = createActionWithCustomTable("cpd", createReport(createIssue(3)));
         var spotbugs = createAction("spotbugs", new Report(), new Report());
         Run<?, ?> run = mock(Run.class);
 
-        var model = new IssuesPageModel(run, List.of(checkstyle, cpd, spotbugs, pmd));
+        var model = new IssuesPageModel(run, List.of(checkstyle, spotbugs, pmd));
 
         assertThat(model).hasDisplayName("Issues").hasUrlName("table").hasAllToolsId(TrendModel.ALL_TOOLS_ID);
         assertThat(model.getObject()).isSameAs(run);
@@ -50,13 +50,13 @@ class IssuesPageModelTest extends AbstractDetailsModelTest {
         assertThat(model.hasSeveralTools()).isTrue();
         assertThat(model.hasIssues()).isTrue();
 
-        var single = new IssuesPageModel(run, List.of(checkstyle, cpd, spotbugs));
+        var single = new IssuesPageModel(run, List.of(checkstyle, spotbugs));
 
         assertThat(single.getTools()).containsExactly(checkstyle);
         assertThat(single.hasSeveralTools()).isFalse();
         assertThat(single.hasIssues()).isTrue();
 
-        var empty = new IssuesPageModel(run, List.of(cpd, spotbugs));
+        var empty = new IssuesPageModel(run, List.of(spotbugs));
 
         assertThat(empty.getTools()).isEmpty();
         assertThat(empty.hasIssues()).isFalse();
@@ -68,7 +68,7 @@ class IssuesPageModelTest extends AbstractDetailsModelTest {
     @Test
     void shouldLinkToolsOfPageToPage() {
         var checkstyle = createAction(CHECKSTYLE, createReport(createIssue(1)), new Report());
-        var cpd = createActionWithCustomTable("cpd", createReport(createIssue(2)));
+        var cpd = createActionWithCustomTable("cpd", createReport(createIssue(2)), mock(DetailsTableModel.class));
         var spotbugs = createAction("spotbugs", new Report(), new Report());
         var custom = createAction("my id", createReport(createIssue(3)), new Report());
 
@@ -76,8 +76,68 @@ class IssuesPageModelTest extends AbstractDetailsModelTest {
 
         assertThat(model.getUrlOf(checkstyle)).isEqualTo("table#tool=checkstyle");
         assertThat(model.getUrlOf(custom)).isEqualTo("table#tool=my%20id");
-        assertThat(model.getUrlOf(cpd)).isEqualTo("cpd");
+        assertThat(model.getUrlOf(cpd)).isEqualTo("table#tool=cpd");
         assertThat(model.getUrlOf(spotbugs)).isEqualTo("spotbugs");
+    }
+
+    /**
+     * Verifies that a tool with a custom issues table is part of the page, and that the page provides the custom
+     * table of this tool in addition to the table of all tools.
+     */
+    @Test
+    void shouldProvideCustomTableOfTool() {
+        var issue = createIssue(2);
+        var checkstyle = createAction(CHECKSTYLE, createReport(createIssue(1)), new Report());
+        DetailsTableModel customModel = mock(DetailsTableModel.class);
+        var customColumn = new ColumnBuilder()
+                .withHeaderLabel("Custom")
+                .withDataPropertyKey("custom")
+                .build();
+        DetailsTableModel.TableRow customRow = mock(DetailsTableModel.TableRow.class);
+        when(customModel.getColumns()).thenReturn(List.of(customColumn));
+        when(customModel.getRow(issue)).thenReturn(customRow);
+        var cpd = createActionWithCustomTable("cpd", createReport(issue), customModel);
+        var pmd = createAction(PMD, createReport(createIssue(3)), new Report());
+
+        var model = new IssuesPageModel(mock(Run.class), List.of(checkstyle, cpd, pmd));
+
+        assertThat(model.getTools()).containsExactly(checkstyle, cpd, pmd);
+        assertThat(model.getCustomTableIds()).containsExactly("issues-tool-1");
+        assertThat(model.getIssuesTableId(checkstyle)).isEqualTo("issues");
+        assertThat(model.getIssuesTableId(cpd)).isEqualTo("issues-tool-1");
+        assertThat(model.getIssuesTableId(pmd)).isEqualTo("issues");
+
+        var table = model.getTableModel("issues-tool-1");
+
+        assertThat(table.getId()).isEqualTo("issues-tool-1");
+        assertThat(table.getColumns())
+                .extracting(TableColumn::getHeaderLabel)
+                .containsExactly("Custom", "Hiddentool", "Hiddenbaseline");
+        assertThat(table.getRows()).hasSize(1).first().isInstanceOfSatisfying(ToolRow.class, row -> {
+            assertThat(row.getRow()).isSameAs(customRow);
+            assertThat(row.getTool()).isEqualTo("cpd");
+            assertThat(row.getBaseline()).isEqualTo("outstanding");
+        });
+        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(() -> model.getTableModel("issues-tool-0"));
+    }
+
+    /**
+     * Verifies that the default issues table is used in the table of all tools if a tool provides a custom table.
+     */
+    @Test
+    void shouldUseDefaultIssuesTableForAllTools() {
+        var checkstyle = createAction(CHECKSTYLE, createReport(createIssue(1)), new Report());
+        DetailsTableModel customModel = mock(DetailsTableModel.class);
+        var cpd = createActionWithCustomTable("cpd", createReport(createIssue(2)), customModel);
+        var factory = new TableModelFactory();
+
+        assertThat(factory.hasCustomIssuesTable(checkstyle)).isFalse();
+        assertThat(factory.createCustomIssuesModel(checkstyle)).isInstanceOf(IssuesModel.class);
+        assertThat(factory.createIssuesModel(checkstyle)).isSameAs(factory.createCustomIssuesModel(checkstyle));
+
+        assertThat(factory.hasCustomIssuesTable(cpd)).isTrue();
+        assertThat(factory.createCustomIssuesModel(cpd)).isSameAs(customModel);
+        assertThat(factory.createIssuesModel(cpd)).isInstanceOf(IssuesModel.class);
     }
 
     /**
@@ -167,7 +227,6 @@ class IssuesPageModelTest extends AbstractDetailsModelTest {
         var report = createReport(createIssue(1));
         var checkstyle = createAction(CHECKSTYLE, report, new Report());
         TableModelFactory factory = mock(TableModelFactory.class);
-        when(factory.hasDefaultIssuesTable(checkstyle)).thenReturn(true);
         var blamesModel = new BlamesModel(
                 report,
                 new Blames(),
@@ -290,10 +349,11 @@ class IssuesPageModelTest extends AbstractDetailsModelTest {
         return action;
     }
 
-    private ResultAction createActionWithCustomTable(final String id, final Report issues) {
+    private ResultAction createActionWithCustomTable(
+            final String id, final Report issues, final DetailsTableModel customModel) {
         var action = createAction(id, issues);
         var labelProvider = mock(StaticAnalysisLabelProvider.class);
-        when(labelProvider.getIssuesModel(any(), any(), any())).thenReturn(mock(DetailsTableModel.class));
+        when(labelProvider.getIssuesModel(any(), any(), any())).thenReturn(customModel);
         when(action.getLabelProvider()).thenReturn(labelProvider);
         return action;
     }
@@ -312,6 +372,7 @@ class IssuesPageModelTest extends AbstractDetailsModelTest {
         when(action.getResult()).thenReturn(result);
         when(action.getOwner()).thenAnswer(invocation -> mock(Run.class));
         when(result.getIssues()).thenReturn(issues);
+        when(result.getNewIssues()).thenReturn(new Report());
         when(result.getTotalSize()).thenReturn(issues.size());
         when(result.getBlames()).thenReturn(blames);
         when(result.getForensics()).thenReturn(statistics);

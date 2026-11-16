@@ -92,10 +92,24 @@
     }
 
     /**
+     * Returns the ID of the table to show. Some tools provide a custom issues table with different columns: if such
+     * a tool is selected, its table replaces the issues table of all tools (see IssuesPageModel#getIssuesTableId).
+     *
+     * @return {String} the ID of the table
+     */
+    function getVisibleTable() {
+        const table = getSelectedTable();
+        if (table === DEFAULT_TABLE) {
+            return $(TOOL_SELECTOR + ' option:selected').attr('data-issues-table') || DEFAULT_TABLE;
+        }
+        return table;
+    }
+
+    /**
      * Shows the table of the selected type and hides all other tables.
      */
     function showSelectedTable() {
-        const visiblePanel = PANEL_ID_PREFIX + getSelectedTable();
+        const visiblePanel = PANEL_ID_PREFIX + getVisibleTable();
         $(PANEL_SELECTOR).each(function () {
             $(this).toggleClass(HIDDEN_CLASS, this.id !== visiblePanel);
         });
@@ -187,6 +201,7 @@
 
         bindSelection(TOOL_SELECTOR, TOOL_KEY, function () {
             showToolIcon();
+            showSelectedTable();
             applyFilters();
         });
         bindSelection(BASELINE_SELECTOR, BASELINE_KEY, applyFilters);
