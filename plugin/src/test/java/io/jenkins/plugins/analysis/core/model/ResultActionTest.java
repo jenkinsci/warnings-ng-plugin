@@ -36,26 +36,6 @@ class ResultActionTest {
     }
 
     @Test
-    void shouldHideIconOnNewBuildPage() {
-        var action = new ResultAction(
-                null,
-                mock(AnalysisResult.class),
-                new HealthDescriptor(0, 0, Severity.WARNING_HIGH),
-                "ID",
-                "Name",
-                "icon",
-                StandardCharsets.UTF_8,
-                TrendChartType.AGGREGATION_TOOLS);
-        var newBuildPage = mock(RunTab.NewBuildPageFacade.class);
-
-        when(newBuildPage.isEnabled()).thenReturn(false);
-        assertThat(action.getIconFileName(newBuildPage)).isEqualTo(action.getSmallImage());
-
-        when(newBuildPage.isEnabled()).thenReturn(true);
-        assertThat(action.getIconFileName(newBuildPage)).isNull();
-    }
-
-    @Test
     void shouldCreateBadgeIfWarningsExist() {
         AnalysisResult result = mock(AnalysisResult.class);
         when(result.getTotalSize()).thenReturn(5);

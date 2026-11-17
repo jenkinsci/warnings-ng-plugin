@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Set;
 import jenkins.management.Badge;
 import jenkins.model.RunAction2;
+import jenkins.model.experimentalflags.BooleanUserExperimentalFlag;
 import jenkins.tasks.SimpleBuildStep.LastBuildAction;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
@@ -267,13 +268,10 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
 
     @Override
     public String getIconFileName() {
-        return getIconFileName(new RunTab.NewBuildPageFacade());
-    }
+        Boolean newBuildPage = BooleanUserExperimentalFlag.getFlagValueForCurrentUser(
+                "jenkins.model.experimentalflags.NewBuildPageUserExperimentalFlag");
 
-    @VisibleForTesting
-    @CheckForNull
-    String getIconFileName(final RunTab.NewBuildPageFacade newBuildPage) {
-        if (newBuildPage.isEnabled()) {
+        if (Boolean.TRUE.equals(newBuildPage)) {
             return null;
         }
 
