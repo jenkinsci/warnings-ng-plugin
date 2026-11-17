@@ -29,7 +29,7 @@
                 <j:forEach var="action" items="${it.qualityGateActions}">
                   <div class="wng-dashboard__quality-gate-tool">
                     <a class="wng-dashboard__quality-gate-tool-name" href="${tabUrl + '/' + action.urlName}">
-                      <l:icon src="${action.iconFileName}" class="icon-sm" alt=""/>
+                      <l:icon src="${action.smallImageName}" class="icon-sm" alt=""/>
                       ${action.displayName}
                     </a>
                     <j:forEach var="item" items="${action.qualityGateResult.resultItems}">
@@ -116,7 +116,7 @@
                   <tr>
                     <td class="wng-dashboard__label">
                       <a class="wng-dashboard__tool" href="${tabUrl + '/' + action.urlName}">
-                        <l:icon src="${action.iconFileName}" class="icon-sm wng-dashboard__tool-icon" alt=""/>
+                        <l:icon src="${action.smallImageName}" class="icon-sm wng-dashboard__tool-icon" alt=""/>
                         ${action.displayName}
                       </a>
                     </td>

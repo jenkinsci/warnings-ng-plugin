@@ -44,7 +44,7 @@ THE SOFTWARE.
                     <j:forEach var="icon" items="${widget.failedResults}" indexVar="i">
                         <j:if test="${i lt maxItems}">
                             <a href="${it.urlName}/${icon.urlName}" class="wng-widget__item">
-                                <l:icon src="${icon.iconFileName}" />
+                                <l:icon src="${icon.smallImageName}" />
                                 ${icon.displayName}
                                 <span class="jenkins-badge jenkins-!-warning-color">${icon.result.totalSize}</span>
                             </a>

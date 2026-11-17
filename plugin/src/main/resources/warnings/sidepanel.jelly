@@ -29,7 +29,7 @@
               href="${tabUrl + '/trend'}"/>
       <j:forEach var="item" items="${tab.warningActions}">
         <l:task title="${item.displayName}"
-                icon="${item.iconFileName}"
+                icon="${item.smallImageName}"
                 href="${tabUrl + '/' + item.urlName}"
                 badge="${item.badge}"/>
       </j:forEach>

@@ -19,6 +19,7 @@ import io.jenkins.plugins.util.ValidationUtilities;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Optional;
+import jenkins.model.experimentalflags.BooleanUserExperimentalFlag;
 import org.kohsuke.stapler.StaplerRequest2;
 import org.kohsuke.stapler.StaplerResponse2;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
@@ -184,6 +185,13 @@ public class JobAction implements Action, AsyncConfigurableTrendChart {
     @Override
     @CheckForNull
     public String getIconFileName() {
+        Boolean newJobPage = BooleanUserExperimentalFlag.getFlagValueForCurrentUser(
+                "jenkins.model.experimentalflags.NewJobPageUserExperimentalFlag");
+
+        if (Boolean.TRUE.equals(newJobPage)) {
+            return null;
+        }
+
         return labelProvider.getSmallIconUrl();
     }
 
