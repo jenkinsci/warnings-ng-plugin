@@ -1,16 +1,14 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import org.junit.jupiter.api.Test;
-
-import edu.hm.hafner.analysis.Report;
-
-import io.jenkins.plugins.forensics.blame.Blames;
-import io.jenkins.plugins.forensics.blame.FileBlame;
-import io.jenkins.plugins.forensics.util.CommitDecorator.NullDecorator;
-
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 import static org.mockito.Mockito.*;
+
+import edu.hm.hafner.analysis.Report;
+import io.jenkins.plugins.forensics.blame.Blames;
+import io.jenkins.plugins.forensics.blame.FileBlame;
+import io.jenkins.plugins.forensics.util.CommitDecorator.NullDecorator;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class {@link BlamesModel}.
@@ -66,14 +64,15 @@ class BlamesModelTest extends AbstractDetailsModelTest {
         var model = createModel(report, blames);
 
         var actualRow = model.getRow(issue);
-        assertThat(actualRow).hasDescription(EXPECTED_DESCRIPTION)
+        assertThat(actualRow)
+                .hasDescription(EXPECTED_DESCRIPTION)
                 .hasAge("1")
                 .hasCommit(COMMIT)
                 .hasAuthor(NAME)
                 .hasEmail(EMAIL)
                 .hasAddedAt(TIME);
-        assertThatDetailedColumnContains(actualRow.getFileName(),
-                createExpectedFileName(issue), "/path/to/file-1:0000015");
+        assertThatDetailedColumnContains(
+                actualRow.getFileName(), createExpectedFileName(issue), "/path/to/file-1:0000015");
     }
 
     @Test
@@ -89,18 +88,25 @@ class BlamesModelTest extends AbstractDetailsModelTest {
         var actualRow = model.getRow(issue);
         assertThat(actualRow.getDescription()).isEqualTo(EXPECTED_DESCRIPTION);
 
-        assertThat(actualRow).hasDescription(EXPECTED_DESCRIPTION)
+        assertThat(actualRow)
+                .hasDescription(EXPECTED_DESCRIPTION)
                 .hasAge("1")
                 .hasCommit(BlamesModel.UNDEFINED)
                 .hasAuthor(BlamesModel.UNDEFINED)
                 .hasEmail(BlamesModel.UNDEFINED);
 
-        assertThatDetailedColumnContains(actualRow.getFileName(),
-                createExpectedFileName(issue), "/path/to/file-1:0000015");
+        assertThatDetailedColumnContains(
+                actualRow.getFileName(), createExpectedFileName(issue), "/path/to/file-1:0000015");
     }
 
     private BlamesModel createModel(final Report report, final Blames blames) {
-        return new BlamesModel(report, blames, createFileNameRenderer(), createAgeBuilder(), issue -> DESCRIPTION,
-                new NullDecorator(), createJenkinsFacade());
+        return new BlamesModel(
+                report,
+                blames,
+                createFileNameRenderer(),
+                createAgeBuilder(),
+                issue -> DESCRIPTION,
+                new NullDecorator(),
+                createJenkinsFacade());
     }
 }

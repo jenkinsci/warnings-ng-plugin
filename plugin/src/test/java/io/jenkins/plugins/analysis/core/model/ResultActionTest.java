@@ -1,18 +1,14 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import org.junit.jupiter.api.Test;
-
-import edu.hm.hafner.analysis.Severity;
-
-import java.nio.charset.StandardCharsets;
-
-import hudson.model.Run;
-
-import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
-import io.jenkins.plugins.analysis.core.util.TrendChartType;
-
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
+
+import edu.hm.hafner.analysis.Severity;
+import hudson.model.Run;
+import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
+import io.jenkins.plugins.analysis.core.util.TrendChartType;
+import java.nio.charset.StandardCharsets;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class {@link ResultAction}.
@@ -22,9 +18,15 @@ import static org.mockito.Mockito.*;
 class ResultActionTest {
     @Test
     void shouldRestoreRun() {
-        var action = new ResultAction(null, mock(AnalysisResult.class),
-                new HealthDescriptor(0, 0, Severity.WARNING_HIGH), "ID", "Name",
-                "icon", StandardCharsets.UTF_8, TrendChartType.AGGREGATION_TOOLS);
+        var action = new ResultAction(
+                null,
+                mock(AnalysisResult.class),
+                new HealthDescriptor(0, 0, Severity.WARNING_HIGH),
+                "ID",
+                "Name",
+                "icon",
+                StandardCharsets.UTF_8,
+                TrendChartType.AGGREGATION_TOOLS);
 
         assertThat(action.getOwner()).isNull();
 
@@ -38,9 +40,15 @@ class ResultActionTest {
         AnalysisResult result = mock(AnalysisResult.class);
         when(result.getTotalSize()).thenReturn(5);
 
-        var action = new ResultAction(null, result,
-                new HealthDescriptor(0, 0, Severity.WARNING_HIGH), "ID", "Name",
-                "icon", StandardCharsets.UTF_8, TrendChartType.AGGREGATION_TOOLS);
+        var action = new ResultAction(
+                null,
+                result,
+                new HealthDescriptor(0, 0, Severity.WARNING_HIGH),
+                "ID",
+                "Name",
+                "icon",
+                StandardCharsets.UTF_8,
+                TrendChartType.AGGREGATION_TOOLS);
 
         assertThat(action.getBadge()).isNotNull();
         assertThat(action.getBadge().getText()).isEqualTo("5");
@@ -53,9 +61,15 @@ class ResultActionTest {
         AnalysisResult result = mock(AnalysisResult.class);
         when(result.getTotalSize()).thenReturn(0);
 
-        var action = new ResultAction(null, result,
-                new HealthDescriptor(0, 0, Severity.WARNING_HIGH), "ID", "Name",
-                "icon", StandardCharsets.UTF_8, TrendChartType.AGGREGATION_TOOLS);
+        var action = new ResultAction(
+                null,
+                result,
+                new HealthDescriptor(0, 0, Severity.WARNING_HIGH),
+                "ID",
+                "Name",
+                "icon",
+                StandardCharsets.UTF_8,
+                TrendChartType.AGGREGATION_TOOLS);
 
         assertThat(action.getBadge()).isNull();
     }
@@ -63,21 +77,31 @@ class ResultActionTest {
     @Test
     void shouldFailBrokenUrl() {
         var illegalId = "javascript:alert(document.domain)";
-        assertThatIllegalArgumentException().isThrownBy(
-                () -> new ResultAction(null, mock(AnalysisResult.class),
-                        new HealthDescriptor(0, 0, Severity.WARNING_HIGH), illegalId, "Name",
-                        "icon", StandardCharsets.UTF_8, TrendChartType.AGGREGATION_TOOLS)
-        );
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> new ResultAction(
+                        null,
+                        mock(AnalysisResult.class),
+                        new HealthDescriptor(0, 0, Severity.WARNING_HIGH),
+                        illegalId,
+                        "Name",
+                        "icon",
+                        StandardCharsets.UTF_8,
+                        TrendChartType.AGGREGATION_TOOLS));
 
-        var good = new ResultAction(null, mock(AnalysisResult.class),
-                new HealthDescriptor(0, 0, Severity.WARNING_HIGH), "validId", "Name",
-                "icon", StandardCharsets.UTF_8, TrendChartType.AGGREGATION_TOOLS);
+        var good = new ResultAction(
+                null,
+                mock(AnalysisResult.class),
+                new HealthDescriptor(0, 0, Severity.WARNING_HIGH),
+                "validId",
+                "Name",
+                "icon",
+                StandardCharsets.UTF_8,
+                TrendChartType.AGGREGATION_TOOLS);
 
         assertThat(good.readResolve()).isSameAs(good);
 
         good.setId(illegalId);
 
-        assertThatIllegalArgumentException()
-                .isThrownBy(good::readResolve);
+        assertThatIllegalArgumentException().isThrownBy(good::readResolve);
     }
 }

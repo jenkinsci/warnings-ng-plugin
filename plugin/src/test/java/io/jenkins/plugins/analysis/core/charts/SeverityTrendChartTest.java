@@ -1,6 +1,8 @@
 package io.jenkins.plugins.analysis.core.charts;
 
-import org.junit.jupiter.api.Test;
+import static io.jenkins.plugins.analysis.core.charts.BuildResultStubs.*;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
+import static org.mockito.Mockito.*;
 
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.echarts.Build;
@@ -8,16 +10,11 @@ import edu.hm.hafner.echarts.BuildResult;
 import edu.hm.hafner.echarts.ChartModelConfiguration;
 import edu.hm.hafner.echarts.ChartModelConfiguration.AxisType;
 import edu.hm.hafner.echarts.LineSeries;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
-
-import static io.jenkins.plugins.analysis.core.charts.BuildResultStubs.*;
-import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
-import static org.mockito.Mockito.*;
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class {@link SeverityTrendChart}.
@@ -33,12 +30,11 @@ class SeverityTrendChartTest {
         List<BuildResult<AnalysisBuildResult>> compositeResults = new ArrayList<>();
         var first = createAnalysisBuildResult(0, 2, 4, 6);
         var second = createAnalysisBuildResult(0, 12, 14, 16);
-        compositeResults.add(new BuildResult<>(new Build(2), new CompositeBuildResult(List.of(
-                first,
-                second))));
-        compositeResults.add(new BuildResult<>(new Build(1), new CompositeBuildResult(List.of(
-                createAnalysisBuildResult(3, 1, 2, 3),
-                createAnalysisBuildResult(1, 11, 12, 13)))));
+        compositeResults.add(new BuildResult<>(new Build(2), new CompositeBuildResult(List.of(first, second))));
+        compositeResults.add(new BuildResult<>(
+                new Build(1),
+                new CompositeBuildResult(
+                        List.of(createAnalysisBuildResult(3, 1, 2, 3), createAnalysisBuildResult(1, 11, 12, 13)))));
 
         var model = chart.create(compositeResults, new ChartModelConfiguration());
 
@@ -47,12 +43,9 @@ class SeverityTrendChartTest {
         verifySeries(model.getSeries().get(2), Severity.WARNING_HIGH, 12, 14);
         verifySeries(model.getSeries().get(3), Severity.ERROR, 4, 0);
 
-        assertThatJson(model).node("domainAxisLabels")
-                .isArray().hasSize(2).containsExactly("#1", "#2");
-        assertThatJson(model).node("buildNumbers")
-                .isArray().hasSize(2).containsExactly(1, 2);
-        assertThatJson(model).node("series")
-                .isArray().hasSize(4);
+        assertThatJson(model).node("domainAxisLabels").isArray().hasSize(2).containsExactly("#1", "#2");
+        assertThatJson(model).node("buildNumbers").isArray().hasSize(2).containsExactly(1, 2);
+        assertThatJson(model).node("series").isArray().hasSize(4);
     }
 
     @Test
@@ -72,12 +65,9 @@ class SeverityTrendChartTest {
         verifySeries(model.getSeries().get(2), Severity.WARNING_HIGH, 1, 2, 0, 0);
         verifySeries(model.getSeries().get(3), Severity.ERROR, 3, 2, 0, 0);
 
-        assertThatJson(model).node("domainAxisLabels")
-                .isArray().hasSize(4).containsExactly("#1", "#2", "#3", "#4");
-        assertThatJson(model).node("buildNumbers")
-                .isArray().hasSize(4).containsExactly(1, 2, 3, 4);
-        assertThatJson(model).node("series")
-                .isArray().hasSize(4);
+        assertThatJson(model).node("domainAxisLabels").isArray().hasSize(4).containsExactly("#1", "#2", "#3", "#4");
+        assertThatJson(model).node("buildNumbers").isArray().hasSize(4).containsExactly(1, 2, 3, 4);
+        assertThatJson(model).node("series").isArray().hasSize(4);
     }
 
     @Test
@@ -102,12 +92,9 @@ class SeverityTrendChartTest {
         verifySeries(model.getSeries().get(1), Severity.WARNING_NORMAL, 20, 30, 40);
         verifySeries(model.getSeries().get(0), Severity.WARNING_LOW, 2, 3, 4);
 
-        assertThatJson(model).node("domainAxisLabels")
-                .isArray().hasSize(3).containsExactly("#2", "#3", "#4");
-        assertThatJson(model).node("buildNumbers")
-                .isArray().hasSize(3).containsExactly(2, 3, 4);
-        assertThatJson(model).node("series")
-                .isArray().hasSize(4);
+        assertThatJson(model).node("domainAxisLabels").isArray().hasSize(3).containsExactly("#2", "#3", "#4");
+        assertThatJson(model).node("buildNumbers").isArray().hasSize(3).containsExactly(2, 3, 4);
+        assertThatJson(model).node("series").isArray().hasSize(4);
     }
 
     @Test
@@ -124,13 +111,10 @@ class SeverityTrendChartTest {
         verifySeries(model.getSeries().get(1), Severity.WARNING_NORMAL, 2, 4);
         verifySeries(model.getSeries().get(2), Severity.WARNING_HIGH, 1, 2);
 
-        assertThatJson(model).node("domainAxisLabels")
-                .isArray().hasSize(2).containsExactly("#1", "#2");
-        assertThatJson(model).node("buildNumbers")
-                .isArray().hasSize(2).containsExactly(1, 2);
+        assertThatJson(model).node("domainAxisLabels").isArray().hasSize(2).containsExactly("#1", "#2");
+        assertThatJson(model).node("buildNumbers").isArray().hasSize(2).containsExactly(1, 2);
 
-        assertThatJson(model).node("series")
-                .isArray().hasSize(3);
+        assertThatJson(model).node("series").isArray().hasSize(3);
     }
 
     @Test
@@ -148,13 +132,10 @@ class SeverityTrendChartTest {
         verifySeries(model.getSeries().get(2), Severity.WARNING_HIGH, 1, 2);
         verifySeries(model.getSeries().get(3), Severity.ERROR, 5, 8);
 
-        assertThatJson(model).node("domainAxisLabels")
-                .isArray().hasSize(2).containsExactly("#1", "#2");
-        assertThatJson(model).node("buildNumbers")
-                .isArray().hasSize(2).containsExactly(1, 2);
+        assertThatJson(model).node("domainAxisLabels").isArray().hasSize(2).containsExactly("#1", "#2");
+        assertThatJson(model).node("buildNumbers").isArray().hasSize(2).containsExactly(1, 2);
 
-        assertThatJson(model).node("series")
-                .isArray().hasSize(4);
+        assertThatJson(model).node("series").isArray().hasSize(4);
     }
 
     @Test

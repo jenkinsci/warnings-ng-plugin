@@ -1,24 +1,20 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.*;
 
 import edu.hm.hafner.analysis.ModuleDetectorRunner;
-
+import hudson.FilePath;
+import hudson.model.Run;
+import io.jenkins.plugins.analysis.core.model.ResultAction;
+import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
+import io.jenkins.plugins.analysis.warnings.Eclipse;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.stream.Stream;
-
-import hudson.FilePath;
-import hudson.model.Run;
-
-import io.jenkins.plugins.analysis.core.model.ResultAction;
-import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
-import io.jenkins.plugins.analysis.warnings.Eclipse;
-
-import static org.assertj.core.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 /**
  * Integration test for the {@link ModuleDetectorRunner}.
@@ -94,7 +90,8 @@ class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String MAVEN_BUILD_FILE_LOCATION = "maven/";
     private static final String ANT_BUILD_FILE_LOCATION = "ant/";
     private static final String OSGI_BUILD_FILE_LOCATION = "osgi/";
-    private static final String DEFAULT_DEBUG_LOG_LINE = "Resolving module names from module definitions (build.xml, pom.xml, or Manifest.mf files)";
+    private static final String DEFAULT_DEBUG_LOG_LINE =
+            "Resolving module names from module definitions (build.xml, pom.xml, or Manifest.mf files)";
     private static final String EMPTY_MODULE_NAME = "-";
     private static final String PROPERTY = "moduleName";
 
@@ -105,23 +102,22 @@ class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     void shouldShowModulesForVariousModulesDetectedForOsgiMavenAndAntInTheHtmlOutput() {
         String[] workspaceFiles = {
-                BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml",
-                BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m1/build.xml",
-                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "pom.xml",
-                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m1/pom.xml",
-                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m2/pom.xml",
-                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "META-INF/MANIFEST.MF",
-                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m1/META-INF/MANIFEST.MF",
-                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m2/META-INF/MANIFEST.MF",
-                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m3/META-INF/MANIFEST.MF",
-                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties"};
+            BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml",
+            BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m1/build.xml",
+            BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "pom.xml",
+            BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m1/pom.xml",
+            BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m2/pom.xml",
+            BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "META-INF/MANIFEST.MF",
+            BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m1/META-INF/MANIFEST.MF",
+            BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m2/META-INF/MANIFEST.MF",
+            BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m3/META-INF/MANIFEST.MF",
+            BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties"
+        };
 
-        var result = createResult(
-                workspaceFiles.length - 1,
-                true,
-                workspaceFiles);
+        var result = createResult(workspaceFiles.length - 1, true, workspaceFiles);
 
-        verifyModules(result,
+        verifyModules(
+                result,
                 new PropertyRow(EMPTY_MODULE_NAME, 1),
                 new PropertyRow("edu.hm.hafner.osgi.symbolicname", 1),
                 new PropertyRow("edu.hm.hafner.osgi.symbolicname (TestVendor)", 7),
@@ -131,30 +127,33 @@ class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     void shouldSkipPostProcessing() {
         String[] workspaceFiles = {
-                BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml",
-                BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m1/build.xml",
-                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "pom.xml",
-                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m1/pom.xml",
-                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m2/pom.xml",
-                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "META-INF/MANIFEST.MF",
-                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m1/META-INF/MANIFEST.MF",
-                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m2/META-INF/MANIFEST.MF",
-                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m3/META-INF/MANIFEST.MF",
-                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties"};
+            BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml",
+            BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m1/build.xml",
+            BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "pom.xml",
+            BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m1/pom.xml",
+            BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m2/pom.xml",
+            BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "META-INF/MANIFEST.MF",
+            BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m1/META-INF/MANIFEST.MF",
+            BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m2/META-INF/MANIFEST.MF",
+            BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m3/META-INF/MANIFEST.MF",
+            BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties"
+        };
 
         var project = createFreeStyleProject();
         copyWorkspaceFiles(project, workspaceFiles, file -> file.replaceFirst("detectors/buildfiles/\\w*/", ""));
         var recorder = enableGenericWarnings(project, new Eclipse());
         recorder.setSkipPostProcessing(true);
 
-        createEclipseWarningsReport(workspaceFiles.length - 1, true,
-                getJenkins().jenkins.getWorkspaceFor(project));
+        createEclipseWarningsReport(
+                workspaceFiles.length - 1, true, getJenkins().jenkins.getWorkspaceFor(project));
 
         Run<?, ?> build = buildSuccessfully(project);
         var result = getResultAction(build);
         assertThat(result.getResult().getIssues().getModules()).containsExactly("-");
 
-        assertThat(getConsoleLog(build)).doesNotContain("Resolving module names from module definitions (build.xml, pom.xml, or Manifest.mf files)");
+        assertThat(getConsoleLog(build))
+                .doesNotContain(
+                        "Resolving module names from module definitions (build.xml, pom.xml, or Manifest.mf files)");
         assertThat(getConsoleLog(build)).contains("Skipping detection of missing package and module names");
     }
 
@@ -164,16 +163,15 @@ class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     void shouldShowModulesForVariousMavenModulesInTheHtmlOutput() {
         String[] workspaceFiles = {
-                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "pom.xml",
-                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m1/pom.xml",
-                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m2/pom.xml"};
+            BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "pom.xml",
+            BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m1/pom.xml",
+            BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m2/pom.xml"
+        };
 
-        var result = createResult(
-                workspaceFiles.length,
-                false,
-                workspaceFiles);
+        var result = createResult(workspaceFiles.length, false, workspaceFiles);
 
-        verifyModules(result,
+        verifyModules(
+                result,
                 new PropertyRow("MainModule", 1, 100),
                 new PropertyRow("SubModuleOne", 1, 100),
                 new PropertyRow("SubModuleTwo", 1, 100));
@@ -185,15 +183,13 @@ class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     void shouldShowModulesForVariousAntModulesInTheHtmlOutput() {
         String[] workspaceFiles = {
-                BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml",
-                BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m1/build.xml"};
+            BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml",
+            BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m1/build.xml"
+        };
 
-        var result = createResult(workspaceFiles.length, false,
-                workspaceFiles);
+        var result = createResult(workspaceFiles.length, false, workspaceFiles);
 
-        verifyModules(result,
-                new PropertyRow("TestModule", 1, 100),
-                new PropertyRow("SecondTestModule", 1, 100));
+        verifyModules(result, new PropertyRow("TestModule", 1, 100), new PropertyRow("SecondTestModule", 1, 100));
     }
 
     /**
@@ -202,18 +198,17 @@ class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     void shouldShowModulesForVariousOsgiModulesInTheHtmlOutput() {
         String[] workspaceFiles = {
-                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "META-INF/MANIFEST.MF",
-                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m1/META-INF/MANIFEST.MF",
-                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m2/META-INF/MANIFEST.MF",
-                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m3/META-INF/MANIFEST.MF",
-                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties"};
+            BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "META-INF/MANIFEST.MF",
+            BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m1/META-INF/MANIFEST.MF",
+            BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m2/META-INF/MANIFEST.MF",
+            BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m3/META-INF/MANIFEST.MF",
+            BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties"
+        };
 
-        var result = createResult(
-                workspaceFiles.length - 1,
-                false,
-                workspaceFiles);
+        var result = createResult(workspaceFiles.length - 1, false, workspaceFiles);
 
-        verifyModules(result,
+        verifyModules(
+                result,
                 new PropertyRow("edu.hm.hafner.osgi.symbolicname", 1),
                 new PropertyRow("edu.hm.hafner.osgi.symbolicname (TestVendor)", 2),
                 new PropertyRow("Test-Bundle-Name", 1));
@@ -226,23 +221,22 @@ class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     void shouldRunMavenAntAndOsgiAndCheckCorrectExecutionSequence() {
         String[] workspaceFiles = {
-                BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml",
-                BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m1/build.xml",
-                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "pom.xml",
-                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m1/pom.xml",
-                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m2/pom.xml",
-                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "META-INF/MANIFEST.MF",
-                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m1/META-INF/MANIFEST.MF",
-                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m2/META-INF/MANIFEST.MF",
-                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m3/META-INF/MANIFEST.MF",
-                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties"};
+            BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml",
+            BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m1/build.xml",
+            BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "pom.xml",
+            BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m1/pom.xml",
+            BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m2/pom.xml",
+            BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "META-INF/MANIFEST.MF",
+            BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m1/META-INF/MANIFEST.MF",
+            BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m2/META-INF/MANIFEST.MF",
+            BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m3/META-INF/MANIFEST.MF",
+            BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties"
+        };
 
-        var result = createResult(
-                workspaceFiles.length - 1,
-                true,
-                workspaceFiles);
+        var result = createResult(workspaceFiles.length - 1, true, workspaceFiles);
 
-        verifyModules(result,
+        verifyModules(
+                result,
                 new PropertyRow(EMPTY_MODULE_NAME, 1),
                 new PropertyRow("edu.hm.hafner.osgi.symbolicname", 1),
                 new PropertyRow("edu.hm.hafner.osgi.symbolicname (TestVendor)", 7),
@@ -255,19 +249,18 @@ class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     void shouldVerifyTheModuleDetectionBehaviorForVariousMavenPomFiles() {
         String[] workspaceFiles = {
-                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "pom.xml",
-                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m1/pom.xml",
-                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m2/pom.xml",
-                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m3/pom.xml",
-                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m4/pom.xml",
-                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m5/pom.xml"};
+            BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "pom.xml",
+            BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m1/pom.xml",
+            BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m2/pom.xml",
+            BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m3/pom.xml",
+            BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m4/pom.xml",
+            BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m5/pom.xml"
+        };
 
-        var result = createResult(
-                workspaceFiles.length,
-                true,
-                workspaceFiles);
+        var result = createResult(workspaceFiles.length, true, workspaceFiles);
 
-        verifyModules(result,
+        verifyModules(
+                result,
                 new PropertyRow(EMPTY_MODULE_NAME, 1),
                 new PropertyRow("SubModuleOne", 1),
                 new PropertyRow("module.read.from.artifact.id", 1),
@@ -281,18 +274,16 @@ class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     void shouldVerifyTheModuleDetectionBehaviorForVariousAntBuildFiles() {
         String[] workspaceFiles = {
-                BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml",
-                BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m1/build.xml",
-                BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m2/build.xml",
-                BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m3/build.xml"
+            BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml",
+            BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m1/build.xml",
+            BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m2/build.xml",
+            BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m3/build.xml"
         };
 
-        var result = createResult(
-                workspaceFiles.length,
-                true,
-                workspaceFiles);
+        var result = createResult(workspaceFiles.length, true, workspaceFiles);
 
-        verifyModules(result,
+        verifyModules(
+                result,
                 new PropertyRow(EMPTY_MODULE_NAME, 1),
                 new PropertyRow("SecondTestModule", 1),
                 new PropertyRow("TestModule", 3));
@@ -304,18 +295,17 @@ class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     void shouldVerifyTheModuleDetectionBehaviorForVariousOsgiMfFiles() {
         String[] workspaceFiles = {
-                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "META-INF/MANIFEST.MF",
-                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m1/META-INF/MANIFEST.MF",
-                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m2/META-INF/MANIFEST.MF",
-                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m3/META-INF/MANIFEST.MF",
-                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties"};
+            BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "META-INF/MANIFEST.MF",
+            BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m1/META-INF/MANIFEST.MF",
+            BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m2/META-INF/MANIFEST.MF",
+            BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m3/META-INF/MANIFEST.MF",
+            BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties"
+        };
 
-        var result = createResult(
-                workspaceFiles.length - 1,
-                true,
-                workspaceFiles);
+        var result = createResult(workspaceFiles.length - 1, true, workspaceFiles);
 
-        verifyModules(result,
+        verifyModules(
+                result,
                 new PropertyRow(EMPTY_MODULE_NAME, 1),
                 new PropertyRow("edu.hm.hafner.osgi.symbolicname (TestVendor)", 2),
                 new PropertyRow("edu.hm.hafner.osgi.symbolicname", 1),
@@ -335,8 +325,7 @@ class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldContainNoSpecificHtmlOutputForASingleModuleMavenProject() {
-        verifyThatModulesTabIsNotShownForSingleModule(
-                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "pom.xml");
+        verifyThatModulesTabIsNotShownForSingleModule(BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "pom.xml");
     }
 
     /**
@@ -344,8 +333,7 @@ class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldContainNoHtmlOutputForASingleModuleAntProject() {
-        verifyThatModulesTabIsNotShownForSingleModule(
-                BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml");
+        verifyThatModulesTabIsNotShownForSingleModule(BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml");
     }
 
     /**
@@ -358,8 +346,7 @@ class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private void verifyThatModulesTabIsNotShownForSingleModule(final String... workspaceFiles) {
-        checkWebPageForExpectedEmptyResult(
-                createResult(workspaceFiles.length, false, workspaceFiles));
+        checkWebPageForExpectedEmptyResult(createResult(workspaceFiles.length, false, workspaceFiles));
     }
 
     private void verifyModules(final ResultAction result, final PropertyRow... modules) {
@@ -367,7 +354,8 @@ class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
 
         assertThat(PropertyRow.getRows(result, PROPERTY)).containsExactlyInAnyOrder(modules);
 
-        verifyConsoleLog(result, Stream.of(modules).mapToLong(PropertyRow::getTotal).sum());
+        verifyConsoleLog(
+                result, Stream.of(modules).mapToLong(PropertyRow::getTotal).sum());
     }
 
     private void verifyConsoleLog(final ResultAction result, final long modulesSize) {
@@ -387,12 +375,13 @@ class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      * @param workspace
      *         the workspace to copy the files to
      */
-    private void createEclipseWarningsReport(final int modulePaths,
-            final boolean appendNonExistingFile, final FilePath workspace) {
+    private void createEclipseWarningsReport(
+            final int modulePaths, final boolean appendNonExistingFile, final FilePath workspace) {
         for (int i = 1; i <= modulePaths; i++) {
             var directory = workspace + "/m" + i;
             var affectedFile = directory + "/ClassWithWarnings.java";
-            writeEclipseWarning(workspace,
+            writeEclipseWarning(
+                    workspace,
                     "[javac] 1. WARNING in " + affectedFile + " (at line 42)",
                     "[javac] \tSample Message",
                     "[javac] \t^^^^^^^^^^^^^^^^^^",
@@ -402,7 +391,8 @@ class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
         }
 
         if (appendNonExistingFile) {
-            writeEclipseWarning(workspace,
+            writeEclipseWarning(
+                    workspace,
                     "[javac] NOT_EXISTING 99. WARNING in /NOT_EXISTING/PATH/NOT_EXISTING_FILE (at line 42)",
                     "[javac] \tSample Message",
                     "[javac] \t^^^^^^^^^^^^^^^^^^",
@@ -419,18 +409,19 @@ class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
                 Files.createDirectories(dirPath);
                 Files.createFile(path);
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new AssertionError(e);
         }
     }
 
     private void writeEclipseWarning(final FilePath workspace, final String... lines) {
         try {
-            Files.write(Path.of(workspace.child(REPORT_FILE_NAME).getRemote()), Arrays.asList(lines),
-                    StandardOpenOption.APPEND, StandardOpenOption.CREATE);
-        }
-        catch (IOException e) {
+            Files.write(
+                    Path.of(workspace.child(REPORT_FILE_NAME).getRemote()),
+                    Arrays.asList(lines),
+                    StandardOpenOption.APPEND,
+                    StandardOpenOption.CREATE);
+        } catch (IOException e) {
             throw new AssertionError(e);
         }
     }
@@ -443,13 +434,15 @@ class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(result.getResult().getIssues().getModules().size() > 1).isEqualTo(isVisible);
     }
 
-    private ResultAction createResult(final int numberOfExpectedModules, final boolean appendNonExistingFile,
-            final String... workspaceFiles) {
+    private ResultAction createResult(
+            final int numberOfExpectedModules, final boolean appendNonExistingFile, final String... workspaceFiles) {
         var project = createFreeStyleProject();
         copyWorkspaceFiles(project, workspaceFiles, file -> file.replaceFirst("detectors/buildfiles/\\w*/", ""));
         enableGenericWarnings(project, new Eclipse());
 
-        createEclipseWarningsReport(numberOfExpectedModules, appendNonExistingFile,
+        createEclipseWarningsReport(
+                numberOfExpectedModules,
+                appendNonExistingFile,
                 getJenkins().jenkins.getWorkspaceFor(project));
 
         return getResultAction(buildSuccessfully(project));

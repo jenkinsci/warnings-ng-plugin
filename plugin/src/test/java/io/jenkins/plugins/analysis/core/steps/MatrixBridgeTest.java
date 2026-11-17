@@ -1,8 +1,7 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import org.junit.jupiter.api.Test;
-
-import java.util.Arrays;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import hudson.Launcher;
 import hudson.matrix.MatrixAggregator;
@@ -12,9 +11,8 @@ import hudson.model.BuildListener;
 import hudson.model.Saveable;
 import hudson.tasks.Publisher;
 import hudson.util.DescribableList;
-
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import java.util.Arrays;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class {@link MatrixBridge}.
@@ -47,8 +45,8 @@ class MatrixBridgeTest {
         MatrixBuild build = mock(MatrixBuild.class);
 
         MatrixProject matrixProject = mock(MatrixProject.class);
-        when(matrixProject.getPublishersList()).thenReturn(
-                new DescribableList<>(Saveable.NOOP, Arrays.asList(publisher)));
+        when(matrixProject.getPublishersList())
+                .thenReturn(new DescribableList<>(Saveable.NOOP, Arrays.asList(publisher)));
 
         when(build.getParent()).thenReturn(matrixProject);
 

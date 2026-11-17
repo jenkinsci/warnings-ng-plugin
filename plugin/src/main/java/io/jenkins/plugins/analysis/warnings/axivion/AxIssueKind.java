@@ -16,8 +16,7 @@ enum AxIssueKind {
     private final String pluralName;
     private final AxIssueTransformation transformation;
 
-    AxIssueKind(final String pluralName,
-            final AxIssueTransformation transformation) {
+    AxIssueKind(final String pluralName, final AxIssueTransformation transformation) {
         this.pluralName = pluralName;
         this.transformation = transformation;
     }

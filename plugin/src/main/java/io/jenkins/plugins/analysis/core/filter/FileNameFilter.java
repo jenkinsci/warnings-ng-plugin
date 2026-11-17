@@ -1,11 +1,10 @@
 package io.jenkins.plugins.analysis.core.filter;
 
+import edu.hm.hafner.analysis.Issue;
 import java.util.Collection;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import edu.hm.hafner.analysis.Issue;
 
 /**
  * A {@link Predicate} that filters {@link Issue} instances by checking their file names against

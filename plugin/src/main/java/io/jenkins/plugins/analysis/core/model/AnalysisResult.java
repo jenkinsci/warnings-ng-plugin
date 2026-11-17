@@ -1,17 +1,25 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import org.apache.commons.lang3.StringUtils;
-import org.eclipse.collections.api.list.ImmutableList;
-import org.eclipse.collections.impl.factory.Lists;
-import org.eclipse.collections.impl.factory.Maps;
-
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.echarts.Build;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
+import hudson.model.Run;
+import io.jenkins.plugins.analysis.core.charts.JenkinsBuild;
+import io.jenkins.plugins.analysis.core.util.IssuesStatistics;
+import io.jenkins.plugins.analysis.core.util.IssuesStatisticsBuilder;
+import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
+import io.jenkins.plugins.forensics.blame.Blames;
+import io.jenkins.plugins.forensics.blame.BlamesXmlStream;
+import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
+import io.jenkins.plugins.forensics.miner.RepositoryStatisticsXmlStream;
+import io.jenkins.plugins.util.JenkinsFacade;
+import io.jenkins.plugins.util.QualityGateEvaluator;
+import io.jenkins.plugins.util.QualityGateResult;
+import io.jenkins.plugins.util.QualityGateStatus;
+import io.jenkins.plugins.util.ValidationUtilities;
 import java.io.Serial;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
@@ -26,23 +34,11 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+import org.apache.commons.lang3.StringUtils;
+import org.eclipse.collections.api.list.ImmutableList;
+import org.eclipse.collections.impl.factory.Lists;
+import org.eclipse.collections.impl.factory.Maps;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
-import hudson.model.Run;
-
-import io.jenkins.plugins.analysis.core.charts.JenkinsBuild;
-import io.jenkins.plugins.analysis.core.util.IssuesStatistics;
-import io.jenkins.plugins.analysis.core.util.IssuesStatisticsBuilder;
-import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
-import io.jenkins.plugins.forensics.blame.Blames;
-import io.jenkins.plugins.forensics.blame.BlamesXmlStream;
-import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
-import io.jenkins.plugins.forensics.miner.RepositoryStatisticsXmlStream;
-import io.jenkins.plugins.util.JenkinsFacade;
-import io.jenkins.plugins.util.QualityGateEvaluator;
-import io.jenkins.plugins.util.QualityGateResult;
-import io.jenkins.plugins.util.QualityGateStatus;
-import io.jenkins.plugins.util.ValidationUtilities;
 
 /**
  * Stores the results of a static analysis run. Provides support for persisting the results of the build and loading and
@@ -50,8 +46,16 @@ import io.jenkins.plugins.util.ValidationUtilities;
  *
  * @author Ullrich Hafner
  */
-@SuppressFBWarnings(value = "SE, DESERIALIZATION_GADGET", justification = "transient fields are restored using a Jenkins callback (or are checked for null)")
-@SuppressWarnings({"PMD.GodClass", "PMD.CouplingBetweenObjects", "PMD.CyclomaticComplexity", "checkstyle:ClassFanOutComplexity", "checkstyle:ClassDataAbstractionCoupling"})
+@SuppressFBWarnings(
+        value = "SE, DESERIALIZATION_GADGET",
+        justification = "transient fields are restored using a Jenkins callback (or are checked for null)")
+@SuppressWarnings({
+    "PMD.GodClass",
+    "PMD.CouplingBetweenObjects",
+    "PMD.CyclomaticComplexity",
+    "checkstyle:ClassFanOutComplexity",
+    "checkstyle:ClassDataAbstractionCoupling"
+})
 public final class AnalysisResult implements Serializable, StaticAnalysisRun {
     @Serial
     private static final long serialVersionUID = 1110545450292087475L;
@@ -67,8 +71,10 @@ public final class AnalysisResult implements Serializable, StaticAnalysisRun {
 
     @SuppressWarnings("serial")
     private final Map<String, Integer> sizePerOrigin;
+
     @SuppressWarnings("serial")
     private final List<String> errors;
+
     @SuppressWarnings("serial")
     private final List<String> messages;
     /**
@@ -140,20 +146,24 @@ public final class AnalysisResult implements Serializable, StaticAnalysisRun {
      *         the analysis result of the previous run
      */
     @SuppressWarnings("checkstyle:ParameterNumber")
-    public AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report, final Blames blames,
-            final RepositoryStatistics totals, final QualityGateResult qualityGateResult,
-            final Map<String, Integer> sizePerOrigin, final AnalysisResult previousResult) {
+    public AnalysisResult(
+            final Run<?, ?> owner,
+            final String id,
+            final DeltaReport report,
+            final Blames blames,
+            final RepositoryStatistics totals,
+            final QualityGateResult qualityGateResult,
+            final Map<String, Integer> sizePerOrigin,
+            final AnalysisResult previousResult) {
         this(owner, id, report, blames, totals, qualityGateResult, sizePerOrigin, true);
 
         if (report.isEmpty()) {
             if (previousResult.noIssuesSinceBuild == NO_BUILD) {
                 noIssuesSinceBuild = owner.getNumber();
-            }
-            else {
+            } else {
                 noIssuesSinceBuild = previousResult.noIssuesSinceBuild;
             }
-        }
-        else {
+        } else {
             noIssuesSinceBuild = NO_BUILD;
         }
 
@@ -161,12 +171,10 @@ public final class AnalysisResult implements Serializable, StaticAnalysisRun {
         if (overallStatus == QualityGateStatus.PASSED) {
             if (previousResult.getQualityGateResult().getOverallStatus() == QualityGateStatus.PASSED) {
                 successfulSinceBuild = previousResult.successfulSinceBuild;
-            }
-            else {
+            } else {
                 successfulSinceBuild = owner.getNumber();
             }
-        }
-        else {
+        } else {
             successfulSinceBuild = NO_BUILD;
         }
     }
@@ -189,21 +197,24 @@ public final class AnalysisResult implements Serializable, StaticAnalysisRun {
      * @param sizePerOrigin
      *         the number of issues per origin
      */
-    public AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report, final Blames blames,
-            final RepositoryStatistics totals, final QualityGateResult qualityGateResult,
+    public AnalysisResult(
+            final Run<?, ?> owner,
+            final String id,
+            final DeltaReport report,
+            final Blames blames,
+            final RepositoryStatistics totals,
+            final QualityGateResult qualityGateResult,
             final Map<String, Integer> sizePerOrigin) {
         this(owner, id, report, blames, totals, qualityGateResult, sizePerOrigin, true);
 
         if (report.isEmpty()) {
             noIssuesSinceBuild = owner.getNumber();
-        }
-        else {
+        } else {
             noIssuesSinceBuild = NO_BUILD;
         }
         if (qualityGateResult.getOverallStatus() == QualityGateStatus.PASSED) {
             successfulSinceBuild = owner.getNumber();
-        }
-        else {
+        } else {
             successfulSinceBuild = NO_BUILD;
         }
     }
@@ -230,9 +241,14 @@ public final class AnalysisResult implements Serializable, StaticAnalysisRun {
      */
     @VisibleForTesting
     @SuppressWarnings("checkstyle:ParameterNumber")
-    AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report,
-            final Blames blames, final RepositoryStatistics repositoryStatistics,
-            final QualityGateResult qualityGateResult, final Map<String, Integer> sizePerOrigin,
+    AnalysisResult(
+            final Run<?, ?> owner,
+            final String id,
+            final DeltaReport report,
+            final Blames blames,
+            final RepositoryStatistics repositoryStatistics,
+            final QualityGateResult qualityGateResult,
+            final Map<String, Integer> sizePerOrigin,
             final boolean canSerialize) {
         this.owner = owner;
 
@@ -307,8 +323,7 @@ public final class AnalysisResult implements Serializable, StaticAnalysisRun {
                 return readBlames();
             }
             return result;
-        }
-        finally {
+        } finally {
             lock.unlock();
         }
     }
@@ -329,8 +344,7 @@ public final class AnalysisResult implements Serializable, StaticAnalysisRun {
                 return readStatistics();
             }
             return result;
-        }
-        finally {
+        } finally {
             lock.unlock();
         }
     }
@@ -416,8 +430,12 @@ public final class AnalysisResult implements Serializable, StaticAnalysisRun {
     }
 
     private Path getReportPath(final String suffix) {
-        return getOwner().getRootDir().toPath().resolve(ISSUES_FILE_NAME.matcher(getSerializationFileName())
-                .replaceAll(Matcher.quoteReplacement(suffix + "-issues.xml")));
+        return getOwner()
+                .getRootDir()
+                .toPath()
+                .resolve(ISSUES_FILE_NAME
+                        .matcher(getSerializationFileName())
+                        .replaceAll(Matcher.quoteReplacement(suffix + "-issues.xml")));
     }
 
     /**
@@ -461,7 +479,9 @@ public final class AnalysisResult implements Serializable, StaticAnalysisRun {
      */
     @Whitelisted
     public Report getOutstandingIssues() {
-        return getIssues(AnalysisResult::getOutstandingIssuesReference, AnalysisResult::setOutstandingIssuesReference,
+        return getIssues(
+                AnalysisResult::getOutstandingIssuesReference,
+                AnalysisResult::setOutstandingIssuesReference,
                 "outstanding");
     }
 
@@ -473,8 +493,7 @@ public final class AnalysisResult implements Serializable, StaticAnalysisRun {
      */
     @Whitelisted
     public Report getNewIssues() {
-        return getIssues(AnalysisResult::getNewIssuesReference, AnalysisResult::setNewIssuesReference,
-                "new");
+        return getIssues(AnalysisResult::getNewIssuesReference, AnalysisResult::setNewIssuesReference, "new");
     }
 
     /**
@@ -485,8 +504,7 @@ public final class AnalysisResult implements Serializable, StaticAnalysisRun {
      */
     @Whitelisted
     public Report getFixedIssues() {
-        return getIssues(AnalysisResult::getFixedIssuesReference, AnalysisResult::setFixedIssuesReference,
-                "fixed");
+        return getIssues(AnalysisResult::getFixedIssuesReference, AnalysisResult::setFixedIssuesReference, "fixed");
     }
 
     @CheckForNull
@@ -516,8 +534,10 @@ public final class AnalysisResult implements Serializable, StaticAnalysisRun {
         this.fixedIssuesReference = fixedIssuesReference;
     }
 
-    private Report getIssues(final Function<AnalysisResult, WeakReference<Report>> getter,
-            final BiConsumer<AnalysisResult, WeakReference<Report>> setter, final String suffix) {
+    private Report getIssues(
+            final Function<AnalysisResult, WeakReference<Report>> getter,
+            final BiConsumer<AnalysisResult, WeakReference<Report>> setter,
+            final String suffix) {
         lock.lock();
         try {
             if (getter.apply(this) == null) {
@@ -528,14 +548,12 @@ public final class AnalysisResult implements Serializable, StaticAnalysisRun {
                 return readIssues(setter, suffix);
             }
             return result;
-        }
-        finally {
+        } finally {
             lock.unlock();
         }
     }
 
-    private Report readIssues(final BiConsumer<AnalysisResult, WeakReference<Report>> setter,
-            final String suffix) {
+    private Report readIssues(final BiConsumer<AnalysisResult, WeakReference<Report>> setter, final String suffix) {
         var report = new ReportXmlStream().read(getReportPath(suffix));
         setter.accept(this, new WeakReference<>(report));
         return report;

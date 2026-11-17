@@ -1,25 +1,22 @@
 package io.jenkins.plugins.analysis.core.charts;
 
-import org.eclipse.collections.impl.factory.Maps;
-import org.junit.jupiter.api.Test;
+import static io.jenkins.plugins.analysis.core.charts.BuildResultStubs.*;
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
+import static org.mockito.Mockito.*;
 
 import edu.hm.hafner.echarts.Build;
 import edu.hm.hafner.echarts.BuildResult;
 import edu.hm.hafner.echarts.ChartModelConfiguration;
 import edu.hm.hafner.echarts.LineSeries;
 import edu.hm.hafner.echarts.Palette;
-
+import io.jenkins.plugins.analysis.core.model.ToolNameRegistry;
+import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-
-import io.jenkins.plugins.analysis.core.model.ToolNameRegistry;
-import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
-
-import static io.jenkins.plugins.analysis.core.charts.BuildResultStubs.*;
-import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
-import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
-import static org.mockito.Mockito.*;
+import org.eclipse.collections.impl.factory.Maps;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class {@link ToolsTrendChart}.
@@ -35,20 +32,22 @@ class ToolsTrendChartTest {
         var chart = new ToolsTrendChart();
 
         List<BuildResult<AnalysisBuildResult>> compositeResults = new ArrayList<>();
-        compositeResults.add(new BuildResult<>(new Build(1), new CompositeBuildResult(List.of(
-                createAnalysisBuildResult(CHECK_STYLE, 1), createAnalysisBuildResult(SPOT_BUGS, 3)))));
-        compositeResults.add(new BuildResult<>(new Build(2), new CompositeBuildResult(List.of(
-                createAnalysisBuildResult(CHECK_STYLE, 2), createAnalysisBuildResult(SPOT_BUGS, 4)))));
+        compositeResults.add(new BuildResult<>(
+                new Build(1),
+                new CompositeBuildResult(
+                        List.of(createAnalysisBuildResult(CHECK_STYLE, 1), createAnalysisBuildResult(SPOT_BUGS, 3)))));
+        compositeResults.add(new BuildResult<>(
+                new Build(2),
+                new CompositeBuildResult(
+                        List.of(createAnalysisBuildResult(CHECK_STYLE, 2), createAnalysisBuildResult(SPOT_BUGS, 4)))));
 
         var model = chart.create(compositeResults, new ChartModelConfiguration());
 
         verifySeries(model.getSeries().get(0), CHECK_STYLE, 1, 2);
         verifySeries(model.getSeries().get(1), SPOT_BUGS, 3, 4);
 
-        assertThatJson(model).node("domainAxisLabels")
-                .isArray().hasSize(2).containsExactly("#1", "#2");
-        assertThatJson(model).node("series")
-                .isArray().hasSize(2);
+        assertThatJson(model).node("domainAxisLabels").isArray().hasSize(2).containsExactly("#1", "#2");
+        assertThatJson(model).node("series").isArray().hasSize(2);
     }
 
     private void verifySeries(final LineSeries high, final String toolId, final int... values) {
@@ -105,10 +104,14 @@ class ToolsTrendChartTest {
         var chart = new ToolsTrendChart(registry.asMap());
 
         List<BuildResult<AnalysisBuildResult>> compositeResults = new ArrayList<>();
-        compositeResults.add(new BuildResult<>(new Build(1), new CompositeBuildResult(List.of(
-                createAnalysisBuildResult(CHECK_STYLE, 1), createAnalysisBuildResult(SPOT_BUGS, 3)))));
-        compositeResults.add(new BuildResult<>(new Build(2), new CompositeBuildResult(List.of(
-                createAnalysisBuildResult(CHECK_STYLE, 2), createAnalysisBuildResult(SPOT_BUGS, 4)))));
+        compositeResults.add(new BuildResult<>(
+                new Build(1),
+                new CompositeBuildResult(
+                        List.of(createAnalysisBuildResult(CHECK_STYLE, 1), createAnalysisBuildResult(SPOT_BUGS, 3)))));
+        compositeResults.add(new BuildResult<>(
+                new Build(2),
+                new CompositeBuildResult(
+                        List.of(createAnalysisBuildResult(CHECK_STYLE, 2), createAnalysisBuildResult(SPOT_BUGS, 4)))));
 
         var model = chart.create(compositeResults, new ChartModelConfiguration());
 
@@ -124,12 +127,11 @@ class ToolsTrendChartTest {
         var chart = new ToolsTrendChart(registry.asMap());
 
         List<BuildResult<AnalysisBuildResult>> results = new ArrayList<>();
-        results.add(new BuildResult<>(new Build(1), new CompositeBuildResult(List.of(
-                createAnalysisBuildResult("custom", 5)))));
+        results.add(new BuildResult<>(
+                new Build(1), new CompositeBuildResult(List.of(createAnalysisBuildResult("custom", 5)))));
 
         var model = chart.create(results, new ChartModelConfiguration());
 
-        assertThatJson(model.getSeries().get(0)).node("name")
-                .isEqualTo("&lt;script&gt;alert('xss')&lt;/script&gt;");
+        assertThatJson(model.getSeries().get(0)).node("name").isEqualTo("&lt;script&gt;alert('xss')&lt;/script&gt;");
     }
 }

@@ -1,19 +1,16 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import org.apache.commons.lang3.StringUtils;
-import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
-import org.junit.jupiter.api.Test;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
 import com.google.errorprone.annotations.MustBeClosed;
-
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
-
 import java.util.NoSuchElementException;
 import java.util.function.Function;
-
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import org.apache.commons.lang3.StringUtils;
+import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
+import org.junit.jupiter.api.Test;
 
 /**
  * PropertyStatisticsTest to test {@link PropertyStatistics}.
@@ -45,8 +42,7 @@ class PropertyStatisticsTest {
         assertThat(statistics.getToolTip("error")).isEqualTo(StringUtils.EMPTY);
     }
 
-    private void assertThatExceptionIsThrownBy(
-            final ThrowingCallable callable) {
+    private void assertThatExceptionIsThrownBy(final ThrowingCallable callable) {
         assertThatExceptionOfType(NoSuchElementException.class)
                 .isThrownBy(callable)
                 .withMessageContaining("error");
@@ -60,7 +56,8 @@ class PropertyStatisticsTest {
 
             var statistics = createStatistics(issues);
 
-            assertThat(statistics).hasTotal(1)
+            assertThat(statistics)
+                    .hasTotal(1)
                     .hasTotalNewIssues(0)
                     .hasOnlyKeys("error")
                     .hasProperty("category")
@@ -79,8 +76,7 @@ class PropertyStatisticsTest {
     }
 
     private PropertyStatistics createStatistics(final Report issues) {
-        return new PropertyStatistics(issues, new Report(),
-                "category", Function.identity());
+        return new PropertyStatistics(issues, new Report(), "category", Function.identity());
     }
 
     /**
@@ -95,7 +91,8 @@ class PropertyStatisticsTest {
 
             var statistics = createStatistics(issues);
 
-            assertThat(statistics).hasTotal(2)
+            assertThat(statistics)
+                    .hasTotal(2)
                     .hasTotalNewIssues(0)
                     .hasOnlyKeys("errorA", "errorB")
                     .hasProperty("category")
@@ -126,8 +123,7 @@ class PropertyStatisticsTest {
     @Test
     void shouldReturnToolTip() {
         var statistics = new PropertyStatistics(
-                new Report(), new Report(), "category",
-                string -> KEY.equals(string) ? KEY : "tooltip");
+                new Report(), new Report(), "category", string -> KEY.equals(string) ? KEY : "tooltip");
 
         assertThat(statistics.getDisplayName(KEY)).isEqualTo(KEY);
         assertThat(statistics.getToolTip(KEY)).isEmpty();
@@ -144,7 +140,8 @@ class PropertyStatisticsTest {
 
             var statistics = createStatistics(issues);
 
-            assertThat(statistics).hasTotal(1)
+            assertThat(statistics)
+                    .hasTotal(1)
                     .hasTotalNewIssues(0)
                     .hasOnlyKeys("")
                     .hasProperty("category")
@@ -191,7 +188,8 @@ class PropertyStatisticsTest {
         }
     }
 
-    @MustBeClosed @SuppressWarnings("resource")
+    @MustBeClosed
+    @SuppressWarnings("resource")
     private IssueBuilder createBuilder() {
         return new IssueBuilder().setSeverity(Severity.WARNING_HIGH);
     }

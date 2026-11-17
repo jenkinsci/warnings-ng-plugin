@@ -1,19 +1,15 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
+import hudson.model.Run;
+import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
-
-import hudson.model.Run;
-
-import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
-
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class {@link ConsoleDetail}.
@@ -23,14 +19,17 @@ import static org.mockito.Mockito.*;
 class ConsoleDetailTest {
     @Test
     void shouldDetectConsoleLog() {
-        assertThat(ConsoleLogHandler.isInConsoleLog(ConsoleLogHandler.JENKINS_CONSOLE_LOG_FILE_NAME_ID)).isTrue();
+        assertThat(ConsoleLogHandler.isInConsoleLog(ConsoleLogHandler.JENKINS_CONSOLE_LOG_FILE_NAME_ID))
+                .isTrue();
 
         assertThat(ConsoleLogHandler.isInConsoleLog("logger")).isFalse();
         assertThat(ConsoleLogHandler.isInConsoleLog("blog")).isFalse();
     }
 
     @Test
-    @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE", justification = "https://github.com/spotbugs/spotbugs/issues/756")
+    @SuppressFBWarnings(
+            value = "RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE",
+            justification = "https://github.com/spotbugs/spotbugs/issues/756")
     void shouldEscapeEntities() {
         try (Stream<String> lines = Stream.of("<b>CheckStyle</b> <script>execute</script>")) {
             var consoleDetail = new ConsoleDetail(mock(Run.class), lines, 1, 2);

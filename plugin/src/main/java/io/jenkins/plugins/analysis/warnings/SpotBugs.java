@@ -1,13 +1,11 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.io.Serial;
-
-import io.jenkins.plugins.analysis.core.model.SymbolIconLabelProvider;
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.jenkinsci.Symbol;
 import hudson.Extension;
-
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import io.jenkins.plugins.analysis.core.model.SymbolIconLabelProvider;
+import java.io.Serial;
+import org.jenkinsci.Symbol;
+import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
  * Provides a parser and customized messages for FindBugs.
@@ -17,6 +15,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 public class SpotBugs extends FindBugs {
     @Serial
     private static final long serialVersionUID = -8773197511353021180L;
+
     private static final String ID = "spotbugs";
 
     /** Creates a new instance of {@link SpotBugs}. */
@@ -37,7 +36,8 @@ public class SpotBugs extends FindBugs {
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new SymbolIconLabelProvider(getId(), getName(), getDescriptionProvider(), "symbol-spotbugs plugin-warnings-ng");
+            return new SymbolIconLabelProvider(
+                    getId(), getName(), getDescriptionProvider(), "symbol-spotbugs plugin-warnings-ng");
         }
     }
 }

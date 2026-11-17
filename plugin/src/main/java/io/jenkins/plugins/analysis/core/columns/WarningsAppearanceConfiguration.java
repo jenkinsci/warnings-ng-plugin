@@ -2,21 +2,19 @@ package io.jenkins.plugins.analysis.core.columns;
 
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.NonNull;
-
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.DataBoundSetter;
-import org.kohsuke.stapler.verb.POST;
-import org.jenkinsci.Symbol;
 import hudson.Extension;
 import hudson.util.ListBoxModel;
-import jenkins.appearance.AppearanceCategory;
-import jenkins.model.GlobalConfigurationCategory;
-import jenkins.model.Jenkins;
-
 import io.jenkins.plugins.analysis.core.util.IssuesStatistics.StatisticProperties;
 import io.jenkins.plugins.util.GlobalConfigurationFacade;
 import io.jenkins.plugins.util.GlobalConfigurationItem;
 import io.jenkins.plugins.util.JenkinsFacade;
+import jenkins.appearance.AppearanceCategory;
+import jenkins.model.GlobalConfigurationCategory;
+import jenkins.model.Jenkins;
+import org.jenkinsci.Symbol;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.verb.POST;
 
 /**
  * Global appearance configuration for the Warnings Plugin.
@@ -47,7 +45,7 @@ public final class WarningsAppearanceConfiguration extends GlobalConfigurationIt
     public WarningsAppearanceConfiguration() {
         super();
 
-        jenkins =  new JenkinsFacade();
+        jenkins = new JenkinsFacade();
 
         load();
     }

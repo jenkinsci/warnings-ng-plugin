@@ -1,22 +1,19 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-import java.util.Collections;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
 import hudson.plugins.git.BranchSpec;
 import hudson.plugins.git.GitSCM;
 import hudson.plugins.git.extensions.impl.RelativeTargetDirectory;
-import jenkins.model.ParameterizedJobMixIn.ParameterizedJob;
-
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.Java;
 import io.jenkins.plugins.forensics.miner.RepositoryMinerStep;
-
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import java.io.IOException;
+import java.util.Collections;
+import jenkins.model.ParameterizedJobMixIn.ParameterizedJob;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * Verifies that Git blamer and miner are correctly called.
@@ -68,9 +65,10 @@ class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldSkipDeltaCalculation() {
         var job = createPipelineWithWorkspaceFilesWithSuffix();
 
-        createFileInWorkspace(job, "java-issues.txt",
-                createJavaWarning(MODIFIED_FILE, 111)
-                        + createJavaWarning(SCM_RESOLVER, AFFECTED_LINE));
+        createFileInWorkspace(
+                job,
+                "java-issues.txt",
+                createJavaWarning(MODIFIED_FILE, 111) + createJavaWarning(SCM_RESOLVER, AFFECTED_LINE));
 
         var step = "recordIssues skipDeltaCalculation: true, "
                 + "sourceDirectories: [[path: 'forensics-api']], tool: java(pattern:'**/*issues.txt', reportEncoding:'UTF-8')";
@@ -78,26 +76,30 @@ class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
 
         buildSuccessfully(job); // reference build
 
-        createFileInWorkspace(job, "java-issues.txt",
-                createJavaWarning(MODIFIED_FILE, 111)    // outstanding and modified
-                        + createJavaWarning(MODIFIED_FILE, 112)  // new and modified
-                        + createJavaWarning(MODIFIED_FILE, 113)  // new and modified
-                        + createJavaWarning(SCM_RESOLVER, AFFECTED_LINE)   // outstanding (not modified)
-                        + createJavaWarning(MODIFIED_FILE, 2));  // new (not modified)
+        createFileInWorkspace(
+                job,
+                "java-issues.txt",
+                createJavaWarning(MODIFIED_FILE, 111) // outstanding and modified
+                        + createJavaWarning(MODIFIED_FILE, 112) // new and modified
+                        + createJavaWarning(MODIFIED_FILE, 113) // new and modified
+                        + createJavaWarning(SCM_RESOLVER, AFFECTED_LINE) // outstanding (not modified)
+                        + createJavaWarning(MODIFIED_FILE, 2)); // new (not modified)
 
         job.setDefinition(asStage(CHECKOUT_FORENSICS_API, "discoverReferenceBuild()", step));
 
         var result = scheduleSuccessfulBuild(job);
-        assertThat(getConsoleLog(result)).contains(
-                "Detect all issues that are part of modified code",
-                "No relevant modified code found",
-                "Created analysis result for 5 issues (found 3 new issues, fixed 0 issues)");
-        assertThat(getConsoleLog(result)).doesNotContain(
-                "-> Using commit 'a6d0ef0' as latest commit for build",
-                "-> Using commit '3097ea1' as latest commit for build",
-                "-> Invoking Git delta calculator for determining the changes between commits 'a6d0ef0' and '3097ea1'",
-                "-> Start scanning for differences between commits...",
-                "Issues in modified code");
+        assertThat(getConsoleLog(result))
+                .contains(
+                        "Detect all issues that are part of modified code",
+                        "No relevant modified code found",
+                        "Created analysis result for 5 issues (found 3 new issues, fixed 0 issues)");
+        assertThat(getConsoleLog(result))
+                .doesNotContain(
+                        "-> Using commit 'a6d0ef0' as latest commit for build",
+                        "-> Using commit '3097ea1' as latest commit for build",
+                        "-> Invoking Git delta calculator for determining the changes between commits 'a6d0ef0' and '3097ea1'",
+                        "-> Start scanning for differences between commits...",
+                        "Issues in modified code");
     }
 
     /**
@@ -107,13 +109,12 @@ class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     void shouldObtainBlamesAndForensicsWithRecordIssuesStep() {
         runStepAndVerifyBlamesAndForensics(createRecordIssuesStep("sourceDirectories: [[path: 'forensics-api']]"));
-        runStepAndVerifyBlamesAndForensics(createRecordIssuesStep("sourceDirectories: [[path: 'does-not-exist'], [path: 'forensics-api']]"));
+        runStepAndVerifyBlamesAndForensics(
+                createRecordIssuesStep("sourceDirectories: [[path: 'does-not-exist'], [path: 'forensics-api']]"));
     }
 
     private String createRecordIssuesStep(final String sourceDirectories) {
-        return "recordIssues "
-                + sourceDirectories
-                + ", tool: java(pattern:'**/*issues.txt', reportEncoding:'UTF-8')";
+        return "recordIssues " + sourceDirectories + ", tool: java(pattern:'**/*issues.txt', reportEncoding:'UTF-8')";
     }
 
     /**
@@ -126,8 +127,11 @@ class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
 
         createFileInWorkspace(job, "java-issues.txt", createJavaWarning(SCM_RESOLVER, AFFECTED_LINE));
 
-        var scm = new GitSCM(GitSCM.createRepoList(FORENSICS_API_PLUGIN, null),
-                Collections.singletonList(new BranchSpec(COMMIT)), null, null,
+        var scm = new GitSCM(
+                GitSCM.createRepoList(FORENSICS_API_PLUGIN, null),
+                Collections.singletonList(new BranchSpec(COMMIT)),
+                null,
+                null,
                 Collections.singletonList(new RelativeTargetDirectory("forensics-api")));
         job.setScm(scm);
         job.getPublishersList().add(new RepositoryMinerStep());
@@ -139,35 +143,39 @@ class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
     private void runStepAndVerifyBlamesAndForensics(final String step) {
         var job = createPipelineWithWorkspaceFilesWithSuffix();
 
-        createFileInWorkspace(job, "java-issues.txt",
-                createJavaWarning(MODIFIED_FILE, 111)
-                        + createJavaWarning(SCM_RESOLVER, AFFECTED_LINE));
+        createFileInWorkspace(
+                job,
+                "java-issues.txt",
+                createJavaWarning(MODIFIED_FILE, 111) + createJavaWarning(SCM_RESOLVER, AFFECTED_LINE));
 
         job.setDefinition(asStage(checkout(OLD_COMMIT), MINE_REPOSITORY, step));
 
         buildSuccessfully(job); // reference build
 
-        createFileInWorkspace(job, "java-issues.txt",
-                createJavaWarning(MODIFIED_FILE, 111)    // outstanding and modified
-                        + createJavaWarning(MODIFIED_FILE, 112)  // new and modified
-                        + createJavaWarning(MODIFIED_FILE, 113)  // new and modified
-                        + createJavaWarning(SCM_RESOLVER, AFFECTED_LINE)   // outstanding (not modified)
-                        + createJavaWarning(MODIFIED_FILE, 2));  // new (not modified)
+        createFileInWorkspace(
+                job,
+                "java-issues.txt",
+                createJavaWarning(MODIFIED_FILE, 111) // outstanding and modified
+                        + createJavaWarning(MODIFIED_FILE, 112) // new and modified
+                        + createJavaWarning(MODIFIED_FILE, 113) // new and modified
+                        + createJavaWarning(SCM_RESOLVER, AFFECTED_LINE) // outstanding (not modified)
+                        + createJavaWarning(MODIFIED_FILE, 2)); // new (not modified)
 
         job.setDefinition(asStage(CHECKOUT_FORENSICS_API, MINE_REPOSITORY, "discoverReferenceBuild()", step));
 
         var result = verifyBlamingWithModifiedFiles(job);
 
-        assertThat(getConsoleLog(result)).contains(
-                "Detect all issues that are part of modified code",
-                "-> Using commit 'a6d0ef0' as latest commit for build",
-                "-> Using commit '3097ea1' as latest commit for build",
-                "-> Invoking Git delta calculator for determining the changes between commits 'a6d0ef0' and '3097ea1'",
-                "-> Start scanning for differences between commits...",
-                "-> 121 files contain changes",
-                "-> Creating the Git diff file",
-                "-> Git code delta successfully calculated",
-                "Issues in modified code: 3 (new: 2, outstanding: 1)");
+        assertThat(getConsoleLog(result))
+                .contains(
+                        "Detect all issues that are part of modified code",
+                        "-> Using commit 'a6d0ef0' as latest commit for build",
+                        "-> Using commit '3097ea1' as latest commit for build",
+                        "-> Invoking Git delta calculator for determining the changes between commits 'a6d0ef0' and '3097ea1'",
+                        "-> Start scanning for differences between commits...",
+                        "-> 121 files contain changes",
+                        "-> Creating the Git diff file",
+                        "-> Git code delta successfully calculated",
+                        "Issues in modified code: 3 (new: 2, outstanding: 1)");
     }
 
     private AnalysisResult verifyBlaming(final ParameterizedJob<?, ?> job) {
@@ -181,12 +189,13 @@ class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(blame.getEmail(AFFECTED_LINE)).isEqualTo("ullrich.hafner@gmail.com");
         assertThat(blame.getCommit(AFFECTED_LINE)).isEqualTo("43dde5d4f7a06122216494a896c51830ed684572");
 
-        assertThat(getConsoleLog(result)).contains(
-                "Invoking Git blamer to create author and commit information for 1 affected files",
-                "Git commit ID = 'a6d0ef09ab3c418e370449a884da99b8190ae950'",
-                "-> blamed authors of issues in 1 files",
-                "Extracting repository forensics for 1 affected files (files in repository: 121)",
-                "-> 1 affected files processed");
+        assertThat(getConsoleLog(result))
+                .contains(
+                        "Invoking Git blamer to create author and commit information for 1 affected files",
+                        "Git commit ID = 'a6d0ef09ab3c418e370449a884da99b8190ae950'",
+                        "-> blamed authors of issues in 1 files",
+                        "Extracting repository forensics for 1 affected files (files in repository: 121)",
+                        "-> 1 affected files processed");
 
         return result;
     }
@@ -204,12 +213,13 @@ class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(blame.getEmail(AFFECTED_LINE)).isEqualTo("ullrich.hafner@gmail.com");
         assertThat(blame.getCommit(AFFECTED_LINE)).isEqualTo("43dde5d4f7a06122216494a896c51830ed684572");
 
-        assertThat(getConsoleLog(result)).contains(
-                "Invoking Git blamer to create author and commit information for 2 affected files",
-                "Git commit ID = 'a6d0ef09ab3c418e370449a884da99b8190ae950'",
-                "-> blamed authors of issues in 2 files",
-                "Extracting repository forensics for 2 affected files (files in repository: 121)",
-                "-> 2 affected files processed");
+        assertThat(getConsoleLog(result))
+                .contains(
+                        "Invoking Git blamer to create author and commit information for 2 affected files",
+                        "Git commit ID = 'a6d0ef09ab3c418e370449a884da99b8190ae950'",
+                        "-> blamed authors of issues in 2 files",
+                        "Extracting repository forensics for 2 affected files (files in repository: 121)",
+                        "-> 2 affected files processed");
 
         return result;
     }
@@ -249,8 +259,11 @@ class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
 
         createFileInWorkspace(job, "java-issues.txt", createJavaWarning(SCM_RESOLVER, AFFECTED_LINE));
 
-        var scm = new GitSCM(GitSCM.createRepoList(FORENSICS_API_PLUGIN, null),
-                Collections.singletonList(new BranchSpec(COMMIT)), null, null,
+        var scm = new GitSCM(
+                GitSCM.createRepoList(FORENSICS_API_PLUGIN, null),
+                Collections.singletonList(new BranchSpec(COMMIT)),
+                null,
+                null,
                 Collections.singletonList(new RelativeTargetDirectory("forensics-api")));
         job.setScm(scm);
         job.getPublishersList().add(new RepositoryMinerStep());
@@ -271,11 +284,12 @@ class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
 
         assertThat(result).hasTotalSize(1).hasNewSize(0).hasFixedSize(0);
 
-        assertThat(getConsoleLog(result)).contains(
-                "Creating SCM blamer to obtain author and commit information for affected files",
-                "-> Filtering SCMs by key 'nothing'",
-                "-> no SCM found",
-                "Extracting repository forensics for 1 affected files (files in repository: 0)",
-                "-> 0 affected files processed");
+        assertThat(getConsoleLog(result))
+                .contains(
+                        "Creating SCM blamer to obtain author and commit information for affected files",
+                        "-> Filtering SCMs by key 'nothing'",
+                        "-> no SCM found",
+                        "Extracting repository forensics for 1 affected files (files in repository: 0)",
+                        "-> 0 affected files processed");
     }
 }

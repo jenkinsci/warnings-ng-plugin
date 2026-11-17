@@ -20,7 +20,10 @@ public class SymbolIconLabelProvider extends StaticAnalysisLabelProvider {
      * @param symbolName
      *         the name of the symbol
      */
-    public SymbolIconLabelProvider(final String id, final String name, final DescriptionProvider descriptionProvider,
+    public SymbolIconLabelProvider(
+            final String id,
+            final String name,
+            final DescriptionProvider descriptionProvider,
             final String symbolName) {
         super(id, name, descriptionProvider);
 

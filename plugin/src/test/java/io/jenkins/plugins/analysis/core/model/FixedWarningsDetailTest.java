@@ -1,21 +1,17 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import org.junit.jupiter.api.Test;
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
-
+import hudson.model.Run;
+import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
-
-import hudson.model.Run;
-
-import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
-
-import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
-import static org.mockito.Mockito.*;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class {@link FixedWarningsDetail}.
@@ -29,8 +25,13 @@ class FixedWarningsDetailTest {
     void shouldDisplayFileOfFixedWarning() {
         var result = createAnalysisResult();
 
-        var detail = new FixedWarningsDetail(mock(Run.class), result, new Report(),
-                "fixed", mock(StaticAnalysisLabelProvider.class), StandardCharsets.UTF_8);
+        var detail = new FixedWarningsDetail(
+                mock(Run.class),
+                result,
+                new Report(),
+                "fixed",
+                mock(StaticAnalysisLabelProvider.class),
+                StandardCharsets.UTF_8);
 
         // No reference build yet
         assertThat(detail.canDisplayFile(ISSUE)).isFalse();
@@ -45,7 +46,8 @@ class FixedWarningsDetailTest {
         assertThat(detail.canDisplayFile(createIssue("file.txt"))).isFalse();
 
         assertThat(detail.getReferenceUrl()).isEqualTo(expectedUrl);
-        assertThat(detail.canDisplayFile(createIssue(ConsoleLogHandler.JENKINS_CONSOLE_LOG_FILE_NAME_ID))).isTrue();
+        assertThat(detail.canDisplayFile(createIssue(ConsoleLogHandler.JENKINS_CONSOLE_LOG_FILE_NAME_ID)))
+                .isTrue();
     }
 
     private Issue createIssue(final String fileName) {

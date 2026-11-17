@@ -3,18 +3,8 @@ package io.jenkins.plugins.analysis.warnings;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.RevApiInfoExtension;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.jenkinsci.Symbol;
 import hudson.Extension;
 import hudson.model.Run;
-
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.DescriptionProvider;
 import io.jenkins.plugins.analysis.core.model.DetailsTableModel;
@@ -24,6 +14,13 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBui
 import io.jenkins.plugins.datatables.TableColumn;
 import io.jenkins.plugins.datatables.TableColumn.ColumnBuilder;
 import io.jenkins.plugins.util.JenkinsFacade;
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import org.jenkinsci.Symbol;
+import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
  * Provides a parser and customized messages for Revapi.
@@ -31,6 +28,7 @@ import io.jenkins.plugins.util.JenkinsFacade;
 public class RevApi extends AnalysisModelParser {
     @Serial
     private static final long serialVersionUID = -8571635906342563283L;
+
     private static final String ID = "revapi";
 
     /** Creates a new instance of {@link RevApi}. */
@@ -67,8 +65,8 @@ public class RevApi extends AnalysisModelParser {
 
         @Override
         public DetailsTableModel getIssuesModel(final Run<?, ?> build, final String url, final Report report) {
-            return new RevApiModel(report, getFileNameRenderer(build), getAgeBuilder(build, url), this,
-                    new JenkinsFacade());
+            return new RevApiModel(
+                    report, getFileNameRenderer(build), getAgeBuilder(build, url), this, new JenkinsFacade());
         }
     }
 
@@ -76,7 +74,8 @@ public class RevApi extends AnalysisModelParser {
      * Provides a customized table for Revapi issues.
      */
     public static class RevApiModel extends DetailsTableModel {
-        RevApiModel(final Report report,
+        RevApiModel(
+                final Report report,
                 final FileNameRenderer fileNameRenderer,
                 final AgeBuilder ageBuilder,
                 final DescriptionProvider descriptionProvider,
@@ -86,8 +85,13 @@ public class RevApi extends AnalysisModelParser {
 
         @Override
         protected TableRow getRow(final Issue issue) {
-            return new RevApiRow(getAgeBuilder(), getFileNameRenderer(),
-                    getDescriptionProvider(), issue, getJenkinsFacade(), issue.getAdditionalProperties());
+            return new RevApiRow(
+                    getAgeBuilder(),
+                    getFileNameRenderer(),
+                    getDescriptionProvider(),
+                    issue,
+                    getJenkinsFacade(),
+                    issue.getAdditionalProperties());
         }
 
         @Override
@@ -99,37 +103,43 @@ public class RevApi extends AnalysisModelParser {
         public List<TableColumn> getColumns() {
             List<TableColumn> columns = new ArrayList<>();
             columns.add(createDetailsColumn());
-            var nameColumn = new ColumnBuilder().withHeaderLabel(Messages.RevApi_Table_Column_Name())
+            var nameColumn = new ColumnBuilder()
+                    .withHeaderLabel(Messages.RevApi_Table_Column_Name())
                     .withDataPropertyKey("issueName")
                     .withResponsivePriority(100)
                     .build();
             columns.add(nameColumn);
 
-            var oldFileColumn = new ColumnBuilder().withHeaderLabel(Messages.RevApi_Table_Column_oldFile())
+            var oldFileColumn = new ColumnBuilder()
+                    .withHeaderLabel(Messages.RevApi_Table_Column_oldFile())
                     .withDataPropertyKey("oldFile")
                     .withResponsivePriority(50)
                     .build();
             columns.add(oldFileColumn);
 
-            var newFileColumn = new ColumnBuilder().withHeaderLabel(Messages.RevApi_Table_Column_newFile())
+            var newFileColumn = new ColumnBuilder()
+                    .withHeaderLabel(Messages.RevApi_Table_Column_newFile())
                     .withDataPropertyKey("newFile")
                     .withResponsivePriority(50)
                     .build();
             columns.add(newFileColumn);
 
-            var categoryColumn = new ColumnBuilder().withHeaderLabel(Messages.RevApi_Table_Column_category())
+            var categoryColumn = new ColumnBuilder()
+                    .withHeaderLabel(Messages.RevApi_Table_Column_category())
                     .withDataPropertyKey("category")
                     .withResponsivePriority(50)
                     .build();
             columns.add(categoryColumn);
 
-            var binaryColumn = new ColumnBuilder().withHeaderLabel(Messages.RevApi_Table_Column_binary())
+            var binaryColumn = new ColumnBuilder()
+                    .withHeaderLabel(Messages.RevApi_Table_Column_binary())
                     .withDataPropertyKey("binary")
                     .withResponsivePriority(30)
                     .build();
             columns.add(binaryColumn);
 
-            var sourceColumn = new ColumnBuilder().withHeaderLabel(Messages.RevApi_Table_Column_source())
+            var sourceColumn = new ColumnBuilder()
+                    .withHeaderLabel(Messages.RevApi_Table_Column_source())
                     .withDataPropertyKey("source")
                     .withResponsivePriority(30)
                     .build();
@@ -152,9 +162,13 @@ public class RevApi extends AnalysisModelParser {
             private final String severity;
             private String category;
 
-            RevApiRow(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
-                    final DescriptionProvider descriptionProvider, final Issue issue,
-                    final JenkinsFacade jenkinsFacade, final Serializable additionalData) {
+            RevApiRow(
+                    final AgeBuilder ageBuilder,
+                    final FileNameRenderer fileNameRenderer,
+                    final DescriptionProvider descriptionProvider,
+                    final Issue issue,
+                    final JenkinsFacade jenkinsFacade,
+                    final Serializable additionalData) {
                 super(ageBuilder, fileNameRenderer, descriptionProvider, issue, jenkinsFacade);
                 if (additionalData instanceof RevApiInfoExtension revApiInfo) {
                     this.oldFile = revApiInfo.getOldFile();
@@ -163,9 +177,9 @@ public class RevApi extends AnalysisModelParser {
                     this.severities = revApiInfo.getSeverities();
                     this.category = issue.getCategory();
                     this.severity = formatSeverity(issue.getSeverity());
-                }
-                else {
-                    throw new IllegalStateException("Additional info of revApi Issue not an instance of RevApiInfoExtension");
+                } else {
+                    throw new IllegalStateException(
+                            "Additional info of revApi Issue not an instance of RevApiInfoExtension");
                 }
             }
 

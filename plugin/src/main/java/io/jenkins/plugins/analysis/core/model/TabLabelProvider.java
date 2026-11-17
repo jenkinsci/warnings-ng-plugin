@@ -1,10 +1,8 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import org.apache.commons.lang3.StringUtils;
-
 import edu.hm.hafner.analysis.Report;
-
 import java.util.Set;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Provides localized labels for the different categories of issues.
@@ -104,12 +102,11 @@ public class TabLabelProvider {
 
     private String getPackageOrNamespace(final String packageText, final String nameSpaceText, final String fallback) {
         if (report.isNotEmpty()) {
-            Set<String> fileTypes = report.getProperties(
-                    issue -> StringUtils.substringAfterLast(issue.getFileName(), "."));
+            Set<String> fileTypes =
+                    report.getProperties(issue -> StringUtils.substringAfterLast(issue.getFileName(), "."));
             if (fileTypes.contains("cs")) {
                 return nameSpaceText;
-            }
-            else if (fileTypes.contains("java") || fileTypes.contains("py")) {
+            } else if (fileTypes.contains("java") || fileTypes.contains("py")) {
                 return packageText;
             }
         }

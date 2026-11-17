@@ -1,27 +1,10 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import org.apache.commons.lang3.StringUtils;
-import org.eclipse.collections.impl.factory.Sets;
-
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.FilteredLog;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
-import java.io.IOException;
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.DataBoundSetter;
-import org.jenkinsci.plugins.workflow.graph.FlowNode;
-import org.jenkinsci.plugins.workflow.steps.Step;
-import org.jenkinsci.plugins.workflow.steps.StepContext;
-import org.jenkinsci.plugins.workflow.steps.StepExecution;
 import hudson.AbortException;
 import hudson.Extension;
 import hudson.FilePath;
@@ -29,7 +12,6 @@ import hudson.model.Action;
 import hudson.model.Job;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
@@ -42,6 +24,20 @@ import io.jenkins.plugins.forensics.delta.DeltaCalculator;
 import io.jenkins.plugins.forensics.delta.DeltaCalculatorFactory;
 import io.jenkins.plugins.util.LogHandler;
 import io.jenkins.plugins.util.ValidationUtilities;
+import java.io.IOException;
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import org.apache.commons.lang3.StringUtils;
+import org.eclipse.collections.impl.factory.Sets;
+import org.jenkinsci.plugins.workflow.graph.FlowNode;
+import org.jenkinsci.plugins.workflow.steps.Step;
+import org.jenkinsci.plugins.workflow.steps.StepContext;
+import org.jenkinsci.plugins.workflow.steps.StepExecution;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 
 /**
  * Publish issues created by a static analysis build. The recorded issues are stored as a {@link ResultAction} in the
@@ -53,6 +49,7 @@ import io.jenkins.plugins.util.ValidationUtilities;
 public class PublishIssuesStep extends Step implements Serializable {
     @Serial
     private static final long serialVersionUID = -1833335402353771148L;
+
     private static final ValidationUtilities VALIDATION_UTILITIES = new ValidationUtilities();
 
     @SuppressWarnings("serial")
@@ -99,8 +96,7 @@ public class PublishIssuesStep extends Step implements Serializable {
 
         if (issues == null) {
             reports = new ArrayList<>();
-        }
-        else {
+        } else {
             reports = new ArrayList<>(issues);
         }
     }
@@ -464,27 +460,37 @@ public class PublishIssuesStep extends Step implements Serializable {
                     var labelProvider = factory.create(subReport.getId());
                     report.logInfo("-> %s", labelProvider.getToolTip(subReport.size()));
                 }
-            }
-            else {
-                report = new AnnotatedReport(StringUtils.defaultIfEmpty(step.getId(), step.reports.get(0).getId())); // use ID from single report
+            } else {
+                report = new AnnotatedReport(StringUtils.defaultIfEmpty(
+                        step.getId(), step.reports.get(0).getId())); // use ID from single report
             }
             report.addAll(step.reports);
 
             var workspace = getContext().get(FilePath.class);
             var deltaCalculator = workspace == null || step.isSkipDeltaCalculation()
                     ? new DeltaCalculator.NullDeltaCalculator()
-                    : DeltaCalculatorFactory.findDeltaCalculator(step.scm, getRun(), workspace, getTaskListener(), new FilteredLog());
+                    : DeltaCalculatorFactory.findDeltaCalculator(
+                            step.scm, getRun(), workspace, getTaskListener(), new FilteredLog());
 
             var logHandler = getLogger(report);
-            var publisher = new IssuesPublisher(getRun(), report,
-                    deltaCalculator, new HealthDescriptor(step.getHealthy(), step.getUnhealthy(),
-                            step.getMinimumSeverityAsSeverity()), step.getQualityGates(),
-                    StringUtils.defaultString(step.getName()), step.getIcon(), step.getIgnoreQualityGate(),
-                    getCharset(step.getSourceCodeEncoding()), logHandler, createResultHandler(), step.getFailOnError());
+            var publisher = new IssuesPublisher(
+                    getRun(),
+                    report,
+                    deltaCalculator,
+                    new HealthDescriptor(step.getHealthy(), step.getUnhealthy(), step.getMinimumSeverityAsSeverity()),
+                    step.getQualityGates(),
+                    StringUtils.defaultString(step.getName()),
+                    step.getIcon(),
+                    step.getIgnoreQualityGate(),
+                    getCharset(step.getSourceCodeEncoding()),
+                    logHandler,
+                    createResultHandler(),
+                    step.getFailOnError());
             var action = publisher.attachAction(step.getTrendChartType());
 
             if (!step.isSkipPublishingChecks()) {
-                var checksPublisher = new WarningChecksPublisher(action, getTaskListener(), getContext().get(ChecksInfo.class));
+                var checksPublisher = new WarningChecksPublisher(
+                        action, getTaskListener(), getContext().get(ChecksInfo.class));
                 checksPublisher.publishChecks(step.getChecksAnnotationScope());
             }
 
@@ -497,8 +503,9 @@ public class PublishIssuesStep extends Step implements Serializable {
         }
 
         private LogHandler getLogger(final AnnotatedReport annotatedReport) throws InterruptedException {
-            var toolName = new LabelProviderFactory().create(annotatedReport.getId(),
-                    StringUtils.defaultString(step.getName())).getName();
+            var toolName = new LabelProviderFactory()
+                    .create(annotatedReport.getId(), StringUtils.defaultString(step.getName()))
+                    .getName();
             var logHandler = new LogHandler(getTaskListener(), toolName, annotatedReport.getLogger());
             logHandler.setQuiet(step.isQuiet());
 
@@ -517,7 +524,9 @@ public class PublishIssuesStep extends Step implements Serializable {
     public static class Descriptor extends AnalysisStepDescriptor {
         @Override
         public Set<Class<?>> getRequiredContext() {
-            return Sets.immutable.of(FlowNode.class, Run.class, TaskListener.class).castToSet();
+            return Sets.immutable
+                    .of(FlowNode.class, Run.class, TaskListener.class)
+                    .castToSet();
         }
 
         @Override

@@ -1,9 +1,8 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.WebElement;
-
-import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 /**
  * Representation of a table row displaying the blames details for an issue.
@@ -29,8 +28,7 @@ public class BlamesTableRow extends BaseIssuesTableRow {
             email = StringUtils.EMPTY;
             commit = StringUtils.EMPTY;
             added = StringUtils.EMPTY;
-        }
-        else {
+        } else {
             author = getCellContent(AUTHOR);
             email = getCellContent(EMAIL);
             commit = getCellContent(COMMIT);

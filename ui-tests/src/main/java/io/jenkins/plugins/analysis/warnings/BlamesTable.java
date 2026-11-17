@@ -11,10 +11,8 @@ public class BlamesTable extends AbstractIssuesTable<BlamesTableRow> {
     /**
      * Creates a new {@link BlamesTable} instance.
      *
-     * @param tab
-     *         the {@link WebElement tab} that contains this {@link BlamesTable}
-     * @param analysisResult
-     *         the {@link AnalysisResult} ppage that contains this {@link BlamesTable}
+     * @param tab the {@link WebElement tab} that contains this {@link BlamesTable}
+     * @param analysisResult the {@link AnalysisResult} ppage that contains this {@link BlamesTable}
      */
     public BlamesTable(final WebElement tab, final AnalysisResult analysisResult) {
         super(tab, analysisResult, "blames");

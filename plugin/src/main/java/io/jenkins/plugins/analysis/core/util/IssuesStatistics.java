@@ -1,11 +1,6 @@
 package io.jenkins.plugins.analysis.core.util;
 
-import org.apache.commons.lang3.StringUtils;
-import org.eclipse.collections.api.map.ImmutableMap;
-import org.eclipse.collections.impl.factory.Maps;
-
 import edu.hm.hafner.analysis.Severity;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
@@ -13,7 +8,9 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.function.Function;
-
+import org.apache.commons.lang3.StringUtils;
+import org.eclipse.collections.api.map.ImmutableMap;
+import org.eclipse.collections.impl.factory.Maps;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
 import org.jvnet.localizer.Localizable;
 
@@ -47,16 +44,26 @@ public class IssuesStatistics implements Serializable {
 
     @SuppressWarnings("serial")
     private final Map<Severity, Integer> totalSizeBySeverity = new HashMap<>();
+
     @SuppressWarnings("serial")
     private final Map<Severity, Integer> newSizeBySeverity = new HashMap<>();
 
     @SuppressWarnings("checkstyle:ParameterNumber")
     IssuesStatistics(
-            final int totalErrorSize, final int totalHighSize, final int totalNormalSize, final int totalLowSize,
+            final int totalErrorSize,
+            final int totalHighSize,
+            final int totalNormalSize,
+            final int totalLowSize,
             final int totalModifiedSize,
-            final int newErrorSize, final int newHighSize, final int newNormalSize, final int newLowSize,
+            final int newErrorSize,
+            final int newHighSize,
+            final int newNormalSize,
+            final int newLowSize,
             final int newModifiedSize,
-            final int deltaErrorSize, final int deltaHighSize, final int deltaNormalSize, final int deltaLowSize,
+            final int deltaErrorSize,
+            final int deltaHighSize,
+            final int deltaNormalSize,
+            final int deltaLowSize,
             final int fixedSize) {
         this.totalErrorSize = totalErrorSize;
         this.totalHighSize = totalHighSize;
@@ -274,9 +281,21 @@ public class IssuesStatistics implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(
-                totalErrorSize, totalHighSize, totalNormalSize, totalLowSize, totalModifiedSize,
-                newErrorSize, newHighSize, newNormalSize, newLowSize, totalModifiedSize,
-                deltaErrorSize, deltaHighSize, deltaNormalSize, deltaLowSize, fixedSize);
+                totalErrorSize,
+                totalHighSize,
+                totalNormalSize,
+                totalLowSize,
+                totalModifiedSize,
+                newErrorSize,
+                newHighSize,
+                newNormalSize,
+                newLowSize,
+                totalModifiedSize,
+                deltaErrorSize,
+                deltaHighSize,
+                deltaNormalSize,
+                deltaLowSize,
+                fixedSize);
     }
 
     /**
@@ -309,8 +328,7 @@ public class IssuesStatistics implements Serializable {
         private final SerializableGetter sizeGetter;
         private final String url;
 
-        StatisticProperties(final Localizable displayName, final SerializableGetter sizeGetter,
-                final String url) {
+        StatisticProperties(final Localizable displayName, final SerializableGetter sizeGetter, final String url) {
             this.displayName = displayName;
             this.sizeGetter = sizeGetter;
             this.url = url;

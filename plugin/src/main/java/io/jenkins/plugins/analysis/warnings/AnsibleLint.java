@@ -1,14 +1,12 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.io.Serial;
-
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.jenkinsci.Symbol;
 import hudson.Extension;
-
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.SymbolIconLabelProvider;
+import java.io.Serial;
+import org.jenkinsci.Symbol;
+import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
  * Provides a parser and customized messages for the Ansible Lint Compiler.
@@ -18,6 +16,7 @@ import io.jenkins.plugins.analysis.core.model.SymbolIconLabelProvider;
 public class AnsibleLint extends AnalysisModelParser {
     @Serial
     private static final long serialVersionUID = -838846658095256811L;
+
     private static final String ID = "ansiblelint";
 
     /** Creates a new instance of {@link AnsibleLint}. */
@@ -38,8 +37,8 @@ public class AnsibleLint extends AnalysisModelParser {
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new SymbolIconLabelProvider(getId(), getDisplayName(), getDescriptionProvider(),
-                    "symbol-cib-ansible plugin-warnings-ng");
+            return new SymbolIconLabelProvider(
+                    getId(), getDisplayName(), getDescriptionProvider(), "symbol-cib-ansible plugin-warnings-ng");
         }
     }
 }

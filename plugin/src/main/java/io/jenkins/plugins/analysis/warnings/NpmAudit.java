@@ -4,10 +4,9 @@ import hudson.Extension;
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.SymbolIconLabelProvider;
+import java.io.Serial;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
-
-import java.io.Serial;
 
 /**
  * Provides a parser and customized messages for npm audit.
@@ -17,6 +16,7 @@ import java.io.Serial;
 public class NpmAudit extends AnalysisModelParser {
     @Serial
     private static final long serialVersionUID = 5195421262070629304L;
+
     private static final String ID = "npm-audit";
 
     /** Creates a new instance of {@link NpmAudit}. */
@@ -39,7 +39,8 @@ public class NpmAudit extends AnalysisModelParser {
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new SymbolIconLabelProvider(ID, getDisplayName(), getDescriptionProvider(), "symbol-cib-npm plugin-warnings-ng");
+            return new SymbolIconLabelProvider(
+                    ID, getDisplayName(), getDescriptionProvider(), "symbol-cib-npm plugin-warnings-ng");
         }
 
         @Override

@@ -1,15 +1,13 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import org.apache.commons.lang3.StringUtils;
-
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
-
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Groups issue by a specified property, like package name or origin. Provides statistics for this property in order to
@@ -37,8 +35,11 @@ public class PropertyStatistics {
      * @param propertyFormatter
      *         the formatter that shows the property
      */
-    PropertyStatistics(final Report report, final Report newIssues,
-            final String property, final Function<String, String> propertyFormatter) {
+    PropertyStatistics(
+            final Report report,
+            final Report newIssues,
+            final String property,
+            final Function<String, String> propertyFormatter) {
         this.property = property;
         this.propertyFormatter = propertyFormatter;
         issuesByProperty = report.groupByProperty(property);
@@ -140,9 +141,7 @@ public class PropertyStatistics {
      * @return the new number of issues
      */
     public long getNewCount(final String key) {
-        return getNewReportFor(key)
-                .map(Report::size)
-                .orElse(0);
+        return getNewReportFor(key).map(Report::size).orElse(0);
     }
 
     /**

@@ -1,13 +1,11 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
-import org.junit.jupiter.api.Test;
-import org.junitpioneer.jupiter.Issue;
-
-import java.util.Collections;
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
-
-import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
+import java.util.Collections;
+import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.Issue;
 
 /**
  * Tests the class {@link GroovyScript}.

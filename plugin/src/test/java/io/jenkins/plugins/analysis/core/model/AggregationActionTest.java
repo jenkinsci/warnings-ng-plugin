@@ -1,25 +1,21 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import org.eclipse.collections.impl.factory.Lists;
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import edu.hm.hafner.analysis.Severity;
-
+import hudson.model.Action;
+import hudson.model.Run;
+import io.jenkins.plugins.analysis.core.restapi.AggregationApi;
+import io.jenkins.plugins.analysis.core.restapi.ToolApi;
+import io.jenkins.plugins.analysis.core.testutil.JobStubs;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import hudson.model.Action;
-import hudson.model.Run;
-
-import io.jenkins.plugins.analysis.core.restapi.AggregationApi;
-import io.jenkins.plugins.analysis.core.restapi.ToolApi;
-import io.jenkins.plugins.analysis.core.testutil.JobStubs;
-
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import org.eclipse.collections.impl.factory.Lists;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class {@link AggregationAction}.
@@ -66,8 +62,7 @@ class AggregationActionTest {
         Run<?, ?> owner = mock(Run.class);
         List<ResultAction> actions = Lists.fixedSize.of(
                 createAction(JobStubs.SPOT_BUGS_ID, JobStubs.SPOT_BUGS_NAME, SIZE, Severity.ERROR),
-                createAction(JobStubs.CHECK_STYLE_NAME, JobStubs.CHECK_STYLE_NAME, SIZE, Severity.WARNING_HIGH)
-        );
+                createAction(JobStubs.CHECK_STYLE_NAME, JobStubs.CHECK_STYLE_NAME, SIZE, Severity.WARNING_HIGH));
         when(owner.getActions(any())).thenAnswer(i -> actions);
         var action = new AggregationAction();
         action.onLoad(owner);

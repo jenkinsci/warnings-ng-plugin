@@ -1,24 +1,20 @@
 package io.jenkins.plugins.analysis.warnings.tasks;
 
-import org.apache.commons.lang3.StringUtils;
-
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.Report;
-
+import hudson.remoting.VirtualChannel;
+import io.jenkins.plugins.analysis.core.util.FileFinder;
+import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.CaseMode;
+import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.MatcherMode;
+import io.jenkins.plugins.util.ValidationUtilities;
 import java.io.File;
 import java.io.Serial;
 import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import hudson.remoting.VirtualChannel;
 import jenkins.MasterToSlaveFileCallable;
-
-import io.jenkins.plugins.analysis.core.util.FileFinder;
-import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.CaseMode;
-import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.MatcherMode;
-import io.jenkins.plugins.util.ValidationUtilities;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Searches in the workspace for files matching the given include and exclude pattern and scans each file for open
@@ -58,8 +54,14 @@ class AgentScanner extends MasterToSlaveFileCallable<Report> {
      *         the encoding to use to read source files
      */
     @SuppressWarnings("ParameterNumber")
-    AgentScanner(final String highTasks, final String normalTasks, final String lowTasks, final CaseMode caseMode,
-            final MatcherMode matcherMode, final String includePattern, final String excludePattern,
+    AgentScanner(
+            final String highTasks,
+            final String normalTasks,
+            final String lowTasks,
+            final CaseMode caseMode,
+            final MatcherMode matcherMode,
+            final String includePattern,
+            final String excludePattern,
             final String sourceCodeEncoding) {
         super();
 
@@ -77,7 +79,8 @@ class AgentScanner extends MasterToSlaveFileCallable<Report> {
     @SuppressWarnings("PMD.DoNotUseThreads")
     public Report invoke(final File workspace, final VirtualChannel channel) {
         var report = new Report();
-        report.logInfo("Searching for files in workspace '%s' that match the include pattern '%s' and exclude pattern '%s'",
+        report.logInfo(
+                "Searching for files in workspace '%s' that match the include pattern '%s' and exclude pattern '%s'",
                 workspace, includePattern, excludePattern);
 
         var fileFinder = new FileFinder(includePattern, excludePattern);
@@ -116,7 +119,8 @@ class AgentScanner extends MasterToSlaveFileCallable<Report> {
         return builder.build();
     }
 
-    @Override @SuppressWarnings("all")
+    @Override
+    @SuppressWarnings("all")
     public boolean equals(final Object o) {
         if (this == o) {
             return true;
@@ -149,10 +153,12 @@ class AgentScanner extends MasterToSlaveFileCallable<Report> {
             return false;
         }
         return sourceCodeEncoding != null
-                ? sourceCodeEncoding.equals(that.sourceCodeEncoding) : that.sourceCodeEncoding == null;
+                ? sourceCodeEncoding.equals(that.sourceCodeEncoding)
+                : that.sourceCodeEncoding == null;
     }
 
-    @Override @SuppressWarnings("all")
+    @Override
+    @SuppressWarnings("all")
     public int hashCode() {
         int result = highTasks != null ? highTasks.hashCode() : 0;
         result = 31 * result + (normalTasks != null ? normalTasks.hashCode() : 0);

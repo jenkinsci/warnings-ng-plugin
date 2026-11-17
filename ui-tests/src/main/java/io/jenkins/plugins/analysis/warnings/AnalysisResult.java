@@ -1,20 +1,17 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import org.apache.commons.lang3.StringUtils;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.Select;
-
 import com.google.inject.Injector;
-
 import java.net.URL;
 import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
-
+import org.apache.commons.lang3.StringUtils;
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.PageObject;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.Select;
 
 /**
  * {@link PageObject} representing the details page of the static analysis tool results.
@@ -32,10 +29,8 @@ public class AnalysisResult extends PageObject {
     /**
      * Creates an instance of the page displaying the details of the issues for a specific tool.
      *
-     * @param parent
-     *         a finished build configured with a static analysis tool
-     * @param id
-     *         the type of the result page (e.g. simian, checkstyle, cpd, etc.)
+     * @param parent a finished build configured with a static analysis tool
+     * @param id the type of the result page (e.g. simian, checkstyle, cpd, etc.)
      */
     public AnalysisResult(final Build parent, final String id) {
         super(parent, parent.url(id));
@@ -47,12 +42,9 @@ public class AnalysisResult extends PageObject {
      * Creates an instance of the page displaying the details of the issues. This constructor is used for injecting a
      * filtered instance of the page (e.g., by clicking on links which open a filtered instance of a AnalysisResult.
      *
-     * @param injector
-     *         the injector of the page
-     * @param url
-     *         the url of the page
-     * @param id
-     *         the id of the result page (e.g., simian or cpd)
+     * @param injector the injector of the page
+     * @param url the url of the page
+     * @param id the id of the result page (e.g., simian or cpd)
      */
     @SuppressWarnings("unused") // Required to dynamically create a page object using reflection
     public AnalysisResult(final Injector injector, final URL url, final String id) {
@@ -114,9 +106,7 @@ public class AnalysisResult extends PageObject {
         return Integer.parseInt(StringUtils.split(total)[column]);
     }
 
-    /**
-     * Reloads the {@link PageObject}.
-     */
+    /** Reloads the {@link PageObject}. */
     public void reload() {
         open();
     }
@@ -124,8 +114,7 @@ public class AnalysisResult extends PageObject {
     /**
      * Opens the analysis details page and selects the specified tab.
      *
-     * @param tab
-     *         the tab that should be selected
+     * @param tab the tab that should be selected
      */
     public void openTab(final Tab tab) {
         open();
@@ -166,9 +155,7 @@ public class AnalysisResult extends PageObject {
      * Opens the analysis details page, selects the tab {@link Tab#CATEGORIES} and returns the {@link PageObject} of the
      * category table.
      *
-     * @param tab
-     *         the tab to open
-     *
+     * @param tab the tab to open
      * @return page object of the categories table.
      */
     public PropertyDetailsTable openPropertiesTable(final Tab tab) {
@@ -205,13 +192,9 @@ public class AnalysisResult extends PageObject {
     /**
      * Opens a link on the page leading to another page.
      *
-     * @param element
-     *         the WebElement representing the link to be clicked
-     * @param type
-     *         the class of the PageObject which represents the page to which the link leads to
-     * @param <T>
-     *         actual type of the page object
-     *
+     * @param element the WebElement representing the link to be clicked
+     * @param type the class of the PageObject which represents the page to which the link leads to
+     * @param <T> actual type of the page object
      * @return the instance of the PageObject to which the link leads to
      */
     public <T extends PageObject> T openLinkOnSite(final WebElement element, final Class<T> type) {
@@ -232,8 +215,8 @@ public class AnalysisResult extends PageObject {
     }
 
     /**
-     * Return the information label of the table in the currently active tab.
-     * This labels shows information about the current visible number of table elements.
+     * Return the information label of the table in the currently active tab. This labels shows information about the
+     * current visible number of table elements.
      *
      * @return the element that shows information about the current visible number of table elements
      */
@@ -271,9 +254,7 @@ public class AnalysisResult extends PageObject {
     /**
      * Opens a link to a filtered version of this AnalysisResult by clicking on a link.
      *
-     * @param element
-     *         the WebElement representing the link to be clicked
-     *
+     * @param element the WebElement representing the link to be clicked
      * @return the instance of the filtered AnalysisResult
      */
     public AnalysisResult openFilterLinkOnSite(final WebElement element) {
@@ -292,9 +273,7 @@ public class AnalysisResult extends PageObject {
         return find(By.id("trend-carousel"));
     }
 
-    /**
-     * Clicks the next-button to cycle through the Trend Charts.
-     */
+    /** Clicks the next-button to cycle through the Trend Charts. */
     public void clickNextOnTrendCarousel() {
         WebElement trendChart = getTrendChart();
         WebElement activeChart = trendChart.findElement(By.className("active"));
@@ -305,9 +284,7 @@ public class AnalysisResult extends PageObject {
     /**
      * Checks if the trendChart is visible on the Page.
      *
-     * @param chartName
-     *         id of the Chart we want to evaluate.
-     *
+     * @param chartName id of the Chart we want to evaluate.
      * @return boolean value, that describes the visibility of the Trendchart.
      */
     public boolean trendChartIsDisplayed(final String chartName) {
@@ -318,9 +295,7 @@ public class AnalysisResult extends PageObject {
     /**
      * Checks if the trendChart is visible on the Page.
      *
-     * @param elementId
-     *         id of the Chart we want to return.
-     *
+     * @param elementId id of the Chart we want to return.
      * @return TrendChart as JSON String.
      */
     public String getTrendChartById(final String elementId) {
@@ -337,9 +312,7 @@ public class AnalysisResult extends PageObject {
         throw new NoSuchElementException("Found no trend chart with ID '%s''" + elementId);
     }
 
-    /**
-     * Enum representing the possible tabs which can be opened in the {@link AnalysisResult} details view.
-     */
+    /** Enum representing the possible tabs which can be opened in the {@link AnalysisResult} details view. */
     public enum Tab {
         TOOLS("origin"),
         MODULES("moduleName"),
@@ -372,12 +345,9 @@ public class AnalysisResult extends PageObject {
         /**
          * Returns the enum element that has the specified href property.
          *
-         * @param href
-         *         the href to select the tab
-         *
+         * @param href the href to select the tab
          * @return the tab
-         * @throws NoSuchElementException
-         *         if the tab could not be found
+         * @throws NoSuchElementException if the tab could not be found
          */
         static Tab valueWithHref(final String href) {
             for (Tab tab : values()) {

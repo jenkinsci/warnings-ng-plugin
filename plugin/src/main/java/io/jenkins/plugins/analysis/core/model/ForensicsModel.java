@@ -3,10 +3,6 @@ package io.jenkins.plugins.analysis.core.model;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.VisibleForTesting;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
 import io.jenkins.plugins.datatables.TableColumn;
 import io.jenkins.plugins.datatables.TableColumn.ColumnBuilder;
@@ -14,6 +10,8 @@ import io.jenkins.plugins.datatables.TableColumn.ColumnCss;
 import io.jenkins.plugins.datatables.TableColumn.ColumnType;
 import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
 import io.jenkins.plugins.util.JenkinsFacade;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Provides the dynamic model for the details table that shows the source control file statistics.
@@ -40,16 +38,23 @@ public class ForensicsModel extends DetailsTableModel {
 
     private final RepositoryStatistics statistics;
 
-    ForensicsModel(final Report report, final RepositoryStatistics statistics,
-            final FileNameRenderer fileNameRenderer, final AgeBuilder ageBuilder,
+    ForensicsModel(
+            final Report report,
+            final RepositoryStatistics statistics,
+            final FileNameRenderer fileNameRenderer,
+            final AgeBuilder ageBuilder,
             final DescriptionProvider labelProvider) {
         this(report, statistics, fileNameRenderer, ageBuilder, labelProvider, new JenkinsFacade());
     }
 
     @VisibleForTesting
-    ForensicsModel(final Report report, final RepositoryStatistics statistics,
-            final FileNameRenderer fileNameRenderer, final AgeBuilder ageBuilder,
-            final DescriptionProvider labelProvider, final JenkinsFacade jenkinsFacade) {
+    ForensicsModel(
+            final Report report,
+            final RepositoryStatistics statistics,
+            final FileNameRenderer fileNameRenderer,
+            final AgeBuilder ageBuilder,
+            final DescriptionProvider labelProvider,
+            final JenkinsFacade jenkinsFacade) {
         super(report, fileNameRenderer, ageBuilder, labelProvider, jenkinsFacade);
 
         this.statistics = statistics;
@@ -68,37 +73,43 @@ public class ForensicsModel extends DetailsTableModel {
         columns.add(createFileColumn());
         columns.add(createAgeColumn());
 
-        var authorsSize = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_AuthorsSize())
+        var authorsSize = new ColumnBuilder()
+                .withHeaderLabel(Messages.Table_Column_AuthorsSize())
                 .withDataPropertyKey("authorsSize")
                 .withResponsivePriority(1)
                 .withType(ColumnType.NUMBER)
                 .build();
         columns.add(authorsSize);
-        var commitsSize = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_CommitsSize())
+        var commitsSize = new ColumnBuilder()
+                .withHeaderLabel(Messages.Table_Column_CommitsSize())
                 .withDataPropertyKey("commitsSize")
                 .withResponsivePriority(1)
                 .withType(ColumnType.NUMBER)
                 .build();
         columns.add(commitsSize);
-        var modifiedAt = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_LastCommit())
+        var modifiedAt = new ColumnBuilder()
+                .withHeaderLabel(Messages.Table_Column_LastCommit())
                 .withDataPropertyKey("modifiedAt")
                 .withResponsivePriority(50)
                 .withHeaderClass(ColumnCss.DATE)
                 .build();
         columns.add(modifiedAt);
-        var addedAt = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_AddedAt())
+        var addedAt = new ColumnBuilder()
+                .withHeaderLabel(Messages.Table_Column_AddedAt())
                 .withDataPropertyKey("addedAt")
                 .withResponsivePriority(50)
                 .withHeaderClass(ColumnCss.DATE)
                 .build();
         columns.add(addedAt);
-        var linesOfCode = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_LOC())
+        var linesOfCode = new ColumnBuilder()
+                .withHeaderLabel(Messages.Table_Column_LOC())
                 .withDataPropertyKey("linesOfCode")
                 .withResponsivePriority(25)
                 .withType(ColumnType.NUMBER)
                 .build();
         columns.add(linesOfCode);
-        var churn = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_Churn())
+        var churn = new ColumnBuilder()
+                .withHeaderLabel(Messages.Table_Column_Churn())
                 .withDataPropertyKey("churn")
                 .withResponsivePriority(25)
                 .withType(ColumnType.NUMBER)
@@ -111,8 +122,8 @@ public class ForensicsModel extends DetailsTableModel {
 
     @Override
     public ForensicsRow getRow(final Issue issue) {
-        var row = new ForensicsRow(getAgeBuilder(), getFileNameRenderer(), getDescriptionProvider(),
-                issue, getJenkinsFacade());
+        var row = new ForensicsRow(
+                getAgeBuilder(), getFileNameRenderer(), getDescriptionProvider(), issue, getJenkinsFacade());
         if (statistics.contains(issue.getFileName())) {
             var result = statistics.get(issue.getFileName());
             row.setAuthorsSize(String.valueOf(result.getNumberOfAuthors()));
@@ -121,8 +132,7 @@ public class ForensicsModel extends DetailsTableModel {
             row.setAddedAt(result.getCreationTime());
             row.setLinesOfCode(result.getLinesOfCode());
             row.setChurn(result.getAbsoluteChurn());
-        }
-        else {
+        } else {
             row.setAuthorsSize(UNDEFINED);
             row.setCommitsSize(UNDEFINED);
             row.setModifiedAt(0);
@@ -145,8 +155,12 @@ public class ForensicsModel extends DetailsTableModel {
         private int linesOfCode;
         private int churn;
 
-        ForensicsRow(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
-                final DescriptionProvider descriptionProvider, final Issue issue, final JenkinsFacade jenkinsFacade) {
+        ForensicsRow(
+                final AgeBuilder ageBuilder,
+                final FileNameRenderer fileNameRenderer,
+                final DescriptionProvider descriptionProvider,
+                final Issue issue,
+                final JenkinsFacade jenkinsFacade) {
             super(ageBuilder, fileNameRenderer, descriptionProvider, issue, jenkinsFacade);
         }
 

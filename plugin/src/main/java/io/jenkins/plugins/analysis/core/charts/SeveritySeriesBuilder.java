@@ -2,11 +2,9 @@ package io.jenkins.plugins.analysis.core.charts;
 
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.echarts.SeriesBuilder;
-
+import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import java.util.HashMap;
 import java.util.Map;
-
-import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 
 /**
  * Builds the series for a stacked line chart showing all issues by severity.

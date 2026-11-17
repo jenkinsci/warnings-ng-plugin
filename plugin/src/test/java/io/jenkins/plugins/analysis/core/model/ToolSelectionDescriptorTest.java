@@ -1,22 +1,19 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import org.assertj.core.util.Lists;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
-
-import java.util.ArrayList;
-import java.util.List;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import hudson.model.BuildableItem;
 import hudson.model.Item;
 import hudson.model.Job;
-
 import io.jenkins.plugins.analysis.core.model.ToolSelection.ToolSelectionDescriptor;
 import io.jenkins.plugins.util.JenkinsFacade;
-
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import java.util.ArrayList;
+import java.util.List;
+import org.assertj.core.util.Lists;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 /**
  * Tests the class {@link ToolSelectionDescriptor}.

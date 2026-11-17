@@ -1,23 +1,19 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.junitpioneer.jupiter.Issue;
-import jenkins.model.experimentalflags.UserExperimentalFlag;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import edu.hm.hafner.analysis.IssueBuilder;
-
-import java.util.Locale;
-
 import hudson.model.Job;
 import hudson.model.Run;
-
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.CompositeLocalizable;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.DefaultAgeBuilder;
-
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
-import static org.mockito.Mockito.*;
+import java.util.Locale;
+import jenkins.model.experimentalflags.UserExperimentalFlag;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.Issue;
 
 /**
  * Tests the class {@link StaticAnalysisLabelProvider}.
@@ -52,7 +48,8 @@ class StaticAnalysisLabelProviderTest {
         assertThat(labelProvider).hasLinkName("Static Analysis Warnings");
     }
 
-    @Test @Issue("JENKINS-61834, JENKINS-67245")
+    @Test
+    @Issue("JENKINS-61834, JENKINS-67245")
     void shouldNotEscapeHtmlEntitiesAnymore() {
         var labelProvider = new StaticAnalysisLabelProvider(ID, "C++");
 
@@ -98,8 +95,9 @@ class StaticAnalysisLabelProviderTest {
     @Test
     void shouldUsePlainLinkNameOnNewBuildPage() {
         try (var mockedFlag = mockStatic(UserExperimentalFlag.class)) {
-            mockedFlag.when(() -> UserExperimentalFlag.getFlagValueForCurrentUser(
-                    "jenkins.model.experimentalflags.NewBuildPageUserExperimentalFlag"))
+            mockedFlag
+                    .when(() -> UserExperimentalFlag.getFlagValueForCurrentUser(
+                            "jenkins.model.experimentalflags.NewBuildPageUserExperimentalFlag"))
                     .thenReturn(Boolean.TRUE);
 
             var namedLabelProvider = new StaticAnalysisLabelProvider(ID, NAME);
@@ -130,15 +128,13 @@ class StaticAnalysisLabelProviderTest {
         @Test
         void shouldCreateAgeLinkForPreviousBuilds() {
             var builder = new DefaultAgeBuilder(10, "checkstyle/", createProject());
-            assertThat(builder.apply(1))
-                    .isEqualTo("<a href=\"../../1/checkstyle\">10</a>");
-            assertThat(builder.apply(9))
-                    .isEqualTo("<a href=\"../../9/checkstyle\">2</a>");
-            assertThat(builder.apply(10))
-                    .isEqualTo("1");
+            assertThat(builder.apply(1)).isEqualTo("<a href=\"../../1/checkstyle\">10</a>");
+            assertThat(builder.apply(9)).isEqualTo("<a href=\"../../9/checkstyle\">2</a>");
+            assertThat(builder.apply(10)).isEqualTo("1");
         }
 
-        @Test @Issue("JENKINS-65845")
+        @Test
+        @Issue("JENKINS-65845")
         void shouldCreatePlainTextForDeletedBuilds() {
             var builder = new DefaultAgeBuilder(10, "checkstyle/", mock(Job.class));
             assertThat(builder.apply(1)).isEqualTo("10");
@@ -149,12 +145,9 @@ class StaticAnalysisLabelProviderTest {
         @Test
         void shouldCreateAgeLinkForSubDetails() {
             var builder = new DefaultAgeBuilder(10, "checkstyle/package.1234/", createProject());
-            assertThat(builder.apply(1))
-                    .isEqualTo("<a href=\"../../../1/checkstyle\">10</a>");
-            assertThat(builder.apply(9))
-                    .isEqualTo("<a href=\"../../../9/checkstyle\">2</a>");
-            assertThat(builder.apply(10))
-                    .isEqualTo("1");
+            assertThat(builder.apply(1)).isEqualTo("<a href=\"../../../1/checkstyle\">10</a>");
+            assertThat(builder.apply(9)).isEqualTo("<a href=\"../../../9/checkstyle\">2</a>");
+            assertThat(builder.apply(10)).isEqualTo("1");
         }
     }
 

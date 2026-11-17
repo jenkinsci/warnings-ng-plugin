@@ -19,10 +19,8 @@ public final class StaticAnalysisIssuesPerToolAndJobPortlet extends AbstractDash
     /**
      * Creates a new portlet page object.
      *
-     * @param parent
-     *         parent page object that contains this portlet
-     * @param path
-     *         absolute path to the page area
+     * @param parent parent page object that contains this portlet
+     * @param path absolute path to the page area
      */
     public StaticAnalysisIssuesPerToolAndJobPortlet(final DashboardView parent, final String path) {
         super(parent, path);

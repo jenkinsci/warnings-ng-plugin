@@ -1,10 +1,9 @@
 package io.jenkins.plugins.analysis.core.util;
 
-import java.util.Collection;
-
 import io.jenkins.plugins.util.QualityGateEvaluator;
 import io.jenkins.plugins.util.QualityGateResult;
 import io.jenkins.plugins.util.QualityGateStatus;
+import java.util.Collection;
 
 /**
  * Evaluates a given set of quality gates.
@@ -22,8 +21,8 @@ public class WarningsQualityGateEvaluator extends QualityGateEvaluator<WarningsQ
      * @param statistics
      *         the statistics to evaluate
      */
-    public WarningsQualityGateEvaluator(final Collection<? extends WarningsQualityGate> qualityGates,
-            final IssuesStatistics statistics) {
+    public WarningsQualityGateEvaluator(
+            final Collection<? extends WarningsQualityGate> qualityGates, final IssuesStatistics statistics) {
         super(qualityGates);
 
         this.statistics = statistics;
@@ -36,12 +35,10 @@ public class WarningsQualityGateEvaluator extends QualityGateEvaluator<WarningsQ
             var actualValue = String.valueOf(actualSize);
             if (actualSize >= qualityGate.getThreshold()) {
                 result.add(qualityGate, qualityGate.getStatus(), actualValue);
-            }
-            else {
+            } else {
                 result.add(qualityGate, QualityGateStatus.PASSED, actualValue);
             }
-        }
-        else {
+        } else {
             result.add(qualityGate, QualityGateStatus.INACTIVE, "Threshold too small: " + qualityGate.getThreshold());
         }
     }

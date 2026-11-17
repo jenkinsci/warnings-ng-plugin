@@ -1,19 +1,16 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-import java.util.Collections;
-
-import org.kohsuke.stapler.StaplerRequest2;
-import org.kohsuke.stapler.StaplerResponse2;
-import hudson.model.Job;
-import hudson.model.Run;
-
-import io.jenkins.plugins.analysis.core.util.TrendChartType;
-
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
+
+import hudson.model.Job;
+import hudson.model.Run;
+import io.jenkins.plugins.analysis.core.util.TrendChartType;
+import java.io.IOException;
+import java.util.Collections;
+import org.junit.jupiter.api.Test;
+import org.kohsuke.stapler.StaplerRequest2;
+import org.kohsuke.stapler.StaplerResponse2;
 
 /**
  * Tests the class {@link JobAction}.
@@ -100,21 +97,22 @@ class JobActionTest {
     void shouldFailBrokenUrl() {
         var illegalUrl = "javascript:alert(document.domain)";
 
-        assertThatIllegalArgumentException().isThrownBy(
-                () -> new JobAction(mock(Job.class), mock(StaticAnalysisLabelProvider.class), 1,
-                        TrendChartType.TOOLS_ONLY, illegalUrl)
-        );
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> new JobAction(
+                        mock(Job.class),
+                        mock(StaticAnalysisLabelProvider.class),
+                        1,
+                        TrendChartType.TOOLS_ONLY,
+                        illegalUrl));
 
-        var good = new JobAction(mock(Job.class), mock(StaticAnalysisLabelProvider.class), 1,
-                TrendChartType.TOOLS_ONLY,
-                "validUrl");
+        var good = new JobAction(
+                mock(Job.class), mock(StaticAnalysisLabelProvider.class), 1, TrendChartType.TOOLS_ONLY, "validUrl");
 
         assertThat(good.readResolve()).isSameAs(good);
 
         good.setUrlName(illegalUrl);
 
-        assertThatIllegalArgumentException()
-                .isThrownBy(good::readResolve);
+        assertThatIllegalArgumentException().isThrownBy(good::readResolve);
     }
 
     private Run<?, ?> createValidReferenceBuild(final int issuesSize) {

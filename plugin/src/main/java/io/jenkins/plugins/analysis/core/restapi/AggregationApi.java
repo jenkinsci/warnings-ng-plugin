@@ -3,7 +3,6 @@ package io.jenkins.plugins.analysis.core.restapi;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 

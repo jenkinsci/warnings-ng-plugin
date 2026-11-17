@@ -11,8 +11,7 @@ final class AxRawIssue {
     private final JsonObject payload;
     private final AxIssueKind kind;
 
-    AxRawIssue(final String dashboardUrl, final String baseDir, final JsonObject payload,
-            final AxIssueKind kind) {
+    AxRawIssue(final String dashboardUrl, final String baseDir, final JsonObject payload, final AxIssueKind kind) {
         this.dashboardUrl = dashboardUrl;
         projectDir = baseDir;
         this.payload = payload;
@@ -44,7 +43,8 @@ final class AxRawIssue {
     }
 
     private boolean isJustified() {
-        return payload.has("justification") && !payload.get("justification").getAsString().isEmpty();
+        return payload.has("justification")
+                && !payload.get("justification").getAsString().isEmpty();
     }
 
     boolean isSuppressedOrJustified() {

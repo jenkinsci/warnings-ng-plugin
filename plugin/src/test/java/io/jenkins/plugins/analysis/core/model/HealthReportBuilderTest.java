@@ -1,20 +1,16 @@
 package io.jenkins.plugins.analysis.core.model;
 
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
+import static org.mockito.Mockito.*;
+
+import edu.hm.hafner.analysis.Severity;
+import hudson.model.HealthReport;
+import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
+import java.util.Map;
 import org.eclipse.collections.impl.factory.Maps;
 import org.junit.jupiter.api.Test;
 import org.junitpioneer.jupiter.Issue;
-
-import edu.hm.hafner.analysis.Severity;
-
-import java.util.Map;
-
 import org.jvnet.localizer.Localizable;
-import hudson.model.HealthReport;
-
-import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
-
-import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * Test {@link HealthReportBuilder}.
@@ -170,8 +166,7 @@ class HealthReportBuilderTest {
      */
     @Test
     void shouldReturnDescriptionForNoItem() {
-        var report = createValidHealthReport(4, 10, Severity.WARNING_HIGH,
-                0, 0, 0, 0);
+        var report = createValidHealthReport(4, 10, Severity.WARNING_HIGH, 0, 0, 0, 0);
         assertThat(report.getDescription()).isEqualTo(HEALTH_REPORT_MESSAGE);
     }
 
@@ -180,8 +175,7 @@ class HealthReportBuilderTest {
      */
     @Test
     void shouldReturnDescriptionForSingleItem() {
-        var report = createValidHealthReport(4, 10, Severity.WARNING_HIGH,
-                1, 0, 0, 1);
+        var report = createValidHealthReport(4, 10, Severity.WARNING_HIGH, 1, 0, 0, 1);
         assertThat(report.getDescription()).isEqualTo(HEALTH_REPORT_MESSAGE);
     }
 
@@ -190,8 +184,7 @@ class HealthReportBuilderTest {
      */
     @Test
     void shouldReturnDescriptionForMultipleItem() {
-        var report = createValidHealthReport(4, 10, Severity.WARNING_HIGH,
-                10, 30, 60, 10);
+        var report = createValidHealthReport(4, 10, Severity.WARNING_HIGH, 10, 30, 60, 10);
         assertThat(report.getDescription()).isEqualTo(HEALTH_REPORT_MESSAGE);
     }
 
@@ -216,17 +209,33 @@ class HealthReportBuilderTest {
      *
      * @return the {@link HealthReport} under test
      */
-    private HealthReport createValidHealthReport(final int healthyThreshold, final int unhealthyThreshold,
-            final Severity priority, final int highSize, final int normalSize, final int lowSize,
+    private HealthReport createValidHealthReport(
+            final int healthyThreshold,
+            final int unhealthyThreshold,
+            final Severity priority,
+            final int highSize,
+            final int normalSize,
+            final int lowSize,
             final int expectedRelevantIssuesCount) {
-        var report = createHealthReport(healthyThreshold, unhealthyThreshold, priority,
-                highSize, normalSize, lowSize, expectedRelevantIssuesCount);
+        var report = createHealthReport(
+                healthyThreshold,
+                unhealthyThreshold,
+                priority,
+                highSize,
+                normalSize,
+                lowSize,
+                expectedRelevantIssuesCount);
         assertThat(report).isNotNull();
         return report;
     }
 
-    private HealthReport createHealthReport(final int healthyThreshold, final int unhealthyThreshold,
-            final Severity priority, final int highSize, final int normalSize, final int lowSize,
+    private HealthReport createHealthReport(
+            final int healthyThreshold,
+            final int unhealthyThreshold,
+            final Severity priority,
+            final int highSize,
+            final int normalSize,
+            final int lowSize,
             final int expectedRelevantIssuesCount) {
         var healthDescriptor = new HealthDescriptor(healthyThreshold, unhealthyThreshold, priority);
         var builder = new HealthReportBuilder();

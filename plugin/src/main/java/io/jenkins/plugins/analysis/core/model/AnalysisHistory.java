@@ -4,15 +4,12 @@ import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.echarts.BuildResult;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
-
+import hudson.model.Run;
+import io.jenkins.plugins.analysis.core.charts.JenkinsBuild;
+import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-
-import hudson.model.Run;
-
-import io.jenkins.plugins.analysis.core.charts.JenkinsBuild;
-import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 
 /**
  * Provides a history of static analysis results. The history starts from a baseline build and provides access to a
@@ -119,6 +116,7 @@ public class AnalysisHistory implements History {
     private static class AnalysisResultIterator implements Iterator<BuildResult<AnalysisBuildResult>> {
         @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
         private Optional<Run<?, ?>> cursor;
+
         private final ResultSelector selector;
 
         /**
@@ -148,7 +146,8 @@ public class AnalysisHistory implements History {
                 cursor = getRunWithResult(run.getPreviousBuild(), selector);
 
                 if (resultAction.isPresent()) {
-                    return new BuildResult<>(new JenkinsBuild(run), resultAction.get().getResult());
+                    return new BuildResult<>(
+                            new JenkinsBuild(run), resultAction.get().getResult());
                 }
             }
 

@@ -22,10 +22,8 @@ public final class IssuesColumnConfiguration extends AbstractListViewColumn {
     /**
      * Creates a new issue column configuration page object.
      *
-     * @param parent
-     *         the list view that contains this column
-     * @param path
-     *         the URL of the view
+     * @param parent the list view that contains this column
+     * @param path the URL of the view
      */
     public IssuesColumnConfiguration(final ListView parent, final String path) {
         super(parent, path);
@@ -34,8 +32,7 @@ public final class IssuesColumnConfiguration extends AbstractListViewColumn {
     /**
      * Sets the name of the column.
      *
-     * @param name
-     *         the name to show as column header
+     * @param name the name to show as column header
      */
     public void setName(final String name) {
         this.name.set(name);
@@ -44,17 +41,14 @@ public final class IssuesColumnConfiguration extends AbstractListViewColumn {
     /**
      * Selects the static analysis tool for which the results should be shown.
      *
-     * @param toolId
-     *         the ID of the static analysis tool
+     * @param toolId the ID of the static analysis tool
      */
     public void filterByTool(final String toolId) {
         selectTools.check(true);
         tools.set(toolId);
     }
 
-    /**
-     * Disables the filtering by static analysis tool.
-     */
+    /** Disables the filtering by static analysis tool. */
     public void disableToolFilter() {
         selectTools.check(false);
     }
@@ -62,8 +56,7 @@ public final class IssuesColumnConfiguration extends AbstractListViewColumn {
     /**
      * Selects the type of the totals to show.
      *
-     * @param properties
-     *         the property that should be shown
+     * @param properties the property that should be shown
      */
     public void setType(final StatisticProperties properties) {
         this.type.select(properties.getDisplayName());

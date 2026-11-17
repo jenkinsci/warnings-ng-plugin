@@ -1,15 +1,12 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import edu.hm.hafner.util.VisibleForTesting;
-
-import java.io.IOException;
-import java.util.List;
-
 import hudson.model.Item;
 import hudson.model.ItemGroup;
 import hudson.model.Run;
-
 import io.jenkins.plugins.util.JenkinsFacade;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Resets the quality gate of a static analysis tool to a clean state. Provides a manual way to restart the new warnings
@@ -62,8 +59,7 @@ public class ResetQualityGateCommand {
         try {
             selectedBuild.addAction(new ResetReferenceAction(id));
             selectedBuild.save();
-        }
-        catch (IOException ignore) {
+        } catch (IOException ignore) {
             // ignore
         }
     }
@@ -93,8 +89,7 @@ public class ResetQualityGateCommand {
             return false;
         }
 
-        return selectedBuild.getActions(ResultAction.class)
-                .stream()
+        return selectedBuild.getActions(ResultAction.class).stream()
                 .filter(action -> action.getId().equals(id))
                 .findAny()
                 .filter(action -> !action.getResult().getQualityGateResult().isSuccessful())
@@ -126,8 +121,7 @@ public class ResetQualityGateCommand {
             ItemGroup<?> itemParent = item.getParent();
             if (itemParent instanceof Item) {
                 parent = itemParent;
-            }
-            else {
+            } else {
                 break;
             }
         }

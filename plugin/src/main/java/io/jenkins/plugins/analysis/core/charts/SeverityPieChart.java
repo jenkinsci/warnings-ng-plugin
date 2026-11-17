@@ -4,7 +4,6 @@ import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.echarts.PieChartModel;
 import edu.hm.hafner.echarts.PieData;
-
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 
 /**
@@ -27,7 +26,8 @@ public class SeverityPieChart {
         for (Severity severity : Severity.getPredefinedValues()) {
             int total = report.getSizeOf(severity);
             if (total > 0 || !severity.equals(Severity.ERROR)) {
-                model.add(new PieData(LocalizedSeverity.getLocalizedString(severity), total),
+                model.add(
+                        new PieData(LocalizedSeverity.getLocalizedString(severity), total),
                         SeverityPalette.mapToColor(severity).normal());
             }
         }

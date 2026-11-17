@@ -1,20 +1,17 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import static org.assertj.core.api.Assumptions.*;
+
+import hudson.tasks.Shell;
+import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
+import io.jenkins.plugins.analysis.warnings.Gcc4;
+import io.jenkins.plugins.analysis.warnings.Java;
+import java.io.IOException;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-
-import java.io.IOException;
-
-import hudson.tasks.Shell;
-
-import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
-import io.jenkins.plugins.analysis.warnings.Gcc4;
-import io.jenkins.plugins.analysis.warnings.Java;
-
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
-import static org.assertj.core.api.Assumptions.*;
 
 /**
  * Tests build on a docker container worker.
@@ -27,6 +24,7 @@ import static org.assertj.core.api.Assumptions.*;
 class DockerContainerITest extends IntegrationTestWithJenkinsPerSuite {
     @Container
     private static final AgentContainer AGENT_CONTAINER = new AgentContainer();
+
     private static final String EMPTY_PATTERN = "";
 
     @Test
@@ -106,7 +104,7 @@ class DockerContainerITest extends IntegrationTestWithJenkinsPerSuite {
         return """
                 prog: test.o
                     gcc -o prog test.o
-                
+
                 test.o: test.cpp
                     gcc -c -Wall -Wextra -O2 test.cpp
                 """;

@@ -8,11 +8,9 @@ import edu.hm.hafner.echarts.LineSeries.FilledMode;
 import edu.hm.hafner.echarts.LineSeries.StackedMode;
 import edu.hm.hafner.echarts.LinesChartModel;
 import edu.hm.hafner.echarts.LinesDataSet;
-
-import java.util.List;
-
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
+import java.util.List;
 
 /**
  * Builds the model for a trend chart showing all issues by severity for a given number of builds.
@@ -21,7 +19,8 @@ import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
  */
 public class SeverityTrendChart implements TrendChart {
     @Override
-    public LinesChartModel create(final Iterable<? extends BuildResult<AnalysisBuildResult>> results,
+    public LinesChartModel create(
+            final Iterable<? extends BuildResult<AnalysisBuildResult>> results,
             final ChartModelConfiguration configuration) {
         var builder = new SeveritySeriesBuilder();
         var dataSet = builder.createDataSet(configuration, results);
@@ -39,7 +38,8 @@ public class SeverityTrendChart implements TrendChart {
      *
      * @return the chart model
      */
-    public LinesChartModel aggregate(final List<Iterable<? extends BuildResult<AnalysisBuildResult>>> results,
+    public LinesChartModel aggregate(
+            final List<Iterable<? extends BuildResult<AnalysisBuildResult>>> results,
             final ChartModelConfiguration configuration) {
         var builder = new SeveritySeriesBuilder();
         var dataSet = builder.createAggregatedDataSet(configuration, results);
@@ -50,8 +50,9 @@ public class SeverityTrendChart implements TrendChart {
     private LinesChartModel createChartFromDataSet(final LinesDataSet dataSet) {
         var model = new LinesChartModel(dataSet);
 
-        Severity[] visibleSeverities
-                = {Severity.WARNING_LOW, Severity.WARNING_NORMAL, Severity.WARNING_HIGH, Severity.ERROR};
+        Severity[] visibleSeverities = {
+            Severity.WARNING_LOW, Severity.WARNING_NORMAL, Severity.WARNING_HIGH, Severity.ERROR
+        };
         for (Severity severity : visibleSeverities) {
             if (!dataSet.getDataSetIds().contains(severity.getName())) {
                 continue;
@@ -68,8 +69,10 @@ public class SeverityTrendChart implements TrendChart {
     }
 
     private LineSeries createSeries(final Severity severity) {
-        return new LineSeries(LocalizedSeverity.getLocalizedString(severity),
+        return new LineSeries(
+                LocalizedSeverity.getLocalizedString(severity),
                 SeverityPalette.mapToColor(severity).normal(),
-                StackedMode.STACKED, FilledMode.FILLED);
+                StackedMode.STACKED,
+                FilledMode.FILLED);
     }
 }

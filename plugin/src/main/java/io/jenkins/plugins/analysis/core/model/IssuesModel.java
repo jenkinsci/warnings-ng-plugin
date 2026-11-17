@@ -3,14 +3,12 @@ package io.jenkins.plugins.analysis.core.model;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.VisibleForTesting;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
 import io.jenkins.plugins.datatables.TableColumn;
 import io.jenkins.plugins.datatables.TableColumn.ColumnBuilder;
 import io.jenkins.plugins.util.JenkinsFacade;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Provides the dynamic model for the details table that shows the issue properties.
@@ -31,14 +29,21 @@ import io.jenkins.plugins.util.JenkinsFacade;
  * @author Ullrich Hafner
  */
 public class IssuesModel extends DetailsTableModel {
-    IssuesModel(final Report report, final FileNameRenderer fileNameRenderer, final AgeBuilder ageBuilder,
+    IssuesModel(
+            final Report report,
+            final FileNameRenderer fileNameRenderer,
+            final AgeBuilder ageBuilder,
             final DescriptionProvider descriptionProvider) {
         this(report, fileNameRenderer, ageBuilder, descriptionProvider, new JenkinsFacade());
     }
 
     @VisibleForTesting
-    IssuesModel(final Report report, final FileNameRenderer fileNameRenderer, final AgeBuilder ageBuilder,
-            final DescriptionProvider descriptionProvider, final JenkinsFacade jenkinsFacade) {
+    IssuesModel(
+            final Report report,
+            final FileNameRenderer fileNameRenderer,
+            final AgeBuilder ageBuilder,
+            final DescriptionProvider descriptionProvider,
+            final JenkinsFacade jenkinsFacade) {
         super(report, fileNameRenderer, ageBuilder, descriptionProvider, jenkinsFacade);
     }
 
@@ -57,14 +62,16 @@ public class IssuesModel extends DetailsTableModel {
             columns.add(createPackageColumn());
         }
         if (getReport().hasCategories()) {
-            var category = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_Category())
+            var category = new ColumnBuilder()
+                    .withHeaderLabel(Messages.Table_Column_Category())
                     .withDataPropertyKey("category")
                     .withResponsivePriority(100)
                     .build();
             columns.add(category);
         }
         if (getReport().hasTypes()) {
-            var type = new ColumnBuilder().withHeaderLabel(Messages.Table_Column_Type())
+            var type = new ColumnBuilder()
+                    .withHeaderLabel(Messages.Table_Column_Type())
                     .withDataPropertyKey("type")
                     .withResponsivePriority(1000)
                     .build();
@@ -78,8 +85,8 @@ public class IssuesModel extends DetailsTableModel {
 
     @Override
     public IssuesRow getRow(final Issue issue) {
-        var row = new IssuesRow(getAgeBuilder(), getFileNameRenderer(), getDescriptionProvider(),
-                issue, getJenkinsFacade());
+        var row = new IssuesRow(
+                getAgeBuilder(), getFileNameRenderer(), getDescriptionProvider(), issue, getJenkinsFacade());
         row.setPackageName(issue);
         row.setCategory(issue);
         row.setType(issue);
@@ -97,8 +104,12 @@ public class IssuesModel extends DetailsTableModel {
         private String type;
         private String severity;
 
-        IssuesRow(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
-                final DescriptionProvider descriptionProvider, final Issue issue, final JenkinsFacade jenkinsFacade) {
+        IssuesRow(
+                final AgeBuilder ageBuilder,
+                final FileNameRenderer fileNameRenderer,
+                final DescriptionProvider descriptionProvider,
+                final Issue issue,
+                final JenkinsFacade jenkinsFacade) {
             super(ageBuilder, fileNameRenderer, descriptionProvider, issue, jenkinsFacade);
         }
 

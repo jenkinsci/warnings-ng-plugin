@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.core.util;
 
 import edu.hm.hafner.analysis.Issue;
-
 import io.jenkins.plugins.forensics.blame.Blames;
 
 /**
@@ -35,8 +34,7 @@ public class Blame {
             email = blameRequest.getEmail(line);
             commit = blameRequest.getCommit(line);
             addedAt = blameRequest.getTime(line);
-        }
-        else {
+        } else {
             author = UNDEFINED;
             email = UNDEFINED;
             commit = UNDEFINED;

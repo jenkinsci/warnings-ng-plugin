@@ -1,21 +1,10 @@
 package io.jenkins.plugins.analysis.core.testutil;
 
-import org.apache.commons.io.FilenameUtils;
-import org.junit.jupiter.api.Tag;
+import static org.assertj.core.api.Assertions.*;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-
-import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
-import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.matrix.MatrixBuild;
 import hudson.matrix.MatrixProject;
 import hudson.maven.MavenModuleSet;
@@ -30,8 +19,6 @@ import hudson.slaves.EnvironmentVariablesNodeProperty;
 import hudson.slaves.EnvironmentVariablesNodeProperty.Entry;
 import hudson.tasks.Publisher;
 import hudson.util.DescribableList;
-import jenkins.model.ParameterizedJobMixIn.ParameterizedJob;
-
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
@@ -41,8 +28,16 @@ import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.util.IntegrationTest;
-
-import static org.assertj.core.api.Assertions.*;
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import jenkins.model.ParameterizedJobMixIn.ParameterizedJob;
+import org.apache.commons.io.FilenameUtils;
+import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
+import org.jenkinsci.plugins.workflow.job.WorkflowJob;
+import org.junit.jupiter.api.Tag;
 
 /**
  * Base class for integration tests in Jenkins.
@@ -50,7 +45,13 @@ import static org.assertj.core.api.Assertions.*;
  * @author Ullrich Hafner
  */
 @Tag("IntegrationTest")
-@SuppressWarnings({"ClassDataAbstractionCoupling", "ClassFanOutComplexity", "SameParameterValue", "PMD.SystemPrintln", "PMD.CouplingBetweenObjects"})
+@SuppressWarnings({
+    "ClassDataAbstractionCoupling",
+    "ClassFanOutComplexity",
+    "SameParameterValue",
+    "PMD.SystemPrintln",
+    "PMD.CouplingBetweenObjects"
+})
 public abstract class WarningsIntegrationTest extends IntegrationTest {
     /** Issue log files will be renamed to mach this pattern. */
     private static final String FILE_NAME_PATTERN = "%s-issues.txt";
@@ -89,8 +90,12 @@ public abstract class WarningsIntegrationTest extends IntegrationTest {
      * @param expectedSizeLow
      *         expected number of warnings with severity low
      */
-    protected void assertThatReportHasSeverities(final Report report, final int expectedSizeError,
-            final int expectedSizeHigh, final int expectedSizeNormal, final int expectedSizeLow) {
+    protected void assertThatReportHasSeverities(
+            final Report report,
+            final int expectedSizeError,
+            final int expectedSizeHigh,
+            final int expectedSizeNormal,
+            final int expectedSizeLow) {
         assertThat(report.getSizeOf(Severity.ERROR)).isEqualTo(expectedSizeError);
         assertThat(report.getSizeOf(Severity.WARNING_HIGH)).isEqualTo(expectedSizeHigh);
         assertThat(report.getSizeOf(Severity.WARNING_NORMAL)).isEqualTo(expectedSizeNormal);
@@ -98,8 +103,8 @@ public abstract class WarningsIntegrationTest extends IntegrationTest {
     }
 
     protected String createJavaWarning(final String fileName, final int lineNumber) {
-        return "[WARNING] %s:[%d,42] [deprecation] path.AClass in path has been deprecated%n".formatted(fileName,
-                lineNumber);
+        return "[WARNING] %s:[%d,42] [deprecation] path.AClass in path has been deprecated%n"
+                .formatted(fileName, lineNumber);
     }
 
     /**
@@ -159,10 +164,10 @@ public abstract class WarningsIntegrationTest extends IntegrationTest {
      *
      * @return the pipeline step
      */
-    protected String createScanForIssuesStep(final AnalysisModelParser tool, final String issuesName,
-            final String... arguments) {
-        return "def %s = scanForIssues tool: %s(pattern:'**/*issues.txt', reportEncoding:'UTF-8')%s".formatted(
-                issuesName, tool.getSymbolName(), join(arguments));
+    protected String createScanForIssuesStep(
+            final AnalysisModelParser tool, final String issuesName, final String... arguments) {
+        return "def %s = scanForIssues tool: %s(pattern:'**/*issues.txt', reportEncoding:'UTF-8')%s"
+                .formatted(issuesName, tool.getSymbolName(), join(arguments));
     }
 
     /**
@@ -174,8 +179,8 @@ public abstract class WarningsIntegrationTest extends IntegrationTest {
      * @return the pipeline step
      */
     protected String createRecordIssuesStep(final AnalysisModelParser tool) {
-        return "recordIssues(tools: [%s(pattern: '**/*issues.txt', reportEncoding:'UTF-8')])".formatted(
-                tool.getSymbolName());
+        return "recordIssues(tools: [%s(pattern: '**/*issues.txt', reportEncoding:'UTF-8')])"
+                .formatted(tool.getSymbolName());
     }
 
     /**
@@ -202,8 +207,8 @@ public abstract class WarningsIntegrationTest extends IntegrationTest {
      * @return the created recorder
      */
     @CanIgnoreReturnValue
-    protected IssuesRecorder enableEclipseWarnings(final FreeStyleProject project,
-            final Consumer<IssuesRecorder> configuration) {
+    protected IssuesRecorder enableEclipseWarnings(
+            final FreeStyleProject project, final Consumer<IssuesRecorder> configuration) {
         return enableGenericWarnings(project, configuration, configurePattern(new Eclipse()));
     }
 
@@ -253,9 +258,11 @@ public abstract class WarningsIntegrationTest extends IntegrationTest {
      * @return the created recorder
      */
     @CanIgnoreReturnValue
-    protected IssuesRecorder enableWarnings(final AbstractProject<?, ?> job,
+    protected IssuesRecorder enableWarnings(
+            final AbstractProject<?, ?> job,
             final Consumer<IssuesRecorder> recorderConfiguration,
-            final ReportScanningTool tool, final ReportScanningTool... additionalTools) {
+            final ReportScanningTool tool,
+            final ReportScanningTool... additionalTools) {
         var recorder = enableWarnings(job, tool, additionalTools);
         recorderConfiguration.accept(recorder);
         return recorder;
@@ -275,8 +282,10 @@ public abstract class WarningsIntegrationTest extends IntegrationTest {
      * @return the created recorder
      */
     @CanIgnoreReturnValue
-    protected IssuesRecorder enableGenericWarnings(final AbstractProject<?, ?> job,
-            final Consumer<IssuesRecorder> configuration, final ReportScanningTool tool) {
+    protected IssuesRecorder enableGenericWarnings(
+            final AbstractProject<?, ?> job,
+            final Consumer<IssuesRecorder> configuration,
+            final ReportScanningTool tool) {
         configurePattern(tool);
 
         return enableWarnings(job, configuration, tool);
@@ -313,8 +322,8 @@ public abstract class WarningsIntegrationTest extends IntegrationTest {
      * @return the created recorder
      */
     @CanIgnoreReturnValue
-    protected IssuesRecorder enableWarnings(final AbstractProject<?, ?> job,
-            final Tool tool, final Tool... additionalTools) {
+    protected IssuesRecorder enableWarnings(
+            final AbstractProject<?, ?> job, final Tool tool, final Tool... additionalTools) {
         var publisher = new IssuesRecorder();
         publisher.setTools(tool, additionalTools);
         job.getPublishersList().add(publisher);
@@ -366,8 +375,7 @@ public abstract class WarningsIntegrationTest extends IntegrationTest {
             var matrixBuild = project.scheduleBuild2(0).get();
             getJenkins().assertBuildStatus(Result.SUCCESS, matrixBuild);
             return matrixBuild;
-        }
-        catch (Exception exception) {
+        } catch (Exception exception) {
             throw new AssertionError(exception);
         }
     }
@@ -405,8 +413,8 @@ public abstract class WarningsIntegrationTest extends IntegrationTest {
      *
      * @return the finished build with status {@code expectedResult}
      */
-    protected AnalysisResult scheduleBuildAndAssertStatus(final ParameterizedJob<?, ?> job,
-            final Result expectedResult) {
+    protected AnalysisResult scheduleBuildAndAssertStatus(
+            final ParameterizedJob<?, ?> job, final Result expectedResult) {
         return getAnalysisResult(buildWithResult(job, expectedResult));
     }
 
@@ -423,8 +431,8 @@ public abstract class WarningsIntegrationTest extends IntegrationTest {
      *
      * @return the finished build with status {@code expectedResult}
      */
-    protected AnalysisResult scheduleBuildAndAssertStatus(final ParameterizedJob<?, ?> job, final Result expectedResult,
-            final Consumer<AnalysisResult> assertions) {
+    protected AnalysisResult scheduleBuildAndAssertStatus(
+            final ParameterizedJob<?, ?> job, final Result expectedResult, final Consumer<AnalysisResult> assertions) {
         Run<?, ?> build = buildWithResult(job, expectedResult);
         var result = getAnalysisResult(build);
         assertions.accept(result);
@@ -557,10 +565,11 @@ public abstract class WarningsIntegrationTest extends IntegrationTest {
      */
     protected void setEnvironmentVariables(final Entry... vars) {
         try {
-            getJenkins().getInstance().getNodeProperties().replaceBy(
-                    Set.of(new EnvironmentVariablesNodeProperty(vars)));
-        }
-        catch (IOException exception) {
+            getJenkins()
+                    .getInstance()
+                    .getNodeProperties()
+                    .replaceBy(Set.of(new EnvironmentVariablesNodeProperty(vars)));
+        } catch (IOException exception) {
             throw new AssertionError(exception);
         }
     }

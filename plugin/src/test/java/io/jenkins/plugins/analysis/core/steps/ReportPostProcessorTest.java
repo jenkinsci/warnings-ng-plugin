@@ -1,27 +1,24 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Set;
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.FilteredLog;
-
 import io.jenkins.plugins.analysis.core.filter.FilterConfig;
 import io.jenkins.plugins.analysis.core.filter.IncludeFile;
 import io.jenkins.plugins.forensics.blame.Blamer;
 import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.forensics.blame.FileLocations;
-
-import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Set;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 /**
  * Tests the report filtering performed by {@link IssuesScanner.ReportPostProcessor}.
@@ -38,16 +35,16 @@ class ReportPostProcessorTest {
         write("src/Other.ts", "content");
         write("include.txt", "src/File.ts\n");
 
-        var result = postProcess(report("src/File.ts", "src/Other.ts"),
-                new FilterConfig(List.of(), "include.txt"));
+        var result = postProcess(report("src/File.ts", "src/Other.ts"), new FilterConfig(List.of(), "include.txt"));
 
         assertThat(result.getReport()).hasSize(1);
         assertThat(result.getReport().get(0).getFileName()).endsWith("src/File.ts");
         assertThat(result.getReport().getInfoMessages())
                 .anyMatch(message -> message.contains("Restricting issues to the 1 files listed"));
         assertThat(result.getReport().getInfoMessages())
-                .anyMatch(message -> message.contains(
-                        "Applying 1 filters on the set of 2 issues (1 issues have been removed, 1 issues will be published)"));
+                .anyMatch(
+                        message -> message.contains(
+                                "Applying 1 filters on the set of 2 issues (1 issues have been removed, 1 issues will be published)"));
     }
 
     @Test
@@ -55,22 +52,22 @@ class ReportPostProcessorTest {
         write("src/File.ts", "content");
         write("src/Other.ts", "content");
 
-        var result = postProcess(report("src/File.ts", "src/Other.ts"),
-                new FilterConfig(List.of(new IncludeFile(".*File\\.ts")), null));
+        var result = postProcess(
+                report("src/File.ts", "src/Other.ts"), new FilterConfig(List.of(new IncludeFile(".*File\\.ts")), null));
 
         assertThat(result.getReport()).hasSize(1);
         assertThat(result.getReport().get(0).getFileName()).endsWith("src/File.ts");
         assertThat(result.getReport().getInfoMessages())
-                .anyMatch(message -> message.contains(
-                        "Applying 1 filters on the set of 2 issues (1 issues have been removed, 1 issues will be published)"));
+                .anyMatch(
+                        message -> message.contains(
+                                "Applying 1 filters on the set of 2 issues (1 issues have been removed, 1 issues will be published)"));
     }
 
     @Test
     void shouldIgnoreBlankRegexpFilter() throws IOException {
         write("src/File.ts", "content");
 
-        var result = postProcess(report("src/File.ts"),
-                new FilterConfig(List.of(new IncludeFile("")), null));
+        var result = postProcess(report("src/File.ts"), new FilterConfig(List.of(new IncludeFile("")), null));
 
         assertThat(result.getReport()).hasSize(1);
         assertThat(result.getReport().getInfoMessages())
@@ -82,8 +79,7 @@ class ReportPostProcessorTest {
         write("src/File.ts", "content");
         write("src/Other.ts", "content");
 
-        var result = postProcess(report("src/File.ts", "src/Other.ts"),
-                new FilterConfig(List.of(), null));
+        var result = postProcess(report("src/File.ts", "src/Other.ts"), new FilterConfig(List.of(), null));
 
         assertThat(result.getReport()).hasSize(2);
         assertThat(result.getReport().getInfoMessages())
@@ -94,8 +90,7 @@ class ReportPostProcessorTest {
     void shouldReportUnreadableFilterFileButPublishAllIssues() throws IOException {
         write("src/File.ts", "content");
 
-        var result = postProcess(report("src/File.ts"),
-                new FilterConfig(List.of(), "missing.txt"));
+        var result = postProcess(report("src/File.ts"), new FilterConfig(List.of(), "missing.txt"));
 
         assertThat(result.getReport()).hasSize(1);
         assertThat(result.getReport().getErrorMessages())
@@ -108,8 +103,18 @@ class ReportPostProcessorTest {
         var blamer = mock(Blamer.class);
         when(blamer.blame(any(FileLocations.class), any(FilteredLog.class))).thenReturn(new Blames());
 
-        var processor = new IssuesScanner.ReportPostProcessor("test", report, "UTF-8", blamer, filterConfig,
-                Set.of(), Set.of(), IssuesScanner.PostProcessingMode.DISABLED, -1, "", "");
+        var processor = new IssuesScanner.ReportPostProcessor(
+                "test",
+                report,
+                "UTF-8",
+                blamer,
+                filterConfig,
+                Set.of(),
+                Set.of(),
+                IssuesScanner.PostProcessingMode.DISABLED,
+                -1,
+                "",
+                "");
 
         return processor.invoke(workspace.toFile(), null);
     }

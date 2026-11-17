@@ -166,3 +166,22 @@
 .warnings-card__x-large {
     grid-column: span 3;
 }
+
+/* Details table */
+table.dataTable th.nosort:first-child {
+    width: 3rem;
+    max-width: 3rem;
+    text-align: center;
+}
+
+table.dataTable tr.dt-hasChild + tr td {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+table.dataTable tr.dt-hasChild + tr pre {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}

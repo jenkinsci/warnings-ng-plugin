@@ -1,12 +1,8 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
-import org.junit.jupiter.api.Test;
-import org.junitpioneer.jupiter.Issue;
-
-import java.util.List;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
 import hudson.model.Run;
-
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.FileNameRenderer;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
@@ -14,8 +10,9 @@ import io.jenkins.plugins.analysis.core.steps.PublishIssuesStep;
 import io.jenkins.plugins.analysis.core.steps.ScanForIssuesStep;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 import io.jenkins.plugins.prism.SourceCodeViewModel;
-
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import java.util.List;
+import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.Issue;
 
 /**
  * Integration tests of the warnings plug-in in pipelines.
@@ -59,10 +56,9 @@ class StepsOnAgentITest extends IntegrationTestWithJenkinsPerTest {
 
     private String getSourceCode(final AnalysisResult result, final int rowIndex) {
         var target = result.getOwner().getAction(ResultAction.class).getTarget();
-        var sourceCodeUrl = new FileNameRenderer(result.getOwner()).getSourceCodeUrl(
-                result.getIssues().get(rowIndex));
-        var dynamic = (SourceCodeViewModel) target.getDynamic(
-                sourceCodeUrl.replaceAll("/#.*", ""), null, null);
+        var sourceCodeUrl = new FileNameRenderer(result.getOwner())
+                .getSourceCodeUrl(result.getIssues().get(rowIndex));
+        var dynamic = (SourceCodeViewModel) target.getDynamic(sourceCodeUrl.replaceAll("/#.*", ""), null, null);
         return dynamic.getSourceCode();
     }
 
@@ -88,8 +84,7 @@ class StepsOnAgentITest extends IntegrationTestWithJenkinsPerTest {
         if (JAVA_ID.equals(actions.get(0).getId())) {
             first = actions.get(0);
             second = actions.get(1);
-        }
-        else {
+        } else {
             first = actions.get(1);
             second = actions.get(0);
         }

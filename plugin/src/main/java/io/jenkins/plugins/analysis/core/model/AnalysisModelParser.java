@@ -7,7 +7,6 @@ import edu.hm.hafner.analysis.registry.ParserDescriptor.Option;
 import edu.hm.hafner.analysis.registry.ParserRegistry;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 import java.io.Serial;
 
 /**
@@ -79,8 +78,8 @@ public abstract class AnalysisModelParser extends ReportScanningTool {
          */
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new StaticAnalysisLabelProvider(getId(), getDisplayName(), descriptionProvider,
-                    analysisModelDescriptor.getType());
+            return new StaticAnalysisLabelProvider(
+                    getId(), getDisplayName(), descriptionProvider, analysisModelDescriptor.getType());
         }
 
         /**

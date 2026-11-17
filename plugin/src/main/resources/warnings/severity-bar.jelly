@@ -1,0 +1,28 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:st="jelly:stapler" xmlns:j="jelly:core">
+
+  <st:documentation>
+    Renders a segmented bar that shows the distribution of warnings by severity, followed by a legend with the number
+    of warnings per severity. The width of each segment is relative to its number of warnings.
+
+    <st:attribute name="segments" type="java.util.List" use="required">
+      The segments to render (see OverviewModel.SeveritySegment). Severities without warnings should be skipped.
+    </st:attribute>
+  </st:documentation>
+
+  <div class="wng-severity-bar">
+    <j:forEach var="segment" items="${segments}">
+      <div class="wng-severity-bar__segment wng-severity-bar__segment--${segment.modifier}"
+           style="flex-grow: ${segment.count}" tooltip="${segment.count} ${segment.label}"/>
+    </j:forEach>
+  </div>
+  <div class="wng-severity-legend">
+    <j:forEach var="segment" items="${segments}">
+      <span class="wng-severity-legend__item">
+        <span class="wng-severity-legend__dot wng-severity-bar__segment--${segment.modifier}"/>
+        ${segment.count} ${segment.label}
+      </span>
+    </j:forEach>
+  </div>
+
+</j:jelly>

@@ -1,21 +1,18 @@
 package io.jenkins.plugins.analysis.core.charts;
 
-import org.junit.jupiter.api.Test;
+import static io.jenkins.plugins.analysis.core.charts.BuildResultStubs.*;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
+import static org.assertj.core.api.Assertions.*;
 
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.echarts.BuildResult;
 import edu.hm.hafner.echarts.ChartModelConfiguration;
 import edu.hm.hafner.echarts.LinesChartModel;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
-
-import static io.jenkins.plugins.analysis.core.charts.BuildResultStubs.*;
-import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
-import static org.assertj.core.api.Assertions.*;
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class {@link HealthTrendChart}.
@@ -31,10 +28,8 @@ class HealthTrendChartTest {
         List<BuildResult<AnalysisBuildResult>> resultsCheckStyle = createBuildResults();
         var model = chart.create(resultsCheckStyle, new ChartModelConfiguration());
 
-        assertThatJson(model).node("domainAxisLabels")
-                .isArray().containsExactly("#1", "#2", "#3", "#4");
-        assertThatJson(model).node("series")
-                .isArray().hasSize(3);
+        assertThatJson(model).node("domainAxisLabels").isArray().containsExactly("#1", "#2", "#3", "#4");
+        assertThatJson(model).node("series").isArray().hasSize(3);
         assertThat(healthDescriptor.isEnabled()).isTrue();
         assertThat(model.getSeries().get(0).getName()).isEqualTo("Excellent");
         verifySeries(model, 0, 0, 5, 5, 5);
@@ -52,10 +47,8 @@ class HealthTrendChartTest {
         List<BuildResult<AnalysisBuildResult>> resultsCheckStyle = createBuildResults();
         var model = chart.create(resultsCheckStyle, new ChartModelConfiguration());
 
-        assertThatJson(model).node("domainAxisLabels")
-                .isArray().containsExactly("#1", "#2", "#3", "#4");
-        assertThatJson(model).node("series")
-                .isArray().hasSize(1);
+        assertThatJson(model).node("domainAxisLabels").isArray().containsExactly("#1", "#2", "#3", "#4");
+        assertThatJson(model).node("series").isArray().hasSize(1);
         assertThat(healthDescriptor.isEnabled()).isFalse();
         assertThat(model.getSeries().get(0).getName()).isEqualTo("Total (health report disabled)");
         verifySeries(model, 0, 0, 5, 10, 15);

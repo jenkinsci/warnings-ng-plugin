@@ -1,27 +1,9 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import org.apache.commons.lang3.StringUtils;
-
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.FilteredLog;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
-
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import org.kohsuke.stapler.AncestorInPath;
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.DataBoundSetter;
-import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.verb.POST;
-import org.jenkinsci.Symbol;
 import hudson.AbortException;
 import hudson.Extension;
 import hudson.FilePath;
@@ -44,7 +26,6 @@ import hudson.tasks.Recorder;
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
-import jenkins.model.Jenkins;
 import io.jenkins.plugins.analysis.core.filter.FilterConfig;
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
@@ -70,6 +51,22 @@ import io.jenkins.plugins.util.QualityGateStatus;
 import io.jenkins.plugins.util.ResultHandler;
 import io.jenkins.plugins.util.RunResultHandler;
 import io.jenkins.plugins.util.ValidationUtilities;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import jenkins.model.Jenkins;
+import org.apache.commons.lang3.StringUtils;
+import org.jenkinsci.Symbol;
+import org.kohsuke.stapler.AncestorInPath;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
 
 /**
  * Freestyle or Maven job {@link Recorder} that scans report files or the console log for issues. Stores the created
@@ -89,7 +86,15 @@ import io.jenkins.plugins.util.ValidationUtilities;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.TooManyFields", "PMD.GodClass", "PMD.CyclomaticComplexity", "PMD.CouplingBetweenObjects", "ClassDataAbstractionCoupling", "ClassFanOutComplexity"})
+@SuppressWarnings({
+    "PMD.ExcessivePublicCount",
+    "PMD.TooManyFields",
+    "PMD.GodClass",
+    "PMD.CyclomaticComplexity",
+    "PMD.CouplingBetweenObjects",
+    "ClassDataAbstractionCoupling",
+    "ClassFanOutComplexity"
+})
 public class IssuesRecorder extends Recorder {
     private static final ValidationUtilities VALIDATION_UTILITIES = new ValidationUtilities();
 
@@ -737,24 +742,32 @@ public class IssuesRecorder extends Recorder {
         return true;
     }
 
-    List<AnalysisResult> perform(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
-            final ResultHandler resultHandler) throws InterruptedException, IOException {
+    List<AnalysisResult> perform(
+            final Run<?, ?> run,
+            final FilePath workspace,
+            final TaskListener listener,
+            final ResultHandler resultHandler)
+            throws InterruptedException, IOException {
         var logHandler = new LogHandler(listener, DEFAULT_ID);
         logHandler.setQuiet(quiet);
 
         var overallResult = run.getResult();
         if (isEnabledForFailure || overallResult == null || overallResult.isBetterOrEqualTo(Result.UNSTABLE)) {
             return record(run, workspace, listener, resultHandler, logHandler);
-        }
-        else {
+        } else {
             logHandler.log("Skipping execution of recorder since overall result is '%s'", overallResult);
             return Collections.emptyList();
         }
     }
 
     @SuppressWarnings("PMD.CognitiveComplexity")
-    private List<AnalysisResult> record(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
-            final ResultHandler resultHandler, final LogHandler logHandler) throws IOException, InterruptedException {
+    private List<AnalysisResult> record(
+            final Run<?, ?> run,
+            final FilePath workspace,
+            final TaskListener listener,
+            final ResultHandler resultHandler,
+            final LogHandler logHandler)
+            throws IOException, InterruptedException {
         if (analysisTools.isEmpty()) {
             throw new IllegalStateException("No tools configured to record issues");
         }
@@ -774,8 +787,8 @@ public class IssuesRecorder extends Recorder {
             }
             report.add(scannedReport, customId);
 
-            results.add(publishResult(run, workspace, listener, customName,
-                    report, customName, customIcon, resultHandler));
+            results.add(
+                    publishResult(run, workspace, listener, customName, report, customName, customIcon, resultHandler));
 
             if (isAggregatingResults) {
                 logHandler.log("Ignoring property 'aggregatingResults' since only a single tool is defined.");
@@ -783,24 +796,29 @@ public class IssuesRecorder extends Recorder {
             if (isNotUnique(tool)) {
                 logHandler.log("Do not set id, name, or icon for both the tool and the recorder");
             }
-        }
-        else {
+        } else {
             if (isAggregatingResults) {
                 var report = new AnnotatedReport(StringUtils.defaultIfBlank(getId(), DEFAULT_ID));
                 for (Tool tool : analysisTools) {
                     report.add(scanWithTool(run, workspace, listener, tool), tool.getActualId());
                 }
 
-                results.add(publishResult(run, workspace, listener, getCustomName(),
-                        report, getCustomName(), getIcon(), resultHandler));
-            }
-            else {
+                results.add(publishResult(
+                        run, workspace, listener, getCustomName(), report, getCustomName(), getIcon(), resultHandler));
+            } else {
                 for (Tool tool : analysisTools) {
                     var report = new AnnotatedReport(tool.getActualId());
                     report.add(scanWithTool(run, workspace, listener, tool));
 
-                    results.add(publishResult(run, workspace, listener, tool.getActualName(),
-                            report, getReportName(tool), tool.getIcon(), resultHandler));
+                    results.add(publishResult(
+                            run,
+                            workspace,
+                            listener,
+                            tool.getActualName(),
+                            report,
+                            getReportName(tool),
+                            tool.getIcon(),
+                            resultHandler));
                 }
                 logWarningForAmbigiousName(logHandler);
             }
@@ -846,21 +864,31 @@ public class IssuesRecorder extends Recorder {
     private String getReportName(final Tool tool) {
         if (StringUtils.isBlank(tool.getName())) {
             return StringUtils.EMPTY;
-        }
-        else {
+        } else {
             return tool.getActualName();
         }
     }
 
-    private AnnotatedReport scanWithTool(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
-            final Tool tool) throws IOException, InterruptedException {
+    private AnnotatedReport scanWithTool(
+            final Run<?, ?> run, final FilePath workspace, final TaskListener listener, final Tool tool)
+            throws IOException, InterruptedException {
         var filterConfig = new FilterConfig(getFilters(), filesFilter);
-        var issuesScanner = new IssuesScanner(tool, filterConfig, getSourceCodeCharset(),
-                workspace, getSourceCodePaths(), getSourceCodeRetention(),
-                run, new FilePath(run.getRootDir()), listener,
-                scm, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED,
-                skipPostProcessing ? PostProcessingMode.DISABLED : PostProcessingMode.ENABLED, quiet,
-                sourcePathPrefix, targetPathPrefix);
+        var issuesScanner = new IssuesScanner(
+                tool,
+                filterConfig,
+                getSourceCodeCharset(),
+                workspace,
+                getSourceCodePaths(),
+                getSourceCodeRetention(),
+                run,
+                new FilePath(run.getRootDir()),
+                listener,
+                scm,
+                isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED,
+                skipPostProcessing ? PostProcessingMode.DISABLED : PostProcessingMode.ENABLED,
+                quiet,
+                sourcePathPrefix,
+                targetPathPrefix);
 
         return issuesScanner.scan();
     }
@@ -901,9 +929,15 @@ public class IssuesRecorder extends Recorder {
      * @return the created results
      */
     @SuppressWarnings("checkstyle:ParameterNumber")
-    AnalysisResult publishResult(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
-            final String loggerName, final AnnotatedReport annotatedReport, final String customName,
-            final String customIcon, final ResultHandler resultHandler) {
+    AnalysisResult publishResult(
+            final Run<?, ?> run,
+            final FilePath workspace,
+            final TaskListener listener,
+            final String loggerName,
+            final AnnotatedReport annotatedReport,
+            final String customName,
+            final String customIcon,
+            final ResultHandler resultHandler) {
         var logHandler = new LogHandler(listener, loggerName, annotatedReport.getLogger());
         logHandler.setQuiet(quiet);
 
@@ -915,9 +949,19 @@ public class IssuesRecorder extends Recorder {
                 ? new NullDeltaCalculator()
                 : DeltaCalculatorFactory.findDeltaCalculator(scm, run, workspace, listener, new FilteredLog());
 
-        var publisher = new IssuesPublisher(run, annotatedReport, deltaCalculator,
-                new HealthDescriptor(healthy, unhealthy, minimumSeverity), qualityGates,
-                customName, customIcon, ignoreQualityGate, getSourceCodeCharset(), logHandler, resultHandler, failOnError);
+        var publisher = new IssuesPublisher(
+                run,
+                annotatedReport,
+                deltaCalculator,
+                new HealthDescriptor(healthy, unhealthy, minimumSeverity),
+                qualityGates,
+                customName,
+                customIcon,
+                ignoreQualityGate,
+                getSourceCodeCharset(),
+                logHandler,
+                resultHandler,
+                failOnError);
         var action = publisher.attachAction(trendChartType);
 
         if (!skipPublishingChecks) {
@@ -940,8 +984,7 @@ public class IssuesRecorder extends Recorder {
      *
      * @return {@code true} if the build should be stopped, {@code false} otherwise
      */
-    static boolean shouldStopBuild(final AnalysisResult result, final boolean stopBuild,
-            final LogHandler logHandler) {
+    static boolean shouldStopBuild(final AnalysisResult result, final boolean stopBuild, final LogHandler logHandler) {
         if (!stopBuild) {
             return false;
         }
@@ -968,8 +1011,8 @@ public class IssuesRecorder extends Recorder {
         /** Retain backward compatibility. */
         @Initializer(before = InitMilestone.PLUGINS_STARTED)
         public static void addAliases() {
-            Run.XSTREAM2.addCompatibilityAlias("io.jenkins.plugins.analysis.core.views.ResultAction",
-                    ResultAction.class);
+            Run.XSTREAM2.addCompatibilityAlias(
+                    "io.jenkins.plugins.analysis.core.views.ResultAction", ResultAction.class);
         }
 
         private final ModelValidation model = new ModelValidation();
@@ -1009,8 +1052,7 @@ public class IssuesRecorder extends Recorder {
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckId(@AncestorInPath final BuildableItem project,
-                @QueryParameter final String id) {
+        public FormValidation doCheckId(@AncestorInPath final BuildableItem project, @QueryParameter final String id) {
             if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
@@ -1071,8 +1113,8 @@ public class IssuesRecorder extends Recorder {
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckReportEncoding(@AncestorInPath final BuildableItem project,
-                @QueryParameter final String reportEncoding) {
+        public FormValidation doCheckReportEncoding(
+                @AncestorInPath final BuildableItem project, @QueryParameter final String reportEncoding) {
             if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
@@ -1091,8 +1133,8 @@ public class IssuesRecorder extends Recorder {
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckSourceCodeEncoding(@AncestorInPath final BuildableItem project,
-                @QueryParameter final String sourceCodeEncoding) {
+        public FormValidation doCheckSourceCodeEncoding(
+                @AncestorInPath final BuildableItem project, @QueryParameter final String sourceCodeEncoding) {
             if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
@@ -1113,8 +1155,10 @@ public class IssuesRecorder extends Recorder {
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckHealthy(@AncestorInPath final BuildableItem project,
-                @QueryParameter final int healthy, @QueryParameter final int unhealthy) {
+        public FormValidation doCheckHealthy(
+                @AncestorInPath final BuildableItem project,
+                @QueryParameter final int healthy,
+                @QueryParameter final int unhealthy) {
             if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
@@ -1134,8 +1178,10 @@ public class IssuesRecorder extends Recorder {
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckUnhealthy(@AncestorInPath final BuildableItem project,
-                @QueryParameter final int healthy, @QueryParameter final int unhealthy) {
+        public FormValidation doCheckUnhealthy(
+                @AncestorInPath final BuildableItem project,
+                @QueryParameter final int healthy,
+                @QueryParameter final int unhealthy) {
             if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }

@@ -1,9 +1,8 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.WebElement;
-
-import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 /**
  * Default row of the issues table that is used by most of the static analysis tools.
@@ -20,8 +19,7 @@ public class IssuesTableRow extends AbstractSeverityTableRow {
         if (isDetailsRow()) {
             category = StringUtils.EMPTY;
             type = StringUtils.EMPTY;
-        }
-        else {
+        } else {
             category = getCellContent("Category");
             type = getCellContent("Type");
         }

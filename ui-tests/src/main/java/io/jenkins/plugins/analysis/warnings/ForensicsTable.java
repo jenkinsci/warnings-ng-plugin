@@ -11,10 +11,8 @@ public class ForensicsTable extends AbstractIssuesTable<ForensicsTableRow> {
     /**
      * Creates a new {@link ForensicsTable} instance.
      *
-     * @param tab
-     *         the {@link WebElement tab} that contains this {@link ForensicsTable}
-     * @param analysisResult
-     *         the {@link AnalysisResult} ppage that contains this {@link ForensicsTable}
+     * @param tab the {@link WebElement tab} that contains this {@link ForensicsTable}
+     * @param analysisResult the {@link AnalysisResult} ppage that contains this {@link ForensicsTable}
      */
     public ForensicsTable(final WebElement tab, final AnalysisResult analysisResult) {
         super(tab, analysisResult, "forensics");

@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.warnings.axivion;
 
 import edu.hm.hafner.analysis.Issue;
-
 import java.io.Serializable;
 
 /**

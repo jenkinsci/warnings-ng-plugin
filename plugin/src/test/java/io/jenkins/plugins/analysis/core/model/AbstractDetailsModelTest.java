@@ -1,30 +1,27 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import org.apache.commons.text.StringEscapeUtils;
-import org.junit.jupiter.api.BeforeAll;
+import static j2html.TagCreator.a;
+import static j2html.TagCreator.join;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
 import com.google.errorprone.annotations.MustBeClosed;
-
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Severity;
-
-import java.util.Locale;
-import java.util.stream.Stream;
-
 import hudson.model.Job;
 import hudson.model.Run;
-
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.DefaultAgeBuilder;
 import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
 import io.jenkins.plugins.datatables.DetailedCell;
 import io.jenkins.plugins.datatables.TableColumn;
 import io.jenkins.plugins.util.JenkinsFacade;
-
-import static j2html.TagCreator.*;
-import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import java.util.Locale;
+import java.util.stream.Stream;
+import org.apache.commons.text.StringEscapeUtils;
+import org.junit.jupiter.api.BeforeAll;
+import org.testcontainers.shaded.com.google.common.annotations.VisibleForTesting;
 
 /**
  * Base class for tests of the details models.
@@ -34,12 +31,16 @@ import static org.mockito.Mockito.*;
 @SuppressWarnings("PMD.AbstractClassWithoutAbstractMethod")
 public abstract class AbstractDetailsModelTest {
     private static final String REL_CONTENT = "nofollow noopener noreferrer";
-    static final String DESCRIPTION
-            = join("Hello description with", a().withHref("url").withText("link").withRel(REL_CONTENT)).render();
-    private static final String MESSAGE
-            = join("Hello message with", a().withHref("url").withText("link").withRel(REL_CONTENT)).render();
+    static final String DESCRIPTION = join(
+                    "Hello description with",
+                    a().withHref("url").withText("link").withRel(REL_CONTENT))
+            .render();
+    private static final String MESSAGE = join(
+                    "Hello message with", a().withHref("url").withText("link").withRel(REL_CONTENT))
+            .render();
     /** Details icon that opens a new row. */
     protected static final String DETAILS_ICON = "my-symbol my-symbol";
+
     static final String EXPECTED_DESCRIPTION = String.format(
             "<div class=\"details-control\" data-description=\"&lt;p&gt;&lt;strong&gt;%s&lt;/strong&gt;&lt;/p&gt; %s\">"
                     + DETAILS_ICON + "</div>",
@@ -78,7 +79,8 @@ public abstract class AbstractDetailsModelTest {
      * @return the file name column
      */
     protected String createExpectedFileName(final Issue issue) {
-        return "<a href=\"source.%s/#15\" data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" title=\"/path/to/file-1\">file-1:15</a>".formatted(issue.getId().toString());
+        return "<a href=\"source.%s/#15\" data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" title=\"/path/to/file-1\">file-1:15</a>"
+                .formatted(issue.getId().toString());
     }
 
     /**
@@ -86,6 +88,8 @@ public abstract class AbstractDetailsModelTest {
      *
      * @return a {@link FileNameRenderer} stub
      */
+    @VisibleForTesting
+    @SuppressWarnings("PMD.InternalApiUsage")
     protected FileNameRenderer createFileNameRenderer() {
         BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
         when(buildFolder.canAccessAffectedFileOf(any(), any())).thenReturn(true);
@@ -108,8 +112,8 @@ public abstract class AbstractDetailsModelTest {
         return job;
     }
 
-    protected void assertThatDetailedColumnContains(final DetailedCell<String> actualColumn,
-            final String expectedDisplayName, final String expectedSortOrder) {
+    protected void assertThatDetailedColumnContains(
+            final DetailedCell<String> actualColumn, final String expectedDisplayName, final String expectedSortOrder) {
         assertThat(actualColumn.getDisplay()).isEqualTo(expectedDisplayName);
         assertThat(actualColumn.getSort()).isEqualTo(expectedSortOrder);
     }

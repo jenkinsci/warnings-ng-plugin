@@ -3,28 +3,23 @@ package io.jenkins.plugins.analysis.core.portlets;
 import edu.hm.hafner.echarts.BuildResult;
 import edu.hm.hafner.echarts.ChartModelConfiguration;
 import edu.umd.cs.findbugs.annotations.NonNull;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-import tools.jackson.databind.ObjectMapper;
-
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.DataBoundSetter;
-import org.kohsuke.stapler.bind.JavaScriptMethod;
-import org.jenkinsci.plugins.variant.OptionalExtension;
 import hudson.model.Descriptor;
 import hudson.model.Job;
 import hudson.model.Run;
 import hudson.plugins.view.dashboard.DashboardPortlet;
-
 import io.jenkins.plugins.analysis.core.charts.SeverityTrendChart;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.ToolSelection;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
-
-import static io.jenkins.plugins.analysis.core.model.ToolSelection.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.jenkinsci.plugins.variant.OptionalExtension;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.bind.JavaScriptMethod;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * A dashboard view portlet that renders a two-dimensional table of issues per type and job.
@@ -135,11 +130,13 @@ public class IssuesChartPortlet extends DashboardPortlet {
         List<Iterable<? extends BuildResult<AnalysisBuildResult>>> histories = jobs.stream()
                 .filter(job -> job.getLastBuild() != null)
                 .flatMap(job -> findLastBuildWithResults(job).stream()
-                        .filter(createToolFilter(selectTools, tools)))
-                .map(ResultAction::createBuildHistory).collect(Collectors.toList());
+                        .filter(ToolSelection.createToolFilter(selectTools, tools)))
+                .map(ResultAction::createBuildHistory)
+                .collect(Collectors.toList());
 
-        return new ObjectMapper().writeValueAsString(
-                severityChart.aggregate(histories, ChartModelConfiguration.fromJson(configuration)));
+        return new ObjectMapper()
+                .writeValueAsString(
+                        severityChart.aggregate(histories, ChartModelConfiguration.fromJson(configuration)));
     }
 
     /**

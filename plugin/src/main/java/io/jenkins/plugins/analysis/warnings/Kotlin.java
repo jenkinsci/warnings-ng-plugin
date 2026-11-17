@@ -1,14 +1,12 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.io.Serial;
-
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.jenkinsci.Symbol;
 import hudson.Extension;
-
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import java.io.Serial;
+import org.jenkinsci.Symbol;
+import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
  * Provides a parser and customized messages for Kotlin errors and warnings.
@@ -18,6 +16,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 public class Kotlin extends AnalysisModelParser {
     @Serial
     private static final long serialVersionUID = -8933886588477373744L;
+
     private static final String ID = "kotlin";
 
     /**

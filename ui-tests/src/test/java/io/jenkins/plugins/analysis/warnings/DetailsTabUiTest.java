@@ -1,22 +1,19 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import static io.jenkins.plugins.analysis.warnings.Assertions.*;
+
+import io.jenkins.plugins.analysis.warnings.AnalysisResult.Tab;
+import java.time.Duration;
+import java.util.Collection;
+import java.util.List;
+import org.jenkinsci.test.acceptance.junit.WithPlugins;
+import org.jenkinsci.test.acceptance.po.Build;
+import org.jenkinsci.test.acceptance.po.FreeStyleJob;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
-import java.time.Duration;
-import java.util.Collection;
-import java.util.List;
-
-import org.jenkinsci.test.acceptance.junit.WithPlugins;
-import org.jenkinsci.test.acceptance.po.Build;
-import org.jenkinsci.test.acceptance.po.FreeStyleJob;
-
-import io.jenkins.plugins.analysis.warnings.AnalysisResult.Tab;
-
-import static io.jenkins.plugins.analysis.warnings.Assertions.*;
 
 /**
  * Integration tests for the details tab part of issue overview page.
@@ -30,9 +27,7 @@ import static io.jenkins.plugins.analysis.warnings.Assertions.*;
 public class DetailsTabUiTest extends UiTest {
     private static final String DETAILS_TAB_RESOURCES = "details_tab_test/";
 
-    /**
-     * When a single warning is being recognized, only the issues-tab should be shown.
-     */
+    /** When a single warning is being recognized, only the issues-tab should be shown. */
     @Test
     public void shouldPopulateDetailsTabSingleWarning() {
         FreeStyleJob job = createFreeStyleJob(DETAILS_TAB_RESOURCES + "java1Warning.txt");
@@ -54,7 +49,8 @@ public class DetailsTabUiTest extends UiTest {
     }
 
     /**
-     * When two warnings are being recognized in one file, then the tabs "issues", "files", and "folders" should be shown.
+     * When two warnings are being recognized in one file, then the tabs "issues", "files", and "folders" should be
+     * shown.
      */
     @Test
     public void shouldPopulateDetailsTabMultipleWarnings() {
@@ -87,7 +83,9 @@ public class DetailsTabUiTest extends UiTest {
     @Test
     public void shouldMemorizeSelectedTabAsActiveOnPageReload() {
         FreeStyleJob job = createFreeStyleJob("checkstyle-report.xml");
-        job.addPublisher(IssuesRecorder.class, recorder -> recorder.setTool(CHECKSTYLE_TOOL).setPattern("**/checkstyle-report.xml"));
+        job.addPublisher(
+                IssuesRecorder.class,
+                recorder -> recorder.setTool(CHECKSTYLE_TOOL).setPattern("**/checkstyle-report.xml"));
         job.save();
 
         Build build = job.startBuild().waitUntilFinished();
@@ -113,7 +111,9 @@ public class DetailsTabUiTest extends UiTest {
     @Test
     public void shouldWorkWithMultipleTabsAndPages() {
         FreeStyleJob job = createFreeStyleJob("checkstyle-report.xml");
-        job.addPublisher(IssuesRecorder.class, recorder -> recorder.setTool(CHECKSTYLE_TOOL).setPattern("**/checkstyle-report.xml"));
+        job.addPublisher(
+                IssuesRecorder.class,
+                recorder -> recorder.setTool(CHECKSTYLE_TOOL).setPattern("**/checkstyle-report.xml"));
         job.save();
 
         Build build = job.startBuild().waitUntilFinished();
@@ -135,8 +135,14 @@ public class DetailsTabUiTest extends UiTest {
         assertThat(typesDetailsTable.getTotal()).isEqualTo(7);
 
         IssuesTable issuesTable = resultPage.openIssuesTable();
-        assertThat(issuesTable.getColumnHeaders()).containsOnly(IssuesTable.Header.DETAILS, IssuesTable.Header.FILE, IssuesTable.Header.CATEGORY,
-                IssuesTable.Header.TYPE, IssuesTable.Header.SEVERITY, IssuesTable.Header.AGE);
+        assertThat(issuesTable.getColumnHeaders())
+                .containsOnly(
+                        IssuesTable.Header.DETAILS,
+                        IssuesTable.Header.FILE,
+                        IssuesTable.Header.CATEGORY,
+                        IssuesTable.Header.TYPE,
+                        IssuesTable.Header.SEVERITY,
+                        IssuesTable.Header.AGE);
         assertThat(issuesTable.getSize()).isEqualTo(10);
         assertThat(issuesTable.getTotal()).isEqualTo(11);
 
@@ -182,9 +188,7 @@ public class DetailsTabUiTest extends UiTest {
         assertThat(issuesTableFirstRow.getAge()).isEqualTo(1);
     }
 
-    /**
-     * When selecting different options in the dropdown menu that controls the numbers of displayed rows.
-     */
+    /** When selecting different options in the dropdown menu that controls the numbers of displayed rows. */
     @Test
     public void shouldShowTheCorrectNumberOfRowsSelectedByLength() {
         FreeStyleJob job = createFreeStyleJob(DETAILS_TAB_RESOURCES + "findbugs-severities.xml");
@@ -217,9 +221,7 @@ public class DetailsTabUiTest extends UiTest {
         assertThat(findBugsAnalysisResult.getPaginationButtons()).hasSize(1);
     }
 
-    /**
-     * When filling out the filter input field, the correct rows should be displayed.
-     */
+    /** When filling out the filter input field, the correct rows should be displayed. */
     @Test
     public void shouldDisplayTheFilteredRows() {
         FreeStyleJob job = createFreeStyleJob(DETAILS_TAB_RESOURCES + "findbugs-severities.xml");
@@ -250,9 +252,7 @@ public class DetailsTabUiTest extends UiTest {
         waitUntilCondition(issuesInfo, "Showing 1 to 7 of 7 entries (filtered from 12 total entries)");
     }
 
-    /**
-     * When selecting different options in the dropdown menu that controls the numbers of displayed rows.
-     */
+    /** When selecting different options in the dropdown menu that controls the numbers of displayed rows. */
     @Test
     public void shouldMemorizeSelectedNumberOfRowsOnReload() {
         FreeStyleJob job = createFreeStyleJob(DETAILS_TAB_RESOURCES + "findbugs-severities.xml");
@@ -294,10 +294,8 @@ public class DetailsTabUiTest extends UiTest {
      * Waits for a defined period of time for a string to be present inside a WebElement. If this is not the case, an
      * exception will be thrown and the test fails.
      *
-     * @param expectedString
-     *         String that should eventually be present in the element
-     * @param target
-     *         WebElement that should contain the expected string
+     * @param expectedString String that should eventually be present in the element
+     * @param target WebElement that should contain the expected string
      */
     private void waitUntilCondition(final WebElement target, final String expectedString) {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2), Duration.ofMillis(100));

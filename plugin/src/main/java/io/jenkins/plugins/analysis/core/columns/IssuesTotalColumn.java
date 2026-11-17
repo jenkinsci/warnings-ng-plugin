@@ -1,11 +1,20 @@
 package io.jenkins.plugins.analysis.core.columns;
 
-import org.apache.commons.lang3.StringUtils;
-
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
+import hudson.Extension;
+import hudson.model.Job;
+import hudson.model.Run;
+import hudson.util.ListBoxModel;
+import hudson.views.ListViewColumn;
+import hudson.views.ListViewColumnDescriptor;
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
+import io.jenkins.plugins.analysis.core.model.ResultAction;
+import io.jenkins.plugins.analysis.core.model.ToolSelection;
+import io.jenkins.plugins.analysis.core.util.IssuesStatistics.StatisticProperties;
+import io.jenkins.plugins.util.JenkinsFacade;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -13,28 +22,13 @@ import java.util.Objects;
 import java.util.OptionalInt;
 import java.util.Set;
 import java.util.stream.Collectors;
-
+import jenkins.model.GlobalConfiguration;
+import jenkins.model.Jenkins;
+import org.apache.commons.lang3.StringUtils;
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.verb.POST;
-import org.jenkinsci.Symbol;
-import hudson.Extension;
-import hudson.model.Job;
-import hudson.model.Run;
-import hudson.util.ListBoxModel;
-import hudson.views.ListViewColumn;
-import hudson.views.ListViewColumnDescriptor;
-import jenkins.model.GlobalConfiguration;
-import jenkins.model.Jenkins;
-
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
-import io.jenkins.plugins.analysis.core.model.ResultAction;
-import io.jenkins.plugins.analysis.core.model.ToolSelection;
-import io.jenkins.plugins.analysis.core.util.IssuesStatistics.StatisticProperties;
-import io.jenkins.plugins.util.JenkinsFacade;
-
-import static io.jenkins.plugins.analysis.core.model.ToolSelection.*;
 
 /**
  * Shows the number of issues of a job in a column of a Jenkins view. This column provides an auto-selection mode that
@@ -71,7 +65,9 @@ public class IssuesTotalColumn extends ListViewColumn {
      *
      * @return this
      */
-    @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE", justification = "Deserialization of instances that do not have all fields yet")
+    @SuppressFBWarnings(
+            value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE",
+            justification = "Deserialization of instances that do not have all fields yet")
     protected Object readResolve() {
         if (type == null) {
             type = StatisticProperties.TOTAL;
@@ -170,7 +166,7 @@ public class IssuesTotalColumn extends ListViewColumn {
         }
 
         return lastCompletedBuild.getActions(ResultAction.class).stream()
-                .filter(createToolFilter(selectTools, tools))
+                .filter(ToolSelection.createToolFilter(selectTools, tools))
                 .map(ResultAction::getResult)
                 .map(AnalysisResult::getTotals)
                 .mapToInt(totals -> type.getSizeGetter().apply(totals))
@@ -193,7 +189,7 @@ public class IssuesTotalColumn extends ListViewColumn {
         }
 
         return lastCompletedBuild.getActions(ResultAction.class).stream()
-                .filter(createToolFilter(selectTools, tools))
+                .filter(ToolSelection.createToolFilter(selectTools, tools))
                 .map(result -> new AnalysisResultDescription(result, getLabelProviderFactory(), type))
                 .collect(Collectors.toList());
     }
@@ -215,13 +211,15 @@ public class IssuesTotalColumn extends ListViewColumn {
         List<ResultAction> actions = lastCompletedBuild.getActions(ResultAction.class);
         Set<String> actualIds = actions.stream().map(ResultAction::getId).collect(Collectors.toSet());
 
-        String[] selectedIds = getIds(tools);
+        String[] selectedIds = ToolSelection.getIds(tools);
         if (selectedIds.length == 1 && selectTools) {
             var selectedId = selectedIds[0];
             if (actualIds.contains(selectedId)) {
                 //noinspection OptionalGetWithoutIsPresent
-                var result = actions.stream().filter(action -> action.getId().equals(selectedId))
-                        .findFirst().get(); // We are sure it contains the selected id
+                var result = actions.stream()
+                        .filter(action -> action.getId().equals(selectedId))
+                        .findFirst()
+                        .get(); // We are sure it contains the selected id
                 return type.getUrl(result.getOwner().getNumber() + "/" + result.getUrlName());
             }
         }
@@ -310,7 +308,9 @@ public class IssuesTotalColumn extends ListViewColumn {
             this.url = url;
         }
 
-        AnalysisResultDescription(final ResultAction result, final LabelProviderFactory labelProviderFactory,
+        AnalysisResultDescription(
+                final ResultAction result,
+                final LabelProviderFactory labelProviderFactory,
                 final StatisticProperties type) {
             var labelProvider = labelProviderFactory.create(result.getId(), result.getName());
             name = labelProvider.getLinkName();

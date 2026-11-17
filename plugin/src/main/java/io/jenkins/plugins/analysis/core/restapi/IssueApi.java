@@ -1,12 +1,10 @@
 package io.jenkins.plugins.analysis.core.restapi;
 
 import edu.hm.hafner.analysis.Issue;
-
+import io.jenkins.plugins.analysis.core.util.Blame;
+import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
-import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
-
-import io.jenkins.plugins.analysis.core.util.Blame;
 
 /**
  * Remote API for an {@link Issue}. Simple Java Bean that exposes several methods of an {@link Issue} instance.

@@ -1,8 +1,7 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import org.openqa.selenium.WebElement;
-
 import org.jenkinsci.test.acceptance.po.PageObject;
+import org.openqa.selenium.WebElement;
 
 /**
  * {@link PageObject} representing one of the property tables that show the distribution of the {@link AnalysisResult}
@@ -15,15 +14,11 @@ public class PropertyDetailsTable extends AbstractIssuesTable<GenericTableRow> {
     /**
      * Creates a {@link PropertyDetailsTable} of a specific type.
      *
-     * @param tab
-     *         the WebElement representing the tab which belongs to the categories table
-     * @param resultDetailsPage
-     *         the AnalysisResult on which the categories table is displayed on
-     * @param property
-     *         the name of the property
+     * @param tab the WebElement representing the tab which belongs to the categories table
+     * @param resultDetailsPage the AnalysisResult on which the categories table is displayed on
+     * @param property the name of the property
      */
-    public PropertyDetailsTable(final WebElement tab, final AnalysisResult resultDetailsPage,
-            final String property) {
+    public PropertyDetailsTable(final WebElement tab, final AnalysisResult resultDetailsPage, final String property) {
         super(tab, resultDetailsPage, property);
     }
 

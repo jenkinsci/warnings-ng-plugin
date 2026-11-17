@@ -1,12 +1,14 @@
 package io.jenkins.plugins.analysis.core.steps;
 
 import com.google.errorprone.annotations.FormatMethod;
-
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.Ensure;
 import edu.hm.hafner.util.FilteredLog;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
-
+import io.jenkins.plugins.analysis.core.restapi.IssueApi;
+import io.jenkins.plugins.analysis.core.restapi.ReportApi;
+import io.jenkins.plugins.forensics.blame.Blames;
+import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -14,13 +16,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
-
-import io.jenkins.plugins.analysis.core.restapi.IssueApi;
-import io.jenkins.plugins.analysis.core.restapi.ReportApi;
-import io.jenkins.plugins.forensics.blame.Blames;
-import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
 
 /**
  * A report of issues and the associated blame information, i.e., author and commit information of the SCM.
@@ -89,8 +85,8 @@ public class AnnotatedReport implements Serializable {
      * @param statistics
      *         repository statistics for affected files
      */
-    public AnnotatedReport(final String id, final Report report, final Blames blames,
-            final RepositoryStatistics statistics) {
+    public AnnotatedReport(
+            final String id, final Report report, final Blames blames, final RepositoryStatistics statistics) {
         this(id);
 
         aggregatedReport = report;
@@ -257,14 +253,14 @@ public class AnnotatedReport implements Serializable {
         add(other, getId());
     }
 
-    private void addReport(final String actualId, final Report report, final Blames blames,
-            final RepositoryStatistics statistics) {
+    private void addReport(
+            final String actualId, final Report report, final Blames blames, final RepositoryStatistics statistics) {
         aggregatedReport.addAll(report);
         addBlames(actualId, blames, statistics, report.size());
     }
 
-    private void addBlames(final String actualId, final Blames blames,
-            final RepositoryStatistics statistics, final int size) {
+    private void addBlames(
+            final String actualId, final Blames blames, final RepositoryStatistics statistics, final int size) {
         sizeOfOrigin.merge(actualId, size, Integer::sum);
         aggregatedBlames.addAll(blames);
         aggregatedRepositoryStatistics.addAll(copyOf(statistics));

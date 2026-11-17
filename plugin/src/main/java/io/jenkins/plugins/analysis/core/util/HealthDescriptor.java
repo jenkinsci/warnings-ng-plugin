@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.core.util;
 
 import edu.hm.hafner.analysis.Severity;
-
 import java.io.Serial;
 import java.io.Serializable;
 

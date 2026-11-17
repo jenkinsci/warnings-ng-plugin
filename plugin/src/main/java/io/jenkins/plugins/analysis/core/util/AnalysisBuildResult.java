@@ -1,9 +1,7 @@
 package io.jenkins.plugins.analysis.core.util;
 
 import edu.hm.hafner.analysis.Severity;
-
 import java.util.Map;
-
 import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
 
 /**

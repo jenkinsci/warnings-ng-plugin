@@ -1,22 +1,19 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
-import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
 import hudson.matrix.AxisList;
 import hudson.matrix.MatrixBuild;
 import hudson.matrix.MatrixProject;
 import hudson.matrix.MatrixRun;
 import hudson.matrix.TextAxis;
-
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.Gcc4;
 import io.jenkins.plugins.analysis.warnings.SpotBugs;
-
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import org.junit.jupiter.api.Test;
 
 /**
  * Integration tests of the warnings plug-in in matrix jobs.
@@ -86,8 +83,7 @@ class MatrixJobITest extends IntegrationTestWithJenkinsPerSuite {
     private void configureAxisLabels(final MatrixProject project, final String... axis) {
         try {
             project.setAxes(new AxisList(new TextAxis("user_axis", String.join(" ", axis))));
-        }
-        catch (IOException exception) {
+        } catch (IOException exception) {
             throw new AssertionError(exception);
         }
     }
@@ -111,7 +107,10 @@ class MatrixJobITest extends IntegrationTestWithJenkinsPerSuite {
         for (MatrixRun run : build.getRuns()) {
             assertSuccessfulBuild(run);
 
-            assertThat(getAnalysisResult(run)).as("Result of axis %s", getAxisName(run)).hasTotalSize(2).hasNewSize(0);
+            assertThat(getAnalysisResult(run))
+                    .as("Result of axis %s", getAxisName(run))
+                    .hasTotalSize(2)
+                    .hasNewSize(0);
         }
         assertThat(getAnalysisResult(build)).hasTotalSize(2).hasNewSize(0);
     }

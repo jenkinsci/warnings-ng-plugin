@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
-import org.apache.commons.lang3.StringUtils;
-
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.LookaheadParser;
@@ -9,10 +7,10 @@ import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.ReaderFactory;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.LookaheadStream;
-
 import java.io.Serial;
 import java.util.Optional;
 import java.util.regex.Matcher;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * A line parser that uses a configurable regular expression and Groovy script to parse warnings.
@@ -48,8 +46,9 @@ class DynamicLineParser extends LookaheadParser {
     }
 
     @Override
-    protected Optional<Issue> createIssue(final Matcher matcher, final LookaheadStream lookahead,
-            final IssueBuilder builder) throws ParsingException {
+    protected Optional<Issue> createIssue(
+            final Matcher matcher, final LookaheadStream lookahead, final IssueBuilder builder)
+            throws ParsingException {
         return expressionMatcher.createIssue(matcher, builder, lookahead.getLine(), fileName);
     }
 }

@@ -1,13 +1,11 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
-import java.util.List;
-import java.util.stream.Collectors;
+import static org.apache.commons.lang3.builder.ToStringStyle.*;
 
 import io.jenkins.plugins.analysis.core.model.ResultAction;
-
-import static org.apache.commons.lang3.builder.ToStringStyle.*;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * Simple Java bean that represents a row in the table. It consists of three columns, the name (value) of the property,
@@ -27,10 +25,9 @@ public class PropertyRow {
     public static List<PropertyRow> getRows(final ResultAction result, final String property) {
         var details = result.getTarget().getDetails(property);
         return details.getKeys().stream()
-                .map(key -> new PropertyRow(
-                        details.getDisplayName(key),
-                        (int) details.getCount(key),
-                        (int) (details.getCount(key) * 100 / details.getMax()))).collect(Collectors.toList());
+                .map(key -> new PropertyRow(details.getDisplayName(key), (int) details.getCount(key), (int)
+                        (details.getCount(key) * 100 / details.getMax())))
+                .collect(Collectors.toList());
     }
 
     private final long percentage;

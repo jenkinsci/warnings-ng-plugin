@@ -8,7 +8,6 @@ import com.thoughtworks.xstream.converters.reflection.ReflectionProvider;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.mapper.Mapper;
-
 import edu.hm.hafner.analysis.DuplicationGroup;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
@@ -17,14 +16,11 @@ import edu.hm.hafner.util.Ensure;
 import edu.hm.hafner.util.LineRange;
 import edu.hm.hafner.util.LineRangeList;
 import edu.hm.hafner.util.TreeString;
-
-import java.util.Collection;
-
 import hudson.util.RobustCollectionConverter;
 import hudson.util.RobustReflectionConverter;
 import hudson.util.XStream2;
-
 import io.jenkins.plugins.util.AbstractXmlStream;
+import java.util.Collection;
 
 /**
  * Reads {@link Issue issues} from an XML file.
@@ -77,8 +73,10 @@ class ReportXmlStream extends AbstractXmlStream<Report> {
 
         @SuppressWarnings({"CastToConcreteClass", "rawtypes"})
         @Override
-        protected void populateCollection(final HierarchicalStreamReader reader,
-                final UnmarshallingContext context, final Collection collection) {
+        protected void populateCollection(
+                final HierarchicalStreamReader reader,
+                final UnmarshallingContext context,
+                final Collection collection) {
             super.populateCollection(reader, context, collection);
             Ensure.that(collection).isInstanceOf(LineRangeList.class);
             ((LineRangeList) collection).trim();
@@ -96,8 +94,8 @@ class ReportXmlStream extends AbstractXmlStream<Report> {
      */
     private static final class SeverityConverter implements Converter {
         @Override
-        public void marshal(final Object source, final HierarchicalStreamWriter writer,
-                final MarshallingContext context) {
+        public void marshal(
+                final Object source, final HierarchicalStreamWriter writer, final MarshallingContext context) {
             writer.setValue(source instanceof Severity s ? s.getName() : null);
         }
 
@@ -125,8 +123,8 @@ class ReportXmlStream extends AbstractXmlStream<Report> {
         }
 
         @Override
-        public void marshal(final Object source, final HierarchicalStreamWriter writer,
-                final MarshallingContext context) {
+        public void marshal(
+                final Object source, final HierarchicalStreamWriter writer, final MarshallingContext context) {
             ref.marshal(source, writer, context);
         }
 

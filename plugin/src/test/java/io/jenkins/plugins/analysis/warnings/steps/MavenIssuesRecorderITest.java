@@ -1,18 +1,15 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.jvnet.hudson.test.ToolInstallations;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
 import edu.hm.hafner.analysis.Severity;
-
 import hudson.model.Result;
-
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.MavenConsole;
-
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.jvnet.hudson.test.ToolInstallations;
 
 /**
  * Integration tests of the warnings plug-in in maven jobs. Tests the new recorder {@link IssuesRecorder}.
@@ -34,9 +31,9 @@ class MavenIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
 
         assertThat(result).hasTotalSize(8);
         assertThat(result).hasNewSize(0);
-        assertThat(result).hasInfoMessages(
-                "-> resolved module names for 8 issues",
-                "-> resolved package names of 4 affected files");
+        assertThat(result)
+                .hasInfoMessages(
+                        "-> resolved module names for 8 issues", "-> resolved package names of 4 affected files");
     }
 
     /**
@@ -63,8 +60,7 @@ class MavenIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     static void installMaven() {
         try {
             ToolInstallations.configureMaven35();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new AssertionError(e);
         }
     }

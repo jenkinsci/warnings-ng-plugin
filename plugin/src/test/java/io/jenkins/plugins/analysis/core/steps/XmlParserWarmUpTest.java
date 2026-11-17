@@ -1,11 +1,10 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import org.junit.jupiter.api.Test;
-import org.junitpioneer.jupiter.Issue;
+import static org.assertj.core.api.Assertions.*;
 
 import edu.hm.hafner.analysis.Report;
-
-import static org.assertj.core.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.Issue;
 
 /**
  * Unit tests that verify the XML parser infrastructure warm-up logic introduced to fix JENKINS-66268.

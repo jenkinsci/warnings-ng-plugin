@@ -1,42 +1,38 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Strings;
-
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.Generated;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.nio.charset.Charset;
-import java.util.Collection;
-import java.util.Set;
-
-import org.kohsuke.accmod.Restricted;
-import org.kohsuke.accmod.restrictions.DoNotUse;
-import org.kohsuke.stapler.StaplerProxy;
-import org.kohsuke.stapler.bind.JavaScriptMethod;
-import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
-import org.jvnet.localizer.Localizable;
 import hudson.model.Action;
 import hudson.model.HealthReport;
 import hudson.model.HealthReportingAction;
 import hudson.model.Result;
 import hudson.model.Run;
-import jenkins.management.Badge;
-import jenkins.model.RunAction2;
-import jenkins.model.experimentalflags.BooleanUserExperimentalFlag;
-import jenkins.tasks.SimpleBuildStep.LastBuildAction;
-
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
 import io.jenkins.plugins.util.JenkinsFacade;
 import io.jenkins.plugins.util.QualityGateResult;
 import io.jenkins.plugins.util.ValidationUtilities;
+import java.io.Serial;
+import java.io.Serializable;
+import java.nio.charset.Charset;
+import java.util.Collection;
+import java.util.Set;
+import jenkins.management.Badge;
+import jenkins.model.RunAction2;
+import jenkins.model.experimentalflags.BooleanUserExperimentalFlag;
+import jenkins.tasks.SimpleBuildStep.LastBuildAction;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
+import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
+import org.jvnet.localizer.Localizable;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.DoNotUse;
+import org.kohsuke.stapler.StaplerProxy;
+import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 /**
  * Controls the life cycle of the analysis results in a job. This action persists the results of a build and displays a
@@ -85,9 +81,49 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      *         determines if the trend chart will be shown
      */
     @SuppressWarnings("checkstyle:ParameterNumber")
-    public ResultAction(final Run<?, ?> owner, final AnalysisResult result, final HealthDescriptor healthDescriptor,
-            final String id, final String name, final String icon,
-            final Charset charset, final TrendChartType trendChartType) {
+    @VisibleForTesting
+    public ResultAction(
+            final Run<?, ?> owner,
+            final AnalysisResult result,
+            final HealthDescriptor healthDescriptor,
+            final String id,
+            final String name,
+            final String icon,
+            final Charset charset,
+            final TrendChartType trendChartType) {
+        this(owner, result, healthDescriptor, id, name, icon, charset.name(), trendChartType);
+    }
+
+    /**
+     * Creates a new instance of {@link ResultAction}.
+     *
+     * @param owner
+     *         the associated build/run that created the static analysis result
+     * @param result
+     *         the result of the static analysis run
+     * @param healthDescriptor
+     *         the health descriptor of the static analysis run
+     * @param id
+     *         the ID of the results
+     * @param name
+     *         the optional name of the results
+     * @param icon
+     *         the optional icon of the results
+     * @param charset
+     *         the charset to use to display source files
+     * @param trendChartType
+     *         determines if the trend chart will be shown
+     */
+    @SuppressWarnings("checkstyle:ParameterNumber")
+    public ResultAction(
+            final Run<?, ?> owner,
+            final AnalysisResult result,
+            final HealthDescriptor healthDescriptor,
+            final String id,
+            final String name,
+            final String icon,
+            final String charset,
+            final TrendChartType trendChartType) {
         VALIDATION_UTILITIES.ensureValidId(id);
 
         this.owner = owner;
@@ -96,7 +132,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
         this.id = id;
         this.name = name;
         this.icon = icon;
-        this.charset = charset.name();
+        this.charset = charset;
         this.trendChartType = trendChartType;
     }
 
@@ -204,14 +240,15 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      */
     @SuppressWarnings("deprecation") // this is the only way for remote API calls to obtain the absolute path
     public String getAbsoluteUrl() {
-        return new JenkinsFacade().getAbsoluteUrl(Strings.CS.removeEnd(getOwner().getUrl(), "/"), getUrlName());
+        return new JenkinsFacade()
+                .getAbsoluteUrl(Strings.CS.removeEnd(getOwner().getUrl(), "/"), getUrlName());
     }
 
     @Override
     @CheckForNull
     public HealthReport getBuildHealth() {
-        return new HealthReportBuilder().computeHealth(healthDescriptor, getLabelProvider(),
-                getResult().getSizePerSeverity());
+        return new HealthReportBuilder()
+                .computeHealth(healthDescriptor, getLabelProvider(), getResult().getSizePerSeverity());
     }
 
     HealthDescriptor getHealthDescriptor() {
@@ -220,8 +257,8 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
 
     @Override
     public Collection<? extends Action> getProjectActions() {
-        return Set.of(new JobAction(owner.getParent(), getLabelProvider(), result.getSizePerOrigin().size(),
-                trendChartType, getUrlName()));
+        return Set.of(new JobAction(
+                owner.getParent(), getLabelProvider(), result.getSizePerOrigin().size(), trendChartType, getUrlName()));
     }
 
     @Whitelisted
@@ -231,8 +268,8 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
 
     @Override
     public String getIconFileName() {
-        Boolean newBuildPage = BooleanUserExperimentalFlag.
-                getFlagValueForCurrentUser("jenkins.model.experimentalflags.NewBuildPageUserExperimentalFlag");
+        Boolean newBuildPage = BooleanUserExperimentalFlag.getFlagValueForCurrentUser(
+                "jenkins.model.experimentalflags.NewBuildPageUserExperimentalFlag");
 
         if (Boolean.TRUE.equals(newBuildPage)) {
             return null;
@@ -370,7 +407,8 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
     @JavaScriptMethod
     @SuppressWarnings("unused")
     public String resetReference() {
-        // Empty method as workaround for Stapler bug that does not find JavaScript proxy methods in target object IssueDetail
+        // Empty method as workaround for Stapler bug that does not find JavaScript proxy methods in target object
+        // IssueDetail
         return "{}";
     }
 
@@ -390,7 +428,10 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
             return null;
         }
 
-        return new Badge(String.valueOf(warningActionsCount), Messages.ResultAction_Badge(warningActionsCount), Badge.Severity.WARNING);
+        return new Badge(
+                String.valueOf(warningActionsCount),
+                Messages.ResultAction_Badge(warningActionsCount),
+                Badge.Severity.WARNING);
     }
 
     private static class CustomIconLabelProvider extends StaticAnalysisLabelProvider {
@@ -411,6 +452,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
 
         @VisibleForTesting
         @Override
+        @SuppressWarnings("PMD.InternalApiUsage")
         protected String getDefaultName() {
             return decorated.getDefaultName();
         }

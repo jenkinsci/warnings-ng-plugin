@@ -1,16 +1,13 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
-import org.junit.jupiter.api.Test;
-
-import java.util.Collections;
-import java.util.List;
-
-import hudson.util.FormValidation;
-
-import io.jenkins.plugins.util.GlobalConfigurationFacade;
-
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import static org.mockito.Mockito.*;
+
+import hudson.util.FormValidation;
+import io.jenkins.plugins.util.GlobalConfigurationFacade;
+import java.util.Collections;
+import java.util.List;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class {@link ParserConfiguration}.
@@ -91,7 +88,9 @@ class ParserConfigurationTest {
         configuration.addParser(testParser);
         verify(facade).save();
 
-        assertThatIllegalArgumentException().isThrownBy(() -> configuration.addParser(testParser)).withMessageContaining(testParser.getId());
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> configuration.addParser(testParser))
+                .withMessageContaining(testParser.getId());
     }
 
     @Test

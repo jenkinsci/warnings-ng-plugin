@@ -1,30 +1,26 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import org.eclipse.collections.api.RichIterable;
-import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
-
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Map;
-
 import hudson.Launcher;
 import hudson.matrix.MatrixBuild;
 import hudson.matrix.MatrixConfiguration;
 import hudson.matrix.MatrixRun;
 import hudson.model.BuildListener;
-
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
-
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Map;
+import org.eclipse.collections.api.RichIterable;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 /**
  * Tests the class {@link IssuesAggregator}.
@@ -51,7 +47,8 @@ class IssuesAggregatorTest {
 
         aggregator.endBuild();
 
-        verify(recorder, never()).publishResult(any(), any(), any(), anyString(), any(), anyString(), anyString(), any());
+        verify(recorder, never())
+                .publishResult(any(), any(), any(), anyString(), any(), anyString(), anyString(), any());
     }
 
     @Test
@@ -67,15 +64,19 @@ class IssuesAggregatorTest {
         Map<String, RichIterable<AnnotatedReport>> results = aggregator.getResultsPerTool();
         assertThat(results).containsOnlyKeys(PMD);
 
-        assertThat(results.get(PMD)).hasSize(1)
-                .satisfies(reports -> assertThat(reports.iterator().next().getReport()).hasSize(1).contains(warning));
+        assertThat(results.get(PMD))
+                .hasSize(1)
+                .satisfies(reports -> assertThat(reports.iterator().next().getReport())
+                        .hasSize(1)
+                        .contains(warning));
 
         aggregator.endBuild();
 
         verify(recorder).publishResult(any(), any(), any(), anyString(), any(), anyString(), anyString(), any());
     }
 
-    @Test @org.junitpioneer.jupiter.Issue("JENKINS-59178")
+    @Test
+    @org.junitpioneer.jupiter.Issue("JENKINS-59178")
     void shouldCollectDifferentResultsForTwoAxes() {
         var recorder = createRecorder();
         var aggregator = createIssueAggregator(recorder);
@@ -90,10 +91,16 @@ class IssuesAggregatorTest {
         Map<String, RichIterable<AnnotatedReport>> results = aggregator.getResultsPerTool();
         assertThat(results).containsOnlyKeys(PMD, SPOTBUGS);
 
-        assertThat(results.get(PMD)).hasSize(1)
-                .satisfies(reports -> assertThat(reports.iterator().next().getReport()).hasSize(1).contains(warning));
-        assertThat(results.get(SPOTBUGS)).hasSize(1)
-                .satisfies(reports -> assertThat(reports.iterator().next().getReport()).hasSize(1).contains(bug));
+        assertThat(results.get(PMD))
+                .hasSize(1)
+                .satisfies(reports -> assertThat(reports.iterator().next().getReport())
+                        .hasSize(1)
+                        .contains(warning));
+        assertThat(results.get(SPOTBUGS))
+                .hasSize(1)
+                .satisfies(reports -> assertThat(reports.iterator().next().getReport())
+                        .hasSize(1)
+                        .contains(bug));
 
         aggregator.endBuild();
 
@@ -121,14 +128,21 @@ class IssuesAggregatorTest {
         Map<String, RichIterable<AnnotatedReport>> results = aggregator.getResultsPerTool();
         assertThat(results).containsOnlyKeys(PMD, SPOTBUGS);
 
-        assertThat(results.get(PMD)).hasSize(1)
-                .satisfies(reports -> assertThat(reports.iterator().next().getReport()).hasSize(1).contains(warning));
-        assertThat(results.get(SPOTBUGS)).hasSize(1)
-                .satisfies(reports -> assertThat(reports.iterator().next().getReport()).hasSize(1).contains(bug));
+        assertThat(results.get(PMD))
+                .hasSize(1)
+                .satisfies(reports -> assertThat(reports.iterator().next().getReport())
+                        .hasSize(1)
+                        .contains(warning));
+        assertThat(results.get(SPOTBUGS))
+                .hasSize(1)
+                .satisfies(reports -> assertThat(reports.iterator().next().getReport())
+                        .hasSize(1)
+                        .contains(bug));
 
         aggregator.endBuild();
 
-        verify(recorder, times(2)).publishResult(any(), any(), any(), anyString(), any(), anyString(), anyString(), any());
+        verify(recorder, times(2))
+                .publishResult(any(), any(), any(), anyString(), any(), anyString(), anyString(), any());
     }
 
     @Test
@@ -147,49 +161,65 @@ class IssuesAggregatorTest {
         Map<String, RichIterable<AnnotatedReport>> results = aggregator.getResultsPerTool();
         assertThat(results).containsOnlyKeys(PMD);
 
-        assertThat(results.get(PMD)).hasSize(2)
-                .satisfies(reports -> {
-                    Iterator<? extends AnnotatedReport> iterator = reports.iterator();
-                    assertThat(iterator.next().getReport()).hasSize(1).contains(unixWarning);
-                    assertThat(iterator.next().getReport()).hasSize(1).contains(windowsWarning);
-                });
+        assertThat(results.get(PMD)).hasSize(2).satisfies(reports -> {
+            Iterator<? extends AnnotatedReport> iterator = reports.iterator();
+            assertThat(iterator.next().getReport()).hasSize(1).contains(unixWarning);
+            assertThat(iterator.next().getReport()).hasSize(1).contains(windowsWarning);
+        });
 
         aggregator.endBuild();
 
         verify(recorder).publishResult(any(), any(), any(), anyString(), any(), anyString(), anyString(), any());
     }
 
-    @Test @org.junitpioneer.jupiter.Issue("JENKINS-71571")
+    @Test
+    @org.junitpioneer.jupiter.Issue("JENKINS-71571")
     void shouldAggregateReportsConsistentlyRegardlessOfCompletionOrder() {
         var recorder1 = createRecorder();
         var aggregator1 = createIssueAggregator(recorder1);
-        
-        var issue1 = new IssueBuilder().setOrigin(PMD).setFileName("file1.java").setLineStart(1).build();
-        var issue2 = new IssueBuilder().setOrigin(PMD).setFileName("file2.java").setLineStart(2).build();
-        var issue3 = new IssueBuilder().setOrigin(PMD).setFileName("file3.java").setLineStart(3).build();
-        
+
+        var issue1 = new IssueBuilder()
+                .setOrigin(PMD)
+                .setFileName("file1.java")
+                .setLineStart(1)
+                .build();
+        var issue2 = new IssueBuilder()
+                .setOrigin(PMD)
+                .setFileName("file2.java")
+                .setLineStart(2)
+                .build();
+        var issue3 = new IssueBuilder()
+                .setOrigin(PMD)
+                .setFileName("file3.java")
+                .setLineStart(3)
+                .build();
+
         aggregator1.endRun(createBuild("axis1", createAction(issue1)));
         aggregator1.endRun(createBuild("axis2", createAction(issue2)));
         aggregator1.endRun(createBuild("axis3", createAction(issue3)));
         aggregator1.endBuild();
-        
+
         var recorder2 = createRecorder();
         var aggregator2 = createIssueAggregator(recorder2);
-        
+
         aggregator2.endRun(createBuild("axis3", createAction(issue3)));
         aggregator2.endRun(createBuild("axis1", createAction(issue1)));
         aggregator2.endRun(createBuild("axis2", createAction(issue2)));
         aggregator2.endBuild();
-        
+
         var reportCaptor1 = ArgumentCaptor.forClass(AnnotatedReport.class);
-        verify(recorder1).publishResult(any(), any(), any(), anyString(), reportCaptor1.capture(), anyString(), anyString(), any());
-        
+        verify(recorder1)
+                .publishResult(
+                        any(), any(), any(), anyString(), reportCaptor1.capture(), anyString(), anyString(), any());
+
         var reportCaptor2 = ArgumentCaptor.forClass(AnnotatedReport.class);
-        verify(recorder2).publishResult(any(), any(), any(), anyString(), reportCaptor2.capture(), anyString(), anyString(), any());
-        
+        verify(recorder2)
+                .publishResult(
+                        any(), any(), any(), anyString(), reportCaptor2.capture(), anyString(), anyString(), any());
+
         var report1 = reportCaptor1.getValue().getReport();
         var report2 = reportCaptor2.getValue().getReport();
-        
+
         assertThat(report1).hasSameElementsAs(report2);
         assertThat(report1.stream().map(Issue::getFileName))
                 .as("First aggregator should have issues sorted by axis name")
@@ -212,8 +242,7 @@ class IssuesAggregatorTest {
     }
 
     private IssuesAggregator createIssueAggregator(final IssuesRecorder recorder) {
-        return new IssuesAggregator(mock(MatrixBuild.class), mock(Launcher.class), mock(
-                BuildListener.class), recorder);
+        return new IssuesAggregator(mock(MatrixBuild.class), mock(Launcher.class), mock(BuildListener.class), recorder);
     }
 
     private MatrixRun createBuild(final String axis, final ResultAction... actions) {

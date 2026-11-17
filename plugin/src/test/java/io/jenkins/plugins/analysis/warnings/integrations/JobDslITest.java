@@ -1,15 +1,12 @@
 package io.jenkins.plugins.analysis.warnings.integrations;
 
-import org.junit.jupiter.api.Test;
-
-import java.util.List;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
 import hudson.model.Descriptor;
 import hudson.model.FreeStyleProject;
 import hudson.tasks.Publisher;
 import hudson.util.DescribableList;
 import hudson.views.ListViewColumn;
-
 import io.jenkins.plugins.analysis.core.columns.IssuesTotalColumn;
 import io.jenkins.plugins.analysis.core.columns.Messages;
 import io.jenkins.plugins.analysis.core.columns.WarningsAppearanceConfiguration;
@@ -23,8 +20,8 @@ import io.jenkins.plugins.analysis.warnings.Java;
 import io.jenkins.plugins.casc.ConfigurationAsCode;
 import io.jenkins.plugins.casc.ConfiguratorException;
 import io.jenkins.plugins.util.QualityGate.QualityGateCriticality;
-
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import java.util.List;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the Job DSL Plugin.
@@ -61,8 +58,10 @@ class JobDslITest extends IntegrationTestWithJenkinsPerTest {
                 .extracting(ListViewColumn::getColumnCaption)
                 .contains(new IssuesTotalColumn().getColumnCaption());
 
-        assertThat(view.getColumns()).first()
-                .isInstanceOfSatisfying(IssuesTotalColumn.class,
+        assertThat(view.getColumns())
+                .first()
+                .isInstanceOfSatisfying(
+                        IssuesTotalColumn.class,
                         c -> assertThat(c)
                                 .hasColumnCaption(Messages.IssuesTotalColumn_Name())
                                 .hasType(StatisticProperties.TOTAL));
@@ -145,12 +144,11 @@ class JobDslITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(recorder.getName()).isEqualTo("test-name");
         assertThat(recorder.getSourceCodeEncoding()).isEqualTo("UTF-8");
         assertThat(recorder.getUnhealthy()).isEqualTo(50);
-        assertThat(recorder.getQualityGates()).hasSize(1)
-                .first().satisfies(gate -> {
-                    assertThat(gate.getThreshold()).isEqualTo(10.0);
-                    assertThat(gate.getType()).isEqualTo(QualityGateType.TOTAL);
-                    assertThat(gate.getCriticality()).isEqualTo(QualityGateCriticality.FAILURE);
-                });
+        assertThat(recorder.getQualityGates()).hasSize(1).first().satisfies(gate -> {
+            assertThat(gate.getThreshold()).isEqualTo(10.0);
+            assertThat(gate.getType()).isEqualTo(QualityGateType.TOTAL);
+            assertThat(gate.getCriticality()).isEqualTo(QualityGateCriticality.FAILURE);
+        });
 
         List<Tool> tools = recorder.getTools();
         assertThat(tools).hasSize(2).first().isInstanceOf(Java.class);
@@ -164,9 +162,9 @@ class JobDslITest extends IntegrationTestWithJenkinsPerTest {
      */
     private void configureJenkins(final String fileName) {
         try {
-            ConfigurationAsCode.get().configure(getResourceAsFile(fileName).toUri().toString());
-        }
-        catch (ConfiguratorException e) {
+            ConfigurationAsCode.get()
+                    .configure(getResourceAsFile(fileName).toUri().toString());
+        } catch (ConfiguratorException e) {
             throw new AssertionError(e);
         }
     }

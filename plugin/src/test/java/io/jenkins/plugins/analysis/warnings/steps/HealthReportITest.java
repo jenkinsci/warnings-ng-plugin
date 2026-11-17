@@ -1,19 +1,16 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
-import org.junit.jupiter.api.Test;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
 import edu.hm.hafner.analysis.Severity;
-
 import hudson.model.FreeStyleProject;
 import hudson.model.HealthReport;
 import hudson.model.Result;
-
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
-
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 /**
  * Integration tests for the health report of the warnings plug-in in freestyle jobs.
@@ -139,12 +136,13 @@ class HealthReportITest extends IntegrationTestWithJenkinsPerSuite {
      */
     private HealthReport createHealthReportTestSetupEclipse(final int health, final int unhealthy) {
         var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("eclipse-healthReport.txt");
-        enableGenericWarnings(project, publisher -> {
+        enableGenericWarnings(
+                project,
+                publisher -> {
                     publisher.setHealthy(health);
                     publisher.setUnhealthy(unhealthy);
                 },
-                configurePattern(new Eclipse())
-        );
+                configurePattern(new Eclipse()));
         return scheduleBuildToGetHealthReportAndAssertStatus(project, Result.SUCCESS);
     }
 
@@ -158,13 +156,14 @@ class HealthReportITest extends IntegrationTestWithJenkinsPerSuite {
      */
     private HealthReport createHealthReportTestSetupCheckstyle(final Severity minimumSeverity) {
         var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle-healthReport.xml");
-        enableGenericWarnings(project, publisher -> {
+        enableGenericWarnings(
+                project,
+                publisher -> {
                     publisher.setHealthy(10);
                     publisher.setUnhealthy(15);
                     publisher.setMinimumSeverity(minimumSeverity.getName());
                 },
-                createTool(new CheckStyle(), "**/*issues.txt")
-        );
+                createTool(new CheckStyle(), "**/*issues.txt"));
         return scheduleBuildToGetHealthReportAndAssertStatus(project, Result.SUCCESS);
     }
 
@@ -180,8 +179,8 @@ class HealthReportITest extends IntegrationTestWithJenkinsPerSuite {
      * @return the created {@link HealthReport}
      */
     @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
-    private HealthReport scheduleBuildToGetHealthReportAndAssertStatus(final FreeStyleProject job,
-            final Result status) {
+    private HealthReport scheduleBuildToGetHealthReportAndAssertStatus(
+            final FreeStyleProject job, final Result status) {
         try {
             var build = getJenkins().assertBuildStatus(status, job.scheduleBuild2(0));
 
@@ -192,8 +191,7 @@ class HealthReportITest extends IntegrationTestWithJenkinsPerSuite {
             assertThat(action).isNotNull();
 
             return action.getBuildHealth();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new AssertionError(e);
         }
     }

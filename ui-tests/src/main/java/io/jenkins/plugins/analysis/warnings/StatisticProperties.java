@@ -49,9 +49,7 @@ public enum StatisticProperties {
     /**
      * Returns the relative url of this statistics.
      *
-     * @param prefix
-     *         the prefix added to the url
-     *
+     * @param prefix the prefix added to the url
      * @return the relative url
      */
     public String getUrl(final String prefix) {

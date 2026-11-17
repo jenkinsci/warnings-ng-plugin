@@ -1,8 +1,8 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.Assertions.*;
+
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class {@link ResetReferenceAction}.
