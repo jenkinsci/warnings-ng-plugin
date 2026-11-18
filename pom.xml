@@ -11,7 +11,7 @@
 
   <groupId>io.jenkins.plugins</groupId>
   <artifactId>warnings-ng-parent</artifactId>
-  <version>${revision}.${changelist}</version>
+  <version>${revision}.10365.${changelist}</version>
   <packaging>pom</packaging>
 
   <name>Aggregator for Warnings Plugin</name>
