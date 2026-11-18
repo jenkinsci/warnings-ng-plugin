@@ -387,6 +387,22 @@
     min-height: 300px;
 }
 
+/* Charts of the hotspots page: the height of the hotspots chart depends on the number of bars (hotspots-model.js). */
+.wng-hotspots__chart {
+    width: 100%;
+    min-height: 200px;
+}
+
+.wng-hotspots__histogram {
+    width: 100%;
+    height: 300px;
+}
+
+.wng-hotspots__empty {
+    margin: 0;
+    color: var(--text-color-secondary);
+}
+
 /* Definition list in HTML tooltips (e.g., the explanation of the chart types on the trend page). */
 .wng-tooltip-list {
     margin: 0;

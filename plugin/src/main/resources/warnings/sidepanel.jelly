@@ -3,7 +3,7 @@
 
   <st:documentation>
     Provides the side panel links of the Warnings tab of a run: the overview page, the trend page, the issues page, the
-    log messages, and one link for each result (static analysis tool) of the run.
+    hotspots, the log messages, and one link for each result (static analysis tool) of the run.
 
     <st:attribute name="tab" type="io.jenkins.plugins.analysis.core.model.RunTab" use="required">
       The Warnings tab of the run that provides the results.
@@ -30,6 +30,9 @@
       <l:task title="${%Issues}"
               icon="symbol-list-outline plugin-ionicons-api"
               href="${tabUrl + '/table'}"/>
+      <l:task title="${%Hotspots}"
+              icon="symbol-flame-outline plugin-ionicons-api"
+              href="${tabUrl + '/hotspots'}"/>
       <l:task title="${%Log Messages}"
               icon="symbol-information-outline plugin-ionicons-api"
               href="${tabUrl + '/log'}"/>

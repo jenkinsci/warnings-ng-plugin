@@ -141,6 +141,18 @@ public class RunTab extends Tab {
     }
 
     /**
+     * Returns the model of the hotspots page that shows the files (or other properties) with the most issues of all
+     * warning actions. Stapler resolves this getter before {@link #getDynamic(String)}, so the URL
+     * {@code warnings/hotspots} always shows the hotspots.
+     *
+     * @return the hotspots model
+     */
+    @Restricted(NoExternalUse.class)
+    public HotspotsModel getHotspots() {
+        return new HotspotsModel(getObject(), getWarningActions());
+    }
+
+    /**
      * Returns the model of the log page that shows the error and information messages of all warning actions.
      * Stapler resolves this getter before {@link #getDynamic(String)}, so the URL {@code warnings/log} always shows
      * the log messages.

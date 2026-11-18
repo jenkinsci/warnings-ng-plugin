@@ -1,0 +1,98 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:wng="/warnings">
+
+  <st:header name="Content-Type" value="text/html;charset=UTF-8"/>
+
+  <l:run-subpage>
+    <st:adjunct includes="io.jenkins.plugins.analysis.core.model.RunTab.styles"/>
+    <st:adjunct includes="io.jenkins.plugins.jquery3"/>
+    <st:adjunct includes="io.jenkins.plugins.echarts"/>
+
+    <j:set var="hasIssues" value="${it.hasIssues()}"/>
+
+    <l:app-bar title="${it.displayName}">
+      <j:if test="${hasIssues}">
+        <div class="wng-app-bar__controls">
+          <div class="wng-app-bar__control" tooltip="${%tool-tooltip}">
+            <label for="wng-hotspots-tool">${%tool-title}:</label>
+            <j:if test="${it.hasSeveralTools()}">
+              <wng:tool-icon tool="${it.allToolsId}" icon="${it.tab.iconFileName}"/>
+            </j:if>
+            <j:forEach var="tool" items="${it.tools}">
+              <wng:tool-icon tool="${tool.id}" icon="${tool.smallImage}"/>
+            </j:forEach>
+            <div class="jenkins-select">
+              <select id="wng-hotspots-tool" class="jenkins-select__input">
+                <j:if test="${it.hasSeveralTools()}">
+                  <option value="${it.allToolsId}">${%tool-all}</option>
+                </j:if>
+                <j:forEach var="tool" items="${it.tools}">
+                  <option value="${tool.id}">${tool.displayName}</option>
+                </j:forEach>
+              </select>
+            </div>
+          </div>
+
+          <div class="wng-app-bar__control" tooltip="${%grouping-tooltip}">
+            <label for="wng-hotspots-grouping">${%grouping-title}:</label>
+            <div class="jenkins-select">
+              <select id="wng-hotspots-grouping" class="jenkins-select__input">
+                <j:forEach var="grouping" items="${it.groupings}">
+                  <option value="${grouping.id}">${grouping.displayName}</option>
+                </j:forEach>
+              </select>
+            </div>
+          </div>
+
+          <div class="wng-app-bar__control" tooltip="${%baseline-tooltip}">
+            <label for="wng-hotspots-baseline">${%baseline-title}:</label>
+            <div class="jenkins-select">
+              <select id="wng-hotspots-baseline" class="jenkins-select__input">
+                <j:forEach var="baseline" items="${it.baselines}">
+                  <option value="${baseline.id}">${baseline.displayName}</option>
+                </j:forEach>
+              </select>
+            </div>
+          </div>
+
+          <div class="wng-app-bar__control" tooltip="${%top-tooltip}">
+            <label for="wng-hotspots-top">${%top-title}:</label>
+            <input id="wng-hotspots-top" class="jenkins-input wng-app-bar__number" type="number"
+                   min="1" max="100"/>
+          </div>
+        </div>
+      </j:if>
+    </l:app-bar>
+
+    <div class="wng-body">
+      <wng:sidepanel tab="${it.tab}"/>
+
+      <div class="wng-dashboard">
+        <j:choose>
+          <j:when test="${hasIssues}">
+            <l:card title="${%Hotspots}">
+              <p id="wng-hotspots-empty" class="wng-hotspots__empty jenkins-hidden">${%no-hotspots}</p>
+              <div id="wng-hotspots-chart" class="wng-hotspots__chart"
+                   data-total-label="${%total-label}"/>
+            </l:card>
+            <l:card title="${%Distribution}">
+              <div id="wng-hotspots-histogram" class="wng-hotspots__histogram"
+                   data-x-label="${%histogram-x-label}"/>
+            </l:card>
+          </j:when>
+          <j:otherwise>
+            <l:card title="${it.displayName}">
+              <p class="wng-hotspots__empty">${%no-issues}</p>
+            </l:card>
+          </j:otherwise>
+        </j:choose>
+      </div>
+    </div>
+
+    <j:if test="${hasIssues}">
+      <st:bind var="proxy" value="${it}"/>
+      <st:adjunct includes="io.jenkins.plugins.analysis.core.model.HotspotsModel.hotspots-model"/>
+    </j:if>
+  </l:run-subpage>
+
+</j:jelly>

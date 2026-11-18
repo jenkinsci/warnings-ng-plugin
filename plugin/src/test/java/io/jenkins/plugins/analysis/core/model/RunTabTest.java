@@ -155,6 +155,24 @@ class RunTabTest {
     }
 
     /**
+     * Verifies that the hotspots page shows the sorted actions of the run that contain issues.
+     */
+    @Test
+    void shouldCreateHotspotsPage() {
+        Run<?, ?> run = mock(Run.class);
+        var checkstyle = createResultAction("checkstyle", "CheckStyle", 0);
+        var pmd = createResultAction("pmd", "PMD", 2);
+        var spotbugs = createResultAction("spotbugs", "SpotBugs", 5);
+        when(run.getActions(ResultAction.class)).thenReturn(List.of(checkstyle, pmd, spotbugs));
+
+        var hotspots = new RunTab(run).getHotspots();
+
+        assertThat(hotspots).hasDisplayName("Hotspots").hasUrlName("hotspots").hasSeveralTools();
+        assertThat(hotspots.getObject()).isSameAs(run);
+        assertThat(hotspots.getTools()).containsExactly(spotbugs, pmd);
+    }
+
+    /**
      * Verifies that the link to the affected file of an issue is resolved by the tool that reported the issue.
      */
     @Test
