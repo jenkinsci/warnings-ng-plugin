@@ -17,7 +17,9 @@ import java.util.function.ToIntFunction;
  * question: "How many warnings did the static analysis tools report in this build, and did the build pass the
  * quality gates?". It shows the total number of warnings, the new and the fixed warnings of all {@link ResultAction
  * results} of the run, a table with these numbers (and the distribution by severity) for each result, and the
- * results of the quality gates of all results.
+ * results of the quality gates of all results. If a tool reported error messages (e.g., a report file that could
+ * not be found or parsed), the table also shows the number of these errors and links to the corresponding tool on
+ * the {@link LogModel log page}.
  *
  * <p>
  * The page has no client side controls yet. All values are obtained from the {@link AnalysisResult} of the
@@ -164,6 +166,51 @@ public class OverviewModel implements ModelObject {
      */
     public List<SeveritySegment> getNewSegments() {
         return createSegments(this::getNewSizeOf);
+    }
+
+    /**
+     * Returns the number of error messages that have been recorded for all results.
+     *
+     * @return the number of error messages
+     */
+    public int getErrorMessagesSize() {
+        return actions.stream().mapToInt(this::getErrorMessagesSizeOf).sum();
+    }
+
+    /**
+     * Returns the number of error messages that have been recorded for the specified result (e.g., a report file
+     * that could not be found or parsed).
+     *
+     * @param action
+     *         the result
+     *
+     * @return the number of error messages
+     */
+    public int getErrorMessagesSizeOf(final ResultAction action) {
+        return action.getResult().getErrorMessages().size();
+    }
+
+    /**
+     * Returns whether at least one of the results has recorded error messages. Only in this case the results table
+     * gets a column with the number of errors.
+     *
+     * @return {@code true} if there are error messages, {@code false} otherwise
+     */
+    public boolean hasErrorMessages() {
+        return getErrorMessagesSize() > 0;
+    }
+
+    /**
+     * Returns the URL of the log page that shows the messages of the specified result, relative to the Warnings tab.
+     * The tool is preselected using the fragment of the URL.
+     *
+     * @param action
+     *         the result
+     *
+     * @return the URL of the log page
+     */
+    public String getLogUrlOf(final ResultAction action) {
+        return LogModel.URL + "#tool=" + action.getId();
     }
 
     private List<SeveritySegment> createSegments(final ToIntFunction<Severity> sizeOf) {
