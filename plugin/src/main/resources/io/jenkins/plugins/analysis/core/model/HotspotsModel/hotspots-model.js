@@ -68,8 +68,26 @@
         }
     }
 
+    // Resolves a CSS variable to an rgba() color. Jenkins defines its colors with oklch() and relative color syntax,
+    // which ECharts cannot parse: it computes the emphasis (hover) colors from the series colors, and these
+    // computations fail for oklch() colors, so the bars disappear on hover. The computed style resolves the variable
+    // to an absolute color, and the canvas converts this color to sRGB.
     function getCssColor(variable) {
-        return getComputedStyle(document.body).getPropertyValue(variable).trim();
+        const element = document.createElement('span');
+        element.style.display = 'none';
+        element.style.color = 'var(' + variable + ')';
+        document.body.appendChild(element);
+        const color = getComputedStyle(element).color;
+        element.remove();
+
+        const canvas = document.createElement('canvas');
+        canvas.width = 1;
+        canvas.height = 1;
+        const context = canvas.getContext('2d', {willReadFrequently: true});
+        context.fillStyle = color;
+        context.fillRect(0, 0, 1, 1);
+        const [red, green, blue, alpha] = context.getImageData(0, 0, 1, 1).data;
+        return 'rgba(' + red + ', ' + green + ', ' + blue + ', ' + (alpha / 255).toFixed(3) + ')';
     }
 
     // Shows the icon of the selected tool next to the select box and hides the icons of all other tools.
@@ -132,7 +150,7 @@
 
     function createAxisStyle() {
         const textColor = getCssColor('--text-color');
-        const lineColor = getCssColor('--jenkins-border-color') || textColor;
+        const lineColor = getCssColor('--jenkins-border-color');
         return {
             axisLabel: {color: textColor},
             axisLine: {lineStyle: {color: lineColor}},
@@ -217,7 +235,7 @@
                 type: 'bar',
                 name: $(GROUPING_SELECTOR + ' option:selected').text(),
                 barMaxWidth: 60,
-                itemStyle: {color: getCssColor('--blue') || getCssColor('--text-color-secondary')},
+                itemStyle: {color: getCssColor('--blue')},
                 data: model.buckets.map(bucket => bucket.count)
             }]
         }, true);
