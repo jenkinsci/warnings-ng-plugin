@@ -76,7 +76,9 @@ public class HotspotsModel implements ModelObject {
      */
     HotspotsModel(final Actionable owner, final List<ResultAction> actions) {
         this.owner = owner;
-        this.actions = actions.stream().filter(action -> action.getResult().getTotalSize() > 0).toList();
+        this.actions = actions.stream()
+                .filter(action -> action.getResult().getTotalSize() > 0)
+                .toList();
     }
 
     @Override
@@ -205,7 +207,8 @@ public class HotspotsModel implements ModelObject {
     }
 
     private List<ResultAction> selectTools(final String id) {
-        var selected = actions.stream().filter(action -> action.getId().equals(id)).toList();
+        var selected =
+                actions.stream().filter(action -> action.getId().equals(id)).toList();
         if (selected.isEmpty()) {
             return actions;
         }
@@ -219,8 +222,7 @@ public class HotspotsModel implements ModelObject {
                 return properties;
             }
             return mapper.createObjectNode();
-        }
-        catch (JacksonException exception) {
+        } catch (JacksonException exception) {
             return mapper.createObjectNode();
         }
     }
@@ -312,7 +314,9 @@ public class HotspotsModel implements ModelObject {
          * @return the grouping, or an empty optional if there is no grouping with this ID
          */
         static Optional<Grouping> fromId(final String id) {
-            return Arrays.stream(values()).filter(grouping -> grouping.getId().equals(id)).findFirst();
+            return Arrays.stream(values())
+                    .filter(grouping -> grouping.getId().equals(id))
+                    .findFirst();
         }
     }
 
@@ -373,7 +377,9 @@ public class HotspotsModel implements ModelObject {
          * @return the baseline, or an empty optional if there is no baseline with this ID
          */
         static Optional<Baseline> fromId(final String id) {
-            return Arrays.stream(values()).filter(baseline -> baseline.getId().equals(id)).findFirst();
+            return Arrays.stream(values())
+                    .filter(baseline -> baseline.getId().equals(id))
+                    .findFirst();
         }
     }
 
@@ -392,11 +398,13 @@ public class HotspotsModel implements ModelObject {
 
             Map<String, Hotspot> elements = new HashMap<>();
             for (Issue issue : report) {
-                elements.computeIfAbsent(grouping.getProperty(issue),
-                        name -> new Hotspot(name, grouping.getLabel(issue))).add(issue.getSeverity());
+                elements.computeIfAbsent(
+                                grouping.getProperty(issue), name -> new Hotspot(name, grouping.getLabel(issue)))
+                        .add(issue.getSeverity());
             }
             var sorted = elements.values().stream()
-                    .sorted(Comparator.comparingInt(Hotspot::getTotal).reversed()
+                    .sorted(Comparator.comparingInt(Hotspot::getTotal)
+                            .reversed()
                             .thenComparing(Hotspot::getName))
                     .toList();
 
@@ -533,11 +541,9 @@ public class HotspotsModel implements ModelObject {
         private Bucket(final int lower, final int upper, final List<Hotspot> elements) {
             if (upper == Integer.MAX_VALUE) {
                 label = "> " + (lower - 1);
-            }
-            else if (lower == upper) {
+            } else if (lower == upper) {
                 label = String.valueOf(lower);
-            }
-            else {
+            } else {
                 label = lower + "–" + upper;
             }
             count = (int) elements.stream()

@@ -34,22 +34,23 @@ class HotspotsModelTest {
         var chart = model.createHotspots("{}");
 
         assertThat(chart).hasNumberOfElements(3);
-        assertThat(chart.getSeverities()).containsExactly(
-                entry("error", "Error"), entry("high", "High"), entry("normal", "Normal"), entry("low", "Low"));
+        assertThat(chart.getSeverities())
+                .containsExactly(
+                        entry("error", "Error"), entry("high", "High"), entry("normal", "Normal"), entry("low", "Low"));
 
         var hotspots = chart.getHotspots();
         assertThat(hotspots).hasSize(3);
         assertThat(hotspots.get(0)).hasName("/src/A.java").hasLabel("A.java").hasTotal(3);
-        assertThat(hotspots.get(0).getCounts()).containsExactly(
-                entry("error", 1), entry("high", 0), entry("normal", 2), entry("low", 0));
+        assertThat(hotspots.get(0).getCounts())
+                .containsExactly(entry("error", 1), entry("high", 0), entry("normal", 2), entry("low", 0));
         assertThat(hotspots.get(1)).hasName("/src/C.java").hasLabel("C.java").hasTotal(2);
         assertThat(hotspots.get(2)).hasName("/src/B.java").hasLabel("B.java").hasTotal(1);
 
         var buckets = chart.getBuckets();
-        assertThat(buckets).extracting(HotspotsModel.Bucket::getLabel)
+        assertThat(buckets)
+                .extracting(HotspotsModel.Bucket::getLabel)
                 .containsExactly("1", "2–5", "6–10", "11–20", "21–50", "> 50");
-        assertThat(buckets).extracting(HotspotsModel.Bucket::getCount)
-                .containsExactly(1, 2, 0, 0, 0, 0);
+        assertThat(buckets).extracting(HotspotsModel.Bucket::getCount).containsExactly(1, 2, 0, 0, 0, 0);
     }
 
     /**
@@ -63,12 +64,15 @@ class HotspotsModelTest {
         var chart = model.createHotspots("{\"numberOfHotspots\": 2}");
 
         assertThat(chart).hasNumberOfElements(3);
-        assertThat(chart.getHotspots()).extracting(HotspotsModel.Hotspot::getLabel)
+        assertThat(chart.getHotspots())
+                .extracting(HotspotsModel.Hotspot::getLabel)
                 .containsExactly("A.java", "C.java");
-        assertThat(chart.getBuckets()).extracting(HotspotsModel.Bucket::getCount)
+        assertThat(chart.getBuckets())
+                .extracting(HotspotsModel.Bucket::getCount)
                 .containsExactly(1, 2, 0, 0, 0, 0);
 
-        assertThat(model.createHotspots("{\"numberOfHotspots\": 0}").getHotspots()).hasSize(1);
+        assertThat(model.createHotspots("{\"numberOfHotspots\": 0}").getHotspots())
+                .hasSize(1);
     }
 
     /**
@@ -80,19 +84,28 @@ class HotspotsModelTest {
         var pmd = createAction(PMD, createReport());
         try (var builder = new IssueBuilder()) {
             var newIssues = new Report();
-            newIssues.add(builder.setFileName("/src/D.java").setCategory("Design").setLineStart(1).build());
-            newIssues.add(builder.setFileName("/src/D.java").setCategory("Design").setLineStart(2).build());
-            newIssues.add(builder.setFileName("/src/E.java").setCategory("Naming").setLineStart(3).build());
+            newIssues.add(builder.setFileName("/src/D.java")
+                    .setCategory("Design")
+                    .setLineStart(1)
+                    .build());
+            newIssues.add(builder.setFileName("/src/D.java")
+                    .setCategory("Design")
+                    .setLineStart(2)
+                    .build());
+            newIssues.add(builder.setFileName("/src/E.java")
+                    .setCategory("Naming")
+                    .setLineStart(3)
+                    .build());
             when(pmd.getResult().getNewIssues()).thenReturn(newIssues);
         }
 
         var model = createModel(checkstyle, pmd);
 
-        var chart = model.createHotspots(
-                "{\"tool\": \"pmd\", \"baseline\": \"new\", \"grouping\": \"category\"}");
+        var chart = model.createHotspots("{\"tool\": \"pmd\", \"baseline\": \"new\", \"grouping\": \"category\"}");
 
         assertThat(chart).hasNumberOfElements(2);
-        assertThat(chart.getHotspots()).extracting(HotspotsModel.Hotspot::getName)
+        assertThat(chart.getHotspots())
+                .extracting(HotspotsModel.Hotspot::getName)
                 .containsExactly("Design", "Naming");
     }
 
@@ -113,7 +126,8 @@ class HotspotsModelTest {
 
             var chart = createModel(checkstyle, pmd).createHotspots("{\"tool\": \"" + tool + "\"}");
 
-            assertThat(chart.getHotspots()).extracting(HotspotsModel.Hotspot::getLabel)
+            assertThat(chart.getHotspots())
+                    .extracting(HotspotsModel.Hotspot::getLabel)
                     .containsExactly("A.java", "B.java", "C.java");
         }
     }
@@ -143,7 +157,8 @@ class HotspotsModelTest {
 
         assertThat(json.get("numberOfElements").asInt()).isEqualTo(3);
         assertThat(json.get("hotspots").get(0).get("label").asString()).isEqualTo("A.java");
-        assertThat(json.get("hotspots").get(0).get("counts").get("normal").asInt()).isEqualTo(2);
+        assertThat(json.get("hotspots").get(0).get("counts").get("normal").asInt())
+                .isEqualTo(2);
         assertThat(json.get("buckets").get(1).get("count").asInt()).isEqualTo(2);
         assertThat(json.get("severities").get("error").asString()).isEqualTo("Error");
     }
@@ -182,7 +197,9 @@ class HotspotsModelTest {
 
         var chart = model.createHotspots("{}");
         assertThat(chart).hasNumberOfElements(0).hasNoHotspots();
-        assertThat(chart.getBuckets()).extracting(HotspotsModel.Bucket::getCount).containsOnly(0);
+        assertThat(chart.getBuckets())
+                .extracting(HotspotsModel.Bucket::getCount)
+                .containsOnly(0);
     }
 
     /**
@@ -206,12 +223,30 @@ class HotspotsModelTest {
     private Report createReport() {
         try (var builder = new IssueBuilder()) {
             var report = new Report();
-            report.add(builder.setFileName("/src/A.java").setSeverity(Severity.ERROR).setLineStart(1).build());
-            report.add(builder.setFileName("/src/A.java").setSeverity(Severity.WARNING_NORMAL).setLineStart(2).build());
-            report.add(builder.setFileName("/src/A.java").setSeverity(Severity.WARNING_NORMAL).setLineStart(3).build());
-            report.add(builder.setFileName("/src/B.java").setSeverity(Severity.WARNING_HIGH).setLineStart(4).build());
-            report.add(builder.setFileName("/src/C.java").setSeverity(Severity.WARNING_LOW).setLineStart(5).build());
-            report.add(builder.setFileName("/src/C.java").setSeverity(Severity.WARNING_LOW).setLineStart(6).build());
+            report.add(builder.setFileName("/src/A.java")
+                    .setSeverity(Severity.ERROR)
+                    .setLineStart(1)
+                    .build());
+            report.add(builder.setFileName("/src/A.java")
+                    .setSeverity(Severity.WARNING_NORMAL)
+                    .setLineStart(2)
+                    .build());
+            report.add(builder.setFileName("/src/A.java")
+                    .setSeverity(Severity.WARNING_NORMAL)
+                    .setLineStart(3)
+                    .build());
+            report.add(builder.setFileName("/src/B.java")
+                    .setSeverity(Severity.WARNING_HIGH)
+                    .setLineStart(4)
+                    .build());
+            report.add(builder.setFileName("/src/C.java")
+                    .setSeverity(Severity.WARNING_LOW)
+                    .setLineStart(5)
+                    .build());
+            report.add(builder.setFileName("/src/C.java")
+                    .setSeverity(Severity.WARNING_LOW)
+                    .setLineStart(6)
+                    .build());
             return report;
         }
     }
