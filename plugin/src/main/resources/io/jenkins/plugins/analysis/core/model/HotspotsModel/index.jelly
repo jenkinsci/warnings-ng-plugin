@@ -70,14 +70,15 @@
       <div class="wng-dashboard">
         <j:choose>
           <j:when test="${hasIssues}">
+            <!-- Same order as on the hotspots page of the Coverage plugin: the distribution first, then the hotspots -->
+            <l:card title="${%Distribution}">
+              <div id="wng-hotspots-histogram" class="wng-hotspots__histogram"
+                   data-x-label="${%histogram-x-label}"/>
+            </l:card>
             <l:card title="${%Hotspots}">
               <p id="wng-hotspots-empty" class="wng-hotspots__empty jenkins-hidden">${%no-hotspots}</p>
               <div id="wng-hotspots-chart" class="wng-hotspots__chart"
                    data-total-label="${%total-label}"/>
-            </l:card>
-            <l:card title="${%Distribution}">
-              <div id="wng-hotspots-histogram" class="wng-hotspots__histogram"
-                   data-x-label="${%histogram-x-label}"/>
             </l:card>
           </j:when>
           <j:otherwise>

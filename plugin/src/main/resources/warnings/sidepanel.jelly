@@ -31,7 +31,7 @@
               icon="symbol-list-outline plugin-ionicons-api"
               href="${tabUrl + '/table'}"/>
       <l:task title="${%Hotspots}"
-              icon="symbol-flame-outline plugin-ionicons-api"
+              icon="symbol-bar-chart-outline plugin-ionicons-api"
               href="${tabUrl + '/hotspots'}"/>
       <l:task title="${%Log Messages}"
               icon="symbol-information-outline plugin-ionicons-api"
