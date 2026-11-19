@@ -404,6 +404,17 @@
     color: var(--text-color-secondary);
 }
 
+/* Chart of the treemap page: the height fills the viewport (treemap-model.js). */
+.wng-treemap__chart {
+    width: 100%;
+    min-height: 300px;
+}
+
+.wng-treemap__empty {
+    margin: 0;
+    color: var(--text-color-secondary);
+}
+
 /* Definition list in HTML tooltips (e.g., the explanation of the chart types on the trend page). */
 .wng-tooltip-list {
     margin: 0;

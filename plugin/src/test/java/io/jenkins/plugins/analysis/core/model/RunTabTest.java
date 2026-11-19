@@ -173,6 +173,24 @@ class RunTabTest {
     }
 
     /**
+     * Verifies that the treemap page shows only the tools with issues.
+     */
+    @Test
+    void shouldCreateTreemapPage() {
+        Run<?, ?> run = mock(Run.class);
+        var checkstyle = createResultAction("checkstyle", "CheckStyle", 0);
+        var pmd = createResultAction("pmd", "PMD", 2);
+        var spotbugs = createResultAction("spotbugs", "SpotBugs", 5);
+        when(run.getActions(ResultAction.class)).thenReturn(List.of(checkstyle, pmd, spotbugs));
+
+        var treemap = new RunTab(run).getTreemap();
+
+        assertThat(treemap).hasDisplayName("Treemap").hasUrlName("treemap").hasSeveralTools();
+        assertThat(treemap.getObject()).isSameAs(run);
+        assertThat(treemap.getTools()).containsExactly(spotbugs, pmd);
+    }
+
+    /**
      * Verifies that the link to the affected file of an issue is resolved by the tool that reported the issue.
      */
     @Test
