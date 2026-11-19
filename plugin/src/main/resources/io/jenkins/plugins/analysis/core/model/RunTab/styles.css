@@ -129,20 +129,21 @@
     min-width: 4px;
 }
 
+/* Same colors as in the charts, see SeverityPalette */
 .wng-severity-bar__segment--error {
     background: var(--red);
 }
 
 .wng-severity-bar__segment--high {
-    background: var(--orange);
+    background: var(--pink);
 }
 
 .wng-severity-bar__segment--normal {
-    background: var(--yellow);
+    background: var(--orange);
 }
 
 .wng-severity-bar__segment--low {
-    background: var(--text-color-secondary);
+    background: var(--yellow);
 }
 
 .wng-severity-legend {

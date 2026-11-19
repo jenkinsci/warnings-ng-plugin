@@ -19,14 +19,6 @@
     const MIN_CHART_HEIGHT = 200;
     const MAX_LABEL_LENGTH = 40;
 
-    // Colors of the severities: the same CSS variables as the severity bar of the overview page
-    const SEVERITY_COLORS = {
-        error: '--red',
-        high: '--orange',
-        normal: '--yellow',
-        low: '--text-color-secondary'
-    };
-
     // The hotspots page shows all tools of a run, so the settings are not stored per report ID.
     const STORAGE_PREFIX = 'wng-hotspots-';
     const TOOL_KEY = 'tool';
@@ -179,7 +171,7 @@
                 type: 'bar',
                 stack: 'total',
                 barMaxWidth: 20,
-                itemStyle: {color: getCssColor(SEVERITY_COLORS[severity])},
+                itemStyle: {color: getCssColor(model.colors[severity])},
                 data: hotspots.map(hotspot => hotspot.counts[severity])
             }));
         const axisStyle = createAxisStyle();

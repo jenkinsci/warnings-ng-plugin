@@ -5,6 +5,7 @@ import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import hudson.model.Actionable;
 import hudson.model.ModelObject;
+import io.jenkins.plugins.analysis.core.charts.SeverityPalette;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -389,12 +390,14 @@ public class HotspotsModel implements ModelObject {
      */
     public static final class HotspotsChart {
         private final Map<String, String> severities;
+        private final Map<String, String> colors;
         private final List<Hotspot> hotspots;
         private final List<Bucket> buckets;
         private final int numberOfElements;
 
         private HotspotsChart(final Report report, final Grouping grouping, final int numberOfHotspots) {
             severities = createSeverities();
+            colors = createColors();
 
             Map<String, Hotspot> elements = new HashMap<>();
             for (Issue issue : report) {
@@ -421,6 +424,14 @@ public class HotspotsModel implements ModelObject {
             return labels;
         }
 
+        private static Map<String, String> createColors() {
+            Map<String, String> palette = new LinkedHashMap<>();
+            for (Severity severity : SEVERITIES) {
+                palette.put(getModifier(severity), SeverityPalette.mapToColor(severity).normal());
+            }
+            return palette;
+        }
+
         private static List<Bucket> createBuckets(final List<Hotspot> elements) {
             var buckets = new ArrayList<Bucket>();
             int lower = 1;
@@ -441,6 +452,17 @@ public class HotspotsModel implements ModelObject {
          */
         public Map<String, String> getSeverities() {
             return severities;
+        }
+
+        /**
+         * Returns the colors of the severities, mapped from the ID (see {@link #getSeverities()}) to the name of the
+         * CSS variable of the Jenkins palette, e.g., {@code --red}. These are the same colors as in the other charts
+         * of the Warnings plugin, see {@link SeverityPalette}.
+         *
+         * @return the colors of the severities
+         */
+        public Map<String, String> getColors() {
+            return colors;
         }
 
         /**
