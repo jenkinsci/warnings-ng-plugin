@@ -168,7 +168,7 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
     /**
      * Returns the URL that shows the details of the specified tool, relative to the Warnings tab. If the tool is
      * part of this page, then the URL opens this page and selects the tool, see {@code issues-page-model.js}.
-     * Otherwise, the URL opens the classic details view of the tool.
+     * Otherwise, the tool has no issues, so the URL opens the log messages of the tool, see {@code log-model.js}.
      *
      * @param action
      *         the results of the tool
@@ -179,7 +179,7 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
         if (actions.contains(action)) {
             return URL + "#" + TOOL_PARAMETER + "=" + Util.rawEncode(action.getId());
         }
-        return action.getUrlName();
+        return LogModel.URL + "#" + TOOL_PARAMETER + "=" + Util.rawEncode(action.getId());
     }
 
     /**

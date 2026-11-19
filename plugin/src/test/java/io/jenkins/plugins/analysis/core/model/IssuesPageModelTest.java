@@ -63,7 +63,7 @@ class IssuesPageModelTest extends AbstractDetailsModelTest {
     }
 
     /**
-     * Verifies that the tools of the page are linked to the page, and all other tools to the classic details view.
+     * Verifies that the tools of the page are linked to the page, and all other tools to the log messages.
      */
     @Test
     void shouldLinkToolsOfPageToPage() {
@@ -77,7 +77,7 @@ class IssuesPageModelTest extends AbstractDetailsModelTest {
         assertThat(model.getUrlOf(checkstyle)).isEqualTo("table#tool=checkstyle");
         assertThat(model.getUrlOf(custom)).isEqualTo("table#tool=my%20id");
         assertThat(model.getUrlOf(cpd)).isEqualTo("table#tool=cpd");
-        assertThat(model.getUrlOf(spotbugs)).isEqualTo("spotbugs");
+        assertThat(model.getUrlOf(spotbugs)).isEqualTo("log#tool=spotbugs");
     }
 
     /**
@@ -319,14 +319,20 @@ class IssuesPageModelTest extends AbstractDetailsModelTest {
      */
     @Test
     void shouldDelegateLinksToTab() {
-        var checkstyle = createAction(CHECKSTYLE, new Report(), new Report());
+        var report = createReport(createIssue(1));
+        var checkstyle = createAction(CHECKSTYLE, report, new Report());
+        var link = "source." + report.get(0).getId();
+        var sourceView = new Object();
+        IssuesDetail details = mock(IssuesDetail.class);
+        when(details.createDetails(link)).thenReturn(sourceView);
+        when(checkstyle.getTarget()).thenReturn(details);
         Run<?, ?> run = mock(Run.class);
         when(run.getActions(ResultAction.class)).thenReturn(List.of(checkstyle));
 
         var model = new IssuesPageModel(run, List.of(checkstyle));
 
-        assertThat(model.getDynamic(CHECKSTYLE)).isSameAs(checkstyle);
-        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(() -> model.getDynamic("missing"));
+        assertThat(model.getDynamic(link)).isSameAs(sourceView);
+        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(() -> model.getDynamic(CHECKSTYLE));
     }
 
     private Report createReport(final Issue... issues) {

@@ -194,24 +194,19 @@ public class RunTab extends Tab {
     }
 
     /**
-     * Renders a dynamic warning action of the Warnings tab, or the affected file of an issue. The latter is required
-     * for the links to the affected files on the issues page (see {@link IssuesPageModel}): these links are relative
-     * to the URL of the tab and do not contain the tool that reported the issue.
+     * Renders the affected file of an issue. This is required for the links to the affected files on the issues page
+     * (see {@link IssuesPageModel}): these links are relative to the URL of the tab and do not contain the tool that
+     * reported the issue. The results of the individual tools are not part of the Warnings tab anymore: they are
+     * shown on the pages of the tab, where the tool can be selected.
      *
      * @param name
-     *         the name of the warning action to render, or the link to the affected file of an issue
+     *         the link to the affected file of an issue
      *
-     * @return the warning action, or the view that shows the affected file
+     * @return the view that shows the affected file
      * @throws NoSuchElementException
-     *         if there is no such action or issue
+     *         if there is no such issue
      */
     public Object getDynamic(final String name) {
-        for (ResultAction ui : getWarningActions()) {
-            String urlName = ui.getUrlName();
-            if (name.equals(urlName)) {
-                return ui;
-            }
-        }
         if (name.startsWith(SOURCE_LINK_PREFIX)) {
             for (ResultAction action : getWarningActions()) {
                 if (hasIssue(action, name)) {
