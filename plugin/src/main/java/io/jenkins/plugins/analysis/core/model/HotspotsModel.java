@@ -188,10 +188,8 @@ public class HotspotsModel implements ModelObject {
 
         var grouping = Grouping.fromId(properties.getString(GROUPING_PROPERTY)).orElse(Grouping.FILE);
         var baseline = properties.getBaseline();
-        var reports = properties.selectTools(actions).stream()
-                .map(action -> baseline.getIssues(action.getResult()))
-                .toList();
-        var report = reports.isEmpty() ? new Report() : new Report(reports);
+        var report = new Report();
+        properties.selectTools(actions).forEach(action -> report.addAll(baseline.getIssues(action.getResult())));
 
         return new HotspotsChart(report, grouping, getNumberOfHotspots(properties));
     }
@@ -349,7 +347,6 @@ public class HotspotsModel implements ModelObject {
      * The data of the charts of the hotspots page: the hotspots with the most issues and the histogram of the number
      * of issues per element (e.g., per file). Serialized as JSON for {@code hotspots-model.js}.
      */
-    @SuppressWarnings("PMD.DataClass")
     public static final class HotspotsChart {
         private final Map<String, String> severities;
         private final Map<String, String> colors;

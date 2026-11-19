@@ -167,9 +167,8 @@ public class TreeMapModel implements ModelObject {
 
         var tools = properties.selectTools(actions);
         var baseline = properties.getBaseline();
-        var report = new Report(tools.stream()
-                .map(action -> baseline.getIssues(action.getResult()))
-                .toList());
+        var report = new Report();
+        tools.forEach(action -> report.addAll(baseline.getIssues(action.getResult())));
         Set<UUID> newIssues = tools.stream()
                 .map(action -> action.getResult().getNewIssues())
                 .flatMap(Report::stream)
