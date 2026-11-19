@@ -248,6 +248,7 @@ public class TreeMapModel implements ModelObject {
     /**
      * An element of the hierarchy (module, package, folder, or file) and the number of its issues.
      */
+    @SuppressWarnings("PMD.DataClass")
     public static final class Node {
         private final String name;
         private final String label;

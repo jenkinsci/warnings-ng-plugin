@@ -347,6 +347,7 @@ public class HotspotsModel implements ModelObject {
      * The data of the charts of the hotspots page: the hotspots with the most issues and the histogram of the number
      * of issues per element (e.g., per file). Serialized as JSON for {@code hotspots-model.js}.
      */
+    @SuppressWarnings("PMD.DataClass")
     public static final class HotspotsChart {
         private final Map<String, String> severities;
         private final Map<String, String> colors;
