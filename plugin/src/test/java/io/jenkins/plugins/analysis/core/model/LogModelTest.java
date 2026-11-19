@@ -39,7 +39,7 @@ class LogModelTest {
         var tools = model.getTools();
         assertThat(tools.get(0))
                 .hasDisplayName("CheckStyle")
-                .hasIconFileName("checkstyle-icon")
+                .hasSmallImage("checkstyle-icon")
                 .hasInfoMessages("Parsing checkstyle.xml")
                 .hasNoErrorMessages();
         assertThat(tools.get(0).hasErrors()).isFalse();

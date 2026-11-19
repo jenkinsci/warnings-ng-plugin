@@ -16,7 +16,7 @@
           <div class="wng-app-bar__control" tooltip="${%tool-tooltip}">
             <label for="wng-log-tool">${%tool-title}:</label>
             <j:forEach var="tool" items="${it.tools}">
-              <wng:tool-icon tool="${tool.id}" icon="${tool.iconFileName}"/>
+              <wng:tool-icon tool="${tool.id}" icon="${tool.smallImage}"/>
             </j:forEach>
             <div class="jenkins-select">
               <select id="wng-log-tool" class="jenkins-select__input">

@@ -325,7 +325,7 @@ public class TrendModel implements ModelObject {
     public static final class TrendSource {
         private final String id;
         private final String displayName;
-        private final String iconFileName;
+        private final String smallImage;
         private final Supplier<Iterable<BuildResult<AnalysisBuildResult>>> history;
         private final HealthDescriptor healthDescriptor;
         private final Set<String> origins;
@@ -334,14 +334,14 @@ public class TrendModel implements ModelObject {
         private TrendSource(
                 final String id,
                 final String displayName,
-                final String iconFileName,
+                final String smallImage,
                 final Supplier<Iterable<BuildResult<AnalysisBuildResult>>> history,
                 final HealthDescriptor healthDescriptor,
                 final Set<String> origins,
                 final Supplier<Map<String, String>> toolNames) {
             this.id = id;
             this.displayName = displayName;
-            this.iconFileName = iconFileName;
+            this.smallImage = smallImage;
             this.history = history;
             this.healthDescriptor = healthDescriptor;
             this.origins = origins;
@@ -371,8 +371,8 @@ public class TrendModel implements ModelObject {
          *
          * @return the icon, a symbol or the URL of an image
          */
-        public String getIconFileName() {
-            return iconFileName;
+        public String getSmallImage() {
+            return smallImage;
         }
 
         /**

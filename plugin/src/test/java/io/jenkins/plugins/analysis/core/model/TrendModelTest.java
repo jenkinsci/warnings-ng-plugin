@@ -48,7 +48,7 @@ class TrendModelTest {
                 .extracting(TrendSource::getDisplayName)
                 .containsExactly("All tools", "CheckStyle", "PMD");
         assertThat(model.getSources())
-                .extracting(TrendSource::getIconFileName)
+                .extracting(TrendSource::getSmallImage)
                 .containsExactly("symbol-warning-outline plugin-ionicons-api", "checkstyle-icon", "pmd-icon");
 
         var sources = model.getSources();
