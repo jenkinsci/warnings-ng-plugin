@@ -1,4 +1,4 @@
-/* global jQuery3, proxy, echarts */
+/* global jQuery3, proxy, echarts, WarningsCharts */
 
 (function ($) {
     const CHART_ID = 'wng-hotspots-chart';
@@ -8,8 +8,7 @@
     const GROUPING_SELECTOR = '#wng-hotspots-grouping';
     const BASELINE_SELECTOR = '#wng-hotspots-baseline';
     const TOP_SELECTOR = '#wng-hotspots-top';
-    const TOOL_ICON_SELECTOR = '.wng-app-bar__tool-icon';
-    const HIDDEN_CLASS = 'jenkins-hidden';
+    const HIDDEN_CLASS = WarningsCharts.HIDDEN_CLASS;
 
     const MIN_HOTSPOTS = 1;
     const MAX_HOTSPOTS = 100;
@@ -26,69 +25,11 @@
     const BASELINE_KEY = 'baseline';
     const TOP_KEY = 'top';
 
+    const storage = WarningsCharts.createStorage(STORAGE_PREFIX);
+    const getCssColor = WarningsCharts.getCssColor;
+
     let resizeTimeout;
     let latestRequest = 0;
-
-    function readStorage(key) {
-        try {
-            return localStorage.getItem(STORAGE_PREFIX + key);
-        }
-        catch (e) {
-            return null;
-        }
-    }
-
-    function writeStorage(key, value) {
-        try {
-            localStorage.setItem(STORAGE_PREFIX + key, value);
-        }
-        catch (e) {
-            // ignore: settings are not persisted if the storage is not available
-        }
-    }
-
-    function hasOption(selector, value) {
-        return value !== null && $(selector + ' option').filter(function () {
-            return this.value === value;
-        }).length > 0;
-    }
-
-    function restoreSelection(selector, key) {
-        const stored = readStorage(key);
-        if (hasOption(selector, stored)) {
-            $(selector).val(stored);
-        }
-    }
-
-    // Resolves a CSS variable to an rgba() color. Jenkins defines its colors with oklch() and relative color syntax,
-    // which ECharts cannot parse: it computes the emphasis (hover) colors from the series colors, and these
-    // computations fail for oklch() colors, so the bars disappear on hover. The computed style resolves the variable
-    // to an absolute color, and the canvas converts this color to sRGB.
-    function getCssColor(variable) {
-        const element = document.createElement('span');
-        element.style.display = 'none';
-        element.style.color = 'var(' + variable + ')';
-        document.body.appendChild(element);
-        const color = getComputedStyle(element).color;
-        element.remove();
-
-        const canvas = document.createElement('canvas');
-        canvas.width = 1;
-        canvas.height = 1;
-        const context = canvas.getContext('2d', {willReadFrequently: true});
-        context.fillStyle = color;
-        context.fillRect(0, 0, 1, 1);
-        const [red, green, blue, alpha] = context.getImageData(0, 0, 1, 1).data;
-        return 'rgba(' + red + ', ' + green + ', ' + blue + ', ' + (alpha / 255).toFixed(3) + ')';
-    }
-
-    // Shows the icon of the selected tool next to the select box and hides the icons of all other tools.
-    function showToolIcon() {
-        const tool = $(TOOL_SELECTOR).val();
-        $(TOOL_ICON_SELECTOR).each(function () {
-            $(this).toggleClass(HIDDEN_CLASS, this.getAttribute('data-tool') !== tool);
-        });
-    }
 
     function getNumberOfHotspots() {
         const parsed = parseInt($(TOP_SELECTOR).val(), 10);
@@ -99,12 +40,12 @@
     }
 
     function initializeControls() {
-        restoreSelection(TOOL_SELECTOR, TOOL_KEY);
-        restoreSelection(GROUPING_SELECTOR, GROUPING_KEY);
-        restoreSelection(BASELINE_SELECTOR, BASELINE_KEY);
-        showToolIcon();
+        storage.restoreSelection(TOOL_SELECTOR, TOOL_KEY);
+        storage.restoreSelection(GROUPING_SELECTOR, GROUPING_KEY);
+        storage.restoreSelection(BASELINE_SELECTOR, BASELINE_KEY);
+        WarningsCharts.showToolIcon(TOOL_SELECTOR);
 
-        const storedTop = parseInt(readStorage(TOP_KEY), 10);
+        const storedTop = parseInt(storage.read(TOP_KEY), 10);
         $(TOP_SELECTOR).val(isNaN(storedTop) ? DEFAULT_HOTSPOTS : storedTop);
     }
 
@@ -118,15 +59,10 @@
     }
 
     function persistConfiguration(configuration) {
-        writeStorage(TOOL_KEY, configuration.tool);
-        writeStorage(GROUPING_KEY, configuration.grouping);
-        writeStorage(BASELINE_KEY, configuration.baseline);
-        writeStorage(TOP_KEY, String(configuration.numberOfHotspots));
-    }
-
-    function getChart(id) {
-        const element = document.getElementById(id);
-        return echarts.getInstanceByDom(element) || echarts.init(element);
+        storage.write(TOOL_KEY, configuration.tool);
+        storage.write(GROUPING_KEY, configuration.grouping);
+        storage.write(BASELINE_KEY, configuration.baseline);
+        storage.write(TOP_KEY, String(configuration.numberOfHotspots));
     }
 
     function shorten(label) {
@@ -134,21 +70,6 @@
             return label;
         }
         return '…' + label.substring(label.length - MAX_LABEL_LENGTH + 1);
-    }
-
-    function escapeHtml(text) {
-        return $('<div>').text(text).html();
-    }
-
-    function createAxisStyle() {
-        const textColor = getCssColor('--text-color');
-        const lineColor = getCssColor('--jenkins-border-color');
-        return {
-            axisLabel: {color: textColor},
-            axisLine: {lineStyle: {color: lineColor}},
-            splitLine: {lineStyle: {color: lineColor}},
-            nameTextStyle: {color: textColor}
-        };
     }
 
     // Renders the hotspots as horizontal bars, stacked by severity. The element with the most issues is on top.
@@ -174,10 +95,10 @@
                 itemStyle: {color: getCssColor(model.colors[severity])},
                 data: hotspots.map(hotspot => hotspot.counts[severity])
             }));
-        const axisStyle = createAxisStyle();
+        const axisStyle = WarningsCharts.createAxisStyle();
         const totalLabel = element.getAttribute('data-total-label');
 
-        const chart = getChart(CHART_ID);
+        const chart = WarningsCharts.getChart(CHART_ID);
         chart.setOption({
             tooltip: {
                 trigger: 'axis',
@@ -186,9 +107,9 @@
                     const hotspot = hotspots[params[0].dataIndex];
                     const lines = params
                         .filter(param => param.value > 0)
-                        .map(param => param.marker + escapeHtml(param.seriesName) + ': ' + param.value);
-                    return '<b>' + escapeHtml(hotspot.name) + '</b><br/>'
-                        + lines.join('<br/>') + '<br/>' + escapeHtml(totalLabel) + ': ' + hotspot.total;
+                        .map(param => param.marker + WarningsCharts.escapeHtml(param.seriesName) + ': ' + param.value);
+                    return '<b>' + WarningsCharts.escapeHtml(hotspot.name) + '</b><br/>'
+                        + lines.join('<br/>') + '<br/>' + WarningsCharts.escapeHtml(totalLabel) + ': ' + hotspot.total;
                 }
             },
             legend: {top: 0, textStyle: {color: getCssColor('--text-color')}},
@@ -207,8 +128,8 @@
     // Renders the histogram: the number of elements (e.g., files) that have a given number of issues.
     function renderHistogram(model) {
         const element = document.getElementById(HISTOGRAM_ID);
-        const axisStyle = createAxisStyle();
-        const chart = getChart(HISTOGRAM_ID);
+        const axisStyle = WarningsCharts.createAxisStyle();
+        const chart = WarningsCharts.getChart(HISTOGRAM_ID);
         chart.setOption({
             tooltip: {trigger: 'axis', axisPointer: {type: 'shadow'}},
             grid: {left: 10, right: 30, top: 30, bottom: 30, containLabel: true},
@@ -263,7 +184,7 @@
         render();
 
         $(TOOL_SELECTOR).on('change', function () {
-            showToolIcon();
+            WarningsCharts.showToolIcon(TOOL_SELECTOR);
             render();
         });
         $([GROUPING_SELECTOR, BASELINE_SELECTOR, TOP_SELECTOR].join(', ')).on('change', function () {

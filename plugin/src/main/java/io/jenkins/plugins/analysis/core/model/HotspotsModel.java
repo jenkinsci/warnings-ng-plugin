@@ -5,22 +5,16 @@ import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import hudson.model.Actionable;
 import hudson.model.ModelObject;
-import io.jenkins.plugins.analysis.core.charts.SeverityPalette;
-import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
-import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
-import tools.jackson.databind.node.ObjectNode;
 
 /**
  * Server side model that provides the data for the "Hotspots" page of the Warnings tab of a run. The page answers the
@@ -52,16 +46,10 @@ public class HotspotsModel implements ModelObject {
     static final int MAX_HOTSPOTS = 100;
     static final int DEFAULT_HOTSPOTS = 10;
 
-    private static final List<Severity> SEVERITIES =
-            List.of(Severity.ERROR, Severity.WARNING_HIGH, Severity.WARNING_NORMAL, Severity.WARNING_LOW);
-    private static final int NORMAL_INDEX = SEVERITIES.indexOf(Severity.WARNING_NORMAL);
-
     /** Upper bounds of the buckets of the histogram, the last bucket has no upper bound. */
     private static final List<Integer> BUCKET_LIMITS = List.of(1, 5, 10, 20, 50);
 
-    private static final String TOOL_PROPERTY = "tool";
     private static final String GROUPING_PROPERTY = "grouping";
-    private static final String BASELINE_PROPERTY = "baseline";
     private static final String HOTSPOTS_PROPERTY = "numberOfHotspots";
 
     private final Actionable owner;
@@ -196,41 +184,16 @@ public class HotspotsModel implements ModelObject {
      * @return the hotspots
      */
     HotspotsChart createHotspots(final String configuration) {
-        var properties = parse(configuration);
+        var properties = new ChartConfiguration(configuration);
 
-        var grouping = Grouping.fromId(getString(properties, GROUPING_PROPERTY)).orElse(Grouping.FILE);
-        var baseline = Baseline.fromId(getString(properties, BASELINE_PROPERTY)).orElse(Baseline.ALL);
-        var reports = selectTools(getString(properties, TOOL_PROPERTY)).stream()
+        var grouping = Grouping.fromId(properties.getString(GROUPING_PROPERTY)).orElse(Grouping.FILE);
+        var baseline = properties.getBaseline();
+        var reports = properties.selectTools(actions).stream()
                 .map(action -> baseline.getIssues(action.getResult()))
                 .toList();
         var report = reports.isEmpty() ? new Report() : new Report(reports);
 
         return new HotspotsChart(report, grouping, getNumberOfHotspots(properties));
-    }
-
-    private List<ResultAction> selectTools(final String id) {
-        var selected =
-                actions.stream().filter(action -> action.getId().equals(id)).toList();
-        if (selected.isEmpty()) {
-            return actions;
-        }
-        return selected;
-    }
-
-    private ObjectNode parse(final String configuration) {
-        var mapper = new ObjectMapper();
-        try {
-            if (mapper.readTree(configuration) instanceof ObjectNode properties) {
-                return properties;
-            }
-            return mapper.createObjectNode();
-        } catch (JacksonException exception) {
-            return mapper.createObjectNode();
-        }
-    }
-
-    private String getString(final ObjectNode properties, final String property) {
-        return properties.optional(property).map(value -> value.asString("")).orElse("");
     }
 
     /**
@@ -242,11 +205,8 @@ public class HotspotsModel implements ModelObject {
      *
      * @return the number of hotspots
      */
-    private int getNumberOfHotspots(final ObjectNode properties) {
-        int count = properties
-                .optional(HOTSPOTS_PROPERTY)
-                .map(value -> value.asInt(DEFAULT_HOTSPOTS))
-                .orElse(DEFAULT_HOTSPOTS);
+    private int getNumberOfHotspots(final ChartConfiguration properties) {
+        int count = properties.getInteger(HOTSPOTS_PROPERTY, DEFAULT_HOTSPOTS);
         return Math.max(MIN_HOTSPOTS, Math.min(MAX_HOTSPOTS, count));
     }
 
@@ -385,10 +345,6 @@ public class HotspotsModel implements ModelObject {
         }
     }
 
-    private static String getModifier(final Severity severity) {
-        return severity.getName().toLowerCase(Locale.ENGLISH);
-    }
-
     /**
      * The data of the charts of the hotspots page: the hotspots with the most issues and the histogram of the number
      * of issues per element (e.g., per file). Serialized as JSON for {@code hotspots-model.js}.
@@ -402,8 +358,8 @@ public class HotspotsModel implements ModelObject {
         private final int numberOfElements;
 
         private HotspotsChart(final Report report, final Grouping grouping, final int numberOfHotspots) {
-            severities = createSeverities();
-            colors = createColors();
+            severities = SeverityLegend.getLabels();
+            colors = SeverityLegend.getColors();
 
             Map<String, Hotspot> elements = new HashMap<>();
             for (Issue issue : report) {
@@ -420,24 +376,6 @@ public class HotspotsModel implements ModelObject {
             hotspots = sorted.stream().limit(numberOfHotspots).toList();
             buckets = createBuckets(sorted);
             numberOfElements = sorted.size();
-        }
-
-        private static Map<String, String> createSeverities() {
-            Map<String, String> labels = new LinkedHashMap<>();
-            for (Severity severity : SEVERITIES) {
-                labels.put(getModifier(severity), LocalizedSeverity.getLocalizedString(severity));
-            }
-            return labels;
-        }
-
-        private static Map<String, String> createColors() {
-            Map<String, String> palette = new LinkedHashMap<>();
-            for (Severity severity : SEVERITIES) {
-                palette.put(
-                        getModifier(severity),
-                        SeverityPalette.mapToColor(severity).normal());
-            }
-            return palette;
         }
 
         private static List<Bucket> createBuckets(final List<Hotspot> elements) {
@@ -465,7 +403,7 @@ public class HotspotsModel implements ModelObject {
         /**
          * Returns the colors of the severities, mapped from the ID (see {@link #getSeverities()}) to the name of the
          * CSS variable of the Jenkins palette, e.g., {@code --red}. These are the same colors as in the other charts
-         * of the Warnings plugin, see {@link SeverityPalette}.
+         * of the Warnings plugin, see {@link io.jenkins.plugins.analysis.core.charts.SeverityPalette}.
          *
          * @return the colors of the severities
          */
@@ -507,7 +445,7 @@ public class HotspotsModel implements ModelObject {
     public static final class Hotspot {
         private final String name;
         private final String label;
-        private final int[] counts = new int[SEVERITIES.size()];
+        private final int[] counts = new int[SeverityLegend.size()];
 
         private Hotspot(final String name, final String label) {
             this.name = name;
@@ -515,8 +453,7 @@ public class HotspotsModel implements ModelObject {
         }
 
         private void add(final Severity severity) {
-            int index = SEVERITIES.indexOf(severity);
-            counts[index < 0 ? NORMAL_INDEX : index]++;
+            counts[SeverityLegend.indexOf(severity)]++;
         }
 
         /**
@@ -544,11 +481,7 @@ public class HotspotsModel implements ModelObject {
          * @return the number of issues by severity
          */
         public Map<String, Integer> getCounts() {
-            Map<String, Integer> sizes = new LinkedHashMap<>();
-            for (int i = 0; i < SEVERITIES.size(); i++) {
-                sizes.put(getModifier(SEVERITIES.get(i)), counts[i]);
-            }
-            return sizes;
+            return SeverityLegend.toMap(counts);
         }
 
         /**
