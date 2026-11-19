@@ -37,8 +37,12 @@ class HotspotsModelTest {
         assertThat(chart.getSeverities())
                 .containsExactly(
                         entry("error", "Error"), entry("high", "High"), entry("normal", "Normal"), entry("low", "Low"));
-        assertThat(chart.getColors()).containsExactly(
-                entry("error", "--red"), entry("high", "--pink"), entry("normal", "--orange"), entry("low", "--yellow"));
+        assertThat(chart.getColors())
+                .containsExactly(
+                        entry("error", "--red"),
+                        entry("high", "--pink"),
+                        entry("normal", "--orange"),
+                        entry("low", "--yellow"));
 
         var hotspots = chart.getHotspots();
         assertThat(hotspots).hasSize(3);

@@ -242,8 +242,8 @@
             if (request !== latestRequest) {
                 return;
             }
-            // The Java method returns the model as JSON string, so Stapler wraps it in another JSON string
-            const model = typeof t.responseJSON === 'string' ? JSON.parse(t.responseJSON) : t.responseJSON;
+            // HotspotsModel#getHotspots returns the model as JSON string, so Stapler wraps it in another JSON string
+            const model = JSON.parse(t.responseJSON);
             renderHotspots(model);
             renderHistogram(model);
         });

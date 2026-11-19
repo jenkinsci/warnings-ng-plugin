@@ -427,7 +427,9 @@ public class HotspotsModel implements ModelObject {
         private static Map<String, String> createColors() {
             Map<String, String> palette = new LinkedHashMap<>();
             for (Severity severity : SEVERITIES) {
-                palette.put(getModifier(severity), SeverityPalette.mapToColor(severity).normal());
+                palette.put(
+                        getModifier(severity),
+                        SeverityPalette.mapToColor(severity).normal());
             }
             return palette;
         }
