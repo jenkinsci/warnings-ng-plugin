@@ -8,6 +8,7 @@ import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import hudson.model.Actionable;
 import hudson.model.Run;
+import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
 import io.jenkins.plugins.analysis.core.util.WarningsQualityGate;
 import io.jenkins.plugins.analysis.core.util.WarningsQualityGate.QualityGateType;
 import io.jenkins.plugins.util.QualityGate.QualityGateCriticality;
@@ -244,59 +245,73 @@ class RunTabTest {
     }
 
     /**
-     * Verifies that the link to the affected file of an issue is resolved by the tool that reported the issue.
+     * Verifies that the link to the affected file of an issue shows the source code page with all issues of the same
+     * file, independent of the tool that reported the issues.
      */
     @Test
     void shouldResolveSourceLinksOfAllTools() {
         Run<?, ?> run = mock(Run.class);
-        var checkstyle = createResultActionWithIssues("checkstyle", new Report());
-        var report = new Report();
-        Issue issue;
-        try (var builder = new IssueBuilder()) {
-            issue = builder.setFileName("file.txt").build();
-        }
-        report.add(issue);
-        var pmd = createResultActionWithIssues("pmd", report);
+        var selected = createIssue("file.txt", 20);
+        var sameFile = createIssue("file.txt", 10);
+        var otherFile = createIssue("other.txt", 5);
+        var checkstyle = createResultActionWithIssues("checkstyle", createReport(sameFile, otherFile));
+        var pmd = createResultActionWithIssues("pmd", createReport(selected));
         when(run.getActions(ResultAction.class)).thenReturn(List.of(checkstyle, pmd));
-        var link = "source." + issue.getId();
-        var sourceView = new Object();
-        IssuesDetail details = mock(IssuesDetail.class);
-        when(details.createDetails(link)).thenReturn(sourceView);
-        when(pmd.getTarget()).thenReturn(details);
 
         var tab = new RunTab(run);
 
-        assertThat(tab.getDynamic(link)).isSameAs(sourceView);
+        assertThat(tab.getDynamic("source." + selected.getId())).isInstanceOfSatisfying(SourceModel.class, source -> {
+            assertThat(source)
+                    .hasSelectedIssue(selected)
+                    .hasDisplayName("file.txt")
+                    .hasSelectedMarkerId("issue-" + selected.getId())
+                    .isNotFixed();
+            assertThat(source.getObject()).isSameAs(run);
+            assertThat(source.getIssues()).containsExactly(sameFile, selected);
+            assertThat(source.getIssuesUrl()).startsWith("table#");
+        });
         assertThatExceptionOfType(NoSuchElementException.class)
                 .isThrownBy(() -> tab.getDynamic("source.00000000-0000-0000-0000-000000000000"));
     }
 
     /**
-     * Verifies that the link to the affected file of a fixed issue is resolved by the same tool in the reference
-     * build, since the affected file is part of the reference build.
+     * Verifies that issues that reference the console log are still shown in the classic view of the tool.
+     */
+    @Test
+    void shouldShowIssuesInConsoleLogInClassicView() {
+        Run<?, ?> run = mock(Run.class);
+        var issue = createIssue("jenkins-console.log", 10);
+        var pmd = createResultActionWithIssues("pmd", createReport(issue));
+        when(run.getActions(ResultAction.class)).thenReturn(List.of(pmd));
+        var link = "source." + issue.getId();
+        var consoleView = new Object();
+        IssuesDetail details = mock(IssuesDetail.class);
+        when(details.createDetails(link)).thenReturn(consoleView);
+        when(pmd.getTarget()).thenReturn(details);
+
+        assertThat(new RunTab(run).getDynamic(link)).isSameAs(consoleView);
+    }
+
+    /**
+     * Verifies that the link to the affected file of a fixed issue shows the source code of the reference build of
+     * the same tool, together with all fixed issues of the same file.
      */
     @Test
     void shouldResolveSourceLinksOfFixedIssuesInReferenceBuild() {
-        var fixedIssues = new Report();
-        Issue issue;
-        try (var builder = new IssueBuilder()) {
-            issue = builder.setFileName("fixed.txt").build();
-        }
-        fixedIssues.add(issue);
+        var selected = createIssue("fixed.txt", 5);
+        var sameFile = createIssue("fixed.txt", 1);
+        var otherFile = createIssue("other.txt", 1);
         var pmd = createResultActionWithIssues("pmd", new Report());
-        when(pmd.getResult().getFixedIssues()).thenReturn(fixedIssues);
+        when(pmd.getResult().getFixedIssues()).thenReturn(createReport(selected, sameFile, otherFile));
         Run<?, ?> run = mock(Run.class);
         when(run.getActions(ResultAction.class)).thenReturn(List.of(pmd));
 
         var referenceCheckstyle = createResultActionWithIssues("checkstyle", new Report());
-        var referencePmd = createResultActionWithIssues("pmd", fixedIssues);
+        var referencePmd = createResultActionWithIssues("pmd", createReport(selected, sameFile, otherFile));
         Run<?, ?> reference = mock(Run.class);
         when(reference.getActions(ResultAction.class)).thenReturn(List.of(referenceCheckstyle, referencePmd));
-        var link = "source." + issue.getId();
-        var sourceView = new Object();
-        IssuesDetail details = mock(IssuesDetail.class);
-        when(details.createDetails(link)).thenReturn(sourceView);
-        when(referencePmd.getTarget()).thenReturn(details);
+        when(referencePmd.getOwner()).thenAnswer(invocation -> reference);
+        var link = "source." + selected.getId();
 
         var tab = new RunTab(run);
 
@@ -304,8 +319,25 @@ class RunTabTest {
 
         when(pmd.getResult().getReferenceBuild()).thenAnswer(invocation -> Optional.of(reference));
 
-        assertThat(tab.getDynamic(link)).isSameAs(sourceView);
+        assertThat(tab.getDynamic(link)).isInstanceOfSatisfying(SourceModel.class, source -> {
+            assertThat(source).hasSelectedIssue(selected).isFixed();
+            assertThat(source.getObject()).isSameAs(run);
+            assertThat(source.getIssues()).containsExactly(sameFile, selected);
+            assertThat(source.getIssuesUrl()).contains("show=fixed");
+        });
         verify(referenceCheckstyle, never()).getTarget();
+    }
+
+    private Issue createIssue(final String fileName, final int line) {
+        try (var builder = new IssueBuilder()) {
+            return builder.setFileName(fileName).setLineStart(line).build();
+        }
+    }
+
+    private Report createReport(final Issue... issues) {
+        var report = new Report();
+        report.addAll(List.of(issues));
+        return report;
     }
 
     /**
@@ -359,7 +391,9 @@ class RunTabTest {
         when(facade.isEnabled()).thenReturn(true);
         var response = mock(StaplerResponse2.class);
 
-        new RunTab(mock(Actionable.class), facade).doIndex().generateResponse(createRequest(), response, new Object());
+        new RunTab(mock(Actionable.class), facade, mock(BuildFolderFacade.class))
+                .doIndex()
+                .generateResponse(createRequest(), response, new Object());
 
         verify(response).sendError(eq(HttpServletResponse.SC_NOT_FOUND), anyString());
         verify(response, never()).sendRedirect(anyInt(), anyString());
@@ -392,7 +426,7 @@ class RunTabTest {
         var facade = mock(NewBuildPageFacade.class);
         when(facade.isEnabled()).thenReturn(isNewBuildPageEnabled);
 
-        return new RunTab(run, facade);
+        return new RunTab(run, facade, mock(BuildFolderFacade.class));
     }
 
     private ResultAction createResultActionWithIssues(final String id, final Report issues) {

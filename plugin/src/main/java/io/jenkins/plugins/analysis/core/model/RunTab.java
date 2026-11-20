@@ -1,16 +1,21 @@
 package io.jenkins.plugins.analysis.core.model;
 
+import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import hudson.model.Actionable;
 import hudson.model.Run;
+import io.jenkins.plugins.analysis.core.model.SourceModel.ToolIssue;
+import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
+import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 import io.jenkins.plugins.util.QualityGateStatus;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Stream;
 import jenkins.management.Badge;
 import jenkins.model.Tab;
 import org.kohsuke.accmod.Restricted;
@@ -28,13 +33,14 @@ public class RunTab extends Tab {
     private static final String SOURCE_LINK_PREFIX = "source.";
 
     private final NewBuildPageFacade newBuildPage;
+    private final BuildFolderFacade buildFolder;
 
     /**
      * Constructs a new {@link RunTab}.
      * @param object the run to construct the tab for
      */
     public RunTab(final Actionable object) {
-        this(object, new NewBuildPageFacade());
+        this(object, new NewBuildPageFacade(), new BuildFolderFacade());
     }
 
     /**
@@ -44,12 +50,15 @@ public class RunTab extends Tab {
      *         the run to construct the tab for
      * @param newBuildPage
      *         the facade that determines whether the new build page is enabled
+     * @param buildFolder
+     *         the facade to read the affected files from the build folder
      */
     @VisibleForTesting
-    RunTab(final Actionable object, final NewBuildPageFacade newBuildPage) {
+    RunTab(final Actionable object, final NewBuildPageFacade newBuildPage, final BuildFolderFacade buildFolder) {
         super(object);
 
         this.newBuildPage = newBuildPage;
+        this.buildFolder = buildFolder;
     }
 
     @Override
@@ -219,12 +228,12 @@ public class RunTab extends Tab {
     /**
      * Renders the affected file of an issue. This is required for the links to the affected files on the issues page
      * (see {@link IssuesPageModel}): these links are relative to the URL of the tab and do not contain the tool that
-     * reported the issue. The results of the individual tools are not part of the Warnings tab anymore: they are
-     * shown on the pages of the tab, where the tool can be selected.
+     * reported the issue. The affected file is shown on a page of the tab (see {@link SourceModel}), together with
+     * all issues of the same file. Issues that reference the console log are still shown in the classic view.
      *
      * <p>
      * The links to the affected files of fixed issues are resolved as well: these files are part of the reference
-     * build, so the source code is rendered by the results of the same tool in the reference build.
+     * build, so the source code of the reference build is shown, together with all fixed issues of the same file.
      * </p>
      *
      * @param name
@@ -234,20 +243,20 @@ public class RunTab extends Tab {
      * @throws NoSuchElementException
      *         if there is no such issue
      */
-    @SuppressWarnings({"PMD.CognitiveComplexity", "PMD.AvoidDeeplyNestedIfStmts"})
     public Object getDynamic(final String name) {
-        if (name.startsWith(SOURCE_LINK_PREFIX)) {
-            for (ResultAction action : getWarningActions()) {
-                if (hasIssue(action.getResult().getIssues(), name)) {
-                    return action.getTarget().createDetails(name);
+        if (name.startsWith(SOURCE_LINK_PREFIX) && getObject() instanceof Run<?, ?> run) {
+            var actions = getWarningActions();
+            for (ResultAction action : actions) {
+                var issue = findIssue(action.getResult().getIssues(), name);
+                if (issue.isPresent()) {
+                    return createSourceView(run, action, issue.get(), actions);
                 }
             }
-            for (ResultAction action : getWarningActions()) {
-                if (hasIssue(action.getResult().getFixedIssues(), name)) {
-                    var reference = findReferenceAction(action);
-                    if (reference.isPresent()) {
-                        return reference.get().getTarget().createDetails(name);
-                    }
+            for (ResultAction action : actions) {
+                var issue = findIssue(action.getResult().getFixedIssues(), name);
+                var reference = findReferenceAction(action);
+                if (issue.isPresent() && reference.isPresent()) {
+                    return createFixedSourceView(run, action, reference.get(), issue.get(), name);
                 }
             }
         }
@@ -255,8 +264,58 @@ public class RunTab extends Tab {
         throw new NoSuchElementException("No warnings found for " + getObject());
     }
 
-    private boolean hasIssue(final Report issues, final String sourceLink) {
-        return issues.stream().anyMatch(issue -> (SOURCE_LINK_PREFIX + issue.getId()).equals(sourceLink));
+    private Object createSourceView(
+            final Run<?, ?> run, final ResultAction action, final Issue issue, final List<ResultAction> actions) {
+        if (ConsoleLogHandler.isInConsoleLog(issue.getFileName())) {
+            return action.getTarget().createDetails(SOURCE_LINK_PREFIX + issue.getId());
+        }
+
+        var issuesOfFile = actions.stream()
+                .flatMap(toolAction ->
+                        filterIssuesOfFile(toolAction, toolAction.getResult().getIssues(), issue))
+                .toList();
+        return new SourceModel(
+                run,
+                run,
+                issue,
+                issuesOfFile,
+                action.getSourceEncoding(),
+                getTable().getAllIssuesUrl(),
+                buildFolder);
+    }
+
+    private Object createFixedSourceView(
+            final Run<?, ?> run,
+            final ResultAction action,
+            final ResultAction reference,
+            final Issue issue,
+            final String name) {
+        if (ConsoleLogHandler.isInConsoleLog(issue.getFileName())) {
+            return reference.getTarget().createDetails(name);
+        }
+
+        var fixedIssuesOfFile = filterIssuesOfFile(action, action.getResult().getFixedIssues(), issue)
+                .toList();
+        return new SourceModel(
+                run,
+                reference.getOwner(),
+                issue,
+                fixedIssuesOfFile,
+                reference.getSourceEncoding(),
+                getTable().getFixedIssuesUrl(),
+                buildFolder);
+    }
+
+    private Stream<ToolIssue> filterIssuesOfFile(final ResultAction action, final Report report, final Issue issue) {
+        return report.stream()
+                .filter(other -> other.getFileName().equals(issue.getFileName()))
+                .map(other -> new ToolIssue(other, action.getLabelProvider()));
+    }
+
+    private Optional<Issue> findIssue(final Report issues, final String sourceLink) {
+        return issues.stream()
+                .filter(issue -> (SOURCE_LINK_PREFIX + issue.getId()).equals(sourceLink))
+                .findFirst();
     }
 
     private Optional<ResultAction> findReferenceAction(final ResultAction action) {

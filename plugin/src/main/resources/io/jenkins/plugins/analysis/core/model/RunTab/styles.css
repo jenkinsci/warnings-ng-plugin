@@ -584,3 +584,13 @@
     border-radius: 0;
     background: transparent;
 }
+
+/* Source code page */
+.wng-source__hint {
+  margin: 0 0 1rem;
+  color: var(--text-color-secondary);
+}
+
+.wng-source pre[class*="language-"] {
+  margin: 0;
+}

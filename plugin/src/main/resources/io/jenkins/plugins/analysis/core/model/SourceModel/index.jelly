@@ -1,0 +1,41 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:wng="/warnings">
+
+  <st:header name="Content-Type" value="text/html;charset=UTF-8"/>
+
+  <l:run-subpage>
+    <st:adjunct includes="io.jenkins.plugins.analysis.core.model.RunTab.styles"/>
+
+    <j:set var="tabUrl" value="${rootURL + '/' + it.object.url + it.tab.urlName}"/>
+
+    <l:app-bar title="${it.displayName}">
+      <a class="jenkins-button jenkins-button--tertiary" href="${tabUrl + '/' + it.issuesUrl}"
+         tooltip="${%back.tooltip}">
+        <l:icon src="symbol-arrow-back-outline plugin-ionicons-api"/>
+        ${%back}
+      </a>
+    </l:app-bar>
+
+    <div class="wng-body">
+      <wng:sidepanel tab="${it.tab}" active="table"/>
+
+      <div class="wng-dashboard">
+        <l:card title="${it.fileName}">
+          <j:if test="${it.fixed}">
+            <p class="wng-source__hint">
+              ${%fixed.hint}
+              <a href="${rootURL + '/' + it.sourceBuildUrl}">${it.sourceBuildName}</a>
+            </p>
+          </j:if>
+
+          <div id="wng-source" class="wng-source" data-selected-marker="${it.selectedMarkerId}">
+            <!-- Selects the issue of the link, if no other issue has been selected in the URL yet. -->
+            <st:adjunct includes="io.jenkins.plugins.analysis.core.model.SourceModel.source-model"/>
+            <st:include it="${it.sourceCode}" page="content.jelly"/>
+          </div>
+        </l:card>
+      </div>
+    </div>
+  </l:run-subpage>
+
+</j:jelly>
