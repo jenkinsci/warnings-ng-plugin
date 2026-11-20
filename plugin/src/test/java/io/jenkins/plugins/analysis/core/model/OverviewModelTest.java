@@ -176,6 +176,7 @@ class OverviewModelTest {
                 .hasReferenceBuildName("#48")
                 .hasReferenceBuildText(Messages.OverviewModel_ReferenceBuild("#48"))
                 .hasReferenceBuildUrl("job/main/48/")
+                .hasReferenceBuildExceptions("")
                 .hasReferenceBuildTooltip("checkstyle: #48, pmd: #48")
                 .hasComparisonCaption(Messages.OverviewModel_ComparedTo("#48"));
     }
@@ -199,23 +200,48 @@ class OverviewModelTest {
     }
 
     /**
-     * Verifies that the number of reference builds is shown (without a link) if the results use different reference
-     * builds.
+     * Verifies that the reference build of most results is shown, and that the results with a different reference
+     * build (or without a reference build) are named as exceptions.
      */
     @Test
-    void shouldShowNumberOfDifferentReferenceBuilds() {
+    void shouldShowMainReferenceBuildWithExceptions() {
+        var main = createBuild("#36", "main #36", "job/main/36/");
         var checkstyle = createAction("checkstyle", 1, 1, 0, QualityGateStatus.INACTIVE);
+        var cpd = createAction("cpd", 66, 66, 0, QualityGateStatus.INACTIVE);
         var pmd = createAction("pmd", 1, 0, 1, QualityGateStatus.INACTIVE);
         var spotbugs = createAction("spotbugs", 1, 0, 0, QualityGateStatus.INACTIVE);
+        setReferenceBuild(checkstyle, main);
+        setReferenceBuild(cpd, createBuild("#2", "main #2", "job/main/2/"));
+        setReferenceBuild(pmd, main);
+
+        assertThat(createModel(checkstyle, cpd, pmd, spotbugs))
+                .hasReferenceBuild()
+                .hasReferenceBuildName("#36")
+                .hasReferenceBuildUrl("job/main/36/")
+                .hasReferenceBuildExceptions("cpd: #2, spotbugs: " + Messages.OverviewModel_NoReferenceBuild())
+                .hasReferenceBuildText(Messages.OverviewModel_ReferenceBuildExceptions(
+                        Messages.OverviewModel_ReferenceBuild("#36"),
+                        "cpd: #2, spotbugs: " + Messages.OverviewModel_NoReferenceBuild()))
+                .hasComparisonCaption(Messages.OverviewModel_ReferenceBuildExceptions(
+                        Messages.OverviewModel_ComparedTo("#36"),
+                        "cpd: #2, spotbugs: " + Messages.OverviewModel_NoReferenceBuild()));
+    }
+
+    /**
+     * Verifies that the reference build of the first result is used if several reference builds are used equally
+     * often.
+     */
+    @Test
+    void shouldUseReferenceBuildOfFirstResultOnTie() {
+        var checkstyle = createAction("checkstyle", 1, 1, 0, QualityGateStatus.INACTIVE);
+        var pmd = createAction("pmd", 1, 0, 1, QualityGateStatus.INACTIVE);
         setReferenceBuild(checkstyle, createBuild("#48", "main #48", "job/main/48/"));
         setReferenceBuild(pmd, createBuild("#47", "main #47", "job/main/47/"));
 
-        assertThat(createModel(checkstyle, pmd, spotbugs))
-                .hasReferenceBuild()
-                .hasReferenceBuildName(Messages.OverviewModel_ReferenceBuilds(2))
-                .hasReferenceBuildUrl("")
-                .hasReferenceBuildTooltip(
-                        "checkstyle: #48, pmd: #47, spotbugs: " + Messages.OverviewModel_NoReferenceBuild());
+        assertThat(createModel(checkstyle, pmd))
+                .hasReferenceBuildName("#48")
+                .hasReferenceBuildExceptions("pmd: #47")
+                .hasReferenceBuildTooltip("checkstyle: #48, pmd: #47");
     }
 
     /**
@@ -231,6 +257,7 @@ class OverviewModelTest {
                 .hasReferenceBuildName("")
                 .hasReferenceBuildText(Messages.OverviewModel_NoReferenceBuild())
                 .hasReferenceBuildUrl("")
+                .hasReferenceBuildExceptions("")
                 .hasComparisonCaption(Messages.OverviewModel_NoReferenceBuild());
     }
 

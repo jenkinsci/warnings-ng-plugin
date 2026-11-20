@@ -148,7 +148,8 @@ public class Widget {
     }
 
     /**
-     * Returns the caption below the metrics that names the reference build, e.g. "compared to #48".
+     * Returns the caption below the metrics that names the reference build, e.g. "compared to #48" or "compared to
+     * #36 (CPD: #2)" if some results use a different reference build.
      *
      * @return the caption
      */
@@ -157,8 +158,8 @@ public class Widget {
     }
 
     /**
-     * Returns the URL of the reference build (relative to the Jenkins root), or an empty string if there is no single
-     * reference build.
+     * Returns the URL of the reference build that is used by most of the results (relative to the Jenkins root), or
+     * an empty string if there is no reference build.
      *
      * @return the URL of the reference build
      */

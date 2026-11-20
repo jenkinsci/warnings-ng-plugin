@@ -10,9 +10,12 @@ import io.jenkins.plugins.util.QualityGate.QualityGateCriticality;
 import io.jenkins.plugins.util.QualityGateResult.QualityGateResultItem;
 import io.jenkins.plugins.util.QualityGateStatus;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
@@ -34,6 +37,7 @@ import java.util.stream.Collectors;
  *
  * @author Ullrich Hafner
  */
+@SuppressWarnings("PMD.GodClass")
 public class OverviewModel implements ModelObject {
     static final String URL = "overview";
 
@@ -47,7 +51,7 @@ public class OverviewModel implements ModelObject {
 
     private final Actionable owner;
     private final List<ResultAction> actions;
-    private List<Run<?, ?>> referenceBuilds = List.of();
+    private Map<ResultAction, Optional<Run<?, ?>>> referenceBuilds = Map.of();
     private boolean isReferenceBuildResolved;
 
     /**
@@ -288,26 +292,32 @@ public class OverviewModel implements ModelObject {
     }
 
     /**
-     * Returns the reference builds of all results. Usually, all results use the same reference build, so the list
-     * contains at most one element. Results without a reference build are skipped. The builds are resolved only
-     * once, since each lookup requires a search in Jenkins.
+     * Returns the distinct reference builds of all results. Usually, all results use the same reference build, so
+     * the list contains at most one element. Results without a reference build are skipped.
      *
      * @return the distinct reference builds
      */
     public List<Run<?, ?>> getReferenceBuilds() {
-        if (!isReferenceBuildResolved) {
-            referenceBuilds = findReferenceBuilds();
-            isReferenceBuildResolved = true;
-        }
-        return referenceBuilds;
-    }
-
-    private List<Run<?, ?>> findReferenceBuilds() {
-        return actions.stream()
-                .map(action -> action.getResult().getReferenceBuild())
+        return getReferenceBuildsPerAction().values().stream()
                 .flatMap(Optional::stream)
                 .distinct()
                 .toList();
+    }
+
+    /**
+     * Returns the reference build of each result. The builds are resolved only once, since each lookup requires a
+     * search in Jenkins.
+     *
+     * @return the reference build of each result, in the order of the results
+     */
+    private Map<ResultAction, Optional<Run<?, ?>>> getReferenceBuildsPerAction() {
+        if (!isReferenceBuildResolved) {
+            var builds = new LinkedHashMap<ResultAction, Optional<Run<?, ?>>>();
+            actions.forEach(action -> builds.put(action, action.getResult().getReferenceBuild()));
+            referenceBuilds = builds;
+            isReferenceBuildResolved = true;
+        }
+        return referenceBuilds;
     }
 
     /**
@@ -321,80 +331,107 @@ public class OverviewModel implements ModelObject {
     }
 
     /**
-     * Returns the name of the reference build, e.g. {@code #48}. If the reference build belongs to another job (e.g.,
-     * the target branch of a pull request), the full name of the build is returned, e.g. {@code main #48}. If the
-     * results use different reference builds, a localized text with the number of reference builds is returned.
+     * Returns the reference build that is used by most of the results. If several builds are used equally often,
+     * the build of the first result wins.
+     *
+     * @return the reference build of most results, or an empty optional if there is no reference build
+     */
+    private Optional<Run<?, ?>> getMainReferenceBuild() {
+        var counts = getReferenceBuildsPerAction().values().stream()
+                .flatMap(Optional::stream)
+                .collect(Collectors.groupingBy(Function.identity(), LinkedHashMap::new, Collectors.counting()));
+        return counts.entrySet().stream().max(Map.Entry.comparingByValue()).map(Map.Entry::getKey);
+    }
+
+    /**
+     * Returns the name of the reference build that is used by most of the results, e.g. {@code #48}. If the
+     * reference build belongs to another job (e.g., the target branch of a pull request), the full name of the build
+     * is returned, e.g. {@code main #48}.
      *
      * @return the name of the reference build, or an empty string if there is no reference build
      */
     public String getReferenceBuildName() {
-        var builds = getReferenceBuilds();
-        if (builds.isEmpty()) {
-            return "";
-        }
-        if (builds.size() > 1) {
-            return Messages.OverviewModel_ReferenceBuilds(builds.size());
-        }
-        return getNameOf(builds.get(0));
+        return getMainReferenceBuild().map(this::getNameOf).orElse("");
     }
 
     private String getNameOf(final Run<?, ?> build) {
-        if (owner instanceof Run<?, ?> run && run.getParent() == build.getParent()) {
+        if (owner instanceof Run<?, ?> run && run.getParent().equals(build.getParent())) {
             return build.getDisplayName();
         }
         return build.getFullDisplayName();
     }
 
     /**
-     * Returns the text of the reference build link in the app bar, e.g. "Reference build #48".
+     * Returns the results that use a different reference build than most of the results (or no reference build at
+     * all), together with their reference build, e.g. "CPD: #2". These exceptions are shown next to the reference
+     * build, so that a deviating reference build (e.g., a build that is skipped because of a missed quality gate) is
+     * visible at first glance.
      *
-     * @return the text of the reference build link
+     * @return the exceptions, or an empty string if all results use the same reference build
+     */
+    public String getReferenceBuildExceptions() {
+        var main = getMainReferenceBuild();
+        if (main.isEmpty()) {
+            return "";
+        }
+        return getReferenceBuildsPerAction().entrySet().stream()
+                .filter(entry -> !entry.getValue().equals(main))
+                .map(entry -> entry.getKey().getDisplayName() + ": "
+                        + entry.getValue().map(this::getNameOf).orElse(Messages.OverviewModel_NoReferenceBuild()))
+                .collect(Collectors.joining(", "));
+    }
+
+    private String withExceptions(final String text) {
+        var exceptions = getReferenceBuildExceptions();
+        if (exceptions.isEmpty()) {
+            return text;
+        }
+        return Messages.OverviewModel_ReferenceBuildExceptions(text, exceptions);
+    }
+
+    /**
+     * Returns the text of the reference build entry in the app bar, e.g. "Reference build #48" or "Reference build
+     * #36 (CPD: #2)".
+     *
+     * @return the text of the reference build entry
      */
     public String getReferenceBuildText() {
         if (hasReferenceBuild()) {
-            return Messages.OverviewModel_ReferenceBuild(getReferenceBuildName());
+            return withExceptions(Messages.OverviewModel_ReferenceBuild(getReferenceBuildName()));
         }
         return Messages.OverviewModel_NoReferenceBuild();
     }
 
     /**
-     * Returns the URL of the reference build (relative to the Jenkins root). If there is no reference build or if
-     * the results use different reference builds, an empty string is returned, since there is no single target.
+     * Returns the URL of the reference build that is used by most of the results (relative to the Jenkins root).
      *
-     * @return the URL of the reference build, or an empty string
+     * @return the URL of the reference build, or an empty string if there is no reference build
      */
     public String getReferenceBuildUrl() {
-        var builds = getReferenceBuilds();
-        if (builds.size() == 1) {
-            return builds.get(0).getUrl();
-        }
-        return "";
+        return getMainReferenceBuild().map(Run::getUrl).orElse("");
     }
 
     /**
-     * Returns a tooltip that lists the reference build of each result, e.g. "CheckStyle: #48, PMD: #47". Used if the
-     * results use different reference builds.
+     * Returns a tooltip that lists the reference build of each result, e.g. "CheckStyle: #48, PMD: #47".
      *
      * @return the tooltip
      */
     public String getReferenceBuildTooltip() {
-        return actions.stream()
-                .map(action -> action.getDisplayName() + ": "
-                        + action.getResult()
-                                .getReferenceBuild()
-                                .map(this::getNameOf)
-                                .orElse(Messages.OverviewModel_NoReferenceBuild()))
+        return getReferenceBuildsPerAction().entrySet().stream()
+                .map(entry -> entry.getKey().getDisplayName() + ": "
+                        + entry.getValue().map(this::getNameOf).orElse(Messages.OverviewModel_NoReferenceBuild()))
                 .collect(Collectors.joining(", "));
     }
 
     /**
-     * Returns the caption of the new and fixed warnings that names the reference build, e.g. "compared to #48".
+     * Returns the caption of the new and fixed warnings that names the reference build, e.g. "compared to #48" or
+     * "compared to #36 (CPD: #2)".
      *
      * @return the caption
      */
     public String getComparisonCaption() {
         if (hasReferenceBuild()) {
-            return Messages.OverviewModel_ComparedTo(getReferenceBuildName());
+            return withExceptions(Messages.OverviewModel_ComparedTo(getReferenceBuildName()));
         }
         return Messages.OverviewModel_NoReferenceBuild();
     }
