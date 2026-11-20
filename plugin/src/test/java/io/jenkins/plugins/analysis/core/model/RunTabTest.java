@@ -8,6 +8,11 @@ import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import hudson.model.Actionable;
 import hudson.model.Run;
+import io.jenkins.plugins.analysis.core.util.WarningsQualityGate;
+import io.jenkins.plugins.analysis.core.util.WarningsQualityGate.QualityGateType;
+import io.jenkins.plugins.util.QualityGate.QualityGateCriticality;
+import io.jenkins.plugins.util.QualityGateResult;
+import io.jenkins.plugins.util.QualityGateStatus;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -57,27 +62,75 @@ class RunTabTest {
     }
 
     @Test
-    void shouldCreateBadgeWithAggregatedWarningCount() {
+    void shouldCreateBadgeWithNumberOfNewWarnings() {
         Run<?, ?> run = mock(Run.class);
-        var checkstyle = createResultAction("checkstyle", "CheckStyle", 2);
+        var checkstyle = createResultAction("checkstyle", "CheckStyle", 4);
+        when(checkstyle.getResult().getNewSize()).thenReturn(2);
         var pmd = createResultAction("pmd", "PMD", 3);
+        when(pmd.getResult().getNewSize()).thenReturn(3);
         when(run.getActions(ResultAction.class)).thenReturn(List.of(checkstyle, pmd));
 
         var badge = new RunTab(run).getBadge();
 
         assertThat(badge).isNotNull();
         assertThat(badge.getText()).isEqualTo("5");
-        assertThat(badge.getTooltip()).isEqualTo(Messages.ResultAction_Badge(5));
+        assertThat(badge.getTooltip()).isEqualTo(Messages.RunTab_Badge_NewWarnings(5));
         assertThat(badge.getSeverity()).isEqualTo("warning");
     }
 
     @Test
-    void shouldNotCreateBadgeForZeroWarnings() {
+    void shouldCreateBadgeWithNumberOfMissedQualityGates() {
         Run<?, ?> run = mock(Run.class);
-        var checkstyle = createResultAction("checkstyle", "CheckStyle", 0);
+        var checkstyle = createResultAction("checkstyle", "CheckStyle", 4);
+        when(checkstyle.getResult().getNewSize()).thenReturn(2);
+        when(checkstyle.getQualityGateResult()).thenReturn(
+                createQualityGateResult(QualityGateStatus.WARNING, QualityGateStatus.PASSED));
+        when(run.getActions(ResultAction.class)).thenReturn(List.of(checkstyle));
+
+        var unstable = new RunTab(run).getBadge();
+
+        assertThat(unstable).isNotNull();
+        assertThat(unstable.getText()).isEqualTo("1");
+        assertThat(unstable.getTooltip()).isEqualTo(Messages.RunTab_Badge_QualityGates(1));
+        assertThat(unstable.getSeverity()).isEqualTo("warning");
+
+        var pmd = createResultAction("pmd", "PMD", 1);
+        when(pmd.getQualityGateResult()).thenReturn(createQualityGateResult(QualityGateStatus.FAILED));
+        when(run.getActions(ResultAction.class)).thenReturn(List.of(checkstyle, pmd));
+
+        var failed = new RunTab(run).getBadge();
+
+        assertThat(failed).isNotNull();
+        assertThat(failed.getText()).isEqualTo("2");
+        assertThat(failed.getTooltip()).isEqualTo(Messages.RunTab_Badge_QualityGates(2));
+        assertThat(failed.getSeverity()).isEqualTo("danger");
+    }
+
+    @Test
+    void shouldNotCreateBadgeWithoutNewWarnings() {
+        Run<?, ?> run = mock(Run.class);
+        var checkstyle = createResultAction("checkstyle", "CheckStyle", 3);
+        when(checkstyle.getQualityGateResult()).thenReturn(createQualityGateResult(QualityGateStatus.PASSED));
         when(run.getActions(ResultAction.class)).thenReturn(List.of(checkstyle));
 
         assertThat(new RunTab(run).getBadge()).isNull();
+    }
+
+    /**
+     * Creates a quality gate result with a quality gate for each of the specified statuses.
+     *
+     * @param statuses
+     *         the status of each quality gate
+     *
+     * @return the quality gate result
+     */
+    private QualityGateResult createQualityGateResult(final QualityGateStatus... statuses) {
+        var result = new QualityGateResult();
+        for (QualityGateStatus status : statuses) {
+            result.add(new WarningsQualityGate(0, QualityGateType.TOTAL, QualityGateCriticality.UNSTABLE),
+                    status, "1");
+        }
+        return result;
     }
 
     /**
@@ -322,6 +375,7 @@ class RunTabTest {
         when(action.getUrlName()).thenReturn(id);
         when(action.getDisplayName()).thenReturn(displayName);
         when(action.getResult()).thenReturn(result);
+        when(action.getQualityGateResult()).thenReturn(new QualityGateResult());
         when(result.getTotalSize()).thenReturn(totalSize);
 
         return action;

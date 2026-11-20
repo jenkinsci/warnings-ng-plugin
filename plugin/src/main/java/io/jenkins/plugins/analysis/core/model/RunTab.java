@@ -1,8 +1,10 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import edu.hm.hafner.util.VisibleForTesting;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import hudson.model.Actionable;
 import hudson.model.Run;
+import io.jenkins.plugins.util.QualityGateStatus;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Comparator;
 import java.util.List;
@@ -67,28 +69,47 @@ public class RunTab extends Tab {
         return URL;
     }
 
+    /**
+     * Returns the badge of the Warnings tab. If at least one quality gate has been missed, the badge shows the number
+     * of missed quality gates (as danger if a quality gate failed the step or the build, otherwise as warning).
+     * Otherwise, the badge shows the number of new warnings. If there are no new warnings, no badge is shown.
+     *
+     * @return the badge, or {@code null} if no badge should be shown (as required by the Jenkins API)
+     */
     @Override
+    @CheckForNull
     public Badge getBadge() {
-        var warningActionsCount = getWarningActions().stream()
-                .map(e -> e.getResult().getTotalSize())
-                .reduce(0, Integer::sum);
+        var overview = getOverview();
 
-        if (warningActionsCount == 0) {
-            return null;
+        int missedQualityGates = overview.getMissedQualityGatesSize();
+        if (missedQualityGates > 0) {
+            var status = overview.getQualityGateStatus();
+            return new Badge(
+                    String.valueOf(missedQualityGates),
+                    Messages.RunTab_Badge_QualityGates(missedQualityGates),
+                    status == QualityGateStatus.ERROR || status == QualityGateStatus.FAILED
+                            ? Badge.Severity.DANGER
+                            : Badge.Severity.WARNING);
         }
 
-        return new Badge(
-                String.valueOf(warningActionsCount),
-                Messages.ResultAction_Badge(warningActionsCount),
-                Badge.Severity.WARNING);
+        int newWarnings = overview.getNewSize();
+        if (newWarnings > 0) {
+            return new Badge(
+                    String.valueOf(newWarnings),
+                    Messages.RunTab_Badge_NewWarnings(newWarnings),
+                    Badge.Severity.WARNING);
+        }
+
+        return null;
     }
 
     /**
-     * Generates the widget for the Overview tab.
-     * @return the widget.
+     * Generates the widget for the build page.
+     *
+     * @return the widget
      */
     public Widget getWidget() {
-        return new Widget(getWarningActions());
+        return new Widget(getOverview());
     }
 
     /**

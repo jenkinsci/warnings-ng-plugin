@@ -6,10 +6,12 @@ import hudson.model.ModelObject;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 import io.jenkins.plugins.util.QualityGate;
 import io.jenkins.plugins.util.QualityGate.QualityGateCriticality;
+import io.jenkins.plugins.util.QualityGateResult.QualityGateResultItem;
 import io.jenkins.plugins.util.QualityGateStatus;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
 
 /**
@@ -278,6 +280,32 @@ public class OverviewModel implements ModelObject {
                 .map(action -> action.getQualityGateResult().getOverallStatus())
                 .max(Comparator.naturalOrder())
                 .orElse(QualityGateStatus.INACTIVE);
+    }
+
+    /**
+     * Returns the number of quality gates of all results.
+     *
+     * @return the number of quality gates
+     */
+    public int getQualityGatesSize() {
+        return countQualityGates(item -> true);
+    }
+
+    /**
+     * Returns the number of quality gates of all results that have been missed, i.e., whose status is not
+     * successful.
+     *
+     * @return the number of missed quality gates
+     */
+    public int getMissedQualityGatesSize() {
+        return countQualityGates(item -> !item.getStatus().isSuccessful());
+    }
+
+    private int countQualityGates(final Predicate<QualityGateResultItem> filter) {
+        return (int) actions.stream()
+                .flatMap(action -> action.getQualityGateResult().getResultItems().stream())
+                .filter(filter)
+                .count();
     }
 
     /**

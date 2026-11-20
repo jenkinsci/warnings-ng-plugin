@@ -117,6 +117,43 @@ class OverviewModelTest {
     }
 
     /**
+     * Verifies that the quality gates of all results are counted, and that only the quality gates that are not
+     * successful are counted as missed.
+     */
+    @Test
+    void shouldCountMissedQualityGates() {
+        var checkstyle = createAction("checkstyle", 1, 0, 0, QualityGateStatus.INACTIVE);
+        var pmd = createAction("pmd", 1, 0, 0, QualityGateStatus.INACTIVE);
+        when(checkstyle.getQualityGateResult()).thenReturn(
+                createQualityGateResult(QualityGateStatus.PASSED, QualityGateStatus.WARNING));
+        when(pmd.getQualityGateResult()).thenReturn(
+                createQualityGateResult(QualityGateStatus.FAILED, QualityGateStatus.PASSED));
+
+        assertThat(createModel(checkstyle, pmd))
+                .hasQualityGatesSize(4)
+                .hasMissedQualityGatesSize(2)
+                .hasQualityGateStatus(QualityGateStatus.FAILED);
+        assertThat(createModel()).hasQualityGatesSize(0).hasMissedQualityGatesSize(0);
+    }
+
+    /**
+     * Creates a quality gate result with a quality gate for each of the specified statuses.
+     *
+     * @param statuses
+     *         the status of each quality gate
+     *
+     * @return the quality gate result
+     */
+    private QualityGateResult createQualityGateResult(final QualityGateStatus... statuses) {
+        var result = new QualityGateResult();
+        for (QualityGateStatus status : statuses) {
+            result.add(new WarningsQualityGate(0, QualityGateType.TOTAL, QualityGateCriticality.UNSTABLE),
+                    status, "1");
+        }
+        return result;
+    }
+
+    /**
      * Verifies that a passed quality gate is reported as passed, even if other results have no quality gates.
      */
     @Test
