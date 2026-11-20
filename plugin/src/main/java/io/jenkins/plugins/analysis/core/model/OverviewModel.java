@@ -3,6 +3,7 @@ package io.jenkins.plugins.analysis.core.model;
 import edu.hm.hafner.analysis.Severity;
 import hudson.model.Actionable;
 import hudson.model.ModelObject;
+import hudson.model.Run;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 import io.jenkins.plugins.util.QualityGate;
 import io.jenkins.plugins.util.QualityGate.QualityGateCriticality;
@@ -11,8 +12,10 @@ import io.jenkins.plugins.util.QualityGateStatus;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
+import java.util.stream.Collectors;
 
 /**
  * Server side model that provides the data for the "Overview" page of the Warnings tab of a run. The page answers the
@@ -44,6 +47,8 @@ public class OverviewModel implements ModelObject {
 
     private final Actionable owner;
     private final List<ResultAction> actions;
+    private List<Run<?, ?>> referenceBuilds = List.of();
+    private boolean isReferenceBuildResolved;
 
     /**
      * Creates a new instance of {@link OverviewModel}.
@@ -280,6 +285,118 @@ public class OverviewModel implements ModelObject {
                 .map(action -> action.getQualityGateResult().getOverallStatus())
                 .max(Comparator.naturalOrder())
                 .orElse(QualityGateStatus.INACTIVE);
+    }
+
+    /**
+     * Returns the reference builds of all results. Usually, all results use the same reference build, so the list
+     * contains at most one element. Results without a reference build are skipped. The builds are resolved only
+     * once, since each lookup requires a search in Jenkins.
+     *
+     * @return the distinct reference builds
+     */
+    public List<Run<?, ?>> getReferenceBuilds() {
+        if (!isReferenceBuildResolved) {
+            referenceBuilds = findReferenceBuilds();
+            isReferenceBuildResolved = true;
+        }
+        return referenceBuilds;
+    }
+
+    private List<Run<?, ?>> findReferenceBuilds() {
+        return actions.stream()
+                .map(action -> action.getResult().getReferenceBuild())
+                .flatMap(Optional::stream)
+                .distinct()
+                .toList();
+    }
+
+    /**
+     * Returns whether at least one of the results has a reference build. Without a reference build, the new and fixed
+     * warnings are not meaningful.
+     *
+     * @return {@code true} if there is a reference build, {@code false} otherwise
+     */
+    public boolean hasReferenceBuild() {
+        return !getReferenceBuilds().isEmpty();
+    }
+
+    /**
+     * Returns the name of the reference build, e.g. {@code #48}. If the reference build belongs to another job (e.g.,
+     * the target branch of a pull request), the full name of the build is returned, e.g. {@code main #48}. If the
+     * results use different reference builds, a localized text with the number of reference builds is returned.
+     *
+     * @return the name of the reference build, or an empty string if there is no reference build
+     */
+    public String getReferenceBuildName() {
+        var builds = getReferenceBuilds();
+        if (builds.isEmpty()) {
+            return "";
+        }
+        if (builds.size() > 1) {
+            return Messages.OverviewModel_ReferenceBuilds(builds.size());
+        }
+        return getNameOf(builds.get(0));
+    }
+
+    private String getNameOf(final Run<?, ?> build) {
+        if (owner instanceof Run<?, ?> run && run.getParent() == build.getParent()) {
+            return build.getDisplayName();
+        }
+        return build.getFullDisplayName();
+    }
+
+    /**
+     * Returns the text of the reference build link in the app bar, e.g. "Reference build #48".
+     *
+     * @return the text of the reference build link
+     */
+    public String getReferenceBuildText() {
+        if (hasReferenceBuild()) {
+            return Messages.OverviewModel_ReferenceBuild(getReferenceBuildName());
+        }
+        return Messages.OverviewModel_NoReferenceBuild();
+    }
+
+    /**
+     * Returns the URL of the reference build (relative to the Jenkins root). If there is no reference build or if
+     * the results use different reference builds, an empty string is returned, since there is no single target.
+     *
+     * @return the URL of the reference build, or an empty string
+     */
+    public String getReferenceBuildUrl() {
+        var builds = getReferenceBuilds();
+        if (builds.size() == 1) {
+            return builds.get(0).getUrl();
+        }
+        return "";
+    }
+
+    /**
+     * Returns a tooltip that lists the reference build of each result, e.g. "CheckStyle: #48, PMD: #47". Used if the
+     * results use different reference builds.
+     *
+     * @return the tooltip
+     */
+    public String getReferenceBuildTooltip() {
+        return actions.stream()
+                .map(action -> action.getDisplayName() + ": "
+                        + action.getResult()
+                                .getReferenceBuild()
+                                .map(this::getNameOf)
+                                .orElse(Messages.OverviewModel_NoReferenceBuild()))
+                .collect(Collectors.joining(", "));
+    }
+
+    /**
+     * Returns the caption of the new and fixed warnings that names the reference build, e.g. "compared to #48".
+     *
+     * @return the caption
+     */
+    public String getComparisonCaption() {
+        if (hasReferenceBuild()) {
+            return Messages.OverviewModel_ComparedTo(getReferenceBuildName());
+        }
+        return Messages.OverviewModel_NoReferenceBuild();
     }
 
     /**

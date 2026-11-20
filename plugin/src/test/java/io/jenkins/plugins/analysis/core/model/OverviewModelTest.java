@@ -4,6 +4,7 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import edu.hm.hafner.analysis.Severity;
+import hudson.model.Job;
 import hudson.model.Run;
 import io.jenkins.plugins.analysis.core.util.WarningsQualityGate;
 import io.jenkins.plugins.analysis.core.util.WarningsQualityGate.QualityGateType;
@@ -11,6 +12,7 @@ import io.jenkins.plugins.util.QualityGate.QualityGateCriticality;
 import io.jenkins.plugins.util.QualityGateResult;
 import io.jenkins.plugins.util.QualityGateStatus;
 import java.util.List;
+import java.util.Optional;
 import org.eclipse.collections.impl.factory.Lists;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -158,6 +160,113 @@ class OverviewModelTest {
     }
 
     /**
+     * Verifies that the reference build is shown if all results use the same reference build.
+     */
+    @Test
+    void shouldShowSingleReferenceBuild() {
+        var reference = createBuild("#48", "main #48", "job/main/48/");
+        var checkstyle = createAction("checkstyle", 1, 1, 0, QualityGateStatus.INACTIVE);
+        var pmd = createAction("pmd", 1, 0, 1, QualityGateStatus.INACTIVE);
+        setReferenceBuild(checkstyle, reference);
+        setReferenceBuild(pmd, reference);
+
+        assertThat(createModel(checkstyle, pmd))
+                .hasReferenceBuild()
+                .hasReferenceBuilds(reference)
+                .hasReferenceBuildName("#48")
+                .hasReferenceBuildText(Messages.OverviewModel_ReferenceBuild("#48"))
+                .hasReferenceBuildUrl("job/main/48/")
+                .hasReferenceBuildTooltip("checkstyle: #48, pmd: #48")
+                .hasComparisonCaption(Messages.OverviewModel_ComparedTo("#48"));
+    }
+
+    /**
+     * Verifies that the full name of the reference build is shown if it belongs to another job (e.g., the target
+     * branch of a pull request).
+     */
+    @Test
+    void shouldShowFullNameOfReferenceBuildOfOtherJob() {
+        Run<?, ?> owner = mock(Run.class);
+        doReturn(mock(Job.class)).when(owner).getParent();
+        var reference = createBuild("#48", "main #48", "job/main/48/");
+        doReturn(mock(Job.class)).when(reference).getParent();
+        var checkstyle = createAction("checkstyle", 1, 1, 0, QualityGateStatus.INACTIVE);
+        setReferenceBuild(checkstyle, reference);
+
+        assertThat(new OverviewModel(owner, List.of(checkstyle)))
+                .hasReferenceBuildName("main #48")
+                .hasComparisonCaption(Messages.OverviewModel_ComparedTo("main #48"));
+    }
+
+    /**
+     * Verifies that the number of reference builds is shown (without a link) if the results use different reference
+     * builds.
+     */
+    @Test
+    void shouldShowNumberOfDifferentReferenceBuilds() {
+        var checkstyle = createAction("checkstyle", 1, 1, 0, QualityGateStatus.INACTIVE);
+        var pmd = createAction("pmd", 1, 0, 1, QualityGateStatus.INACTIVE);
+        var spotbugs = createAction("spotbugs", 1, 0, 0, QualityGateStatus.INACTIVE);
+        setReferenceBuild(checkstyle, createBuild("#48", "main #48", "job/main/48/"));
+        setReferenceBuild(pmd, createBuild("#47", "main #47", "job/main/47/"));
+
+        assertThat(createModel(checkstyle, pmd, spotbugs))
+                .hasReferenceBuild()
+                .hasReferenceBuildName(Messages.OverviewModel_ReferenceBuilds(2))
+                .hasReferenceBuildUrl("")
+                .hasReferenceBuildTooltip(
+                        "checkstyle: #48, pmd: #47, spotbugs: " + Messages.OverviewModel_NoReferenceBuild());
+    }
+
+    /**
+     * Verifies that a hint is shown if there is no reference build.
+     */
+    @Test
+    void shouldShowHintWithoutReferenceBuild() {
+        var checkstyle = createAction("checkstyle", 1, 1, 0, QualityGateStatus.INACTIVE);
+
+        assertThat(createModel(checkstyle))
+                .doesNotHaveReferenceBuild()
+                .hasNoReferenceBuilds()
+                .hasReferenceBuildName("")
+                .hasReferenceBuildText(Messages.OverviewModel_NoReferenceBuild())
+                .hasReferenceBuildUrl("")
+                .hasComparisonCaption(Messages.OverviewModel_NoReferenceBuild());
+    }
+
+    /**
+     * Creates a build stub.
+     *
+     * @param displayName
+     *         the display name of the build
+     * @param fullDisplayName
+     *         the full display name of the build (including the job name)
+     * @param url
+     *         the URL of the build, relative to the Jenkins root
+     *
+     * @return the build
+     */
+    private Run<?, ?> createBuild(final String displayName, final String fullDisplayName, final String url) {
+        Run<?, ?> build = mock(Run.class);
+        when(build.getDisplayName()).thenReturn(displayName);
+        when(build.getFullDisplayName()).thenReturn(fullDisplayName);
+        when(build.getUrl()).thenReturn(url);
+        return build;
+    }
+
+    /**
+     * Sets the reference build of the specified result action stub.
+     *
+     * @param action
+     *         the action
+     * @param reference
+     *         the reference build
+     */
+    private void setReferenceBuild(final ResultAction action, final Run<?, ?> reference) {
+        doReturn(Optional.of(reference)).when(action.getResult()).getReferenceBuild();
+    }
+
+    /**
      * Creates a quality gate result with a quality gate for each of the specified statuses.
      *
      * @param statuses
@@ -274,6 +383,7 @@ class OverviewModelTest {
         var result = mock(AnalysisResult.class);
 
         when(action.getId()).thenReturn(id);
+        when(action.getDisplayName()).thenReturn(id);
         when(action.getUrlName()).thenReturn(id);
         when(action.getResult()).thenReturn(result);
         when(action.getQualityGateResult()).thenReturn(new QualityGateResult(status));

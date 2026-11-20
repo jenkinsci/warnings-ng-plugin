@@ -138,6 +138,19 @@
     color: var(--text-color-secondary);
 }
 
+.wng-widget__reference {
+    margin-top: -0.5rem;
+    font-size: var(--font-size-xs);
+    font-weight: normal;
+    text-align: center;
+
+    a {
+        position: relative;
+        z-index: 2;
+        color: var(--text-color-secondary);
+    }
+}
+
 .wng-widget__severities {
     display: flex;
     flex-direction: column;
@@ -148,7 +161,6 @@
 }
 
 .wng-widget__item--more {
-    pointer-events: none;
 
     svg {
         margin-inline: -0.25rem;

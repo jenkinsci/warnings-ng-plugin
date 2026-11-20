@@ -34,7 +34,11 @@ class WidgetTest {
                 .doesNotHaveQualityGates()
                 .hasPills()
                 .hasErrorMessagesSize(0)
-                .hasLogUrl(LogModel.URL);
+                .hasLogUrl(LogModel.URL)
+                .hasOverviewUrl(OverviewModel.URL)
+                .doesNotHaveReferenceBuild()
+                .hasReferenceBuildUrl("")
+                .hasComparisonCaption(Messages.OverviewModel_NoReferenceBuild());
         assertThat(widget.getResults()).containsExactly(checkstyle, pmd);
     }
 

@@ -12,7 +12,7 @@ import java.util.List;
  * <ul>
  *     <li>the overall status of the quality gates (or the status of the new warnings if there are no quality
  *     gates),</li>
- *     <li>the total, new and fixed warnings of all results,</li>
+ *     <li>the total, new and fixed warnings of all results, and the reference build they are compared to,</li>
  *     <li>the distribution of all warnings by severity,</li>
  *     <li>a pill for each result that has warnings or missed its quality gates (only if there is more than one
  *     result), colored by the status of its quality gates, and</li>
@@ -135,6 +135,54 @@ public class Widget {
      */
     public int getFixedSize() {
         return overview.getFixedSize();
+    }
+
+    /**
+     * Returns whether there is a reference build. Without a reference build, the new and fixed warnings are not
+     * highlighted.
+     *
+     * @return {@code true} if there is a reference build, {@code false} otherwise
+     */
+    public boolean hasReferenceBuild() {
+        return overview.hasReferenceBuild();
+    }
+
+    /**
+     * Returns the caption below the metrics that names the reference build, e.g. "compared to #48".
+     *
+     * @return the caption
+     */
+    public String getComparisonCaption() {
+        return overview.getComparisonCaption();
+    }
+
+    /**
+     * Returns the URL of the reference build (relative to the Jenkins root), or an empty string if there is no single
+     * reference build.
+     *
+     * @return the URL of the reference build
+     */
+    public String getReferenceBuildUrl() {
+        return overview.getReferenceBuildUrl();
+    }
+
+    /**
+     * Returns a tooltip that lists the reference build of each result.
+     *
+     * @return the tooltip
+     */
+    public String getReferenceBuildTooltip() {
+        return overview.getReferenceBuildTooltip();
+    }
+
+    /**
+     * Returns the URL of the overview page, relative to the Warnings tab. The pill that summarizes the remaining
+     * results links to this page, since the overview lists all results.
+     *
+     * @return the URL of the overview page
+     */
+    public String getOverviewUrl() {
+        return OverviewModel.URL;
     }
 
     /**
