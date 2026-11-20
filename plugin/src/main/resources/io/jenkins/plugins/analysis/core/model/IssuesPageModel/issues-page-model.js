@@ -14,6 +14,8 @@
     const BASELINE_COLUMN = 'baseline';
     const ALL_BASELINES = 'all';
     const DEFAULT_TABLE = 'issues';
+    // The fixed issues are shown in a table of their own, see IssuesPageModel#FIXED_TABLE_ID
+    const FIXED = 'fixed';
 
     // The rows are rendered by the table models of the classic details view. These models link the properties of an
     // issue (e.g., 'category.123/') and the severity (e.g., 'HIGH') to filtered views that are not part of the
@@ -91,13 +93,21 @@
         return $(TABLE_SELECTOR).val() || DEFAULT_TABLE;
     }
 
+    function isFixedSelected() {
+        return $(BASELINE_SELECTOR).val() === FIXED;
+    }
+
     /**
-     * Returns the ID of the table to show. Some tools provide a custom issues table with different columns: if such
-     * a tool is selected, its table replaces the issues table of all tools (see IssuesPageModel#getIssuesTableId).
+     * Returns the ID of the table to show. The fixed issues replace all other tables. Some tools provide a custom
+     * issues table with different columns: if such a tool is selected, its table replaces the issues table of all
+     * tools (see IssuesPageModel#getIssuesTableId).
      *
      * @return {String} the ID of the table
      */
     function getVisibleTable() {
+        if (isFixedSelected()) {
+            return FIXED;
+        }
         const table = getSelectedTable();
         if (table === DEFAULT_TABLE) {
             return $(TOOL_SELECTOR + ' option:selected').attr('data-issues-table') || DEFAULT_TABLE;
@@ -109,6 +119,9 @@
      * Shows the table of the selected type and hides all other tables.
      */
     function showSelectedTable() {
+        // SCM blames and forensics are not available for the fixed issues
+        $(TABLE_SELECTOR).prop('disabled', isFixedSelected());
+
         const visiblePanel = PANEL_ID_PREFIX + getVisibleTable();
         $(PANEL_SELECTOR).each(function () {
             $(this).toggleClass(HIDDEN_CLASS, this.id !== visiblePanel);
@@ -204,7 +217,10 @@
             showSelectedTable();
             applyFilters();
         });
-        bindSelection(BASELINE_SELECTOR, BASELINE_KEY, applyFilters);
+        bindSelection(BASELINE_SELECTOR, BASELINE_KEY, function () {
+            showSelectedTable();
+            applyFilters();
+        });
         bindSelection(TABLE_SELECTOR, TABLE_KEY, showSelectedTable);
     });
 })(jQuery3);

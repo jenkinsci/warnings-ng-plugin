@@ -19,6 +19,7 @@ import io.jenkins.plugins.forensics.util.CommitDecorator.NullDecorator;
 import java.net.URI;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import tools.jackson.databind.ObjectMapper;
 
@@ -49,6 +50,7 @@ class IssuesPageModelTest extends AbstractDetailsModelTest {
         assertThat(model.getTools()).containsExactly(checkstyle, pmd);
         assertThat(model.hasSeveralTools()).isTrue();
         assertThat(model.hasIssues()).isTrue();
+        assertThat(model.hasFixedIssues()).isFalse();
 
         var single = new IssuesPageModel(run, List.of(checkstyle, spotbugs));
 
@@ -219,6 +221,86 @@ class IssuesPageModelTest extends AbstractDetailsModelTest {
     }
 
     /**
+     * Verifies that the fixed issues of all tools are shown in a table of their own. Tools that fixed all of their
+     * issues are part of the page as well. The fixed issues table has no age column.
+     */
+    @Test
+    void shouldShowFixedIssuesInTableOfTheirOwn() {
+        var fixedCheckstyleIssue = createIssue(1);
+        var fixedPmdIssue = createIssue(2);
+        var checkstyle = createAction(CHECKSTYLE, createReport(createIssue(3)), new Report());
+        setFixedIssues(checkstyle, createReport(fixedCheckstyleIssue));
+        var pmd = createAction(PMD, new Report(), new Report());
+        setFixedIssues(pmd, createReport(fixedPmdIssue));
+        var spotbugs = createAction("spotbugs", new Report(), new Report());
+        // the helper methods create mocks, so the models must be created before the stubbing starts
+        var checkstyleModel = createFixedModel(checkstyle);
+        var pmdModel = createFixedModel(pmd);
+        TableModelFactory factory = mock(TableModelFactory.class);
+        when(factory.createFixedModel(checkstyle)).thenReturn(checkstyleModel);
+        when(factory.createFixedModel(pmd)).thenReturn(pmdModel);
+        when(factory.createFixedColumns(anyList())).thenCallRealMethod();
+
+        var model = new IssuesPageModel(mock(Run.class), List.of(checkstyle, pmd, spotbugs), factory);
+
+        assertThat(model.getTools()).containsExactly(checkstyle, pmd);
+        assertThat(model.hasIssues()).isTrue();
+        assertThat(model.hasFixedIssues()).isTrue();
+        assertThat(model.getUrlOf(pmd)).isEqualTo("table#tool=pmd");
+
+        var table = model.getTableModel(IssuesPageModel.FIXED_TABLE_ID);
+
+        assertThat(table.getId()).isEqualTo("fixed");
+        assertThat(table.getColumns())
+                .extracting(TableColumn::getHeaderLabel)
+                .doesNotContain("Age")
+                .startsWith("Details", "File")
+                .endsWith("Severity", "Hiddendetails", "Hiddentool", "Hiddenbaseline");
+
+        var json = new ObjectMapper().writeValueAsString(table.getRows());
+
+        assertThatJson(json).isArray().hasSize(2);
+        assertThatJson(json).node("[0].tool").isEqualTo(CHECKSTYLE);
+        assertThatJson(json).node("[0].baseline").isEqualTo("fixed");
+        assertThatJson(json)
+                .node("[0].fileName.display")
+                .isString()
+                .isEqualTo(createExpectedFileName(fixedCheckstyleIssue));
+        assertThatJson(json).node("[1].tool").isEqualTo(PMD);
+        assertThatJson(json).node("[1].baseline").isEqualTo("fixed");
+    }
+
+    /**
+     * Verifies that the links to the affected files of fixed issues are rendered only if the reference build, which
+     * contains these files, is available.
+     */
+    @Test
+    void shouldLinkFixedIssuesToFilesOfReferenceBuild() {
+        var fixedIssue = createIssue(1);
+        var action = createAction(CHECKSTYLE, new Report(), new Report());
+        setFixedIssues(action, createReport(fixedIssue));
+        var fileNameRenderer = createFileNameRenderer();
+        Run<?, ?> reference = mock(Run.class);
+        var labelProvider = action.getLabelProvider();
+        when(labelProvider.getFileNameRenderer(reference)).thenReturn(fileNameRenderer);
+        var factory = new TableModelFactory();
+
+        var withoutReference = factory.createFixedModel(action);
+
+        assertThat(withoutReference).isInstanceOf(FixedIssuesModel.class);
+        assertThat(withoutReference.getFileNameRenderer().renderAffectedFileLink(fixedIssue))
+                .isEqualTo("file-1:15");
+
+        when(action.getResult().getReferenceBuild()).thenAnswer(invocation -> Optional.of(reference));
+
+        var withReference = factory.createFixedModel(action);
+
+        assertThat(withReference.getFileNameRenderer()).isSameAs(fileNameRenderer);
+        assertThat(withReference.getFileNameRenderer().renderAffectedFileLink(fixedIssue))
+                .isEqualTo(createExpectedFileName(fixedIssue));
+    }
+
+    /**
      * Verifies that the SCM tables provide the columns of the corresponding table models and the hidden columns
      * for tool and baseline.
      */
@@ -355,6 +437,20 @@ class IssuesPageModelTest extends AbstractDetailsModelTest {
         return action;
     }
 
+    private void setFixedIssues(final ResultAction action, final Report fixedIssues) {
+        when(action.getResult().getFixedIssues()).thenReturn(fixedIssues);
+        when(action.getResult().getFixedSize()).thenReturn(fixedIssues.size());
+    }
+
+    private FixedIssuesModel createFixedModel(final ResultAction action) {
+        return new FixedIssuesModel(
+                action.getResult().getFixedIssues(),
+                createFileNameRenderer(),
+                createAgeBuilder(),
+                issue -> DESCRIPTION,
+                createJenkinsFacade());
+    }
+
     private ResultAction createActionWithCustomTable(
             final String id, final Report issues, final DetailsTableModel customModel) {
         var action = createAction(id, issues);
@@ -379,6 +475,7 @@ class IssuesPageModelTest extends AbstractDetailsModelTest {
         when(action.getOwner()).thenAnswer(invocation -> mock(Run.class));
         when(result.getIssues()).thenReturn(issues);
         when(result.getNewIssues()).thenReturn(new Report());
+        when(result.getFixedIssues()).thenReturn(new Report());
         when(result.getTotalSize()).thenReturn(issues.size());
         when(result.getBlames()).thenReturn(blames);
         when(result.getForensics()).thenReturn(statistics);

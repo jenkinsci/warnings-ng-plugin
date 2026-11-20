@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.core.model;
 
+import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import hudson.model.Actionable;
@@ -9,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import jenkins.management.Badge;
 import jenkins.model.Tab;
 import org.kohsuke.accmod.Restricted;
@@ -220,6 +222,11 @@ public class RunTab extends Tab {
      * reported the issue. The results of the individual tools are not part of the Warnings tab anymore: they are
      * shown on the pages of the tab, where the tool can be selected.
      *
+     * <p>
+     * The links to the affected files of fixed issues are resolved as well: these files are part of the reference
+     * build, so the source code is rendered by the results of the same tool in the reference build.
+     * </p>
+     *
      * @param name
      *         the link to the affected file of an issue
      *
@@ -230,8 +237,16 @@ public class RunTab extends Tab {
     public Object getDynamic(final String name) {
         if (name.startsWith(SOURCE_LINK_PREFIX)) {
             for (ResultAction action : getWarningActions()) {
-                if (hasIssue(action, name)) {
+                if (hasIssue(action.getResult().getIssues(), name)) {
                     return action.getTarget().createDetails(name);
+                }
+            }
+            for (ResultAction action : getWarningActions()) {
+                if (hasIssue(action.getResult().getFixedIssues(), name)) {
+                    var reference = findReferenceAction(action);
+                    if (reference.isPresent()) {
+                        return reference.get().getTarget().createDetails(name);
+                    }
                 }
             }
         }
@@ -239,8 +254,15 @@ public class RunTab extends Tab {
         throw new NoSuchElementException("No warnings found for " + getObject());
     }
 
-    private boolean hasIssue(final ResultAction action, final String sourceLink) {
-        return action.getResult().getIssues().stream()
-                .anyMatch(issue -> (SOURCE_LINK_PREFIX + issue.getId()).equals(sourceLink));
+    private boolean hasIssue(final Report issues, final String sourceLink) {
+        return issues.stream().anyMatch(issue -> (SOURCE_LINK_PREFIX + issue.getId()).equals(sourceLink));
+    }
+
+    private Optional<ResultAction> findReferenceAction(final ResultAction action) {
+        return action.getResult()
+                .getReferenceBuild()
+                .flatMap(reference -> reference.getActions(ResultAction.class).stream()
+                        .filter(referenceAction -> referenceAction.getId().equals(action.getId()))
+                        .findFirst());
     }
 }

@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  * are shown in hidden columns:
  * <ul>
  *     <li>{@code tool}: the ID of the tool that reported the issue</li>
- *     <li>{@code baseline}: whether the issue is new or outstanding with respect to the reference build</li>
+ *     <li>{@code baseline}: whether the issue is new, outstanding, or fixed with respect to the reference build</li>
  * </ul>
  *
  * <p>
@@ -36,6 +36,7 @@ public class ToolsTableModel extends TableModel {
     static final String BASELINE_PROPERTY = "baseline";
     static final String NEW = "new";
     static final String OUTSTANDING = "outstanding";
+    static final String FIXED = "fixed";
 
     private final String id;
     private final List<TableColumn> columns;
@@ -105,6 +106,7 @@ public class ToolsTableModel extends TableModel {
         private final DetailsTableModel model;
         private final Report issues;
         private final Set<UUID> newIssueIds;
+        private final String otherBaseline;
 
         /**
          * Creates a new instance of {@link ToolIssues}.
@@ -119,10 +121,37 @@ public class ToolsTableModel extends TableModel {
          *         the new issues of the tool, all other issues are considered outstanding
          */
         ToolIssues(final String toolId, final DetailsTableModel model, final Report issues, final Report newIssues) {
+            this(toolId, model, issues, newIssues, OUTSTANDING);
+        }
+
+        private ToolIssues(
+                final String toolId,
+                final DetailsTableModel model,
+                final Report issues,
+                final Report newIssues,
+                final String otherBaseline) {
             this.toolId = toolId;
             this.model = model;
             this.issues = issues;
             this.newIssueIds = newIssues.stream().map(Issue::getId).collect(Collectors.toSet());
+            this.otherBaseline = otherBaseline;
+        }
+
+        /**
+         * Creates the fixed issues of a tool, i.e., the issues of the reference build that are not reported in the
+         * current build anymore. The baseline of all these issues is {@link #FIXED}.
+         *
+         * @param toolId
+         *         the ID of the tool
+         * @param model
+         *         the table model of the tool that renders the rows
+         * @param fixedIssues
+         *         the fixed issues of the tool
+         *
+         * @return the fixed issues of the tool
+         */
+        static ToolIssues fixed(final String toolId, final DetailsTableModel model, final Report fixedIssues) {
+            return new ToolIssues(toolId, model, fixedIssues, new Report(), FIXED);
         }
 
         List<ToolRow> createRows() {
@@ -134,7 +163,7 @@ public class ToolsTableModel extends TableModel {
         }
 
         private String getBaseline(final Issue issue) {
-            return newIssueIds.contains(issue.getId()) ? NEW : OUTSTANDING;
+            return newIssueIds.contains(issue.getId()) ? NEW : otherBaseline;
         }
     }
 
@@ -175,7 +204,7 @@ public class ToolsTableModel extends TableModel {
         /**
          * Returns the baseline of the issue.
          *
-         * @return {@link #NEW} or {@link #OUTSTANDING}
+         * @return {@link #NEW}, {@link #OUTSTANDING}, or {@link #FIXED}
          */
         public String getBaseline() {
             return baseline;

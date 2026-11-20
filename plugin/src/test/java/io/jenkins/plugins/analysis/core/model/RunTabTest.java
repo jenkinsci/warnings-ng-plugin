@@ -18,6 +18,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import org.eclipse.collections.impl.factory.Lists;
 import org.junit.jupiter.api.Test;
 import org.kohsuke.stapler.StaplerRequest2;
@@ -271,6 +272,43 @@ class RunTabTest {
     }
 
     /**
+     * Verifies that the link to the affected file of a fixed issue is resolved by the same tool in the reference
+     * build, since the affected file is part of the reference build.
+     */
+    @Test
+    void shouldResolveSourceLinksOfFixedIssuesInReferenceBuild() {
+        var fixedIssues = new Report();
+        Issue issue;
+        try (var builder = new IssueBuilder()) {
+            issue = builder.setFileName("fixed.txt").build();
+        }
+        fixedIssues.add(issue);
+        var pmd = createResultActionWithIssues("pmd", new Report());
+        when(pmd.getResult().getFixedIssues()).thenReturn(fixedIssues);
+        Run<?, ?> run = mock(Run.class);
+        when(run.getActions(ResultAction.class)).thenReturn(List.of(pmd));
+
+        var referenceCheckstyle = createResultActionWithIssues("checkstyle", new Report());
+        var referencePmd = createResultActionWithIssues("pmd", fixedIssues);
+        Run<?, ?> reference = mock(Run.class);
+        when(reference.getActions(ResultAction.class)).thenReturn(List.of(referenceCheckstyle, referencePmd));
+        var link = "source." + issue.getId();
+        var sourceView = new Object();
+        IssuesDetail details = mock(IssuesDetail.class);
+        when(details.createDetails(link)).thenReturn(sourceView);
+        when(referencePmd.getTarget()).thenReturn(details);
+
+        var tab = new RunTab(run);
+
+        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(() -> tab.getDynamic(link));
+
+        when(pmd.getResult().getReferenceBuild()).thenAnswer(invocation -> Optional.of(reference));
+
+        assertThat(tab.getDynamic(link)).isSameAs(sourceView);
+        verify(referenceCheckstyle, never()).getTarget();
+    }
+
+    /**
      * Verifies that the index page redirects to the overview page of the run, using an absolute URL that is derived
      * from the URL of the run.
      *
@@ -376,6 +414,7 @@ class RunTabTest {
         when(action.getResult()).thenReturn(result);
         when(action.getQualityGateResult()).thenReturn(new QualityGateResult());
         when(result.getTotalSize()).thenReturn(totalSize);
+        when(result.getFixedIssues()).thenReturn(new Report());
 
         return action;
     }
