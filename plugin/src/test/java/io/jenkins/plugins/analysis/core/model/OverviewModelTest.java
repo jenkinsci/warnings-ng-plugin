@@ -146,12 +146,13 @@ class OverviewModelTest {
      */
     @ParameterizedTest(name = "{0} -> {1}")
     @CsvSource({
-            "INACTIVE, symbol-status-nobuilt",
-            "PASSED, symbol-status-blue",
-            "NOTE, symbol-status-yellow",
-            "WARNING, symbol-status-yellow",
-            "ERROR, symbol-status-red",
-            "FAILED, symbol-status-red"})
+        "INACTIVE, symbol-status-nobuilt",
+        "PASSED, symbol-status-blue",
+        "NOTE, symbol-status-yellow",
+        "WARNING, symbol-status-yellow",
+        "ERROR, symbol-status-red",
+        "FAILED, symbol-status-red"
+    })
     void shouldUseBuildStatusSymbolsForQualityGates(final QualityGateStatus status, final String icon) {
         assertThat(createModel().getStatusIcon(status)).isEqualTo(icon);
     }

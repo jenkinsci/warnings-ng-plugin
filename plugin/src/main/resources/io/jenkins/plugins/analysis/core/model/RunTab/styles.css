@@ -95,6 +95,12 @@
     justify-content: center;
     gap: 0.5rem;
     text-align: left;
+
+    /* The size of the symbol is defined by the card teaser (as in the Tests widget), only the margin is reset */
+    > svg {
+        flex-shrink: 0;
+        margin-bottom: 0;
+    }
 }
 
 .wng-widget__status-title {
