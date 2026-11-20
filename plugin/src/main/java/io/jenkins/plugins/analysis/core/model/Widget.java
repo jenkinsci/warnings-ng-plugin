@@ -10,7 +10,8 @@ import java.util.List;
  * OverviewModel overview} of the Warnings tab and answers the question: "Did this build make the static analysis
  * results worse, and does that block anything?". It shows (from top to bottom):
  * <ul>
- *     <li>the overall status of the quality gates (or a summary line if there are no quality gates),</li>
+ *     <li>the overall status of the quality gates (or the status of the new warnings if there are no quality
+ *     gates),</li>
  *     <li>the total, new and fixed warnings of all results,</li>
  *     <li>the distribution of all warnings by severity,</li>
  *     <li>a pill for each result that has warnings or missed its quality gates (only if there is more than one
@@ -24,8 +25,6 @@ import java.util.List;
  * </p>
  */
 public class Widget {
-    private static final String WARNING_SYMBOL = "symbol-warning-outline plugin-ionicons-api";
-    private static final String CLEAN_SYMBOL = "symbol-status-blue";
     private static final String ERROR_STATUS = "error";
     private static final String WARNING_STATUS = "warning";
     private static final String NO_STATUS = "none";
@@ -43,28 +42,30 @@ public class Widget {
     }
 
     /**
-     * Returns the symbol that is shown in front of the summary lines if there are no quality gates.
+     * Returns the symbol that is shown in front of the summary lines if there are no quality gates. Without quality
+     * gates, the status is derived from the new warnings: an unstable symbol if there are new warnings, and a success
+     * symbol otherwise. The symbols are the same build status symbols that are used for the quality gates.
      *
      * @return the symbol
      */
     public String getSymbol() {
-        return hasWarnings() ? WARNING_SYMBOL : CLEAN_SYMBOL;
+        return overview.getStatusIcon(getNewSize() > 0 ? QualityGateStatus.WARNING : QualityGateStatus.PASSED);
     }
 
     /**
-     * Returns the summary lines that are shown if there are no quality gates.
+     * Returns the summary lines that are shown if there are no quality gates. The first line states whether the build
+     * introduced new warnings, the second line explains the status.
      *
      * @return the summary lines
      */
     public List<String> getLines() {
-        if (hasWarnings()) {
-            return List.of(Messages.Widget_WarningsForThisBuild(getTotalSize()));
+        if (getTotalSize() == 0) {
+            return List.of(Messages.Widget_AllClear(), Messages.Widget_NoWarningsForThisBuild());
         }
-        return List.of(Messages.Widget_AllClear(), Messages.Widget_NoWarningsForThisBuild());
-    }
-
-    private boolean hasWarnings() {
-        return getTotalSize() > 0;
+        if (getNewSize() > 0) {
+            return List.of(Messages.Widget_NewWarnings(getNewSize()), Messages.Widget_NoQualityGates());
+        }
+        return List.of(Messages.Widget_NoNewWarnings(), Messages.Widget_NoQualityGates());
     }
 
     /**

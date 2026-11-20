@@ -26,8 +26,8 @@ class WidgetTest {
         var widget = createWidget(clean, pmd, checkstyle);
 
         assertThat(widget)
-                .hasSymbol("symbol-warning-outline plugin-ionicons-api")
-                .hasLines(Messages.Widget_WarningsForThisBuild(3))
+                .hasSymbol("symbol-status-yellow")
+                .hasOnlyLines(Messages.Widget_NewWarnings(1), Messages.Widget_NoQualityGates())
                 .hasTotalSize(3)
                 .hasNewSize(1)
                 .hasFixedSize(3)
@@ -47,11 +47,22 @@ class WidgetTest {
 
         assertThat(widget)
                 .hasSymbol("symbol-status-blue")
-                .hasLines(Messages.Widget_AllClear(), Messages.Widget_NoWarningsForThisBuild())
+                .hasOnlyLines(Messages.Widget_AllClear(), Messages.Widget_NoWarningsForThisBuild())
                 .hasTotalSize(0)
                 .hasFixedSize(2)
                 .hasNoResults()
                 .doesNotHavePills();
+    }
+
+    @Test
+    void shouldShowNoNewWarningsIfBuildHasOnlyOutstandingWarnings() {
+        var checkstyle = createAction("checkstyle", 4, 0, 1);
+        var pmd = createAction("pmd", 2, 0, 0);
+
+        assertThat(createWidget(checkstyle, pmd))
+                .hasSymbol("symbol-status-blue")
+                .hasOnlyLines(Messages.Widget_NoNewWarnings(), Messages.Widget_NoQualityGates())
+                .doesNotHaveQualityGates();
     }
 
     @Test

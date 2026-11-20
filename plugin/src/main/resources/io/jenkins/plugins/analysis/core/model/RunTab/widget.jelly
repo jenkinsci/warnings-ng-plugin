@@ -48,7 +48,7 @@ THE SOFTWARE.
                 </j:when>
                 <j:otherwise>
                     <div class="wng-widget__status">
-                        <l:icon src="${widget.symbol}" class="${widget.totalSize gt 0 ? 'jenkins-!-warning-color' : ''}" />
+                        <l:icon src="${widget.symbol}" />
                         <div>
                             <j:forEach var="line" items="${widget.lines}">
                                 <div>${line}</div>
