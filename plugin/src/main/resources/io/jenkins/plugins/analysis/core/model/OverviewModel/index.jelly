@@ -96,8 +96,18 @@
           </div>
           <div class="wng-dashboard__metric-card">
             <l:card title="${%New}">
-              <div class="wng-dashboard__metric-value" data-trend="${it.newSize gt 0 and it.hasReferenceBuild() ? 'worse' : 'none'}"
-                   tooltip="${it.comparisonCaption}">${it.newSize}</div>
+              <j:choose>
+                <!-- A number greater than zero opens the issues page with the corresponding baseline -->
+                <j:when test="${it.newSize gt 0}">
+                  <a class="wng-dashboard__metric-value wng-dashboard__metric-link" href="${tabUrl + '/' + issuesPage.newIssuesUrl}"
+                     data-trend="${it.hasReferenceBuild() ? 'worse' : 'none'}"
+                     tooltip="${%new.link.tooltip(it.comparisonCaption)}">${it.newSize}</a>
+                </j:when>
+                <j:otherwise>
+                  <div class="wng-dashboard__metric-value" data-trend="none"
+                       tooltip="${it.comparisonCaption}">${it.newSize}</div>
+                </j:otherwise>
+              </j:choose>
               <j:choose>
                 <j:when test="${it.newSize gt 0}">
                   <wng:severity-bar segments="${it.newSegments}"/>
@@ -110,8 +120,17 @@
           </div>
           <div class="wng-dashboard__metric-card">
             <l:card title="${%Fixed}">
-              <div class="wng-dashboard__metric-value" data-trend="${it.fixedSize gt 0 and it.hasReferenceBuild() ? 'better' : 'none'}"
-                   tooltip="${it.comparisonCaption}">${it.fixedSize}</div>
+              <j:choose>
+                <j:when test="${it.fixedSize gt 0}">
+                  <a class="wng-dashboard__metric-value wng-dashboard__metric-link" href="${tabUrl + '/' + issuesPage.fixedIssuesUrl}"
+                     data-trend="${it.hasReferenceBuild() ? 'better' : 'none'}"
+                     tooltip="${%fixed.link.tooltip(it.comparisonCaption)}">${it.fixedSize}</a>
+                </j:when>
+                <j:otherwise>
+                  <div class="wng-dashboard__metric-value" data-trend="none"
+                       tooltip="${it.comparisonCaption}">${it.fixedSize}</div>
+                </j:otherwise>
+              </j:choose>
               <div class="wng-dashboard__metric-caption">${it.comparisonCaption}</div>
             </l:card>
           </div>

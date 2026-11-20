@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
+import hudson.Util;
 import hudson.model.Job;
 import hudson.model.Run;
 import io.jenkins.plugins.analysis.core.model.IssuesPageModel.TableModelFactory;
@@ -80,6 +81,18 @@ class IssuesPageModelTest extends AbstractDetailsModelTest {
         assertThat(model.getUrlOf(custom)).isEqualTo("table#tool=my%20id");
         assertThat(model.getUrlOf(cpd)).isEqualTo("table#tool=cpd");
         assertThat(model.getUrlOf(spotbugs)).isEqualTo("log#tool=spotbugs");
+    }
+
+    /**
+     * Verifies that the links to the new and fixed issues select all tools and the corresponding baseline.
+     */
+    @Test
+    void shouldLinkNewAndFixedIssuesOfAllTools() {
+        var model = new IssuesPageModel(mock(Run.class), List.of());
+        var allTools = "table#tool=" + Util.rawEncode(TrendModel.ALL_TOOLS_ID);
+
+        assertThat(model.getNewIssuesUrl()).isEqualTo(allTools + "&show=new");
+        assertThat(model.getFixedIssuesUrl()).isEqualTo(allTools + "&show=fixed");
     }
 
     /**

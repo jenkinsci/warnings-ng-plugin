@@ -234,6 +234,7 @@ public class RunTab extends Tab {
      * @throws NoSuchElementException
      *         if there is no such issue
      */
+    @SuppressWarnings({"PMD.CognitiveComplexity", "PMD.AvoidDeeplyNestedIfStmts"})
     public Object getDynamic(final String name) {
         if (name.startsWith(SOURCE_LINK_PREFIX)) {
             for (ResultAction action : getWarningActions()) {

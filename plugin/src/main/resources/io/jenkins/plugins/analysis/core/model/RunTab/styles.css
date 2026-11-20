@@ -125,6 +125,20 @@
     font-variant-numeric: tabular-nums;
 }
 
+/* Numbers greater than zero link to the issues page. The double class beats the link color of Jenkins (a:link),
+   the trend colors below are defined later with the same specificity, so they win. */
+.wng-widget__metric-value.wng-widget__metric-link {
+    display: block;
+    position: relative;
+    z-index: 2; /* above the link of the whole card */
+    color: var(--text-color);
+    text-decoration: none;
+
+    &:hover, &:focus-visible {
+        text-decoration: underline;
+    }
+}
+
 .wng-widget__metric-value[data-trend="worse"] {
     color: var(--red);
 }
@@ -201,6 +215,17 @@
     font-weight: 700;
     line-height: 1.2;
     font-variant-numeric: tabular-nums;
+}
+
+/* Numbers greater than zero link to the issues page, see the widget for the specificity of the selectors */
+.wng-dashboard__metric-value.wng-dashboard__metric-link {
+    display: block;
+    color: var(--text-color);
+    text-decoration: none;
+
+    &:hover, &:focus-visible {
+        text-decoration: underline;
+    }
 }
 
 .wng-dashboard__metric-value[data-trend="worse"] {

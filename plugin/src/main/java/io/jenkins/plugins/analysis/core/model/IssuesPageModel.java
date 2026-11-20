@@ -67,6 +67,7 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
     static final String CUSTOM_TABLE_ID_PREFIX = "issues-tool-";
 
     private static final String TOOL_PARAMETER = "tool";
+    private static final String BASELINE_PARAMETER = "show";
 
     private final Actionable owner;
     private final List<ResultAction> actions;
@@ -200,6 +201,41 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
             return URL + "#" + TOOL_PARAMETER + "=" + Util.rawEncode(action.getId());
         }
         return LogModel.URL + "#" + TOOL_PARAMETER + "=" + Util.rawEncode(action.getId());
+    }
+
+    /**
+     * Returns the URL that shows the new issues of all tools, relative to the Warnings tab. Used by the overview and
+     * the widget to link the number of new issues.
+     *
+     * @return the relative URL
+     */
+    public String getNewIssuesUrl() {
+        return getUrlOfBaseline(ToolsTableModel.NEW);
+    }
+
+    /**
+     * Returns the URL that shows the fixed issues of all tools, relative to the Warnings tab. Used by the overview
+     * and the widget to link the number of fixed issues.
+     *
+     * @return the relative URL
+     */
+    public String getFixedIssuesUrl() {
+        return getUrlOfBaseline(ToolsTableModel.FIXED);
+    }
+
+    /**
+     * Returns the URL of this page with the specified baseline and all tools preselected, see
+     * {@code issues-page-model.js}. If the page shows a single tool only, there is no option for all tools, so the
+     * client side keeps the selection of this tool.
+     *
+     * @param baseline
+     *         the baseline to select
+     *
+     * @return the relative URL
+     */
+    private String getUrlOfBaseline(final String baseline) {
+        return URL + "#" + TOOL_PARAMETER + "=" + Util.rawEncode(getAllToolsId()) + "&" + BASELINE_PARAMETER + "="
+                + baseline;
     }
 
     /**
@@ -349,6 +385,7 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
      * Jenkins instance, so that the models can be replaced in tests.
      */
     @VisibleForTesting
+    @SuppressWarnings("PMD.InternalApiUsage")
     static class TableModelFactory {
         /**
          * Returns whether the specified tool provides a custom issues table, i.e., a table with different columns

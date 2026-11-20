@@ -64,15 +64,30 @@ THE SOFTWARE.
                     <div class="wng-widget__metric-label">${%Total}</div>
                 </div>
                 <div class="wng-widget__metric" tooltip="${%new.tooltip}">
-                    <div class="wng-widget__metric-value" data-trend="${widget.newSize gt 0 and widget.hasReferenceBuild() ? 'worse' : 'none'}">
-                        ${widget.newSize gt 0 ? '+' : ''}${widget.newSize}
-                    </div>
+                    <j:choose>
+                        <!-- A number greater than zero opens the issues page with the corresponding baseline -->
+                        <j:when test="${widget.newSize gt 0}">
+                            <a class="wng-widget__metric-value wng-widget__metric-link"
+                               href="${it.urlName}/${issuesPage.newIssuesUrl}"
+                               data-trend="${widget.hasReferenceBuild() ? 'worse' : 'none'}">+${widget.newSize}</a>
+                        </j:when>
+                        <j:otherwise>
+                            <div class="wng-widget__metric-value" data-trend="none">${widget.newSize}</div>
+                        </j:otherwise>
+                    </j:choose>
                     <div class="wng-widget__metric-label">${%New}</div>
                 </div>
                 <div class="wng-widget__metric" tooltip="${%fixed.tooltip}">
-                    <div class="wng-widget__metric-value" data-trend="${widget.fixedSize gt 0 and widget.hasReferenceBuild() ? 'better' : 'none'}">
-                        ${widget.fixedSize gt 0 ? '−' : ''}${widget.fixedSize}
-                    </div>
+                    <j:choose>
+                        <j:when test="${widget.fixedSize gt 0}">
+                            <a class="wng-widget__metric-value wng-widget__metric-link"
+                               href="${it.urlName}/${issuesPage.fixedIssuesUrl}"
+                               data-trend="${widget.hasReferenceBuild() ? 'better' : 'none'}">−${widget.fixedSize}</a>
+                        </j:when>
+                        <j:otherwise>
+                            <div class="wng-widget__metric-value" data-trend="none">${widget.fixedSize}</div>
+                        </j:otherwise>
+                    </j:choose>
                     <div class="wng-widget__metric-label">${%Fixed}</div>
                 </div>
             </div>
