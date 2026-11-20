@@ -68,6 +68,8 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
 
     private static final String TOOL_PARAMETER = "tool";
     private static final String BASELINE_PARAMETER = "show";
+    /** Value of the baseline that shows all issues, see {@code issues-page-model.js}. */
+    private static final String ALL_BASELINE = "all";
 
     private final Actionable owner;
     private final List<ResultAction> actions;
@@ -188,7 +190,8 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
 
     /**
      * Returns the URL that shows the details of the specified tool, relative to the Warnings tab. If the tool is
-     * part of this page, then the URL opens this page and selects the tool, see {@code issues-page-model.js}.
+     * part of this page, then the URL opens this page and selects the tool and all issues of the tool, see
+     * {@code issues-page-model.js}.
      * Otherwise, the tool has no issues, so the URL opens the log messages of the tool, see {@code log-model.js}.
      *
      * @param action
@@ -198,9 +201,19 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
      */
     public String getUrlOf(final ResultAction action) {
         if (actions.contains(action)) {
-            return URL + "#" + TOOL_PARAMETER + "=" + Util.rawEncode(action.getId());
+            return getUrlOf(action.getId(), ALL_BASELINE);
         }
         return LogModel.URL + "#" + TOOL_PARAMETER + "=" + Util.rawEncode(action.getId());
+    }
+
+    /**
+     * Returns the URL that shows all issues of all tools, relative to the Warnings tab. Used by the overview and the
+     * widget to link the total number of issues.
+     *
+     * @return the relative URL
+     */
+    public String getAllIssuesUrl() {
+        return getUrlOfBaseline(ALL_BASELINE);
     }
 
     /**
@@ -234,8 +247,11 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
      * @return the relative URL
      */
     private String getUrlOfBaseline(final String baseline) {
-        return URL + "#" + TOOL_PARAMETER + "=" + Util.rawEncode(getAllToolsId()) + "&" + BASELINE_PARAMETER + "="
-                + baseline;
+        return getUrlOf(getAllToolsId(), baseline);
+    }
+
+    private String getUrlOf(final String toolId, final String baseline) {
+        return URL + "#" + TOOL_PARAMETER + "=" + Util.rawEncode(toolId) + "&" + BASELINE_PARAMETER + "=" + baseline;
     }
 
     /**

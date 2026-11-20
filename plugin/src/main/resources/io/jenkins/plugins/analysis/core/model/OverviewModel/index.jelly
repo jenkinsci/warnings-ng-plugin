@@ -83,7 +83,15 @@
         <div class="wng-dashboard__top">
           <div class="wng-dashboard__metric-card">
             <l:card title="${%Total}">
-              <div class="wng-dashboard__metric-value" tooltip="${%total.caption(size(it.actions))}">${it.totalSize}</div>
+              <j:choose>
+                <j:when test="${it.totalSize gt 0}">
+                  <a class="wng-dashboard__metric-value wng-dashboard__metric-link" href="${tabUrl + '/' + issuesPage.allIssuesUrl}"
+                     tooltip="${%total.link.tooltip(size(it.actions))}">${it.totalSize}</a>
+                </j:when>
+                <j:otherwise>
+                  <div class="wng-dashboard__metric-value" tooltip="${%total.caption(size(it.actions))}">${it.totalSize}</div>
+                </j:otherwise>
+              </j:choose>
               <j:choose>
                 <j:when test="${it.totalSize gt 0}">
                   <wng:severity-bar segments="${it.totalSegments}"/>

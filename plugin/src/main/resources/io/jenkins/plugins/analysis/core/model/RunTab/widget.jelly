@@ -60,7 +60,15 @@ THE SOFTWARE.
 
             <div class="wng-widget__metrics">
                 <div class="wng-widget__metric" tooltip="${%total.tooltip}">
-                    <div class="wng-widget__metric-value">${widget.totalSize}</div>
+                    <j:choose>
+                        <j:when test="${widget.totalSize gt 0}">
+                            <a class="wng-widget__metric-value wng-widget__metric-link"
+                               href="${it.urlName}/${issuesPage.allIssuesUrl}">${widget.totalSize}</a>
+                        </j:when>
+                        <j:otherwise>
+                            <div class="wng-widget__metric-value">${widget.totalSize}</div>
+                        </j:otherwise>
+                    </j:choose>
                     <div class="wng-widget__metric-label">${%Total}</div>
                 </div>
                 <div class="wng-widget__metric" tooltip="${%new.tooltip}">

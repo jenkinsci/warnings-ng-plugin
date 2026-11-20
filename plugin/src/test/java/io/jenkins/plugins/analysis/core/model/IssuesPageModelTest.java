@@ -77,20 +77,21 @@ class IssuesPageModelTest extends AbstractDetailsModelTest {
 
         var model = new IssuesPageModel(mock(Run.class), List.of(checkstyle, cpd, spotbugs, custom));
 
-        assertThat(model.getUrlOf(checkstyle)).isEqualTo("table#tool=checkstyle");
-        assertThat(model.getUrlOf(custom)).isEqualTo("table#tool=my%20id");
-        assertThat(model.getUrlOf(cpd)).isEqualTo("table#tool=cpd");
+        assertThat(model.getUrlOf(checkstyle)).isEqualTo("table#tool=checkstyle&show=all");
+        assertThat(model.getUrlOf(custom)).isEqualTo("table#tool=my%20id&show=all");
+        assertThat(model.getUrlOf(cpd)).isEqualTo("table#tool=cpd&show=all");
         assertThat(model.getUrlOf(spotbugs)).isEqualTo("log#tool=spotbugs");
     }
 
     /**
-     * Verifies that the links to the new and fixed issues select all tools and the corresponding baseline.
+     * Verifies that the links to all, new, and fixed issues select all tools and the corresponding baseline.
      */
     @Test
     void shouldLinkNewAndFixedIssuesOfAllTools() {
         var model = new IssuesPageModel(mock(Run.class), List.of());
         var allTools = "table#tool=" + Util.rawEncode(TrendModel.ALL_TOOLS_ID);
 
+        assertThat(model.getAllIssuesUrl()).isEqualTo(allTools + "&show=all");
         assertThat(model.getNewIssuesUrl()).isEqualTo(allTools + "&show=new");
         assertThat(model.getFixedIssuesUrl()).isEqualTo(allTools + "&show=fixed");
     }
@@ -259,7 +260,7 @@ class IssuesPageModelTest extends AbstractDetailsModelTest {
         assertThat(model.getTools()).containsExactly(checkstyle, pmd);
         assertThat(model.hasIssues()).isTrue();
         assertThat(model.hasFixedIssues()).isTrue();
-        assertThat(model.getUrlOf(pmd)).isEqualTo("table#tool=pmd");
+        assertThat(model.getUrlOf(pmd)).isEqualTo("table#tool=pmd&show=all");
 
         var table = model.getTableModel(IssuesPageModel.FIXED_TABLE_ID);
 
