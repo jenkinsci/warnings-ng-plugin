@@ -39,7 +39,7 @@ THE SOFTWARE.
                 <j:when test="${widget.hasQualityGates()}">
                     <j:set var="status" value="${widget.qualityGateStatus}" />
                     <div class="wng-widget__status">
-                        <l:icon class="${status.iconClass} icon-md" alt="${status.description}" />
+                        <l:icon src="${widget.qualityGateIcon}" class="icon-md" alt="${status.description}" />
                         <div>
                             <div class="wng-widget__status-title">${status.description}</div>
                             <div class="wng-widget__status-caption">${widget.qualityGateSummary}</div>

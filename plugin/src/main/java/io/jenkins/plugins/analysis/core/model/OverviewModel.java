@@ -309,6 +309,25 @@ public class OverviewModel implements ModelObject {
     }
 
     /**
+     * Returns the symbol that visualizes the specified quality gate status. The symbols are the build status symbols
+     * of Jenkins (see the icon legend), so that a quality gate status looks like the build result it causes: passed
+     * like a successful build, note and warning like an unstable build, and error and failed like a failed build.
+     *
+     * @param status
+     *         the quality gate status
+     *
+     * @return the symbol
+     */
+    public String getStatusIcon(final QualityGateStatus status) {
+        return switch (status) {
+            case PASSED -> "symbol-status-blue";
+            case NOTE, WARNING -> "symbol-status-yellow";
+            case ERROR, FAILED -> "symbol-status-red";
+            default -> "symbol-status-nobuilt";
+        };
+    }
+
+    /**
      * Returns the icon that visualizes the criticality of the specified quality gate: an error icon for quality gates
      * that fail the step or build, and a warning icon for quality gates that mark the step or build as unstable.
      *

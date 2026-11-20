@@ -86,6 +86,16 @@ public class Widget {
     }
 
     /**
+     * Returns the symbol that visualizes the overall status of the quality gates (see
+     * {@link OverviewModel#getStatusIcon(QualityGateStatus)}).
+     *
+     * @return the symbol
+     */
+    public String getQualityGateIcon() {
+        return overview.getStatusIcon(getQualityGateStatus());
+    }
+
+    /**
      * Returns a localized summary of the quality gates, e.g. "1 of 3 quality gates missed".
      *
      * @return the summary

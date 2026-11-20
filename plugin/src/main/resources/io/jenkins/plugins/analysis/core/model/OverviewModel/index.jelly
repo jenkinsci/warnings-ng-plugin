@@ -25,7 +25,7 @@
           <l:card title="${%Quality Gates}">
             <div class="wng-dashboard__quality-gates">
               <div class="wng-dashboard__quality-gate-total">
-                <l:icon class="${status.iconClass} icon-lg" alt="${status.description}"/>
+                <l:icon src="${it.getStatusIcon(status)}" class="icon-lg" alt="${status.description}"/>
                 <div class="wng-dashboard__quality-gate-status">${status.description}</div>
               </div>
               <div class="wng-dashboard__quality-gate-tools">
@@ -38,7 +38,7 @@
                     <j:forEach var="item" items="${action.qualityGateResult.resultItems}">
                       <div class="wng-dashboard__quality-gate-item">
                         <span class="wng-dashboard__quality-gate-item-name" tooltip="${item.qualityGate.name}">
-                          <l:icon class="${item.status.iconClass} icon-sm" alt="${item.status.description}"/>
+                          <l:icon src="${it.getStatusIcon(item.status)}" class="icon-sm" alt="${item.status.description}"/>
                           ${item.qualityGate.name}
                         </span>
                         <span class="wng-dashboard__quality-gate-item-value"
@@ -172,7 +172,7 @@
                             <span class="wng-dashboard__zero" tooltip="${%No quality gate}">–</span>
                           </j:when>
                           <j:otherwise>
-                            <l:icon class="${gate.overallStatus.iconClass} icon-sm"
+                            <l:icon src="${it.getStatusIcon(gate.overallStatus)}" class="icon-sm"
                                     alt="${gate.overallStatus.description}"
                                     tooltip="${gate.overallStatus.description}"/>
                           </j:otherwise>
@@ -197,7 +197,7 @@
                     </j:if>
                     <j:if test="${it.hasQualityGates()}">
                       <td class="wng-dashboard__status">
-                        <l:icon class="${it.qualityGateStatus.iconClass} icon-sm"
+                        <l:icon src="${it.getStatusIcon(it.qualityGateStatus)}" class="icon-sm"
                                 alt="${it.qualityGateStatus.description}"
                                 tooltip="${it.qualityGateStatus.description}"/>
                       </td>

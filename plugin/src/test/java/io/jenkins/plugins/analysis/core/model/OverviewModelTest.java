@@ -124,16 +124,36 @@ class OverviewModelTest {
     void shouldCountMissedQualityGates() {
         var checkstyle = createAction("checkstyle", 1, 0, 0, QualityGateStatus.INACTIVE);
         var pmd = createAction("pmd", 1, 0, 0, QualityGateStatus.INACTIVE);
-        when(checkstyle.getQualityGateResult()).thenReturn(
-                createQualityGateResult(QualityGateStatus.PASSED, QualityGateStatus.WARNING));
-        when(pmd.getQualityGateResult()).thenReturn(
-                createQualityGateResult(QualityGateStatus.FAILED, QualityGateStatus.PASSED));
+        when(checkstyle.getQualityGateResult())
+                .thenReturn(createQualityGateResult(QualityGateStatus.PASSED, QualityGateStatus.WARNING));
+        when(pmd.getQualityGateResult())
+                .thenReturn(createQualityGateResult(QualityGateStatus.FAILED, QualityGateStatus.PASSED));
 
         assertThat(createModel(checkstyle, pmd))
                 .hasQualityGatesSize(4)
                 .hasMissedQualityGatesSize(2)
                 .hasQualityGateStatus(QualityGateStatus.FAILED);
         assertThat(createModel()).hasQualityGatesSize(0).hasMissedQualityGatesSize(0);
+    }
+
+    /**
+     * Verifies that the quality gate status is visualized with the build status symbols of Jenkins.
+     *
+     * @param status
+     *         the quality gate status
+     * @param icon
+     *         the expected symbol
+     */
+    @ParameterizedTest(name = "{0} -> {1}")
+    @CsvSource({
+            "INACTIVE, symbol-status-nobuilt",
+            "PASSED, symbol-status-blue",
+            "NOTE, symbol-status-yellow",
+            "WARNING, symbol-status-yellow",
+            "ERROR, symbol-status-red",
+            "FAILED, symbol-status-red"})
+    void shouldUseBuildStatusSymbolsForQualityGates(final QualityGateStatus status, final String icon) {
+        assertThat(createModel().getStatusIcon(status)).isEqualTo(icon);
     }
 
     /**
@@ -147,8 +167,7 @@ class OverviewModelTest {
     private QualityGateResult createQualityGateResult(final QualityGateStatus... statuses) {
         var result = new QualityGateResult();
         for (QualityGateStatus status : statuses) {
-            result.add(new WarningsQualityGate(0, QualityGateType.TOTAL, QualityGateCriticality.UNSTABLE),
-                    status, "1");
+            result.add(new WarningsQualityGate(0, QualityGateType.TOTAL, QualityGateCriticality.UNSTABLE), status, "1");
         }
         return result;
     }

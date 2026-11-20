@@ -67,6 +67,7 @@ class WidgetTest {
         assertThat(widget)
                 .hasQualityGates()
                 .hasQualityGateStatus(QualityGateStatus.FAILED)
+                .hasQualityGateIcon("symbol-status-red")
                 .hasQualityGateSummary(Messages.Widget_QualityGates_Missed(2, 4));
         assertThat(widget.getResults()).containsExactly(failed, unstable, fresh, passed);
         assertThat(widget.getStatusModifier(failed)).isEqualTo("error");
@@ -82,6 +83,7 @@ class WidgetTest {
 
         assertThat(createWidget(checkstyle))
                 .hasQualityGateStatus(QualityGateStatus.PASSED)
+                .hasQualityGateIcon("symbol-status-blue")
                 .hasQualityGateSummary(Messages.Widget_QualityGates_Passed(2));
     }
 
@@ -129,7 +131,11 @@ class WidgetTest {
      *
      * @return the action
      */
-    private ResultAction createAction(final String id, final int totalSize, final int newSize, final int fixedSize,
+    private ResultAction createAction(
+            final String id,
+            final int totalSize,
+            final int newSize,
+            final int fixedSize,
             final QualityGateStatus... qualityGates) {
         var action = mock(ResultAction.class);
         var result = mock(AnalysisResult.class);
@@ -144,8 +150,10 @@ class WidgetTest {
 
         var qualityGateResult = new QualityGateResult();
         for (QualityGateStatus status : qualityGates) {
-            qualityGateResult.add(new WarningsQualityGate(0, QualityGateType.TOTAL, QualityGateCriticality.UNSTABLE),
-                    status, String.valueOf(totalSize));
+            qualityGateResult.add(
+                    new WarningsQualityGate(0, QualityGateType.TOTAL, QualityGateCriticality.UNSTABLE),
+                    status,
+                    String.valueOf(totalSize));
         }
         when(action.getQualityGateResult()).thenReturn(qualityGateResult);
 

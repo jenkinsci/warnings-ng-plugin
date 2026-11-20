@@ -83,8 +83,8 @@ class RunTabTest {
         Run<?, ?> run = mock(Run.class);
         var checkstyle = createResultAction("checkstyle", "CheckStyle", 4);
         when(checkstyle.getResult().getNewSize()).thenReturn(2);
-        when(checkstyle.getQualityGateResult()).thenReturn(
-                createQualityGateResult(QualityGateStatus.WARNING, QualityGateStatus.PASSED));
+        when(checkstyle.getQualityGateResult())
+                .thenReturn(createQualityGateResult(QualityGateStatus.WARNING, QualityGateStatus.PASSED));
         when(run.getActions(ResultAction.class)).thenReturn(List.of(checkstyle));
 
         var unstable = new RunTab(run).getBadge();
@@ -127,8 +127,7 @@ class RunTabTest {
     private QualityGateResult createQualityGateResult(final QualityGateStatus... statuses) {
         var result = new QualityGateResult();
         for (QualityGateStatus status : statuses) {
-            result.add(new WarningsQualityGate(0, QualityGateType.TOTAL, QualityGateCriticality.UNSTABLE),
-                    status, "1");
+            result.add(new WarningsQualityGate(0, QualityGateType.TOTAL, QualityGateCriticality.UNSTABLE), status, "1");
         }
         return result;
     }
