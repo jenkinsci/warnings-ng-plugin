@@ -17,6 +17,7 @@ import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
@@ -28,6 +29,9 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
  * issue with all issues of the same file: the lines of each issue are highlighted, and the message and description
  * of each issue are shown in a box below these lines. The box shows the severity, the state (new or fixed), the
  * tool, the category and type, and the author and commit of the affected line (if blames are available) as badges.
+ * The severity, the state, and the tool of an issue are additionally provided as data of the marker, so the client
+ * side script {@code source-model.js} can filter the issues by the selected settings of the app bar: all issues of
+ * the file or only the selected one, the minimum severity, and the baseline (new or outstanding issues).
  * The color of the box and of the marked lines is derived from the severity of the issue, see
  * {@code asMarkerSeverity}. In contrast to the classic source code view, the page is part
  * of the Warnings tab, so the side panel of the tab is still visible.
@@ -56,7 +60,6 @@ public class SourceModel implements ModelObject {
     private final Issue selectedIssue;
     private final List<ToolIssue> issues;
     private final Charset sourceEncoding;
-    private final String issuesUrl;
     private final BuildFolderFacade buildFolder;
 
     /**
@@ -74,19 +77,15 @@ public class SourceModel implements ModelObject {
      *         them
      * @param sourceEncoding
      *         the encoding of the affected file
-     * @param issuesUrl
-     *         the URL of the issues page that lists the selected issue, relative to the Warnings tab
      * @param buildFolder
      *         the facade to read the affected file from the build folder
      */
-    @SuppressWarnings("checkstyle:ParameterNumber")
     SourceModel(
             final Run<?, ?> owner,
             final Run<?, ?> sourceBuild,
             final Issue selectedIssue,
             final List<ToolIssue> issues,
             final Charset sourceEncoding,
-            final String issuesUrl,
             final BuildFolderFacade buildFolder) {
         this.owner = owner;
         this.sourceBuild = sourceBuild;
@@ -97,7 +96,6 @@ public class SourceModel implements ModelObject {
                         .thenComparingInt(toolIssue -> toolIssue.issue().getColumnStart()))
                 .toList();
         this.sourceEncoding = sourceEncoding;
-        this.issuesUrl = issuesUrl;
         this.buildFolder = buildFolder;
     }
 
@@ -188,15 +186,6 @@ public class SourceModel implements ModelObject {
     }
 
     /**
-     * Returns the URL of the issues page that lists the selected issue.
-     *
-     * @return the URL, relative to the Warnings tab
-     */
-    public String getIssuesUrl() {
-        return issuesUrl;
-    }
-
-    /**
      * Returns the view model that renders the source code of the affected file with all issues. If the current user
      * has no permission to see the source code, a view model with a corresponding message is returned instead. Both
      * models provide the fragment {@code content.jelly}.
@@ -240,7 +229,10 @@ public class SourceModel implements ModelObject {
                 .withLineStart(issue.getLineStart())
                 .withLineEnd(issue.getLineEnd())
                 .withColumnStart(issue.getColumnStart())
-                .withColumnEnd(issue.getColumnEnd());
+                .withColumnEnd(issue.getColumnEnd())
+                .withData("severity", issue.getSeverity().getName().toLowerCase(Locale.ENGLISH))
+                .withData("state", toolIssue.state().name().toLowerCase(Locale.ENGLISH))
+                .withData("tool", toolIssue.action().getId());
 
         builder.withBadge(
                 LocalizedSeverity.getLocalizedString(issue.getSeverity()),

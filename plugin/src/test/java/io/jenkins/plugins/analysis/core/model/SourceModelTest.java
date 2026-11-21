@@ -51,7 +51,6 @@ class SourceModelTest {
                 .hasFileName(FILE_NAME)
                 .hasSelectedIssue(selected)
                 .hasSelectedMarkerId("issue-" + selected.getId())
-                .hasIssuesUrl("table")
                 .isNotFixed();
         assertThat(model.getObject()).isSameAs(run);
         assertThat(model.getIssues()).containsExactly(first, selected);
@@ -118,6 +117,11 @@ class SourceModelTest {
         assertThat(markers.get(1).getBadges())
                 .extracting(Badge::getText)
                 .containsExactly("Low", TOOL, "Category · Type");
+        assertThat(markers.get(0).getData())
+                .containsEntry("severity", "high")
+                .containsEntry("state", "new")
+                .containsEntry("tool", "pmd");
+        assertThat(markers.get(1).getData()).containsEntry("severity", "low").containsEntry("state", "outstanding");
     }
 
     /**
@@ -147,7 +151,7 @@ class SourceModelTest {
     private SourceModel createModel(
             final Run<?, ?> run, final Run<?, ?> sourceBuild, final Issue selected, final List<ToolIssue> issues) {
         return new SourceModel(
-                run, sourceBuild, selected, issues, StandardCharsets.UTF_8, "table", mock(BuildFolderFacade.class));
+                run, sourceBuild, selected, issues, StandardCharsets.UTF_8, mock(BuildFolderFacade.class));
     }
 
     private ResultAction createAction(final Blames blames) {
@@ -160,6 +164,7 @@ class SourceModelTest {
         var result = mock(AnalysisResult.class);
         when(result.getBlames()).thenReturn(blames);
         var action = mock(ResultAction.class);
+        when(action.getId()).thenReturn("pmd");
         when(action.getLabelProvider()).thenReturn(labelProvider);
         when(action.getResult()).thenReturn(result);
         return action;

@@ -268,7 +268,6 @@ class RunTabTest {
                     .isNotFixed();
             assertThat(source.getObject()).isSameAs(run);
             assertThat(source.getIssues()).containsExactly(sameFile, selected);
-            assertThat(source.getIssuesUrl()).startsWith("table#");
         });
         assertThatExceptionOfType(NoSuchElementException.class)
                 .isThrownBy(() -> tab.getDynamic("source.00000000-0000-0000-0000-000000000000"));
@@ -323,7 +322,6 @@ class RunTabTest {
             assertThat(source).hasSelectedIssue(selected).isFixed();
             assertThat(source.getObject()).isSameAs(run);
             assertThat(source.getIssues()).containsExactly(sameFile, selected);
-            assertThat(source.getIssuesUrl()).contains("show=fixed");
         });
         verify(referenceCheckstyle, never()).getTarget();
     }

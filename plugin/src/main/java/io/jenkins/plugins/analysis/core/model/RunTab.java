@@ -29,6 +29,7 @@ import org.kohsuke.stapler.verb.GET;
 /**
  * Defines the Warnings tab for a run.
  */
+@SuppressWarnings("checkstyle:ClassDataAbstractionCoupling")
 public class RunTab extends Tab {
     static final String URL = "warnings";
     static final String ICON = "symbol-warning-outline plugin-ionicons-api";
@@ -275,14 +276,7 @@ public class RunTab extends Tab {
         var issuesOfFile = actions.stream()
                 .flatMap(toolAction -> filterIssuesOfFile(toolAction, issue))
                 .toList();
-        return new SourceModel(
-                run,
-                run,
-                issue,
-                issuesOfFile,
-                action.getSourceEncoding(),
-                getTable().getAllIssuesUrl(),
-                buildFolder);
+        return new SourceModel(run, run, issue, issuesOfFile, action.getSourceEncoding(), buildFolder);
     }
 
     private Object createFixedSourceView(
@@ -300,13 +294,7 @@ public class RunTab extends Tab {
                 .map(fixed -> new ToolIssue(fixed, reference, IssueState.FIXED))
                 .toList();
         return new SourceModel(
-                run,
-                reference.getOwner(),
-                issue,
-                fixedIssuesOfFile,
-                reference.getSourceEncoding(),
-                getTable().getFixedIssuesUrl(),
-                buildFolder);
+                run, reference.getOwner(), issue, fixedIssuesOfFile, reference.getSourceEncoding(), buildFolder);
     }
 
     private Stream<ToolIssue> filterIssuesOfFile(final ResultAction action, final Issue issue) {
