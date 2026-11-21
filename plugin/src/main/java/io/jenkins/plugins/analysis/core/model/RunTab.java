@@ -6,6 +6,7 @@ import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import hudson.model.Actionable;
 import hudson.model.Run;
+import io.jenkins.plugins.analysis.core.model.SourceModel.IssueState;
 import io.jenkins.plugins.analysis.core.model.SourceModel.ToolIssue;
 import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
@@ -15,6 +16,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import jenkins.management.Badge;
 import jenkins.model.Tab;
@@ -271,8 +273,7 @@ public class RunTab extends Tab {
         }
 
         var issuesOfFile = actions.stream()
-                .flatMap(toolAction ->
-                        filterIssuesOfFile(toolAction, toolAction.getResult().getIssues(), issue))
+                .flatMap(toolAction -> filterIssuesOfFile(toolAction, issue))
                 .toList();
         return new SourceModel(
                 run,
@@ -294,7 +295,9 @@ public class RunTab extends Tab {
             return reference.getTarget().createDetails(name);
         }
 
-        var fixedIssuesOfFile = filterIssuesOfFile(action, action.getResult().getFixedIssues(), issue)
+        var fixedIssuesOfFile = action.getResult().getFixedIssues().stream()
+                .filter(fixed -> isInSameFile(fixed, issue))
+                .map(fixed -> new ToolIssue(fixed, reference, IssueState.FIXED))
                 .toList();
         return new SourceModel(
                 run,
@@ -306,10 +309,17 @@ public class RunTab extends Tab {
                 buildFolder);
     }
 
-    private Stream<ToolIssue> filterIssuesOfFile(final ResultAction action, final Report report, final Issue issue) {
-        return report.stream()
-                .filter(other -> other.getFileName().equals(issue.getFileName()))
-                .map(other -> new ToolIssue(other, action.getLabelProvider()));
+    private Stream<ToolIssue> filterIssuesOfFile(final ResultAction action, final Issue issue) {
+        var newIssues =
+                action.getResult().getNewIssues().stream().map(Issue::getId).collect(Collectors.toSet());
+        return action.getResult().getIssues().stream()
+                .filter(other -> isInSameFile(other, issue))
+                .map(other -> new ToolIssue(
+                        other, action, newIssues.contains(other.getId()) ? IssueState.NEW : IssueState.OUTSTANDING));
+    }
+
+    private boolean isInSameFile(final Issue other, final Issue issue) {
+        return other.getFileName().equals(issue.getFileName());
     }
 
     private Optional<Issue> findIssue(final Report issues, final String sourceLink) {

@@ -1,9 +1,13 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.Severity;
 import hudson.model.ModelObject;
 import hudson.model.Run;
+import io.jenkins.plugins.analysis.core.util.Blame;
 import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
+import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
+import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.prism.Marker;
 import io.jenkins.plugins.prism.Marker.MarkerBuilder;
 import io.jenkins.plugins.prism.SourceCodeViewModel;
@@ -13,13 +17,19 @@ import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 /**
  * Server side model that provides the data for the source code page of the Warnings tab of a run. The page answers
  * the question: "Where in the source code are the warnings located?". It shows the affected file of the selected
  * issue with all issues of the same file: the lines of each issue are highlighted, and the message and description
- * of each issue are shown in a box below these lines. In contrast to the classic source code view, the page is part
+ * of each issue are shown in a box below these lines. The box shows the severity, the state (new or fixed), the
+ * tool, the category and type, and the author and commit of the affected line (if blames are available) as badges.
+ * The color of the box and of the marked lines is derived from the severity of the issue, see
+ * {@code asMarkerSeverity}. In contrast to the classic source code view, the page is part
  * of the Warnings tab, so the side panel of the tab is still visible.
  *
  * <p>
@@ -38,6 +48,8 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
  */
 public class SourceModel implements ModelObject {
     private static final String MARKER_ID_PREFIX = "issue-";
+    private static final String UNDEFINED = "-";
+    private static final int COMMIT_LENGTH = 7;
 
     private final Run<?, ?> owner;
     private final Run<?, ?> sourceBuild;
@@ -218,17 +230,70 @@ public class SourceModel implements ModelObject {
 
     private Marker asMarker(final ToolIssue toolIssue) {
         var issue = toolIssue.issue();
-        var labelProvider = toolIssue.labelProvider();
-        return new MarkerBuilder()
+        var labelProvider = toolIssue.action().getLabelProvider();
+        var builder = new MarkerBuilder()
                 .withId(createMarkerId(issue))
                 .withTitle(issue.getMessage())
                 .withDescription(labelProvider.getSourceCodeDescription(sourceBuild, issue))
                 .withIcon(labelProvider.getSmallIconUrl())
+                .withSeverity(asMarkerSeverity(issue.getSeverity()))
                 .withLineStart(issue.getLineStart())
                 .withLineEnd(issue.getLineEnd())
                 .withColumnStart(issue.getColumnStart())
-                .withColumnEnd(issue.getColumnEnd())
-                .build();
+                .withColumnEnd(issue.getColumnEnd());
+
+        builder.withBadge(
+                LocalizedSeverity.getLocalizedString(issue.getSeverity()),
+                LocalizedSeverity.getLongLocalizedString(issue.getSeverity()));
+        if (toolIssue.state() == IssueState.NEW) {
+            builder.withBadge(Messages.SourceModel_New(), Messages.SourceModel_New_Tooltip());
+        } else if (toolIssue.state() == IssueState.FIXED) {
+            builder.withBadge(Messages.SourceModel_Fixed(), Messages.SourceModel_Fixed_Tooltip());
+        }
+        builder.withBadge(labelProvider.getName(), Messages.SourceModel_Tool_Tooltip());
+        var categoryAndType = Stream.of(issue.getCategory(), issue.getType())
+                .filter(SourceModel::isDefined)
+                .collect(Collectors.joining(" · "));
+        if (!categoryAndType.isEmpty()) {
+            builder.withBadge(categoryAndType, Messages.SourceModel_CategoryAndType_Tooltip());
+        }
+        addBlame(builder, issue, toolIssue.action().getResult().getBlames());
+
+        return builder.build();
+    }
+
+    private void addBlame(final MarkerBuilder builder, final Issue issue, final Blames blames) {
+        var blame = new Blame(issue, blames);
+        if (isDefined(blame.getCommit())) {
+            var commit = StringUtils.left(blame.getCommit(), COMMIT_LENGTH);
+            builder.withBadge(
+                    Messages.SourceModel_Blame(blame.getAuthorName(), commit),
+                    Messages.SourceModel_Blame_Tooltip(
+                            blame.getCommit(), blame.getAuthorName(), blame.getAuthorEmail()));
+        }
+    }
+
+    private static boolean isDefined(final String value) {
+        return StringUtils.isNotBlank(value) && !UNDEFINED.equals(value);
+    }
+
+    /**
+     * Maps the severity of an issue to the severity of a marker: errors and warnings with high severity are shown
+     * as errors, warnings with low severity as information.
+     *
+     * @param severity
+     *         the severity of the issue
+     *
+     * @return the severity of the marker
+     */
+    static Marker.Severity asMarkerSeverity(final Severity severity) {
+        if (Severity.ERROR.equals(severity) || Severity.WARNING_HIGH.equals(severity)) {
+            return Marker.Severity.ERROR;
+        }
+        if (Severity.WARNING_LOW.equals(severity)) {
+            return Marker.Severity.INFO;
+        }
+        return Marker.Severity.WARNING;
     }
 
     private static String createMarkerId(final Issue issue) {
@@ -236,12 +301,27 @@ public class SourceModel implements ModelObject {
     }
 
     /**
-     * An issue together with the label provider of the tool that reported the issue.
+     * The state of an issue in the source code view.
+     */
+    enum IssueState {
+        /** The issue has been introduced in the current build. */
+        NEW,
+        /** The issue has been reported in the reference build as well. */
+        OUTSTANDING,
+        /** The issue has been reported in the reference build but has been fixed in the current build. */
+        FIXED
+    }
+
+    /**
+     * An issue together with the results of the tool that reported the issue.
      *
      * @param issue
      *         the issue
-     * @param labelProvider
-     *         the label provider of the tool that reported the issue
+     * @param action
+     *         the results of the tool that reported the issue: the results of the current build for new and
+     *         outstanding issues, the results of the reference build for fixed issues
+     * @param state
+     *         the state of the issue
      */
-    record ToolIssue(Issue issue, StaticAnalysisLabelProvider labelProvider) {}
+    record ToolIssue(Issue issue, ResultAction action, IssueState state) {}
 }

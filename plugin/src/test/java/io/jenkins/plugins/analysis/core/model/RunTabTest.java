@@ -449,6 +449,7 @@ class RunTabTest {
         when(action.getQualityGateResult()).thenReturn(new QualityGateResult());
         when(result.getTotalSize()).thenReturn(totalSize);
         when(result.getFixedIssues()).thenReturn(new Report());
+        when(result.getNewIssues()).thenReturn(new Report());
 
         return action;
     }

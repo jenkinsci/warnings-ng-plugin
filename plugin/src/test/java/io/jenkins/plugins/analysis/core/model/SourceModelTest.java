@@ -5,10 +5,15 @@ import static org.mockito.Mockito.*;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
+import edu.hm.hafner.analysis.Severity;
 import hudson.model.Run;
+import io.jenkins.plugins.analysis.core.model.SourceModel.IssueState;
 import io.jenkins.plugins.analysis.core.model.SourceModel.ToolIssue;
 import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
+import io.jenkins.plugins.forensics.blame.Blames;
+import io.jenkins.plugins.forensics.blame.FileBlame;
 import io.jenkins.plugins.prism.Marker;
+import io.jenkins.plugins.prism.Marker.Badge;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -21,6 +26,7 @@ import org.junit.jupiter.api.Test;
 class SourceModelTest {
     private static final String FILE_NAME = "path/to/File.java";
     private static final String ICON = "symbol-pmd";
+    private static final String TOOL = "PMD";
 
     /**
      * Verifies that each issue of the affected file is shown as a marker, sorted by the position in the file.
@@ -28,15 +34,17 @@ class SourceModelTest {
     @Test
     void shouldCreateMarkersForAllIssuesOfFile() {
         Run<?, ?> run = mock(Run.class);
-        var selected = createIssue(20, 5, "Selected");
-        var first = createIssue(10, 1, "First");
-        var labelProvider = createLabelProvider();
+        var selected = createIssue(20, 5, "Selected", Severity.WARNING_NORMAL);
+        var first = createIssue(10, 1, "First", Severity.WARNING_NORMAL);
+        var action = createAction(mock(Blames.class));
 
         var model = createModel(
                 run,
                 run,
                 selected,
-                List.of(new ToolIssue(selected, labelProvider), new ToolIssue(first, labelProvider)));
+                List.of(
+                        new ToolIssue(selected, action, IssueState.OUTSTANDING),
+                        new ToolIssue(first, action, IssueState.OUTSTANDING)));
 
         assertThat(model)
                 .hasDisplayName("File.java")
@@ -61,6 +69,58 @@ class SourceModelTest {
     }
 
     /**
+     * Verifies that the severity of an issue is mapped to the severity of the marker.
+     */
+    @Test
+    void shouldMapSeverities() {
+        assertThat(SourceModel.asMarkerSeverity(Severity.ERROR)).isEqualTo(Marker.Severity.ERROR);
+        assertThat(SourceModel.asMarkerSeverity(Severity.WARNING_HIGH)).isEqualTo(Marker.Severity.ERROR);
+        assertThat(SourceModel.asMarkerSeverity(Severity.WARNING_NORMAL)).isEqualTo(Marker.Severity.WARNING);
+        assertThat(SourceModel.asMarkerSeverity(Severity.WARNING_LOW)).isEqualTo(Marker.Severity.INFO);
+    }
+
+    /**
+     * Verifies that the badges show the severity, the state, the tool, the category and type, and the blame.
+     */
+    @Test
+    void shouldShowBadges() {
+        Run<?, ?> run = mock(Run.class);
+        var newIssue = createIssue(10, 1, "New", Severity.WARNING_HIGH);
+        var outstanding = createIssue(20, 1, "Outstanding", Severity.WARNING_LOW);
+        var blames = mock(Blames.class);
+        var fileBlame = mock(FileBlame.class);
+        when(blames.contains(FILE_NAME)).thenReturn(true);
+        when(blames.getBlame(FILE_NAME)).thenReturn(fileBlame);
+        when(fileBlame.getName(10)).thenReturn("Ulli");
+        when(fileBlame.getEmail(10)).thenReturn("ulli@example.com");
+        when(fileBlame.getCommit(10)).thenReturn("0123456789abcdef");
+        when(fileBlame.getName(20)).thenReturn("-");
+        when(fileBlame.getEmail(20)).thenReturn("-");
+        when(fileBlame.getCommit(20)).thenReturn("-");
+        var action = createAction(blames);
+
+        var markers = createModel(
+                        run,
+                        run,
+                        newIssue,
+                        List.of(
+                                new ToolIssue(newIssue, action, IssueState.NEW),
+                                new ToolIssue(outstanding, action, IssueState.OUTSTANDING)))
+                .createMarkers();
+
+        assertThat(markers)
+                .extracting(Marker::getSeverity)
+                .containsExactly(Marker.Severity.ERROR, Marker.Severity.INFO);
+        assertThat(markers.get(0).getBadges())
+                .extracting(Badge::getText)
+                .containsExactly("High", "New", TOOL, "Category · Type", "Ulli · 0123456");
+        assertThat(markers.get(0).getBadges().get(4).getTooltip()).contains("0123456789abcdef", "ulli@example.com");
+        assertThat(markers.get(1).getBadges())
+                .extracting(Badge::getText)
+                .containsExactly("Low", TOOL, "Category · Type");
+    }
+
+    /**
      * Verifies that the source code of the reference build is shown for fixed issues.
      */
     @Test
@@ -69,12 +129,19 @@ class SourceModelTest {
         Run<?, ?> reference = mock(Run.class);
         when(reference.getDisplayName()).thenReturn("#36");
         when(reference.getUrl()).thenReturn("job/x/36/");
-        var fixed = createIssue(3, 0, "Fixed");
+        var fixed = createIssue(3, 0, "Fixed", Severity.WARNING_NORMAL);
 
-        var model = createModel(run, reference, fixed, List.of(new ToolIssue(fixed, createLabelProvider())));
+        var model = createModel(
+                run,
+                reference,
+                fixed,
+                List.of(new ToolIssue(fixed, createAction(mock(Blames.class)), IssueState.FIXED)));
 
         assertThat(model).isFixed().hasSourceBuildName("#36").hasSourceBuildUrl("job/x/36/");
         assertThat(model.getObject()).isSameAs(run);
+        assertThat(model.createMarkers().get(0).getBadges())
+                .extracting(Badge::getText)
+                .contains("Fixed");
     }
 
     private SourceModel createModel(
@@ -83,21 +150,30 @@ class SourceModelTest {
                 run, sourceBuild, selected, issues, StandardCharsets.UTF_8, "table", mock(BuildFolderFacade.class));
     }
 
-    private StaticAnalysisLabelProvider createLabelProvider() {
+    private ResultAction createAction(final Blames blames) {
         var labelProvider = mock(StaticAnalysisLabelProvider.class);
+        when(labelProvider.getName()).thenReturn(TOOL);
         when(labelProvider.getSmallIconUrl()).thenReturn(ICON);
         when(labelProvider.getSourceCodeDescription(any(), any()))
                 .thenAnswer(invocation ->
                         "Description of " + invocation.<Issue>getArgument(1).getMessage());
-        return labelProvider;
+        var result = mock(AnalysisResult.class);
+        when(result.getBlames()).thenReturn(blames);
+        var action = mock(ResultAction.class);
+        when(action.getLabelProvider()).thenReturn(labelProvider);
+        when(action.getResult()).thenReturn(result);
+        return action;
     }
 
-    private Issue createIssue(final int line, final int column, final String message) {
+    private Issue createIssue(final int line, final int column, final String message, final Severity severity) {
         try (var builder = new IssueBuilder()) {
             return builder.setFileName(FILE_NAME)
                     .setLineStart(line)
                     .setColumnStart(column)
                     .setMessage(message)
+                    .setSeverity(severity)
+                    .setCategory("Category")
+                    .setType("Type")
                     .build();
         }
     }
