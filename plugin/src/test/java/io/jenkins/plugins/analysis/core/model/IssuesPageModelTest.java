@@ -424,8 +424,9 @@ class IssuesPageModelTest extends AbstractDetailsModelTest {
 
         var model = new IssuesPageModel(run, List.of(checkstyle));
 
-        assertThat(model.getDynamic(link)).isInstanceOfSatisfying(SourceModel.class,
-                source -> assertThat(source).hasSelectedIssue(report.get(0)));
+        assertThat(model.getDynamic(link))
+                .isInstanceOfSatisfying(
+                        SourceModel.class, source -> assertThat(source).hasSelectedIssue(report.get(0)));
         assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(() -> model.getDynamic(CHECKSTYLE));
     }
 

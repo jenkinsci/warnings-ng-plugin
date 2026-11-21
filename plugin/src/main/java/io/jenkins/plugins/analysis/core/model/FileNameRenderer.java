@@ -4,7 +4,6 @@ import static j2html.TagCreator.a;
 import static j2html.TagCreator.text;
 
 import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.util.VisibleForTesting;
 import hudson.model.Run;
 import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
@@ -40,7 +39,6 @@ public class FileNameRenderer {
      * @param facade
      *         facade to the build folder that contains the affected files
      */
-    @VisibleForTesting
     public FileNameRenderer(final Run<?, ?> build, final BuildFolderFacade facade) {
         this.facade = facade;
         this.build = build;
