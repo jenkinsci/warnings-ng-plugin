@@ -2,7 +2,6 @@ package io.jenkins.plugins.analysis.core.model;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
-import edu.hm.hafner.analysis.Severity;
 import hudson.model.Actionable;
 import hudson.model.ModelObject;
 import java.util.ArrayList;
@@ -13,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
+import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 import tools.jackson.databind.ObjectMapper;
 
@@ -363,7 +363,7 @@ public class HotspotsModel implements ModelObject {
             for (Issue issue : report) {
                 elements.computeIfAbsent(
                                 grouping.getProperty(issue), name -> new Hotspot(name, grouping.getLabel(issue)))
-                        .add(issue.getSeverity());
+                        .add(issue, grouping == Grouping.FILE);
             }
             var sorted = elements.values().stream()
                     .sorted(Comparator.comparingInt(Hotspot::getTotal)
@@ -441,17 +441,37 @@ public class HotspotsModel implements ModelObject {
      * An element (e.g., a file) and the number of its issues by severity.
      */
     public static final class Hotspot {
+        private static final String SOURCE_URL = "../table/source.";
+
         private final String name;
         private final String label;
         private final int[] counts = new int[SeverityLegend.size()];
+        private String url = StringUtils.EMPTY;
+        private int linkedSeverity = SeverityLegend.size(); // index in the legend: the lower, the more severe
 
         private Hotspot(final String name, final String label) {
             this.name = name;
             this.label = label;
         }
 
-        private void add(final Severity severity) {
-            counts[SeverityLegend.indexOf(severity)]++;
+        private void add(final Issue issue, final boolean isLinked) {
+            int severity = SeverityLegend.indexOf(issue.getSeverity());
+            counts[severity]++;
+            if (isLinked && severity < linkedSeverity) {
+                url = SOURCE_URL + issue.getId() + "/";
+                linkedSeverity = severity;
+            }
+        }
+
+        /**
+         * Returns the URL of the details of the element, relative to the hotspots page. If the issues are grouped by
+         * file, the URL shows the source code of the file with all issues (the issue with the highest severity is
+         * selected). Otherwise, the URL is empty.
+         *
+         * @return the URL of the details, or an empty string if there are no details
+         */
+        public String getUrl() {
+            return url;
         }
 
         /**

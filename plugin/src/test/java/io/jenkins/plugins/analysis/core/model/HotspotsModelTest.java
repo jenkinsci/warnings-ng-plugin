@@ -60,6 +60,28 @@ class HotspotsModelTest {
     }
 
     /**
+     * Verifies that the hotspots of files link to the source code of the file: the issue with the highest severity
+     * is selected. Hotspots of other properties have no link.
+     */
+    @Test
+    void shouldLinkFilesToSourceCode() {
+        var report = createReport();
+        var model = createModel(createAction(CHECKSTYLE, report));
+
+        var hotspots = model.createHotspots("{}").getHotspots();
+
+        assertThat(hotspots)
+                .extracting(HotspotsModel.Hotspot::getUrl)
+                .containsExactly(
+                        "../table/source." + report.get(0).getId() + "/",
+                        "../table/source." + report.get(4).getId() + "/",
+                        "../table/source." + report.get(3).getId() + "/");
+        assertThat(model.createHotspots("{\"grouping\": \"category\"}").getHotspots())
+                .extracting(HotspotsModel.Hotspot::getUrl)
+                .containsOnly("");
+    }
+
+    /**
      * Verifies that only the requested number of hotspots is returned, while the histogram still considers all
      * elements.
      */
