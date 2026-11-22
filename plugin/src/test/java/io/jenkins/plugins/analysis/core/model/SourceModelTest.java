@@ -14,6 +14,7 @@ import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.forensics.blame.FileBlame;
+import io.jenkins.plugins.forensics.util.CommitDecorator;
 import io.jenkins.plugins.prism.Marker;
 import io.jenkins.plugins.prism.Marker.Badge;
 import io.jenkins.plugins.prism.SourceCodeViewModel;
@@ -33,6 +34,7 @@ class SourceModelTest {
     private static final String FILE_NAME = "path/to/File.java";
     private static final String ICON = "symbol-pmd";
     private static final String TOOL = "PMD";
+    private static final String COMMIT_URL = "https://github.com/jenkinsci/warnings-ng-plugin/commit/";
 
     /**
      * Verifies that each issue of the affected file is shown as a marker, sorted by the position in the file.
@@ -120,6 +122,8 @@ class SourceModelTest {
                 .extracting(Badge::getText)
                 .containsExactly("High", "New", TOOL, "Category · Type", "Ulli · 0123456");
         assertThat(markers.get(0).getBadges().get(4).getTooltip()).contains("0123456789abcdef", "ulli@example.com");
+        assertThat(markers.get(0).getBadges().get(4).getUrl()).isEqualTo(COMMIT_URL + "0123456789abcdef");
+        assertThat(markers.get(0).getBadges().get(0).getUrl()).isEmpty();
         assertThat(markers.get(1).getBadges())
                 .extracting(Badge::getText)
                 .containsExactly("Low", TOOL, "Category · Type");
@@ -157,7 +161,18 @@ class SourceModelTest {
     private SourceModel createModel(
             final Run<?, ?> run, final Run<?, ?> sourceBuild, final Issue selected, final List<ToolIssue> issues) {
         return new SourceModel(
-                run, sourceBuild, selected, issues, StandardCharsets.UTF_8, mock(BuildFolderFacade.class));
+                run,
+                sourceBuild,
+                selected,
+                issues,
+                StandardCharsets.UTF_8,
+                mock(BuildFolderFacade.class),
+                new IssueMarkerFactory(build -> new CommitDecorator() {
+                    @Override
+                    public String asLink(final String id) {
+                        return "<a href=\"%s%s\">%s</a>".formatted(COMMIT_URL, id, id);
+                    }
+                }));
     }
 
     /**

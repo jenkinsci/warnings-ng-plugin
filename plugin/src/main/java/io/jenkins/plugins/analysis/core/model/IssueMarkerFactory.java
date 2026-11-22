@@ -2,14 +2,20 @@ package io.jenkins.plugins.analysis.core.model;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Severity;
+import edu.hm.hafner.util.VisibleForTesting;
 import hudson.model.Run;
 import io.jenkins.plugins.analysis.core.model.SourceModel.IssueState;
 import io.jenkins.plugins.analysis.core.util.Blame;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 import io.jenkins.plugins.forensics.blame.Blames;
+import io.jenkins.plugins.forensics.util.CommitDecorator;
+import io.jenkins.plugins.forensics.util.CommitDecoratorFactory;
 import io.jenkins.plugins.prism.Marker;
 import io.jenkins.plugins.prism.Marker.MarkerBuilder;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
@@ -20,7 +26,8 @@ import org.apache.commons.lang3.StringUtils;
  * and the author and commit of the affected line (if blames are available) are shown as badges. The severity, the
  * state, and the tool are additionally provided as data of the marker, so client side scripts can filter the markers.
  * The color of the marker is derived from the severity of the issue: errors and warnings with high severity are shown
- * as errors, warnings with low severity as information.
+ * as errors, warnings with low severity as information. The badge of the blame links to the commit, if the
+ * repository browser of the SCM provides such a link.
  *
  * @author Ullrich Hafner
  */
@@ -28,6 +35,28 @@ class IssueMarkerFactory {
     private static final String MARKER_ID_PREFIX = "issue-";
     private static final String UNDEFINED = "-";
     private static final int COMMIT_LENGTH = 7;
+
+    private final Function<Run<?, ?>, CommitDecorator> decoratorFactory;
+    private final Map<Run<?, ?>, CommitDecorator> decorators = new HashMap<>();
+
+    /**
+     * Creates a new instance of {@link IssueMarkerFactory} that uses the repository browser of the SCM of a build to
+     * create links to commits.
+     */
+    IssueMarkerFactory() {
+        this(CommitDecoratorFactory::findCommitDecorator);
+    }
+
+    /**
+     * Creates a new instance of {@link IssueMarkerFactory}.
+     *
+     * @param decoratorFactory
+     *         creates the decorator for the commits of a build, the decorator is created only if needed
+     */
+    @VisibleForTesting
+    IssueMarkerFactory(final Function<Run<?, ?>, CommitDecorator> decoratorFactory) {
+        this.decoratorFactory = decoratorFactory;
+    }
 
     /**
      * Creates the marker for the specified issue.
@@ -83,19 +112,24 @@ class IssueMarkerFactory {
         if (!categoryAndType.isEmpty()) {
             builder.withBadge(categoryAndType, Messages.SourceModel_CategoryAndType_Tooltip());
         }
-        addBlame(builder, issue, blames);
+        addBlame(builder, build, issue, blames);
 
         return builder.build();
     }
 
-    private void addBlame(final MarkerBuilder builder, final Issue issue, final Blames blames) {
+    private void addBlame(final MarkerBuilder builder, final Run<?, ?> build, final Issue issue, final Blames blames) {
         var blame = new Blame(issue, blames);
         if (isDefined(blame.getCommit())) {
             var commit = StringUtils.left(blame.getCommit(), COMMIT_LENGTH);
+            var url = decorators
+                    .computeIfAbsent(build, decoratorFactory)
+                    .getUrl(blame.getCommit())
+                    .orElse(StringUtils.EMPTY);
             builder.withBadge(
                     Messages.SourceModel_Blame(blame.getAuthorName(), commit),
                     Messages.SourceModel_Blame_Tooltip(
-                            blame.getCommit(), blame.getAuthorName(), blame.getAuthorEmail()));
+                            blame.getCommit(), blame.getAuthorName(), blame.getAuthorEmail()),
+                    url);
         }
     }
 

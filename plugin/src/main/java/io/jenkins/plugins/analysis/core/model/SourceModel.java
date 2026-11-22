@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.util.VisibleForTesting;
 import hudson.model.ModelObject;
 import hudson.model.Run;
 import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
@@ -49,6 +50,7 @@ public class SourceModel implements ModelObject {
     private final List<ToolIssue> issues;
     private final Charset sourceEncoding;
     private final BuildFolderFacade buildFolder;
+    private final IssueMarkerFactory markerFactory;
 
     /**
      * Creates a new instance of {@link SourceModel}.
@@ -75,6 +77,37 @@ public class SourceModel implements ModelObject {
             final List<ToolIssue> issues,
             final Charset sourceEncoding,
             final BuildFolderFacade buildFolder) {
+        this(owner, sourceBuild, selectedIssue, issues, sourceEncoding, buildFolder, new IssueMarkerFactory());
+    }
+
+    /**
+     * Creates a new instance of {@link SourceModel} with the specified factory for the markers of the issues.
+     *
+     * @param owner
+     *         the run that owns the Warnings tab
+     * @param sourceBuild
+     *         the run that contains the source code of the affected file
+     * @param selectedIssue
+     *         the issue that has been selected by the link
+     * @param issues
+     *         all issues of the affected file together with the tools that reported them
+     * @param sourceEncoding
+     *         the encoding of the affected file
+     * @param buildFolder
+     *         the facade to read the affected file from the build folder
+     * @param markerFactory
+     *         the factory for the markers of the issues
+     */
+    @VisibleForTesting
+    @SuppressWarnings("checkstyle:ParameterNumber")
+    SourceModel(
+            final Run<?, ?> owner,
+            final Run<?, ?> sourceBuild,
+            final Issue selectedIssue,
+            final List<ToolIssue> issues,
+            final Charset sourceEncoding,
+            final BuildFolderFacade buildFolder,
+            final IssueMarkerFactory markerFactory) {
         this.owner = owner;
         this.sourceBuild = sourceBuild;
         this.selectedIssue = selectedIssue;
@@ -85,6 +118,7 @@ public class SourceModel implements ModelObject {
                 .toList();
         this.sourceEncoding = sourceEncoding;
         this.buildFolder = buildFolder;
+        this.markerFactory = markerFactory;
     }
 
     @Override
@@ -230,14 +264,13 @@ public class SourceModel implements ModelObject {
 
     private Marker asMarker(final ToolIssue toolIssue) {
         var action = toolIssue.action();
-        return new IssueMarkerFactory()
-                .create(
-                        sourceBuild,
-                        toolIssue.issue(),
-                        toolIssue.state(),
-                        action.getId(),
-                        action.getLabelProvider(),
-                        action.getResult().getBlames());
+        return markerFactory.create(
+                sourceBuild,
+                toolIssue.issue(),
+                toolIssue.state(),
+                action.getId(),
+                action.getLabelProvider(),
+                action.getResult().getBlames());
     }
 
     /**
