@@ -17,11 +17,11 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -135,20 +135,23 @@ public class DetailFactory {
         var plainLink = removePropertyPrefix(link);
         if (link.startsWith("source.")) {
             var issue = allIssues.findById(UUID.fromString(plainLink));
+            var marker = new IssueMarkerFactory()
+                    .create(
+                            owner,
+                            issue,
+                            getState(newIssues, issue),
+                            labelProvider.getId(),
+                            labelProvider,
+                            result.getBlames());
             if (ConsoleLogHandler.isInConsoleLog(issue.getFileName())) {
-                try (Stream<String> consoleLog = buildFolder.readConsoleLog(owner)) {
-                    return new ConsoleDetail(owner, consoleLog, issue.getLineStart(), issue.getLineEnd());
-                }
-            } else {
-                var marker = new IssueMarkerFactory().create(owner, issue, getState(newIssues, issue),
-                        labelProvider.getId(), labelProvider, result.getBlames());
-                try (var affectedFile = buildFolder.readFile(owner, issue.getFileName(), sourceEncoding)) {
-                    return SourceCodeViewModel.create(owner, issue.getBaseName(), affectedFile, marker);
-                } catch (IOException e) {
-                    try (var fallback = new StringReader(
-                            "%s%n%s".formatted(ExceptionUtils.getMessage(e), ExceptionUtils.getStackTrace(e)))) {
-                        return SourceCodeViewModel.create(owner, issue.getBaseName(), fallback, marker);
-                    }
+                return new ConsoleLogExcerpt(buildFolder).create(owner, List.of(issue), List.of(marker));
+            }
+            try (var affectedFile = buildFolder.readFile(owner, issue.getFileName(), sourceEncoding)) {
+                return SourceCodeViewModel.create(owner, issue.getBaseName(), affectedFile, marker);
+            } catch (IOException e) {
+                try (var fallback = new StringReader(
+                        "%s%n%s".formatted(ExceptionUtils.getMessage(e), ExceptionUtils.getStackTrace(e)))) {
+                    return SourceCodeViewModel.create(owner, issue.getBaseName(), fallback, marker);
                 }
             }
         }

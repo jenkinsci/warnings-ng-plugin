@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import edu.hm.hafner.analysis.Issue;
-import hudson.console.ConsoleNote;
 import hudson.model.ModelObject;
 import hudson.model.Run;
 import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
@@ -14,7 +13,6 @@ import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Stream;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 /**
@@ -45,8 +43,6 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
  * @author Ullrich Hafner
  */
 public class SourceModel implements ModelObject {
-    private static final int CONSOLE_LOG_CONTEXT = 10;
-
     private final Run<?, ?> owner;
     private final Run<?, ?> sourceBuild;
     private final Issue selectedIssue;
@@ -218,35 +214,9 @@ public class SourceModel implements ModelObject {
         return SourceCodeViewModel.create(sourceBuild, getDisplayName(), reader, markers);
     }
 
-    /**
-     * Renders an excerpt of the console log of the build: the lines of all issues plus some context lines before
-     * and after. The console log is shown as plain text, and the console notes (e.g., hyperlinks or colors) are
-     * removed. The console log is not part of the workspace, so the permission to view the source code is not
-     * required: every user who can see the build can see its console log.
-     *
-     * @param markers
-     *         the markers of the issues
-     *
-     * @return the view model of the console log
-     */
     private ModelObject renderConsoleLog(final List<Marker> markers) {
-        int first = issues.stream()
-                .mapToInt(toolIssue -> toolIssue.issue().getLineStart())
-                .min()
-                .orElse(1);
-        int last = issues.stream()
-                .mapToInt(toolIssue -> Math.max(
-                        toolIssue.issue().getLineStart(), toolIssue.issue().getLineEnd()))
-                .max()
-                .orElse(1);
-        try (Stream<String> consoleLog = buildFolder.readConsoleLog(sourceBuild)) {
-            return new SourceCodeViewModel.Builder(sourceBuild, getDisplayName())
-                    .withMarkers(markers)
-                    .withPlainText()
-                    .withExcerpt(first - CONSOLE_LOG_CONTEXT, last + CONSOLE_LOG_CONTEXT)
-                    .withoutPermissionCheck()
-                    .build(consoleLog.map(ConsoleNote::removeNotes));
-        }
+        return new ConsoleLogExcerpt(buildFolder)
+                .create(sourceBuild, issues.stream().map(ToolIssue::issue).toList(), markers);
     }
 
     /**
@@ -260,8 +230,14 @@ public class SourceModel implements ModelObject {
 
     private Marker asMarker(final ToolIssue toolIssue) {
         var action = toolIssue.action();
-        return new IssueMarkerFactory().create(sourceBuild, toolIssue.issue(), toolIssue.state(), action.getId(),
-                action.getLabelProvider(), action.getResult().getBlames());
+        return new IssueMarkerFactory()
+                .create(
+                        sourceBuild,
+                        toolIssue.issue(),
+                        toolIssue.state(),
+                        action.getId(),
+                        action.getLabelProvider(),
+                        action.getResult().getBlames());
     }
 
     /**

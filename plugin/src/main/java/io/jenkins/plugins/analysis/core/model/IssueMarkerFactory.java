@@ -47,8 +47,13 @@ class IssueMarkerFactory {
      *
      * @return the marker
      */
-    Marker create(final Run<?, ?> build, final Issue issue, final IssueState state, final String toolId,
-            final StaticAnalysisLabelProvider labelProvider, final Blames blames) {
+    Marker create(
+            final Run<?, ?> build,
+            final Issue issue,
+            final IssueState state,
+            final String toolId,
+            final StaticAnalysisLabelProvider labelProvider,
+            final Blames blames) {
         var builder = new MarkerBuilder()
                 .withId(createMarkerId(issue))
                 .withTitle(issue.getMessage())

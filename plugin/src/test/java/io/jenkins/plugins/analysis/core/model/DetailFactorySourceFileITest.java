@@ -11,6 +11,7 @@ import edu.hm.hafner.analysis.Severity;
 import hudson.model.Run;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
+import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.prism.SourceCodeViewModel;
 import io.jenkins.plugins.util.JenkinsFacade;
@@ -18,6 +19,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.stream.IntStream;
 import org.eclipse.collections.impl.factory.Lists;
 import org.jsoup.Jsoup;
 import org.junit.jupiter.api.Test;
@@ -76,7 +78,8 @@ class DetailFactorySourceFileITest extends IntegrationTestWithJenkinsPerSuite {
         when(buildFolder.readFile(any(), anyString(), any())).thenReturn(new StringReader(AFFECTED_FILE_CONTENT));
 
         try (var issueBuilder = new IssueBuilder()) {
-            var issue = issueBuilder.setFileName("a-file")
+            var issue = issueBuilder
+                    .setFileName("a-file")
                     .setLineStart(1)
                     .setSeverity(Severity.WARNING_HIGH)
                     .setCategory("Design")
@@ -96,6 +99,37 @@ class DetailFactorySourceFileITest extends IntegrationTestWithJenkinsPerSuite {
                 assertThat(marker.attr("data-marker-tool")).isEqualTo("test");
                 assertThat(marker.getElementsByClass("prism-marker__badge").eachText())
                         .contains("New", "Test", "Design · Coupling");
+            });
+        }
+    }
+
+    /**
+     * Checks that issues in the console log are shown in an excerpt of the console log.
+     */
+    @Test
+    void shouldShowExcerptOfConsoleLog() {
+        BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
+        when(buildFolder.readConsoleLog(any()))
+                .thenReturn(IntStream.rangeClosed(1, 50).mapToObj(line -> "line " + line));
+
+        try (var issueBuilder = new IssueBuilder()) {
+            var issue = issueBuilder
+                    .setFileName(ConsoleLogHandler.JENKINS_CONSOLE_LOG_FILE_NAME_ID)
+                    .setLineStart(20)
+                    .setMessage("Message")
+                    .build();
+
+            var details = createDetails(buildFolder, issue, NEW_ISSUES);
+
+            assertThat(details).isInstanceOfSatisfying(SourceCodeViewModel.class, s -> {
+                assertThat(s.getDisplayName()).isEqualTo(Messages.ConsoleLog_Name());
+                var document = Jsoup.parse(s.getSourceCode());
+                var code = document.selectFirst(".prism-source__raw > code");
+                assertThat(code).isNotNull();
+                assertThat(code.attr("data-first-line")).isEqualTo("10");
+                assertThat(code.attr("data-lines")).isEqualTo("21");
+                assertThat(code.classNames()).isEmpty();
+                assertThat(document.getElementById("issue-" + issue.getId())).isNotNull();
             });
         }
     }
