@@ -6,16 +6,22 @@ import static org.mockito.Mockito.*;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Severity;
+import hudson.console.ConsoleNote;
 import hudson.model.Run;
 import io.jenkins.plugins.analysis.core.model.SourceModel.IssueState;
 import io.jenkins.plugins.analysis.core.model.SourceModel.ToolIssue;
 import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
+import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.forensics.blame.FileBlame;
 import io.jenkins.plugins.prism.Marker;
 import io.jenkins.plugins.prism.Marker.Badge;
+import io.jenkins.plugins.prism.SourceCodeViewModel;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.stream.IntStream;
+import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -152,6 +158,54 @@ class SourceModelTest {
             final Run<?, ?> run, final Run<?, ?> sourceBuild, final Issue selected, final List<ToolIssue> issues) {
         return new SourceModel(
                 run, sourceBuild, selected, issues, StandardCharsets.UTF_8, mock(BuildFolderFacade.class));
+    }
+
+    /**
+     * Verifies that issues in the console log are shown in an excerpt of the console log: the lines of all issues
+     * plus 10 lines of context before and after, without the console notes.
+     */
+    @Test
+    void shouldShowExcerptOfConsoleLog() {
+        Run<?, ?> run = mock(Run.class);
+        var selected = createConsoleIssue(20);
+        var other = createConsoleIssue(15);
+        var action = createAction(mock(Blames.class));
+        when(action.getLabelProvider().getSmallIconUrl()).thenReturn(StringUtils.EMPTY); // symbols require Jenkins
+        var buildFolder = mock(BuildFolderFacade.class);
+        when(buildFolder.readConsoleLog(run))
+                .thenReturn(IntStream.rangeClosed(1, 100)
+                        .mapToObj(line ->
+                                ConsoleNote.PREAMBLE_STR + "note" + ConsoleNote.POSTAMBLE_STR + "line " + line));
+
+        var model = new SourceModel(
+                run,
+                run,
+                selected,
+                List.of(new ToolIssue(selected, action, IssueState.NEW), new ToolIssue(other, action, IssueState.NEW)),
+                StandardCharsets.UTF_8,
+                buildFolder);
+
+        assertThat(model)
+                .isConsoleLog()
+                .hasDisplayName(Messages.ConsoleLog_Name())
+                .hasFileName(Messages.ConsoleLog_Name());
+        assertThat(model.getSourceCode()).isInstanceOfSatisfying(SourceCodeViewModel.class, view -> {
+            var code = Jsoup.parse(view.getSourceCode()).selectFirst(".prism-source__raw > code");
+            assertThat(code).isNotNull();
+            assertThat(code.attr("data-first-line")).isEqualTo("5");
+            assertThat(code.attr("data-lines")).isEqualTo("26");
+            assertThat(code.classNames()).isEmpty();
+            assertThat(code.wholeText()).startsWith("line 5\nline 6\n").endsWith("line 30");
+        });
+    }
+
+    private Issue createConsoleIssue(final int line) {
+        try (var builder = new IssueBuilder()) {
+            return builder.setFileName(ConsoleLogHandler.JENKINS_CONSOLE_LOG_FILE_NAME_ID)
+                    .setLineStart(line)
+                    .setMessage("Message " + line)
+                    .build();
+        }
     }
 
     private ResultAction createAction(final Blames blames) {

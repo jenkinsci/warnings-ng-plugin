@@ -9,7 +9,6 @@ import hudson.model.Run;
 import io.jenkins.plugins.analysis.core.model.SourceModel.IssueState;
 import io.jenkins.plugins.analysis.core.model.SourceModel.ToolIssue;
 import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
-import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 import io.jenkins.plugins.util.QualityGateStatus;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Comparator;
@@ -232,7 +231,7 @@ public class RunTab extends Tab {
      * Renders the affected file of an issue. This is required for the links to the affected files on the issues page
      * (see {@link IssuesPageModel}): these links are relative to the URL of the tab and do not contain the tool that
      * reported the issue. The affected file is shown on a page of the tab (see {@link SourceModel}), together with
-     * all issues of the same file. Issues that reference the console log are still shown in the classic view.
+     * all issues of the same file. Issues that reference the console log are shown in an excerpt of the console log.
      *
      * <p>
      * The links to the affected files of fixed issues are resolved as well: these files are part of the reference
@@ -259,7 +258,7 @@ public class RunTab extends Tab {
                 var issue = findIssue(action.getResult().getFixedIssues(), name);
                 var reference = findReferenceAction(action);
                 if (issue.isPresent() && reference.isPresent()) {
-                    return createFixedSourceView(run, action, reference.get(), issue.get(), name);
+                    return createFixedSourceView(run, action, reference.get(), issue.get());
                 }
             }
         }
@@ -269,10 +268,6 @@ public class RunTab extends Tab {
 
     private Object createSourceView(
             final Run<?, ?> run, final ResultAction action, final Issue issue, final List<ResultAction> actions) {
-        if (ConsoleLogHandler.isInConsoleLog(issue.getFileName())) {
-            return action.getTarget().createDetails(SOURCE_LINK_PREFIX + issue.getId());
-        }
-
         var issuesOfFile = actions.stream()
                 .flatMap(toolAction -> filterIssuesOfFile(toolAction, issue))
                 .toList();
@@ -280,15 +275,7 @@ public class RunTab extends Tab {
     }
 
     private Object createFixedSourceView(
-            final Run<?, ?> run,
-            final ResultAction action,
-            final ResultAction reference,
-            final Issue issue,
-            final String name) {
-        if (ConsoleLogHandler.isInConsoleLog(issue.getFileName())) {
-            return reference.getTarget().createDetails(name);
-        }
-
+            final Run<?, ?> run, final ResultAction action, final ResultAction reference, final Issue issue) {
         var fixedIssuesOfFile = action.getResult().getFixedIssues().stream()
                 .filter(fixed -> isInSameFile(fixed, issue))
                 .map(fixed -> new ToolIssue(fixed, reference, IssueState.FIXED))

@@ -2,10 +2,12 @@ package io.jenkins.plugins.analysis.core.model;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Severity;
+import hudson.console.ConsoleNote;
 import hudson.model.ModelObject;
 import hudson.model.Run;
 import io.jenkins.plugins.analysis.core.util.Blame;
 import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
+import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.prism.Marker;
@@ -54,6 +56,7 @@ public class SourceModel implements ModelObject {
     private static final String MARKER_ID_PREFIX = "issue-";
     private static final String UNDEFINED = "-";
     private static final int COMMIT_LENGTH = 7;
+    private static final int CONSOLE_LOG_CONTEXT = 10;
 
     private final Run<?, ?> owner;
     private final Run<?, ?> sourceBuild;
@@ -101,6 +104,9 @@ public class SourceModel implements ModelObject {
 
     @Override
     public String getDisplayName() {
+        if (isConsoleLog()) {
+            return Messages.ConsoleLog_Name();
+        }
         return selectedIssue.getBaseName();
     }
 
@@ -110,7 +116,19 @@ public class SourceModel implements ModelObject {
      * @return the file name
      */
     public String getFileName() {
+        if (isConsoleLog()) {
+            return Messages.ConsoleLog_Name();
+        }
         return selectedIssue.getFileName();
+    }
+
+    /**
+     * Returns whether the issues are part of the console log of the build (and not of a source code file).
+     *
+     * @return {@code true} if the issues are part of the console log, {@code false} otherwise
+     */
+    public boolean isConsoleLog() {
+        return ConsoleLogHandler.isInConsoleLog(selectedIssue.getFileName());
     }
 
     /**
@@ -194,6 +212,9 @@ public class SourceModel implements ModelObject {
      */
     public ModelObject getSourceCode() {
         var markers = createMarkers();
+        if (isConsoleLog()) {
+            return renderConsoleLog(markers);
+        }
         try (var affectedFile = buildFolder.readFile(sourceBuild, getFileName(), sourceEncoding)) {
             return render(affectedFile, markers);
         } catch (IOException exception) {
@@ -206,6 +227,37 @@ public class SourceModel implements ModelObject {
 
     private ModelObject render(final Reader reader, final List<Marker> markers) {
         return SourceCodeViewModel.create(sourceBuild, getDisplayName(), reader, markers);
+    }
+
+    /**
+     * Renders an excerpt of the console log of the build: the lines of all issues plus some context lines before
+     * and after. The console log is shown as plain text, and the console notes (e.g., hyperlinks or colors) are
+     * removed. The console log is not part of the workspace, so the permission to view the source code is not
+     * required: every user who can see the build can see its console log.
+     *
+     * @param markers
+     *         the markers of the issues
+     *
+     * @return the view model of the console log
+     */
+    private ModelObject renderConsoleLog(final List<Marker> markers) {
+        int first = issues.stream()
+                .mapToInt(toolIssue -> toolIssue.issue().getLineStart())
+                .min()
+                .orElse(1);
+        int last = issues.stream()
+                .mapToInt(toolIssue -> Math.max(
+                        toolIssue.issue().getLineStart(), toolIssue.issue().getLineEnd()))
+                .max()
+                .orElse(1);
+        try (Stream<String> consoleLog = buildFolder.readConsoleLog(sourceBuild)) {
+            return new SourceCodeViewModel.Builder(sourceBuild, getDisplayName())
+                    .withMarkers(markers)
+                    .withPlainText()
+                    .withExcerpt(first - CONSOLE_LOG_CONTEXT, last + CONSOLE_LOG_CONTEXT)
+                    .withoutPermissionCheck()
+                    .build(consoleLog.map(ConsoleNote::removeNotes));
+        }
     }
 
     /**

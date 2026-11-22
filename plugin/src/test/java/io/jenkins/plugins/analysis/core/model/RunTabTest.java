@@ -274,21 +274,20 @@ class RunTabTest {
     }
 
     /**
-     * Verifies that issues that reference the console log are still shown in the classic view of the tool.
+     * Verifies that issues that reference the console log are shown in an excerpt of the console log.
      */
     @Test
-    void shouldShowIssuesInConsoleLogInClassicView() {
+    void shouldShowIssuesInConsoleLog() {
         Run<?, ?> run = mock(Run.class);
         var issue = createIssue("jenkins-console.log", 10);
         var pmd = createResultActionWithIssues("pmd", createReport(issue));
         when(run.getActions(ResultAction.class)).thenReturn(List.of(pmd));
-        var link = "source." + issue.getId();
-        var consoleView = new Object();
-        IssuesDetail details = mock(IssuesDetail.class);
-        when(details.createDetails(link)).thenReturn(consoleView);
-        when(pmd.getTarget()).thenReturn(details);
 
-        assertThat(new RunTab(run).getDynamic(link)).isSameAs(consoleView);
+        assertThat(new RunTab(run).getDynamic("source." + issue.getId()))
+                .isInstanceOfSatisfying(SourceModel.class, source -> {
+                    assertThat(source).hasSelectedIssue(issue).isConsoleLog();
+                    assertThat(source.getIssues()).containsExactly(issue);
+                });
     }
 
     /**
