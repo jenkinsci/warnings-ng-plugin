@@ -26,7 +26,7 @@ THE SOFTWARE.
 <j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout" xmlns:st="jelly:stapler" xmlns:wng="/warnings">
     <st:adjunct includes="io.jenkins.plugins.analysis.core.model.RunTab.styles"/>
 
-    <j:set var="maxItems" value="7" />
+    <j:set var="maxItems" value="5" />
 
     <l:card title="${it.displayName}" expandable="${it.urlName}">
         <j:set var="widget" value="${it.widget}" />
@@ -58,64 +58,68 @@ THE SOFTWARE.
                 </j:otherwise>
             </j:choose>
 
-            <div class="wng-widget__metrics">
-                <div class="wng-widget__metric" tooltip="${%total.tooltip}">
-                    <j:choose>
-                        <j:when test="${widget.totalSize gt 0}">
-                            <a class="wng-widget__metric-value wng-widget__metric-link"
-                               href="${it.urlName}/${issuesPage.allIssuesUrl}">${widget.totalSize}</a>
-                        </j:when>
-                        <j:otherwise>
-                            <div class="wng-widget__metric-value">${widget.totalSize}</div>
-                        </j:otherwise>
-                    </j:choose>
-                    <div class="wng-widget__metric-label">${%Total}</div>
+            <!-- Metrics, reference build, and severity bar are grouped in a panel to set them off from the status
+                 and the pills -->
+            <div class="wng-widget__panel">
+                <div class="wng-widget__metrics">
+                    <div class="wng-widget__metric" tooltip="${%total.tooltip}">
+                        <j:choose>
+                            <j:when test="${widget.totalSize gt 0}">
+                                <a class="wng-widget__metric-value wng-widget__metric-link"
+                                   href="${it.urlName}/${issuesPage.allIssuesUrl}">${widget.totalSize}</a>
+                            </j:when>
+                            <j:otherwise>
+                                <div class="wng-widget__metric-value">${widget.totalSize}</div>
+                            </j:otherwise>
+                        </j:choose>
+                        <div class="wng-widget__metric-label">${%Total}</div>
+                    </div>
+                    <div class="wng-widget__metric" tooltip="${%new.tooltip}">
+                        <j:choose>
+                            <!-- A number greater than zero opens the issues page with the corresponding baseline -->
+                            <j:when test="${widget.newSize gt 0}">
+                                <a class="wng-widget__metric-value wng-widget__metric-link"
+                                   href="${it.urlName}/${issuesPage.newIssuesUrl}"
+                                   data-trend="${widget.hasReferenceBuild() ? 'worse' : 'none'}">+${widget.newSize}</a>
+                            </j:when>
+                            <j:otherwise>
+                                <div class="wng-widget__metric-value" data-trend="none">${widget.newSize}</div>
+                            </j:otherwise>
+                        </j:choose>
+                        <div class="wng-widget__metric-label">${%New}</div>
+                    </div>
+                    <div class="wng-widget__metric" tooltip="${%fixed.tooltip}">
+                        <j:choose>
+                            <j:when test="${widget.fixedSize gt 0}">
+                                <a class="wng-widget__metric-value wng-widget__metric-link"
+                                   href="${it.urlName}/${issuesPage.fixedIssuesUrl}"
+                                   data-trend="${widget.hasReferenceBuild() ? 'better' : 'none'}">−${widget.fixedSize}</a>
+                            </j:when>
+                            <j:otherwise>
+                                <div class="wng-widget__metric-value" data-trend="none">${widget.fixedSize}</div>
+                            </j:otherwise>
+                        </j:choose>
+                        <div class="wng-widget__metric-label">${%Fixed}</div>
+                    </div>
                 </div>
-                <div class="wng-widget__metric" tooltip="${%new.tooltip}">
-                    <j:choose>
-                        <!-- A number greater than zero opens the issues page with the corresponding baseline -->
-                        <j:when test="${widget.newSize gt 0}">
-                            <a class="wng-widget__metric-value wng-widget__metric-link"
-                               href="${it.urlName}/${issuesPage.newIssuesUrl}"
-                               data-trend="${widget.hasReferenceBuild() ? 'worse' : 'none'}">+${widget.newSize}</a>
-                        </j:when>
-                        <j:otherwise>
-                            <div class="wng-widget__metric-value" data-trend="none">${widget.newSize}</div>
-                        </j:otherwise>
-                    </j:choose>
-                    <div class="wng-widget__metric-label">${%New}</div>
-                </div>
-                <div class="wng-widget__metric" tooltip="${%fixed.tooltip}">
-                    <j:choose>
-                        <j:when test="${widget.fixedSize gt 0}">
-                            <a class="wng-widget__metric-value wng-widget__metric-link"
-                               href="${it.urlName}/${issuesPage.fixedIssuesUrl}"
-                               data-trend="${widget.hasReferenceBuild() ? 'better' : 'none'}">−${widget.fixedSize}</a>
-                        </j:when>
-                        <j:otherwise>
-                            <div class="wng-widget__metric-value" data-trend="none">${widget.fixedSize}</div>
-                        </j:otherwise>
-                    </j:choose>
-                    <div class="wng-widget__metric-label">${%Fixed}</div>
-                </div>
-            </div>
 
-            <div class="wng-widget__reference" tooltip="${widget.referenceBuildTooltip}">
-                <j:choose>
-                    <j:when test="${empty(widget.referenceBuildUrl)}">
-                        ${widget.comparisonCaption}
-                    </j:when>
-                    <j:otherwise>
-                        <a href="${rootURL}/${widget.referenceBuildUrl}">${widget.comparisonCaption}</a>
-                    </j:otherwise>
-                </j:choose>
-            </div>
-
-            <j:if test="${widget.totalSize gt 0}">
-                <div class="wng-widget__severities">
-                    <wng:severity-bar segments="${widget.totalSegments}" />
+                <div class="wng-widget__reference" tooltip="${widget.referenceBuildTooltip}">
+                    <j:choose>
+                        <j:when test="${empty(widget.referenceBuildUrl)}">
+                            ${widget.comparisonCaption}
+                        </j:when>
+                        <j:otherwise>
+                            <a href="${rootURL}/${widget.referenceBuildUrl}">${widget.comparisonCaption}</a>
+                        </j:otherwise>
+                    </j:choose>
                 </div>
-            </j:if>
+
+                <j:if test="${widget.totalSize gt 0}">
+                    <div class="wng-widget__severities">
+                        <wng:severity-bar segments="${widget.totalSegments}" />
+                    </div>
+                </j:if>
+            </div>
 
             <j:if test="${widget.hasPills() or widget.errorMessagesSize gt 0}">
                 <div class="wng-widget">
