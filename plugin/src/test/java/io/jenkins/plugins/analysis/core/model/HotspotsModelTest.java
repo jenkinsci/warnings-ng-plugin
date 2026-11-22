@@ -23,6 +23,7 @@ import tools.jackson.databind.ObjectMapper;
 class HotspotsModelTest {
     private static final String CHECKSTYLE = "checkstyle";
     private static final String PMD = "pmd";
+    private static final String QUERY_ALL = "?show=all&severity=low&baseline=all";
 
     /**
      * Verifies that the issues are grouped by file by default and that the files with the most issues come first.
@@ -73,9 +74,14 @@ class HotspotsModelTest {
         assertThat(hotspots)
                 .extracting(HotspotsModel.Hotspot::getUrl)
                 .containsExactly(
-                        "../table/source." + report.get(0).getId() + "/",
-                        "../table/source." + report.get(4).getId() + "/",
-                        "../table/source." + report.get(3).getId() + "/");
+                        "../table/source." + report.get(0).getId() + "/" + QUERY_ALL,
+                        "../table/source." + report.get(4).getId() + "/" + QUERY_ALL,
+                        "../table/source." + report.get(3).getId() + "/" + QUERY_ALL);
+        assertThat(model.createHotspots("{\"baseline\": \"new\"}")
+                        .getHotspots()
+                        .get(0)
+                        .getUrl())
+                .endsWith("/?show=all&severity=low&baseline=new");
         assertThat(model.createHotspots("{\"grouping\": \"category\"}").getHotspots())
                 .extracting(HotspotsModel.Hotspot::getUrl)
                 .containsOnly("");

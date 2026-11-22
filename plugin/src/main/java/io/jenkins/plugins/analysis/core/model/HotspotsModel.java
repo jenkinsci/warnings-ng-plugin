@@ -191,7 +191,7 @@ public class HotspotsModel implements ModelObject {
         var report = new Report();
         properties.selectTools(actions).forEach(action -> report.addAll(baseline.getIssues(action.getResult())));
 
-        return new HotspotsChart(report, grouping, getNumberOfHotspots(properties));
+        return new HotspotsChart(report, grouping, baseline, getNumberOfHotspots(properties));
     }
 
     /**
@@ -355,15 +355,20 @@ public class HotspotsModel implements ModelObject {
         private final List<Bucket> buckets;
         private final int numberOfElements;
 
-        private HotspotsChart(final Report report, final Grouping grouping, final int numberOfHotspots) {
+        private HotspotsChart(
+                final Report report, final Grouping grouping, final Baseline baseline, final int numberOfHotspots) {
             severities = SeverityLegend.getLabels();
             colors = SeverityLegend.getColors();
 
+            // The source code view shows all issues of the file that are part of the hotspot
+            var query = grouping == Grouping.FILE
+                    ? "?show=all&severity=low&baseline=" + baseline.getId()
+                    : StringUtils.EMPTY;
             Map<String, Hotspot> elements = new HashMap<>();
             for (Issue issue : report) {
                 elements.computeIfAbsent(
-                                grouping.getProperty(issue), name -> new Hotspot(name, grouping.getLabel(issue)))
-                        .add(issue, grouping == Grouping.FILE);
+                                grouping.getProperty(issue), name -> new Hotspot(name, grouping.getLabel(issue), query))
+                        .add(issue);
             }
             var sorted = elements.values().stream()
                     .sorted(Comparator.comparingInt(Hotspot::getTotal)
@@ -446,27 +451,41 @@ public class HotspotsModel implements ModelObject {
         private final String name;
         private final String label;
         private final int[] counts = new int[SeverityLegend.size()];
+        private final String query;
         private String url = StringUtils.EMPTY;
         private int linkedSeverity = SeverityLegend.size(); // index in the legend: the lower, the more severe
 
-        private Hotspot(final String name, final String label) {
+        /**
+         * Creates a new hotspot.
+         *
+         * @param name
+         *         the name of the element
+         * @param label
+         *         the short label of the element
+         * @param query
+         *         the query of the URL of the details (with the settings of the source code view), or an empty string
+         *         if the hotspot has no details
+         */
+        private Hotspot(final String name, final String label, final String query) {
             this.name = name;
             this.label = label;
+            this.query = query;
         }
 
-        private void add(final Issue issue, final boolean isLinked) {
+        private void add(final Issue issue) {
             int severity = SeverityLegend.indexOf(issue.getSeverity());
             counts[severity]++;
-            if (isLinked && severity < linkedSeverity) {
-                url = SOURCE_URL + issue.getId() + "/";
+            if (!query.isEmpty() && severity < linkedSeverity) {
+                url = SOURCE_URL + issue.getId() + "/" + query;
                 linkedSeverity = severity;
             }
         }
 
         /**
          * Returns the URL of the details of the element, relative to the hotspots page. If the issues are grouped by
-         * file, the URL shows the source code of the file with all issues (the issue with the highest severity is
-         * selected). Otherwise, the URL is empty.
+         * file, the URL shows the source code of the file with all issues of the hotspot: the filters of the source
+         * code view are set by the query of the URL (all issues, all severities, and the selected baseline). The issue
+         * with the highest severity is selected. Otherwise, the URL is empty.
          *
          * @return the URL of the details, or an empty string if there are no details
          */

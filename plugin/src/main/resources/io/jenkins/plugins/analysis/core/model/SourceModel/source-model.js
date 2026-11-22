@@ -8,7 +8,9 @@
  *   <li>Filters the issues by the settings of the app bar: all issues of the file or only the selected issue, the
  *   minimum severity, and the baseline (new or outstanding issues). Hidden issues are marked with the attribute
  *   'hidden', afterwards the event 'prism-markers-changed' notifies the source code view. The settings are stored in
- *   the local storage of the browser.</li>
+ *   the local storage of the browser. Links can override the stored settings with the parameters 'show', 'severity',
+ *   and 'baseline' of the URL (e.g., the links of the hotspots page use '?show=all&severity=low&baseline=new'). Such
+ *   settings are not stored, only settings that the user changes on the page are stored.</li>
  * </ul>
  */
 (function () {
@@ -19,7 +21,7 @@
   // The source code page shows the issues of all tools, so the settings are not stored per report ID.
   const STORAGE_PREFIX = "wng-source-";
 
-  // Severities of the issues, see SourceModel#asMarker (data-marker-severity)
+  // Severities of the issues, see IssueMarkerFactory#create (data-marker-severity)
   const SEVERITY_RANKS = { low: 1, normal: 2, high: 3, error: 4 };
 
   const source = document.getElementById("wng-source");
@@ -89,9 +91,11 @@
     if (!select) {
       return;
     }
-    const stored = readStorage(key);
-    if (stored !== null && Array.from(select.options).some((option) => option.value === stored)) {
-      select.value = stored;
+    // a valid parameter of the URL overrides the stored setting
+    const isValid = (value) => value !== null && Array.from(select.options).some((option) => option.value === value);
+    const value = [new URLSearchParams(window.location.search).get(key), readStorage(key)].find(isValid);
+    if (value !== undefined) {
+      select.value = value;
     }
     select.addEventListener("change", () => {
       writeStorage(key, select.value);
