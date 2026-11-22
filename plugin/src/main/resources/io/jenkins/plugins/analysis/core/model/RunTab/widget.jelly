@@ -26,11 +26,8 @@ THE SOFTWARE.
 <j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout" xmlns:st="jelly:stapler" xmlns:wng="/warnings">
     <st:adjunct includes="io.jenkins.plugins.analysis.core.model.RunTab.styles"/>
 
-    <j:set var="maxItems" value="5" />
-
     <l:card title="${it.displayName}" expandable="${it.urlName}">
         <j:set var="widget" value="${it.widget}" />
-        <j:set var="issuesPage" value="${it.table}" />
 
         <a class="wng-widget__link" href="${it.urlName}" tabindex="-1" aria-hidden="true" />
 
@@ -42,7 +39,13 @@ THE SOFTWARE.
                         <l:icon src="${widget.qualityGateIcon}" alt="${status.description}" />
                         <div>
                             <div class="wng-widget__status-title">${status.description}</div>
-                            <div class="wng-widget__status-caption">${widget.qualityGateSummary}</div>
+                            <div class="wng-widget__status-caption">
+                                ${widget.qualityGateSummary}
+                                <j:if test="${widget.errorMessagesSize gt 0}">
+                                    · <a href="${it.urlName}/${widget.logUrl}" class="wng-widget__errors"
+                                         tooltip="${%errors.tooltip}">${%errors(widget.errorMessagesSize)}</a>
+                                </j:if>
+                            </div>
                         </div>
                     </div>
                 </j:when>
@@ -50,16 +53,22 @@ THE SOFTWARE.
                     <div class="wng-widget__status">
                         <l:icon src="${widget.symbol}" />
                         <div>
-                            <j:forEach var="line" items="${widget.lines}">
-                                <div>${line}</div>
+                            <j:set var="lines" value="${widget.lines}" />
+                            <j:forEach var="line" items="${lines}" indexVar="i">
+                                <div>
+                                    ${line}
+                                    <j:if test="${i eq size(lines) - 1 and widget.errorMessagesSize gt 0}">
+                                        · <a href="${it.urlName}/${widget.logUrl}" class="wng-widget__errors"
+                                             tooltip="${%errors.tooltip}">${%errors(widget.errorMessagesSize)}</a>
+                                    </j:if>
+                                </div>
                             </j:forEach>
                         </div>
                     </div>
                 </j:otherwise>
             </j:choose>
 
-            <!-- Metrics, reference build, and severity bar are grouped in a panel to set them off from the status
-                 and the pills -->
+            <!-- Metrics, reference build, and severity bar are grouped in a panel to set them off from the status -->
             <div class="wng-widget__panel">
                 <div class="wng-widget__metrics">
                     <div class="wng-widget__metric" tooltip="${%total.tooltip}">
@@ -120,43 +129,6 @@ THE SOFTWARE.
                     </div>
                 </j:if>
             </div>
-
-            <j:if test="${widget.hasPills() or widget.errorMessagesSize gt 0}">
-                <div class="wng-widget">
-                    <j:if test="${widget.hasPills()}">
-                        <j:set var="results" value="${widget.results}" />
-                        <j:forEach var="action" items="${results}" indexVar="i">
-                            <j:if test="${i lt maxItems}">
-                                <a href="${it.urlName}/${issuesPage.getUrlOf(action)}" class="wng-widget__item"
-                                   data-status="${widget.getStatusModifier(action)}">
-                                    <l:icon src="${action.smallImage}" />
-                                    ${action.displayName}
-                                    <span class="wng-widget__item-count">${action.result.totalSize}</span>
-                                    <j:if test="${widget.getNewSizeOf(action) gt 0}">
-                                        <span class="wng-widget__item-new" tooltip="${%new.tooltip}">+${widget.getNewSizeOf(action)}</span>
-                                    </j:if>
-                                </a>
-                            </j:if>
-
-                            <j:if test="${i eq maxItems}">
-                                <a href="${it.urlName}/${widget.overviewUrl}" class="wng-widget__item wng-widget__item--more"
-                                   tooltip="${%more.tooltip}">
-                                    ${%more(size(results) - maxItems)}
-                                    <l:icon src="symbol-chevron-forward-outline plugin-ionicons-api" />
-                                </a>
-                            </j:if>
-                        </j:forEach>
-                    </j:if>
-
-                    <j:if test="${widget.errorMessagesSize gt 0}">
-                        <a href="${it.urlName}/${widget.logUrl}" class="wng-widget__item" data-status="error"
-                           tooltip="${%errors.tooltip}">
-                            <l:icon src="symbol-close-circle-outline plugin-ionicons-api" />
-                            ${%errors(widget.errorMessagesSize)}
-                        </a>
-                    </j:if>
-                </div>
-            </j:if>
         </div>
     </l:card>
 </j:jelly>
