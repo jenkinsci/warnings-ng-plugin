@@ -6,12 +6,11 @@ import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.model.Run;
+import io.jenkins.plugins.analysis.core.model.SourceModel.IssueState;
 import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 import io.jenkins.plugins.bootstrap5.MessagesViewModel;
-import io.jenkins.plugins.prism.Marker;
-import io.jenkins.plugins.prism.Marker.MarkerBuilder;
 import io.jenkins.plugins.prism.SourceCodeViewModel;
 import io.jenkins.plugins.util.JenkinsFacade;
 import java.io.IOException;
@@ -141,8 +140,8 @@ public class DetailFactory {
                     return new ConsoleDetail(owner, consoleLog, issue.getLineStart(), issue.getLineEnd());
                 }
             } else {
-                var marker = asMarker(
-                        issue, labelProvider.getSourceCodeDescription(owner, issue), labelProvider.getSmallIconUrl());
+                var marker = new IssueMarkerFactory().create(owner, issue, getState(newIssues, issue),
+                        labelProvider.getId(), labelProvider, result.getBlames());
                 try (var affectedFile = buildFolder.readFile(owner, issue.getFileName(), sourceEncoding)) {
                     return SourceCodeViewModel.create(owner, issue.getBaseName(), affectedFile, marker);
                 } catch (IOException e) {
@@ -173,16 +172,11 @@ public class DetailFactory {
                 sourceEncoding);
     }
 
-    private Marker asMarker(final Issue issue, final String description, final String icon) {
-        return new MarkerBuilder()
-                .withTitle(issue.getMessage())
-                .withDescription(description)
-                .withIcon(icon)
-                .withLineStart(issue.getLineStart())
-                .withLineEnd(issue.getLineEnd())
-                .withColumnStart(issue.getColumnStart())
-                .withColumnEnd(issue.getColumnEnd())
-                .build();
+    private IssueState getState(final Report newIssues, final Issue issue) {
+        if (newIssues.stream().map(Issue::getId).anyMatch(issue.getId()::equals)) {
+            return IssueState.NEW;
+        }
+        return IssueState.OUTSTANDING;
     }
 
     @SuppressWarnings({"checkstyle:ParameterNumber", "PMD.CyclomaticComplexity", "PMD.AvoidLiteralsInIfCondition"})

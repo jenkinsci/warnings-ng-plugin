@@ -1,17 +1,12 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.Severity;
 import hudson.console.ConsoleNote;
 import hudson.model.ModelObject;
 import hudson.model.Run;
-import io.jenkins.plugins.analysis.core.util.Blame;
 import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
-import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
-import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.prism.Marker;
-import io.jenkins.plugins.prism.Marker.MarkerBuilder;
 import io.jenkins.plugins.prism.SourceCodeViewModel;
 import java.io.IOException;
 import java.io.Reader;
@@ -19,10 +14,7 @@ import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 /**
@@ -35,7 +27,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
  * side script {@code source-model.js} can filter the issues by the selected settings of the app bar: all issues of
  * the file or only the selected one, the minimum severity, and the baseline (new or outstanding issues).
  * The color of the box and of the marked lines is derived from the severity of the issue, see
- * {@code asMarkerSeverity}. In contrast to the classic source code view, the page is part
+ * {@link IssueMarkerFactory}. In contrast to the classic source code view, the page is part
  * of the Warnings tab, so the side panel of the tab is still visible.
  *
  * <p>
@@ -53,9 +45,6 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
  * @author Ullrich Hafner
  */
 public class SourceModel implements ModelObject {
-    private static final String MARKER_ID_PREFIX = "issue-";
-    private static final String UNDEFINED = "-";
-    private static final int COMMIT_LENGTH = 7;
     private static final int CONSOLE_LOG_CONTEXT = 10;
 
     private final Run<?, ?> owner;
@@ -164,7 +153,7 @@ public class SourceModel implements ModelObject {
      * @return the ID of the marker
      */
     public String getSelectedMarkerId() {
-        return createMarkerId(selectedIssue);
+        return IssueMarkerFactory.createMarkerId(selectedIssue);
     }
 
     /**
@@ -270,78 +259,9 @@ public class SourceModel implements ModelObject {
     }
 
     private Marker asMarker(final ToolIssue toolIssue) {
-        var issue = toolIssue.issue();
-        var labelProvider = toolIssue.action().getLabelProvider();
-        var builder = new MarkerBuilder()
-                .withId(createMarkerId(issue))
-                .withTitle(issue.getMessage())
-                .withDescription(labelProvider.getSourceCodeDescription(sourceBuild, issue))
-                .withIcon(labelProvider.getSmallIconUrl())
-                .withSeverity(asMarkerSeverity(issue.getSeverity()))
-                .withLineStart(issue.getLineStart())
-                .withLineEnd(issue.getLineEnd())
-                .withColumnStart(issue.getColumnStart())
-                .withColumnEnd(issue.getColumnEnd())
-                .withData("severity", issue.getSeverity().getName().toLowerCase(Locale.ENGLISH))
-                .withData("state", toolIssue.state().name().toLowerCase(Locale.ENGLISH))
-                .withData("tool", toolIssue.action().getId());
-
-        builder.withBadge(
-                LocalizedSeverity.getLocalizedString(issue.getSeverity()),
-                LocalizedSeverity.getLongLocalizedString(issue.getSeverity()));
-        if (toolIssue.state() == IssueState.NEW) {
-            builder.withBadge(Messages.SourceModel_New(), Messages.SourceModel_New_Tooltip());
-        } else if (toolIssue.state() == IssueState.FIXED) {
-            builder.withBadge(Messages.SourceModel_Fixed(), Messages.SourceModel_Fixed_Tooltip());
-        }
-        builder.withBadge(labelProvider.getName(), Messages.SourceModel_Tool_Tooltip());
-        var categoryAndType = Stream.of(issue.getCategory(), issue.getType())
-                .filter(SourceModel::isDefined)
-                .collect(Collectors.joining(" · "));
-        if (!categoryAndType.isEmpty()) {
-            builder.withBadge(categoryAndType, Messages.SourceModel_CategoryAndType_Tooltip());
-        }
-        addBlame(builder, issue, toolIssue.action().getResult().getBlames());
-
-        return builder.build();
-    }
-
-    private void addBlame(final MarkerBuilder builder, final Issue issue, final Blames blames) {
-        var blame = new Blame(issue, blames);
-        if (isDefined(blame.getCommit())) {
-            var commit = StringUtils.left(blame.getCommit(), COMMIT_LENGTH);
-            builder.withBadge(
-                    Messages.SourceModel_Blame(blame.getAuthorName(), commit),
-                    Messages.SourceModel_Blame_Tooltip(
-                            blame.getCommit(), blame.getAuthorName(), blame.getAuthorEmail()));
-        }
-    }
-
-    private static boolean isDefined(final String value) {
-        return StringUtils.isNotBlank(value) && !UNDEFINED.equals(value);
-    }
-
-    /**
-     * Maps the severity of an issue to the severity of a marker: errors and warnings with high severity are shown
-     * as errors, warnings with low severity as information.
-     *
-     * @param severity
-     *         the severity of the issue
-     *
-     * @return the severity of the marker
-     */
-    static Marker.Severity asMarkerSeverity(final Severity severity) {
-        if (Severity.ERROR.equals(severity) || Severity.WARNING_HIGH.equals(severity)) {
-            return Marker.Severity.ERROR;
-        }
-        if (Severity.WARNING_LOW.equals(severity)) {
-            return Marker.Severity.INFO;
-        }
-        return Marker.Severity.WARNING;
-    }
-
-    private static String createMarkerId(final Issue issue) {
-        return MARKER_ID_PREFIX + issue.getId();
+        var action = toolIssue.action();
+        return new IssueMarkerFactory().create(sourceBuild, toolIssue.issue(), toolIssue.state(), action.getId(),
+                action.getLabelProvider(), action.getResult().getBlames());
     }
 
     /**

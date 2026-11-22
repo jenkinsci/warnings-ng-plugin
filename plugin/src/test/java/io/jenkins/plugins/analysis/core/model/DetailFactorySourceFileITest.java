@@ -4,11 +4,14 @@ import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.analysis.Severity;
 import hudson.model.Run;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
+import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.prism.SourceCodeViewModel;
 import io.jenkins.plugins.util.JenkinsFacade;
 import java.io.IOException;
@@ -16,6 +19,7 @@ import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import org.eclipse.collections.impl.factory.Lists;
+import org.jsoup.Jsoup;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -63,43 +67,80 @@ class DetailFactorySourceFileITest extends IntegrationTestWithJenkinsPerSuite {
                         s -> assertThat(s.getSourceCode()).contains(AFFECTED_FILE_CONTENT));
     }
 
+    /**
+     * Checks that the source code view shows the severity and the details of the issue as badges.
+     */
+    @Test
+    void shouldShowSeverityAndBadgesOfIssue() throws IOException {
+        BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
+        when(buildFolder.readFile(any(), anyString(), any())).thenReturn(new StringReader(AFFECTED_FILE_CONTENT));
+
+        try (var issueBuilder = new IssueBuilder()) {
+            var issue = issueBuilder.setFileName("a-file")
+                    .setLineStart(1)
+                    .setSeverity(Severity.WARNING_HIGH)
+                    .setCategory("Design")
+                    .setType("Coupling")
+                    .setMessage("Message")
+                    .build();
+            var newIssues = new Report();
+            newIssues.add(issue);
+
+            var details = createDetails(buildFolder, issue, newIssues);
+
+            assertThat(details).isInstanceOfSatisfying(SourceCodeViewModel.class, s -> {
+                var marker = Jsoup.parse(s.getSourceCode()).getElementById("issue-" + issue.getId());
+                assertThat(marker).isNotNull();
+                assertThat(marker.classNames()).contains("prism-marker--error");
+                assertThat(marker.attr("data-marker-state")).isEqualTo("new");
+                assertThat(marker.attr("data-marker-tool")).isEqualTo("test");
+                assertThat(marker.getElementsByClass("prism-marker__badge").eachText())
+                        .contains("New", "Test", "Design · Coupling");
+            });
+        }
+    }
+
     private Object createDetails(final BuildFolderFacade buildFolder, final String fileName) {
         try (var issueBuilder = new IssueBuilder()) {
-            var detailFactory = new DetailFactory(new JenkinsFacade(), buildFolder);
-
             issueBuilder.setFileName(fileName);
-            var issue = issueBuilder.build();
-
-            var report = new Report();
-            report.add(issue);
-
-            var project = createFreeStyleProject();
-            buildSuccessfully(project);
-            Run<?, ?> run = project.getLastBuild();
-
-            return detailFactory.createTrendDetails(
-                    "source." + issue.getId().toString(),
-                    run,
-                    createAnalysisResult(),
-                    report,
-                    NEW_ISSUES,
-                    OUTSTANDING_ISSUES,
-                    FIXED_ISSUES,
-                    ENCODING,
-                    createParent());
+            return createDetails(buildFolder, issueBuilder.build(), NEW_ISSUES);
         }
+    }
+
+    private Object createDetails(final BuildFolderFacade buildFolder, final Issue issue, final Report newIssues) {
+        var detailFactory = new DetailFactory(new JenkinsFacade(), buildFolder);
+
+        var report = new Report();
+        report.add(issue);
+
+        var project = createFreeStyleProject();
+        buildSuccessfully(project);
+        Run<?, ?> run = project.getLastBuild();
+
+        return detailFactory.createTrendDetails(
+                "source." + issue.getId().toString(),
+                run,
+                createAnalysisResult(),
+                report,
+                newIssues,
+                OUTSTANDING_ISSUES,
+                FIXED_ISSUES,
+                ENCODING,
+                createParent());
     }
 
     private AnalysisResult createAnalysisResult() {
         AnalysisResult result = mock(AnalysisResult.class);
         when(result.getErrorMessages()).thenReturn(Lists.immutable.empty());
         when(result.getInfoMessages()).thenReturn(Lists.immutable.empty());
+        when(result.getBlames()).thenReturn(new Blames());
         return result;
     }
 
     private IssuesDetail createParent() {
         IssuesDetail parent = mock(IssuesDetail.class);
         StaticAnalysisLabelProvider labelProvider = mock(StaticAnalysisLabelProvider.class);
+        when(labelProvider.getId()).thenReturn("test");
         when(labelProvider.getName()).thenReturn("Test");
         when(labelProvider.getSmallIconUrl()).thenReturn("/icon");
         when(labelProvider.getLargeIconUrl()).thenReturn("/icon");

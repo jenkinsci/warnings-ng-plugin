@@ -78,10 +78,10 @@ class SourceModelTest {
      */
     @Test
     void shouldMapSeverities() {
-        assertThat(SourceModel.asMarkerSeverity(Severity.ERROR)).isEqualTo(Marker.Severity.ERROR);
-        assertThat(SourceModel.asMarkerSeverity(Severity.WARNING_HIGH)).isEqualTo(Marker.Severity.ERROR);
-        assertThat(SourceModel.asMarkerSeverity(Severity.WARNING_NORMAL)).isEqualTo(Marker.Severity.WARNING);
-        assertThat(SourceModel.asMarkerSeverity(Severity.WARNING_LOW)).isEqualTo(Marker.Severity.INFO);
+        assertThat(IssueMarkerFactory.asMarkerSeverity(Severity.ERROR)).isEqualTo(Marker.Severity.ERROR);
+        assertThat(IssueMarkerFactory.asMarkerSeverity(Severity.WARNING_HIGH)).isEqualTo(Marker.Severity.ERROR);
+        assertThat(IssueMarkerFactory.asMarkerSeverity(Severity.WARNING_NORMAL)).isEqualTo(Marker.Severity.WARNING);
+        assertThat(IssueMarkerFactory.asMarkerSeverity(Severity.WARNING_LOW)).isEqualTo(Marker.Severity.INFO);
     }
 
     /**
