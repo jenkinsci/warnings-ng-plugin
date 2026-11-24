@@ -21,6 +21,7 @@ import org.kohsuke.stapler.verb.GET;
  */
 public class RunTab extends Tab {
     static final String URL = "warnings";
+    static final String ICON = "symbol-warning-outline plugin-ionicons-api";
 
     private final NewBuildPageFacade newBuildPage;
 
@@ -53,7 +54,7 @@ public class RunTab extends Tab {
             return null;
         }
 
-        return "symbol-warning-outline plugin-ionicons-api";
+        return ICON;
     }
 
     @Override
@@ -164,7 +165,6 @@ public class RunTab extends Tab {
      * Facade for the experimental flag of the new build page. Encapsulates the static access to the current user so
      * that the flag can be replaced in tests.
      */
-    @VisibleForTesting
     static class NewBuildPageFacade {
         private static final String NEW_BUILD_PAGE_FLAG =
                 "jenkins.model.experimentalflags.NewBuildPageUserExperimentalFlag";

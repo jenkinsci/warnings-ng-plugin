@@ -1,0 +1,120 @@
+/*
+ * Same look as the test result summary of the JUnit plugin: a row of tags and a row of details.
+ * The tags of a group are joined to a segmented tag, so the existing and new warnings form one tag,
+ * the fixed warnings are shown in a separate tag.
+ */
+.warnings-history-summary {
+  --warnings-history-icon-size: 0.75rem;
+  --warnings-history-tag-height: 1.375rem;
+  --warnings-history-tag-gap: 0.0625rem;
+  --warnings-history-tag-radius-outer: calc(var(--warnings-history-tag-height) / 2);
+  --warnings-history-tag-radius-inner: 0.25rem;
+
+  display: inline-flex;
+  flex-direction: column;
+  border-radius: var(--form-input-border-radius);
+  outline: none;
+}
+
+.warnings-history-summary:focus-visible {
+  box-shadow: 0 0 0 0.2rem var(--text-color);
+}
+
+/* Beat core's link colour and underline */
+.warnings-history-summary,
+.warnings-history-summary:link,
+.warnings-history-summary:visited,
+.warnings-history-summary:hover,
+.warnings-history-summary:focus,
+.warnings-history-summary:active {
+  color: inherit;
+  text-decoration: none;
+}
+
+.warnings-history-summary svg {
+  width: var(--warnings-history-icon-size);
+  height: var(--warnings-history-icon-size);
+  flex-shrink: 0;
+}
+
+.warnings-history-summary__tags {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  min-height: var(--warnings-history-tag-height);
+  margin-bottom: 0.375rem;
+}
+
+.warnings-history-summary__group {
+  display: flex;
+  align-items: center;
+  gap: var(--warnings-history-tag-gap);
+}
+
+.warnings-history-summary__tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3125rem;
+  height: var(--warnings-history-tag-height);
+  padding: 0 0.5625rem 0 0.375rem;
+  border-radius: var(--warnings-history-tag-radius-inner);
+  box-sizing: border-box;
+  color: var(--warnings-history-tag-color);
+  /* Tint over an opaque card base, so the tag doesn't change with whatever is behind it */
+  background: color-mix(
+    in srgb,
+    var(--warnings-history-tag-color) calc(var(--status-background-opacity, 0.125) * 100%),
+    var(--card-background)
+  );
+  border: var(--jenkins-border--inherit-subtle);
+  font-size: var(--font-size-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.warnings-history-summary__tag svg * {
+  stroke-width: 50px;
+}
+
+.warnings-history-summary__tag:first-child {
+  border-top-left-radius: var(--warnings-history-tag-radius-outer);
+  border-bottom-left-radius: var(--warnings-history-tag-radius-outer);
+}
+
+.warnings-history-summary__tag:last-child {
+  border-top-right-radius: var(--warnings-history-tag-radius-outer);
+  border-bottom-right-radius: var(--warnings-history-tag-radius-outer);
+}
+
+/* Tags without icon (+new, −fixed) */
+.warnings-history-summary__tag--new,
+.warnings-history-summary__tag--fixed {
+  padding: 0 0.5625rem;
+}
+
+.warnings-history-summary__tag--existing {
+  --warnings-history-tag-color: var(--warning-color);
+}
+
+.warnings-history-summary__tag--new {
+  --warnings-history-tag-color: var(--error-color);
+}
+
+.warnings-history-summary__tag--fixed,
+.warnings-history-summary__tag--clean {
+  --warnings-history-tag-color: var(--success-color);
+}
+
+.warnings-history-summary__details {
+  display: flex;
+  gap: 0.5rem;
+  font-size: var(--font-size-xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-color-secondary);
+}
+
+.warnings-history-summary__details > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.1875rem;
+  white-space: nowrap;
+}

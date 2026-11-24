@@ -35,6 +35,9 @@
   <properties>
     <maven.deploy.skip>false</maven.deploy.skip>
 
+    <!-- Required for the HistoryPageEntryDecorator of the new build history -->
+    <jenkins.version>2.589</jenkins.version>
+
     <!-- Library Dependencies Versions -->
     <analysis-model-tests.version>14.20.0</analysis-model-tests.version>
     <pull-request-monitoring.version>335.v525cd64ec76b_</pull-request-monitoring.version>
