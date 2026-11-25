@@ -1,8 +1,9 @@
 package io.jenkins.plugins.analysis.core.model;
 
+import java.util.List;
+
 import hudson.model.Actionable;
 import hudson.model.ModelObject;
-import java.util.List;
 
 /**
  * Server side model that provides the data for the "Log Messages" page of the Warnings tab of a run. The page
