@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.VisibleForTesting;
 import hudson.Util;
@@ -8,12 +7,10 @@ import hudson.model.Actionable;
 import hudson.model.ModelObject;
 import hudson.model.Run;
 import io.jenkins.plugins.analysis.core.model.ToolsTableModel.ToolIssues;
-import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
 import io.jenkins.plugins.datatables.DefaultAsyncTableContentProvider;
 import io.jenkins.plugins.datatables.TableColumn;
 import io.jenkins.plugins.datatables.TableModel;
 import io.jenkins.plugins.forensics.util.CommitDecoratorFactory;
-import java.io.Serial;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.function.Function;
@@ -401,7 +398,6 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
      * Jenkins instance, so that the models can be replaced in tests.
      */
     @VisibleForTesting
-    @SuppressWarnings("PMD.InternalApiUsage")
     static class TableModelFactory {
         /**
          * Returns whether the specified tool provides a custom issues table, i.e., a table with different columns
@@ -492,7 +488,7 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
             var fileNameRenderer = action.getResult()
                     .getReferenceBuild()
                     .map(labelProvider::getFileNameRenderer)
-                    .orElseGet(() -> new FileNameRenderer(run, new NoAffectedFilesFacade()));
+                    .orElseGet(() -> FileNameRenderer.withoutLinks(run));
             return new FixedIssuesModel(
                     action.getResult().getFixedIssues(),
                     fileNameRenderer,
@@ -588,20 +584,6 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
                                     issue -> StringUtils.EMPTY)
                             .getColumns())
                     .orElse(List.of());
-        }
-    }
-
-    /**
-     * A build folder without affected files. Used if the reference build of the fixed issues is not available
-     * anymore, so no links to the affected files are rendered.
-     */
-    private static class NoAffectedFilesFacade extends BuildFolderFacade {
-        @Serial
-        private static final long serialVersionUID = 2_143_689_562_731_908_234L;
-
-        @Override
-        public boolean canAccessAffectedFileOf(final Run<?, ?> build, final Issue issue) {
-            return false;
         }
     }
 }

@@ -24,6 +24,8 @@ import org.junit.jupiter.params.provider.CsvSource;
  * @author Ullrich Hafner
  */
 class OverviewModelTest {
+    private final Job<?, ?> job = mock(Job.class);
+
     /**
      * Verifies that the sizes of all results are summed up and that only severities with warnings are shown.
      */
@@ -278,6 +280,7 @@ class OverviewModelTest {
         when(build.getDisplayName()).thenReturn(displayName);
         when(build.getFullDisplayName()).thenReturn(fullDisplayName);
         when(build.getUrl()).thenReturn(url);
+        doReturn(job).when(build).getParent();
         return build;
     }
 
@@ -290,7 +293,8 @@ class OverviewModelTest {
      *         the reference build
      */
     private void setReferenceBuild(final ResultAction action, final Run<?, ?> reference) {
-        doReturn(Optional.of(reference)).when(action.getResult()).getReferenceBuild();
+        var result = action.getResult(); // must not be called within a stubbing
+        doReturn(Optional.of(reference)).when(result).getReferenceBuild();
     }
 
     /**
@@ -381,7 +385,9 @@ class OverviewModelTest {
      * @return the model
      */
     private OverviewModel createModel(final ResultAction... actions) {
-        return new OverviewModel(mock(Run.class), List.of(actions));
+        Run<?, ?> owner = mock(Run.class);
+        doReturn(job).when(owner).getParent();
+        return new OverviewModel(owner, List.of(actions));
     }
 
     /**

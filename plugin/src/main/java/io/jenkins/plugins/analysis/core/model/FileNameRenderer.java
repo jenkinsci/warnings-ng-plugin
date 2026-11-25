@@ -9,6 +9,7 @@ import hudson.model.Run;
 import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 import j2html.tags.DomContent;
+import java.io.Serial;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -43,6 +44,19 @@ public class FileNameRenderer {
     public FileNameRenderer(final Run<?, ?> build, final BuildFolderFacade facade) {
         this.facade = facade;
         this.build = build;
+    }
+
+    /**
+     * Creates a new {@link FileNameRenderer} that never creates links to the affected files. This renderer should be
+     * used if the build that contains the affected files is not available anymore.
+     *
+     * @param build
+     *         the build that is used as context for the file names
+     *
+     * @return a renderer that shows the base names of the affected files only
+     */
+    public static FileNameRenderer withoutLinks(final Run<?, ?> build) {
+        return new FileNameRenderer(build, new NoAffectedFilesFacade());
     }
 
     /**
@@ -132,6 +146,19 @@ public class FileNameRenderer {
             return Messages.ConsoleLog_Name();
         } else {
             return issue.getBaseName();
+        }
+    }
+
+    /**
+     * Null object of a {@link BuildFolderFacade} that does not provide access to any affected file.
+     */
+    private static class NoAffectedFilesFacade extends BuildFolderFacade {
+        @Serial
+        private static final long serialVersionUID = 2_143_689_562_731_908_234L;
+
+        @Override
+        public boolean canAccessAffectedFileOf(final Run<?, ?> build, final Issue issue) {
+            return false;
         }
     }
 }
