@@ -3,7 +3,10 @@ package io.jenkins.plugins.analysis.core.model;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
-
+import hudson.model.Actionable;
+import hudson.model.ModelObject;
+import io.jenkins.plugins.analysis.core.charts.SeverityPalette;
+import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -14,16 +17,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
+import org.kohsuke.stapler.bind.JavaScriptMethod;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.node.ObjectNode;
-
-import org.kohsuke.stapler.bind.JavaScriptMethod;
-import hudson.model.Actionable;
-import hudson.model.ModelObject;
-
-import io.jenkins.plugins.analysis.core.charts.SeverityPalette;
-import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 
 /**
  * Server side model that provides the data for the "Hotspots" page of the Warnings tab of a run. The page answers the
