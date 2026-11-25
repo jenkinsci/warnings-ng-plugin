@@ -3,10 +3,7 @@ package io.jenkins.plugins.analysis.core.model;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
-import hudson.model.Actionable;
-import hudson.model.ModelObject;
-import io.jenkins.plugins.analysis.core.charts.SeverityPalette;
-import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -17,10 +14,16 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
-import org.kohsuke.stapler.bind.JavaScriptMethod;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.node.ObjectNode;
+
+import org.kohsuke.stapler.bind.JavaScriptMethod;
+import hudson.model.Actionable;
+import hudson.model.ModelObject;
+
+import io.jenkins.plugins.analysis.core.charts.SeverityPalette;
+import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 
 /**
  * Server side model that provides the data for the "Hotspots" page of the Warnings tab of a run. The page answers the
@@ -200,9 +203,10 @@ public class HotspotsModel implements ModelObject {
 
         var grouping = Grouping.fromId(getString(properties, GROUPING_PROPERTY)).orElse(Grouping.FILE);
         var baseline = Baseline.fromId(getString(properties, BASELINE_PROPERTY)).orElse(Baseline.ALL);
-        var report = new Report(selectTools(getString(properties, TOOL_PROPERTY)).stream()
+        var reports = selectTools(getString(properties, TOOL_PROPERTY)).stream()
                 .map(action -> baseline.getIssues(action.getResult()))
-                .toList());
+                .toList();
+        var report = reports.isEmpty() ? new Report() : new Report(reports);
 
         return new HotspotsChart(report, grouping, getNumberOfHotspots(properties));
     }
@@ -384,10 +388,15 @@ public class HotspotsModel implements ModelObject {
         }
     }
 
+    private static String getModifier(final Severity severity) {
+        return severity.getName().toLowerCase(Locale.ENGLISH);
+    }
+
     /**
      * The data of the charts of the hotspots page: the hotspots with the most issues and the histogram of the number
      * of issues per element (e.g., per file). Serialized as JSON for {@code hotspots-model.js}.
      */
+    @SuppressWarnings("PMD.DataClass")
     public static final class HotspotsChart {
         private final Map<String, String> severities;
         private final Map<String, String> colors;
@@ -594,9 +603,5 @@ public class HotspotsModel implements ModelObject {
         public int getCount() {
             return count;
         }
-    }
-
-    private static String getModifier(final Severity severity) {
-        return severity.getName().toLowerCase(Locale.ENGLISH);
     }
 }
