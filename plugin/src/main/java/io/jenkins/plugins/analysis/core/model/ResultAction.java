@@ -1,41 +1,37 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Strings;
-
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.Generated;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.nio.charset.Charset;
-import java.util.Collection;
-import java.util.Set;
-
-import org.kohsuke.accmod.Restricted;
-import org.kohsuke.accmod.restrictions.DoNotUse;
-import org.kohsuke.stapler.StaplerProxy;
-import org.kohsuke.stapler.bind.JavaScriptMethod;
-import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
-import org.jvnet.localizer.Localizable;
 import hudson.model.Action;
 import hudson.model.HealthReport;
 import hudson.model.HealthReportingAction;
 import hudson.model.Result;
 import hudson.model.Run;
-import jenkins.management.Badge;
-import jenkins.model.RunAction2;
-import jenkins.tasks.SimpleBuildStep.LastBuildAction;
-
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
 import io.jenkins.plugins.util.JenkinsFacade;
 import io.jenkins.plugins.util.QualityGateResult;
 import io.jenkins.plugins.util.ValidationUtilities;
+import java.io.Serial;
+import java.io.Serializable;
+import java.nio.charset.Charset;
+import java.util.Collection;
+import java.util.Set;
+import jenkins.management.Badge;
+import jenkins.model.RunAction2;
+import jenkins.tasks.SimpleBuildStep.LastBuildAction;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
+import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
+import org.jvnet.localizer.Localizable;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.DoNotUse;
+import org.kohsuke.stapler.StaplerProxy;
+import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 /**
  * Controls the life cycle of the analysis results in a job. This action persists the results of a build and displays a
@@ -230,7 +226,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
 
     @Override
     public String getUrlName() {
-        return StringUtils.defaultIfEmpty(id, getLabelProvider().getId());
+        return StringUtils.getIfEmpty(id, () -> getLabelProvider().getId());
     }
 
     /**
