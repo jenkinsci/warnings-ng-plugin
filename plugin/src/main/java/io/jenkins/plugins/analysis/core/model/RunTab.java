@@ -142,6 +142,18 @@ public class RunTab extends Tab {
     }
 
     /**
+     * Returns the model of the log page that shows the error and information messages of all warning actions.
+     * Stapler resolves this getter before {@link #getDynamic(String)}, so the URL {@code warnings/log} always shows
+     * the log messages.
+     *
+     * @return the log model
+     */
+    @Restricted(NoExternalUse.class)
+    public LogModel getLog() {
+        return new LogModel(getObject(), getWarningActions());
+    }
+
+    /**
      * Redirects to the overview page if the new build page is enabled. The redirect target is derived from the URL of
      * the run (and not from the request), and it is resolved via the context path, so it always points to the
      * overview page of this run, independent of whether the request URL ends with a slash.
