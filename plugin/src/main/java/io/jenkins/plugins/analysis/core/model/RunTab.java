@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import jenkins.management.Badge;
 import jenkins.model.Tab;
-import jenkins.model.experimentalflags.BooleanUserExperimentalFlag;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.HttpResponse;
@@ -203,24 +202,5 @@ public class RunTab extends Tab {
     private boolean hasIssue(final ResultAction action, final String sourceLink) {
         return action.getResult().getIssues().stream()
                 .anyMatch(issue -> (SOURCE_LINK_PREFIX + issue.getId()).equals(sourceLink));
-    }
-
-    /**
-     * Facade for the experimental flag of the new build page. Encapsulates the static access to the current user so
-     * that the flag can be replaced in tests.
-     */
-    @VisibleForTesting
-    static class NewBuildPageFacade {
-        private static final String NEW_BUILD_PAGE_FLAG =
-                "jenkins.model.experimentalflags.NewBuildPageUserExperimentalFlag";
-
-        /**
-         * Returns whether the new build page is enabled for the current user.
-         *
-         * @return {@code true} if the new build page is enabled, {@code false} otherwise
-         */
-        boolean isEnabled() {
-            return Boolean.TRUE.equals(BooleanUserExperimentalFlag.getFlagValueForCurrentUser(NEW_BUILD_PAGE_FLAG));
-        }
     }
 }

@@ -35,7 +35,7 @@
               href="${tabUrl + '/log'}"/>
       <j:forEach var="item" items="${tab.warningActions}">
         <l:task title="${item.displayName}"
-                icon="${item.iconFileName}"
+                icon="${item.smallImage}"
                 href="${tabUrl + '/' + item.urlName}"
                 badge="${item.badge}"/>
       </j:forEach>

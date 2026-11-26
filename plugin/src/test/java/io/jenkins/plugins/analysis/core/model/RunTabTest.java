@@ -8,7 +8,6 @@ import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import hudson.model.Actionable;
 import hudson.model.Run;
-import io.jenkins.plugins.analysis.core.model.RunTab.NewBuildPageFacade;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;

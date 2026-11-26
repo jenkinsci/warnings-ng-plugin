@@ -42,6 +42,7 @@ public class JobAction implements Action, AsyncConfigurableTrendChart {
     private final int numberOfTools;
     private final TrendChartType trendChartType;
     private /* almost final */ String urlName;
+    private final NewBuildPageFacade newBuildPage;
 
     /**
      * Creates a new instance of {@link JobAction}.
@@ -103,7 +104,38 @@ public class JobAction implements Action, AsyncConfigurableTrendChart {
             final int numberOfTools,
             final TrendChartType trendChartType,
             final String urlName) {
+        this(owner, labelProvider, numberOfTools, trendChartType, urlName, new NewBuildPageFacade());
+    }
+
+    /**
+     * Creates a new instance of {@link JobAction} with a custom facade for the experimental flag of the new build
+     * page.
+     *
+     * @param owner
+     *         the job that owns this action
+     * @param labelProvider
+     *         the label provider
+     * @param numberOfTools
+     *         the number of tools that have results to show
+     * @param trendChartType
+     *         determines if the trend chart will be shown
+     * @param urlName
+     *         the custom URL name of this action
+     * @param newBuildPage
+     *         the facade that determines whether the new build page is enabled
+     */
+    @VisibleForTesting
+    @SuppressWarnings("checkstyle:ParameterNumber")
+    JobAction(
+            final Job<?, ?> owner,
+            final StaticAnalysisLabelProvider labelProvider,
+            final int numberOfTools,
+            final TrendChartType trendChartType,
+            final String urlName,
+            final NewBuildPageFacade newBuildPage) {
         VALIDATION_UTILITIES.ensureValidId(urlName);
+
+        this.newBuildPage = newBuildPage;
 
         this.urlName = urlName;
         this.owner = owner;
@@ -176,14 +208,17 @@ public class JobAction implements Action, AsyncConfigurableTrendChart {
     }
 
     /**
-     * Returns the icon URL for the side-panel in the job screen. If there is no valid result yet, then {@code null} is
-     * returned.
+     * Returns the icon URL for the side-panel in the job screen. If the new build page is enabled, then the results
+     * are shown in the Warnings tab of a build (see {@link RunTab}), so no link is created in the side panel.
      *
-     * @return the icon URL for the side-panel in the job screen
+     * @return the icon URL for the side-panel in the job screen, or {@code null} if the new build page is enabled
      */
     @Override
     @CheckForNull
     public String getIconFileName() {
+        if (newBuildPage.isEnabled()) {
+            return null; // Jenkins API: null hides the link
+        }
         return labelProvider.getSmallIconUrl();
     }
 
