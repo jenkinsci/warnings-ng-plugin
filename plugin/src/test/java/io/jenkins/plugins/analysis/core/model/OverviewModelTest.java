@@ -164,13 +164,14 @@ class OverviewModelTest {
      */
     @Test
     void shouldShowSingleReferenceBuild() {
-        var reference = createBuild("#48", "main #48", "job/main/48/");
+        Job<?, ?> job = mock(Job.class);
+        var reference = createBuild(job, "#48", "main #48", "job/main/48/");
         var checkstyle = createAction("checkstyle", 1, 1, 0, QualityGateStatus.INACTIVE);
         var pmd = createAction("pmd", 1, 0, 1, QualityGateStatus.INACTIVE);
         setReferenceBuild(checkstyle, reference);
         setReferenceBuild(pmd, reference);
 
-        assertThat(createModel(checkstyle, pmd))
+        assertThat(createModel(job, checkstyle, pmd))
                 .hasReferenceBuild()
                 .hasReferenceBuilds(reference)
                 .hasReferenceBuildName("#48")
@@ -187,14 +188,11 @@ class OverviewModelTest {
      */
     @Test
     void shouldShowFullNameOfReferenceBuildOfOtherJob() {
-        Run<?, ?> owner = mock(Run.class);
-        doReturn(mock(Job.class)).when(owner).getParent();
-        var reference = createBuild("#48", "main #48", "job/main/48/");
-        doReturn(mock(Job.class)).when(reference).getParent();
+        var reference = createBuild(mock(Job.class), "#48", "main #48", "job/main/48/");
         var checkstyle = createAction("checkstyle", 1, 1, 0, QualityGateStatus.INACTIVE);
         setReferenceBuild(checkstyle, reference);
 
-        assertThat(new OverviewModel(owner, List.of(checkstyle)))
+        assertThat(createModel(mock(Job.class), checkstyle))
                 .hasReferenceBuildName("main #48")
                 .hasComparisonCaption(Messages.OverviewModel_ComparedTo("main #48"));
     }
@@ -205,16 +203,17 @@ class OverviewModelTest {
      */
     @Test
     void shouldShowMainReferenceBuildWithExceptions() {
-        var main = createBuild("#36", "main #36", "job/main/36/");
+        Job<?, ?> job = mock(Job.class);
+        var main = createBuild(job, "#36", "main #36", "job/main/36/");
         var checkstyle = createAction("checkstyle", 1, 1, 0, QualityGateStatus.INACTIVE);
         var cpd = createAction("cpd", 66, 66, 0, QualityGateStatus.INACTIVE);
         var pmd = createAction("pmd", 1, 0, 1, QualityGateStatus.INACTIVE);
         var spotbugs = createAction("spotbugs", 1, 0, 0, QualityGateStatus.INACTIVE);
         setReferenceBuild(checkstyle, main);
-        setReferenceBuild(cpd, createBuild("#2", "main #2", "job/main/2/"));
+        setReferenceBuild(cpd, createBuild(job, "#2", "main #2", "job/main/2/"));
         setReferenceBuild(pmd, main);
 
-        assertThat(createModel(checkstyle, cpd, pmd, spotbugs))
+        assertThat(createModel(job, checkstyle, cpd, pmd, spotbugs))
                 .hasReferenceBuild()
                 .hasReferenceBuildName("#36")
                 .hasReferenceBuildUrl("job/main/36/")
@@ -235,10 +234,11 @@ class OverviewModelTest {
     void shouldUseReferenceBuildOfFirstResultOnTie() {
         var checkstyle = createAction("checkstyle", 1, 1, 0, QualityGateStatus.INACTIVE);
         var pmd = createAction("pmd", 1, 0, 1, QualityGateStatus.INACTIVE);
-        setReferenceBuild(checkstyle, createBuild("#48", "main #48", "job/main/48/"));
-        setReferenceBuild(pmd, createBuild("#47", "main #47", "job/main/47/"));
+        Job<?, ?> job = mock(Job.class);
+        setReferenceBuild(checkstyle, createBuild(job, "#48", "main #48", "job/main/48/"));
+        setReferenceBuild(pmd, createBuild(job, "#47", "main #47", "job/main/47/"));
 
-        assertThat(createModel(checkstyle, pmd))
+        assertThat(createModel(job, checkstyle, pmd))
                 .hasReferenceBuildName("#48")
                 .hasReferenceBuildExceptions("pmd: #47")
                 .hasReferenceBuildTooltip("checkstyle: #48, pmd: #47");
@@ -264,6 +264,8 @@ class OverviewModelTest {
     /**
      * Creates a build stub.
      *
+     * @param job
+     *         the job of the build
      * @param displayName
      *         the display name of the build
      * @param fullDisplayName
@@ -273,8 +275,10 @@ class OverviewModelTest {
      *
      * @return the build
      */
-    private Run<?, ?> createBuild(final String displayName, final String fullDisplayName, final String url) {
+    private Run<?, ?> createBuild(
+            final Job<?, ?> job, final String displayName, final String fullDisplayName, final String url) {
         Run<?, ?> build = mock(Run.class);
+        doReturn(job).when(build).getParent();
         when(build.getDisplayName()).thenReturn(displayName);
         when(build.getFullDisplayName()).thenReturn(fullDisplayName);
         when(build.getUrl()).thenReturn(url);
@@ -384,6 +388,22 @@ class OverviewModelTest {
      */
     private OverviewModel createModel(final ResultAction... actions) {
         Job<?, ?> job = mock(Job.class);
+        Run<?, ?> owner = mock(Run.class);
+        doReturn(job).when(owner).getParent();
+        return new OverviewModel(owner, List.of(actions));
+    }
+
+    /**
+     * Creates a model for a run of the specified job with the specified results.
+     *
+     * @param job
+     *         the job of the run
+     * @param actions
+     *         the results of the run
+     *
+     * @return the model
+     */
+    private OverviewModel createModel(final Job<?, ?> job, final ResultAction... actions) {
         Run<?, ?> owner = mock(Run.class);
         doReturn(job).when(owner).getParent();
         return new OverviewModel(owner, List.of(actions));
