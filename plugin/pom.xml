@@ -58,6 +58,16 @@
       java.base/java.util.concurrent=ALL-UNNAMED</argLine>
   </properties>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.jenkins-ci.plugins.workflow</groupId>
+        <artifactId>workflow-api</artifactId>
+        <version>1429.v7a_1b_efb_a_f7c5</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
