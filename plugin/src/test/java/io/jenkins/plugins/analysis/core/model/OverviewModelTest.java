@@ -11,6 +11,7 @@ import io.jenkins.plugins.util.QualityGate.QualityGateCriticality;
 import io.jenkins.plugins.util.QualityGateResult;
 import io.jenkins.plugins.util.QualityGateStatus;
 import java.util.List;
+import org.eclipse.collections.impl.factory.Lists;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -92,6 +93,8 @@ class OverviewModelTest {
                 .hasNoNewSegments()
                 .hasNoQualityGateActions()
                 .doesNotHaveQualityGates()
+                .doesNotHaveErrorMessages()
+                .hasErrorMessagesSize(0)
                 .hasQualityGateStatus(QualityGateStatus.INACTIVE);
     }
 
@@ -125,6 +128,24 @@ class OverviewModelTest {
                 .hasQualityGates()
                 .hasQualityGateActions(checkstyle)
                 .hasQualityGateStatus(QualityGateStatus.PASSED);
+    }
+
+    /**
+     * Verifies that the error messages of all results are counted and that each result links to its tool on the
+     * log page.
+     */
+    @Test
+    void shouldCountErrorMessages() {
+        var checkstyle = createAction("checkstyle", 1, 0, 0, QualityGateStatus.INACTIVE);
+        var pmd = createAction("pmd", 1, 0, 0, QualityGateStatus.INACTIVE);
+        when(pmd.getResult().getErrorMessages()).thenReturn(Lists.immutable.of("No files found", "No blame"));
+
+        var model = createModel(checkstyle, pmd);
+
+        assertThat(model).hasErrorMessages().hasErrorMessagesSize(2);
+        assertThat(model.getErrorMessagesSizeOf(checkstyle)).isZero();
+        assertThat(model.getErrorMessagesSizeOf(pmd)).isEqualTo(2);
+        assertThat(model.getLogUrlOf(pmd)).isEqualTo("log#tool=pmd");
     }
 
     /**
@@ -202,6 +223,7 @@ class OverviewModelTest {
         when(result.getTotalSize()).thenReturn(totalSize);
         when(result.getNewSize()).thenReturn(newSize);
         when(result.getFixedSize()).thenReturn(fixedSize);
+        when(result.getErrorMessages()).thenReturn(Lists.immutable.empty());
 
         return action;
     }
