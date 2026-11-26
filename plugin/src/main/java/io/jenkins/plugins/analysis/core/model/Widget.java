@@ -22,7 +22,6 @@ import java.util.List;
  * </p>
  */
 public class Widget {
-
     private final OverviewModel overview;
 
     /**

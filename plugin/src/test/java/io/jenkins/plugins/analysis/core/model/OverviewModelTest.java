@@ -1,6 +1,6 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 import edu.hm.hafner.analysis.Severity;
@@ -24,8 +24,6 @@ import org.junit.jupiter.params.provider.CsvSource;
  * @author Ullrich Hafner
  */
 class OverviewModelTest {
-    private final Job<?, ?> job = mock(Job.class);
-
     /**
      * Verifies that the sizes of all results are summed up and that only severities with warnings are shown.
      */
@@ -385,6 +383,7 @@ class OverviewModelTest {
      * @return the model
      */
     private OverviewModel createModel(final ResultAction... actions) {
+        Job<?, ?> job = mock(Job.class);
         Run<?, ?> owner = mock(Run.class);
         doReturn(job).when(owner).getParent();
         return new OverviewModel(owner, List.of(actions));

@@ -445,6 +445,7 @@ public class HotspotsModel implements ModelObject {
     /**
      * An element (e.g., a file) and the number of its issues by severity.
      */
+    @SuppressWarnings("PMD.DataClass")
     public static final class Hotspot {
         private static final String SOURCE_URL = "../table/source.";
 
