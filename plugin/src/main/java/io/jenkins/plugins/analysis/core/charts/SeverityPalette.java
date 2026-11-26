@@ -2,13 +2,17 @@ package io.jenkins.plugins.analysis.core.charts;
 
 import edu.hm.hafner.analysis.Severity;
 import io.jenkins.plugins.echarts.JenkinsPalette;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /**
- * Provides colors for {@link Severity}.
+ * Provides colors for {@link Severity}. These colors are used for all charts of the Warnings plugin (and the severity
+ * bar of the overview page in {@code RunTab/styles.css}), so that a severity has the same color everywhere.
  *
  * @author Ullrich Hafner
  */
-final class SeverityPalette {
+@Restricted(NoExternalUse.class)
+public final class SeverityPalette {
     /**
      * Returns the color of UI elements for the specified severity.
      *
@@ -17,7 +21,7 @@ final class SeverityPalette {
      *
      * @return color of the specified severity
      */
-    static JenkinsPalette mapToColor(final Severity severity) {
+    public static JenkinsPalette mapToColor(final Severity severity) {
         if (Severity.ERROR.equals(severity)) {
             return JenkinsPalette.RED;
         }
