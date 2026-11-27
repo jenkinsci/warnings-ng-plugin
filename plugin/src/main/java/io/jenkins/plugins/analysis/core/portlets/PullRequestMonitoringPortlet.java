@@ -73,7 +73,7 @@ public class PullRequestMonitoringPortlet extends MonitorPortlet {
 
     @Override
     public Optional<String> getIconUrl() {
-        return Optional.ofNullable(action.getIconFileName());
+        return Optional.ofNullable(action.getSmallImage());
     }
 
     @Override

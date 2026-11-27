@@ -129,20 +129,21 @@
     min-width: 4px;
 }
 
+/* Same colors as in the charts, see SeverityPalette */
 .wng-severity-bar__segment--error {
     background: var(--red);
 }
 
 .wng-severity-bar__segment--high {
-    background: var(--orange);
+    background: var(--pink);
 }
 
 .wng-severity-bar__segment--normal {
-    background: var(--yellow);
+    background: var(--orange);
 }
 
 .wng-severity-bar__segment--low {
-    background: var(--text-color-secondary);
+    background: var(--yellow);
 }
 
 .wng-severity-legend {
@@ -367,6 +368,17 @@
     }
 }
 
+/* Icon of the selected tool next to the tool selection. Uses the text color, like the tool icons of the overview. */
+.wng-app-bar__tool-icon {
+    display: inline-flex;
+    align-items: center;
+}
+
+.wng-app-bar__tool-icon,
+.wng-app-bar__tool-icon svg {
+    color: var(--text-color);
+}
+
 .wng-app-bar__number {
     width: 6em;
 }
@@ -374,6 +386,33 @@
 .wng-trend__chart {
     width: 100%;
     min-height: 300px;
+}
+
+/* Charts of the hotspots page: the height of the hotspots chart depends on the number of bars (hotspots-model.js). */
+.wng-hotspots__chart {
+    width: 100%;
+    min-height: 200px;
+}
+
+.wng-hotspots__histogram {
+    width: 100%;
+    height: 300px;
+}
+
+.wng-hotspots__empty {
+    margin: 0;
+    color: var(--text-color-secondary);
+}
+
+/* Chart of the treemap page: the height fills the viewport (treemap-model.js). */
+.wng-treemap__chart {
+    width: 100%;
+    min-height: 300px;
+}
+
+.wng-treemap__empty {
+    margin: 0;
+    color: var(--text-color-secondary);
 }
 
 /* Definition list in HTML tooltips (e.g., the explanation of the chart types on the trend page). */
@@ -391,4 +430,28 @@
     dd:last-child {
         margin-bottom: 0;
     }
+}
+
+/* Message of the issues page if no issues have been reported. */
+.wng-issues__empty {
+    margin: 0;
+    color: var(--text-color-secondary);
+}
+
+/* Log page (LogModel/index.jelly): the cards with the error and information messages of a tool. The height of the
+   messages is computed in log-model.js, which measures the gap between the cards dynamically. */
+.wng-log__panel {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--section-padding) / 2);
+}
+
+.wng-log {
+    display: block;
+    overflow-y: auto;
+    margin: 0;
+    padding-left: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
 }

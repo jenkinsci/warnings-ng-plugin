@@ -3,14 +3,17 @@ package io.jenkins.plugins.analysis.core.model;
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.IssueBuilder;
+import edu.hm.hafner.analysis.Report;
 import hudson.model.Actionable;
 import hudson.model.Run;
-import io.jenkins.plugins.analysis.core.model.RunTab.NewBuildPageFacade;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.NoSuchElementException;
+import org.eclipse.collections.impl.factory.Lists;
 import org.junit.jupiter.api.Test;
 import org.kohsuke.stapler.StaplerRequest2;
 import org.kohsuke.stapler.StaplerResponse2;
@@ -37,7 +40,7 @@ class RunTabTest {
     }
 
     @Test
-    void shouldSortWarningActionsAndResolveDynamicActions() {
+    void shouldSortWarningActionsAndNotResolveActionsOfTools() {
         Run<?, ?> run = mock(Run.class);
         var checkstyle = createResultAction("checkstyle", "CheckStyle", 3);
         var pmd = createResultAction("pmd", "PMD", 5);
@@ -49,7 +52,7 @@ class RunTabTest {
         assertThat(tab.getWarningActions())
                 .extracting(ResultAction::getId)
                 .containsExactly("pmd", "checkstyle", "spotbugs");
-        assertThat(tab.getDynamic("checkstyle")).isSameAs(checkstyle);
+        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(() -> tab.getDynamic("checkstyle"));
         assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(() -> tab.getDynamic("missing"));
     }
 
@@ -106,6 +109,113 @@ class RunTabTest {
         assertThat(trend.getSources())
                 .extracting(TrendModel.TrendSource::getId)
                 .containsExactly(TrendModel.ALL_TOOLS_ID, "pmd", "checkstyle");
+    }
+
+    /**
+     * Verifies that the issues page is created for the sorted actions of the run.
+     */
+    @Test
+    void shouldCreateIssuesPage() {
+        Run<?, ?> run = mock(Run.class);
+        var report = new Report();
+        try (var builder = new IssueBuilder()) {
+            report.add(builder.setFileName("file.txt").build());
+        }
+        var checkstyle = createResultActionWithIssues("checkstyle", report);
+        var pmd = createResultActionWithIssues("pmd", new Report());
+        when(run.getActions(ResultAction.class)).thenReturn(List.of(checkstyle, pmd));
+
+        var table = new RunTab(run).getTable();
+
+        assertThat(table).hasDisplayName("Issues").hasUrlName("table");
+        assertThat(table.getObject()).isSameAs(run);
+        assertThat(table.getTools()).containsExactly(checkstyle);
+    }
+
+    /**
+     * Verifies that the log page shows the messages of the sorted actions of the run, including the tools without
+     * issues.
+     */
+    @Test
+    void shouldCreateLogPage() {
+        Run<?, ?> run = mock(Run.class);
+        var checkstyle = createResultAction("checkstyle", "CheckStyle", 0);
+        when(checkstyle.getResult().getInfoMessages()).thenReturn(Lists.immutable.of("Parsing checkstyle.xml"));
+        when(checkstyle.getResult().getErrorMessages()).thenReturn(Lists.immutable.empty());
+        var pmd = createResultAction("pmd", "PMD", 5);
+        when(pmd.getResult().getInfoMessages()).thenReturn(Lists.immutable.empty());
+        when(pmd.getResult().getErrorMessages()).thenReturn(Lists.immutable.of("No files found"));
+        when(run.getActions(ResultAction.class)).thenReturn(List.of(checkstyle, pmd));
+
+        var log = new RunTab(run).getLog();
+
+        assertThat(log).hasDisplayName("Log Messages").hasUrlName("log").hasDefaultToolId("pmd");
+        assertThat(log.getObject()).isSameAs(run);
+        assertThat(log.getTools()).extracting(LogModel.ToolLog::getId).containsExactly("pmd", "checkstyle");
+    }
+
+    /**
+     * Verifies that the hotspots page shows the sorted actions of the run that contain issues.
+     */
+    @Test
+    void shouldCreateHotspotsPage() {
+        Run<?, ?> run = mock(Run.class);
+        var checkstyle = createResultAction("checkstyle", "CheckStyle", 0);
+        var pmd = createResultAction("pmd", "PMD", 2);
+        var spotbugs = createResultAction("spotbugs", "SpotBugs", 5);
+        when(run.getActions(ResultAction.class)).thenReturn(List.of(checkstyle, pmd, spotbugs));
+
+        var hotspots = new RunTab(run).getHotspots();
+
+        assertThat(hotspots).hasDisplayName("Hotspots").hasUrlName("hotspots").hasSeveralTools();
+        assertThat(hotspots.getObject()).isSameAs(run);
+        assertThat(hotspots.getTools()).containsExactly(spotbugs, pmd);
+    }
+
+    /**
+     * Verifies that the treemap page shows only the tools with issues.
+     */
+    @Test
+    void shouldCreateTreemapPage() {
+        Run<?, ?> run = mock(Run.class);
+        var checkstyle = createResultAction("checkstyle", "CheckStyle", 0);
+        var pmd = createResultAction("pmd", "PMD", 2);
+        var spotbugs = createResultAction("spotbugs", "SpotBugs", 5);
+        when(run.getActions(ResultAction.class)).thenReturn(List.of(checkstyle, pmd, spotbugs));
+
+        var treemap = new RunTab(run).getTreemap();
+
+        assertThat(treemap).hasDisplayName("Treemap").hasUrlName("treemap").hasSeveralTools();
+        assertThat(treemap.getObject()).isSameAs(run);
+        assertThat(treemap.getTools()).containsExactly(spotbugs, pmd);
+    }
+
+    /**
+     * Verifies that the link to the affected file of an issue is resolved by the tool that reported the issue.
+     */
+    @Test
+    void shouldResolveSourceLinksOfAllTools() {
+        Run<?, ?> run = mock(Run.class);
+        var checkstyle = createResultActionWithIssues("checkstyle", new Report());
+        var report = new Report();
+        Issue issue;
+        try (var builder = new IssueBuilder()) {
+            issue = builder.setFileName("file.txt").build();
+        }
+        report.add(issue);
+        var pmd = createResultActionWithIssues("pmd", report);
+        when(run.getActions(ResultAction.class)).thenReturn(List.of(checkstyle, pmd));
+        var link = "source." + issue.getId();
+        var sourceView = new Object();
+        IssuesDetail details = mock(IssuesDetail.class);
+        when(details.createDetails(link)).thenReturn(sourceView);
+        when(pmd.getTarget()).thenReturn(details);
+
+        var tab = new RunTab(run);
+
+        assertThat(tab.getDynamic(link)).isSameAs(sourceView);
+        assertThatExceptionOfType(NoSuchElementException.class)
+                .isThrownBy(() -> tab.getDynamic("source.00000000-0000-0000-0000-000000000000"));
     }
 
     /**
@@ -193,6 +303,15 @@ class RunTabTest {
         when(facade.isEnabled()).thenReturn(isNewBuildPageEnabled);
 
         return new RunTab(run, facade);
+    }
+
+    private ResultAction createResultActionWithIssues(final String id, final Report issues) {
+        var action = createResultAction(id, id, issues.size());
+        var labelProvider = mock(StaticAnalysisLabelProvider.class);
+        when(labelProvider.getIssuesModel(any(), any(), any())).thenReturn(mock(IssuesModel.class));
+        when(action.getLabelProvider()).thenReturn(labelProvider);
+        when(action.getResult().getIssues()).thenReturn(issues);
+        return action;
     }
 
     private ResultAction createResultAction(final String id, final String displayName, final int totalSize) {

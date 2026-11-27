@@ -1,0 +1,120 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:wng="/warnings"
+         xmlns:dt="/data-tables">
+
+  <st:header name="Content-Type" value="text/html;charset=UTF-8"/>
+
+  <l:run-subpage>
+    <st:adjunct includes="io.jenkins.plugins.analysis.core.model.RunTab.styles"/>
+    <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
+
+    <j:set var="hasIssues" value="${it.hasIssues()}"/>
+    <j:set var="blameVisible" value="${it.blameVisible}"/>
+    <j:set var="forensicsVisible" value="${it.forensicsVisible}"/>
+
+    <l:app-bar title="${it.displayName}">
+      <j:if test="${hasIssues}">
+        <div class="wng-app-bar__controls">
+          <div class="wng-app-bar__control" tooltip="${%tool-tooltip}">
+            <label for="wng-issues-tool">${%tool-title}:</label>
+            <j:if test="${it.hasSeveralTools()}">
+              <wng:tool-icon tool="${it.allToolsId}" icon="${it.tab.iconFileName}"/>
+            </j:if>
+            <j:forEach var="tool" items="${it.tools}">
+              <wng:tool-icon tool="${tool.id}" icon="${tool.smallImage}"/>
+            </j:forEach>
+            <div class="jenkins-select">
+              <select id="wng-issues-tool" class="jenkins-select__input" data-all-tools="${it.allToolsId}">
+                <j:if test="${it.hasSeveralTools()}">
+                  <option value="${it.allToolsId}">${%tool-all}</option>
+                </j:if>
+                <j:forEach var="tool" items="${it.tools}">
+                  <option value="${tool.id}"
+                          data-issues-table="${it.getIssuesTableId(tool)}">${tool.displayName}</option>
+                </j:forEach>
+              </select>
+            </div>
+          </div>
+
+          <j:if test="${blameVisible or forensicsVisible}">
+            <div class="wng-app-bar__control" tooltip="${%table-tooltip}">
+              <label for="wng-issues-table">${%table-title}:</label>
+              <div class="jenkins-select">
+                <select id="wng-issues-table" class="jenkins-select__input">
+                  <option value="issues">${%table-issues}</option>
+                  <j:if test="${blameVisible}">
+                    <option value="blames">${%table-blames}</option>
+                  </j:if>
+                  <j:if test="${forensicsVisible}">
+                    <option value="forensics">${%table-forensics}</option>
+                  </j:if>
+                </select>
+              </div>
+            </div>
+          </j:if>
+
+          <div class="wng-app-bar__control" tooltip="${%baseline-tooltip}">
+            <label for="wng-issues-baseline">${%baseline-title}:</label>
+            <div class="jenkins-select">
+              <select id="wng-issues-baseline" class="jenkins-select__input">
+                <option value="all">${%baseline-all}</option>
+                <option value="new">${%baseline-new}</option>
+                <option value="outstanding">${%baseline-outstanding}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </j:if>
+    </l:app-bar>
+
+    <div class="wng-body">
+      <wng:sidepanel tab="${it.tab}"/>
+
+      <div class="wng-dashboard">
+        <j:choose>
+          <j:when test="${hasIssues}">
+            <!-- All tables are part of the page, the visible table is selected on the client side. The rows of a
+                 table are loaded when the table becomes visible for the first time. -->
+            <div id="wng-issues-panel-issues" class="wng-issues__panel">
+              <l:card title="${%table-issues}">
+                <dt:table model="${it.getTableModel('issues')}"/>
+              </l:card>
+            </div>
+            <!-- Tools with a custom issues table: the table replaces the issues table if the tool is selected -->
+            <j:forEach var="customTableId" items="${it.customTableIds}">
+              <div id="wng-issues-panel-${customTableId}" class="wng-issues__panel jenkins-hidden">
+                <l:card title="${%table-issues}">
+                  <dt:table model="${it.getTableModel(customTableId)}"/>
+                </l:card>
+              </div>
+            </j:forEach>
+            <j:if test="${blameVisible}">
+              <div id="wng-issues-panel-blames" class="wng-issues__panel jenkins-hidden">
+                <l:card title="${%table-blames}">
+                  <dt:table model="${it.getTableModel('blames')}"/>
+                </l:card>
+              </div>
+            </j:if>
+            <j:if test="${forensicsVisible}">
+              <div id="wng-issues-panel-forensics" class="wng-issues__panel jenkins-hidden">
+                <l:card title="${%table-forensics}">
+                  <dt:table model="${it.getTableModel('forensics')}"/>
+                </l:card>
+              </div>
+            </j:if>
+          </j:when>
+          <j:otherwise>
+            <l:card title="${it.displayName}">
+              <p class="wng-issues__empty">${%no-issues}</p>
+            </l:card>
+          </j:otherwise>
+        </j:choose>
+      </div>
+    </div>
+
+    <j:if test="${hasIssues}">
+      <st:adjunct includes="io.jenkins.plugins.analysis.core.model.IssuesPageModel.issues-page-model"/>
+    </j:if>
+  </l:run-subpage>
+
+</j:jelly>

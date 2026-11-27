@@ -47,6 +47,9 @@ class TrendModelTest {
         assertThat(model.getSources())
                 .extracting(TrendSource::getDisplayName)
                 .containsExactly("All tools", "CheckStyle", "PMD");
+        assertThat(model.getSources())
+                .extracting(TrendSource::getSmallImage)
+                .containsExactly("symbol-warning-outline plugin-ionicons-api", "checkstyle-icon", "pmd-icon");
 
         var sources = model.getSources();
         assertThat(sources.get(0))
@@ -253,6 +256,7 @@ class TrendModelTest {
 
         when(action.getId()).thenReturn(id);
         when(action.getDisplayName()).thenReturn(displayName);
+        when(action.getSmallImage()).thenReturn(id + "-icon");
         when(action.getResult()).thenReturn(result);
         when(action.getHealthDescriptor()).thenReturn(healthDescriptor);
         when(action.createBuildHistory()).thenReturn(buildHistory);

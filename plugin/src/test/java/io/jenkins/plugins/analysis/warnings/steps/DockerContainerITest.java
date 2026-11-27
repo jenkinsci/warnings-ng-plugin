@@ -1,7 +1,7 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
-import static org.assertj.core.api.Assumptions.*;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.assertThat;
+import static org.assertj.core.api.Assumptions.assumeThat;
 
 import hudson.tasks.Shell;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
@@ -10,8 +10,6 @@ import io.jenkins.plugins.analysis.warnings.Java;
 import java.io.IOException;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 /**
  * Tests build on a docker container worker.
@@ -19,10 +17,8 @@ import org.testcontainers.junit.jupiter.Testcontainers;
  * @author Andreas Reiser
  * @author Andreas Moser
  */
-@Testcontainers(disabledWithoutDocker = true)
 @Disabled("Docker tests are failing with Java 17 Jenkins")
 class DockerContainerITest extends IntegrationTestWithJenkinsPerSuite {
-    @Container
     private static final AgentContainer AGENT_CONTAINER = new AgentContainer();
 
     private static final String EMPTY_PATTERN = "";

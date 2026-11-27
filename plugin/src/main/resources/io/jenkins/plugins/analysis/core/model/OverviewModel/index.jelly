@@ -8,7 +8,10 @@
 
     <j:set var="tab" value="${it.tab}"/>
     <j:set var="tabUrl" value="${url + '/' + tab.urlName}"/>
+    <!-- The tools link to the issues page (or to the classic details view if a tool is not part of that page) -->
+    <j:set var="issuesPage" value="${tab.table}"/>
     <j:set var="severities" value="${it.severities}"/>
+    <j:set var="hasErrors" value="${it.hasErrorMessages()}"/>
 
     <l:app-bar title="${it.displayName}"/>
 
@@ -28,8 +31,8 @@
               <div class="wng-dashboard__quality-gate-tools">
                 <j:forEach var="action" items="${it.qualityGateActions}">
                   <div class="wng-dashboard__quality-gate-tool">
-                    <a class="wng-dashboard__quality-gate-tool-name" href="${tabUrl + '/' + action.urlName}">
-                      <l:icon src="${action.iconFileName}" class="icon-sm" alt=""/>
+                    <a class="wng-dashboard__quality-gate-tool-name" href="${tabUrl + '/' + issuesPage.getUrlOf(action)}">
+                      <l:icon src="${action.smallImage}" class="icon-sm" alt=""/>
                       ${action.displayName}
                     </a>
                     <j:forEach var="item" items="${action.qualityGateResult.resultItems}">
@@ -105,6 +108,9 @@
                   <j:forEach var="severity" items="${severities}">
                     <th class="wng-dashboard__number">${it.getSeverityLabel(severity)}</th>
                   </j:forEach>
+                  <j:if test="${hasErrors}">
+                    <th class="wng-dashboard__number" tooltip="${%errors.tooltip}">${%Errors}</th>
+                  </j:if>
                   <j:if test="${it.hasQualityGates()}">
                     <th class="wng-dashboard__status">${%Quality Gate}</th>
                   </j:if>
@@ -115,8 +121,8 @@
                   <j:set var="result" value="${action.result}"/>
                   <tr>
                     <td class="wng-dashboard__label">
-                      <a class="wng-dashboard__tool" href="${tabUrl + '/' + action.urlName}">
-                        <l:icon src="${action.iconFileName}" class="icon-sm wng-dashboard__tool-icon" alt=""/>
+                      <a class="wng-dashboard__tool" href="${tabUrl + '/' + issuesPage.getUrlOf(action)}">
+                        <l:icon src="${action.smallImage}" class="icon-sm wng-dashboard__tool-icon" alt=""/>
                         ${action.displayName}
                       </a>
                     </td>
@@ -144,6 +150,20 @@
                     <j:forEach var="severity" items="${severities}">
                       <td class="wng-dashboard__number">${result.getTotalSizeOf(severity)}</td>
                     </j:forEach>
+                    <j:if test="${hasErrors}">
+                      <td class="wng-dashboard__number">
+                        <j:set var="errors" value="${it.getErrorMessagesSizeOf(action)}"/>
+                        <j:choose>
+                          <j:when test="${errors gt 0}">
+                            <a class="jenkins-badge jenkins-!-error-color" href="${tabUrl + '/' + it.getLogUrlOf(action)}"
+                               tooltip="${%errors.link}">${errors}</a>
+                          </j:when>
+                          <j:otherwise>
+                            <span class="wng-dashboard__zero">0</span>
+                          </j:otherwise>
+                        </j:choose>
+                      </td>
+                    </j:if>
                     <j:if test="${it.hasQualityGates()}">
                       <td class="wng-dashboard__status">
                         <j:set var="gate" value="${action.qualityGateResult}"/>
@@ -172,6 +192,9 @@
                     <j:forEach var="severity" items="${severities}">
                       <td class="wng-dashboard__number">${it.getTotalSizeOf(severity)}</td>
                     </j:forEach>
+                    <j:if test="${hasErrors}">
+                      <td class="wng-dashboard__number">${it.errorMessagesSize}</td>
+                    </j:if>
                     <j:if test="${it.hasQualityGates()}">
                       <td class="wng-dashboard__status">
                         <l:icon class="${it.qualityGateStatus.iconClass} icon-sm"

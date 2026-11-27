@@ -1,0 +1,88 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:wng="/warnings">
+
+  <st:header name="Content-Type" value="text/html;charset=UTF-8"/>
+
+  <l:run-subpage>
+    <st:adjunct includes="io.jenkins.plugins.analysis.core.model.RunTab.styles"/>
+    <st:adjunct includes="io.jenkins.plugins.jquery3"/>
+    <st:adjunct includes="io.jenkins.plugins.echarts"/>
+    <st:adjunct includes="io.jenkins.plugins.analysis.core.model.RunTab.charts"/>
+
+    <j:set var="hasIssues" value="${it.hasIssues()}"/>
+
+    <l:app-bar title="${it.displayName}">
+      <j:if test="${hasIssues}">
+        <div class="wng-app-bar__controls">
+          <div class="wng-app-bar__control" tooltip="${%tool-tooltip}">
+            <label for="wng-treemap-tool">${%tool-title}:</label>
+            <j:if test="${it.hasSeveralTools()}">
+              <wng:tool-icon tool="${it.allToolsId}" icon="${it.tab.iconFileName}"/>
+            </j:if>
+            <j:forEach var="tool" items="${it.tools}">
+              <wng:tool-icon tool="${tool.id}" icon="${tool.smallImage}"/>
+            </j:forEach>
+            <div class="jenkins-select">
+              <select id="wng-treemap-tool" class="jenkins-select__input">
+                <j:if test="${it.hasSeveralTools()}">
+                  <option value="${it.allToolsId}">${%tool-all}</option>
+                </j:if>
+                <j:forEach var="tool" items="${it.tools}">
+                  <option value="${tool.id}">${tool.displayName}</option>
+                </j:forEach>
+              </select>
+            </div>
+          </div>
+
+          <div class="wng-app-bar__control" tooltip="${%baseline-tooltip}">
+            <label for="wng-treemap-baseline">${%baseline-title}:</label>
+            <div class="jenkins-select">
+              <select id="wng-treemap-baseline" class="jenkins-select__input">
+                <j:forEach var="baseline" items="${it.baselines}">
+                  <option value="${baseline.id}">${baseline.displayName}</option>
+                </j:forEach>
+              </select>
+            </div>
+          </div>
+
+          <div class="wng-app-bar__control" tooltip="${%color-tooltip}">
+            <label for="wng-treemap-color">${%color-title}:</label>
+            <div class="jenkins-select">
+              <select id="wng-treemap-color" class="jenkins-select__input">
+                <option value="severity">${%color-severity}</option>
+                <option value="new">${%color-new}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </j:if>
+    </l:app-bar>
+
+    <div class="wng-body">
+      <wng:sidepanel tab="${it.tab}"/>
+
+      <div class="wng-dashboard">
+        <j:choose>
+          <j:when test="${hasIssues}">
+            <l:card title="${%Treemap}">
+              <p id="wng-treemap-empty" class="wng-treemap__empty jenkins-hidden">${%no-elements}</p>
+              <div id="wng-treemap-chart" class="wng-treemap__chart"
+                   data-total-label="${%total-label}" data-new-label="${%new-label}"/>
+            </l:card>
+          </j:when>
+          <j:otherwise>
+            <l:card title="${it.displayName}">
+              <p class="wng-treemap__empty">${%no-issues}</p>
+            </l:card>
+          </j:otherwise>
+        </j:choose>
+      </div>
+    </div>
+
+    <j:if test="${hasIssues}">
+      <st:bind var="proxy" value="${it}"/>
+      <st:adjunct includes="io.jenkins.plugins.analysis.core.model.TreeMapModel.treemap-model"/>
+    </j:if>
+  </l:run-subpage>
+
+</j:jelly>

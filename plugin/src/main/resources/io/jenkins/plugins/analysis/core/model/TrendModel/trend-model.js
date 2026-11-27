@@ -7,6 +7,8 @@
     const CHART_TYPE_SELECTOR = '#wng-trend-chart-type';
     const BUILDS_SELECTOR = '#wng-trend-builds';
     const FOOTER_SELECTOR = '.page-footer';
+    const TOOL_ICON_SELECTOR = '.wng-app-bar__tool-icon';
+    const HIDDEN_CLASS = 'jenkins-hidden';
 
     const MIN_CHART_HEIGHT = 300;
     const BOTTOM_MARGIN = 40;
@@ -51,6 +53,14 @@
         return $(TOOL_SELECTOR).val();
     }
 
+    // Shows the icon of the selected tool next to the select box and hides the icons of all other tools.
+    function showToolIcon() {
+        const tool = getSelectedTool();
+        $(TOOL_ICON_SELECTOR).each(function () {
+            $(this).toggleClass(HIDDEN_CLASS, this.getAttribute('data-tool') !== tool);
+        });
+    }
+
     function getAvailableCharts() {
         const charts = $(TOOL_SELECTOR + ' option:selected').attr('data-charts') || '';
         return charts.split(' ').filter(chart => chart.length > 0);
@@ -84,6 +94,7 @@
         if (hasOption(TOOL_SELECTOR, storedTool)) {
             $(TOOL_SELECTOR).val(storedTool);
         }
+        showToolIcon();
         updateChartTypes();
 
         const storedBuilds = parseInt(readStorage(BUILDS_KEY), 10);
@@ -153,6 +164,7 @@
         renderTrendChart();
 
         $(TOOL_SELECTOR).on('change', function () {
+            showToolIcon();
             updateChartTypes();
             renderTrendChart();
         });

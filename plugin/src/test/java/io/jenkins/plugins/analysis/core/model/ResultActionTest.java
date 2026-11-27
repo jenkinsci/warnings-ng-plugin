@@ -104,4 +104,32 @@ class ResultActionTest {
 
         assertThatIllegalArgumentException().isThrownBy(good::readResolve);
     }
+
+    /**
+     * Verifies that the link in the side panel of the build is hidden if the new build page is enabled: the results
+     * are shown in the Warnings tab then. The action is still available using its URL.
+     */
+    @Test
+    void shouldHideSidePanelLinkIfNewBuildPageIsEnabled() {
+        var action = spy(new ResultAction(
+                null,
+                mock(AnalysisResult.class),
+                new HealthDescriptor(0, 0, Severity.WARNING_HIGH),
+                "ID",
+                "Name",
+                "icon",
+                StandardCharsets.UTF_8,
+                TrendChartType.AGGREGATION_TOOLS));
+        doReturn("small-icon").when(action).getSmallImage();
+        var facade = mock(NewBuildPageFacade.class);
+        action.setNewBuildPageFacade(facade);
+
+        assertThat(action.getIconFileName()).isEqualTo("small-icon");
+
+        when(facade.isEnabled()).thenReturn(true);
+
+        assertThat(action.getIconFileName()).isNull();
+        assertThat(action.getSmallImage()).isEqualTo("small-icon");
+        assertThat(action.getUrlName()).isEqualTo("ID");
+    }
 }

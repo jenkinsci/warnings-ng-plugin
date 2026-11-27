@@ -5,7 +5,6 @@ import static org.mockito.Mockito.*;
 
 import hudson.model.Run;
 import hudson.widgets.HistoryWidget;
-import io.jenkins.plugins.analysis.core.model.RunTab.NewBuildPageFacade;
 import java.util.List;
 import jenkins.model.HistoricalBuild;
 import org.junit.jupiter.api.Test;
