@@ -43,7 +43,7 @@
                  data-url="${buildUrl}${aggregationId}/api/json">
               <l:card title="${%endpoints-title}">
                 <p>${%endpoints-intro}</p>
-                <table class="wng-remote-api__table">
+                <table class="wng-table">
                   <thead>
                     <tr>
                       <th>${%endpoint}</th>
@@ -102,7 +102,7 @@
               <div class="wng-remote-api__panel jenkins-hidden" data-tool="${tool.id}" data-url="${toolUrl}/api/json">
                 <l:card title="${%endpoints-title}">
                   <p>${%endpoints-intro}</p>
-                  <table class="wng-remote-api__table">
+                  <table class="wng-table">
                     <thead>
                       <tr>
                         <th>${%endpoint}</th>

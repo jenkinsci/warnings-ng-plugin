@@ -210,6 +210,17 @@ public class RunTab extends Tab {
     }
 
     /**
+     * Returns the model of the help page that explains the terms used on the other pages of the tab. Stapler resolves
+     * this getter before {@link #getDynamic(String)}, so the URL {@code warnings/help} always shows the help.
+     *
+     * @return the help model
+     */
+    @Restricted(NoExternalUse.class)
+    public HelpModel getHelp() {
+        return new HelpModel(getObject());
+    }
+
+    /**
      * Creates the model of the remote API page that lists the endpoints of the remote API of all warning actions.
      * The URL {@code warnings/remote-api} contains a hyphen, so it cannot be resolved by a getter: it is resolved by
      * {@link #getDynamic(String)}.

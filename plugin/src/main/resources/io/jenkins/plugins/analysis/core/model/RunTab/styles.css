@@ -564,32 +564,47 @@
     font-size: var(--font-size-sm);
 }
 
-/* Endpoints table: same style as the results table of the overview (see .wng-dashboard__results). The endpoints
-   are shown as short relative paths so that the table fits into the card; the descriptions wrap. */
-.wng-remote-api__table {
+/* Tables with names and descriptions (help and remote API pages): same style as the results table of the overview
+   (see .wng-dashboard__results). The first column is as narrow as possible, the descriptions wrap. */
+.wng-table {
     width: 100%;
+    margin: 12px 0;
     border-collapse: collapse;
     font-size: var(--font-size-sm);
 }
 
-.wng-remote-api__table th {
+.wng-table th {
     color: var(--text-color-secondary);
     font-weight: 600;
     text-align: left;
+    white-space: nowrap;
     padding: 0 24px 6px 0;
     border-bottom: 1px solid var(--jenkins-border-color, #e5e7eb);
 }
 
-.wng-remote-api__table td {
+.wng-table td {
     padding: 5px 24px 5px 0;
     overflow-wrap: anywhere;
     vertical-align: top;
 }
 
-.wng-remote-api__table tbody tr:first-child td {
+.wng-table tbody tr:first-child td {
     padding-top: 10px;
 }
 
+.wng-table__name {
+    width: 1%;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.wng-table__icon-name {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* The endpoints of the remote API are shown as short relative paths so that the table fits into the card. */
 .wng-remote-api__endpoint {
     width: 1%;
     font-family: var(--font-family-mono);
