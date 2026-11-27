@@ -11,6 +11,7 @@
     <j:set var="hasIssues" value="${it.hasIssues()}"/>
     <j:set var="blameVisible" value="${it.blameVisible}"/>
     <j:set var="forensicsVisible" value="${it.forensicsVisible}"/>
+    <j:set var="fixedVisible" value="${it.hasFixedIssues()}"/>
 
     <l:app-bar title="${it.displayName}">
       <j:if test="${hasIssues}">
@@ -60,6 +61,9 @@
                 <option value="all">${%baseline-all}</option>
                 <option value="new">${%baseline-new}</option>
                 <option value="outstanding">${%baseline-outstanding}</option>
+                <j:if test="${fixedVisible}">
+                  <option value="fixed">${%baseline-fixed}</option>
+                </j:if>
               </select>
             </div>
           </div>
@@ -99,6 +103,14 @@
               <div id="wng-issues-panel-forensics" class="wng-issues__panel jenkins-hidden">
                 <l:card title="${%table-forensics}">
                   <dt:table model="${it.getTableModel('forensics')}"/>
+                </l:card>
+              </div>
+            </j:if>
+            <!-- The fixed issues replace all other tables if the fixed issues are selected -->
+            <j:if test="${fixedVisible}">
+              <div id="wng-issues-panel-fixed" class="wng-issues__panel jenkins-hidden">
+                <l:card title="${%table-fixed}">
+                  <dt:table model="${it.getTableModel('fixed')}"/>
                 </l:card>
               </div>
             </j:if>

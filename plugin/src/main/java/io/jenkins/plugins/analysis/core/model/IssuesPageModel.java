@@ -19,7 +19,9 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * Server side model that provides the data for the "Issues" page of the Warnings tab of a run. The page answers the
  * question: "Which warnings have been reported in this build?". It shows the issues of all
- * {@link ResultAction results} of the run in a single table. Tools without issues are not shown.
+ * {@link ResultAction results} of the run in a single table. Additionally, it answers the question "Which warnings
+ * have been fixed in this build?" with a separate table of the fixed issues. Tools without issues and without fixed
+ * issues are not shown.
  *
  * <p>
  * The following settings can be changed on the client side in the app bar, see {@code issues-page-model.js}. They
@@ -28,12 +30,15 @@ import org.apache.commons.lang3.StringUtils;
  * <ul>
  *     <li>the tool: all tools (only if the run has more than one result) or a single tool</li>
  *     <li>the type of the table: issues, SCM blames, or SCM forensics (the latter two only if available)</li>
- *     <li>the baseline: all, new, or outstanding issues</li>
+ *     <li>the baseline: all, new, or outstanding issues, or the fixed issues (only if there are fixed issues)</li>
  * </ul>
  *
  * <p>
  * The table of each type contains the issues of all tools, see {@link ToolsTableModel}. Tool and baseline are
- * filtered on the client side using hidden columns. The rows are rendered by the table models of the individual
+ * filtered on the client side using hidden columns. The fixed issues are not part of these tables: they are shown in
+ * a table of their own (see {@link FixedIssuesModel}) that replaces all other tables if the fixed issues are selected.
+ * The links to the affected files of fixed issues open the source code of the reference build, see
+ * {@link RunTab#getDynamic(String)}. The rows are rendered by the table models of the individual
  * tools, see {@link StaticAnalysisLabelProvider#getIssuesModel(Run, String, Report)}, {@link BlamesModel}, and
  * {@link ForensicsModel}. The links to the affected files are resolved by {@link RunTab#getDynamic(String)}.
  * </p>
@@ -54,10 +59,14 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
     static final String ISSUES_TABLE_ID = "issues";
     static final String BLAMES_TABLE_ID = "blames";
     static final String FORENSICS_TABLE_ID = "forensics";
+    static final String FIXED_TABLE_ID = "fixed";
     /** Prefix of the IDs of the custom issues tables. The suffix is the index of the tool, see {@link #getTools()}. */
     static final String CUSTOM_TABLE_ID_PREFIX = "issues-tool-";
 
     private static final String TOOL_PARAMETER = "tool";
+    private static final String BASELINE_PARAMETER = "show";
+    /** Value of the baseline that shows all issues, see {@code issues-page-model.js}. */
+    private static final String ALL_BASELINE = "all";
 
     private final Actionable owner;
     private final List<ResultAction> actions;
@@ -92,7 +101,8 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
         this.owner = owner;
         this.factory = factory;
         this.actions = actions.stream()
-                .filter(action -> action.getResult().getTotalSize() > 0)
+                .filter(action -> action.getResult().getTotalSize() > 0
+                        || action.getResult().getFixedSize() > 0)
                 .toList();
     }
 
@@ -129,7 +139,7 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
     }
 
     /**
-     * Returns the tools that are shown on this page, i.e., all tools with issues.
+     * Returns the tools that are shown on this page, i.e., all tools with issues or fixed issues.
      *
      * @return the tools
      */
@@ -157,17 +167,28 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
     }
 
     /**
-     * Returns whether one of the tools reported at least one issue.
+     * Returns whether one of the tools reported at least one issue or fixed at least one issue.
      *
-     * @return {@code true} if there are issues, {@code false} otherwise
+     * @return {@code true} if there are issues or fixed issues, {@code false} otherwise
      */
     public boolean hasIssues() {
         return !actions.isEmpty();
     }
 
     /**
+     * Returns whether one of the tools fixed at least one issue, i.e., whether the table of fixed issues should be
+     * offered.
+     *
+     * @return {@code true} if there are fixed issues, {@code false} otherwise
+     */
+    public boolean hasFixedIssues() {
+        return actions.stream().anyMatch(action -> action.getResult().getFixedSize() > 0);
+    }
+
+    /**
      * Returns the URL that shows the details of the specified tool, relative to the Warnings tab. If the tool is
-     * part of this page, then the URL opens this page and selects the tool, see {@code issues-page-model.js}.
+     * part of this page, then the URL opens this page and selects the tool and all issues of the tool, see
+     * {@code issues-page-model.js}.
      * Otherwise, the tool has no issues, so the URL opens the log messages of the tool, see {@code log-model.js}.
      *
      * @param action
@@ -177,9 +198,57 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
      */
     public String getUrlOf(final ResultAction action) {
         if (actions.contains(action)) {
-            return URL + "#" + TOOL_PARAMETER + "=" + Util.rawEncode(action.getId());
+            return getUrlOf(action.getId(), ALL_BASELINE);
         }
         return LogModel.URL + "#" + TOOL_PARAMETER + "=" + Util.rawEncode(action.getId());
+    }
+
+    /**
+     * Returns the URL that shows all issues of all tools, relative to the Warnings tab. Used by the overview and the
+     * widget to link the total number of issues.
+     *
+     * @return the relative URL
+     */
+    public String getAllIssuesUrl() {
+        return getUrlOfBaseline(ALL_BASELINE);
+    }
+
+    /**
+     * Returns the URL that shows the new issues of all tools, relative to the Warnings tab. Used by the overview and
+     * the widget to link the number of new issues.
+     *
+     * @return the relative URL
+     */
+    public String getNewIssuesUrl() {
+        return getUrlOfBaseline(ToolsTableModel.NEW);
+    }
+
+    /**
+     * Returns the URL that shows the fixed issues of all tools, relative to the Warnings tab. Used by the overview
+     * and the widget to link the number of fixed issues.
+     *
+     * @return the relative URL
+     */
+    public String getFixedIssuesUrl() {
+        return getUrlOfBaseline(ToolsTableModel.FIXED);
+    }
+
+    /**
+     * Returns the URL of this page with the specified baseline and all tools preselected, see
+     * {@code issues-page-model.js}. If the page shows a single tool only, there is no option for all tools, so the
+     * client side keeps the selection of this tool.
+     *
+     * @param baseline
+     *         the baseline to select
+     *
+     * @return the relative URL
+     */
+    private String getUrlOfBaseline(final String baseline) {
+        return getUrlOf(getAllToolsId(), baseline);
+    }
+
+    private String getUrlOf(final String toolId, final String baseline) {
+        return URL + "#" + TOOL_PARAMETER + "=" + Util.rawEncode(toolId) + "&" + BASELINE_PARAMETER + "=" + baseline;
     }
 
     /**
@@ -233,11 +302,13 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
 
     /**
      * Returns the table model that matches the given table ID. The issues table, the SCM blames table, and the SCM
-     * forensics table contain the issues of all tools. A custom table contains the issues of a single tool.
+     * forensics table contain the issues of all tools. The fixed issues table contains the fixed issues of all tools.
+     * A custom table contains the issues of a single tool.
      *
      * @param tableId
      *         ID of the table model, one of {@link #ISSUES_TABLE_ID}, {@link #BLAMES_TABLE_ID},
-     *         {@link #FORENSICS_TABLE_ID}, or one of the {@link #getCustomTableIds() IDs of the custom tables}
+     *         {@link #FORENSICS_TABLE_ID}, {@link #FIXED_TABLE_ID}, or one of the
+     *         {@link #getCustomTableIds() IDs of the custom tables}
      *
      * @return the table model
      * @throws NoSuchElementException
@@ -254,11 +325,24 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
         if (FORENSICS_TABLE_ID.equals(tableId)) {
             return createTable(tableId, factory::createForensicsModel);
         }
+        if (FIXED_TABLE_ID.equals(tableId)) {
+            return createFixedTable(tableId);
+        }
         return actions.stream()
                 .filter(action -> getIssuesTableId(action).equals(tableId))
                 .findFirst()
                 .map(action -> createCustomTable(tableId, action))
                 .orElseThrow(() -> new NoSuchElementException("No such table model: " + tableId));
+    }
+
+    private TableModel createFixedTable(final String tableId) {
+        var tools = actions.stream()
+                .map(action -> ToolIssues.fixed(
+                        action.getId(),
+                        factory.createFixedModel(action),
+                        action.getResult().getFixedIssues()))
+                .toList();
+        return new ToolsTableModel(tableId, factory.createFixedColumns(actions), tools);
     }
 
     private TableModel createCustomTable(final String tableId, final ResultAction action) {
@@ -386,6 +470,56 @@ public class IssuesPageModel extends DefaultAsyncTableContentProvider implements
                     labelProvider.getFileNameRenderer(run),
                     labelProvider.getAgeBuilder(run, getAgeUrl(action)),
                     labelProvider);
+        }
+
+        /**
+         * Creates the fixed issues table model of the specified tool. The affected files of the fixed issues are
+         * part of the reference build, so the links to these files are only rendered if the reference build is
+         * still available.
+         *
+         * @param action
+         *         the results of the tool
+         *
+         * @return the table model
+         */
+        DetailsTableModel createFixedModel(final ResultAction action) {
+            var labelProvider = action.getLabelProvider();
+            var run = action.getOwner();
+            var fileNameRenderer = action.getResult()
+                    .getReferenceBuild()
+                    .map(labelProvider::getFileNameRenderer)
+                    .orElseGet(() -> FileNameRenderer.withoutLinks(run));
+            return new FixedIssuesModel(
+                    action.getResult().getFixedIssues(),
+                    fileNameRenderer,
+                    labelProvider.getAgeBuilder(run, getAgeUrl(action)),
+                    labelProvider);
+        }
+
+        /**
+         * Creates the columns of the fixed issues table for the specified tools. The optional columns (package,
+         * category, and type) are shown if at least one of the fixed issues provides a value for the corresponding
+         * property.
+         *
+         * @param actions
+         *         the results of the tools
+         *
+         * @return the columns
+         */
+        List<TableColumn> createFixedColumns(final List<ResultAction> actions) {
+            var allIssues = new Report();
+            for (ResultAction action : actions) {
+                allIssues.addAll(action.getResult().getFixedIssues());
+            }
+            return actions.stream()
+                    .findFirst()
+                    .map(action -> new FixedIssuesModel(
+                                    allIssues,
+                                    new FileNameRenderer(action.getOwner()),
+                                    referenceBuild -> StringUtils.EMPTY,
+                                    issue -> StringUtils.EMPTY)
+                            .getColumns())
+                    .orElse(List.of());
         }
 
         /**

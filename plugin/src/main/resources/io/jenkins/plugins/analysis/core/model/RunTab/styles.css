@@ -43,8 +43,33 @@
         margin-bottom: 0;
     }
 
-    span {
-        margin-right: -0.5rem;
+}
+
+.wng-widget__item-count {
+    font-variant-numeric: tabular-nums;
+    color: var(--text-color-secondary);
+}
+
+.wng-widget__item-new {
+    margin-left: -0.25rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--red);
+}
+
+/* The pills of results with missed quality gates use the color of the criticality */
+.wng-widget__item[data-status="warning"] {
+    border-color: var(--warning-color);
+
+    svg {
+        color: var(--warning-color);
+    }
+}
+
+.wng-widget__item[data-status="error"] {
+    border-color: var(--error-color);
+
+    svg {
+        color: var(--error-color);
     }
 }
 
@@ -55,8 +80,101 @@
     z-index: 1;
 }
 
+/* Content of the widget: status line, metrics, severity bar and pills (see RunTab/widget.jelly) */
+.wng-widget__content {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+.wng-widget__status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    text-align: left;
+
+    /* The size of the symbol is defined by the card teaser (as in the Tests widget), only the margin is reset */
+    > svg {
+        flex-shrink: 0;
+        margin-bottom: 0;
+    }
+}
+
+.wng-widget__status-title {
+    font-weight: 600;
+}
+
+.wng-widget__status-caption {
+    font-size: var(--font-size-xs);
+    color: var(--text-color-secondary);
+}
+
+.wng-widget__metrics {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    text-align: center;
+}
+
+.wng-widget__metric-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Numbers greater than zero link to the issues page. The double class beats the link color of Jenkins (a:link),
+   the trend colors below are defined later with the same specificity, so they win. */
+.wng-widget__metric-value.wng-widget__metric-link {
+    display: block;
+    position: relative;
+    z-index: 2; /* above the link of the whole card */
+    color: var(--text-color);
+    text-decoration: none;
+
+    &:hover, &:focus-visible {
+        text-decoration: underline;
+    }
+}
+
+.wng-widget__metric-value[data-trend="worse"] {
+    color: var(--red);
+}
+
+.wng-widget__metric-value[data-trend="better"] {
+    color: var(--green);
+}
+
+.wng-widget__metric-label {
+    font-size: var(--font-size-xs);
+    color: var(--text-color-secondary);
+}
+
+.wng-widget__reference {
+    margin-top: -0.5rem;
+    font-size: var(--font-size-xs);
+    font-weight: normal;
+    text-align: center;
+
+    a {
+        position: relative;
+        z-index: 2;
+        color: var(--text-color-secondary);
+    }
+}
+
+.wng-widget__severities {
+    display: flex;
+    flex-direction: column;
+
+    .wng-severity-legend {
+        justify-content: center;
+    }
+}
+
 .wng-widget__item--more {
-    pointer-events: none;
 
     svg {
         margin-inline: -0.25rem;
@@ -97,6 +215,17 @@
     font-weight: 700;
     line-height: 1.2;
     font-variant-numeric: tabular-nums;
+}
+
+/* Numbers greater than zero link to the issues page, see the widget for the specificity of the selectors */
+.wng-dashboard__metric-value.wng-dashboard__metric-link {
+    display: block;
+    color: var(--text-color);
+    text-decoration: none;
+
+    &:hover, &:focus-visible {
+        text-decoration: underline;
+    }
 }
 
 .wng-dashboard__metric-value[data-trend="worse"] {

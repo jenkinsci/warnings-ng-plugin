@@ -3,14 +3,22 @@ package io.jenkins.plugins.analysis.core.model;
 import edu.hm.hafner.analysis.Severity;
 import hudson.model.Actionable;
 import hudson.model.ModelObject;
+import hudson.model.Run;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 import io.jenkins.plugins.util.QualityGate;
 import io.jenkins.plugins.util.QualityGate.QualityGateCriticality;
+import io.jenkins.plugins.util.QualityGateResult.QualityGateResultItem;
 import io.jenkins.plugins.util.QualityGateStatus;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
+import java.util.stream.Collectors;
 
 /**
  * Server side model that provides the data for the "Overview" page of the Warnings tab of a run. The page answers the
@@ -29,6 +37,7 @@ import java.util.function.ToIntFunction;
  *
  * @author Ullrich Hafner
  */
+@SuppressWarnings("PMD.GodClass")
 public class OverviewModel implements ModelObject {
     static final String URL = "overview";
 
@@ -42,6 +51,8 @@ public class OverviewModel implements ModelObject {
 
     private final Actionable owner;
     private final List<ResultAction> actions;
+    private Map<ResultAction, Optional<Run<?, ?>>> referenceBuilds = Map.of();
+    private boolean isReferenceBuildResolved;
 
     /**
      * Creates a new instance of {@link OverviewModel}.
@@ -278,6 +289,196 @@ public class OverviewModel implements ModelObject {
                 .map(action -> action.getQualityGateResult().getOverallStatus())
                 .max(Comparator.naturalOrder())
                 .orElse(QualityGateStatus.INACTIVE);
+    }
+
+    /**
+     * Returns the distinct reference builds of all results. Usually, all results use the same reference build, so
+     * the list contains at most one element. Results without a reference build are skipped.
+     *
+     * @return the distinct reference builds
+     */
+    public List<Run<?, ?>> getReferenceBuilds() {
+        return getReferenceBuildsPerAction().values().stream()
+                .flatMap(Optional::stream)
+                .distinct()
+                .toList();
+    }
+
+    /**
+     * Returns the reference build of each result. The builds are resolved only once, since each lookup requires a
+     * search in Jenkins.
+     *
+     * @return the reference build of each result, in the order of the results
+     */
+    private Map<ResultAction, Optional<Run<?, ?>>> getReferenceBuildsPerAction() {
+        if (!isReferenceBuildResolved) {
+            var builds = new LinkedHashMap<ResultAction, Optional<Run<?, ?>>>();
+            actions.forEach(action -> builds.put(action, action.getResult().getReferenceBuild()));
+            referenceBuilds = builds;
+            isReferenceBuildResolved = true;
+        }
+        return referenceBuilds;
+    }
+
+    /**
+     * Returns whether at least one of the results has a reference build. Without a reference build, the new and fixed
+     * warnings are not meaningful.
+     *
+     * @return {@code true} if there is a reference build, {@code false} otherwise
+     */
+    public boolean hasReferenceBuild() {
+        return !getReferenceBuilds().isEmpty();
+    }
+
+    /**
+     * Returns the reference build that is used by most of the results. If several builds are used equally often,
+     * the build of the first result wins.
+     *
+     * @return the reference build of most results, or an empty optional if there is no reference build
+     */
+    private Optional<Run<?, ?>> getMainReferenceBuild() {
+        var counts = getReferenceBuildsPerAction().values().stream()
+                .flatMap(Optional::stream)
+                .collect(Collectors.groupingBy(Function.identity(), LinkedHashMap::new, Collectors.counting()));
+        return counts.entrySet().stream().max(Map.Entry.comparingByValue()).map(Map.Entry::getKey);
+    }
+
+    /**
+     * Returns the name of the reference build that is used by most of the results, e.g. {@code #48}. If the
+     * reference build belongs to another job (e.g., the target branch of a pull request), the full name of the build
+     * is returned, e.g. {@code main #48}.
+     *
+     * @return the name of the reference build, or an empty string if there is no reference build
+     */
+    public String getReferenceBuildName() {
+        return getMainReferenceBuild().map(this::getNameOf).orElse("");
+    }
+
+    private String getNameOf(final Run<?, ?> build) {
+        if (owner instanceof Run<?, ?> run && run.getParent().equals(build.getParent())) {
+            return build.getDisplayName();
+        }
+        return build.getFullDisplayName();
+    }
+
+    /**
+     * Returns the results that use a different reference build than most of the results (or no reference build at
+     * all), together with their reference build, e.g. "CPD: #2". These exceptions are shown next to the reference
+     * build, so that a deviating reference build (e.g., a build that is skipped because of a missed quality gate) is
+     * visible at first glance.
+     *
+     * @return the exceptions, or an empty string if all results use the same reference build
+     */
+    public String getReferenceBuildExceptions() {
+        var main = getMainReferenceBuild();
+        if (main.isEmpty()) {
+            return "";
+        }
+        return getReferenceBuildsPerAction().entrySet().stream()
+                .filter(entry -> !entry.getValue().equals(main))
+                .map(entry -> entry.getKey().getDisplayName() + ": "
+                        + entry.getValue().map(this::getNameOf).orElse(Messages.OverviewModel_NoReferenceBuild()))
+                .collect(Collectors.joining(", "));
+    }
+
+    private String withExceptions(final String text) {
+        var exceptions = getReferenceBuildExceptions();
+        if (exceptions.isEmpty()) {
+            return text;
+        }
+        return Messages.OverviewModel_ReferenceBuildExceptions(text, exceptions);
+    }
+
+    /**
+     * Returns the text of the reference build entry in the app bar, e.g. "Reference build #48" or "Reference build
+     * #36 (CPD: #2)".
+     *
+     * @return the text of the reference build entry
+     */
+    public String getReferenceBuildText() {
+        if (hasReferenceBuild()) {
+            return withExceptions(Messages.OverviewModel_ReferenceBuild(getReferenceBuildName()));
+        }
+        return Messages.OverviewModel_NoReferenceBuild();
+    }
+
+    /**
+     * Returns the URL of the reference build that is used by most of the results (relative to the Jenkins root).
+     *
+     * @return the URL of the reference build, or an empty string if there is no reference build
+     */
+    public String getReferenceBuildUrl() {
+        return getMainReferenceBuild().map(Run::getUrl).orElse("");
+    }
+
+    /**
+     * Returns a tooltip that lists the reference build of each result, e.g. "CheckStyle: #48, PMD: #47".
+     *
+     * @return the tooltip
+     */
+    public String getReferenceBuildTooltip() {
+        return getReferenceBuildsPerAction().entrySet().stream()
+                .map(entry -> entry.getKey().getDisplayName() + ": "
+                        + entry.getValue().map(this::getNameOf).orElse(Messages.OverviewModel_NoReferenceBuild()))
+                .collect(Collectors.joining(", "));
+    }
+
+    /**
+     * Returns the caption of the new and fixed warnings that names the reference build, e.g. "compared to #48" or
+     * "compared to #36 (CPD: #2)".
+     *
+     * @return the caption
+     */
+    public String getComparisonCaption() {
+        if (hasReferenceBuild()) {
+            return withExceptions(Messages.OverviewModel_ComparedTo(getReferenceBuildName()));
+        }
+        return Messages.OverviewModel_NoReferenceBuild();
+    }
+
+    /**
+     * Returns the number of quality gates of all results.
+     *
+     * @return the number of quality gates
+     */
+    public int getQualityGatesSize() {
+        return countQualityGates(item -> true);
+    }
+
+    /**
+     * Returns the number of quality gates of all results that have been missed, i.e., whose status is not
+     * successful.
+     *
+     * @return the number of missed quality gates
+     */
+    public int getMissedQualityGatesSize() {
+        return countQualityGates(item -> !item.getStatus().isSuccessful());
+    }
+
+    private int countQualityGates(final Predicate<QualityGateResultItem> filter) {
+        return (int) actions.stream()
+                .flatMap(action -> action.getQualityGateResult().getResultItems().stream())
+                .filter(filter)
+                .count();
+    }
+
+    /**
+     * Returns the symbol that visualizes the specified quality gate status. The symbols are the build status symbols
+     * of Jenkins (see the icon legend), so that a quality gate status looks like the build result it causes: passed
+     * like a successful build, note and warning like an unstable build, and error and failed like a failed build.
+     *
+     * @param status
+     *         the quality gate status
+     *
+     * @return the symbol
+     */
+    public String getStatusIcon(final QualityGateStatus status) {
+        return switch (status) {
+            case PASSED -> "symbol-status-blue";
+            case NOTE, WARNING -> "symbol-status-yellow";
+            case ERROR, FAILED -> "symbol-status-red";
+            default -> "symbol-status-nobuilt";
+        };
     }
 
     /**

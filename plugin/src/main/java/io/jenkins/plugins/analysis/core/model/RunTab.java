@@ -1,12 +1,16 @@
 package io.jenkins.plugins.analysis.core.model;
 
+import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.VisibleForTesting;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import hudson.model.Actionable;
 import hudson.model.Run;
+import io.jenkins.plugins.util.QualityGateStatus;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import jenkins.management.Badge;
 import jenkins.model.Tab;
 import org.kohsuke.accmod.Restricted;
@@ -67,28 +71,47 @@ public class RunTab extends Tab {
         return URL;
     }
 
+    /**
+     * Returns the badge of the Warnings tab. If at least one quality gate has been missed, the badge shows the number
+     * of missed quality gates (as danger if a quality gate failed the step or the build, otherwise as warning).
+     * Otherwise, the badge shows the number of new warnings. If there are no new warnings, no badge is shown.
+     *
+     * @return the badge, or {@code null} if no badge should be shown (as required by the Jenkins API)
+     */
     @Override
+    @CheckForNull
     public Badge getBadge() {
-        var warningActionsCount = getWarningActions().stream()
-                .map(e -> e.getResult().getTotalSize())
-                .reduce(0, Integer::sum);
+        var overview = getOverview();
 
-        if (warningActionsCount == 0) {
-            return null;
+        int missedQualityGates = overview.getMissedQualityGatesSize();
+        if (missedQualityGates > 0) {
+            var status = overview.getQualityGateStatus();
+            return new Badge(
+                    String.valueOf(missedQualityGates),
+                    Messages.RunTab_Badge_QualityGates(missedQualityGates),
+                    status == QualityGateStatus.ERROR || status == QualityGateStatus.FAILED
+                            ? Badge.Severity.DANGER
+                            : Badge.Severity.WARNING);
         }
 
-        return new Badge(
-                String.valueOf(warningActionsCount),
-                Messages.ResultAction_Badge(warningActionsCount),
-                Badge.Severity.WARNING);
+        int newWarnings = overview.getNewSize();
+        if (newWarnings > 0) {
+            return new Badge(
+                    String.valueOf(newWarnings),
+                    Messages.RunTab_Badge_NewWarnings(newWarnings),
+                    Badge.Severity.WARNING);
+        }
+
+        return null;
     }
 
     /**
-     * Generates the widget for the Overview tab.
-     * @return the widget.
+     * Generates the widget for the build page.
+     *
+     * @return the widget
      */
     public Widget getWidget() {
-        return new Widget(getWarningActions());
+        return new Widget(getOverview());
     }
 
     /**
@@ -199,6 +222,11 @@ public class RunTab extends Tab {
      * reported the issue. The results of the individual tools are not part of the Warnings tab anymore: they are
      * shown on the pages of the tab, where the tool can be selected.
      *
+     * <p>
+     * The links to the affected files of fixed issues are resolved as well: these files are part of the reference
+     * build, so the source code is rendered by the results of the same tool in the reference build.
+     * </p>
+     *
      * @param name
      *         the link to the affected file of an issue
      *
@@ -206,11 +234,20 @@ public class RunTab extends Tab {
      * @throws NoSuchElementException
      *         if there is no such issue
      */
+    @SuppressWarnings({"PMD.CognitiveComplexity", "PMD.AvoidDeeplyNestedIfStmts"})
     public Object getDynamic(final String name) {
         if (name.startsWith(SOURCE_LINK_PREFIX)) {
             for (ResultAction action : getWarningActions()) {
-                if (hasIssue(action, name)) {
+                if (hasIssue(action.getResult().getIssues(), name)) {
                     return action.getTarget().createDetails(name);
+                }
+            }
+            for (ResultAction action : getWarningActions()) {
+                if (hasIssue(action.getResult().getFixedIssues(), name)) {
+                    var reference = findReferenceAction(action);
+                    if (reference.isPresent()) {
+                        return reference.get().getTarget().createDetails(name);
+                    }
                 }
             }
         }
@@ -218,8 +255,15 @@ public class RunTab extends Tab {
         throw new NoSuchElementException("No warnings found for " + getObject());
     }
 
-    private boolean hasIssue(final ResultAction action, final String sourceLink) {
-        return action.getResult().getIssues().stream()
-                .anyMatch(issue -> (SOURCE_LINK_PREFIX + issue.getId()).equals(sourceLink));
+    private boolean hasIssue(final Report issues, final String sourceLink) {
+        return issues.stream().anyMatch(issue -> (SOURCE_LINK_PREFIX + issue.getId()).equals(sourceLink));
+    }
+
+    private Optional<ResultAction> findReferenceAction(final ResultAction action) {
+        return action.getResult()
+                .getReferenceBuild()
+                .flatMap(reference -> reference.getActions(ResultAction.class).stream()
+                        .filter(referenceAction -> referenceAction.getId().equals(action.getId()))
+                        .findFirst());
     }
 }

@@ -4,6 +4,7 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import edu.hm.hafner.analysis.Severity;
+import hudson.model.Job;
 import hudson.model.Run;
 import io.jenkins.plugins.analysis.core.util.WarningsQualityGate;
 import io.jenkins.plugins.analysis.core.util.WarningsQualityGate.QualityGateType;
@@ -11,6 +12,7 @@ import io.jenkins.plugins.util.QualityGate.QualityGateCriticality;
 import io.jenkins.plugins.util.QualityGateResult;
 import io.jenkins.plugins.util.QualityGateStatus;
 import java.util.List;
+import java.util.Optional;
 import org.eclipse.collections.impl.factory.Lists;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -22,6 +24,8 @@ import org.junit.jupiter.params.provider.CsvSource;
  * @author Ullrich Hafner
  */
 class OverviewModelTest {
+    private final Job<?, ?> job = mock(Job.class);
+
     /**
      * Verifies that the sizes of all results are summed up and that only severities with warnings are shown.
      */
@@ -117,6 +121,199 @@ class OverviewModelTest {
     }
 
     /**
+     * Verifies that the quality gates of all results are counted, and that only the quality gates that are not
+     * successful are counted as missed.
+     */
+    @Test
+    void shouldCountMissedQualityGates() {
+        var checkstyle = createAction("checkstyle", 1, 0, 0, QualityGateStatus.INACTIVE);
+        var pmd = createAction("pmd", 1, 0, 0, QualityGateStatus.INACTIVE);
+        when(checkstyle.getQualityGateResult())
+                .thenReturn(createQualityGateResult(QualityGateStatus.PASSED, QualityGateStatus.WARNING));
+        when(pmd.getQualityGateResult())
+                .thenReturn(createQualityGateResult(QualityGateStatus.FAILED, QualityGateStatus.PASSED));
+
+        assertThat(createModel(checkstyle, pmd))
+                .hasQualityGatesSize(4)
+                .hasMissedQualityGatesSize(2)
+                .hasQualityGateStatus(QualityGateStatus.FAILED);
+        assertThat(createModel()).hasQualityGatesSize(0).hasMissedQualityGatesSize(0);
+    }
+
+    /**
+     * Verifies that the quality gate status is visualized with the build status symbols of Jenkins.
+     *
+     * @param status
+     *         the quality gate status
+     * @param icon
+     *         the expected symbol
+     */
+    @ParameterizedTest(name = "{0} -> {1}")
+    @CsvSource({
+        "INACTIVE, symbol-status-nobuilt",
+        "PASSED, symbol-status-blue",
+        "NOTE, symbol-status-yellow",
+        "WARNING, symbol-status-yellow",
+        "ERROR, symbol-status-red",
+        "FAILED, symbol-status-red"
+    })
+    void shouldUseBuildStatusSymbolsForQualityGates(final QualityGateStatus status, final String icon) {
+        assertThat(createModel().getStatusIcon(status)).isEqualTo(icon);
+    }
+
+    /**
+     * Verifies that the reference build is shown if all results use the same reference build.
+     */
+    @Test
+    void shouldShowSingleReferenceBuild() {
+        var reference = createBuild("#48", "main #48", "job/main/48/");
+        var checkstyle = createAction("checkstyle", 1, 1, 0, QualityGateStatus.INACTIVE);
+        var pmd = createAction("pmd", 1, 0, 1, QualityGateStatus.INACTIVE);
+        setReferenceBuild(checkstyle, reference);
+        setReferenceBuild(pmd, reference);
+
+        assertThat(createModel(checkstyle, pmd))
+                .hasReferenceBuild()
+                .hasReferenceBuilds(reference)
+                .hasReferenceBuildName("#48")
+                .hasReferenceBuildText(Messages.OverviewModel_ReferenceBuild("#48"))
+                .hasReferenceBuildUrl("job/main/48/")
+                .hasReferenceBuildExceptions("")
+                .hasReferenceBuildTooltip("checkstyle: #48, pmd: #48")
+                .hasComparisonCaption(Messages.OverviewModel_ComparedTo("#48"));
+    }
+
+    /**
+     * Verifies that the full name of the reference build is shown if it belongs to another job (e.g., the target
+     * branch of a pull request).
+     */
+    @Test
+    void shouldShowFullNameOfReferenceBuildOfOtherJob() {
+        Run<?, ?> owner = mock(Run.class);
+        doReturn(mock(Job.class)).when(owner).getParent();
+        var reference = createBuild("#48", "main #48", "job/main/48/");
+        doReturn(mock(Job.class)).when(reference).getParent();
+        var checkstyle = createAction("checkstyle", 1, 1, 0, QualityGateStatus.INACTIVE);
+        setReferenceBuild(checkstyle, reference);
+
+        assertThat(new OverviewModel(owner, List.of(checkstyle)))
+                .hasReferenceBuildName("main #48")
+                .hasComparisonCaption(Messages.OverviewModel_ComparedTo("main #48"));
+    }
+
+    /**
+     * Verifies that the reference build of most results is shown, and that the results with a different reference
+     * build (or without a reference build) are named as exceptions.
+     */
+    @Test
+    void shouldShowMainReferenceBuildWithExceptions() {
+        var main = createBuild("#36", "main #36", "job/main/36/");
+        var checkstyle = createAction("checkstyle", 1, 1, 0, QualityGateStatus.INACTIVE);
+        var cpd = createAction("cpd", 66, 66, 0, QualityGateStatus.INACTIVE);
+        var pmd = createAction("pmd", 1, 0, 1, QualityGateStatus.INACTIVE);
+        var spotbugs = createAction("spotbugs", 1, 0, 0, QualityGateStatus.INACTIVE);
+        setReferenceBuild(checkstyle, main);
+        setReferenceBuild(cpd, createBuild("#2", "main #2", "job/main/2/"));
+        setReferenceBuild(pmd, main);
+
+        assertThat(createModel(checkstyle, cpd, pmd, spotbugs))
+                .hasReferenceBuild()
+                .hasReferenceBuildName("#36")
+                .hasReferenceBuildUrl("job/main/36/")
+                .hasReferenceBuildExceptions("cpd: #2, spotbugs: " + Messages.OverviewModel_NoReferenceBuild())
+                .hasReferenceBuildText(Messages.OverviewModel_ReferenceBuildExceptions(
+                        Messages.OverviewModel_ReferenceBuild("#36"),
+                        "cpd: #2, spotbugs: " + Messages.OverviewModel_NoReferenceBuild()))
+                .hasComparisonCaption(Messages.OverviewModel_ReferenceBuildExceptions(
+                        Messages.OverviewModel_ComparedTo("#36"),
+                        "cpd: #2, spotbugs: " + Messages.OverviewModel_NoReferenceBuild()));
+    }
+
+    /**
+     * Verifies that the reference build of the first result is used if several reference builds are used equally
+     * often.
+     */
+    @Test
+    void shouldUseReferenceBuildOfFirstResultOnTie() {
+        var checkstyle = createAction("checkstyle", 1, 1, 0, QualityGateStatus.INACTIVE);
+        var pmd = createAction("pmd", 1, 0, 1, QualityGateStatus.INACTIVE);
+        setReferenceBuild(checkstyle, createBuild("#48", "main #48", "job/main/48/"));
+        setReferenceBuild(pmd, createBuild("#47", "main #47", "job/main/47/"));
+
+        assertThat(createModel(checkstyle, pmd))
+                .hasReferenceBuildName("#48")
+                .hasReferenceBuildExceptions("pmd: #47")
+                .hasReferenceBuildTooltip("checkstyle: #48, pmd: #47");
+    }
+
+    /**
+     * Verifies that a hint is shown if there is no reference build.
+     */
+    @Test
+    void shouldShowHintWithoutReferenceBuild() {
+        var checkstyle = createAction("checkstyle", 1, 1, 0, QualityGateStatus.INACTIVE);
+
+        assertThat(createModel(checkstyle))
+                .doesNotHaveReferenceBuild()
+                .hasNoReferenceBuilds()
+                .hasReferenceBuildName("")
+                .hasReferenceBuildText(Messages.OverviewModel_NoReferenceBuild())
+                .hasReferenceBuildUrl("")
+                .hasReferenceBuildExceptions("")
+                .hasComparisonCaption(Messages.OverviewModel_NoReferenceBuild());
+    }
+
+    /**
+     * Creates a build stub.
+     *
+     * @param displayName
+     *         the display name of the build
+     * @param fullDisplayName
+     *         the full display name of the build (including the job name)
+     * @param url
+     *         the URL of the build, relative to the Jenkins root
+     *
+     * @return the build
+     */
+    private Run<?, ?> createBuild(final String displayName, final String fullDisplayName, final String url) {
+        Run<?, ?> build = mock(Run.class);
+        when(build.getDisplayName()).thenReturn(displayName);
+        when(build.getFullDisplayName()).thenReturn(fullDisplayName);
+        when(build.getUrl()).thenReturn(url);
+        doReturn(job).when(build).getParent();
+        return build;
+    }
+
+    /**
+     * Sets the reference build of the specified result action stub.
+     *
+     * @param action
+     *         the action
+     * @param reference
+     *         the reference build
+     */
+    private void setReferenceBuild(final ResultAction action, final Run<?, ?> reference) {
+        var result = action.getResult(); // must not be called within a stubbing
+        doReturn(Optional.of(reference)).when(result).getReferenceBuild();
+    }
+
+    /**
+     * Creates a quality gate result with a quality gate for each of the specified statuses.
+     *
+     * @param statuses
+     *         the status of each quality gate
+     *
+     * @return the quality gate result
+     */
+    private QualityGateResult createQualityGateResult(final QualityGateStatus... statuses) {
+        var result = new QualityGateResult();
+        for (QualityGateStatus status : statuses) {
+            result.add(new WarningsQualityGate(0, QualityGateType.TOTAL, QualityGateCriticality.UNSTABLE), status, "1");
+        }
+        return result;
+    }
+
+    /**
      * Verifies that a passed quality gate is reported as passed, even if other results have no quality gates.
      */
     @Test
@@ -188,7 +385,9 @@ class OverviewModelTest {
      * @return the model
      */
     private OverviewModel createModel(final ResultAction... actions) {
-        return new OverviewModel(mock(Run.class), List.of(actions));
+        Run<?, ?> owner = mock(Run.class);
+        doReturn(job).when(owner).getParent();
+        return new OverviewModel(owner, List.of(actions));
     }
 
     /**
@@ -217,6 +416,7 @@ class OverviewModelTest {
         var result = mock(AnalysisResult.class);
 
         when(action.getId()).thenReturn(id);
+        when(action.getDisplayName()).thenReturn(id);
         when(action.getUrlName()).thenReturn(id);
         when(action.getResult()).thenReturn(result);
         when(action.getQualityGateResult()).thenReturn(new QualityGateResult(status));

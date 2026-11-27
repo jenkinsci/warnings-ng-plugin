@@ -23,7 +23,7 @@ THE SOFTWARE.
 -->
 
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout" xmlns:st="jelly:stapler">
+<j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout" xmlns:st="jelly:stapler" xmlns:wng="/warnings">
     <st:adjunct includes="io.jenkins.plugins.analysis.core.model.RunTab.styles"/>
 
     <j:set var="maxItems" value="7" />
@@ -34,30 +34,123 @@ THE SOFTWARE.
 
         <a class="wng-widget__link" href="${it.urlName}" tabindex="-1" aria-hidden="true" />
 
-        <div class="jenkins-card__teaser">
-            <l:icon src="${widget.symbol}" class="jenkins-!-warning-color" />
-            <j:forEach var="line" items="${widget.lines}">
-                <div>${line}</div>
-            </j:forEach>
+        <div class="jenkins-card__teaser wng-widget__content">
+            <j:choose>
+                <j:when test="${widget.hasQualityGates()}">
+                    <j:set var="status" value="${widget.qualityGateStatus}" />
+                    <div class="wng-widget__status">
+                        <l:icon src="${widget.qualityGateIcon}" alt="${status.description}" />
+                        <div>
+                            <div class="wng-widget__status-title">${status.description}</div>
+                            <div class="wng-widget__status-caption">${widget.qualityGateSummary}</div>
+                        </div>
+                    </div>
+                </j:when>
+                <j:otherwise>
+                    <div class="wng-widget__status">
+                        <l:icon src="${widget.symbol}" />
+                        <div>
+                            <j:forEach var="line" items="${widget.lines}">
+                                <div>${line}</div>
+                            </j:forEach>
+                        </div>
+                    </div>
+                </j:otherwise>
+            </j:choose>
 
-            <j:if test="${!empty(widget.failedResults)}">
+            <div class="wng-widget__metrics">
+                <div class="wng-widget__metric" tooltip="${%total.tooltip}">
+                    <j:choose>
+                        <j:when test="${widget.totalSize gt 0}">
+                            <a class="wng-widget__metric-value wng-widget__metric-link"
+                               href="${it.urlName}/${issuesPage.allIssuesUrl}">${widget.totalSize}</a>
+                        </j:when>
+                        <j:otherwise>
+                            <div class="wng-widget__metric-value">${widget.totalSize}</div>
+                        </j:otherwise>
+                    </j:choose>
+                    <div class="wng-widget__metric-label">${%Total}</div>
+                </div>
+                <div class="wng-widget__metric" tooltip="${%new.tooltip}">
+                    <j:choose>
+                        <!-- A number greater than zero opens the issues page with the corresponding baseline -->
+                        <j:when test="${widget.newSize gt 0}">
+                            <a class="wng-widget__metric-value wng-widget__metric-link"
+                               href="${it.urlName}/${issuesPage.newIssuesUrl}"
+                               data-trend="${widget.hasReferenceBuild() ? 'worse' : 'none'}">+${widget.newSize}</a>
+                        </j:when>
+                        <j:otherwise>
+                            <div class="wng-widget__metric-value" data-trend="none">${widget.newSize}</div>
+                        </j:otherwise>
+                    </j:choose>
+                    <div class="wng-widget__metric-label">${%New}</div>
+                </div>
+                <div class="wng-widget__metric" tooltip="${%fixed.tooltip}">
+                    <j:choose>
+                        <j:when test="${widget.fixedSize gt 0}">
+                            <a class="wng-widget__metric-value wng-widget__metric-link"
+                               href="${it.urlName}/${issuesPage.fixedIssuesUrl}"
+                               data-trend="${widget.hasReferenceBuild() ? 'better' : 'none'}">−${widget.fixedSize}</a>
+                        </j:when>
+                        <j:otherwise>
+                            <div class="wng-widget__metric-value" data-trend="none">${widget.fixedSize}</div>
+                        </j:otherwise>
+                    </j:choose>
+                    <div class="wng-widget__metric-label">${%Fixed}</div>
+                </div>
+            </div>
+
+            <div class="wng-widget__reference" tooltip="${widget.referenceBuildTooltip}">
+                <j:choose>
+                    <j:when test="${empty(widget.referenceBuildUrl)}">
+                        ${widget.comparisonCaption}
+                    </j:when>
+                    <j:otherwise>
+                        <a href="${rootURL}/${widget.referenceBuildUrl}">${widget.comparisonCaption}</a>
+                    </j:otherwise>
+                </j:choose>
+            </div>
+
+            <j:if test="${widget.totalSize gt 0}">
+                <div class="wng-widget__severities">
+                    <wng:severity-bar segments="${widget.totalSegments}" />
+                </div>
+            </j:if>
+
+            <j:if test="${widget.hasPills() or widget.errorMessagesSize gt 0}">
                 <div class="wng-widget">
-                    <j:forEach var="icon" items="${widget.failedResults}" indexVar="i">
-                        <j:if test="${i lt maxItems}">
-                            <a href="${it.urlName}/${issuesPage.getUrlOf(icon)}" class="wng-widget__item">
-                                <l:icon src="${icon.smallImage}" />
-                                ${icon.displayName}
-                                <span class="jenkins-badge jenkins-!-warning-color">${icon.result.totalSize}</span>
-                            </a>
-                        </j:if>
+                    <j:if test="${widget.hasPills()}">
+                        <j:set var="results" value="${widget.results}" />
+                        <j:forEach var="action" items="${results}" indexVar="i">
+                            <j:if test="${i lt maxItems}">
+                                <a href="${it.urlName}/${issuesPage.getUrlOf(action)}" class="wng-widget__item"
+                                   data-status="${widget.getStatusModifier(action)}">
+                                    <l:icon src="${action.smallImage}" />
+                                    ${action.displayName}
+                                    <span class="wng-widget__item-count">${action.result.totalSize}</span>
+                                    <j:if test="${widget.getNewSizeOf(action) gt 0}">
+                                        <span class="wng-widget__item-new" tooltip="${%new.tooltip}">+${widget.getNewSizeOf(action)}</span>
+                                    </j:if>
+                                </a>
+                            </j:if>
 
-                        <j:if test="${i eq maxItems}">
-                            <span class="wng-widget__item wng-widget__item--more">
-                                ${size(widget.failedResults) - maxItems} left
-                                <l:icon src="symbol-chevron-forward-outline plugin-ionicons-api" />
-                            </span>
-                        </j:if>
-                    </j:forEach>
+                            <j:if test="${i eq maxItems}">
+                                <a href="${it.urlName}/${widget.overviewUrl}" class="wng-widget__item wng-widget__item--more"
+                                   tooltip="${%more.tooltip}">
+                                    ${%more(size(results) - maxItems)}
+                                    <l:icon src="symbol-chevron-forward-outline plugin-ionicons-api" />
+                                </a>
+                            </j:if>
+                        </j:forEach>
+                    </j:if>
+
+                    <j:if test="${widget.errorMessagesSize gt 0}">
+                        <a href="${it.urlName}/${widget.logUrl}" class="wng-widget__item" data-status="error"
+                           tooltip="${%errors.tooltip}">
+                            <l:icon src="symbol-close-circle-outline plugin-ionicons-api" />
+                            ${%errors(widget.errorMessagesSize)}
+                        </a>
+                    </j:if>
                 </div>
             </j:if>
         </div>

@@ -13,7 +13,28 @@
     <j:set var="severities" value="${it.severities}"/>
     <j:set var="hasErrors" value="${it.hasErrorMessages()}"/>
 
-    <l:app-bar title="${it.displayName}"/>
+    <l:app-bar title="${it.displayName}">
+      <div class="jenkins-details">
+        <j:choose>
+          <j:when test="${empty(it.referenceBuildUrl)}">
+            <span class="jenkins-details__item" tooltip="${it.referenceBuildTooltip}">
+              <div class="jenkins-details__item__icon">
+                <l:icon src="symbol-git-compare-outline plugin-ionicons-api" alt=""/>
+              </div>
+              <span>${it.referenceBuildText}</span>
+            </span>
+          </j:when>
+          <j:otherwise>
+            <a href="${rootURL}/${it.referenceBuildUrl}" class="jenkins-details__item" tooltip="${%reference.tooltip}">
+              <div class="jenkins-details__item__icon">
+                <l:icon src="symbol-git-compare-outline plugin-ionicons-api" alt=""/>
+              </div>
+              <span>${it.referenceBuildText}</span>
+            </a>
+          </j:otherwise>
+        </j:choose>
+      </div>
+    </l:app-bar>
 
     <div class="wng-body">
       <wng:sidepanel tab="${tab}"/>
@@ -25,7 +46,7 @@
           <l:card title="${%Quality Gates}">
             <div class="wng-dashboard__quality-gates">
               <div class="wng-dashboard__quality-gate-total">
-                <l:icon class="${status.iconClass} icon-lg" alt="${status.description}"/>
+                <l:icon src="${it.getStatusIcon(status)}" class="icon-lg" alt="${status.description}"/>
                 <div class="wng-dashboard__quality-gate-status">${status.description}</div>
               </div>
               <div class="wng-dashboard__quality-gate-tools">
@@ -38,7 +59,7 @@
                     <j:forEach var="item" items="${action.qualityGateResult.resultItems}">
                       <div class="wng-dashboard__quality-gate-item">
                         <span class="wng-dashboard__quality-gate-item-name" tooltip="${item.qualityGate.name}">
-                          <l:icon class="${item.status.iconClass} icon-sm" alt="${item.status.description}"/>
+                          <l:icon src="${it.getStatusIcon(item.status)}" class="icon-sm" alt="${item.status.description}"/>
                           ${item.qualityGate.name}
                         </span>
                         <span class="wng-dashboard__quality-gate-item-value"
@@ -62,7 +83,15 @@
         <div class="wng-dashboard__top">
           <div class="wng-dashboard__metric-card">
             <l:card title="${%Total}">
-              <div class="wng-dashboard__metric-value" tooltip="${%total.caption(size(it.actions))}">${it.totalSize}</div>
+              <j:choose>
+                <j:when test="${it.totalSize gt 0}">
+                  <a class="wng-dashboard__metric-value wng-dashboard__metric-link" href="${tabUrl + '/' + issuesPage.allIssuesUrl}"
+                     tooltip="${%total.link.tooltip(size(it.actions))}">${it.totalSize}</a>
+                </j:when>
+                <j:otherwise>
+                  <div class="wng-dashboard__metric-value" tooltip="${%total.caption(size(it.actions))}">${it.totalSize}</div>
+                </j:otherwise>
+              </j:choose>
               <j:choose>
                 <j:when test="${it.totalSize gt 0}">
                   <wng:severity-bar segments="${it.totalSegments}"/>
@@ -75,22 +104,42 @@
           </div>
           <div class="wng-dashboard__metric-card">
             <l:card title="${%New}">
-              <div class="wng-dashboard__metric-value" data-trend="${it.newSize gt 0 ? 'worse' : 'none'}"
-                   tooltip="${%new.caption}">${it.newSize}</div>
+              <j:choose>
+                <!-- A number greater than zero opens the issues page with the corresponding baseline -->
+                <j:when test="${it.newSize gt 0}">
+                  <a class="wng-dashboard__metric-value wng-dashboard__metric-link" href="${tabUrl + '/' + issuesPage.newIssuesUrl}"
+                     data-trend="${it.hasReferenceBuild() ? 'worse' : 'none'}"
+                     tooltip="${%new.link.tooltip(it.comparisonCaption)}">${it.newSize}</a>
+                </j:when>
+                <j:otherwise>
+                  <div class="wng-dashboard__metric-value" data-trend="none"
+                       tooltip="${it.comparisonCaption}">${it.newSize}</div>
+                </j:otherwise>
+              </j:choose>
               <j:choose>
                 <j:when test="${it.newSize gt 0}">
                   <wng:severity-bar segments="${it.newSegments}"/>
                 </j:when>
                 <j:otherwise>
-                  <div class="wng-dashboard__metric-caption">${%new.caption}</div>
+                  <div class="wng-dashboard__metric-caption">${it.comparisonCaption}</div>
                 </j:otherwise>
               </j:choose>
             </l:card>
           </div>
           <div class="wng-dashboard__metric-card">
             <l:card title="${%Fixed}">
-              <div class="wng-dashboard__metric-value" data-trend="${it.fixedSize gt 0 ? 'better' : 'none'}">${it.fixedSize}</div>
-              <div class="wng-dashboard__metric-caption">${%fixed.caption}</div>
+              <j:choose>
+                <j:when test="${it.fixedSize gt 0}">
+                  <a class="wng-dashboard__metric-value wng-dashboard__metric-link" href="${tabUrl + '/' + issuesPage.fixedIssuesUrl}"
+                     data-trend="${it.hasReferenceBuild() ? 'better' : 'none'}"
+                     tooltip="${%fixed.link.tooltip(it.comparisonCaption)}">${it.fixedSize}</a>
+                </j:when>
+                <j:otherwise>
+                  <div class="wng-dashboard__metric-value" data-trend="none"
+                       tooltip="${it.comparisonCaption}">${it.fixedSize}</div>
+                </j:otherwise>
+              </j:choose>
+              <div class="wng-dashboard__metric-caption">${it.comparisonCaption}</div>
             </l:card>
           </div>
 
@@ -172,7 +221,7 @@
                             <span class="wng-dashboard__zero" tooltip="${%No quality gate}">–</span>
                           </j:when>
                           <j:otherwise>
-                            <l:icon class="${gate.overallStatus.iconClass} icon-sm"
+                            <l:icon src="${it.getStatusIcon(gate.overallStatus)}" class="icon-sm"
                                     alt="${gate.overallStatus.description}"
                                     tooltip="${gate.overallStatus.description}"/>
                           </j:otherwise>
@@ -197,7 +246,7 @@
                     </j:if>
                     <j:if test="${it.hasQualityGates()}">
                       <td class="wng-dashboard__status">
-                        <l:icon class="${it.qualityGateStatus.iconClass} icon-sm"
+                        <l:icon src="${it.getStatusIcon(it.qualityGateStatus)}" class="icon-sm"
                                 alt="${it.qualityGateStatus.description}"
                                 tooltip="${it.qualityGateStatus.description}"/>
                       </td>
