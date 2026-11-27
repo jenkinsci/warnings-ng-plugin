@@ -3,7 +3,7 @@
 
   <st:documentation>
     Provides the side panel links of the Warnings tab of a run: the overview page, the trend page, the treemap, the
-    issues page, the hotspots, and the log messages.
+    issues page, the hotspots, the log messages, and the remote API.
 
     <st:attribute name="tab" type="io.jenkins.plugins.analysis.core.model.RunTab" use="required">
       The Warnings tab of the run that provides the results.
@@ -30,15 +30,18 @@
       <l:task title="${%Treemap}"
               icon="symbol-apps-outline plugin-ionicons-api"
               href="${tabUrl + '/treemap'}"/>
-      <l:task title="${%Issues}"
-              icon="symbol-list-outline plugin-ionicons-api"
-              href="${tabUrl + '/table'}"/>
       <l:task title="${%Hotspots}"
               icon="symbol-bar-chart-outline plugin-ionicons-api"
               href="${tabUrl + '/hotspots'}"/>
+      <l:task title="${%Issues}"
+              icon="symbol-list-outline plugin-ionicons-api"
+              href="${tabUrl + '/table'}"/>
       <l:task title="${%Log Messages}"
               icon="symbol-information-outline plugin-ionicons-api"
               href="${tabUrl + '/log'}"/>
+      <l:task title="${%Remote API}"
+              icon="symbol-code-slash-outline plugin-ionicons-api"
+              href="${tabUrl + '/remote-api'}"/>
     </l:tasks>
   </div>
 

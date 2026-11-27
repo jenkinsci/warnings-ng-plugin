@@ -211,6 +211,17 @@ public class RunTab extends Tab {
     }
 
     /**
+     * Creates the model of the remote API page that lists the endpoints of the remote API of all warning actions.
+     * The URL {@code warnings/remote-api} contains a hyphen, so it cannot be resolved by a getter: it is resolved by
+     * {@link #getDynamic(String)}.
+     *
+     * @return the remote API model
+     */
+    RemoteApiModel createRemoteApi() {
+        return new RemoteApiModel(getObject(), getWarningActions());
+    }
+
+    /**
      * Redirects to the overview page if the new build page is enabled. The redirect target is derived from the URL of
      * the run (and not from the request), and it is resolved via the context path, so it always points to the
      * overview page of this run, independent of whether the request URL ends with a slash.
@@ -238,14 +249,21 @@ public class RunTab extends Tab {
      * build, so the source code of the reference build is shown, together with all fixed issues of the same file.
      * </p>
      *
-     * @param name
-     *         the link to the affected file of an issue
+     * <p>
+     * Additionally, the URL {@code remote-api} is resolved to the remote API page, see {@link #createRemoteApi()}.
+     * </p>
      *
-     * @return the view that shows the affected file
+     * @param name
+     *         the link to the affected file of an issue, or {@code remote-api}
+     *
+     * @return the view that shows the affected file or the remote API page
      * @throws NoSuchElementException
      *         if there is no such issue
      */
     public Object getDynamic(final String name) {
+        if (RemoteApiModel.URL.equals(name)) {
+            return createRemoteApi();
+        }
         if (name.startsWith(SOURCE_LINK_PREFIX) && getObject() instanceof Run<?, ?> run) {
             var actions = getWarningActions();
             for (ResultAction action : actions) {

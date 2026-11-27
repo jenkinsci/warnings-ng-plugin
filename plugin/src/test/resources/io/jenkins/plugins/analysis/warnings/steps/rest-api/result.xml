@@ -5,7 +5,9 @@
   <owner _class='hudson.model.FreeStyleBuild'>
     <number>1</number>
   </owner>
-  <qualityGateStatus>INACTIVE</qualityGateStatus>
+  <qualityGates>
+    <overallResult>INACTIVE</overallResult>
+  </qualityGates>
   <successfulSinceBuild>-1</successfulSinceBuild>
   <totalSize>7</totalSize>
 </analysisResultApi>
