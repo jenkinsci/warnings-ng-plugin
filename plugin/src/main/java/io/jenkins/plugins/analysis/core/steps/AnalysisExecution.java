@@ -1,11 +1,13 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import edu.hm.hafner.util.Ensure;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import hudson.FilePath;
 import hudson.model.Computer;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
+import io.jenkins.plugins.analysis.core.util.BranchConsoleLog;
+import io.jenkins.plugins.analysis.core.util.ConsoleLog;
 import io.jenkins.plugins.util.PipelineResultHandler;
 import io.jenkins.plugins.util.ValidationUtilities;
 import java.io.IOException;
@@ -136,14 +138,29 @@ abstract class AnalysisExecution<T> extends SynchronousNonBlockingStepExecution<
     }
 
     protected PipelineResultHandler createResultHandler() throws IOException, InterruptedException {
-        return new PipelineResultHandler(getRun(), getFlowNode());
+        var flowNode = getContext().get(FlowNode.class);
+        if (flowNode == null) {
+            throw new IOException("FlowNode is not defined in the context of " + this);
+        }
+        return new PipelineResultHandler(getRun(), flowNode);
     }
 
-    private FlowNode getFlowNode() throws IOException, InterruptedException {
-        var flowNode = getContext().get(FlowNode.class);
+    @CheckForNull
+    protected FlowNode getFlowNode() throws InterruptedException {
+        try {
+            return getContext().get(FlowNode.class);
+        } catch (IOException ignored) {
+            return null;
+        }
+    }
 
-        Ensure.that(flowNode).isNotNull("FlowNode is not defined in the context of " + this);
-
-        return flowNode;
+    protected ConsoleLog createConsoleLog(final boolean filterBranchLog) throws InterruptedException {
+        if (filterBranchLog) {
+            var flowNode = getFlowNode();
+            if (flowNode != null) {
+                return new BranchConsoleLog(flowNode);
+            }
+        }
+        return ConsoleLog.BUILD;
     }
 }

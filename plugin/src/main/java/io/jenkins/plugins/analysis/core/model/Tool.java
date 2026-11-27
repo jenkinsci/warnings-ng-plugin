@@ -11,6 +11,7 @@ import hudson.model.Descriptor;
 import hudson.model.Item;
 import hudson.model.Run;
 import hudson.util.FormValidation;
+import io.jenkins.plugins.analysis.core.util.ConsoleLog;
 import io.jenkins.plugins.util.JenkinsFacade;
 import io.jenkins.plugins.util.LogHandler;
 import io.jenkins.plugins.util.ValidationUtilities;
@@ -187,6 +188,37 @@ public abstract class Tool implements Describable<Tool>, Serializable {
      */
     public abstract Report scan(Run<?, ?> run, FilePath workspace, Charset sourceCodeEncoding, LogHandler logger)
             throws ParsingException, ParsingCanceledException;
+
+    /**
+     * Scans the results of a build for issues with the specified {@link ConsoleLog}.
+     * Default implementation delegates to {@link #scan(Run, FilePath, Charset, LogHandler)}.
+     *
+     * @param run
+     *         the build
+     * @param consoleLog
+     *         the console log abstraction
+     * @param workspace
+     *         the workspace of the build
+     * @param sourceCodeEncoding
+     *         the encoding to use to read source files
+     * @param logger
+     *         the logger
+     *
+     * @return the created report
+     * @throws ParsingException
+     *         signals that during parsing a non-recoverable error has occurred
+     * @throws ParsingCanceledException
+     *         signals that the user has aborted the parsing
+     */
+    public Report scan(
+            final Run<?, ?> run,
+            final ConsoleLog consoleLog,
+            final FilePath workspace,
+            final Charset sourceCodeEncoding,
+            final LogHandler logger)
+            throws ParsingException, ParsingCanceledException {
+        return scan(run, workspace, sourceCodeEncoding, logger);
+    }
 
     /** Descriptor for {@link Tool}. **/
     public abstract static class ToolDescriptor extends Descriptor<Tool> {
