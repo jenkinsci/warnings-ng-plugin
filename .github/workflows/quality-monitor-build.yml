@@ -21,10 +21,6 @@ jobs:
           java-version: 25
           check-latest: true
           cache: 'maven'
-      - name: Set up Maven
-        uses: stCarolas/setup-maven@d6af6abeda15e98926a57b5aa970a96bb37f97d1 # v5
-        with:
-          maven-version: 3.9.16
       - name: Check if quality monitor reports mutation coverage
         run: |
           FILE='.github/quality-monitor.json'
@@ -39,7 +35,7 @@ jobs:
           PIT: ${{ env.PIT }}
           BROWSER: chrome-container
         run: |
-          mvn -V --color always -ntp clean verify $PIT -Pci | tee maven.log
+          ./mvnw -V --color always -ntp clean verify $PIT -Pci | tee maven.log
           if [ "${PIPESTATUS[0]}" != "0" ]; then
              exit 1;
           fi

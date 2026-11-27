@@ -27,11 +27,7 @@ jobs:
           java-version: '${{ matrix.jdk }}'
           check-latest: true
           cache: 'maven'
-      - name: Set up Maven
-        uses: stCarolas/setup-maven@d6af6abeda15e98926a57b5aa970a96bb37f97d1 # v5
-        with:
-          maven-version: 3.9.16
       - name: Build with Maven
         env:
           BROWSER: chrome-container
-        run: mvn -V --color always -ntp clean verify '-Djenkins.test.timeout=5000' '-Dgpg.skip' -Pno-ui-tests
+        run: ${{ runner.os == 'Windows' && './mvnw.cmd' || './mvnw' }} -V --color always -ntp clean verify '-Djenkins.test.timeout=5000' '-Dgpg.skip' -Pno-ui-tests
