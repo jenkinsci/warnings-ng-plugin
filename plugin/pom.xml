@@ -130,7 +130,7 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>prism-api</artifactId>
-      <version>1.30.0-818.v187d7075b_db_8</version>
+      <version>1.30.0-830.v51e96b_cd8df4</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
