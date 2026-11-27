@@ -32,11 +32,6 @@ jobs:
           java-version: 25
           cache: maven
 
-      - name: Set up Maven
-        uses: stCarolas/setup-maven@d6af6abeda15e98926a57b5aa970a96bb37f97d1 # v5
-        with:
-          maven-version: 3.9.16
-
       - name: Initialize CodeQL
         uses: github/codeql-action/init@33d7b85da1a04171e211befe2c739303b9a4c066 # v4
         with:
@@ -44,7 +39,7 @@ jobs:
           queries: +security-and-quality
 
       - name: Build with Maven
-        run: mvn -V --color always -ntp clean verify -Pskip
+        run: ./mvnw -V --color always -ntp clean verify -Pskip
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@33d7b85da1a04171e211befe2c739303b9a4c066 # v4
