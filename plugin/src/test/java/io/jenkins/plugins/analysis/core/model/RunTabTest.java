@@ -40,7 +40,7 @@ class RunTabTest {
     }
 
     @Test
-    void shouldSortWarningActionsAndResolveDynamicActions() {
+    void shouldSortWarningActionsAndNotResolveActionsOfTools() {
         Run<?, ?> run = mock(Run.class);
         var checkstyle = createResultAction("checkstyle", "CheckStyle", 3);
         var pmd = createResultAction("pmd", "PMD", 5);
@@ -52,7 +52,7 @@ class RunTabTest {
         assertThat(tab.getWarningActions())
                 .extracting(ResultAction::getId)
                 .containsExactly("pmd", "checkstyle", "spotbugs");
-        assertThat(tab.getDynamic("checkstyle")).isSameAs(checkstyle);
+        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(() -> tab.getDynamic("checkstyle"));
         assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(() -> tab.getDynamic("missing"));
     }
 
