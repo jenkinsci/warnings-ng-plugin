@@ -119,14 +119,14 @@ public class LogModel implements ModelObject {
     public static final class ToolLog {
         private final String id;
         private final String displayName;
-        private final String iconFileName;
+        private final String smallImage;
         private final List<String> infoMessages;
         private final List<String> errorMessages;
 
         private ToolLog(final ResultAction action) {
             this.id = action.getId();
             this.displayName = action.getDisplayName();
-            this.iconFileName = action.getSmallImage();
+            this.smallImage = action.getSmallImage();
             this.infoMessages = action.getResult().getInfoMessages().castToList();
             this.errorMessages = action.getResult().getErrorMessages().castToList();
         }
@@ -167,8 +167,8 @@ public class LogModel implements ModelObject {
          *
          * @return the icon, a symbol or the URL of an image
          */
-        public String getIconFileName() {
-            return iconFileName;
+        public String getSmallImage() {
+            return smallImage;
         }
 
         /**

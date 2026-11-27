@@ -13,7 +13,7 @@
         <div class="wng-app-bar__control" tooltip="${%tool-tooltip}">
           <label for="wng-trend-tool">${%tool-title}:</label>
           <j:forEach var="source" items="${it.sources}">
-            <wng:tool-icon tool="${source.id}" icon="${source.iconFileName}"/>
+            <wng:tool-icon tool="${source.id}" icon="${source.smallImage}"/>
           </j:forEach>
           <div class="jenkins-select">
             <select id="wng-trend-tool" class="jenkins-select__input">
