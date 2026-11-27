@@ -226,6 +226,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
 
     @Override
     public String getUrlName() {
+        // the label provider is resolved only if required, since this requires a running Jenkins instance
         return StringUtils.getIfEmpty(id, () -> getLabelProvider().getId());
     }
 

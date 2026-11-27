@@ -153,6 +153,18 @@ public class RunTab extends Tab {
     }
 
     /**
+     * Returns the model of the treemap page that shows the modules, packages, and files with issues of all warning
+     * actions. Stapler resolves this getter before {@link #getDynamic(String)}, so the URL {@code warnings/treemap}
+     * always shows the treemap.
+     *
+     * @return the treemap model
+     */
+    @Restricted(NoExternalUse.class)
+    public TreeMapModel getTreemap() {
+        return new TreeMapModel(getObject(), getWarningActions());
+    }
+
+    /**
      * Returns the model of the log page that shows the error and information messages of all warning actions.
      * Stapler resolves this getter before {@link #getDynamic(String)}, so the URL {@code warnings/log} always shows
      * the log messages.
