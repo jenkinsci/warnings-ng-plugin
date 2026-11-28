@@ -1,0 +1,46 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout">
+  <st:adjunct includes="io.jenkins.plugins.analysis.core.model.WarningsHistoryPageEntryDecorator.resources"/>
+
+  <j:set var="summary" value="${it.decorator.getSummary(it.build)}"/>
+
+  <!-- Same structure as the test result summary of the JUnit plugin: a row of tags and a row of details -->
+  <a class="warnings-history-summary" href="${rootURL}/${it.build.url}${summary.url}">
+    <div class="warnings-history-summary__tags">
+      <!-- Segmented tag: total = existing + new -->
+      <div class="warnings-history-summary__group">
+        <j:choose>
+          <j:when test="${summary.totalSize == 0}">
+            <span class="warnings-history-summary__tag warnings-history-summary__tag--clean" tooltip="${%NoWarnings}">
+              <l:icon src="symbol-checkmark-outline plugin-ionicons-api" alt="${%NoWarnings}"/>
+              <span aria-hidden="true">0</span>
+            </span>
+          </j:when>
+          <j:otherwise>
+            <j:if test="${summary.existingSize gt 0}">
+              <span class="warnings-history-summary__tag warnings-history-summary__tag--existing"
+                    tooltip="${%Existing(summary.existingSize)}">
+                <l:icon src="${summary.icon}" alt="${%Existing(summary.existingSize)}"/>
+                <span aria-hidden="true">${summary.existingSize}</span>
+              </span>
+            </j:if>
+            <j:if test="${summary.newSize gt 0}">
+              <span class="warnings-history-summary__tag warnings-history-summary__tag--new"
+                    tooltip="${%New(summary.newSize)}">+${summary.newSize}</span>
+            </j:if>
+          </j:otherwise>
+        </j:choose>
+      </div>
+      <j:if test="${summary.fixedSize gt 0}">
+        <div class="warnings-history-summary__group">
+          <span class="warnings-history-summary__tag warnings-history-summary__tag--fixed"
+                tooltip="${%Fixed(summary.fixedSize)}">−${summary.fixedSize}</span>
+        </div>
+      </j:if>
+    </div>
+
+    <div class="warnings-history-summary__details">
+      <span>${%Warnings(summary.totalSize)}</span>
+    </div>
+  </a>
+</j:jelly>
