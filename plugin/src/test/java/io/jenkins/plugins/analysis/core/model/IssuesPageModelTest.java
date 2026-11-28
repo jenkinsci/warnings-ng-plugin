@@ -411,23 +411,22 @@ class IssuesPageModelTest extends AbstractDetailsModelTest {
     }
 
     /**
-     * Verifies that links are resolved by the Warnings tab.
+     * Verifies that links are resolved by the Warnings tab: the links to the affected files show the source code
+     * page of the tab.
      */
     @Test
     void shouldDelegateLinksToTab() {
         var report = createReport(createIssue(1));
         var checkstyle = createAction(CHECKSTYLE, report, new Report());
         var link = "source." + report.get(0).getId();
-        var sourceView = new Object();
-        IssuesDetail details = mock(IssuesDetail.class);
-        when(details.createDetails(link)).thenReturn(sourceView);
-        when(checkstyle.getTarget()).thenReturn(details);
         Run<?, ?> run = mock(Run.class);
         when(run.getActions(ResultAction.class)).thenReturn(List.of(checkstyle));
 
         var model = new IssuesPageModel(run, List.of(checkstyle));
 
-        assertThat(model.getDynamic(link)).isSameAs(sourceView);
+        assertThat(model.getDynamic(link))
+                .isInstanceOfSatisfying(
+                        SourceModel.class, source -> assertThat(source).hasSelectedIssue(report.get(0)));
         assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(() -> model.getDynamic(CHECKSTYLE));
     }
 

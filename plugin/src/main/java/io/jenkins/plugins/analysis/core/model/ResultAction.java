@@ -407,7 +407,16 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      */
     @Override
     public IssuesDetail getTarget() {
-        return new IssuesDetail(owner, result, getLabelProvider(), healthDescriptor, Charset.forName(charset));
+        return new IssuesDetail(owner, result, getLabelProvider(), healthDescriptor, getSourceEncoding());
+    }
+
+    /**
+     * Returns the encoding to use when displaying the affected source files.
+     *
+     * @return the encoding of the source files
+     */
+    Charset getSourceEncoding() {
+        return Charset.forName(charset);
     }
 
     /**

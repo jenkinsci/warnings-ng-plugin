@@ -72,7 +72,15 @@
         return '…' + label.substring(label.length - MAX_LABEL_LENGTH + 1);
     }
 
+    // Opens the details of a hotspot (e.g., the source code of a file), if the hotspot has details.
+    function openHotspot(hotspot) {
+        if (hotspot && hotspot.url) {
+            window.location.href = hotspot.url;
+        }
+    }
+
     // Renders the hotspots as horizontal bars, stacked by severity. The element with the most issues is on top.
+    // Clicking a bar (or the label of a bar) opens the details of the hotspot, e.g., the source code of a file.
     function renderHotspots(model) {
         const element = document.getElementById(CHART_ID);
         const isEmpty = model.hotspots.length === 0;
@@ -92,9 +100,11 @@
                 type: 'bar',
                 stack: 'total',
                 barMaxWidth: 20,
+                cursor: hotspots.some(hotspot => hotspot.url) ? 'pointer' : 'default',
                 itemStyle: {color: getCssColor(model.colors[severity])},
                 data: hotspots.map(hotspot => hotspot.counts[severity])
             }));
+        const labels = hotspots.map(hotspot => shorten(hotspot.label));
         const axisStyle = WarningsCharts.createAxisStyle();
         const totalLabel = element.getAttribute('data-total-label');
 
@@ -117,11 +127,18 @@
             xAxis: Object.assign({type: 'value', minInterval: 1}, axisStyle),
             yAxis: Object.assign({}, axisStyle, {
                 type: 'category',
-                data: hotspots.map(hotspot => shorten(hotspot.label)),
+                data: labels,
+                triggerEvent: true,
                 splitLine: {show: false}
             }),
             series: series
         }, true);
+        chart.off('click');
+        chart.on('click', function (params) {
+            // Labels of the axis do not provide the index of the data in all versions of ECharts
+            const index = params.dataIndex === undefined ? labels.indexOf(params.value) : params.dataIndex;
+            openHotspot(hotspots[index]);
+        });
         chart.resize();
     }
 

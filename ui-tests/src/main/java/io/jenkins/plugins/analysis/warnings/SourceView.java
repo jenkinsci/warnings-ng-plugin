@@ -3,7 +3,7 @@ package io.jenkins.plugins.analysis.warnings;
 import com.google.inject.Injector;
 import java.net.URL;
 import java.util.List;
-import org.apache.commons.lang3.StringUtils;
+import java.util.stream.Collectors;
 import org.jenkinsci.test.acceptance.po.PageObject;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -17,6 +17,9 @@ import org.openqa.selenium.WebElement;
  * @author Stephan Plöderl
  */
 public class SourceView extends PageObject {
+    private static final By RAW_CODE = By.cssSelector(".prism-source__raw");
+    private static final By LINES = By.cssSelector(".prism-source__lines > .prism-line .prism-line__code");
+
     /**
      * Creates a new source code view.
      *
@@ -25,11 +28,6 @@ public class SourceView extends PageObject {
      */
     public SourceView(final Injector injector, final URL url) {
         super(injector, url);
-    }
-
-    private void removeSourceLinesFromView() {
-        executeScript("inputs = document.getElementsByTagName('code')[1];"
-                + "document.querySelectorAll(\"a[name]\").forEach(e => e.parentNode.removeChild(e));");
     }
 
     /**
@@ -44,22 +42,19 @@ public class SourceView extends PageObject {
     }
 
     /**
-     * Returns the source code.
+     * Returns the source code. The source code view of the Prism API plugin renders each line as a separate element
+     * (without the line number), the boxes of the markers are not part of the source code. Lines in collapsed sections
+     * are hidden, so the text content of the lines is used rather than the visible text.
      *
      * @return the source code
      */
     public String getSourceCode() {
-        removeSourceLinesFromView();
+        waitFor().until(() -> all(RAW_CODE).isEmpty() || !all(LINES).isEmpty());
 
-        List<WebElement> code = all(by.tagName("code"));
-        StringBuilder sourceCode = new StringBuilder();
-        for (WebElement webElement : code) {
-            sourceCode.append(webElement.getText());
-        }
-        String text = sourceCode.toString();
-        if (StringUtils.isBlank(text)) { // fallback if no source code has been found
+        List<WebElement> lines = all(LINES);
+        if (lines.isEmpty()) { // fallback if no source code has been found
             return find(by.xpath("//*[@id=\"main-panel\"]")).getText();
         }
-        return text;
+        return lines.stream().map(line -> line.getDomProperty("textContent")).collect(Collectors.joining("\n"));
     }
 }

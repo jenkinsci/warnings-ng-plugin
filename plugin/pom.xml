@@ -58,6 +58,16 @@
       java.base/java.util.concurrent=ALL-UNNAMED</argLine>
   </properties>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.jenkins-ci.plugins.workflow</groupId>
+        <artifactId>workflow-api</artifactId>
+        <version>1429.v7a_1b_efb_a_f7c5</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
@@ -89,6 +99,7 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>forensics-api</artifactId>
+      <version>4.1977.v0f55b_7ee93a_4</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
@@ -119,6 +130,7 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>prism-api</artifactId>
+      <version>1.30.0-830.v51e96b_cd8df4</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
@@ -285,6 +297,7 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>forensics-api</artifactId>
+      <version>4.1977.v0f55b_7ee93a_4</version>
       <classifier>tests</classifier>
       <scope>test</scope>
     </dependency>

@@ -89,7 +89,6 @@ public abstract class AbstractDetailsModelTest {
      * @return a {@link FileNameRenderer} stub
      */
     @VisibleForTesting
-    @SuppressWarnings("PMD.InternalApiUsage")
     protected FileNameRenderer createFileNameRenderer() {
         BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
         when(buildFolder.canAccessAffectedFileOf(any(), any())).thenReturn(true);

@@ -23,6 +23,7 @@ import tools.jackson.databind.ObjectMapper;
 class HotspotsModelTest {
     private static final String CHECKSTYLE = "checkstyle";
     private static final String PMD = "pmd";
+    private static final String QUERY_ALL = "?show=all&severity=low&baseline=all";
 
     /**
      * Verifies that the issues are grouped by file by default and that the files with the most issues come first.
@@ -57,6 +58,33 @@ class HotspotsModelTest {
                 .extracting(HotspotsModel.Bucket::getLabel)
                 .containsExactly("1", "2–5", "6–10", "11–20", "21–50", "> 50");
         assertThat(buckets).extracting(HotspotsModel.Bucket::getCount).containsExactly(1, 2, 0, 0, 0, 0);
+    }
+
+    /**
+     * Verifies that the hotspots of files link to the source code of the file: the issue with the highest severity
+     * is selected. Hotspots of other properties have no link.
+     */
+    @Test
+    void shouldLinkFilesToSourceCode() {
+        var report = createReport();
+        var model = createModel(createAction(CHECKSTYLE, report));
+
+        var hotspots = model.createHotspots("{}").getHotspots();
+
+        assertThat(hotspots)
+                .extracting(HotspotsModel.Hotspot::getUrl)
+                .containsExactly(
+                        "../table/source." + report.get(0).getId() + "/" + QUERY_ALL,
+                        "../table/source." + report.get(4).getId() + "/" + QUERY_ALL,
+                        "../table/source." + report.get(3).getId() + "/" + QUERY_ALL);
+        assertThat(model.createHotspots("{\"baseline\": \"new\"}")
+                        .getHotspots()
+                        .get(0)
+                        .getUrl())
+                .endsWith("/?show=all&severity=low&baseline=new");
+        assertThat(model.createHotspots("{\"grouping\": \"category\"}").getHotspots())
+                .extracting(HotspotsModel.Hotspot::getUrl)
+                .containsOnly("");
     }
 
     /**

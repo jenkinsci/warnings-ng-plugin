@@ -2,9 +2,10 @@ package io.jenkins.plugins.analysis.warnings;
 
 import com.google.inject.Injector;
 import java.net.URL;
-import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import org.jenkinsci.test.acceptance.po.PageObject;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 /**
@@ -36,17 +37,19 @@ public class ConsoleLogView extends PageObject {
     }
 
     /**
-     * Returns the highlighted text.
+     * Returns the highlighted text, i.e., the lines of the selected issue. The console log view shows all issues of the
+     * console log, the issue of the link is selected by the fragment of the URL.
      *
      * @return the highlighted text
      */
     public String getHighlightedText() {
-        List<WebElement> styleTags = getStyleTags();
+        WebElement marker = waitFor(By.cssSelector(".prism-marker.prism-marker--selected"));
+        int start = Integer.parseInt(marker.getDomAttribute("data-line-start"));
+        int end = Math.max(start, Integer.parseInt(marker.getDomAttribute("data-line-end")));
 
-        return styleTags.stream().map(WebElement::getText).collect(Collectors.joining("\n"));
-    }
-
-    private List<WebElement> getStyleTags() {
-        return driver.findElements(by.xpath("//td[contains(@style, 'background-color')]"));
+        return IntStream.rangeClosed(start, end)
+                .mapToObj(line -> find(By.cssSelector("#L" + line + " .prism-line__code")))
+                .map(line -> line.getDomProperty("textContent"))
+                .collect(Collectors.joining("\n"));
     }
 }

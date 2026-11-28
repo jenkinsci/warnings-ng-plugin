@@ -6,23 +6,22 @@ import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.model.Run;
+import io.jenkins.plugins.analysis.core.model.SourceModel.IssueState;
 import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 import io.jenkins.plugins.bootstrap5.MessagesViewModel;
-import io.jenkins.plugins.prism.Marker;
-import io.jenkins.plugins.prism.Marker.MarkerBuilder;
 import io.jenkins.plugins.prism.SourceCodeViewModel;
 import io.jenkins.plugins.util.JenkinsFacade;
 import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -136,20 +135,23 @@ public class DetailFactory {
         var plainLink = removePropertyPrefix(link);
         if (link.startsWith("source.")) {
             var issue = allIssues.findById(UUID.fromString(plainLink));
+            var marker = new IssueMarkerFactory()
+                    .create(
+                            owner,
+                            issue,
+                            getState(newIssues, issue),
+                            labelProvider.getId(),
+                            labelProvider,
+                            result.getBlames());
             if (ConsoleLogHandler.isInConsoleLog(issue.getFileName())) {
-                try (Stream<String> consoleLog = buildFolder.readConsoleLog(owner)) {
-                    return new ConsoleDetail(owner, consoleLog, issue.getLineStart(), issue.getLineEnd());
-                }
-            } else {
-                var marker = asMarker(
-                        issue, labelProvider.getSourceCodeDescription(owner, issue), labelProvider.getSmallIconUrl());
-                try (var affectedFile = buildFolder.readFile(owner, issue.getFileName(), sourceEncoding)) {
-                    return SourceCodeViewModel.create(owner, issue.getBaseName(), affectedFile, marker);
-                } catch (IOException e) {
-                    try (var fallback = new StringReader(
-                            "%s%n%s".formatted(ExceptionUtils.getMessage(e), ExceptionUtils.getStackTrace(e)))) {
-                        return SourceCodeViewModel.create(owner, issue.getBaseName(), fallback, marker);
-                    }
+                return new ConsoleLogExcerpt(buildFolder).create(owner, List.of(issue), List.of(marker));
+            }
+            try (var affectedFile = buildFolder.readFile(owner, issue.getFileName(), sourceEncoding)) {
+                return SourceCodeViewModel.create(owner, issue.getBaseName(), affectedFile, marker);
+            } catch (IOException e) {
+                try (var fallback = new StringReader(
+                        "%s%n%s".formatted(ExceptionUtils.getMessage(e), ExceptionUtils.getStackTrace(e)))) {
+                    return SourceCodeViewModel.create(owner, issue.getBaseName(), fallback, marker);
                 }
             }
         }
@@ -173,16 +175,11 @@ public class DetailFactory {
                 sourceEncoding);
     }
 
-    private Marker asMarker(final Issue issue, final String description, final String icon) {
-        return new MarkerBuilder()
-                .withTitle(issue.getMessage())
-                .withDescription(description)
-                .withIcon(icon)
-                .withLineStart(issue.getLineStart())
-                .withLineEnd(issue.getLineEnd())
-                .withColumnStart(issue.getColumnStart())
-                .withColumnEnd(issue.getColumnEnd())
-                .build();
+    private IssueState getState(final Report newIssues, final Issue issue) {
+        if (newIssues.stream().map(Issue::getId).anyMatch(issue.getId()::equals)) {
+            return IssueState.NEW;
+        }
+        return IssueState.OUTSTANDING;
     }
 
     @SuppressWarnings({"checkstyle:ParameterNumber", "PMD.CyclomaticComplexity", "PMD.AvoidLiteralsInIfCondition"})

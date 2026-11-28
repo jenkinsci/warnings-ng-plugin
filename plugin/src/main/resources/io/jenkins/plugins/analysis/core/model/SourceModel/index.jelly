@@ -1,0 +1,68 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:wng="/warnings">
+
+  <st:header name="Content-Type" value="text/html;charset=UTF-8"/>
+
+  <l:run-subpage>
+    <st:adjunct includes="io.jenkins.plugins.analysis.core.model.RunTab.styles"/>
+
+    <l:app-bar title="${it.displayName}">
+      <div class="wng-app-bar__controls">
+        <div class="wng-app-bar__control" tooltip="${%show-tooltip}">
+          <label for="wng-source-show">${%show-title}:</label>
+          <div class="jenkins-select">
+            <select id="wng-source-show" class="jenkins-select__input">
+              <option value="all">${%show-all}</option>
+              <option value="selected">${%show-selected}</option>
+            </select>
+          </div>
+        </div>
+        <div class="wng-app-bar__control" tooltip="${%severity-tooltip}">
+          <label for="wng-source-severity">${%severity-title}:</label>
+          <div class="jenkins-select">
+            <select id="wng-source-severity" class="jenkins-select__input">
+              <option value="low">${%severity-all}</option>
+              <option value="normal">${%severity-normal}</option>
+              <option value="high">${%severity-high}</option>
+              <option value="error">${%severity-error}</option>
+            </select>
+          </div>
+        </div>
+        <j:if test="${!it.fixed}">
+          <div class="wng-app-bar__control" tooltip="${%baseline-tooltip}">
+            <label for="wng-source-baseline">${%baseline-title}:</label>
+            <div class="jenkins-select">
+              <select id="wng-source-baseline" class="jenkins-select__input">
+                <option value="all">${%baseline-all}</option>
+                <option value="new">${%baseline-new}</option>
+                <option value="outstanding">${%baseline-outstanding}</option>
+              </select>
+            </div>
+          </div>
+        </j:if>
+      </div>
+    </l:app-bar>
+
+    <div class="wng-body">
+      <wng:sidepanel tab="${it.tab}" active="table"/>
+
+      <div class="wng-dashboard">
+        <l:card title="${it.fileName}">
+          <j:if test="${it.fixed}">
+            <p class="wng-source__hint">
+              ${%fixed.hint}
+              <a href="${rootURL + '/' + it.sourceBuildUrl}">${it.sourceBuildName}</a>
+            </p>
+          </j:if>
+
+          <div id="wng-source" class="wng-source" data-selected-marker="${it.selectedMarkerId}">
+            <!-- Selects the issue of the link and filters the issues by the settings of the app bar. -->
+            <st:adjunct includes="io.jenkins.plugins.analysis.core.model.SourceModel.source-model"/>
+            <st:include it="${it.sourceCode}" page="content.jelly"/>
+          </div>
+        </l:card>
+      </div>
+    </div>
+  </l:run-subpage>
+
+</j:jelly>

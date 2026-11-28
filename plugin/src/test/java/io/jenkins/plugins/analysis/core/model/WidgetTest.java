@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test;
  */
 class WidgetTest {
     @Test
-    void shouldShowWarningSummaryAndResultsWithWarnings() {
+    void shouldShowWarningSummary() {
         var clean = createAction("clean", 0, 0, 0);
         var checkstyle = createAction("checkstyle", 2, 1, 0);
         var pmd = createAction("pmd", 1, 0, 3);
@@ -32,14 +32,11 @@ class WidgetTest {
                 .hasNewSize(1)
                 .hasFixedSize(3)
                 .doesNotHaveQualityGates()
-                .hasPills()
                 .hasErrorMessagesSize(0)
                 .hasLogUrl(LogModel.URL)
-                .hasOverviewUrl(OverviewModel.URL)
                 .doesNotHaveReferenceBuild()
                 .hasReferenceBuildUrl("")
                 .hasComparisonCaption(Messages.OverviewModel_NoReferenceBuild());
-        assertThat(widget.getResults()).containsExactly(checkstyle, pmd);
     }
 
     @Test
@@ -53,9 +50,7 @@ class WidgetTest {
                 .hasSymbol("symbol-status-blue")
                 .hasOnlyLines(Messages.Widget_AllClear(), Messages.Widget_NoWarningsForThisBuild())
                 .hasTotalSize(0)
-                .hasFixedSize(2)
-                .hasNoResults()
-                .doesNotHavePills();
+                .hasFixedSize(2);
     }
 
     @Test
@@ -70,7 +65,7 @@ class WidgetTest {
     }
 
     @Test
-    void shouldSortResultsByQualityGatesAndNewWarnings() {
+    void shouldSummarizeMissedQualityGatesOfAllResults() {
         var passed = createAction("passed", 10, 0, 0, QualityGateStatus.PASSED);
         var unstable = createAction("unstable", 1, 0, 0, QualityGateStatus.WARNING, QualityGateStatus.PASSED);
         var fresh = createAction("fresh", 2, 2, 0);
@@ -84,12 +79,6 @@ class WidgetTest {
                 .hasQualityGateStatus(QualityGateStatus.FAILED)
                 .hasQualityGateIcon("symbol-status-red")
                 .hasQualityGateSummary(Messages.Widget_QualityGates_Missed(2, 4));
-        assertThat(widget.getResults()).containsExactly(failed, unstable, fresh, passed);
-        assertThat(widget.getStatusModifier(failed)).isEqualTo("error");
-        assertThat(widget.getStatusModifier(unstable)).isEqualTo("warning");
-        assertThat(widget.getStatusModifier(passed)).isEqualTo("none");
-        assertThat(widget.getStatusModifier(fresh)).isEqualTo("none");
-        assertThat(widget.getNewSizeOf(fresh)).isEqualTo(2);
     }
 
     @Test
@@ -100,13 +89,6 @@ class WidgetTest {
                 .hasQualityGateStatus(QualityGateStatus.PASSED)
                 .hasQualityGateIcon("symbol-status-blue")
                 .hasQualityGateSummary(Messages.Widget_QualityGates_Passed(2));
-    }
-
-    @Test
-    void shouldNotShowPillsForSingleResult() {
-        var checkstyle = createAction("checkstyle", 5, 1, 0);
-
-        assertThat(createWidget(checkstyle)).hasResults(checkstyle).doesNotHavePills();
     }
 
     @Test

@@ -2,7 +2,6 @@ package io.jenkins.plugins.analysis.core.model;
 
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.assertThat;
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.assertThatExceptionOfType;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import edu.hm.hafner.analysis.Issue;
@@ -13,17 +12,13 @@ import hudson.DescriptorExtensionList;
 import hudson.model.ModelObject;
 import hudson.model.Run;
 import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
-import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 import io.jenkins.plugins.bootstrap5.MessagesViewModel;
 import io.jenkins.plugins.util.JenkinsFacade;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.stream.Stream;
 import jenkins.model.Jenkins;
 import org.eclipse.collections.impl.factory.Lists;
 import org.junit.jupiter.api.Test;
@@ -45,7 +40,6 @@ class DetailFactoryTest {
     private static final Report OUTSTANDING_ISSUES = createReportWith(3, 2, 1, "outstanding");
     private static final Report FIXED_ISSUES = createReportWith(3, 2, 1, "fixed");
     private static final String PARENT_NAME = "Parent Name";
-    private static final String AFFECTED_FILE_CONTENT = "Console-Log-Content";
     private static final String TOOL_ID = "spotbugs";
 
     @Test
@@ -271,42 +265,6 @@ class DetailFactoryTest {
         assertThat(details.getDisplayName()).contains(PARENT_NAME);
     }
 
-    @Test
-    void shouldCreateConsoleDetailForSourceLinksIfFileNameIsSelf() {
-        JenkinsFacade jenkins = mock(JenkinsFacade.class);
-        BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
-        when(buildFolder.readConsoleLog(any())).thenReturn(createLines());
-        var fileName = ConsoleLogHandler.JENKINS_CONSOLE_LOG_FILE_NAME_ID;
-
-        var details = createDetails(jenkins, buildFolder, fileName);
-        assertThat(details).isInstanceOf(ConsoleDetail.class);
-        assertThat(((ConsoleDetail) details).getSourceCode()).contains(AFFECTED_FILE_CONTENT);
-    }
-
-    private Object createDetails(
-            final JenkinsFacade jenkins, final BuildFolderFacade buildFolder, final String fileName) {
-        try (var issueBuilder = new IssueBuilder()) {
-            var detailFactory = new DetailFactory(jenkins, buildFolder);
-
-            issueBuilder.setFileName(fileName);
-            var issue = issueBuilder.build();
-
-            var report = new Report();
-            report.add(issue);
-
-            return detailFactory.createTrendDetails(
-                    "source." + issue.getId().toString(),
-                    RUN,
-                    createResult(),
-                    report,
-                    NEW_ISSUES,
-                    OUTSTANDING_ISSUES,
-                    FIXED_ISSUES,
-                    ENCODING,
-                    createParent());
-        }
-    }
-
     /**
      * Checks that a link with a filter, that results to an non empty set, returns an IssueDetail-View that only
      * contains filtered issues.
@@ -351,12 +309,6 @@ class DetailFactoryTest {
                 link, RUN, result, allIssues, newIssues, outstandingIssues, fixedIssues, ENCODING, parent);
         assertThat(details).isInstanceOf(actualType);
         return actualType.cast(details);
-    }
-
-    private Stream<String> createLines() {
-        List<String> lines = new ArrayList<>();
-        lines.add(AFFECTED_FILE_CONTENT);
-        return lines.stream();
     }
 
     private void assertThatPrioritiesAreCorrectlySet(

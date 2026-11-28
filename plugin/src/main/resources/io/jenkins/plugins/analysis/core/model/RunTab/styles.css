@@ -15,62 +15,12 @@
     }
 }
 
-.wng-widget {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 0.25rem;
-    margin-top: 0.5rem;
-    margin-bottom: -1rem;
-}
-
-.wng-widget__item {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: var(--jenkins-border);
-    border-radius: 50px;
-    padding: 0.25rem 0.75rem;
-    gap: 0.5rem;
-    font-size: 12px;
-    color: var(--text-color) !important;
-    text-decoration: none !important;
+/* Link to the log page in the status line: placed above the link of the card (see .wng-widget__link) */
+.wng-widget__errors {
+    position: relative;
     z-index: 2;
-
-    svg, img {
-        width: 0.875rem;
-        height: 0.875rem;
-        margin-bottom: 0;
-    }
-
-}
-
-.wng-widget__item-count {
-    font-variant-numeric: tabular-nums;
-    color: var(--text-color-secondary);
-}
-
-.wng-widget__item-new {
-    margin-left: -0.25rem;
-    font-variant-numeric: tabular-nums;
-    color: var(--red);
-}
-
-/* The pills of results with missed quality gates use the color of the criticality */
-.wng-widget__item[data-status="warning"] {
-    border-color: var(--warning-color);
-
-    svg {
-        color: var(--warning-color);
-    }
-}
-
-.wng-widget__item[data-status="error"] {
-    border-color: var(--error-color);
-
-    svg {
-        color: var(--error-color);
-    }
+    font-weight: 600;
+    color: var(--error-color) !important;
 }
 
 .wng-widget__link {
@@ -85,7 +35,7 @@
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    gap: 0.75rem;
+    gap: 1rem;
     width: 100%;
 }
 
@@ -152,8 +102,19 @@
     color: var(--text-color-secondary);
 }
 
+/* Metrics, reference build, and severity bar: a tinted panel that sets them off from the status and the pills */
+.wng-widget__panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.75rem 0.75rem 0.6rem;
+    border-radius: var(--form-input-border-radius);
+    background: var(--button-background);
+}
+
 .wng-widget__reference {
-    margin-top: -0.5rem;
+    padding-top: 0.5rem;
+    border-top: var(--jenkins-border);
     font-size: var(--font-size-xs);
     font-weight: normal;
     text-align: center;
@@ -171,14 +132,6 @@
 
     .wng-severity-legend {
         justify-content: center;
-    }
-}
-
-.wng-widget__item--more {
-
-    svg {
-        margin-inline: -0.25rem;
-        color: var(--text-color-secondary);
     }
 }
 
@@ -583,4 +536,14 @@
     border: none;
     border-radius: 0;
     background: transparent;
+}
+
+/* Source code page */
+.wng-source__hint {
+  margin: 0 0 1rem;
+  color: var(--text-color-secondary);
+}
+
+.wng-source pre[class*="language-"] {
+  margin: 0;
 }
