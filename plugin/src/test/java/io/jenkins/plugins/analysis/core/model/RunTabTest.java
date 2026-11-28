@@ -209,6 +209,27 @@ class RunTabTest {
     }
 
     /**
+     * Verifies that the URL of the remote API page is resolved to the endpoints of the sorted actions of the run.
+     */
+    @Test
+    void shouldResolveRemoteApiPage() {
+        Run<?, ?> run = mock(Run.class);
+        var checkstyle = createResultAction("checkstyle", "CheckStyle", 0);
+        var pmd = createResultAction("pmd", "PMD", 5);
+        when(run.getActions(ResultAction.class)).thenReturn(List.of(checkstyle, pmd));
+
+        var page = new RunTab(run).getDynamic("remote-api");
+
+        assertThat(page).isInstanceOfSatisfying(RemoteApiModel.class, remoteApi -> {
+            assertThat(remoteApi).hasUrlName("remote-api");
+            assertThat(remoteApi.getObject()).isSameAs(run);
+            assertThat(remoteApi.getTools())
+                    .extracting(RemoteApiModel.ToolEndpoints::getId)
+                    .containsExactly("pmd", "checkstyle");
+        });
+    }
+
+    /**
      * Verifies that the hotspots page shows the sorted actions of the run that contain issues.
      */
     @Test

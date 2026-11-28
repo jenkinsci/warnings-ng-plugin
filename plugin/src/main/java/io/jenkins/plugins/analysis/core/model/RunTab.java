@@ -6,7 +6,6 @@ import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import hudson.model.Actionable;
 import hudson.model.Run;
-import io.jenkins.plugins.analysis.core.model.SourceModel.IssueState;
 import io.jenkins.plugins.analysis.core.model.SourceModel.ToolIssue;
 import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
 import io.jenkins.plugins.util.QualityGateStatus;
@@ -28,7 +27,7 @@ import org.kohsuke.stapler.verb.GET;
 /**
  * Defines the Warnings tab for a run.
  */
-@SuppressWarnings("checkstyle:ClassDataAbstractionCoupling")
+@SuppressWarnings({"checkstyle:ClassDataAbstractionCoupling", "PMD.CouplingBetweenObjects"})
 public class RunTab extends Tab {
     static final String URL = "warnings";
     static final String ICON = "symbol-warning-outline plugin-ionicons-api";
@@ -211,6 +210,17 @@ public class RunTab extends Tab {
     }
 
     /**
+     * Creates the model of the remote API page that lists the endpoints of the remote API of all warning actions.
+     * The URL {@code warnings/remote-api} contains a hyphen, so it cannot be resolved by a getter: it is resolved by
+     * {@link #getDynamic(String)}.
+     *
+     * @return the remote API model
+     */
+    RemoteApiModel createRemoteApi() {
+        return new RemoteApiModel(getObject(), getWarningActions());
+    }
+
+    /**
      * Redirects to the overview page if the new build page is enabled. The redirect target is derived from the URL of
      * the run (and not from the request), and it is resolved via the context path, so it always points to the
      * overview page of this run, independent of whether the request URL ends with a slash.
@@ -238,14 +248,25 @@ public class RunTab extends Tab {
      * build, so the source code of the reference build is shown, together with all fixed issues of the same file.
      * </p>
      *
-     * @param name
-     *         the link to the affected file of an issue
+     * <p>
+     * Additionally, the URL {@code remote-api} is resolved to the remote API page, see {@link #createRemoteApi()}.
+     * </p>
      *
-     * @return the view that shows the affected file
+     * @param name
+     *         the link to the affected file of an issue, or {@code remote-api}
+     *
+     * @return the view that shows the affected file or the remote API page
      * @throws NoSuchElementException
      *         if there is no such issue
      */
     public Object getDynamic(final String name) {
+        if (RemoteApiModel.URL.equals(name)) {
+            return createRemoteApi();
+        }
+        return getSourceView(name);
+    }
+
+    private Object getSourceView(final String name) {
         if (name.startsWith(SOURCE_LINK_PREFIX) && getObject() instanceof Run<?, ?> run) {
             var actions = getWarningActions();
             for (ResultAction action : actions) {
@@ -278,7 +299,7 @@ public class RunTab extends Tab {
             final Run<?, ?> run, final ResultAction action, final ResultAction reference, final Issue issue) {
         var fixedIssuesOfFile = action.getResult().getFixedIssues().stream()
                 .filter(fixed -> isInSameFile(fixed, issue))
-                .map(fixed -> new ToolIssue(fixed, reference, IssueState.FIXED))
+                .map(fixed -> ToolIssue.fixed(fixed, reference))
                 .toList();
         return new SourceModel(
                 run, reference.getOwner(), issue, fixedIssuesOfFile, reference.getSourceEncoding(), buildFolder);
@@ -289,8 +310,7 @@ public class RunTab extends Tab {
                 action.getResult().getNewIssues().stream().map(Issue::getId).collect(Collectors.toSet());
         return action.getResult().getIssues().stream()
                 .filter(other -> isInSameFile(other, issue))
-                .map(other -> new ToolIssue(
-                        other, action, newIssues.contains(other.getId()) ? IssueState.NEW : IssueState.OUTSTANDING));
+                .map(other -> ToolIssue.current(other, action, newIssues.contains(other.getId())));
     }
 
     private boolean isInSameFile(final Issue other, final Issue issue) {

@@ -980,6 +980,12 @@ new, fixed, or outstanding issues. The corresponding URLs are:
 3. `[build-url]/[tool-id]/new/api/xml`: lists all new issues
 4. `[build-url]/[tool-id]/outstanding/api/xml`: lists all outstanding issues
 
+The issues of all tools are available with the same URLs relative to the aggregation, e.g., 
+`[build-url]/warnings-ng/new/api/json` lists the new issues of all tools. The property `origin` of an issue contains
+the ID of the tool that reported the issue.
+
+The Warnings tab of the new build page lists all these endpoints on the page *Remote API*.
+
 Here is an example JSON report:
 
 ```json

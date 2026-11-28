@@ -12,6 +12,8 @@ import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSu
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Pmd;
 import io.jenkins.plugins.analysis.warnings.SpotBugs;
+import io.jenkins.plugins.forensics.reference.SimpleReferenceRecorder;
+import java.util.Map;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
@@ -65,7 +67,7 @@ class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
                 .and(Input.from(readAllBytes(FOLDER_PREFIX + expectedXml)))
                 .ignoreChildNodesOrder()
                 .normalizeWhitespace()
-                .withNodeFilter(node -> "toString".equals(node.getNodeName()))
+                .withNodeFilter(node -> !"toString".equals(node.getNodeName()))
                 .areIdentical();
     }
 
@@ -114,11 +116,7 @@ class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     void shouldFindNewCheckStyleWarnings() {
-        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle1.xml", "checkstyle2.xml");
-        var recorder = enableWarnings(project, createCheckstyle("**/checkstyle1*"));
-        buildWithResult(project, Result.SUCCESS);
-        recorder.setTools(createCheckstyle("**/checkstyle2*"));
-        Run<?, ?> build = buildWithResult(project, Result.SUCCESS);
+        Run<?, ?> build = buildCheckStyleJobWithReference();
 
         assertThatRemoteApiEquals(build, "/checkstyle/all/api/xml", "all-issues.xml");
         assertThatRemoteApiEquals(build, "/checkstyle/new/api/xml", "new-issues.xml");
@@ -146,6 +144,45 @@ class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
         assertThatToolsContains(tools, "checkstyle", "CheckStyle Warnings", 3);
         assertThatToolsContains(tools, "pmd", "PMD Warnings", 0);
         assertThatToolsContains(tools, "spotbugs", "SpotBugs Warnings", 0);
+    }
+
+    /**
+     * Verifies that the remote API of the tools aggregation returns the new, fixed, and outstanding issues of all
+     * tools. The job uses CheckStyle only, so the aggregation must return the same issues as CheckStyle.
+     */
+    @Test
+    void shouldReturnIssuesOfAggregation() {
+        Run<?, ?> build = buildCheckStyleJobWithReference();
+
+        var expectedSizes = Map.of("all", 4, "new", 3, "fixed", 2, "outstanding", 1);
+        expectedSizes.forEach((selection, size) -> {
+            var aggregation = callJsonRemoteApi(build.getUrl() + "warnings-ng/" + selection + "/api/json")
+                    .getJSONObject();
+            var checkstyle = callJsonRemoteApi(build.getUrl() + "checkstyle/" + selection + "/api/json")
+                    .getJSONObject();
+
+            assertThatJson(aggregation).as(selection).node("size").isEqualTo(size);
+            assertThatJson(aggregation)
+                    .as(selection)
+                    .node("issues")
+                    .isEqualTo(json(checkstyle.getJSONArray("issues").toString()));
+        });
+    }
+
+    /**
+     * Builds a CheckStyle job twice: the reference build reports the issues of 'checkstyle1.xml', the second build
+     * the issues of 'checkstyle2.xml'. So the second build contains new, fixed, and outstanding issues.
+     *
+     * @return the second build
+     */
+    private Run<?, ?> buildCheckStyleJobWithReference() {
+        var project = createFreeStyleProjectWithWorkspaceFilesWithSuffix("checkstyle1.xml", "checkstyle2.xml");
+        project.getPublishersList().add(new SimpleReferenceRecorder());
+        var recorder = enableWarnings(project, createCheckstyle("**/checkstyle1*"));
+        buildWithResult(project, Result.SUCCESS);
+        recorder.setTools(createCheckstyle("**/checkstyle2*"));
+
+        return buildWithResult(project, Result.SUCCESS);
     }
 
     private void assertThatToolsContains(

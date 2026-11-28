@@ -296,5 +296,13 @@ public class SourceModel implements ModelObject {
      * @param state
      *         the state of the issue
      */
-    record ToolIssue(Issue issue, ResultAction action, IssueState state) {}
+    record ToolIssue(Issue issue, ResultAction action, IssueState state) {
+        static ToolIssue fixed(final Issue issue, final ResultAction action) {
+            return new ToolIssue(issue, action, IssueState.FIXED);
+        }
+
+        static ToolIssue current(final Issue issue, final ResultAction action, final boolean isNew) {
+            return new ToolIssue(issue, action, isNew ? IssueState.NEW : IssueState.OUTSTANDING);
+        }
+    }
 }

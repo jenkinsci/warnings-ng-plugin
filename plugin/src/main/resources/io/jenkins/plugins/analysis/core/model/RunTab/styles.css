@@ -547,3 +547,57 @@
 .wng-source pre[class*="language-"] {
   margin: 0;
 }
+
+/* Remote API page (RemoteApiModel/index.jelly): the content column must not grow with its content, otherwise long
+   lines of the response would widen the whole page. The height of the response is computed in remote-api.js. */
+.wng-remote-api {
+    min-width: 0;
+}
+
+/* The JSON response uses the monospace log style and keeps its indentation, but long lines are soft-wrapped
+   (even within long values like URLs) so that no horizontal scrolling is required. */
+.wng-remote-api__response {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    overflow-x: hidden;
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-sm);
+}
+
+/* Endpoints table: same style as the results table of the overview (see .wng-dashboard__results). The endpoints
+   are shown as short relative paths so that the table fits into the card; the descriptions wrap. */
+.wng-remote-api__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--font-size-sm);
+}
+
+.wng-remote-api__table th {
+    color: var(--text-color-secondary);
+    font-weight: 600;
+    text-align: left;
+    padding: 0 24px 6px 0;
+    border-bottom: 1px solid var(--jenkins-border-color, #e5e7eb);
+}
+
+.wng-remote-api__table td {
+    padding: 5px 24px 5px 0;
+    overflow-wrap: anywhere;
+    vertical-align: top;
+}
+
+.wng-remote-api__table tbody tr:first-child td {
+    padding-top: 10px;
+}
+
+.wng-remote-api__endpoint {
+    width: 1%;
+    font-family: var(--font-family-mono);
+    white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+    .wng-remote-api__endpoint {
+        white-space: normal;
+    }
+}

@@ -1,0 +1,179 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:wng="/warnings">
+
+  <st:header name="Content-Type" value="text/html;charset=UTF-8"/>
+
+  <l:run-subpage>
+    <st:adjunct includes="io.jenkins.plugins.analysis.core.model.RunTab.styles"/>
+
+    <j:set var="hasTools" value="${it.hasTools()}"/>
+    <j:set var="aggregationId" value="${it.aggregationId}"/>
+    <!-- The endpoints are relative to the URL of the build. -->
+    <j:set var="buildUrl" value="${rootURL}/${it.object.url}"/>
+
+    <l:app-bar title="${it.displayName}">
+      <j:if test="${hasTools}">
+        <div class="wng-app-bar__controls">
+          <div class="wng-app-bar__control" tooltip="${%tool-tooltip}">
+            <label for="wng-remote-api-tool">${%tool-title}:</label>
+            <j:forEach var="tool" items="${it.tools}">
+              <wng:tool-icon tool="${tool.id}" icon="${tool.smallImage}"/>
+            </j:forEach>
+            <div class="jenkins-select">
+              <select id="wng-remote-api-tool" class="jenkins-select__input">
+                <option value="${aggregationId}" selected="selected">${%all-tools}</option>
+                <j:forEach var="tool" items="${it.tools}">
+                  <option value="${tool.id}">${tool.displayName}</option>
+                </j:forEach>
+              </select>
+            </div>
+          </div>
+        </div>
+      </j:if>
+    </l:app-bar>
+
+    <div class="wng-body">
+      <wng:sidepanel tab="${it.tab}"/>
+
+      <div class="wng-dashboard wng-remote-api">
+        <j:choose>
+          <j:when test="${hasTools}">
+            <!-- The endpoints of all tools are part of the page, the visible tool is selected on the client side. -->
+            <div class="wng-remote-api__panel jenkins-hidden" data-tool="${aggregationId}"
+                 data-url="${buildUrl}${aggregationId}/api/json">
+              <l:card title="${%endpoints-title}">
+                <p>${%endpoints-intro}</p>
+                <table class="wng-remote-api__table">
+                  <thead>
+                    <tr>
+                      <th>${%endpoint}</th>
+                      <th>${%description}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="wng-remote-api__endpoint">
+                        <a href="${buildUrl}${aggregationId}/api/">${aggregationId}/api</a>
+                      </td>
+                      <td>${%aggregation-overview}</td>
+                    </tr>
+                    <tr>
+                      <td class="wng-remote-api__endpoint">
+                        <a href="${buildUrl}${aggregationId}/api/json?pretty=true">${aggregationId}/api/json</a>
+                        (<a href="${buildUrl}${aggregationId}/api/xml">XML</a>)
+                      </td>
+                      <td>${%aggregation-summary}</td>
+                    </tr>
+                    <tr>
+                      <td class="wng-remote-api__endpoint">
+                        <a href="${buildUrl}${aggregationId}/all/api/json?pretty=true">${aggregationId}/all/api/json</a>
+                        (<a href="${buildUrl}${aggregationId}/all/api/xml">XML</a>)
+                      </td>
+                      <td>${%aggregation-issues-all}</td>
+                    </tr>
+                    <tr>
+                      <td class="wng-remote-api__endpoint">
+                        <a href="${buildUrl}${aggregationId}/new/api/json?pretty=true">${aggregationId}/new/api/json</a>
+                        (<a href="${buildUrl}${aggregationId}/new/api/xml">XML</a>)
+                      </td>
+                      <td>${%aggregation-issues-new}</td>
+                    </tr>
+                    <tr>
+                      <td class="wng-remote-api__endpoint">
+                        <a href="${buildUrl}${aggregationId}/outstanding/api/json?pretty=true">${aggregationId}/outstanding/api/json</a>
+                        (<a href="${buildUrl}${aggregationId}/outstanding/api/xml">XML</a>)
+                      </td>
+                      <td>${%aggregation-issues-outstanding}</td>
+                    </tr>
+                    <tr>
+                      <td class="wng-remote-api__endpoint">
+                        <a href="${buildUrl}${aggregationId}/fixed/api/json?pretty=true">${aggregationId}/fixed/api/json</a>
+                        (<a href="${buildUrl}${aggregationId}/fixed/api/xml">XML</a>)
+                      </td>
+                      <td>${%aggregation-issues-fixed}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </l:card>
+            </div>
+
+            <j:forEach var="tool" items="${it.tools}">
+              <j:set var="toolUrl" value="${buildUrl}${tool.id}"/>
+              <div class="wng-remote-api__panel jenkins-hidden" data-tool="${tool.id}" data-url="${toolUrl}/api/json">
+                <l:card title="${%endpoints-title}">
+                  <p>${%endpoints-intro}</p>
+                  <table class="wng-remote-api__table">
+                    <thead>
+                      <tr>
+                        <th>${%endpoint}</th>
+                        <th>${%description}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="wng-remote-api__endpoint">
+                          <a href="${toolUrl}/api/">${tool.id}/api</a>
+                        </td>
+                        <td>${%tool-overview}</td>
+                      </tr>
+                      <tr>
+                        <td class="wng-remote-api__endpoint">
+                          <a href="${toolUrl}/api/json?pretty=true">${tool.id}/api/json</a>
+                          (<a href="${toolUrl}/api/xml">XML</a>)
+                        </td>
+                        <td>${%tool-summary}</td>
+                      </tr>
+                      <tr>
+                        <td class="wng-remote-api__endpoint">
+                          <a href="${toolUrl}/all/api/json?pretty=true">${tool.id}/all/api/json</a>
+                          (<a href="${toolUrl}/all/api/xml">XML</a>)
+                        </td>
+                        <td>${%tool-issues-all}</td>
+                      </tr>
+                      <tr>
+                        <td class="wng-remote-api__endpoint">
+                          <a href="${toolUrl}/new/api/json?pretty=true">${tool.id}/new/api/json</a>
+                          (<a href="${toolUrl}/new/api/xml">XML</a>)
+                        </td>
+                        <td>${%tool-issues-new}</td>
+                      </tr>
+                      <tr>
+                        <td class="wng-remote-api__endpoint">
+                          <a href="${toolUrl}/outstanding/api/json?pretty=true">${tool.id}/outstanding/api/json</a>
+                          (<a href="${toolUrl}/outstanding/api/xml">XML</a>)
+                        </td>
+                        <td>${%tool-issues-outstanding}</td>
+                      </tr>
+                      <tr>
+                        <td class="wng-remote-api__endpoint">
+                          <a href="${toolUrl}/fixed/api/json?pretty=true">${tool.id}/fixed/api/json</a>
+                          (<a href="${toolUrl}/fixed/api/xml">XML</a>)
+                        </td>
+                        <td>${%tool-issues-fixed}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </l:card>
+              </div>
+            </j:forEach>
+
+            <l:card title="${%response-title}">
+              <pre id="wng-remote-api-response" class="wng-log wng-remote-api__response"
+                   data-loading="${%loading}" data-error="${%error}">${%loading}</pre>
+            </l:card>
+          </j:when>
+          <j:otherwise>
+            <l:card title="${it.displayName}">
+              <p class="wng-issues__empty">${%no-tools}</p>
+            </l:card>
+          </j:otherwise>
+        </j:choose>
+      </div>
+    </div>
+
+    <j:if test="${hasTools}">
+      <st:adjunct includes="io.jenkins.plugins.analysis.core.model.RemoteApiModel.remote-api"/>
+    </j:if>
+  </l:run-subpage>
+
+</j:jelly>
