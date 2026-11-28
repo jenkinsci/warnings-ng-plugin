@@ -29,6 +29,7 @@ import io.jenkins.plugins.forensics.reference.SimpleReferenceRecorder;
 import io.jenkins.plugins.util.JenkinsFacade;
 import io.jenkins.plugins.util.QualityGateStatus;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
@@ -337,6 +338,30 @@ class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         var result = scheduleBuildAndAssertStatus(job, Result.FAILURE);
         assertThat(result).hasErrorMessages("No files found for pattern '**/*issues.txt'. Configuration error?");
         assertThat(getConsoleLog(result)).contains("Failing build because analysis result contains errors");
+    }
+
+    /**
+     * Verifies that the ID in the console message "Attaching ResultAction" is a hyperlink to the result page, while
+     * the message that is stored in the result (and shown on the Log Messages page) stays plain text.
+     */
+    @Test
+    void shouldLinkResultInConsoleLog() throws IOException {
+        var job = createFreeStyleProject();
+        enableEclipseWarnings(job);
+
+        var result = scheduleBuildAndAssertStatus(job, Result.SUCCESS);
+        var build = result.getOwner();
+        var id = result.getId();
+        var message = "Attaching ResultAction with ID '" + id + "' to build '" + build + "'.";
+
+        assertThat(getConsoleLog(result)).contains(message);
+
+        var html = new StringWriter();
+        assertThat(build.getLogText().writeHtmlTo(0, html)).isPositive();
+        assertThat(html.toString()).contains(build.getUrl() + id + "'").contains(id + "</a>");
+
+        assertThat(result.getInfoMessages()).contains(message);
+        assertThat(result.getInfoMessages()).noneMatch(line -> line.contains("\u001B"));
     }
 
     /**

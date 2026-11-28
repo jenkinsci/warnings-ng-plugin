@@ -130,8 +130,8 @@ class IssuesPublisher {
             }
         }
 
-        issues.logInfo("Attaching ResultAction with ID '%s' to build '%s'.", getId(), run);
-        logger.logInfoMessages(issues.getInfoMessages());
+        issues.logInfo(AttachMessageLinker.ATTACHING_MESSAGE, getId(), run);
+        logger.logInfoMessages(new AttachMessageLinker(run, getId()).linkResult(issues.getInfoMessages()));
         logger.logErrorMessages(issues.getErrorMessages());
 
         var result = new AnalysisHistory(run, selector)
