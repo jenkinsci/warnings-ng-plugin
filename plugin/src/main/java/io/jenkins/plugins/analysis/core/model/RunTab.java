@@ -6,7 +6,6 @@ import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import hudson.model.Actionable;
 import hudson.model.Run;
-import io.jenkins.plugins.analysis.core.model.SourceModel.IssueState;
 import io.jenkins.plugins.analysis.core.model.SourceModel.ToolIssue;
 import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
 import io.jenkins.plugins.util.QualityGateStatus;
@@ -264,6 +263,10 @@ public class RunTab extends Tab {
         if (RemoteApiModel.URL.equals(name)) {
             return createRemoteApi();
         }
+        return getSourceView(name);
+    }
+
+    private Object getSourceView(final String name) {
         if (name.startsWith(SOURCE_LINK_PREFIX) && getObject() instanceof Run<?, ?> run) {
             var actions = getWarningActions();
             for (ResultAction action : actions) {
@@ -296,7 +299,7 @@ public class RunTab extends Tab {
             final Run<?, ?> run, final ResultAction action, final ResultAction reference, final Issue issue) {
         var fixedIssuesOfFile = action.getResult().getFixedIssues().stream()
                 .filter(fixed -> isInSameFile(fixed, issue))
-                .map(fixed -> new ToolIssue(fixed, reference, IssueState.FIXED))
+                .map(fixed -> ToolIssue.fixed(fixed, reference))
                 .toList();
         return new SourceModel(
                 run, reference.getOwner(), issue, fixedIssuesOfFile, reference.getSourceEncoding(), buildFolder);
@@ -307,8 +310,7 @@ public class RunTab extends Tab {
                 action.getResult().getNewIssues().stream().map(Issue::getId).collect(Collectors.toSet());
         return action.getResult().getIssues().stream()
                 .filter(other -> isInSameFile(other, issue))
-                .map(other -> new ToolIssue(
-                        other, action, newIssues.contains(other.getId()) ? IssueState.NEW : IssueState.OUTSTANDING));
+                .map(other -> ToolIssue.current(other, action, newIssues.contains(other.getId())));
     }
 
     private boolean isInSameFile(final Issue other, final Issue issue) {
