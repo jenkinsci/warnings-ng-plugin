@@ -209,6 +209,19 @@ class RunTabTest {
     }
 
     /**
+     * Verifies that the help page is created for the run.
+     */
+    @Test
+    void shouldCreateHelpPage() {
+        Run<?, ?> run = mock(Run.class);
+
+        var help = new RunTab(run).getHelp();
+
+        assertThat(help).hasUrlName("help");
+        assertThat(help.getObject()).isSameAs(run);
+    }
+
+    /**
      * Verifies that the URL of the remote API page is resolved to the endpoints of the sorted actions of the run.
      */
     @Test

@@ -1,0 +1,123 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:wng="/warnings">
+
+  <st:header name="Content-Type" value="text/html;charset=UTF-8"/>
+
+  <l:run-subpage>
+    <st:adjunct includes="io.jenkins.plugins.analysis.core.model.RunTab.styles"/>
+
+    <l:app-bar title="${it.displayName}"/>
+
+    <div class="wng-body">
+      <wng:sidepanel tab="${it.tab}"/>
+
+      <div class="wng-dashboard wng-help">
+        <div id="baselines">
+          <l:card title="${%baselines-title}">
+            <p>${%baselines-intro}</p>
+            <table class="wng-table">
+              <thead>
+                <tr>
+                  <th>${%baseline}</th>
+                  <th>${%description}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <j:forEach var="entry" items="${it.baselines}">
+                  <tr>
+                    <td class="wng-table__name">${entry.name}</td>
+                    <td>${entry.description}</td>
+                  </tr>
+                </j:forEach>
+              </tbody>
+            </table>
+          </l:card>
+        </div>
+
+        <div id="severities">
+          <l:card title="${%severities-title}">
+            <p>${%severities-intro}</p>
+            <table class="wng-table">
+              <thead>
+                <tr>
+                  <th>${%severity}</th>
+                  <th>${%description}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <j:forEach var="entry" items="${it.severities}">
+                  <tr>
+                    <td class="wng-table__name">${entry.name}</td>
+                    <td>${entry.description}</td>
+                  </tr>
+                </j:forEach>
+              </tbody>
+            </table>
+          </l:card>
+        </div>
+
+        <div id="quality-gates">
+          <l:card title="${%quality-gates-title}">
+            <p>${%quality-gates-intro}</p>
+            <table class="wng-table">
+              <thead>
+                <tr>
+                  <th>${%quality-gate}</th>
+                  <th>${%description}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <j:forEach var="entry" items="${it.qualityGateTypes}">
+                  <tr>
+                    <td class="wng-table__name">${entry.name}</td>
+                    <td>${entry.description}</td>
+                  </tr>
+                </j:forEach>
+              </tbody>
+            </table>
+            <p>${%criticalities-intro}</p>
+            <table class="wng-table">
+              <thead>
+                <tr>
+                  <th>${%result}</th>
+                  <th>${%description}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <j:forEach var="entry" items="${it.criticalities}">
+                  <tr>
+                    <td class="wng-table__name">
+                      <span class="wng-table__icon-name">
+                        <l:icon src="${entry.icon}" class="icon-sm" alt=""/>
+                        ${entry.name}
+                      </span>
+                    </td>
+                    <td>${entry.description}</td>
+                  </tr>
+                </j:forEach>
+              </tbody>
+            </table>
+          </l:card>
+        </div>
+
+        <div id="reference-build">
+          <l:card title="${%reference-build-title}">
+            <p>${%reference-build-intro}</p>
+            <p>${%reference-build-quality-gate}</p>
+            <p>${%reference-build-missing}</p>
+          </l:card>
+        </div>
+
+        <l:card title="${%more-title}">
+          <p>
+            ${%more-intro}
+            <a href="https://github.com/jenkinsci/warnings-ng-plugin/blob/main/doc/Documentation.md"
+               target="_blank" rel="noopener noreferrer">${%documentation}</a>
+          </p>
+        </l:card>
+      </div>
+    </div>
+
+  </l:run-subpage>
+
+</j:jelly>

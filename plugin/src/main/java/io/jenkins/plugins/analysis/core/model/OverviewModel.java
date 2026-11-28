@@ -517,7 +517,20 @@ public class OverviewModel implements ModelObject {
      * @return the localized description
      */
     public String getCriticalityDescription(final QualityGate qualityGate) {
-        return switch (qualityGate.getCriticality()) {
+        return describeCriticality(qualityGate.getCriticality());
+    }
+
+    /**
+     * Returns a localized description of the specified criticality, i.e., what happens with the step and the build
+     * if a quality gate with this criticality is missed. Used by the overview and the help page.
+     *
+     * @param criticality
+     *         the criticality
+     *
+     * @return the localized description
+     */
+    static String describeCriticality(final QualityGateCriticality criticality) {
+        return switch (criticality) {
             case NOTE -> Messages.OverviewModel_Criticality_UnstableStage();
             case UNSTABLE -> Messages.OverviewModel_Criticality_UnstableRun();
             case ERROR -> Messages.OverviewModel_Criticality_FailureStage();

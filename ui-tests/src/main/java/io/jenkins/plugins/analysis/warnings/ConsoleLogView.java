@@ -1,12 +1,15 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+
 import com.google.inject.Injector;
+
 import java.net.URL;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
 import org.jenkinsci.test.acceptance.po.PageObject;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 
 /**
  * Page object that represents the part of the console log that contains the issue.
@@ -44,12 +47,20 @@ public class ConsoleLogView extends PageObject {
      */
     public String getHighlightedText() {
         WebElement marker = waitFor(By.cssSelector(".prism-marker.prism-marker--selected"));
-        int start = Integer.parseInt(marker.getDomAttribute("data-line-start"));
-        int end = Math.max(start, Integer.parseInt(marker.getDomAttribute("data-line-end")));
+        int start = getIntegerAttribute(marker, "data-line-start");
+        int end = Math.max(start, getIntegerAttribute(marker, "data-line-end"));
 
         return IntStream.rangeClosed(start, end)
                 .mapToObj(line -> find(By.cssSelector("#L" + line + " .prism-line__code")))
                 .map(line -> line.getDomProperty("textContent"))
                 .collect(Collectors.joining("\n"));
+    }
+
+    private int getIntegerAttribute(final WebElement marker, final String name) {
+        var domAttribute = marker.getDomAttribute(name);
+        if (domAttribute == null) {
+            return 0;
+        }
+        return Integer.parseInt(domAttribute);
     }
 }
