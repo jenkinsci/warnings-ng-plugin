@@ -27,7 +27,7 @@ import org.kohsuke.stapler.verb.GET;
 /**
  * Defines the Warnings tab for a run.
  */
-@SuppressWarnings("checkstyle:ClassDataAbstractionCoupling")
+@SuppressWarnings({"checkstyle:ClassDataAbstractionCoupling", "PMD.CouplingBetweenObjects"})
 public class RunTab extends Tab {
     static final String URL = "warnings";
     static final String ICON = "symbol-warning-outline plugin-ionicons-api";
@@ -259,6 +259,7 @@ public class RunTab extends Tab {
      * @throws NoSuchElementException
      *         if there is no such issue
      */
+    @SuppressWarnings("PMD.CyclomaticComplexity")
     public Object getDynamic(final String name) {
         if (RemoteApiModel.URL.equals(name)) {
             return createRemoteApi();
