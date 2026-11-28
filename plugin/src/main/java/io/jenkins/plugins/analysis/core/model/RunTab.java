@@ -259,7 +259,6 @@ public class RunTab extends Tab {
      * @throws NoSuchElementException
      *         if there is no such issue
      */
-    @SuppressWarnings("PMD.CyclomaticComplexity")
     public Object getDynamic(final String name) {
         if (RemoteApiModel.URL.equals(name)) {
             return createRemoteApi();
